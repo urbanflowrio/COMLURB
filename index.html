@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUB COMLURB | Central de Inteligência Operacional</title>
+<style>
+:root{
+  --bg:#06111f;--panel:#0d1f36;--panel2:#0a1b31;
+  --line:#294866;--text:#f7f9ff;--muted:#b8c9de;
+  --blue:#5b9bd5;--orange:#e87535;--green:#78aaa3;
+  --red:#ef6a5d;--purple:#a78bfa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5}
+.app{max-width:1400px;margin:0 auto;padding:32px 28px}
+
+.hero{border:1px solid var(--line);border-radius:22px;background:var(--panel2);padding:28px 32px;display:flex;gap:28px;align-items:center;margin-bottom:28px}
+.logo{width:260px;max-height:68px;object-fit:contain;padding-right:24px;border-right:1px solid rgba(255,255,255,.2)}
+.logoFallback{font-size:14px;font-weight:900;letter-spacing:.12em;color:#fff;padding-right:24px;border-right:1px solid rgba(255,255,255,.2);white-space:nowrap}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:.22em;color:#b8d4f2;text-transform:uppercase}
+.heroTitle{font-size:36px;font-weight:950;margin:6px 0;color:#fff}
+.heroSub{color:#c7d8ee;font-size:14px;line-height:1.5}
+
+.sectionLabel{font-size:11px;font-weight:900;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:28px 0 12px}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+
+.card{display:block;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;transition:.15s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-2px);border-color:#5b9bd5}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)}
+.card.orange::before{background:var(--orange)}
+.card.green::before{background:var(--green)}
+.card.purple::before{background:var(--purple)}
+.card.red::before{background:var(--red)}
+.card.wip{opacity:.65;cursor:default}
+.card.wip:hover{transform:none}
+
+.cardLabel{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.cardTitle{font-size:22px;font-weight:950;margin:8px 0 6px;color:#fff}
+.cardDesc{font-size:13px;color:#c7d8ee;line-height:1.4}
+.cardBadge{display:inline-block;margin-top:10px;font-size:10px;font-weight:900;letter-spacing:.12em;padding:3px 8px;border-radius:999px;background:rgba(91,155,213,.15);border:1px solid rgba(91,155,213,.3);color:#b8d4f2}
+.cardBadge.wip{background:rgba(232,117,53,.12);border-color:rgba(232,117,53,.3);color:#e87535}
+.cardBadge.ok{background:rgba(120,170,163,.12);border-color:rgba(120,170,163,.3);color:#78aaa3}
+
+.footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:#7a8fa5;font-size:12px}
+
+@media(max-width:900px){.grid,.grid2{grid-template-columns:1fr}.hero{flex-direction:column}.logo{border-right:0;padding-right:0}.heroTitle{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section class="hero">
+    <img class="logo" id="logo"
+         src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png"
+         alt="COMLURB"
+         onerror="this.style.display='none';document.getElementById('logoFb').style.display='block'">
+    <div class="logoFallback" id="logoFb" style="display:none">PREFEITURA DO RIO | COMLURB</div>
+    <div>
+      <div class="eyebrow">Gabinete da Presidência · Núcleo de Inteligência e Gestão Estratégica</div>
+      <div class="heroTitle">HUB COMLURB</div>
+      <div class="heroSub">Central de inteligência operacional — painéis executivos por diretoria, eixo temático e território.</div>
+    </div>
+  </section>
+
+  <div class="sectionLabel">Painéis operacionais</div>
+  <div class="grid">
+    <a class="card" href="dte/">
+      <div class="cardLabel">Painel · DTE</div>
+      <div class="cardTitle">Diretoria Técnica</div>
+      <div class="cardDesc">Frota, ETR, utilização e semáforo operacional.</div>
+      <span class="cardBadge ok">Ativo</span>
+    </a>
+    <a class="card orange" href="pessoas/">
+      <div class="cardLabel">Painel · DAF / Pessoas</div>
+      <div class="cardTitle">Gestão de Pessoas</div>
+      <div class="cardDesc">Força de trabalho, saúde ocupacional, afastamentos e perfil demográfico.</div>
+      <span class="cardBadge ok">Ativo</span>
+    </a>
+    <a class="card green" href="sms/">
+      <div class="cardLabel">Painel · SMS / Saúde</div>
+      <div class="cardTitle">Monitoramento Saúde</div>
+      <div class="cardDesc">Indicadores operacionais de saúde e segurança do trabalho.</div>
+      <span class="cardBadge ok">Ativo</span>
+    </a>
+    <a class="card purple" href="ipl/">
+      <div class="cardLabel">Painel · DLU / IPL</div>
+      <div class="cardTitle">IPL Territorial</div>
+      <div class="cardDesc">Índice de Padrão de Limpeza por bairro, gerência e superintendência.</div>
+      <span class="cardBadge ok">Ativo</span>
+    </a>
+    <a class="card orange" href="contratos/">
+      <div class="cardLabel">Painel · Contratos</div>
+      <div class="cardTitle">Gestão Contratual</div>
+      <div class="cardDesc">Acompanhamento executivo de contratos e fornecedores.</div>
+      <span class="cardBadge wip">Em refatoração</span>
+    </a>
+    <a class="card wip" href="sme/" onclick="return false">
+      <div class="cardLabel">Painel · SME</div>
+      <div class="cardTitle">Limpeza Escolar</div>
+      <div class="cardDesc">Higienização e limpeza da rede municipal de ensino.</div>
+      <span class="cardBadge wip">Em refatoração</span>
+    </a>
+  </div>
+
+  <div class="sectionLabel">Inteligência territorial</div>
+  <div class="grid">
+    <a class="card green" href="territorial/">
+      <div class="cardLabel">Mapa · Operacional</div>
+      <div class="cardTitle">Território Operacional</div>
+      <div class="cardDesc">Malha de gerências DSU e setores DLU sobre o mapa do Rio.</div>
+      <span class="cardBadge ok">Ativo</span>
+    </a>
+    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+      <div class="cardLabel">Mapa · Pessoas</div>
+      <div class="cardTitle">Dispersão da Força</div>
+      <div class="cardDesc">Localização residencial e aderência territorial dos colaboradores.</div>
+      <span class="cardBadge wip">Previsto</span>
+    </a>
+    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+      <div class="cardLabel">Mapa · IPL</div>
+      <div class="cardTitle">Calor de Limpeza</div>
+      <div class="cardDesc">Heatmap de notas IPL sobre o território — visão integrada.</div>
+      <span class="cardBadge wip">Previsto</span>
+    </a>
+  </div>
+
+  <div class="sectionLabel">Presidência</div>
+  <div class="grid2">
+    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+      <div class="cardLabel">Painel · PRE</div>
+      <div class="cardTitle">Radar de Indicadores</div>
+      <div class="cardDesc">Matriz executiva de desempenho por eixo — Pessoas, Operação, Segurança, Atendimento, Sustentabilidade, Receita.</div>
+      <span class="cardBadge wip">Em desenvolvimento</span>
+    </a>
+    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+      <div class="cardLabel">Painel · Ouvidoria</div>
+      <div class="cardTitle">1746 / Ouvidoria</div>
+      <div class="cardDesc">Chamados, satisfação cidadã e análise de conformidade operacional.</div>
+      <span class="cardBadge wip">Em desenvolvimento</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    Gabinete da Presidência / HUB COMLURB &bull; Núcleo de Inteligência e Gestão Estratégica Operacional &bull; Greicy Moreira
+  </div>
+</div>
+</body>
+</html>

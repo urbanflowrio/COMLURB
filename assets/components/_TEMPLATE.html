@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[NOME DO PAINEL] | HUB COMLURB</title>
+  
+  <!-- CSS do HUB -->
+  <link rel="stylesheet" href="../assets/css/hub-premium.css">
+</head>
+
+<body>
+<div class="app">
+  
+  <!-- ============================================
+       HEADER - Gerado automaticamente
+       ============================================ -->
+  <div id="header"></div>
+  
+  <!-- ============================================
+       FILTROS
+       ============================================ -->
+  <section class="filters">
+    <div class="field">
+      <label>Filtro 1</label>
+      <select id="f1"><option value="">Todos</option></select>
+    </div>
+    
+    <div class="field">
+      <label>Filtro 2</label>
+      <select id="f2"><option value="">Todos</option></select>
+    </div>
+    
+    <button class="actionBtn" onclick="clearAll()">Limpar</button>
+  </section>
+  
+  <!-- ============================================
+       BANNER DE DRILL DOWN
+       ============================================ -->
+  <div id="drillBanner"></div>
+  
+  <!-- ============================================
+       KPIS
+       ============================================ -->
+  <div class="kpis" id="kpis"></div>
+  
+  <!-- ============================================
+       GRÁFICOS
+       ============================================ -->
+  <div class="grid">
+    <!-- Painel 1 -->
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Título Gráfico 1</h2>
+        <div class="hint">Descrição</div>
+      </div>
+      <div class="body" id="chart1"></div>
+    </div>
+    
+    <!-- Painel 2 -->
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Título Gráfico 2</h2>
+        <div class="hint">Descrição</div>
+      </div>
+      <div class="body" id="chart2"></div>
+    </div>
+    
+    <!-- Painel 3 -->
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Título Gráfico 3</h2>
+        <div class="hint">Descrição</div>
+      </div>
+      <div class="body" id="chart3"></div>
+    </div>
+  </div>
+  
+  <!-- ============================================
+       FOOTER - Gerado automaticamente
+       ============================================ -->
+  <div id="footer"></div>
+  
+</div>
+
+<!-- ============================================
+     DEPENDÊNCIAS EXTERNAS
+     ============================================ -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- ============================================
+     COMPONENTES HUB
+     ============================================ -->
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-cards.js"></script>
+<script src="../assets/components/hub-charts.js"></script>
+<script src="../assets/components/hub-filters.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
+
+<!-- ============================================
+     CÓDIGO DO PAINEL
+     ============================================ -->
+<script>
+// ============================================
+// CONFIGURAÇÃO
+// ============================================
+
+const CONFIG = {
+  // URL do Google Sheets
+  dataUrl: "COLE_SUA_URL_AQUI",
+  
+  // Nome do painel
+  panelName: "[NOME DO PAINEL]",
+  systemLabel: "[CATEGORIA]",
+  subtitle: "[DESCRIÇÃO]"
+};
+
+// ============================================
+// ESTADO GLOBAL
+// ============================================
+
+let DATA = [];      // Dados originais
+let FILTERED = [];  // Dados filtrados
+let DRILL = null;   // Estado de drill down
+
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
+
+async function init() {
+  try {
+    // Mostra loading
+    HUB.loading.showMultiple(["kpis", "chart1", "chart2", "chart3"]);
+    
+    // Renderiza header
+    HUB.header.render("header", {
+      systemLabel: CONFIG.systemLabel,
+      title: CONFIG.panelName,
+      subtitle: CONFIG.subtitle
+    });
+    
+    // Carrega dados
+    DATA = await HUB.data.loadCSV(CONFIG.dataUrl, {
+      name: CONFIG.panelName,
+      required: true
+    });
+    
+    // Enriquece dados (se necessário)
+    DATA = DATA.map(row => ({
+      ...row,
+      // Adicione campos calculados aqui
+      total: HUB.format.toNumber(row.valor),
+      ativo: row.status === "ATIVO"
+    }));
+    
+    // Popula filtros
+    populateFilters();
+    
+    // Callback de mudança
+    HUB.filters.onChange(() => render());
+    
+    // Renderiza inicial
+    render();
+    
+    // Footer
+    HUB.footer.render("footer", {
+      author: "Greicy Moreira",
+      contact: "greicymoreira@comlurb.rio",
+      version: "1.0"
+    });
+    
+  } catch (e) {
+    console.error("Erro ao inicializar:", e);
+    alert(`Erro ao carregar dados: ${e.message}`);
+  }
+}
+
+// ============================================
+// FILTROS
+// ============================================
+
+function populateFilters() {
+  HUB.filters.populateAll(DATA, [
+    { id: "f1", field: "campo1" },
+    { id: "f2", field: "campo2" }
+  ]);
+}
+
+function applyFilters() {
+  FILTERED = HUB.filters.apply(DATA, [
+    { id: "f1", field: "campo1" },
+    { id: "f2", field: "campo2" }
+  ]);
+  
+  // Aplica drill down se existir
+  if (DRILL) {
+    FILTERED = FILTERED.filter(row => row[DRILL.field] === DRILL.value);
+  }
+}
+
+function clearAll() {
+  HUB.filters.clear();
+  DRILL = null;
+  HUB.drillBanner.hide("drillBanner");
+  render();
+}
+
+// ============================================
+// DRILL DOWN
+// ============================================
+
+function setDrill(field, value, label) {
+  DRILL = { field, value, label };
+  
+  HUB.drillBanner.show("drillBanner", {
+    title: `Drill down: ${label}`,
+    description: "Clique para remover o filtro",
+    onClear: "clearDrill()"
+  });
+  
+  render();
+}
+
+function clearDrill() {
+  DRILL = null;
+  HUB.drillBanner.hide("drillBanner");
+  render();
+}
+
+// ============================================
+// RENDERIZAÇÃO
+// ============================================
+
+function render() {
+  applyFilters();
+  
+  renderKPIs();
+  renderCharts();
+}
+
+function renderKPIs() {
+  const total = FILTERED.length;
+  const ativos = FILTERED.filter(r => r.ativo).length;
+  
+  HUB.cards.render("kpis", [
+    {
+      label: "Total",
+      value: total,
+      note: "Registros no recorte",
+      feature: true,
+      onclick: "clearDrill()"
+    },
+    {
+      label: "Ativos",
+      value: ativos,
+      note: HUB.format.pct(HUB.format.calcPct(ativos, total)),
+      color: "green",
+      onclick: "setDrill('ativo', true, 'Ativos')"
+    }
+    // Adicione mais KPIs aqui
+  ]);
+}
+
+function renderCharts() {
+  // Gráfico 1 - Exemplo com barras HTML
+  const grouped1 = HUB.array.groupCount(FILTERED, "campo1").slice(0, 10);
+  HUB.simpleBar.render("chart1", grouped1, {
+    total: FILTERED.length,
+    color: "blue",
+    onclick: name => `setDrill('campo1', '${name}', '${name}')`
+  });
+  
+  // Gráfico 2 - Exemplo com barras HTML
+  const grouped2 = HUB.array.groupCount(FILTERED, "campo2").slice(0, 10);
+  HUB.simpleBar.render("chart2", grouped2, {
+    total: FILTERED.length,
+    color: "green"
+  });
+  
+  // Gráfico 3 - Exemplo com Chart.js
+  const grouped3 = HUB.array.groupCount(FILTERED, "campo3").slice(0, 5);
+  HUB.charts.donut("chart3", {
+    labels: grouped3.map(x => x[0]),
+    values: grouped3.map(x => x[1])
+  });
+}
+
+// ============================================
+// BOOT
+// ============================================
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+
+</body>
+</html>

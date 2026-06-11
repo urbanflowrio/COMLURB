@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPL · Análise Territorial · HUB COMLURB</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{
+  --bg:#07111f;--panel:#0d1b2f;--line:#274260;--ink:#f2f6ff;
+  --muted:#9fb0c7;--blue:#6da5d8;--orange:#e87535;--green:#78aaa3;--red:#e84855;
+  --shadow:0 18px 45px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
+.app{max-width:1880px;margin:0 auto;padding:18px}
+
+.header{display:flex;align-items:center;gap:24px;padding:22px;border:1px solid rgba(111,164,216,.25);border-radius:22px;background:#0b1a2e;box-shadow:var(--shadow);margin-bottom:14px}
+.logo{width:250px;max-height:76px;object-fit:contain;border-right:1px solid rgba(255,255,255,.24);padding-right:22px}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#b9c9dc}
+h1{margin:5px 0;font-size:clamp(28px,2.2vw,42px);line-height:1.05}
+.sub{color:#c5d5e8;font-size:14px}
+
+.controls{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:12px;margin:14px 0}
+.field,.btn{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:11px 12px}
+label{display:block;color:#aebbd0;font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:900;margin-bottom:6px}
+select{width:100%;background:transparent;border:0;color:#f2f6ff;font-weight:800;outline:0}
+select option{background:#0d1b2f;color:#fff}
+.btn{cursor:pointer;color:#fff;font-weight:950}
+.btn.orange{border-color:rgba(232,117,53,.75);background:#14243b}
+
+.status{margin:12px 0;padding:10px 12px;border:1px solid rgba(75,126,172,.55);background:#1b2130;border-radius:14px;color:#b8d4f2;font-size:13px}
+.insight{border:1px solid rgba(255,255,255,.10);background:#0b1a2e;border-radius:16px;padding:14px 16px;margin-bottom:14px;border-left:4px solid var(--orange);line-height:1.5;font-size:14px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+.kpi{min-height:118px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:#4b7eac}
+.kpi.orange:before{background:var(--orange)}
+.kpi.green:before{background:var(--green)}
+.kpi.red:before{background:var(--red)}
+.kpi span{display:block;color:#aebbd0;font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:950}
+.kpi strong{display:block;font-size:clamp(22px,1.9vw,34px);margin:9px 0 4px;font-weight:950}
+.kpi small{color:#a8b8cf}
+/* linha de contexto de filtro */
+.kpi .ctx{display:block;margin-top:10px;font-size:10px;color:#5a7089;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-top:1px solid rgba(255,255,255,.07);padding-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.panelHead{padding:16px 18px;border-bottom:1px solid var(--line);background:#0b1a2e}
+.panel h2{margin:0;font-size:16px}
+.hint{font-size:12px;color:#a8b8cf;margin-top:4px}
+.body{padding:16px}
+
+.rank{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;border-radius:10px;transition:background .15s}
+.rank:hover{background:rgba(109,165,216,.08)}
+.rank b{font-size:13px}
+.rank small{color:#a8b8cf;font-weight:900}
+.bar{height:7px;border-radius:999px;background:#1b3657;margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%}
+
+/* badge meta no ranking */
+.mbadge{font-size:10px;font-weight:700;margin-left:7px;vertical-align:middle;display:inline-block;padding:2px 7px;border-radius:999px;border:1px solid rgba(91,155,213,.35);color:#9fc8e8;background:rgba(91,155,213,.10)}
+
+#map{height:620px;background:#07111f}
+.bairro-popup .leaflet-popup-content-wrapper{background:#0d1b2f;border:1px solid #5b9bd5;border-radius:10px;color:#f7f9ff;font-size:13px;font-weight:700;padding:4px 2px;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+.bairro-popup .leaflet-popup-tip{background:#0d1b2f}
+
+/* execHero executivo */
+.execHero{padding:16px;border:1px solid rgba(255,255,255,.10);border-radius:18px;background:#0b1a2e;margin-bottom:12px}
+.execHero .label{display:block;color:#9fb0c7;font-size:10px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px}
+.execHero strong{display:block;font-size:26px;line-height:1.05;color:#fff;margin-bottom:6px}
+.execHero p{margin:0 0 0;color:#c5d5e8;font-size:13px}
+/* narrativa condicional */
+.narrativa{margin-top:12px;padding:11px 14px;border-left:3px solid var(--orange);background:rgba(232,117,53,.07);border-radius:0 10px 10px 0;color:#d4e4f5;font-size:13px;line-height:1.6}
+
+.miniList{display:grid;gap:8px}
+.miniList div{padding:11px 12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025);cursor:pointer;transition:background .15s}
+.miniList div:hover{background:rgba(109,165,216,.08)}
+.miniList b{display:block;font-size:13px;color:#fff;margin-bottom:4px}
+.miniList small{color:#9fb0c7}
+
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;margin:2px;color:#cfe0f5;font-size:11px}
+
+/* destaque de trecho no drill */
+.rank.destaque{background:rgba(232,117,53,.12);border-left:3px solid var(--orange);border-radius:0 10px 10px 0}
+
+.footer{border-top:1px solid rgba(255,255,255,.12);padding:24px 18px;margin-top:20px;color:#7f8fa6;font-size:13px;background:transparent}
+.footer strong{color:#8b98ad;font-weight:900}
+
+@media(max-width:1100px){
+  .controls,.kpis,.grid,.grid2{grid-template-columns:1fr}
+  .header{flex-direction:column;align-items:flex-start}
+  .logo{width:220px;border-right:0;padding-right:0}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="header">
+  <img class="logo" alt="COMLURB" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png">
+  <div>
+    <div class="eyebrow">HUB COMLURB · Inteligência Operacional</div>
+    <h1>IPL · Análise Territorial</h1>
+    <div class="sub">Criticidade territorial, reincidência operacional e concentração de não conformidades</div>
+  </div>
+</header>
+
+<section class="controls">
+  <div class="field">
+    <label>Mês</label>
+    <select id="fMes" onchange="onMesChange()"><option value="">Todos</option></select>
+  </div>
+  <div class="field">
+    <label>Superintendência</label>
+    <select id="fSup" onchange="onSupChange()"><option value="">Todas</option></select>
+  </div>
+  <div class="field">
+    <label>Gerência</label>
+    <select id="fGer" onchange="onGerChange()"><option value="">Todas</option></select>
+  </div>
+  <div class="field">
+    <label>Bairro</label>
+    <select id="fBairro" onchange="onBairroChange()"><option value="">Todos</option></select>
+  </div>
+  <button class="btn orange" onclick="clearAll()">Limpar</button>
+</section>
+
+<div id="status" class="status">Carregando bases territoriais...</div>
+<div id="insight" class="insight"></div>
+<div class="kpis" id="kpis"></div>
+
+<div class="grid">
+  <div class="panel">
+    <div class="panelHead">
+      <h2>Mapa de calor territorial</h2>
+      <div class="hint">Intensidade territorial de não conformidade, reincidência e concentração operacional</div>
+    </div>
+    <div id="map"></div>
+  </div>
+  <div class="panel">
+    <div class="panelHead">
+      <h2>Bairros críticos</h2>
+      <div class="hint">Clique em um bairro para abrir ruas e trechos críticos</div>
+    </div>
+    <div class="body" id="rankBairros"></div>
+  </div>
+</div>
+
+<div class="grid2">
+  <div class="panel">
+    <div class="panelHead">
+      <h2>Síntese de reincidência</h2>
+      <div class="hint">Onde o problema se repete com maior impacto operacional</div>
+    </div>
+    <div class="body" id="sinteseReincidencia"></div>
+  </div>
+  <div class="panel">
+    <div class="panelHead">
+      <h2>Síntese de não conformidade</h2>
+      <div class="hint">Itens que mais explicam a perda de conformidade</div>
+    </div>
+    <div class="body" id="sinteseItens"></div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panelHead">
+    <h2 id="drillTitle">Explosão territorial</h2>
+    <div class="hint">Clique em um bairro, rua ou trecho para abrir o detalhe executivo</div>
+  </div>
+  <div class="body" id="drilldown">
+    <div class="status">Selecione um bairro crítico para visualizar ruas e trechos.</div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>
+    <strong>Gabinete da Presidência</strong><br>
+    HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional
+  </span>
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script>
+const META = 77;
+
+const GEO_CENTROIDS = {
+  "PECHINCHA": [-22.932254,-43.354924],
+  "CURICICA": [-22.949681,-43.385242],
+  "CIDADE DE DEUS": [-22.947942,-43.361856],
+  "ANIL": [-22.958493,-43.338646],
+  "GARDENIA AZUL": [-22.958105,-43.351751],
+  "TAQUARA": [-22.941898,-43.369768],
+  "FREGUESIA (JACAREPAGUA)": [-22.939838,-43.343677],
+  "JACAREPAGUA": [-22.965371,-43.337011],
+  "CAMORIM": [-22.962656,-43.438161],
+  "BARRA OLIMPICA": [-22.974512,-43.361714],
+  "SAUDE": [-22.898286,-43.184476],
+  "CAJU": [-22.874053,-43.221532],
+  "VILA VALQUEIRE": [-22.888468,-43.369873],
+  "PRACA SECA": [-22.900802,-43.353970],
+  "TANQUE": [-22.913018,-43.358092],
+  "JACAREPAGUA": [-22.934528,-43.415901],
+  "ITANHANGA": [-22.988215,-43.324095],
+  "TAQUARA": [-22.930395,-43.380476],
+  "FREGUESIA (JACAREPAGUA)": [-22.914618,-43.335966],
+  "BARRA DA TIJUCA": [-22.996644,-43.362730],
+  "JOA": [-23.011449,-43.286729],
+  "JACAREPAGUA": [-22.971527,-43.401950],
+  "BARRA OLIMPICA": [-22.979923,-43.398967],
+  "VARGEM GRANDE": [-22.976794,-43.494165],
+  "VARGEM PEQUENA": [-22.980688,-43.451366],
+  "RECREIO DOS BANDEIRANTES": [-23.026454,-43.481533],
+  "GRUMARI": [-23.051724,-43.526252],
+  "BARRA OLIMPICA": [-22.982386,-43.418316],
+  "JACAREPAGUA": [-22.973188,-43.417087],
+  "MARE": [-22.848964,-43.244749],
+  "CAMORIM": [-22.978055,-43.423773],
+  "PENHA CIRCULAR": [-22.829693,-43.284066],
+  "BRAS DE PINA": [-22.830670,-43.298456],
+  "PENHA": [-22.831306,-43.264468],
+  "DEL CASTILHO": [-22.879640,-43.272273],
+  "MARIA DA GRACA": [-22.883612,-43.265618],
+  "JACAREZINHO": [-22.889305,-43.256548],
+  "HIGIENOPOLIS": [-22.874010,-43.262425],
+  "TODOS OS SANTOS": [-22.894447,-43.284914],
+  "ROCHA": [-22.898451,-43.248273],
+  "SAO FRANCISCO XAVIER": [-22.902447,-43.242347],
+  "SAMPAIO": [-22.899640,-43.260542],
+  "RIACHUELO": [-22.898420,-43.255858],
+  "LINS DE VASCONCELOS": [-22.912932,-43.286009],
+  "ABOLICAO": [-22.884698,-43.300134],
+  "IRAJA": [-22.835338,-43.326443],
+  "VISTA ALEGRE": [-22.830474,-43.314666],
+  "COLEGIO": [-22.838380,-43.338236],
+  "VILA DA PENHA": [-22.843855,-43.310848],
+  "VILA KOSMOS": [-22.853492,-43.302486],
+  "VICENTE DE CARVALHO": [-22.855041,-43.313500],
+  "HONORIO GURGEL": [-22.846446,-43.357177],
+  "ROCHA MIRANDA": [-22.848559,-43.346778],
+  "CAMPINHO": [-22.882559,-43.349449],
+  "MARECHAL HERMES": [-22.858389,-43.371281],
+  "BENTO RIBEIRO": [-22.869083,-43.360549],
+  "OSVALDO CRUZ": [-22.869534,-43.351240],
+  "VAZ LOBO": [-22.857136,-43.328450],
+  "TURIACU": [-22.862936,-43.344081],
+  "FREGUESIA (ILHA)": [-22.782359,-43.167868],
+  "MADUREIRA": [-22.873521,-43.336627],
+  "CAVALCANTI": [-22.873336,-43.316030],
+  "ENGENHEIRO LEAL": [-22.874910,-43.324732],
+  "CASCADURA": [-22.885068,-43.327837],
+  "QUINTINO BOCAIUVA": [-22.895408,-43.324071],
+  "ACARI": [-22.819699,-43.338860],
+  "GALEAO": [-22.807840,-43.240710],
+  "JARDIM CARIOCA": [-22.804446,-43.193226],
+  "JARDIM AMERICA": [-22.810787,-43.323031],
+  "CACUIA": [-22.827548,-43.182825],
+  "PITANGUEIRAS": [-22.816041,-43.178121],
+  "RIBEIRA": [-22.826064,-43.170231],
+  "CIDADE UNIVERSITARIA": [-22.850646,-43.226700],
+  "ANCHIETA": [-22.824898,-43.400315],
+  "GUADALUPE": [-22.838493,-43.377453],
+  "SANTISSIMO": [-22.884639,-43.513845],
+  "PARQUE ANCHIETA": [-22.836225,-43.420419],
+  "RICARDO DE ALBUQUERQUE": [-22.836942,-43.396732],
+  "PAVUNA": [-22.812851,-43.362865],
+  "PARQUE COLUMBIA": [-22.815997,-43.343000],
+  "COSTA BARROS": [-22.824510,-43.369076],
+  "COELHO NETO": [-22.833382,-43.349258],
+  "BARROS FILHO": [-22.833954,-43.365155],
+  "VIGARIO GERAL": [-22.808449,-43.308525],
+  "CORDOVIL": [-22.818660,-43.292006],
+  "PARADA DE LUCAS": [-22.814949,-43.299961],
+  "ROCINHA": [-22.989189,-43.248375],
+  "VIDIGAL": [-22.995215,-43.236113],
+  "VILA MILITAR": [-22.868307,-43.397885],
+  "REALENGO": [-22.876264,-43.430749],
+  "MAGALHAES BASTOS": [-22.873477,-43.413316],
+  "CAMPO DOS AFONSOS": [-22.877371,-43.388020],
+  "JARDIM SULACAP": [-22.890931,-43.387510],
+  "DEODORO": [-22.851249,-43.386631],
+  "GUARATIBA": [-23.014443,-43.609302],
+  "ALTO DA BOA VISTA": [-22.960494,-43.236534],
+  "PEDRA DE GUARATIBA": [-23.000754,-43.640748],
+  "BARRA DE GUARATIBA": [-23.054987,-43.558148],
+  "ILHA DE GUARATIBA": [-22.994142,-43.571243],
+  "PACIENCIA": [-22.893644,-43.642949],
+  "SANTA CRUZ": [-22.916679,-43.715767],
+  "SEPETIBA": [-22.977347,-43.699608],
+  "SENADOR VASCONCELOS": [-22.895885,-43.531750],
+  "COSMOS": [-22.920384,-43.614954],
+  "INHOAIBA": [-22.922457,-43.594419],
+  "CAMPO GRANDE": [-22.926512,-43.554290],
+  "SANTISSIMO": [-22.872709,-43.521832],
+  "SENADOR VASCONCELOS": [-22.889123,-43.537464],
+  "COSMOS": [-22.898696,-43.609041],
+  "INHOAIBA": [-22.898862,-43.593943],
+  "CAMPO GRANDE": [-22.874226,-43.563500],
+  "PADRE MIGUEL": [-22.874568,-43.450137],
+  "VILA KENNEDY": [-22.857827,-43.485787],
+  "SENADOR CAMARA": [-22.881181,-43.493560],
+  "BANGU": [-22.861617,-43.487624],
+  "GERICINO": [-22.847532,-43.477107],
+  "JABOUR": [-22.881415,-43.493236],
+  "SAO CONRADO": [-22.998051,-43.263401],
+  "ANDARAI": [-22.929171,-43.252813],
+  "PRACA DA BANDEIRA": [-22.912131,-43.213852],
+  "BENFICA": [-22.892605,-43.239260],
+  "SAO CRISTOVAO": [-22.898797,-43.226668],
+  "VASCO DA GAMA": [-22.890519,-43.227477],
+  "MANGUEIRA": [-22.904482,-43.237212],
+  "JARDIM BOTANICO": [-22.963721,-43.226412],
+  "LAGOA": [-22.971730,-43.209435],
+  "GAVEA": [-22.977772,-43.238677],
+  "LARANJEIRAS": [-22.937579,-43.191428],
+  "LEBLON": [-22.985841,-43.224307],
+  "IPANEMA": [-22.987408,-43.198434],
+  "COPACABANA": [-22.975220,-43.183350],
+  "LEME": [-22.964499,-43.149509],
+  "COSME VELHO": [-22.940283,-43.201421],
+  "GLORIA": [-22.918728,-43.170578],
+  "CATETE": [-22.925953,-43.180883],
+  "LAPA": [-22.914188,-43.179967],
+  "FLAMENGO": [-22.935551,-43.171468],
+  "GAMBOA": [-22.898763,-43.194927],
+  "CIDADE NOVA": [-22.910637,-43.202293],
+  "SANTO CRISTO": [-22.902177,-43.201322],
+  "BOTAFOGO": [-22.947809,-43.183621],
+  "URCA": [-22.949582,-43.159312],
+  "HUMAITA": [-22.956927,-43.202443],
+  "RIO COMPRIDO": [-22.929234,-43.207493],
+  "SANTA TERESA": [-22.932310,-43.199807],
+  "ESTACIO": [-22.917113,-43.204383],
+  "CATUMBI": [-22.920609,-43.196653],
+  "PAQUETA": [-22.758489,-43.107759],
+  "CENTRO": [-22.907340,-43.171895],
+  "RAMOS": [-22.855044,-43.258169],
+  "BONSUCESSO": [-22.867346,-43.254837],
+  "TOMAS COELHO": [-22.867801,-43.303754],
+  "ENGENHO DA RAINHA": [-22.865100,-43.294480],
+  "ENGENHO NOVO": [-22.907987,-43.268098],
+  "JARDIM GUANABARA": [-22.816366,-43.206333],
+  "ENGENHO DE DENTRO": [-22.900429,-43.293601],
+  "ENCANTADO": [-22.896414,-43.303930],
+  "MONERO": [-22.794811,-43.196243],
+  "PILARES": [-22.879631,-43.296198],
+  "ZUMBI": [-22.820645,-43.175493],
+  "OLARIA": [-22.849726,-43.274800],
+  "MANGUINHOS": [-22.879767,-43.245286],
+  "TIJUCA": [-22.938773,-43.236418],
+  "COMPLEXO DO ALEMAO": [-22.859594,-43.274689],
+  "INHAUMA": [-22.869901,-43.282228],
+  "JACARE": [-22.892872,-43.257560],
+  "CACHAMBI": [-22.890510,-43.272345],
+  "MEIER": [-22.901548,-43.281086],
+  "PIEDADE": [-22.891828,-43.312155],
+  "AGUA SANTA": [-22.909794,-43.310521],
+  "COCOTA": [-22.804490,-43.179921],
+  "BANCARIOS": [-22.791990,-43.181998],
+  "TAUA": [-22.797037,-43.187690],
+  "PORTUGUESA": [-22.797101,-43.206495],
+  "PRAIA DA BANDEIRA": [-22.810029,-43.178112],
+  "VILA ISABEL": [-22.916441,-43.246413],
+  "MARACANA": [-22.912996,-43.228169],
+  "GRAJAU": [-22.929842,-43.270173]
+};
+
+const URL_IPL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv';
+const URL_BAIRROS_GEOJSON = '../territorial/data/DLU_Novos_Bairros_estrutura2025.geojson';
+const URL_COORD_BAIRROS   = '../territorial/data/coordenadas_bairros_rio.csv';
+
+let DATA = [], FILTERED = [], GEO = null, COORDS = {};
+let map, geoLayer, heatLayer, pointLayer, highlightLayer;
+
+const $ = id => document.getElementById(id);
+
+function normaliza(s){
+  return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+}
+function fmt(n,d=1){
+  if(!isFinite(n)) n=0;
+  return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function num(v){
+  const n=parseFloat(String(v||'').replace(',','.'));
+  return isNaN(n)?null:n;
+}
+function csv(url){
+  return new Promise((res,rej)=>{
+    Papa.parse(url,{download:true,header:true,skipEmptyLines:true,complete:r=>res(r.data),error:e=>rej(e)});
+  });
+}
+async function carregarGeo(){
+  const r=await fetch(URL_BAIRROS_GEOJSON);
+  if(!r.ok) throw new Error('GeoJSON não encontrado: '+URL_BAIRROS_GEOJSON);
+  return r.json();
+}
+function campo(row,nomes){
+  for(const n of nomes){ if(row[n]!==undefined) return row[n]; }
+  return '';
+}
+
+/* ── PESOS IPL (sem Lixo Branco — placeholder pendente metodologia) ──
+   Fonte: planilha PESO POR ITEM IPL
+   Lixo Branco (30%) excluído — depende de extensão/classe do logradouro
+   Os demais itens são normalizados sobre 70% → taxa expressa em 0-100%       */
+const PESOS_IPL = {
+  // col exata no CSV (normalizada) : peso
+  'COLETA DOMICILIAR'           : 0.20,
+  'RALO'                        : 0.06,
+  // Bens inservíveis + Entulho + Material de Obra + Pneus = 6% dividido em 4
+  'ENTULHO'                     : 0.015,
+  'BENS INSERVÍVEIS'            : 0.015,
+  'BENS INSERVIVEIS'            : 0.015,
+  'MATERIAL DE OBRA'            : 0.015,
+  'PNEUS'                       : 0.015,
+  // Papeleira/Contêiner — condicional (só entra se logradouro tem)
+  'PAPELEIRA/CONTEINER – SUJA'  : 0.02,
+  'PAPELEIRA/CONTEINER - SUJA'  : 0.02,
+  'PAPELEIRA/CONTEINER – CHEIA' : 0.02,
+  'PAPELEIRA/CONTEINER - CHEIA' : 0.02,
+  'PAPELEIRA/CONTEINER – QUEBRADA': 0.02,
+  'PAPELEIRA/CONTEINER - QUEBRADA': 0.02,
+  // Lixo crítico
+  'LIXO CRITICO - FEZES'        : 0.03,
+  'LIXO CRÍTICO - FEZES'        : 0.03,
+  'LIXO CRITICO'                : 0.03,
+  'LIXO CRÍTICO'                : 0.03,
+  // Resíduos 2%
+  'GALHADA'                     : 0.02,
+  'PROPAGANDA'                  : 0.02,
+  'CAPINA'                      : 0.02,
+  'ROCADA AREA VERDE AVALIACAO' : 0.02,
+  'ROCADA AREA VERDE'           : 0.02,
+  'ÁREAS VERDES AVALIAÇÃO'      : 0.02,
+  'AREAS VERDES AVALIACAO'      : 0.02,
+  // Resíduos 1%
+  'ANIMAL MORTO'                : 0.01,
+  'RESIDUO MORADOR DE RUA'      : 0.01,
+  'RESÍDUO MORADOR DE RUA'      : 0.01,
+  'RESIDUOS LIMPEZA'            : 0.01,
+  'RESÍDUO PÓS SERVICO'         : 0.01,
+  'RESIDUO POS SERVICO'         : 0.01,
+  'LAMA/AREIA'                  : 0.01,
+  'DESCARTE IRREGULAR (PONTO CRITICO)': 0.01,
+  'PONTO CRITICO'               : 0.01,
+  'PONTO CRÍTICO'               : 0.01,
+  'CAIXA METALICA AVALIACAO'    : 0.01,
+  'CAIXA METÁLICA AVALIAÇÃO'    : 0.01,
+};
+
+/* Colunas que indicam SE o item condicional existe (Sim/Não) */
+const COND_GATILHO = {
+  'PAPELEIRA/CONTEINER': ['PAPELEIRA/CONTEINER – SUJA','PAPELEIRA/CONTEINER - SUJA',
+                          'PAPELEIRA/CONTEINER – CHEIA','PAPELEIRA/CONTEINER - CHEIA',
+                          'PAPELEIRA/CONTEINER – QUEBRADA','PAPELEIRA/CONTEINER - QUEBRADA'],
+  'PAPELEIRA/CONTÊINER': ['PAPELEIRA/CONTEINER – SUJA','PAPELEIRA/CONTEINER - SUJA',
+                           'PAPELEIRA/CONTEINER – CHEIA','PAPELEIRA/CONTEINER - CHEIA',
+                           'PAPELEIRA/CONTEINER – QUEBRADA','PAPELEIRA/CONTEINER - QUEBRADA'],
+  'AREAS VERDES'       : ['ROCADA AREA VERDE AVALIACAO','ROCADA AREA VERDE','ÁREAS VERDES AVALIAÇÃO','AREAS VERDES AVALIACAO'],
+  'ÁREAS VERDES'       : ['ROCADA AREA VERDE AVALIACAO','ROCADA AREA VERDE','ÁREAS VERDES AVALIAÇÃO','AREAS VERDES AVALIACAO'],
+  'CAIXA METALICA'     : ['CAIXA METALICA AVALIACAO','CAIXA METÁLICA AVALIAÇÃO'],
+  'CAIXA METÁLICA'     : ['CAIXA METALICA AVALIACAO','CAIXA METÁLICA AVALIAÇÃO'],
+};
+
+function calculaTrecho(row){
+  // — monta mapa normalizado da linha —
+  const rowNorm = {};
+  Object.keys(row).forEach(col=>{ rowNorm[normaliza(col)] = normaliza(row[col]); });
+
+  // — identifica quais itens condicionais estão ATIVOS —
+  const inativas = new Set();
+  Object.entries(COND_GATILHO).forEach(([gatilho, filhos])=>{
+    const val = rowNorm[gatilho];
+    if(val === 'NAO' || val === 'N/A' || val === '') {
+      filhos.forEach(f => inativas.add(normaliza(f)));
+    }
+  });
+
+  // — Coleta domiciliar: numérica, 0 = OK —
+  const coletaRaw = row['Coleta domiciliar'] ?? row['COLETA DOMICILIAR'];
+  const coletaNum = parseFloat(String(coletaRaw ?? '').replace(',','.'));
+  const coletaOk  = !isNaN(coletaNum) ? (coletaNum === 0 ? 1 : 0) : null;
+
+  let somaPeso = 0, somaOk = 0;
+  let ok = 0, nok = 0;
+  const itensNok = [];
+
+  // — Coleta domiciliar —
+  if(coletaOk !== null){
+    somaPeso += 0.20;
+    somaOk   += coletaOk * 0.20;
+    if(coletaOk === 0) itensNok.push('Coleta domiciliar');
+    if(coletaOk === 1) ok++; else nok++;
+  }
+
+  // — Demais itens ponderados —
+  Object.entries(PESOS_IPL).forEach(([colNorm, peso])=>{
+    if(colNorm === 'COLETA DOMICILIAR') return; // já tratado
+    if(inativas.has(colNorm)) return;           // condicional inativo
+    const val = rowNorm[colNorm];
+    if(val === undefined || val === '' || val === 'N/A') return;
+    if(val === 'OK'){
+      somaPeso += peso; somaOk += peso; ok++;
+    } else if(val === 'NOK'){
+      somaPeso += peso;
+      nok++;
+      // nome original do col para exibir no drilldown
+      const colOrig = Object.keys(row).find(c=>normaliza(c)===colNorm) || colNorm;
+      itensNok.push(colOrig);
+    }
+  });
+
+  const total = ok + nok;
+  // taxa ponderada (0-100); fallback simples se somaPeso=0
+  const taxa = somaPeso > 0 ? (somaOk / somaPeso) * 100 : (total > 0 ? (ok/total)*100 : null);
+
+  return { ok, nok, total, taxa, itensNok,
+           somaPeso, somaOk,
+           // flag: Lixo Branco presente mas sem peso (placeholder)
+           lbPresente: Object.keys(row).some(c=>normaliza(c).includes('LIXO BRANCO')) };
+}
+
+function prepararCoords(rows){
+  const out={};
+  rows.forEach(r=>{
+    const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']);
+    const lat=num(campo(r,['lat','Lat','LAT','latitude','Latitude','LATITUDE']));
+    const lon=num(campo(r,['lon','Lon','LON','lng','Lng','LNG','longitude','Longitude','LONGITUDE']));
+    if(b&&lat&&lon) out[normaliza(b)]={lat,lon};
+  });
+  return out;
+}
+
+/* calcula centroide simples de um feature GeoJSON (média dos vértices do primeiro anel) */
+function centroideFeature(feature){
+  try{
+    const geom=feature.geometry;
+    let coords=[];
+    if(geom.type==='Polygon') coords=geom.coordinates[0];
+    else if(geom.type==='MultiPolygon'){
+      // pega o anel do maior polígono
+      let maior=0,idx=0;
+      geom.coordinates.forEach((p,i)=>{ if(p[0].length>maior){maior=p[0].length;idx=i;} });
+      coords=geom.coordinates[idx][0];
+    }
+    if(!coords.length) return null;
+    let sumLat=0,sumLon=0;
+    coords.forEach(c=>{ sumLon+=c[0]; sumLat+=c[1]; });
+    return{lat:sumLat/coords.length, lon:sumLon/coords.length};
+  }catch(e){ return null; }
+}
+
+/* monta mapa de centroides a partir do GeoJSON carregado */
+function construirCentroiDesGeo(geo){
+  const out={};
+  if(!geo||!geo.features) return out;
+  geo.features.forEach(f=>{
+    const nome=nomeBairroGeo(f.properties);
+    if(!nome) return;
+    const c=centroideFeature(f);
+    if(c) out[normaliza(nome)]=c;
+  });
+  return out;
+}
+
+async function init(){
+  try{
+    $('status').style.display='block';
+    $('status').textContent='Carregando Avaliação dos Trechos, coordenadas e mapa territorial...';
+
+    const [base,geo,coords]=await Promise.all([
+      csv(URL_IPL),
+      carregarGeo(),
+      csv(URL_COORD_BAIRROS).catch(()=>[])
+    ]);
+
+    GEO=geo;
+    COORDS=prepararCoords(coords);
+
+    DATA=base.map(r=>{
+      const calc=calculaTrecho(r);
+      const bairro=campo(r,['Bairro','BAIRRO']);
+      const coord=COORDS[normaliza(bairro)]||null;
+      return{
+        raw:r,
+        mes:campo(r,['Mês','Mes','MES']),
+        data:campo(r,['Data','DATA']),
+        sup:campo(r,['Superintendência','Superintendencia','SUPERINTENDÊNCIA','SUPERINTENDENCIA']),
+        diretoria:campo(r,['Diretoria','DIRETORIA']),
+        ger:campo(r,['Gerência','Gerencia','GERÊNCIA','GERENCIA']),
+        bairro,
+        logradouro:campo(r,['Nome','NOME','Logradouro','LOGRADOURO']),
+        trecho:campo(r,['Trecho','TRECHO']),
+        lat:coord?.lat||null,
+        lon:coord?.lon||null,
+        ok:calc.ok,nok:calc.nok,total:calc.total,taxa:calc.taxa,itensNok:calc.itensNok,
+        somaPeso:calc.somaPeso,somaOk:calc.somaOk,lbPresente:calc.lbPresente
+      };
+    }).filter(r=>r.total>0&&r.bairro);
+
+    initMap();
+    populateAll();
+    render();
+    $('status').style.display='none';
+  }catch(e){
+    $('status').style.display='block';
+    $('status').textContent='Erro ao carregar: '+e.message;
+    console.error(e);
+  }
+}
+
+/* ── FILTROS EM CASCATA ── */
+function baseMes(){ return DATA; }
+function baseSup(){
+  const m=$('fMes').value;
+  return DATA.filter(r=>!m||r.mes===m);
+}
+function baseGer(){
+  const m=$('fMes').value,s=$('fSup').value;
+  return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s));
+}
+function baseBairro(){
+  const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value;
+  return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g));
+}
+const ORDEM_MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function ordemMes(v){
+  const s=String(v||'').toLowerCase().trim();
+  const idx=ORDEM_MESES.findIndex(m=>s.startsWith(m));
+  return idx>=0?idx:99;
+}
+function preencherSelect(id,campo,label,base,preservar=true){
+  const atual=preservar?$(id).value:'';
+  const vals=[...new Set(base.map(r=>r[campo]).filter(Boolean))];
+  if(campo==='mes'){
+    vals.sort((a,b)=>{
+      const oa=ordemMes(a),ob=ordemMes(b);
+      return oa!==ob?oa-ob:String(a).localeCompare(String(b),'pt-BR');
+    });
+  } else {
+    vals.sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));
+  }
+  $(id).innerHTML=`<option value="">${label}</option>`;
+  vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; $(id).appendChild(o); });
+  if(preservar&&vals.includes(atual)) $(id).value=atual;
+}
+function populateAll(){
+  preencherSelect('fMes','mes','Todos',baseMes());
+  preencherSelect('fSup','sup','Todas',baseSup());
+  preencherSelect('fGer','ger','Todas',baseGer());
+  preencherSelect('fBairro','bairro','Todos',baseBairro());
+}
+function onMesChange(){
+  $('fSup').value='';$('fGer').value='';$('fBairro').value='';
+  preencherSelect('fSup','sup','Todas',baseSup(),false);
+  preencherSelect('fGer','ger','Todas',baseGer(),false);
+  preencherSelect('fBairro','bairro','Todos',baseBairro(),false);
+  resetDrill(); render();
+}
+function onSupChange(){
+  $('fGer').value='';$('fBairro').value='';
+  preencherSelect('fGer','ger','Todas',baseGer(),false);
+  preencherSelect('fBairro','bairro','Todos',baseBairro(),false);
+  resetDrill(); render();
+}
+function onGerChange(){
+  $('fBairro').value='';
+  preencherSelect('fBairro','bairro','Todos',baseBairro(),false);
+  resetDrill(); render();
+  const g=$('fGer').value;
+  if(g) setTimeout(()=>focarGerenciaNoMapa(g),120);
+  else if(geoLayer){ try{map.fitBounds(geoLayer.getBounds(),{padding:[20,20]});}catch(e){} }
+}
+function onBairroChange(){
+  resetDrill(); render();
+  const b=$('fBairro').value;
+  if(b){ abrirBairro(encodeURIComponent(b)); }
+  else if(geoLayer){ try{ map.fitBounds(geoLayer.getBounds(),{padding:[20,20]}); }catch(e){} if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null;} }
+}
+function clearAll(){
+  $('fMes').value='';$('fSup').value='';$('fGer').value='';$('fBairro').value='';
+  if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null;}
+  populateAll(); resetDrill(); render();
+}
+function resetDrill(){
+  $('drillTitle').textContent='Explosão territorial';
+  $('drilldown').innerHTML='<div class="status">Selecione um bairro crítico para visualizar ruas e trechos.</div>';
+}
+function apply(){
+  const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value,b=$('fBairro').value;
+  FILTERED=DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g)&&(!b||r.bairro===b));
+}
+
+/* ── LABEL DE CONTEXTO DE FILTRO ── */
+function labelContexto(){
+  const m=$('fMes').value||'Acumulado';
+  const s=$('fSup').value||null;
+  const g=$('fGer').value||null;
+  const b=$('fBairro').value||null;
+  const p=[m];
+  if(b) p.push(b);
+  else{ if(s) p.push(s); if(g) p.push(g); }
+  return p.join(' · ');
+}
+
+/* ── AGRUPAMENTO ── */
+function group(field){
+  const o={};
+  FILTERED.forEach(r=>{ const k=r[field]||'Não informado'; if(!o[k]) o[k]=[]; o[k].push(r); });
+  return Object.entries(o).map(([k,rows])=>{
+    const ok=rows.reduce((s,r)=>s+r.ok,0);
+    const nok=rows.reduce((s,r)=>s+r.nok,0);
+    const total=ok+nok;
+    const reincidentes=contaReincidencia(rows);
+    // taxa ponderada: média das taxas ponderadas individuais
+    const taxas=rows.map(r=>r.taxa).filter(t=>t!==null&&t!==undefined);
+    const taxa=taxas.length?taxas.reduce((s,t)=>s+t,0)/taxas.length:0;
+    return{k,rows,n:rows.length,ok,nok,total,reincidentes,taxa,criticidade:calculaCriticidade(rows)};
+  });
+}
+
+/* ── CHAVE UNIFICADA ── */
+function chaveReincidencia(r){
+  return [normaliza(r.bairro),normaliza(r.logradouro),normaliza(r.trecho)].join('|');
+}
+function contaReincidencia(rows){
+  const c={};
+  rows.forEach(r=>{ const k=chaveReincidencia(r); c[k]=(c[k]||0)+1; });
+  return Object.values(c).filter(v=>v>=2).length;
+}
+function totalReincidentes(rows){ return contaReincidencia(rows); }
+
+function calculaCriticidade(rows){
+  const ok=rows.reduce((s,r)=>s+r.ok,0);
+  const nok=rows.reduce((s,r)=>s+r.nok,0);
+  const total=ok+nok;
+  const taxaNok=total?nok/total:0;
+  const reinc=contaReincidencia(rows);
+  return(taxaNok*60)+(Math.min(reinc,20)*2)+Math.min(rows.length/10,20);
+}
+function corCriticidade(v){
+  return v>=60?'#e84855':v>=40?'#e87535':v>=25?'#f4a261':'#6da5d8';
+}
+
+function render(){
+  apply();
+  renderKpis();
+  renderInsight();
+  renderRanks();
+  renderSinteses();
+  renderMap();
+}
+
+/* ── KPI COM CONTEXTO DE FILTRO ── */
+function renderKpis(){
+  const ok=FILTERED.reduce((s,r)=>s+r.ok,0);
+  const nok=FILTERED.reduce((s,r)=>s+r.nok,0);
+  const total=ok+nok;
+  // taxa ponderada global: média das taxas individuais ponderadas
+  const taxas_ind=FILTERED.map(r=>r.taxa).filter(t=>t!==null&&t!==undefined);
+  const taxa=taxas_ind.length?taxas_ind.reduce((s,t)=>s+t,0)/taxas_ind.length:0;
+
+  const bairros=group('bairro');
+  const bairrosCriticos=bairros.filter(x=>x.n>=5&&x.taxa<META).length;
+  const pior=bairros.filter(x=>x.n>=5).sort((a,b)=>b.criticidade-a.criticidade)[0];
+  const reincidentes=totalReincidentes(FILTERED);
+  const piorItem=itemMaisCritico();
+  const ctx=labelContexto();
+
+  const cards=[
+    ['Conformidade territorial',fmt(taxa)+'%','ponderado · sem Lixo Branco (30%)',taxa>=META?'green':'orange'],
+    ['Bairros abaixo de 77%',bairrosCriticos.toLocaleString('pt-BR'),'referência anterior',bairrosCriticos?'red':'green'],
+    ['Trechos reincidentes',reincidentes.toLocaleString('pt-BR'),'repetição territorial',reincidentes?'orange':'green'],
+    ['Área mais crítica',pior?.k||'-',pior?fmt(pior.taxa)+'% OK':'-','orange'],
+    ['Item dominante',piorItem?.item||'-',piorItem?`${piorItem.n.toLocaleString('pt-BR')} ocorrências`:'-','red']
+  ];
+
+  $('kpis').innerHTML=cards.map(c=>`
+    <div class="kpi ${c[3]}">
+      <span>${c[0]}</span>
+      <strong>${c[1]}</strong>
+      <small>${c[2]}</small>
+      <em class="ctx">${ctx}</em>
+    </div>
+  `).join('');
+}
+
+function itemMaisCritico(){
+  const itens={};
+  FILTERED.forEach(r=>{ r.itensNok.forEach(item=>{ itens[item]=(itens[item]||0)+1; }); });
+  return Object.entries(itens).map(([item,n])=>({item,n})).sort((a,b)=>b.n-a.n)[0]||null;
+}
+
+function renderInsight(){
+  const ok=FILTERED.reduce((s,r)=>s+r.ok,0);
+  const nok=FILTERED.reduce((s,r)=>s+r.nok,0);
+  const total=ok+nok;
+  const taxas_ins=FILTERED.map(r=>r.taxa).filter(t=>t!==null&&t!==undefined);
+  const taxa=taxas_ins.length?taxas_ins.reduce((s,t)=>s+t,0)/taxas_ins.length:0;
+  const piorBairro=group('bairro').filter(x=>x.n>=1).sort((a,b)=>b.criticidade-a.criticidade)[0];
+  const piorSup=group('sup').sort((a,b)=>a.taxa-b.taxa)[0];
+  const reincidentes=totalReincidentes(FILTERED);
+  const item=itemMaisCritico();
+
+  $('insight').innerHTML=FILTERED.length
+    ?`Leitura executiva: o recorte <b>${labelContexto()}</b> apresenta <b>${fmt(taxa)}% de conformidade</b>. Maior concentração de registros em <b>${piorBairro?.k||'-'}</b> (${reincidentes.toLocaleString('pt-BR')} trechos com ocorrências repetidas). Superintendência <b>${piorSup?.k||'-'}</b> registra o menor índice no período. Item mais frequente: <b>${item?.item||'-'}</b>. <small style='color:#9fb0c7'>&nbsp;· Lixo Branco (30%) pendente.</small>`
+    :'Sem dados no filtro atual.';
+}
+
+/* ── RANK COM BADGE DE META ── */
+function gerenciaDoBairro(bairro){
+  const r=FILTERED.find(x=>normaliza(x.bairro)===normaliza(bairro));
+  return r?.ger||'';
+}
+function rankHTML(arr){
+  return arr.map(x=>{
+    const ger=gerenciaDoBairro(x.k);
+    const badge=ger?`<span class="mbadge ger">${ger}</span>`:'';
+    // top 2 itens NOK do bairro
+    const itensB={};
+    x.rows.forEach(r=>r.itensNok.forEach(i=>{itensB[i]=(itensB[i]||0)+1;}));
+    const topItens=Object.entries(itensB).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([i])=>i).join(' · ');
+    return`
+      <div class="rank" onclick="abrirBairro('${encodeURIComponent(x.k)}')">
+        <div>
+          <b>${x.k}</b>${badge}
+          <div class="hint">${x.n} avaliações · ${x.reincidentes} reincidentes · ${x.nok} NOK${topItens?' · '+topItens:''}</div>
+          <div class="bar"><i style="width:${Math.min(100,Math.max(8,x.criticidade))}%;background:${corCriticidade(x.criticidade)}"></i></div>
+        </div>
+        <small>${fmt(x.taxa)}% OK</small>
+      </div>
+    `;
+  }).join('')||'<div class="status">Sem dados</div>';
+}
+
+function renderRanks(){
+  $('rankBairros').innerHTML=rankHTML(
+    group('bairro').filter(x=>x.n>=1).sort((a,b)=>b.criticidade-a.criticidade).slice(0,14)
+  );
+}
+
+function renderSinteses(){
+  renderSinteseReincidencia();
+  renderSinteseItens();
+}
+
+/* ── SÍNTESE REINCIDÊNCIA ── */
+function renderSinteseReincidencia(){
+  const trechos=montarTrechos(FILTERED);
+
+  const ranking=Object.values(trechos)
+    .map(t=>{ const tot=t.ok+t.nok; return{...t,taxa:tot?(t.ok/tot)*100:0,criticidade:(t.nok*2)+(t.avaliacoes*4)}; })
+    .filter(t=>t.avaliacoes>=2)
+    .sort((a,b)=>b.criticidade-a.criticidade)
+    .slice(0,3);
+
+  if(!ranking.length){
+    // fallback: mostrar top logradouros por NOK mesmo sem reincidência
+    const trechosSingle=Object.values(trechos)
+      .map(t=>{const tot=t.ok+t.nok;return{...t,taxa:tot?(t.ok/tot)*100:0};})
+      .sort((a,b)=>b.nok-a.nok).slice(0,3);
+    if(!trechosSingle.length){
+      $('sinteseReincidencia').innerHTML='<div class="status">Sem registros no filtro atual.</div>';
+      return;
+    }
+    $('sinteseReincidencia').innerHTML=`
+      <div class="execHero">
+        <span class="label">Logradouros com mais registros · ${labelContexto()}</span>
+        <strong>${trechosSingle[0].bairro}</strong>
+        <p>${trechosSingle[0].logradouro} · ${trechosSingle[0].avaliacoes} avaliação(ões) · ${trechosSingle[0].nok} NOK</p>
+      </div>
+      <div class="miniList">
+        ${trechosSingle.map((t,i)=>`
+          <div onclick="abrirTrecho('${encodeURIComponent(t.bairro)}','${encodeURIComponent(t.logradouro)}','${encodeURIComponent(t.trecho||'')}')">
+            <b>${i+1}. ${t.logradouro}</b>
+            <small>${t.bairro} · ${t.avaliacoes}x · ${t.nok} NOK · ${fmt(t.taxa)}% OK</small>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    return;
+  }
+
+  const pior=ranking[0];
+
+  const logsReinc=[...new Set(
+    Object.values(trechos)
+      .filter(t=>t.avaliacoes>=2&&normaliza(t.bairro)===normaliza(pior.bairro))
+      .map(t=>t.logradouro)
+  )].length;
+
+  let narrativa;
+  if(logsReinc>=4){
+    narrativa=`Registros em <b>${logsReinc} logradouros</b> em ${pior.bairro} no período analisado.`;
+  } else if(logsReinc>=2){
+    narrativa=`Registros em <b>${logsReinc} logradouros</b> em ${pior.bairro} no período analisado.`;
+  } else {
+    narrativa=`Trecho <b>${pior.logradouro}</b> com ${pior.avaliacoes} avaliações registradas no período.`;
+  }
+
+  $('sinteseReincidencia').innerHTML=`
+    <div class="execHero">
+      <span class="label">Maior reincidência · ${labelContexto()}</span>
+      <strong>${pior.bairro}</strong>
+      <p>${pior.logradouro} · ${pior.avaliacoes} avaliações · ${pior.nok} NOK</p>
+      <div class="narrativa">${narrativa}</div>
+    </div>
+    <div class="miniList">
+      ${ranking.map((t,i)=>`
+        <div onclick="abrirTrecho('${encodeURIComponent(t.bairro)}','${encodeURIComponent(t.logradouro)}','${encodeURIComponent(t.trecho||'')}')">
+          <b>${i+1}. ${t.logradouro}</b>
+          <small>${t.bairro} · ${t.avaliacoes}x · ${t.nok} NOK</small>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ── SÍNTESE ITENS ── */
+function renderSinteseItens(){
+  const itens={};
+  FILTERED.forEach(r=>{ r.itensNok.forEach(item=>{ itens[item]=(itens[item]||0)+1; }); });
+
+  const totalItens=Object.values(itens).reduce((a,b)=>a+b,0);
+  const ranking=Object.entries(itens)
+    .map(([item,n])=>({item,n,pct:totalItens?(n/totalItens)*100:0}))
+    .sort((a,b)=>b.n-a.n).slice(0,5);
+
+  if(!ranking.length){
+    $('sinteseItens').innerHTML='<div class="status">Sem NOK no filtro atual.</div>';
+    return;
+  }
+
+  const dom=ranking[0];
+  const top3pct=ranking.slice(0,3).reduce((s,i)=>s+i.pct,0);
+
+  let narrativa;
+  if(dom.pct>=40){
+    narrativa=`<b>${dom.item}</b> corresponde a ${fmt(dom.pct)}% dos registros de não conformidade no período.`;
+  } else if(top3pct>=65){
+    narrativa=`Os 3 primeiros itens somam ${fmt(top3pct)}% dos registros de não conformidade no período.`;
+  } else {
+    narrativa=`Ocorrências distribuídas entre múltiplos itens, sem item predominante no período.`;
+  }
+
+  $('sinteseItens').innerHTML=`
+    <div class="execHero">
+      <span class="label">Item dominante · ${labelContexto()}</span>
+      <strong>${dom.item}</strong>
+      <p>${dom.n.toLocaleString('pt-BR')} ocorrências · ${fmt(dom.pct)}% dos NOK</p>
+      <div class="narrativa">${narrativa}</div>
+    </div>
+    <div class="miniList">
+      ${ranking.slice(1).map((i,idx)=>`
+        <div>
+          <b>${idx+2}. ${i.item}</b>
+          <small>${i.n.toLocaleString('pt-BR')} ocorrências · ${fmt(i.pct)}%</small>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ── MONTA TRECHOS ── */
+function montarTrechos(rows){
+  const t={};
+  rows.forEach(r=>{
+    const k=[r.bairro,r.logradouro,r.trecho].join(' | ');
+    if(!t[k]) t[k]={bairro:r.bairro,logradouro:r.logradouro,trecho:r.trecho||'trecho não informado',avaliacoes:0,ok:0,nok:0,itens:{}};
+    t[k].avaliacoes++;
+    t[k].ok+=r.ok;
+    t[k].nok+=r.nok;
+    r.itensNok.forEach(item=>{ t[k].itens[item]=(t[k].itens[item]||0)+1; });
+  });
+  return t;
+}
+
+/* ── MAPA ── */
+function initMap(){
+  map=L.map('map').setView([-22.91,-43.35],10);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap & CARTO'}).addTo(map);
+  pointLayer=L.layerGroup().addTo(map);
+}
+function nomeBairroGeo(p){
+  return p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
+}
+function renderMap(){
+  if(!map||!GEO) return;
+  if(geoLayer) map.removeLayer(geoLayer);
+  if(heatLayer) map.removeLayer(heatLayer);
+  if(pointLayer) pointLayer.clearLayers();
+
+  const byBairro={};
+  group('bairro').forEach(x=>{ byBairro[normaliza(x.k)]=x; });
+
+  const geoFeatures={};
+  geoLayer=L.geoJSON(GEO,{
+    style:f=>{
+      const nome=nomeBairroGeo(f.properties);
+      const d=byBairro[normaliza(nome)];
+      return{color:d?'#2f85d7':'#274260',weight:d?.9:.5,fillColor:d?corCriticidade(d.criticidade):'#1c2a3d',fillOpacity:d?.30:.08};
+    },
+    onEachFeature:(f,l)=>{
+      const nome=nomeBairroGeo(f.properties);
+      const d=byBairro[normaliza(nome)];
+      geoFeatures[normaliza(nome)]=l;
+      l.on('click',()=>{
+        if(nome){
+          // garante valor após repopulação do select
+          preencherSelect('fBairro','bairro','Todos',baseBairro(),false);
+          $('fBairro').value=nome;
+          resetDrill(); render();
+          abrirBairro(encodeURIComponent(nome));
+        }
+      });
+      const gerPop=d?DATA.find(r=>normaliza(r.bairro)===normaliza(nome))?.ger||'':'';
+      l.bindPopup(`<b>${nome}</b>${gerPop?` <small style="color:#9fc8e8">${gerPop}</small>`:''}<br>${d?`Conformidade: ${fmt(d.taxa)}%<br>Avaliações: ${d.n}<br>Reincidentes: ${d.reincidentes}<br>NOK: ${d.nok}`:'Sem avaliação no filtro'}`);
+    }
+  }).addTo(map);
+  map._geoFeatures=geoFeatures;
+
+  const centroiGeo=construirCentroiDesGeo(GEO);
+  const pontos=[];
+  Object.values(byBairro).forEach(d=>{
+    // prioriza centroide calculado do polígono; fallback para CSV
+    const c=centroiGeo[normaliza(d.k)]||COORDS[normaliza(d.k)];
+    if(!c) return;
+    pontos.push([c.lat,c.lon,Math.max(0.18,Math.min(1,d.criticidade/100))]);
+    L.circleMarker([c.lat,c.lon],{
+      radius:Math.max(5,Math.min(20,d.criticidade/5)),
+      color:corCriticidade(d.criticidade),fillColor:corCriticidade(d.criticidade),fillOpacity:.68,weight:1
+    })
+    .on('click',()=>{
+      preencherSelect('fBairro','bairro','Todos',baseBairro(),false);
+      $('fBairro').value=d.k;
+      resetDrill(); render();
+      abrirBairro(encodeURIComponent(d.k));
+    })
+    .bindPopup(`<b>${d.k}</b><br>Conformidade: ${fmt(d.taxa)}%<br>Avaliações: ${d.n}<br>Reincidência: ${d.reincidentes}<br>NOK: ${d.nok}`)
+    .addTo(pointLayer);
+  });
+
+  if(pontos.length){
+    heatLayer=L.heatLayer(pontos,{radius:36,blur:26,maxZoom:13,gradient:{0.20:'#2f85d7',0.45:'#e87535',0.75:'#e84855',1.00:'#ffffff'}}).addTo(map);
+  }
+  // se há gerência selecionada, focarGerenciaNoMapa cuida do zoom e cores
+  const _g=$('fGer').value;
+  if(!_g){
+    try{ map.fitBounds(geoLayer.getBounds(),{padding:[20,20]}); }catch(e){}
+  } else {
+    setTimeout(()=>focarGerenciaNoMapa(_g),80);
+  }
+
+  // diagnóstico: lista bairros da planilha sem polígono no GeoJSON
+  const nomesgeo=new Set(GEO.features.map(f=>normaliza(nomeBairroGeo(f.properties))).filter(Boolean));
+  const semPoly=[...new Set(FILTERED.map(r=>r.bairro).filter(Boolean))]
+    .filter(b=>!nomesgeo.has(normaliza(b)));
+  if(semPoly.length) console.warn('Bairros sem polígono GeoJSON:',semPoly);
+  const semCentroide=Object.keys(byBairro)
+    .filter(k=>{ const c=construirCentroiDesGeo(GEO)[normaliza(k)]||COORDS[normaliza(k)]; return!c; });
+  if(semCentroide.length) console.warn('Bairros sem coordenada (não plotados):',semCentroide);
+}
+
+/* ── ZOOM E HIGHLIGHT NO MAPA ── */
+function focarGerenciaNoMapa(ger){
+  if(!map||!GEO) return;
+  if(highlightLayer){ map.removeLayer(highlightLayer); highlightLayer=null; }
+  // pega bairros da gerência a partir de DATA (não FILTERED, para não depender de filtro de bairro)
+  const gerNorm=normaliza(ger);
+  const bairrosGer=new Set(DATA.filter(r=>normaliza(r.ger)===gerNorm).map(r=>normaliza(r.bairro)));
+  if(!bairrosGer.size) return;
+  const features=map._geoFeatures||{};
+  const layers=Object.entries(features)
+    .filter(([k])=>bairrosGer.has(k))
+    .map(([,l])=>l);
+  // highlight: bairros da gerência em azul, demais esmaecidos
+  if(geoLayer){
+    geoLayer.eachLayer(l=>{
+      const nm=normaliza(nomeBairroGeo(l.feature?.properties||{}));
+      if(bairrosGer.has(nm)){
+        l.setStyle({color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:0.18});
+      } else {
+        l.setStyle({color:'#1e3050',weight:0.4,fillColor:'#0d1b2f',fillOpacity:0.55});
+      }
+    });
+  }
+  // zoom nos bounds dos bairros da gerência
+  if(layers.length){
+    try{
+      const bounds=L.latLngBounds(layers.map(l=>l.getBounds()));
+      map.fitBounds(bounds,{padding:[30,30],maxZoom:13});
+    }catch(e){}
+  }
+}
+
+
+function focarBairroNoMapa(bairro){
+  if(!map) return;
+  // remove highlight anterior
+  if(highlightLayer){ map.removeLayer(highlightLayer); highlightLayer=null; }
+  const features=map._geoFeatures||{};
+  const key=normaliza(bairro);
+  const layer=features[key];
+  if(layer){
+    // zoom no bairro
+    try{ map.fitBounds(layer.getBounds(),{padding:[40,40],maxZoom:14}); }catch(e){}
+    // cria layer de destaque por cima
+    highlightLayer=L.geoJSON(layer.feature,{
+      style:{color:'#5b9bd5',weight:3,fillColor:'#5b9bd5',fillOpacity:0.08}
+    }).addTo(map);
+    // popup com nome do bairro
+    const center=layer.getBounds().getCenter();
+    L.popup({className:'bairro-popup',closeButton:false,autoClose:true,offset:[0,-4]})
+      .setLatLng(center)
+      .setContent(`<b>${bairro}</b>`)
+      .openOn(map);
+  } else {
+    // fallback: centroide do GeoJSON ou CSV
+    const gc=GEO_CENTROIDS[key];
+    if(gc) map.setView([gc[0],gc[1]],14);
+    else{ const c=COORDS[key]; if(c) map.setView([c.lat,c.lon],14); }
+  }
+}
+
+/* ── DRILL: BAIRRO ── */
+function abrirBairro(bairroEncoded){
+  const bairro=decodeURIComponent(bairroEncoded);
+  focarBairroNoMapa(bairro);
+  const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro));
+  const logs={};
+
+  rows.forEach(r=>{
+    const k=r.logradouro||'Não informado';
+    if(!logs[k]) logs[k]={logradouro:k,avaliacoes:0,ok:0,nok:0,trechos:{}};
+    logs[k].avaliacoes++;
+    logs[k].ok+=r.ok;
+    logs[k].nok+=r.nok;
+    const t=r.trecho||'trecho não informado';
+    if(!logs[k].trechos[t]) logs[k].trechos[t]={trecho:t,avaliacoes:0,ok:0,nok:0,itens:{}};
+    logs[k].trechos[t].avaliacoes++;
+    logs[k].trechos[t].ok+=r.ok;
+    logs[k].trechos[t].nok+=r.nok;
+    r.itensNok.forEach(item=>{ logs[k].trechos[t].itens[item]=(logs[k].trechos[t].itens[item]||0)+1; });
+  });
+
+  const dados=Object.values(logs).map(x=>{
+    const total=x.ok+x.nok;
+    const reinc=Object.values(x.trechos).filter(t=>t.avaliacoes>=2).length;
+    return{...x,total,reincidentes:reinc,taxa:total?(x.ok/total)*100:0,criticidade:(x.nok*2)+(reinc*5)+x.avaliacoes};
+  }).sort((a,b)=>b.criticidade-a.criticidade).slice(0,20);
+
+  const gerBairro=FILTERED.find(r=>normaliza(r.bairro)===normaliza(bairro))?.ger||'';
+  $('drillTitle').textContent=`${bairro}${gerBairro?' · '+gerBairro:''}`;
+  $('drilldown').innerHTML=dados.map(l=>`
+    <div class="rank" onclick="abrirLogradouro('${encodeURIComponent(bairro)}','${encodeURIComponent(l.logradouro)}')">
+      <div>
+        <b>${l.logradouro}</b>
+        <div class="hint">${l.avaliacoes} avaliações · ${l.reincidentes} trechos reincidentes · ${l.nok} NOK</div>
+        <div class="bar"><i style="width:${Math.min(100,Math.max(8,l.criticidade))}%;background:${corCriticidade(l.criticidade)}"></i></div>
+      </div>
+      <small>${fmt(l.taxa)}% OK</small>
+    </div>
+  `).join('')||'<div class="status">Sem dados para este bairro no filtro atual.</div>';
+}
+
+/* ── DRILL: LOGRADOURO ── */
+function abrirLogradouro(bairroEncoded,logradouroEncoded,trechoHighlight=''){
+  const bairro=decodeURIComponent(bairroEncoded);
+  const logradouro=decodeURIComponent(logradouroEncoded);
+  const alvo=trechoHighlight?normaliza(decodeURIComponent(trechoHighlight)):'';
+
+  const rows=FILTERED.filter(r=>
+    normaliza(r.bairro)===normaliza(bairro)&&
+    normaliza(r.logradouro)===normaliza(logradouro)
+  );
+
+  const trechos=montarTrechos(rows);
+
+  const dados=Object.values(trechos).map(x=>{
+    const total=x.ok+x.nok;
+    return{...x,total,taxa:total?(x.ok/total)*100:0,criticidade:(x.nok*2)+(x.avaliacoes*3)};
+  }).sort((a,b)=>b.criticidade-a.criticidade);
+
+  $('drillTitle').textContent=`Trechos · ${bairro} · ${logradouro}`;
+
+  $('drilldown').innerHTML=dados.map(t=>{
+    const isAlvo=alvo&&normaliza(t.trecho)===alvo;
+    const itensTop=Object.entries(t.itens)
+      .sort((a,b)=>b[1]-a[1]).slice(0,5)
+      .map(([item,n])=>`<span class="pill">${item}: ${n}</span>`).join('');
+    return`
+      <div class="rank${isAlvo?' destaque':''}" data-trecho="${normaliza(t.trecho)}">
+        <div>
+          <b>${t.trecho}</b>
+          <div class="hint">${t.avaliacoes} avaliações · ${t.nok} NOK · ${fmt(t.taxa)}% OK</div>
+          <div>${itensTop||'<span class="pill">Sem NOK</span>'}</div>
+          <div class="bar"><i style="width:${Math.min(100,Math.max(8,t.criticidade))}%;background:${corCriticidade(t.criticidade)}"></i></div>
+        </div>
+        <small>${t.nok} NOK</small>
+      </div>
+    `;
+  }).join('')||'<div class="status">Sem trechos para este logradouro.</div>';
+
+  if(alvo){
+    setTimeout(()=>{
+      const el=$('drilldown').querySelector('.rank.destaque');
+      if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },80);
+  }
+}
+
+/* ── abrirTrecho ── */
+function abrirTrecho(bairroEncoded,logradouroEncoded,trechoEncoded){
+  abrirLogradouro(bairroEncoded,logradouroEncoded,trechoEncoded);
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUB COMLURB | Território Operacional</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+:root{
+  --bg:#06111f;
+  --panel:#0d1f36;
+  --panel2:#0a1b31;
+  --line:#294866;
+  --text:#f7f9ff;
+  --muted:#b8c9de;
+  --blue:#4b86bd;
+  --blue2:#5b9bd5;
+  --orange:#e87535;
+  --green:#78aaa3;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Segoe UI,Arial,sans-serif;
+}
+
+.app{
+  max-width:1800px;
+  margin:0 auto;
+  padding:28px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  padding:26px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:var(--panel2);
+  margin-bottom:16px;
+}
+
+.logo{
+  width:310px;
+  max-height:82px;
+  object-fit:contain;
+  padding-right:26px;
+  border-right:1px solid rgba(255,255,255,.28);
+}
+
+.eyebrow{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.25em;
+  color:#b8d4f2;
+}
+
+h1{
+  margin:6px 0;
+  font-size:38px;
+}
+
+.sub{
+  color:#c7d8ee;
+  line-height:1.5;
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.kpi{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  min-height:115px;
+}
+
+.kpi .label{
+  font-size:11px;
+  letter-spacing:.16em;
+  color:#b8d4f2;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.kpi .value{
+  font-size:34px;
+  font-weight:950;
+  margin:14px 0 4px;
+}
+
+.kpi .note{
+  color:#c7d8ee;
+  font-size:13px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:14px;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:20px;
+  overflow:hidden;
+  min-height:420px;
+}
+
+.panelHead{
+  padding:18px;
+  border-bottom:1px solid var(--line);
+}
+
+h2{
+  margin:0;
+  font-size:18px;
+}
+
+.hint{
+  color:#c7d8ee;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.body{
+  padding:18px;
+}
+
+#map{
+  height:720px;
+  width:100%;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  overflow:hidden;
+  background:#09182a;
+}
+
+.layers{
+  display:grid;
+  gap:10px;
+}
+
+.layerBtn{
+  width:100%;
+  text-align:left;
+  border:1px solid var(--line);
+  background:#132840;
+  color:#fff;
+  border-radius:14px;
+  padding:14px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.layerBtn.active{
+  background:linear-gradient(90deg,#2f67a5,#5b9bd5);
+  border-color:#6fa7d8;
+}
+
+.infoBox{
+  margin-top:14px;
+  background:#132840;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:16px;
+  color:#dcecff;
+  line-height:1.5;
+}
+
+.rank{
+  margin-top:14px;
+  display:grid;
+  gap:10px;
+}
+
+.rankItem{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  background:#132840;
+  border-radius:14px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.rankItem b{
+  color:#fff;
+}
+
+.rankItem small{
+  display:block;
+  color:#aebfd5;
+  margin-top:4px;
+}
+
+.pill{
+  border:1px solid #345978;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:900;
+  color:#dcecff;
+}
+
+.footer{
+  margin-top:16px;
+  color:#aebfd5;
+  font-size:13px;
+}
+
+@media(max-width:1100px){
+  .grid,.kpis{grid-template-columns:1fr}
+  .header{flex-direction:column;align-items:flex-start}
+  .logo{width:220px;border-right:0;padding-right:0}
+  h1{font-size:32px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <header class="header">
+    <img class="logo" src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio + Comlurb">
+    <div>
+      <div class="eyebrow">HUB COMLURB</div>
+      <h1>Território Operacional</h1>
+      <div class="sub">
+        Base territorial corporativa para leitura operacional, visualização das camadas GIS e apoio à gestão por território.
+      </div>
+    </div>
+  </header>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">Camada ativa</div>
+      <div class="value" id="kpiCamada">-</div>
+      <div class="note">Arquivo GIS carregado no mapa</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Feições</div>
+      <div class="value" id="kpiFeicoes">0</div>
+      <div class="note">Registros geográficos identificados</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Tipo de geometria</div>
+      <div class="value" id="kpiTipo">-</div>
+      <div class="note">Polígono, linha ou ponto</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Fonte</div>
+      <div class="value" style="font-size:24px">ArcGIS</div>
+      <div class="note">Dados exportados para o HUB</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Mapa territorial</h2>
+        <div class="hint">Clique nas áreas do mapa para abrir os detalhes da camada.</div>
+      </div>
+      <div class="body">
+        <div id="map"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Camadas disponíveis</h2>
+        <div class="hint">Selecione a camada GIS que deseja visualizar.</div>
+      </div>
+      <div class="body">
+        <div class="layers">
+          <button class="layerBtn active" id="btnDSU" onclick="loadLayer('dsu')">
+            Gerências DSU
+          </button>
+
+          <button class="layerBtn" id="btnDLU" onclick="loadLayer('dlu')">
+            DLU | Novos Bairros 2025
+          </button>
+        </div>
+
+        <div class="infoBox" id="infoBox">
+          Carregando camada territorial...
+        </div>
+
+        <div class="rank" id="rankBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    COMLURB • HUB de Inteligência Operacional • Dados geográficos em territorial/data/
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

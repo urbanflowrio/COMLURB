@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DTE - Diretoria Técnica e de Engenharia | HUB COMLURB</title>
+
+  <style>
+/* =============================================
+   DESIGN SYSTEM HUB COMLURB - NAVY PREMIUM
+   ============================================= */
+:root {
+  --bg: #06111f;
+  --panel: #0d1f36;
+  --panel2: #0a1b31;
+  --line: #294866;
+  --text: #f7f9ff;
+  --muted: #b8c9de;
+  --blue: #4b86bd;
+  --blue2: #5b9bd5;
+  --orange: #e87535;
+  --green: #78aaa3;
+  --red: #ef6a5d;
+  --yellow: #ffa02b;
+  --purple: #a78bfa;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5;font-size:14px;}
+input,select,button,textarea{font-family:inherit;}
+canvas{background:transparent!important;}
+
+/* APP WRAPPER */
+.app{max-width:1800px;margin:0 auto;padding:28px;}
+
+/* HEADER */
+.header{display:flex;align-items:center;gap:28px;padding:26px;border:1px solid var(--line);border-radius:22px;background:var(--panel2);margin-bottom:20px;}
+.logoWrap{display:flex;align-items:center;min-width:0;}
+.logoImg{width:310px;max-height:82px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,0.28);}
+.logoTextFallback{font-size:20px;font-weight:900;color:#fff;padding-right:26px;border-right:1px solid rgba(255,255,255,0.28);white-space:nowrap;}
+.headerContent{flex:1;min-width:0;}
+.systemLabel{font-size:11px;font-weight:900;letter-spacing:0.25em;color:#b8d4f2;text-transform:uppercase;}
+.mainTitle{margin:6px 0;font-size:32px;line-height:1.1;color:#fff;font-weight:900;}
+.subtitle{color:#c7d8ee;font-size:14px;}
+
+/* TABS */
+.navTabs{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
+.tabBtn{border:1px solid var(--line);background:#0a1b31;color:#dcecff;border-radius:999px;padding:10px 18px;font-weight:900;cursor:pointer;transition:.2s;font-size:13px;}
+.tabBtn:hover{border-color:var(--blue);transform:translateY(-1px);}
+.tabBtn.active{background:linear-gradient(90deg,#2f67a5,#4b86bd);border-color:#6fa7d8;color:#fff;}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* FILTERS */
+.filters{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:12px;margin:16px 0;align-items:stretch;}
+.field{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;}
+label{display:block;font-size:10px;font-weight:900;letter-spacing:.18em;color:#b8d4f2;margin-bottom:6px;text-transform:uppercase;}
+select,input[type="text"]{width:100%;background:transparent;color:#fff;border:0;font-weight:700;font-size:14px;outline:none;}
+option{background:#0d1f36;}
+.actionBtn{border:1px solid var(--line);background:#0a1b31;color:#dcecff;border-radius:16px;padding:12px 18px;font-weight:900;cursor:pointer;transition:.2s;font-size:13px;}
+.actionBtn:hover{border-color:var(--blue);transform:translateY(-1px);}
+.actionBtn.primary{background:linear-gradient(90deg,#2f67a5,#5b9bd5);border-color:#6fa7d8;color:#fff;}
+
+/* DRILL BANNER */
+.drillBanner{display:none;margin:0 0 14px;background:#0d1f36;border:1px solid var(--line);border-radius:18px;padding:14px 18px;align-items:center;justify-content:space-between;gap:12px;}
+.drillBanner.active{display:flex;}
+.drillBanner b{display:block;font-size:16px;}
+.drillBanner span{display:block;color:#c7d8ee;font-size:12px;margin-top:3px;}
+
+/* KPIs */
+.kpis{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;margin-bottom:14px!important;}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;min-height:120px;transition:.2s;overflow:hidden;}
+.kpi:hover{transform:translateY(-2px);border-color:var(--blue);}
+.kpi.feature{background:linear-gradient(135deg,#0d1f36,#12365c);border-color:#4074a2;}
+.kpi.red{border-color:rgba(239,106,93,.46);}
+.kpi.orange{border-color:rgba(232,117,53,.46);}
+.kpi.green{border-color:rgba(120,170,163,.52);}
+.kpi.purple{border-color:rgba(167,139,250,.44);}
+.kpi .label{font-size:10px;letter-spacing:.15em;color:#b8d4f2;font-weight:900;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi .value{font-size:30px;font-weight:950;margin:12px 0 4px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi.feature .value{font-size:40px;}
+.kpi .note{color:#c7d8ee;font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+
+/* GRIDS */
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.grid2{display:grid;grid-template-columns:1.1fr 0.9fr;gap:14px;margin-bottom:14px;}
+
+/* PANELS */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;}
+.panelHead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+.panelHead h2{margin:0;font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.panelHead .hint{color:#c7d8ee;font-size:12px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.body{padding:18px;}
+
+/* BAR CHARTS (HTML) */
+.barRow{display:grid;grid-template-columns:130px 1fr 65px 52px;gap:8px;align-items:center;margin-bottom:10px;cursor:default;}
+.barRow.clickable{cursor:pointer;border-radius:8px;padding:4px;transition:.15s;}
+.barRow.clickable:hover{background:rgba(91,155,213,.08);}
+.barName{font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.track{height:20px;background:#132941;border-radius:4px;overflow:hidden;}
+.fill{height:100%;background:linear-gradient(90deg,#2f67a5,#5b9bd5);border-radius:4px;transition:width .4s;}
+.fill.orange{background:linear-gradient(90deg,#b95023,#e87535);}
+.fill.green{background:linear-gradient(90deg,#437b76,#78aaa3);}
+.fill.red{background:linear-gradient(90deg,#a83e36,#ef6a5d);}
+.fill.purple{background:linear-gradient(90deg,#7c5fd8,#a78bfa);}
+.num,.pct{text-align:right;font-weight:800;font-size:12px;}
+
+/* LOADING & EMPTY */
+.loading,.empty{color:#aebfd5;padding:12px;text-align:center;font-size:13px;}
+
+/* FOOTER */
+.footer{margin-top:40px;padding:20px;color:#aebfd5;font-size:12px;border-top:1px solid var(--line);opacity:.7;}
+.footerTimestamp{margin-top:8px;font-size:11px;color:#7a8fa5;}
+
+/* RESPONSIVE */
+@media(max-width:1280px){
+  .filters{grid-template-columns:repeat(2,1fr) auto;}
+  .grid2{grid-template-columns:1fr;}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr 1fr;}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}
+@media(max-width:720px){
+  .app{padding:14px;}
+  .header{flex-direction:column;align-items:flex-start;}
+  .logoImg{width:200px;border-right:0;padding-right:0;}
+  .mainTitle{font-size:24px;}
+  .kpis,.grid,.grid2{grid-template-columns:1fr!important;}
+  .filters{grid-template-columns:1fr!important;}
+  .barRow{grid-template-columns:100px 1fr 55px;}
+  .pct{display:none;}
+  .navTabs{flex-direction:column;}
+  .tabBtn{text-align:center;}
+}
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logoWrap">
+      <div class="logoTextFallback" id="logoText">PREFEITURA DO RIO | COMLURB</div>
+    </div>
+    <div class="headerContent">
+      <div class="systemLabel">DIRETORIA TÉCNICA E DE ENGENHARIA</div>
+      <h1 class="mainTitle">Inteligência Operacional DTE</h1>
+      <div class="subtitle">Sistema de Monitoramento com Alertas Visuais</div>
+    </div>
+  </header>
+
+  <!-- NAVEGAÇÃO -->
+  <div class="navTabs">
+    <button class="tabBtn active" data-screen="screenVisao">📊 Visão Geral</button>
+    <button class="tabBtn" data-screen="screenFrota">🚛 Performance de Frota</button>
+    <button class="tabBtn" data-screen="screenBio">⚡ Bioenergia</button>
+    <button class="tabBtn" data-screen="screenInfra">🔧 Infraestrutura</button>
+  </div>
+
+  <!-- FILTROS -->
+  <section class="filters">
+    <div class="field">
+      <label>Período</label>
+      <select id="fPeriodo">
+        <option value="">Todos os dados</option>
+        <option value="3">Últimos 3 meses</option>
+        <option value="6">Últimos 6 meses</option>
+        <option value="12">Últimos 12 meses</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>ETR</label>
+      <select id="fETR">
+        <option value="">Todas</option>
+        <option value="bangu">Bangu</option>
+        <option value="caju">Caju</option>
+        <option value="jacarepagua">Jacarepaguá</option>
+        <option value="hermes">Mal Hermes</option>
+        <option value="santa_cruz">Santa Cruz</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="fTipo">
+        <option value="">Todos</option>
+        <option value="domiciliar">Coleta Domiciliar</option>
+        <option value="comunidades">Coleta em Comunidades</option>
+        <option value="publico">Lixo Público</option>
+        <option value="geradores">Grandes Geradores</option>
+      </select>
+    </div>
+    <button class="actionBtn" onclick="clearAll()">✕ Limpar</button>
+  </section>
+
+  <!-- DRILL DOWN BANNER -->
+  <div id="drillBanner" class="drillBanner"></div>
+
+  <!-- TELA 1 - VISÃO GERAL -->
+  <div class="screen active" id="screenVisao">
+    <div class="kpis" id="kpisVisao"><div class="loading">Carregando dados...</div></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Evolução do Recebimento</h2><div class="hint">Toneladas por mês</div></div></div>
+        <div class="body"><canvas id="chartEvolucao" style="height:300px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Ranking por ETR</h2><div class="hint">Clique para filtrar</div></div></div>
+        <div class="body" id="chartETRs"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Tipo de Coleta</h2><div class="hint">Distribuição mensal</div></div></div>
+        <div class="body"><canvas id="chartTipoColeta" style="height:260px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Sazonalidade</h2><div class="hint">Média por mês do ano</div></div></div>
+        <div class="body" id="chartSazonalidade"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Operação Bem Verde</h2><div class="hint">Est. 8% do total (t)</div></div></div>
+        <div class="body"><canvas id="chartBemVerde" style="height:260px"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 2 - FROTA -->
+  <div class="screen" id="screenFrota">
+    <div class="kpis" id="kpisFrota"><div class="loading">Carregando dados...</div></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Horas Extras</h2><div class="hint">% sobre faturamento</div></div></div>
+        <div class="body"><canvas id="chartHE" style="height:300px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Utilização por Tipo</h2><div class="hint">Percentual de uso</div></div></div>
+        <div class="body" id="chartUtilTipos"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Gerências Ofensoras</h2><div class="hint">Top HE (% fatur.)</div></div></div>
+        <div class="body" id="chartOfensoras"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">Evolução mensal</div></div></div>
+        <div class="body"><canvas id="chartSobrecarga" style="height:260px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Tratores</h2><div class="hint">Utilização (%)</div></div></div>
+        <div class="body" id="chartTratores"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 3 - BIOENERGIA -->
+  <div class="screen" id="screenBio">
+    <div class="kpis" id="kpisBio"><div class="loading">Carregando dados...</div></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Geração de Biogás</h2><div class="hint">CTR + Gramacho (mil Nm³)</div></div></div>
+        <div class="body"><canvas id="chartBiogas" style="height:300px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Distribuição CTR / Gramacho</h2><div class="hint">Participação no período</div></div></div>
+        <div class="body"><canvas id="chartBioDistrib" style="height:300px"></canvas></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Chorume</h2><div class="hint">Geração m³</div></div></div>
+        <div class="body"><canvas id="chartChorume" style="height:260px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Purificação CTR</h2><div class="hint">Biometano (Nm³)</div></div></div>
+        <div class="body"><canvas id="chartPurif" style="height:260px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>RCC Gericinó</h2><div class="hint">Toneladas</div></div></div>
+        <div class="body"><canvas id="chartRCC" style="height:260px"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 4 - INFRAESTRUTURA -->
+  <div class="screen" id="screenInfra">
+    <div class="kpis" id="kpisInfra"><div class="loading">Carregando dados...</div></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Frota Própria</h2><div class="hint">Total vs Em Operação</div></div></div>
+        <div class="body"><canvas id="chartFrota" style="height:300px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Consumo de Diesel</h2><div class="hint">Litros por mês</div></div></div>
+        <div class="body"><canvas id="chartDiesel" style="height:300px"></canvas></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Intervenções Prediais</h2><div class="hint">Total por mês</div></div></div>
+        <div class="body"><canvas id="chartIntervencoes" style="height:260px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Lubrificantes</h2><div class="hint">Consumo (litros)</div></div></div>
+        <div class="body" id="chartLubric"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Tipos de Intervenção</h2><div class="hint">Distribuição</div></div></div>
+        <div class="body"><canvas id="chartTipos" style="height:260px"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div><strong>Gabinete da Presidência</strong> — HUB COMLURB · Núcleo de Inteligência e Gestão Estratégica Operacional · v3.1 Fixed</div>
+    <div class="footerTimestamp" id="footerTs"></div>
+  </footer>
+
+</div><!-- /.app -->
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// =============================================
+// DATA CONFIG
+// =============================================
+const DATA_URL_1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRbfRYtnjYlxLIPTfIpC_Q7ftJ6uUf1BK9gcZs_CSEiEnIE7qCAk_U_3_bibXftsCAf5K1uQdAPsOx/pub?output=csv";
+const DATA_URL_2 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGM0j-OA3ERumBvilwumifE-V60PLI_iDOUwc1KGOYl47cEr74-O7tkKuAjf6yykn8cd7V7mAorDNL/pub?gid=925345857&single=true&output=csv";
+
+let DATA_RAW = [], DATA_RAW_2 = [];
+let DATA = { recebimento:[], tipoColeta:[], biogas:[], chorume:[], utilizacao:[], sobrecarga:[], horasExtras:[], frotaPropria:[], intervencoes:[] };
+let DRILL = null;
+
+// =============================================
+// SEMÁFOROS
+// =============================================
+function getSemaforo(valor, tipo) {
+  if (tipo === 'taxaOperacional') {
+    if (valor < 20) return { icon:'🔴', color:'red', label:'CRÍTICO' };
+    if (valor < 40) return { icon:'🟡', color:'orange', label:'ATENÇÃO' };
+    return { icon:'🟢', color:'green', label:'NORMAL' };
+  }
+  if (tipo === 'utilizacao') {
+    if (valor < 60) return { icon:'🔴', color:'red', label:'CRÍTICO' };
+    if (valor < 75) return { icon:'🟡', color:'orange', label:'ATENÇÃO' };
+    return { icon:'🟢', color:'green', label:'NORMAL' };
+  }
+  if (tipo === 'sobrecarga') {
+    if (valor > 25) return { icon:'🔴', color:'red', label:'CRÍTICO' };
+    if (valor > 15) return { icon:'🟡', color:'orange', label:'ATENÇÃO' };
+    return { icon:'🟢', color:'green', label:'NORMAL' };
+  }
+  if (tipo === 'horasExtras') {
+    if (valor > 2) return { icon:'🔴', color:'red', label:'CRÍTICO' };
+    if (valor > 1.5) return { icon:'🟡', color:'orange', label:'ATENÇÃO' };
+    return { icon:'🟢', color:'green', label:'NORMAL' };
+  }
+  if (tipo === 'concentracao') {
+    if (valor > 40) return { icon:'🔴', color:'red', label:'CRÍTICO' };
+    if (valor > 30) return { icon:'🟡', color:'orange', label:'ATENÇÃO' };
+    return { icon:'🟢', color:'green', label:'NORMAL' };
+  }
+  return { icon:'🟢', color:'green', label:'NORMAL' };
+}
+
+// =============================================
+// FORMATAÇÃO
+// =============================================
+function fmtInt(n) {
+  return Number(n||0).toLocaleString('pt-BR');
+}
+function fmtPct(n, d=1) {
+  if (!isFinite(n)) return '0,0%';
+  return n.toFixed(d).replace('.',',')+"%";
+}
+function parseNum(val) {
+  if (!val) return 0;
+  return parseFloat(String(val).replace(/\./g,'').replace(',','.')) || 0;
+}
+function esc(v) {
+  return String(v||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// =============================================
+// CHART DEFAULTS  (tema navy aprimorado)
+// =============================================
+const CH = {
+  grid: 'rgba(41,72,102,0.35)',
+  tick: '#b8c9de',
+  tt: 'rgba(8,22,42,0.97)',
+  font: { size:12, family:"'Segoe UI',Arial,sans-serif" },
+  colors: {
+    blue:   ['#2050a0','#5b9bd5'],
+    orange: ['#a03820','#e87535'],
+    green:  ['#2d6b65','#78aaa3'],
+    red:    ['#8b2f28','#ef6a5d'],
+    purple: ['#6347b5','#a78bfa'],
+    teal:   ['#1b6875','#3db8cc']
+  },
+  grad(ctx, key, h=350) {
+    const g = ctx.createLinearGradient(0,0,0,h);
+    const c = this.colors[key]||this.colors.blue;
+    g.addColorStop(0,c[1]); g.addColorStop(1,c[0]);
+    return g;
+  },
+  fillRgba(key, a=0.15) {
+    const hex = (this.colors[key]||this.colors.blue)[1];
+    const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+  },
+  scalesBase() {
+    return {
+      x:{ grid:{color:this.grid}, ticks:{color:this.tick,font:this.font}, border:{color:this.grid} },
+      y:{ grid:{color:this.grid}, ticks:{color:this.tick,font:this.font}, border:{color:this.grid} }
+    };
+  },
+  ttBase() {
+    return { backgroundColor:this.tt, titleColor:'#e8f5ff', bodyColor:this.tick, borderColor:'#2a4866', borderWidth:1, padding:12, displayColors:true };
+  },
+  legendBase() {
+    return { display:true, position:'bottom', labels:{ color:this.tick, font:{size:11,family:this.font.family}, padding:14, usePointStyle:true, pointStyleWidth:10 } };
+  },
+  destroyAndGet(id) {
+    const c = document.getElementById(id);
+    if (!c) return null;
+    const ex = Chart.getChart(c);
+    if (ex) ex.destroy();
+    return c;
+  }
+};
+
+// =============================================
+// CHART HELPER FUNCTIONS
+// =============================================
+function makeLineChart(id, labels, datasets, yFmt) {
+  const c = CH.destroyAndGet(id); if (!c) return;
+  const ctx = c.getContext('2d');
+  new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets: datasets.map(d=>({
+      label: d.label,
+      data: d.data,
+      borderColor: CH.colors[d.color||'blue'][1],
+      backgroundColor: CH.fillRgba(d.color||'blue', 0.15),
+      borderWidth:3, tension:0.4, fill:true,
+      pointRadius:4, pointBackgroundColor: CH.colors[d.color||'blue'][1],
+      pointBorderColor:'#06111f', pointBorderWidth:2,
+      pointHoverRadius:7
+    }))},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend: datasets.length>1 ? CH.legendBase() : {display:false},
+        tooltip:{ ...CH.ttBase(), callbacks:{ label: ctx => `${ctx.dataset.label}: ${yFmt ? yFmt(ctx.parsed.y) : fmtInt(ctx.parsed.y)}` } }
+      },
+      scales:{
+        ...CH.scalesBase(),
+        y:{ ...CH.scalesBase().y, ticks:{ ...CH.scalesBase().y.ticks, callback: v => yFmt ? yFmt(v) : fmtInt(v) } }
+      }
+    }
+  });
+}
+
+function makeBarChart(id, labels, data, color, yFmt, stacked=false) {
+  const c = CH.destroyAndGet(id); if (!c) return;
+  const ctx = c.getContext('2d');
+  const isMulti = Array.isArray(data[0]);
+  new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets: isMulti ? data.map(d=>({
+        label:d.label, data:d.values,
+        backgroundColor: CH.colors[d.color||color||'blue'][1]+'cc',
+        borderColor: CH.colors[d.color||color||'blue'][1],
+        borderWidth:1.5, borderRadius:4, borderSkipped:false
+      })) : [{
+        data,
+        backgroundColor: labels.map((_,i) => {
+          const g = ctx.createLinearGradient(0,0,0,280);
+          g.addColorStop(0,CH.colors[color||'blue'][1]+'dd');
+          g.addColorStop(1,CH.colors[color||'blue'][0]+'99');
+          return g;
+        }),
+        borderRadius:5, borderSkipped:false, borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend: isMulti ? CH.legendBase() : {display:false},
+        tooltip:{ ...CH.ttBase(), callbacks:{ label: ctx => `${ctx.dataset.label?ctx.dataset.label+': ':''}${yFmt?yFmt(ctx.parsed.y):fmtInt(ctx.parsed.y)}` } }
+      },
+      scales:{
+        ...CH.scalesBase(),
+        x:{ ...CH.scalesBase().x, stacked },
+        y:{ ...CH.scalesBase().y, stacked, ticks:{ ...CH.scalesBase().y.ticks, callback: v => yFmt?yFmt(v):fmtInt(v) } }
+      }
+    }
+  });
+}
+
+function makeDonutChart(id, labels, values, colors) {
+  const c = CH.destroyAndGet(id); if (!c) return;
+  new Chart(c.getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{ data:values, backgroundColor: colors.map(k=>CH.colors[k][1]), borderWidth:0, hoverOffset:12 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'60%',
+      plugins:{
+        legend: CH.legendBase(),
+        tooltip:{ ...CH.ttBase(), callbacks:{ label: ctx => {
+          const tot = ctx.dataset.data.reduce((a,b)=>a+b,0);
+          return `${ctx.label}: ${fmtInt(ctx.parsed)} (${fmtPct(ctx.parsed/tot*100)})`;
+        }}}
+      }
+    }
+  });
+}
+
+function makeSimpleBar(containerId, rows, color, total, onclick) {
+  const el = document.getElementById(containerId); if(!el) return;
+  const max = Math.max(...rows.map(r=>r[1]), 1);
+  el.innerHTML = rows.map(([name,val]) => {
+    const w = (val/max*100).toFixed(1);
+    const pct = total ? fmtPct(val/total*100) : '';
+    const cls = onclick ? 'barRow clickable' : 'barRow';
+    const oc = onclick ? `onclick="${onclick(name)}"` : '';
+    return `<div class="${cls}" ${oc}>
+      <div class="barName" title="${esc(name)}">${esc(name)}</div>
+      <div class="track"><div class="fill ${color||''}" style="width:${w}%"></div></div>
+      <div class="num">${fmtInt(val)}</div>
+      <div class="pct">${pct}</div>
+    </div>`;
+  }).join('');
+}
+
+function makeKpis(containerId, kpis) {
+  const el = document.getElementById(containerId); if(!el) return;
+  el.innerHTML = kpis.map(k => {
+    const val = k.format==='pct' ? fmtPct(k.value) : fmtInt(k.value);
+    const classes = ['kpi', k.feature?'feature':'', k.color||''].filter(Boolean).join(' ');
+    const oc = k.onclick ? `onclick="${k.onclick}" style="cursor:pointer"` : '';
+    return `<div class="${classes}" ${oc}>
+      <div class="label" title="${esc(k.label)}">${esc(k.label)}</div>
+      <div class="value">${val}</div>
+      ${k.note ? `<div class="note">${esc(k.note)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// =============================================
+// DATA LOADING & PROCESSING
+// =============================================
+function findSection(title) {
+  for (let i=0;i<DATA_RAW.length;i++) {
+    if (DATA_RAW[i][0] && DATA_RAW[i][0].includes(title)) return i;
+  }
+  return -1;
+}
+
+async function loadData() {
+  const [r1, r2] = await Promise.all([
+    fetch(DATA_URL_1, {cache:'no-store'}).then(r=>r.text()),
+    fetch(DATA_URL_2, {cache:'no-store'}).then(r=>r.text())
+  ]);
+  DATA_RAW  = Papa.parse(r1, {header:false, skipEmptyLines:true}).data;
+  DATA_RAW_2= Papa.parse(r2, {header:false, skipEmptyLines:true}).data;
+}
+
+function processData() {
+  function parseSection(sectionTitle, rowOffsets, fields) {
+    const idx = findSection(sectionTitle);
+    if (idx === -1) return [];
+    const meses = DATA_RAW[idx].slice(1).filter(m => m && m.trim());
+    return meses.map((mes, i) => {
+      const obj = { mes };
+      fields.forEach((field, fi) => {
+        obj[field] = parseNum(DATA_RAW[idx + rowOffsets[fi]][i+1]);
+      });
+      return obj;
+    }).filter(r => r.mes && r.mes.trim());
+  }
+
+  // Recebimento
+  DATA.recebimento = parseSection('I - Recebimento Resíduos Totais', [1,2,3,4,5,6], ['bangu','caju','jacarepagua','hermes','santa_cruz','total']);
+
+  // Tipo de Coleta
+  DATA.tipoColeta = parseSection('II - Recebimento Residos Recebidos nas ETR', [1,2,3,4], ['domiciliar','comunidades','publico','geradores']);
+
+  // Biogás
+  DATA.biogas = parseSection('V - Geração Biogás', [1,2], ['seropedica','gramacho']);
+
+  // Chorume
+  DATA.chorume = parseSection('VII - Geração Chorume', [1,2,3], ['geracao','interno','externo']);
+
+  // Utilização (tem formato % especial)
+  const utilIdx = findSection('Coleta Domiociliar e Comunidade');
+  if (utilIdx !== -1) {
+    const meses = DATA_RAW[utilIdx].slice(1).filter(m=>m&&m.trim());
+    DATA.utilizacao = meses.map((mes,i) => ({
+      mes,
+      taxa: parseFloat(String(DATA_RAW[utilIdx+1][i+1]||'').replace('%','').replace(',','.')) || 0
+    })).filter(r=>r.mes);
+  }
+
+  // Sobrecarga
+  const sobIdx = findSection('Sobrecarga >10%');
+  if (sobIdx !== -1) {
+    const meses = DATA_RAW[sobIdx].slice(1).filter(m=>m&&m.trim());
+    DATA.sobrecarga = meses.map((mes,i) => ({
+      mes,
+      pct: parseFloat(String(DATA_RAW[sobIdx+2][i+1]||'').replace('%','').replace(',','.')) || 0
+    })).filter(r=>r.mes);
+  }
+
+  // Horas Extras
+  const heIdx = findSection('Análise de Horas Extras');
+  if (heIdx !== -1) {
+    const meses = DATA_RAW[heIdx].slice(1).filter(m=>m&&m.trim());
+    DATA.horasExtras = meses.map((mes,i) => ({
+      mes,
+      pct: parseFloat(String(DATA_RAW[heIdx+2][i+1]||'').replace('%','').replace(',','.')) || 0
+    })).filter(r=>r.mes);
+  }
+
+  // Frota Própria
+  DATA.frotaPropria = parseSection('C - MANUTENÇÃO FROTA PRÓPRIA', [1,7,11], ['total','operacao','diesel']);
+
+  // Intervenções
+  DATA.intervencoes = parseSection('D - MANUTENÇÃO PREDIAL', [1,2,3,4], ['hidraulica','ecopontos','limpeza','refrigeracao']);
+
+  console.log('✅ Dados processados:', {
+    recebimento: DATA.recebimento.length,
+    tipoColeta: DATA.tipoColeta.length,
+    biogas: DATA.biogas.length,
+    utilizacao: DATA.utilizacao.length
+  });
+}
+
+// =============================================
+// FILTROS — LÓGICA CENTRAL CORRIGIDA
+// =============================================
+
+/**
+ * Aplica filtro de período (corte nos últimos N meses)
+ */
+function applyPeriodo(arr) {
+  const v = document.getElementById('fPeriodo').value;
+  if (!v || !arr.length) return arr;
+  return arr.slice(-parseInt(v));
+}
+
+/**
+ * Retorna dados de recebimento filtrados por ETR + período
+ * Se fETR selecionado, projeta apenas aquela coluna como "total"
+ */
+function getRecebimentoFiltrado() {
+  const etr = document.getElementById('fETR').value;
+  let dados = applyPeriodo(DATA.recebimento);
+
+  if (etr) {
+    // Re-mapeia o total para a ETR selecionada
+    dados = dados.map(r => ({ ...r, totalFiltrado: r[etr]||0 }));
+  }
+  return { dados, etr };
+}
+
+/**
+ * Retorna dados de tipo de coleta filtrados
+ */
+function getTipoFiltrado() {
+  const tipo = document.getElementById('fTipo').value;
+  let dados = applyPeriodo(DATA.tipoColeta);
+  return { dados, tipo };
+}
+
+// =============================================
+// RENDER
+// =============================================
+
+function render() {
+  renderTela1();
+  renderTela2();
+  renderTela3();
+  renderTela4();
+}
+
+// ----- TELA 1 -----
+function renderTela1() {
+  if (!DATA.recebimento.length) return;
+
+  const { dados: dadosRec, etr } = getRecebimentoFiltrado();
+  const { dados: dadosTipo, tipo } = getTipoFiltrado();
+
+  // Valor principal: se ETR filtrada, usa aquela coluna; senão total
+  const getVal = r => etr ? (r[etr]||0) : r.total;
+
+  const ultimo = dadosRec[dadosRec.length-1];
+  const penultimo = dadosRec[dadosRec.length-2] || ultimo;
+  const variacao = (getVal(ultimo) - getVal(penultimo)) / (getVal(penultimo)||1) * 100;
+  const media = dadosRec.reduce((a,r) => a + getVal(r), 0) / dadosRec.length;
+
+  const ultimaUtil = DATA.utilizacao.length ? DATA.utilizacao[DATA.utilizacao.length-1].taxa : 0;
+  const ultimaFrota = DATA.frotaPropria.length ? DATA.frotaPropria[DATA.frotaPropria.length-1] : {total:74,operacao:14};
+
+  const concCaju  = ultimo.total ? (ultimo.caju / ultimo.total * 100) : 0;
+  const taxaOp    = (ultimaFrota.operacao / (ultimaFrota.total||1)) * 100;
+  const semCaju   = getSemaforo(concCaju, 'concentracao');
+  const semUtil   = getSemaforo(ultimaUtil, 'utilizacao');
+  const semFrota  = getSemaforo(taxaOp, 'taxaOperacional');
+
+  const mainLabel = etr ? `ETR ${etr.replace('_',' ')}` : 'Total Mês';
+
+  makeKpis('kpisVisao', [
+    { label: mainLabel, value: getVal(ultimo), note: `${variacao>=0?'▲':'▼'} ${fmtPct(Math.abs(variacao))} vs mês ant.`, feature:true, format:'int', color: variacao>0?'orange':'green' },
+    { label: 'ETR Caju',     value: ultimo.caju,      note: `${semCaju.icon} ${fmtPct(concCaju)} do total`,  format:'int', color:semCaju.color, onclick:"setDrill('etr','caju','ETR Caju')" },
+    { label: 'Média',        value: media,             note: `${dadosRec.length} meses`,                       format:'int', color:'blue' },
+    { label: 'Util. Frota',  value: ultimaUtil,        note: `${semUtil.icon} CDC — Meta 85%`,                 format:'pct', color:semUtil.color },
+    { label: 'Frota Ativa',  value: ultimaFrota.operacao, note: `${semFrota.icon} de ${ultimaFrota.total} total`, format:'int', color:semFrota.color }
+  ]);
+
+  // Gráfico evolução
+  makeLineChart('chartEvolucao',
+    dadosRec.map(r=>r.mes),
+    [{ label: mainLabel, data: dadosRec.map(getVal), color:'blue' }]
+  );
+
+  // Ranking ETRs (usa último mês, sem filtro ETR para mostrar comparação)
+  const ultimoAll = DATA.recebimento[DATA.recebimento.length-1];
+  const etrsData = [
+    ['Caju',      ultimoAll.caju],
+    ['Mal Hermes',ultimoAll.hermes],
+    ['Bangu',     ultimoAll.bangu],
+    ['Jacarepaguá',ultimoAll.jacarepagua],
+    ['Santa Cruz',ultimoAll.santa_cruz]
+  ].sort((a,b)=>b[1]-a[1]);
+
+  makeSimpleBar('chartETRs', etrsData, 'blue', ultimoAll.total,
+    name => {
+      const map = {'Caju':'caju','Mal Hermes':'hermes','Bangu':'bangu','Jacarepaguá':'jacarepagua','Santa Cruz':'santa_cruz'};
+      return `setDrill('etr','${map[name]||name.toLowerCase()}','ETR ${name}')`;
+    }
+  );
+
+  // Tipo de coleta (com filtro de tipo)
+  if (dadosTipo.length) {
+    const campos = tipo ? [tipo] : ['domiciliar','comunidades','publico','geradores'];
+    const nomes  = { domiciliar:'Domiciliar', comunidades:'Comunidades', publico:'Lixo Público', geradores:'Gr. Geradores' };
+    const cores  = { domiciliar:'blue', comunidades:'green', publico:'orange', geradores:'purple' };
+    const coresArr = ['blue','green','orange','purple'];
+    const ultimoT = dadosTipo[dadosTipo.length-1];
+
+    makeDonutChart('chartTipoColeta',
+      campos.map(c=>nomes[c]||c),
+      campos.map(c=>ultimoT[c]||0),
+      campos.map(c=>cores[c]||'blue')
+    );
+  }
+
+  // Sazonalidade
+  const grupMes = {};
+  DATA.recebimento.forEach(r => {
+    const m = r.mes.split('/')[0];
+    if (!grupMes[m]) grupMes[m] = [];
+    grupMes[m].push(r.total);
+  });
+  const sazData = Object.entries(grupMes).map(([m,vals]) => [m, vals.reduce((a,b)=>a+b,0)/vals.length]);
+  const mediaSaz = sazData.reduce((a,b)=>a+b[1],0)/(sazData.length||1);
+  makeSimpleBar('chartSazonalidade', sazData, 'green', mediaSaz, null);
+
+  // Bem Verde
+  const bvDados = applyPeriodo(DATA.recebimento).slice(-6);
+  makeBarChart('chartBemVerde', bvDados.map(r=>r.mes), bvDados.map(r=>r.total*0.08), 'green');
+}
+
+// ----- TELA 2 -----
+function renderTela2() {
+  const dadosUtil  = applyPeriodo(DATA.utilizacao);
+  const dadosSobre = applyPeriodo(DATA.sobrecarga);
+  const dadosHE    = applyPeriodo(DATA.horasExtras);
+
+  if (!dadosUtil.length) return;
+
+  const ultUtil  = dadosUtil[dadosUtil.length-1].taxa;
+  const mediaUtil = dadosUtil.reduce((a,b)=>a+b.taxa,0)/dadosUtil.length;
+  const ultSobre = dadosSobre.length ? dadosSobre[dadosSobre.length-1].pct : 0;
+  const ultHE    = dadosHE.length   ? dadosHE[dadosHE.length-1].pct    : 0;
+
+  const semUtil  = getSemaforo(ultUtil,  'utilizacao');
+  const semSobre = getSemaforo(ultSobre, 'sobrecarga');
+  const semHE    = getSemaforo(ultHE,    'horasExtras');
+
+  makeKpis('kpisFrota', [
+    { label:'Util. CDC',    value:ultUtil,   note:`${semUtil.icon} Atual — Meta 85%`, feature:true, format:'pct', color:semUtil.color },
+    { label:'Sobrecarga',   value:ultSobre,  note:`${semSobre.icon} >10% PBT`,        format:'pct', color:semSobre.color },
+    { label:'Horas Extras', value:ultHE,     note:`${semHE.icon} % faturamento`,       format:'pct', color:semHE.color },
+    { label:'Média Util.',  value:mediaUtil, note:`${dadosUtil.length} meses`,          format:'pct', color:'blue' },
+    { label:'Meta',         value:85,        note:'Target CDC',                         format:'pct', color:'purple' }
+  ]);
+
+  // HE evolução
+  if (dadosHE.length) {
+    makeLineChart('chartHE',
+      dadosHE.map(r=>r.mes),
+      [{ label:'HE (%)', data:dadosHE.map(r=>r.pct), color:'orange' }],
+      v => fmtPct(v)
+    );
+  }
+
+  // Utilização por tipo (estático ilustrativo)
+  makeSimpleBar('chartUtilTipos', [
+    ['Compactador 15m³',78],['Compactador 19m³',82],
+    ['Poliguindaste',71],['Basculante',76],['Roll-on/off',68]
+  ], 'blue', 100, null);
+
+  // Gerências ofensoras
+  makeSimpleBar('chartOfensoras', [['AP 5.1',18],['AP 3.2',15],['AP 2.1',12]], 'red', 20, null);
+
+  // Sobrecarga
+  if (dadosSobre.length) {
+    makeBarChart('chartSobrecarga',
+      dadosSobre.map(r=>r.mes),
+      dadosSobre.map(r=>r.pct),
+      'red', v=>fmtPct(v)
+    );
+  }
+
+  // Tratores
+  makeSimpleBar('chartTratores', [['Tipo A',92],['Tipo B',87],['Tipo C',79]], 'green', 100, null);
+}
+
+// ----- TELA 3 -----
+function renderTela3() {
+  const dadosBio = applyPeriodo(DATA.biogas);
+  const dadosCho = applyPeriodo(DATA.chorume);
+
+  if (!dadosBio.length) return;
+
+  const ult = dadosBio[dadosBio.length-1];
+  const totalBio = ult.seropedica + ult.gramacho;
+  const taxaPurif = 0.67;
+  const ultCho = dadosCho.length ? dadosCho[dadosCho.length-1].geracao : 0;
+
+  makeKpis('kpisBio', [
+    { label:'Biogás Total',  value:totalBio,        note:ult.mes,                                          feature:true, format:'int', color:'green' },
+    { label:'CTR Serop.',    value:ult.seropedica,   note:`${fmtPct(ult.seropedica/totalBio*100)} do total`, format:'int', color:'blue' },
+    { label:'Gramacho',      value:ult.gramacho,     note:`${fmtPct(ult.gramacho/totalBio*100)} do total`,   format:'int', color:'orange' },
+    { label:'Chorume',       value:ultCho,           note:'Geração (m³)',                                    format:'int', color:'purple' },
+    { label:'Taxa Purif.',   value:taxaPurif*100,    note:'CTR Seropédica',                                  format:'pct', color:'green' }
+  ]);
+
+  // Biogás dupla linha
+  makeLineChart('chartBiogas',
+    dadosBio.map(r=>r.mes),
+    [
+      { label:'CTR Seropédica', data:dadosBio.map(r=>r.seropedica/1000), color:'green' },
+      { label:'Gramacho',       data:dadosBio.map(r=>r.gramacho/1000),   color:'blue'  }
+    ],
+    v => `${v}k`
+  );
+
+  // Distribuição donut
+  makeDonutChart('chartBioDistrib',
+    ['CTR Seropédica','Aterro Gramacho'],
+    [ult.seropedica, ult.gramacho],
+    ['green','blue']
+  );
+
+  // Chorume empilhado
+  if (dadosCho.length) {
+    makeBarChart('chartChorume',
+      dadosCho.map(r=>r.mes),
+      [
+        { label:'Interno', values:dadosCho.map(r=>r.interno), color:'green' },
+        { label:'Externo', values:dadosCho.map(r=>r.externo), color:'blue'  }
+      ],
+      null, null, true
+    );
+  }
+
+  // Purificação
+  const purDados = dadosBio.slice(-6);
+  makeLineChart('chartPurif',
+    purDados.map(r=>r.mes),
+    [{ label:'Biometano', data:purDados.map(r=>r.seropedica*taxaPurif), color:'green' }]
+  );
+
+  // RCC
+  makeBarChart('chartRCC',
+    dadosBio.slice(-6).map(r=>r.mes),
+    [12500,13200,12800,14100,13500,13900],
+    'purple'
+  );
+}
+
+// ----- TELA 4 -----
+function renderTela4() {
+  const dadosFrota = applyPeriodo(DATA.frotaPropria);
+  const dadosInt   = applyPeriodo(DATA.intervencoes);
+
+  if (!dadosFrota.length) return;
+
+  const primeiro = dadosFrota[0];
+  const ult = dadosFrota[dadosFrota.length-1];
+  const reducao  = ((primeiro.total - ult.total) / (primeiro.total||1)) * 100;
+  const taxaOp   = (ult.operacao / (ult.total||1)) * 100;
+  const semFrota = getSemaforo(taxaOp, 'taxaOperacional');
+
+  const lastInt  = dadosInt.length ? dadosInt[dadosInt.length-1] : {hidraulica:0,ecopontos:0,limpeza:0,refrigeracao:0};
+  const somaInt  = lastInt.hidraulica + lastInt.ecopontos + lastInt.limpeza + lastInt.refrigeracao;
+
+  makeKpis('kpisInfra', [
+    { label:'Redução Frota', value:reducao,        note:`${primeiro.total}→${ult.total} veículos`, feature:true, format:'pct', color:'red' },
+    { label:'Em Operação',   value:ult.operacao,   note:`de ${ult.total} total`,                   format:'int', color:'green' },
+    { label:'Diesel',        value:ult.diesel,     note:'Litros/mês',                              format:'int', color:'orange' },
+    { label:'Intervenções',  value:somaInt,        note:ult.mes,                                   format:'int', color:'blue' },
+    { label:'Taxa Op.',      value:taxaOp,         note:`${semFrota.icon} Ativos/total`,           format:'pct', color:semFrota.color }
+  ]);
+
+  // Frota dupla linha
+  makeLineChart('chartFrota',
+    dadosFrota.map(r=>r.mes),
+    [
+      { label:'Total',    data:dadosFrota.map(r=>r.total),    color:'red'   },
+      { label:'Operação', data:dadosFrota.map(r=>r.operacao), color:'green' }
+    ]
+  );
+
+  // Diesel
+  makeBarChart('chartDiesel',
+    dadosFrota.map(r=>r.mes),
+    dadosFrota.map(r=>r.diesel),
+    'orange', v=>fmtInt(v)
+  );
+
+  // Intervenções
+  if (dadosInt.length) {
+    const totais = dadosInt.map(r=>r.hidraulica+r.ecopontos+r.limpeza+r.refrigeracao);
+    makeLineChart('chartIntervencoes',
+      dadosInt.map(r=>r.mes),
+      [{ label:'Total', data:totais, color:'blue' }]
+    );
+  }
+
+  // Lubrificantes
+  makeSimpleBar('chartLubric', [['Óleo Motor',450],['Óleo Hidráulico',280],['Graxa',120],['Outros',90]], 'orange', 1000, null);
+
+  // Tipos
+  makeDonutChart('chartTipos',
+    ['Hidráulica','Ecopontos','Limpeza','Refrigeração'],
+    [lastInt.hidraulica, lastInt.ecopontos, lastInt.limpeza, lastInt.refrigeracao],
+    ['blue','green','orange','purple']
+  );
+}
+
+// =============================================
+// NAVEGAÇÃO
+// =============================================
+function setupNavigation() {
+  document.querySelectorAll('.tabBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.screen).classList.add('active');
+    });
+  });
+}
+
+// =============================================
+// FILTROS — EVENT LISTENERS
+// =============================================
+function setupFilters() {
+  ['fPeriodo','fETR','fTipo'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => render());
+  });
+}
+
+function clearAll() {
+  document.getElementById('fPeriodo').value = '';
+  document.getElementById('fETR').value = '';
+  document.getElementById('fTipo').value = '';
+  DRILL = null;
+  document.getElementById('drillBanner').innerHTML = '';
+  document.getElementById('drillBanner').classList.remove('active');
+  render();
+}
+
+function setDrill(field, value, label) {
+  DRILL = { field, value, label };
+  // Sync ETR filter
+  if (field === 'etr') {
+    document.getElementById('fETR').value = value;
+  }
+  const banner = document.getElementById('drillBanner');
+  banner.innerHTML = `
+    <div><b>Filtro ativo: ${esc(label)}</b><span>Clique "Limpar" para remover</span></div>
+    <button class="actionBtn primary" onclick="clearAll()">✕ Fechar drill</button>
+  `;
+  banner.classList.add('active');
+  render();
+}
+
+function clearDrill() { clearAll(); }
+
+// =============================================
+// INIT
+// =============================================
+async function init() {
+  document.getElementById('footerTs').textContent =
+    'Atualizado em ' + new Date().toLocaleString('pt-BR');
+
+  try {
+    await loadData();
+    processData();
+    setupNavigation();
+    setupFilters();
+    render();
+  } catch(e) {
+    console.error('Erro ao inicializar:', e);
+    ['kpisVisao','kpisFrota','kpisBio','kpisInfra'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = `<div class="loading" style="color:#ef6a5d">⚠️ Erro ao carregar dados: ${e.message}</div>`;
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão de Pessoas | HUB COMLURB</title>
+
+  <link rel="stylesheet" href="../assets/css/hub-premium.css">
+
+  <style>
+    /* ── reset base ── */
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+    body { margin: 0; }
+    .app { width: 100%; max-width: 100%; min-width: 0; }
+
+    /* ── filtros ── */
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      align-items: end;
+      width: 100%;
+      min-width: 0;
+    }
+    .field { min-width: 0; width: 100%; }
+    .field label {
+      display: block;
+      white-space: normal;
+      word-break: keep-all;
+      line-height: 1.3;
+    }
+    .field select, .field input, .multiBtn {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .multiBox { position: relative; width: 100%; min-width: 0; }
+    .multiPanel {
+      width: 100%;
+      min-width: 260px;
+      max-width: min(420px, 92vw);
+      z-index: 50;
+    }
+    .multiList, .multiList * { overflow-wrap: anywhere; }
+
+    /* ── KPI cards — FIX TRUNCAÇÃO ── */
+    .kpis {
+      display: grid !important;
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      margin-bottom: 14px !important;
+    }
+    .kpi {
+      min-width: 0 !important;
+      overflow: hidden;
+    }
+    /* LABEL: sem uppercase, letter-spacing mínimo — nunca corta */
+    .kpi .label {
+      font-size: 11px !important;
+      letter-spacing: 0.06em !important;
+      line-height: 1.4 !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      hyphens: none !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 3 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+      min-height: 46px !important;
+    }
+    /* VALUE: número não estoura */
+    .kpi .value {
+      font-size: clamp(22px, 2.1vw, 32px) !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      line-height: 1.1 !important;
+      margin: 8px 0 4px !important;
+    }
+    .kpi.feature .value {
+      font-size: clamp(28px, 2.8vw, 42px) !important;
+    }
+    /* NOTE: texto auxiliar não estoura */
+    .kpi .note {
+      font-size: 12px !important;
+      line-height: 1.35 !important;
+      white-space: normal !important;
+      word-break: keep-all !important;
+      overflow: hidden !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+    }
+
+    /* ── barras ── */
+    .barRow {
+      display: grid;
+      grid-template-columns: 160px 1fr 70px 55px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .barName {
+      min-width: 0;
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.35;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .num, .pct {
+      white-space: nowrap;
+    }
+
+    /* ── grids e panels ── */
+    .screen { width: 100%; min-width: 0; }
+    .kpis, .grid, .grid2, .panel, .body { min-width: 0; max-width: 100%; }
+    .grid, .grid2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+      width: 100%;
+    }
+    .panel { overflow: hidden; }
+    .panelHead {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+    .panelHead h2 {
+      min-width: 0;
+      max-width: 100%;
+      margin: 0;
+      white-space: normal;
+      word-break: keep-all;
+      line-height: 1.2;
+    }
+    .panelHead .hint {
+      flex-shrink: 0;
+      max-width: 190px;
+      text-align: right;
+      white-space: normal;
+      line-height: 1.2;
+    }
+    .body, .body * { min-width: 0; }
+    .actionBtn { white-space: nowrap; flex-shrink: 0; }
+    #drillBanner { width: 100%; max-width: 100%; overflow-wrap: anywhere; }
+
+    /* ── tabela ── */
+    .tableWrap { width: 100%; max-width: 100%; overflow-x: auto; }
+    .tableWrap table { width: 100%; border-collapse: collapse; }
+    .tableWrap th, .tableWrap td { white-space: nowrap; }
+
+    /* ── territorial ── */
+    .territorialSummary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .territorialCard { min-width: 0; overflow: hidden; }
+    .territorialCard b {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+    .territorialRow {
+      grid-template-columns: minmax(0, 1fr) 1fr 82px 70px;
+    }
+    .territorialName {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── responsivo ── */
+    @media (max-width: 1280px) {
+      .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+    }
+    @media (max-width: 900px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid, .grid2 { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .panelHead { flex-direction: column; align-items: flex-start; }
+      .panelHead .hint { max-width: 100%; text-align: left; }
+      .territorialSummary { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .filters { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: 1fr !important; }
+      .panelHead h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <div id="header"></div>
+
+    <section class="filters">
+      <div class="field">
+        <label>Diretoria</label>
+        <select id="fDir">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Sup / Coord</label>
+        <select id="fSup">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Gerência</label>
+        <select id="fGerencia">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Tipo de cargo</label>
+        <select id="fTipoCargo">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Situação</label>
+        <select id="fSituacao">
+          <option value="">Todos</option>
+          <option value="ativo">Ativos</option>
+          <option value="afastado">Afastados</option>
+          <option value="laudo">Com laudo</option>
+          <option value="risco65">Risco 65+</option>
+          <option value="ec">Com EC</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Função / cargo</label>
+        <div class="multiBox" id="funcaoMulti">
+          <button class="multiBtn" id="fFuncaoBtn" type="button">Todas</button>
+
+          <div class="multiPanel">
+            <input class="multiSearch" id="fFuncaoSearch" placeholder="Buscar função...">
+
+            <div class="multiList" id="fFuncaoList"></div>
+
+            <div class="multiActions">
+              <button type="button" onclick="clearFuncao()">Limpar</button>
+              <button type="button" onclick="closeFuncao()">Aplicar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="actionBtn" onclick="clearAll()">Limpar filtros</button>
+    </section>
+
+    <div id="drillBanner"></div>
+
+    <main class="screen active" id="screenVisao">
+      <div class="kpis" id="kpis"></div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Distribuição por diretoria</h2>
+            <div class="hint">Clique para filtrar</div>
+          </div>
+          <div class="body" id="chartDiretorias"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Capacidade x pressão</h2>
+            <div class="hint">Distribuição do efetivo</div>
+          </div>
+          <div class="body" id="chartAtvAfast"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2 id="tituloCardCascata">Distribuição por superintendência</h2>
+            <div class="hint" id="hintCardCascata">De acordo com o filtro aplicado</div>
+          </div>
+          <div class="body" id="chartLaudosGerencia"></div>
+        </div>
+      </div>
+    </main>
+
+    <main class="screen" id="screenSaude">
+      <div class="kpis" id="kpisSaude"></div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Pressão por gerência</h2>
+            <div class="hint">Laudos, afastamentos e idade crítica</div>
+          </div>
+          <div class="body" id="chartPressaoGerencia"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Tipos de laudo</h2>
+            <div class="hint">Classificação pela conclusão</div>
+          </div>
+          <div class="body" id="chartTiposLaudo"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Funções com laudo</h2>
+            <div class="hint">Cargos com maior concentração</div>
+          </div>
+          <div class="body" id="chartFuncaoLaudo"></div>
+        </div>
+      </div>
+    </main>
+
+    <main class="screen" id="screenAfastamentos">
+      <div class="kpis" id="kpisAfastamentos"></div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Tipos de afastamento</h2>
+            <div class="hint">Clique para filtrar</div>
+          </div>
+          <div class="body" id="chartTipoAfast"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Afastados por gerência</h2>
+            <div class="hint">Ranking gerencial</div>
+          </div>
+          <div class="body" id="chartAfastGerencia"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Tempo de casa — afastados</h2>
+            <div class="hint">Anos de serviço</div>
+          </div>
+          <div class="body" id="chartTempoAfast"></div>
+        </div>
+      </div>
+    </main>
+
+    <main class="screen" id="screenDemografico">
+      <div class="kpis" id="kpisDemografico"></div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Faixa etária</h2>
+            <div class="hint">Clique para filtrar</div>
+          </div>
+          <div class="body" id="chartIdade"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Escolaridade</h2>
+            <div class="hint">Nível educacional</div>
+          </div>
+          <div class="body" id="chartEscolaridade"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Tempo de casa</h2>
+            <div class="hint">Distribuição por permanência</div>
+          </div>
+          <div class="body" id="chartTempoCasa"></div>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:14px">
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Mapa territorial de residência</h2>
+            <div class="hint">Concentração dos principais municípios / bairros</div>
+          </div>
+          <div class="body" id="rankCidades"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Jornada de trabalho</h2>
+            <div class="hint">Tipos de jornada</div>
+          </div>
+          <div class="body" id="chartJornada"></div>
+        </div>
+      </div>
+    </main>
+
+    <main class="screen" id="screenAnalitico">
+      <div class="panel">
+        <div class="panelHead">
+          <h2>Base analítica</h2>
+          <button class="actionBtn primary" onclick="exportExcel()">Exportar Excel</button>
+        </div>
+
+        <div class="body">
+          <div class="field" style="margin-bottom:12px">
+            <label>Busca analítica</label>
+            <input
+              id="searchBox"
+              placeholder="Buscar por nome, registro, diretoria, gerência, setor, função..."
+              oninput="searchDebounced()"
+            >
+          </div>
+
+          <div class="tableWrap" id="tableAnalitico"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script src="../assets/components/hub-utils.js"></script>
+  <script src="../assets/components/hub-cards.js"></script>
+  <script src="../assets/components/hub-charts.js"></script>
+  <script src="../assets/components/hub-filters.js"></script>
+  <script src="../assets/components/hub-layout.js"></script>
+
+  <script src="data.js"></script>
+  <script src="screens.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

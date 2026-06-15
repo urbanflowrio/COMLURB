@@ -188,7 +188,7 @@ const META = 77;
    URLS
 ══════════════════════════════════════════ */
 const URL_IPL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv';
-const URL_SARC  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?output=csv';
+const URL_SARC  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv';
 const URL_CHECK = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvXtM1UVgwp9_KAiUBsEnFh5JR1Vxh8cJmxibkuhrUgol2_BFbs9zC8KCzjh6HWxFpNMQEpj2C7bV1/pub?output=csv';
 const URL_GEO   = '../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson';
 const URL_COORDS= '../territorial/data/coordenadas_bairros_rio.csv';
@@ -282,22 +282,40 @@ function calcIPL(row){
 ══════════════════════════════════════════ */
 function parseSARC(rows){
   const s={dir:[],sup:[],ger:[]};
+  if(!rows.length){ console.warn('SARC: nenhuma linha recebida'); return s; }
+
+  // detecta nomes reais das colunas (CSV pode ter variações de acento)
+  const colsDisp=Object.keys(rows[0]);
+  console.log('SARC colunas recebidas:', colsDisp);
+
+  const colFind=(nomes)=>colsDisp.find(c=>nomes.some(n=>normaliza(c)===normaliza(n)))||nomes[0];
+  const COL_IND  = colFind(['Indicador','INDICADOR']);
+  const COL_DIR  = colFind(['Diretoria','DIRETORIA']);
+  const COL_SUP  = colFind(['Superint.','Superintendência','Superintendencia','SUP','SUPERINT']);
+  const COL_GER  = colFind(['Gerência','Gerencia','GER','GERENCIA']);
+  const COL_ACUM = colFind(['Acumulado','ACUMULADO','Acum.']);
+
   rows.forEach(row=>{
-    if(!(row['Indicador']||'').toLowerCase().includes('ipl')) return;
-    const dir=(row['Diretoria']||'').trim();
-    const sup=(row['Superint.']||'').trim();
-    const ger=(row['Gerência']||row['Gerencia']||'').trim();
+    const ind=(row[COL_IND]||'').toLowerCase();
+    // aceita qualquer linha que contenha 'ipl' ou 'limpeza'
+    if(!ind.includes('ipl')&&!ind.includes('limpeza')) return;
+    const dir=(row[COL_DIR]||'').trim();
+    const sup=(row[COL_SUP]||'').trim();
+    const ger=(row[COL_GER]||'').trim();
     const notas={};
     MESES_SARC.forEach(m=>{
       const v=parseFloat((row[m]||'').toString().replace(',','.'));
       if(!isNaN(v)) notas[m]=v;
     });
-    const acum=parseFloat((row['Acumulado']||'').toString().replace(',','.'));
+    const acumRaw=(row[COL_ACUM]||'').toString().replace(',','.');
+    const acum=parseFloat(acumRaw);
     const obj={dir,sup,ger,notas,acum:isNaN(acum)?null:acum};
     if(ger&&ger!=='-') s.ger.push(obj);
     else if(sup&&sup!=='-') s.sup.push(obj);
     else s.dir.push(obj);
   });
+
+  console.log(`SARC parsed: ${s.dir.length} dir, ${s.sup.length} sup, ${s.ger.length} ger`);
   return s;
 }
 function notaCor(n){return n>=85?'#78aaa3':n>=77?'#6da5d8':n>=70?'#e87535':'#e84855';}

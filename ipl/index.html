@@ -6,7 +6,6 @@
 <title>IPL · Análise Territorial · HUB COMLURB</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
-/* ── HUB COMLURB · design system ───────────────────── */
 :root{
   --bg:#0d1f36;--panel:#0b1a2e;--line:#294866;--ink:#f7f9ff;
   --muted:#b8c9de;--blue:#5b9bd5;--orange:#e87535;--green:#78aaa3;
@@ -17,81 +16,73 @@
 body{background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px}
 .app{max-width:1880px;margin:0 auto;padding:18px}
 
-/* HEADER */
 .header{display:flex;align-items:center;gap:24px;padding:22px;
   border:1px solid rgba(91,155,213,.25);border-radius:22px;
   background:var(--panel);box-shadow:var(--shadow);margin-bottom:14px}
 .logo{width:250px;max-height:76px;object-fit:contain;
   border-right:1px solid rgba(255,255,255,.24);padding-right:22px}
-.eyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--muted)}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 h1{margin:5px 0;font-size:clamp(26px,2.2vw,40px);font-weight:950;line-height:1.05}
 .sub{color:#c5d5e8;font-size:14px;margin-top:2px}
 
-/* FILTROS */
-.filters{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:12px;margin:14px 0}
+.filters{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:12px;margin:14px 0}
 .field{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:11px 12px}
-label{display:block;color:#aebbd0;font-size:10px;letter-spacing:.13em;
-  text-transform:uppercase;font-weight:900;margin-bottom:6px}
-select{width:100%;background:transparent;border:0;color:var(--ink);
-  font-weight:800;font-size:13px;outline:0;cursor:pointer}
+label{display:block;color:#aebbd0;font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:900;margin-bottom:6px}
+select{width:100%;background:transparent;border:0;color:var(--ink);font-weight:800;font-size:13px;outline:0;cursor:pointer}
 select option{background:#0d1b2f;color:#fff}
-.btn{cursor:pointer;color:#fff;font-weight:950;font-size:11px;
-  letter-spacing:.1em;text-transform:uppercase;
-  border:1px solid var(--line);background:var(--panel);
-  border-radius:16px;padding:11px 12px;transition:background .15s}
-.btn.orange{border-color:rgba(232,117,53,.6);background:rgba(232,117,53,.06);color:var(--orange)}
-.btn.orange:hover{background:rgba(232,117,53,.12)}
+.btn{cursor:pointer;font-weight:900;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid rgba(232,117,53,.6);background:rgba(232,117,53,.06);
+  color:var(--orange);border-radius:16px;padding:11px 12px;transition:background .15s}
+.btn:hover{background:rgba(232,117,53,.13)}
 
-/* STATUS / LOADING */
 .loading{margin:10px 0;padding:10px 14px;border:1px solid rgba(91,155,213,.4);
   background:rgba(91,155,213,.06);border-radius:14px;color:#b8d4f2;font-size:13px}
 
-/* KPI STRIP */
+/* KPI */
 .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
 .kpi{min-height:118px;background:var(--panel);border:1px solid var(--line);
   border-radius:20px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--blue)}
-.kpi.green::before{background:var(--green)}
-.kpi.orange::before{background:var(--orange)}
-.kpi.red::before{background:var(--red)}
-.kpi.purple::before{background:var(--purple)}
-.kpi span{display:block;color:#aebbd0;font-size:11px;letter-spacing:.13em;
-  text-transform:uppercase;font-weight:950}
+.kpi.green::before{background:var(--green)}.kpi.orange::before{background:var(--orange)}
+.kpi.red::before{background:var(--red)}.kpi.purple::before{background:var(--purple)}
+.kpi span{display:block;color:#aebbd0;font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:950}
 .kpi strong{display:block;font-size:clamp(22px,1.9vw,34px);margin:9px 0 4px;font-weight:950}
 .kpi small{color:#a8b8cf;font-size:12px}
 .kpi .ctx{display:block;margin-top:10px;font-size:10px;color:#3d5472;font-weight:700;
   letter-spacing:.07em;text-transform:uppercase;border-top:1px solid rgba(255,255,255,.07);
   padding-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* GRID LAYOUTS */
+/* SARC STRIP — nota oficial por nível */
+.sarc-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.sarc-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;
+  padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.sarc-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple)}
+.sarc-card .nivel{font-size:10px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:10px}
+.sarc-table{width:100%;border-collapse:collapse;font-size:13px}
+.sarc-table th{text-align:left;color:var(--muted);font-size:10px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;border-bottom:1px solid var(--line)}
+.sarc-table td{padding:6px 6px;border-bottom:1px solid rgba(255,255,255,.05);font-weight:700}
+.sarc-table td:last-child{text-align:right;font-weight:950}
+.nota-pill{display:inline-block;padding:2px 9px;border-radius:7px;font-size:13px;font-weight:950;border:1px solid}
+
+/* GRID */
 .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}
 .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
-
-/* PANEL */
-.panel{background:var(--panel);border:1px solid var(--line);
-  border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
 .panelHead{padding:16px 18px;border-bottom:1px solid var(--line);background:#07111f}
-.panel h2{margin:0;font-size:15px;font-weight:900;letter-spacing:.01em}
+.panel h2{margin:0;font-size:15px;font-weight:900}
 .hint{font-size:12px;color:#a8b8cf;margin-top:4px}
 .body{padding:16px 18px}
 
-/* MAPA */
-#map{height:600px;background:#07111f}
+#map{height:580px;background:#07111f}
 .leaflet-container{background:#07111f!important}
 .leaflet-tile-pane{background:#07111f}
-.bairro-popup .leaflet-popup-content-wrapper{
-  background:var(--panel)!important;border:1px solid var(--blue)!important;
-  border-radius:10px!important;color:var(--ink)!important;
-  font-size:13px!important;font-weight:700!important;
-  box-shadow:0 4px 18px rgba(0,0,0,.5)!important}
-.bairro-popup .leaflet-popup-tip{background:var(--panel)!important}
+.leaflet-popup-content-wrapper{background:var(--panel)!important;border:1px solid var(--blue)!important;
+  border-radius:10px!important;color:var(--ink)!important;font-size:13px!important;font-weight:700!important}
+.leaflet-popup-tip{background:var(--panel)!important}
 
-/* BAR ROWS */
-.barRow{display:grid;grid-template-columns:minmax(0,1fr) auto;
-  align-items:center;gap:8px;padding:10px 6px;
-  border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;
+.barRow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;
+  padding:10px 6px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;
   border-radius:10px;transition:background .15s}
 .barRow:hover{background:rgba(91,155,213,.07)}
 .barRow b{font-size:13px;font-weight:800}
@@ -99,57 +90,39 @@ select option{background:#0d1b2f;color:#fff}
 .track{height:6px;border-radius:999px;background:#1b3657;margin-top:6px;overflow:hidden}
 .fill{display:block;height:100%;border-radius:999px}
 
-/* FAIXAS */
-.faixaRow{display:grid;grid-template-columns:56px 1fr 44px;
-  align-items:center;gap:10px;padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
+.faixaRow{display:grid;grid-template-columns:60px 1fr 44px;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
 .faixaRow:last-child{border-bottom:0}
 .faixaLabel{font-weight:900;font-size:11px}
 .faixaTrack{height:7px;background:#1b3657;border-radius:999px;overflow:hidden}
 .faixaFill{height:100%;border-radius:999px}
 .faixaN{text-align:right;font-weight:900;color:var(--muted)}
 
-/* PENALIDADE */
-.penRow{display:grid;grid-template-columns:1fr auto;
-  align-items:center;gap:8px;padding:9px 4px;
-  border-bottom:1px solid rgba(255,255,255,.05)}
+.penRow{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;
+  padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.05)}
 .penRow:last-child{border-bottom:0}
 .penName{font-size:12px;font-weight:700;margin-bottom:3px}
 .penTrack{height:5px;background:#1b3657;border-radius:999px;overflow:hidden;margin-top:3px}
 .penFill{height:100%;background:var(--orange);border-radius:999px}
 .penPts{font-size:12px;font-weight:950;color:var(--orange);white-space:nowrap}
 
-/* NOTA BADGE */
 .notaBadge{display:inline-block;font-size:13px;font-weight:950;
   padding:3px 10px;border-radius:8px;border:1px solid;min-width:52px;text-align:center}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;
+  margin:1px 2px 0 0;border:1px solid rgba(239,106,93,.3);color:#f4c0bb;background:rgba(239,106,93,.07)}
 
-/* PILL */
-.pill{display:inline-block;font-size:10px;font-weight:700;
-  padding:2px 6px;border-radius:999px;margin:1px 2px 0 0;
-  border:1px solid rgba(239,106,93,.3);color:#f4c0bb;
-  background:rgba(239,106,93,.07)}
+.drillBanner{padding:10px 14px;background:rgba(91,155,213,.08);border-bottom:1px solid rgba(91,155,213,.2);
+  font-size:12px;font-weight:700;color:#9fc8e8;display:flex;align-items:center;gap:8px}
 
-/* DRILL BANNER */
-.drillBanner{padding:10px 14px;background:rgba(91,155,213,.08);
-  border-bottom:1px solid rgba(91,155,213,.2);
-  font-size:12px;font-weight:700;color:#9fc8e8;
-  display:flex;align-items:center;gap:8px}
-.drillBanner span{opacity:.6}
-.destaque{background:rgba(232,117,53,.08)!important;
-  border-left:3px solid var(--orange);border-radius:0 10px 10px 0!important}
+.insight{border:1px solid rgba(255,255,255,.10);background:var(--panel);border-radius:16px;
+  padding:14px 16px;margin-bottom:14px;border-left:4px solid var(--orange);
+  line-height:1.6;font-size:13.5px;color:#dce8f5}
 
-/* INSIGHT */
-.insight{border:1px solid rgba(255,255,255,.10);background:var(--panel);
-  border-radius:16px;padding:14px 16px;margin-bottom:14px;
-  border-left:4px solid var(--orange);line-height:1.6;font-size:13.5px;color:#dce8f5}
-
-/* FOOTER */
-.footer{border-top:1px solid rgba(255,255,255,.10);padding:24px 0;
-  margin-top:18px;color:#5a7080;font-size:13px}
+.footer{border-top:1px solid rgba(255,255,255,.10);padding:24px 0;margin-top:18px;color:#5a7080;font-size:13px}
 .footer strong{color:#7a8fa4;font-weight:900}
 
 @media(max-width:1100px){
-  .filters,.kpis,.grid,.grid2,.grid3{grid-template-columns:1fr}
+  .filters,.kpis,.sarc-strip,.grid,.grid2{grid-template-columns:1fr}
   .header{flex-direction:column;align-items:flex-start}
   .logo{width:200px;border-right:0;padding-right:0;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:14px}
 }
@@ -158,97 +131,81 @@ select option{background:#0d1b2f;color:#fff}
 <body>
 <div class="app">
 
-<!-- HEADER -->
 <header class="header">
   <img class="logo" alt="COMLURB"
     src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png">
   <div>
     <div class="eyebrow">HUB COMLURB · DLU · Inteligência Operacional</div>
     <h1>IPL · Análise Territorial</h1>
-    <div class="sub">Índice Padrão de Limpeza — metodologia v1.0 validada &nbsp;·&nbsp; Nota por trecho calculada &nbsp;·&nbsp; Nota oficial SARC</div>
+    <div class="sub">Nota por trecho calculada (IPL v1.0) &nbsp;·&nbsp; Nota por gerência, superintendência e diretoria via SARC</div>
   </div>
 </header>
 
-<!-- FILTROS -->
 <section class="filters">
-  <div class="field">
-    <label>Mês</label>
-    <select id="fMes" onchange="onMesChange()"><option value="">Todos</option></select>
-  </div>
-  <div class="field">
-    <label>Superintendência</label>
-    <select id="fSup" onchange="onSupChange()"><option value="">Todas</option></select>
-  </div>
-  <div class="field">
-    <label>Gerência</label>
-    <select id="fGer" onchange="onGerChange()"><option value="">Todas</option></select>
-  </div>
-  <div class="field">
-    <label>Bairro</label>
-    <select id="fBairro" onchange="onBairroChange()"><option value="">Todos</option></select>
-  </div>
-  <button class="btn orange" onclick="clearAll()">↺ &nbsp;Limpar filtros</button>
+  <div class="field"><label>Mês</label>
+    <select id="fMes" onchange="onMesChange()"><option value="">Todos</option></select></div>
+  <div class="field"><label>Superintendência</label>
+    <select id="fSup" onchange="onSupChange()"><option value="">Todas</option></select></div>
+  <div class="field"><label>Gerência</label>
+    <select id="fGer" onchange="onGerChange()"><option value="">Todas</option></select></div>
+  <div class="field"><label>Bairro</label>
+    <select id="fBairro" onchange="onBairroChange()"><option value="">Todos</option></select></div>
+  <button class="btn" onclick="clearAll()">↺ &nbsp;Limpar filtros</button>
 </section>
 
-<div id="statusBar" class="loading">Carregando bases territoriais…</div>
+<div id="statusBar" class="loading">Carregando bases…</div>
 <div id="insightBox" class="insight" style="display:none"></div>
 
-<!-- KPIs -->
+<!-- KPIs calculados dos trechos -->
 <div class="kpis" id="kpis"></div>
+
+<!-- SARC: nota oficial por nível -->
+<div class="sarc-strip" id="sarcStrip"></div>
 
 <!-- MAPA + LATERAL -->
 <div class="grid">
   <div class="panel">
     <div class="panelHead">
       <h2>Mapa territorial</h2>
-      <div class="hint">Bairros coloridos por nota IPL média · clique para detalhar</div>
+      <div class="hint">Bairros coloridos por nota IPL média calculada · clique para detalhar</div>
     </div>
     <div id="map"></div>
   </div>
-
   <div style="display:grid;gap:14px;align-content:start">
     <div class="panel">
-      <div class="panelHead">
-        <h2>Distribuição de notas</h2>
-        <div class="hint">Trechos por faixa IPL no filtro atual</div>
-      </div>
+      <div class="panelHead"><h2>Distribuição de notas</h2>
+        <div class="hint">Trechos por faixa IPL calculada</div></div>
       <div class="body" id="faixas"></div>
     </div>
     <div class="panel">
-      <div class="panelHead">
-        <h2>Perda de nota por item</h2>
-        <div class="hint">Impacto médio em pontos IPL por trecho</div>
-      </div>
+      <div class="panelHead"><h2>Perda de nota por item</h2>
+        <div class="hint">Impacto médio em pontos IPL por trecho</div></div>
       <div class="body" id="penalidade"></div>
     </div>
   </div>
 </div>
 
-<!-- TRECHOS CRÍTICOS + DRILLDOWN -->
+<!-- TRECHOS + DRILL -->
 <div class="grid2">
   <div class="panel">
-    <div class="panelHead">
-      <h2>Trechos críticos</h2>
-      <div class="hint">Piores notas IPL calculadas no filtro atual</div>
-    </div>
+    <div class="panelHead"><h2>Trechos críticos</h2>
+      <div class="hint">Piores notas IPL calculadas no filtro atual</div></div>
     <div class="body" id="rankTrechos"></div>
   </div>
-
   <div class="panel">
-    <div id="drillBanner" class="drillBanner" style="display:none">
-      <span id="drillBannerTxt"></span>
+    <div id="drillBannerEl" class="drillBanner" style="display:none">
+      <span>▸</span><span id="drillBannerTxt"></span>
     </div>
     <div class="panelHead">
       <h2 id="drillTitle">Explosão territorial</h2>
-      <div class="hint">Clique em um bairro ou trecho para abrir o detalhe</div>
+      <div class="hint">Clique em um bairro para abrir logradouros e notas</div>
     </div>
     <div class="body" id="drilldown">
-      <div class="loading">Selecione um bairro ou trecho para visualizar ruas e notas.</div>
+      <div class="loading">Selecione um bairro para visualizar o detalhe.</div>
     </div>
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="footer">
   <strong>Gabinete da Presidência</strong><br>
   HUB COMLURB &nbsp;•&nbsp; Núcleo de Inteligência e Gestão Estratégica Operacional
@@ -259,24 +216,22 @@ select option{background:#0d1b2f;color:#fff}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 <script>
-/* ═══════════════════════════════════════════════
-   CONFIG
-═══════════════════════════════════════════════ */
-const CFG = {
-  urlTrechos:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv',
-  urlSarc:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv',
-  urlGeo:'../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson',
-};
+/* ════════════════════════════════════════════
+   URLS
+════════════════════════════════════════════ */
+const URL_BASE  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv';
+const URL_CHECK = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvXtM1UVgwp9_KAiUBsEnFh5JR1Vxh8cJmxibkuhrUgol2_BFbs9zC8KCzjh6HWxFpNMQEpj2C7bV1/pub?output=csv';
+const URL_SARC  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?output=csv';
+const URL_GEO   = '../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson';
 
-/* ═══════════════════════════════════════════════
-   IPL v1.0 — PESOS E COLUNAS
-═══════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   IPL v1.0 — PESOS
+════════════════════════════════════════════ */
 const PESOS = {
   LB:30,CD:20,Bens:6,Ralo:6,PapCheia:6,PapSuja:6,PapQuebrada:6,
   Fezes:3,Perfuro:3,Propaganda:2,Galhada:2,Capina:2,AreaVerde:2,
   Animal:1,MorRua:1,Lama:1,CxMet:1,PosSvc:1,PtoCrit:1
 };
-// mapeamento col CSV → chave interna (binários)
 const BINARIOS = {
   'Lixo Crítico':'Perfuro','Lixo Critico':'Perfuro',
   'Lixo Crítico - Fezes':'Fezes','Lixo Critico - Fezes':'Fezes',
@@ -292,37 +247,36 @@ const BINARIOS = {
   'Papeleira/contêiner – Suja':'PapSuja','Papeleira/conteiner - Suja':'PapSuja',
   'Papeleira/contêiner – Quebrada':'PapQuebrada','Papeleira/conteiner - Quebrada':'PapQuebrada',
 };
-
-const MES_SARC = {
+const MES_COL = {
   'jan./26':'Jan','fev./26':'Fev','mar./26':'Mar','abr./26':'Abr',
   'mai./26':'Mai','jun./26':'Jun','jul./26':'Jul','ago./26':'Ago',
-  'set./26':'Set','out./26':'Out','nov./26':'Nov','dez./26':'Dez',
+  'set./26':'Set','out./26':'Out','nov./26':'Nov','dez./26':'Dez'
 };
-const ORDEM_MES = Object.keys(MES_SARC);
+const ORDEM_MES = Object.keys(MES_COL);
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════
    CÁLCULO IPL v1.0
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 function calcIPL(row){
   const itens = {};
 
   // LB: 4 TCs
-  let somaLB = 0;
+  let somaLB=0;
   for(let i=1;i<=4;i++){
-    const p = parseFloat(row[`Lixo Branco TC${i} - P`]||0);
-    const g = parseFloat(row[`Lixo Branco TC${i} - G`]||0);
-    const tc = (p/2)+g;
+    const p=parseFloat(row[`Lixo Branco TC${i} - P`]||0);
+    const g=parseFloat(row[`Lixo Branco TC${i} - G`]||0);
+    const tc=(p/2)+g;
     somaLB += tc<=5?100:tc<=15?80:tc<=25?50:tc<=33?20:0;
   }
   itens['LB'] = somaLB/4;
 
   // CD
-  const cdRaw = (row['Coleta domiciliar']||row['Coleta Domiciliar']||'').toString().trim();
+  const cdRaw=(row['Coleta domiciliar']||row['Coleta Domiciliar']||'').toString().trim();
   if(cdRaw===''||cdRaw==='N/A') itens['CD']=null;
   else{ const n=parseInt(cdRaw); itens['CD']=n===0?100:n<=3?80:n<=7?40:20; }
 
-  // Bens composite (Entulho + Bens inservíveis + Material de Obra + Pneus)
-  const bensVals = [
+  // Bens composite: Entulho + Bens inservíveis + Material de Obra + Pneus
+  const bensVals=[
     row['Entulho'],
     row['Bens inservíveis']||row['Bens inserviveis'],
     row['Material de Obra']||row['Material de obra'],
@@ -336,108 +290,122 @@ function calcIPL(row){
   Object.entries(BINARIOS).forEach(([col,key])=>{
     if(row[col]!==undefined && itens[key]===undefined){
       const v=(row[col]||'').trim().toUpperCase();
-      itens[key] = v==='OK'?100:v==='NOK'?0:null;
+      itens[key]=v==='OK'?100:v==='NOK'?0:null;
     }
   });
   Object.keys(PESOS).forEach(k=>{ if(itens[k]===undefined) itens[k]=null; });
 
-  const somaNA = Object.entries(itens).filter(([,v])=>v===null).reduce((s,[k])=>s+PESOS[k],0);
-  const qtdVal = Object.values(itens).filter(v=>v!==null).length;
+  const somaNA=Object.entries(itens).filter(([,v])=>v===null).reduce((s,[k])=>s+PESOS[k],0);
+  const qtdVal=Object.values(itens).filter(v=>v!==null).length;
   if(!qtdVal) return null;
 
   let nota=0;
   const perda={};
   Object.entries(itens).forEach(([k,v])=>{
     if(v===null) return;
-    const pa = PESOS[k]+(somaNA/qtdVal);
-    nota += (v/100)*pa;
-    perda[k] = pa - (v/100)*pa; // pontos perdidos neste item
+    const pa=PESOS[k]+(somaNA/qtdVal);
+    nota+=(v/100)*pa;
+    perda[k]=pa-(v/100)*pa;
   });
-
-  return { nota: Math.round(nota*100)/100, perda };
+  return{nota:Math.round(nota*100)/100, perda};
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════
    PARSER SARC
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 function parseSARC(rows){
-  const s={ger:{},sup:{},corp:{}};
+  // estrutura: { dir:{nome:{mes:nota}}, sup:{nome:{mes:nota}}, ger:{nome:{mes:nota}} }
+  const s={dir:{},sup:{},ger:{}};
   const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   rows.forEach(row=>{
-    if(!(row['Indicador']||'').toLowerCase().includes('ipl')) return;
-    const sup=(row['Superint.']||'').trim();
+    const ind=(row['Indicador']||'').toLowerCase();
+    if(!ind.includes('ipl')) return;
+    const dir=(row['Diretoria']||'').trim();
+    const sup=(row['Superint.']||row['Superintendência']||'').trim();
     const ger=(row['Gerência']||row['Gerencia']||'').trim();
     meses.forEach(m=>{
-      const v=parseFloat((row[m]||'').toString().replace(',','.'));
+      const raw=(row[m]||'').toString().replace(',','.');
+      const v=parseFloat(raw);
       if(isNaN(v)) return;
-      if(ger&&ger!=='-'){ if(!s.ger[ger])s.ger[ger]={}; s.ger[ger][m]=v; }
-      else if(sup&&sup!=='-'){ if(!s.sup[sup])s.sup[sup]={}; s.sup[sup][m]=v; }
-      else s.corp[m]=v;
+      if(ger&&ger!=='-'){
+        if(!s.ger[ger]) s.ger[ger]={};
+        s.ger[ger][m]=v;
+      } else if(sup&&sup!=='-'){
+        if(!s.sup[sup]) s.sup[sup]={};
+        s.sup[sup][m]=v;
+      } else if(dir&&dir!=='-'){
+        if(!s.dir[dir]) s.dir[dir]={};
+        s.dir[dir][m]=v;
+      }
     });
   });
   return s;
 }
-function getSARC(mes,ger,sup){
-  const m = MES_SARC[mes]||mes;
-  if(ger&&SARC.ger[ger]?.[m]!==undefined) return SARC.ger[ger][m];
-  if(sup&&SARC.sup[sup]?.[m]!==undefined) return SARC.sup[sup][m];
-  return SARC.corp[m]??null;
-}
+function sarcMes(mes){ return MES_COL[mes]||mes; }
 
-/* ═══════════════════════════════════════════════
-   ESTADO GLOBAL
-═══════════════════════════════════════════════ */
-let DATA=[], FILTERED=[], SARC={}, GEO=null;
+/* ════════════════════════════════════════════
+   ESTADO
+════════════════════════════════════════════ */
+let DATA=[], FILTERED=[], SARC_DATA={}, GEO=null;
 let map, geoLayer, heatLayer, markerLayer, highlightLayer;
-const $ = id => document.getElementById(id);
-function fmt(n,d=1){ return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
-function norm(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase(); }
-function esc(s){ return encodeURIComponent(s||''); }
-function csv(url){
-  return new Promise((res,rej)=>Papa.parse(url,{download:true,header:true,
-    skipEmptyLines:true,complete:r=>res(r.data),error:rej}));
-}
-function nomeBairroGeo(p){ return p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.name||''; }
-function notaCor(n){ return n>=85?'#78aaa3':n>=70?'#5b9bd5':n>=50?'#e87535':'#ef6a5d'; }
-function groupBy(campo){
-  const acc={};
-  FILTERED.forEach(r=>{
-    const k=r[campo]||'—';
-    if(!acc[k]) acc[k]={k,rows:[],somaNotas:0};
-    acc[k].rows.push(r); acc[k].somaNotas+=r.nota;
-  });
-  return Object.values(acc).map(x=>({...x,n:x.rows.length,media:x.somaNotas/x.rows.length}));
-}
+const $=id=>document.getElementById(id);
+const fmt=(n,d=1)=>Number(n).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+const esc=s=>encodeURIComponent(s||'');
+const notaCor=n=>n>=85?'#78aaa3':n>=70?'#5b9bd5':n>=50?'#e87535':'#ef6a5d';
+const csvLoad=url=>new Promise((res,rej)=>Papa.parse(url,{download:true,header:true,
+  skipEmptyLines:true,complete:r=>res(r.data),error:rej}));
+const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.name||'';
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════
    INIT
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 async function init(){
-  setStatus('Carregando base de trechos e SARC…');
+  setStatus('Carregando base de trechos, SARC e mapa…');
   try{
-    const [trechos, sarcRows, geo] = await Promise.all([
-      csv(CFG.urlTrechos),
-      csv(CFG.urlSarc).catch(()=>[]),
-      fetch(CFG.urlGeo).then(r=>r.ok?r.json():null).catch(()=>null)
+    const [base, check, sarcRows, geo] = await Promise.all([
+      csvLoad(URL_BASE),
+      csvLoad(URL_CHECK).catch(()=>[]),
+      csvLoad(URL_SARC).catch(()=>[]),
+      fetch(URL_GEO).then(r=>r.ok?r.json():null).catch(()=>null)
     ]);
-    GEO = geo;
-    SARC = parseSARC(sarcRows);
 
-    DATA = trechos.map(row=>{
-      const c = calcIPL(row);
+    GEO = geo;
+    SARC_DATA = parseSARC(sarcRows);
+
+    // monta lookup de notas validadas pelo check (Código + Mês → NotaFinal)
+    const checkMap={};
+    check.forEach(row=>{
+      const cod=(row['Código logradouro']||'').trim().toUpperCase();
+      const mes=(row['Mês']||'').trim();
+      const nota=parseFloat((row['NotaFinal']||'').toString().replace(',','.'));
+      if(cod&&mes&&!isNaN(nota)) checkMap[cod+'|'+mes]=nota;
+    });
+
+    // calcula trechos
+    let matchOk=0, matchFail=0;
+    DATA = base.map(row=>{
+      const c=calcIPL(row);
       if(!c) return null;
+      const cod=(row['Código logradouro']||'').trim().toUpperCase();
+      const mes=(row['Mês']||row['Mes']||'').trim();
+      const notaCheck=checkMap[cod+'|'+mes]??null;
+      const diff=notaCheck!==null?Math.abs(c.nota-notaCheck):null;
+      if(diff!==null){ if(diff<=0.1) matchOk++; else matchFail++; }
       return{
-        mes:(row['Mês']||row['Mes']||'').trim(),
-        sup:(row['Superintendência']||row['Superintendencia']||'').trim(),
+        mes, sup:(row['Superintendência']||row['Superintendencia']||'').trim(),
         ger:(row['Gerência']||row['Gerencia']||'').trim(),
         bairro:(row['Bairro']||'').trim(),
         tipo:(row['TipoLogradouro']||'').trim(),
         log:(row['Nome']||'').trim(),
-        cod:(row['Código logradouro']||'').trim(),
-        trecho:(row['Trecho']||'').trim(),
+        cod, trecho:(row['Trecho']||'').trim(),
         nota:c.nota, perda:c.perda,
+        notaCheck, diff,
       };
     }).filter(Boolean);
+
+    // log de validação no console (não aparece no painel)
+    console.log(`✓ Validação IPL: ${matchOk} trechos OK (diff≤0.1), ${matchFail} divergentes de ${matchOk+matchFail} cruzados`);
 
     initMap();
     populateAll();
@@ -448,16 +416,16 @@ async function init(){
     console.error(e);
   }
 }
-function setStatus(msg, err=false){
+function setStatus(msg,err=false){
   $('statusBar').style.display='block';
-  $('statusBar').style.borderColor = err?'rgba(239,106,93,.4)':'rgba(91,155,213,.4)';
-  $('statusBar').style.color = err?'#f4b8b2':'#b8d4f2';
-  $('statusBar').textContent = msg;
+  $('statusBar').style.borderColor=err?'rgba(239,106,93,.4)':'rgba(91,155,213,.4)';
+  $('statusBar').style.color=err?'#f4b8b2':'#b8d4f2';
+  $('statusBar').textContent=msg;
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════
    FILTROS EM CASCATA
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 function filtBase(...campos){
   const v={mes:$('fMes').value,sup:$('fSup').value,ger:$('fGer').value,bairro:$('fBairro').value};
   return DATA.filter(r=>campos.every(c=>!v[c]||r[c]===v[c]));
@@ -468,7 +436,7 @@ function preenche(id,campo,ph,base,preservar=true){
   if(campo==='mes') vals.sort((a,b)=>ORDEM_MES.indexOf(a)-ORDEM_MES.indexOf(b));
   else vals.sort((a,b)=>a.localeCompare(b,'pt-BR'));
   $(id).innerHTML=`<option value="">${ph}</option>`;
-  vals.forEach(v=>{ const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o); });
+  vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o);});
   if(preservar&&vals.includes(atual)) $(id).value=atual;
 }
 function populateAll(){
@@ -477,16 +445,16 @@ function populateAll(){
   preenche('fGer','ger','Todas',filtBase('mes','sup'));
   preenche('fBairro','bairro','Todos',filtBase('mes','sup','ger'));
 }
-function onMesChange(){  $('fSup').value='';$('fGer').value='';$('fBairro').value=''; preenches(); resetDrill();render(); }
-function onSupChange(){  $('fGer').value='';$('fBairro').value=''; preenches(); resetDrill();render(); }
-function onGerChange(){  $('fBairro').value=''; preenches(); resetDrill();render();
-  const g=$('fGer').value; if(g) setTimeout(()=>focarGer(g),100); }
-function onBairroChange(){ resetDrill();render(); const b=$('fBairro').value; if(b) abrirBairro(b); }
 function preenches(){
   preenche('fSup','sup','Todas',filtBase('mes'),false);
   preenche('fGer','ger','Todas',filtBase('mes','sup'),false);
   preenche('fBairro','bairro','Todos',filtBase('mes','sup','ger'),false);
 }
+function onMesChange(){ $('fSup').value='';$('fGer').value='';$('fBairro').value=''; preenches();resetDrill();render(); }
+function onSupChange(){ $('fGer').value='';$('fBairro').value=''; preenches();resetDrill();render(); }
+function onGerChange(){ $('fBairro').value=''; preenches();resetDrill();render();
+  const g=$('fGer').value; if(g) setTimeout(()=>focarGer(g),100); }
+function onBairroChange(){ resetDrill();render(); const b=$('fBairro').value; if(b) abrirBairro(b); }
 function clearAll(){
   ['fMes','fSup','fGer','fBairro'].forEach(id=>$(id).value='');
   if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null;}
@@ -502,13 +470,23 @@ function labelCtx(){
   if(b) parts.push(b); else{ if(s) parts.push(s); if(g) parts.push(g); }
   return parts.join(' · ');
 }
+function groupBy(campo){
+  const acc={};
+  FILTERED.forEach(r=>{
+    const k=r[campo]||'—';
+    if(!acc[k]) acc[k]={k,rows:[],soma:0};
+    acc[k].rows.push(r); acc[k].soma+=r.nota;
+  });
+  return Object.values(acc).map(x=>({...x,n:x.rows.length,media:x.soma/x.rows.length}));
+}
 
-/* ═══════════════════════════════════════════════
-   RENDER PRINCIPAL
-═══════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   RENDER
+════════════════════════════════════════════ */
 function render(){
   applyFilters();
   renderKPIs();
+  renderSARC();
   renderInsight();
   renderFaixas();
   renderPenalidade();
@@ -516,41 +494,29 @@ function render(){
   renderMap();
 }
 
-/* ─── KPIs ─────────────────────────────────── */
+/* ── KPIs (base calculada) ───────────────── */
 function renderKPIs(){
-  const mes=$('fMes').value, sup=$('fSup').value, ger=$('fGer').value;
-  const media = FILTERED.length ? FILTERED.reduce((s,r)=>s+r.nota,0)/FILTERED.length : null;
-  const notaSarc = mes ? getSARC(mes,ger,sup) : null;
-  const delta = (media!==null&&notaSarc!==null) ? notaSarc-media : null;
-  const criticos = FILTERED.filter(r=>r.nota<70).length;
-  const pctCrit = FILTERED.length ? criticos/FILTERED.length*100 : 0;
-  const topPerda = calcTopPerda(1)[0];
-  const ctx = labelCtx();
+  const media=FILTERED.length?FILTERED.reduce((s,r)=>s+r.nota,0)/FILTERED.length:null;
+  const criticos=FILTERED.filter(r=>r.nota<70).length;
+  const pctCrit=FILTERED.length?criticos/FILTERED.length*100:0;
+  const topPerda=calcTopPerda(1)[0];
+  const gers=groupBy('ger').sort((a,b)=>a.media-b.media);
+  const piorGer=gers[0];
+  const ctx=labelCtx();
 
-  const cards = [
-    { label:'Nota SARC',
-      value: notaSarc!==null ? fmt(notaSarc)+'%' : '—',
-      note: mes ? (ger||sup||'COMLURB')+' · fonte oficial' : 'Selecione um mês',
-      ctx, cls:'' },
-    { label:'Nota calculada',
-      value: media!==null ? fmt(media)+'%' : '—',
-      note: FILTERED.length+' trechos · IPL v1.0',
-      ctx, cls:'blue' },
-    { label:'Delta SARC–Calc.',
-      value: delta!==null ? (delta>=0?'+':'')+fmt(delta)+' pt' : '—',
-      note: 'diferença metodológica esperada',
-      ctx, cls: delta!==null?(Math.abs(delta)>8?'orange':'purple'):'purple' },
-    { label:'Trechos críticos',
-      value: criticos.toLocaleString('pt-BR'),
-      note: fmt(pctCrit)+'% do total &lt; 70 · '+ctx,
-      ctx, cls: pctCrit>25?'red':'orange' },
-    { label:'Item mais penalizante',
-      value: topPerda?.item||'—',
-      note: topPerda ? '−'+fmt(topPerda.pts)+' pt médio/trecho' : 'sem dados',
-      ctx, cls:'red' },
+  const cards=[
+    {label:'Nota média IPL',value:media!==null?fmt(media)+'%':'—',
+     note:`${FILTERED.length} trechos calculados · IPL v1.0`,ctx,cls:''},
+    {label:'Trechos críticos',value:criticos.toLocaleString('pt-BR'),
+     note:fmt(pctCrit)+'% do total < 70',ctx,cls:pctCrit>25?'red':'orange'},
+    {label:'Gerência mais crítica',value:piorGer?.k||'—',
+     note:piorGer?fmt(piorGer.media)+'% · '+piorGer.n+' trechos':'sem dados',ctx,cls:'red'},
+    {label:'Item mais penalizante',value:topPerda?.item||'—',
+     note:topPerda?'−'+fmt(topPerda.pts)+' pt médio/trecho':'sem dados',ctx,cls:'orange'},
+    {label:'Trechos avaliados',value:FILTERED.length.toLocaleString('pt-BR'),
+     note:'base bruta · '+ctx,ctx,cls:'purple'},
   ];
-
-  $('kpis').innerHTML = cards.map(c=>`
+  $('kpis').innerHTML=cards.map(c=>`
     <div class="kpi ${c.cls}">
       <span>${c.label}</span>
       <strong>${c.value}</strong>
@@ -559,41 +525,92 @@ function renderKPIs(){
     </div>`).join('');
 }
 
-/* ─── INSIGHT ───────────────────────────────── */
-function renderInsight(){
-  if(!FILTERED.length){ $('insightBox').style.display='none'; return; }
-  const mes=$('fMes').value, sup=$('fSup').value, ger=$('fGer').value;
-  const media = FILTERED.reduce((s,r)=>s+r.nota,0)/FILTERED.length;
-  const notaSarc = mes ? getSARC(mes,ger,sup) : null;
-  const criticos = FILTERED.filter(r=>r.nota<70).length;
-  const pctCrit = criticos/FILTERED.length*100;
-  const gers = groupBy('ger').sort((a,b)=>a.media-b.media);
-  const piorGer = gers[0], melhorGer = gers[gers.length-1];
-  const topPerda = calcTopPerda(1)[0];
+/* ── SARC: nota oficial por nível ────────── */
+function renderSARC(){
+  const mes=$('fMes').value;
+  const m=mes?MES_COL[mes]:null;
+  const ger=$('fGer').value;
+  const sup=$('fSup').value;
 
-  let txt = `Leitura executiva — <b>${labelCtx()}</b>: nota média calculada de <b>${fmt(media)}%</b>`;
-  if(notaSarc!==null) txt += `, nota oficial SARC <b>${fmt(notaSarc)}%</b>`;
-  txt += `.`;
-  if(criticos>0) txt += ` <b>${criticos} trechos</b> (${fmt(pctCrit)}%) estão abaixo de 70.`;
-  if(piorGer&&melhorGer&&piorGer.k!==melhorGer.k)
-    txt += ` Maior disparidade entre <b>${piorGer.k}</b> (${fmt(piorGer.media)}%) e <b>${melhorGer.k}</b> (${fmt(melhorGer.media)}%).`;
-  if(topPerda) txt += ` Item com maior perda de nota: <b>${topPerda.item}</b> (−${fmt(topPerda.pts)} pt médio por trecho).`;
+  // filtra o que mostrar com base nos filtros ativos
+  const meses=m?[m]:['Jan','Fev','Mar','Abr','Mai','Jun'];
 
-  $('insightBox').innerHTML = txt;
-  $('insightBox').style.display = 'block';
+  // Diretoria
+  const dirs=Object.entries(SARC_DATA.dir||{});
+  // Sup
+  const sups=Object.entries(SARC_DATA.sup||{})
+    .filter(([k])=>!sup||k===sup);
+  // Ger
+  const gers=Object.entries(SARC_DATA.ger||{})
+    .filter(([k])=>!ger||k===ger);
+
+  function tabelaSARC(entries, nivel){
+    if(!entries.length) return `<div class="loading">Sem dados ${nivel} no SARC</div>`;
+    return`<table class="sarc-table">
+      <thead><tr><th>${nivel}</th>${meses.map(m=>`<th style="text-align:right">${m}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${entries.map(([nome,notas])=>`
+          <tr>
+            <td>${nome}</td>
+            ${meses.map(m=>{
+              const v=notas[m];
+              if(v===undefined) return`<td style="color:#3d5472;text-align:right">—</td>`;
+              const cor=notaCor(v);
+              return`<td style="text-align:right">
+                <span class="nota-pill" style="color:${cor};border-color:${cor}44;background:${cor}11">${fmt(v)}</span>
+              </td>`;
+            }).join('')}
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  $('sarcStrip').innerHTML=`
+    <div class="sarc-card">
+      <div class="nivel">Diretoria · SARC oficial</div>
+      ${tabelaSARC(dirs,'Diretoria')}
+    </div>
+    <div class="sarc-card">
+      <div class="nivel">Superintendência · SARC oficial</div>
+      ${tabelaSARC(sups,'Sup.')}
+    </div>
+    <div class="sarc-card">
+      <div class="nivel">Gerência · SARC oficial</div>
+      ${tabelaSARC(gers,'Gerência')}
+    </div>`;
 }
 
-/* ─── FAIXAS ────────────────────────────────── */
+/* ── INSIGHT ─────────────────────────────── */
+function renderInsight(){
+  if(!FILTERED.length){$('insightBox').style.display='none';return;}
+  const media=FILTERED.reduce((s,r)=>s+r.nota,0)/FILTERED.length;
+  const criticos=FILTERED.filter(r=>r.nota<70).length;
+  const pctCrit=criticos/FILTERED.length*100;
+  const gers=groupBy('ger').sort((a,b)=>a.media-b.media);
+  const piorGer=gers[0], melhorGer=gers[gers.length-1];
+  const topPerda=calcTopPerda(1)[0];
+
+  let txt=`Leitura executiva — <b>${labelCtx()}</b>: nota média calculada de <b>${fmt(media)}%</b>.`;
+  if(criticos>0) txt+=` <b>${criticos} trechos</b> (${fmt(pctCrit)}%) abaixo de 70.`;
+  if(piorGer&&melhorGer&&piorGer.k!==melhorGer.k)
+    txt+=` Maior disparidade entre <b>${piorGer.k}</b> (${fmt(piorGer.media)}%) e <b>${melhorGer.k}</b> (${fmt(melhorGer.media)}%).`;
+  if(topPerda) txt+=` Item com maior perda de nota: <b>${topPerda.item}</b> (−${fmt(topPerda.pts)} pt médio por trecho).`;
+
+  $('insightBox').innerHTML=txt;
+  $('insightBox').style.display='block';
+}
+
+/* ── FAIXAS ──────────────────────────────── */
 function renderFaixas(){
-  const total = FILTERED.length;
-  if(!total){ $('faixas').innerHTML='<div class="loading">Sem dados</div>'; return; }
+  const total=FILTERED.length;
+  if(!total){$('faixas').innerHTML='<div class="loading">Sem dados</div>';return;}
   const faixas=[
     {label:'≥ 85',min:85,max:101,cor:'#78aaa3'},
     {label:'70 – 84',min:70,max:85,cor:'#5b9bd5'},
     {label:'50 – 69',min:50,max:70,cor:'#e87535'},
     {label:'< 50',min:0,max:50,cor:'#ef6a5d'},
   ];
-  $('faixas').innerHTML = faixas.map(f=>{
+  $('faixas').innerHTML=faixas.map(f=>{
     const n=FILTERED.filter(r=>r.nota>=f.min&&r.nota<f.max).length;
     const pct=n/total*100;
     return`<div class="faixaRow">
@@ -604,7 +621,7 @@ function renderFaixas(){
   }).join('');
 }
 
-/* ─── PENALIDADE ────────────────────────────── */
+/* ── PENALIDADE ──────────────────────────── */
 function calcTopPerda(n=8){
   const acc={};
   FILTERED.forEach(r=>Object.entries(r.perda).forEach(([k,v])=>{
@@ -615,10 +632,10 @@ function calcTopPerda(n=8){
     .sort((a,b)=>b.pts-a.pts).slice(0,n);
 }
 function renderPenalidade(){
-  const top = calcTopPerda(8);
-  if(!top.length){ $('penalidade').innerHTML='<div class="loading">Sem dados</div>'; return; }
-  const max = top[0].pts;
-  $('penalidade').innerHTML = top.map(p=>`
+  const top=calcTopPerda(8);
+  if(!top.length){$('penalidade').innerHTML='<div class="loading">Sem dados</div>';return;}
+  const max=top[0].pts;
+  $('penalidade').innerHTML=top.map(p=>`
     <div class="penRow">
       <div>
         <div class="penName">${p.item}</div>
@@ -628,11 +645,11 @@ function renderPenalidade(){
     </div>`).join('');
 }
 
-/* ─── TRECHOS CRÍTICOS ──────────────────────── */
+/* ── TRECHOS CRÍTICOS ────────────────────── */
 function renderTrechos(){
   const piores=[...FILTERED].sort((a,b)=>a.nota-b.nota).slice(0,12);
-  if(!piores.length){ $('rankTrechos').innerHTML='<div class="loading">Sem dados no filtro atual.</div>'; return; }
-  $('rankTrechos').innerHTML = piores.map((r,i)=>{
+  if(!piores.length){$('rankTrechos').innerHTML='<div class="loading">Sem dados</div>';return;}
+  $('rankTrechos').innerHTML=piores.map((r,i)=>{
     const cor=notaCor(r.nota);
     const topItens=Object.entries(r.perda).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
     return`<div class="barRow" onclick="abrirBairro('${esc(r.bairro)}')">
@@ -647,16 +664,16 @@ function renderTrechos(){
   }).join('');
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════
    MAPA
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 function initMap(){
-  map = L.map('map').setView([-22.91,-43.35],10);
+  map=L.map('map').setView([-22.91,-43.35],10);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-    {attribution:'&copy; OpenStreetMap &amp; CARTO'}).addTo(map);
+    {attribution:'&copy; OSM &amp; CARTO'}).addTo(map);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',
     {attribution:''}).addTo(map);
-  markerLayer = L.layerGroup().addTo(map);
+  markerLayer=L.layerGroup().addTo(map);
 }
 function centrGeo(f){
   try{
@@ -677,14 +694,13 @@ function renderMap(){
   const byBairro={};
   groupBy('bairro').forEach(x=>{ byBairro[norm(x.k)]=x; });
 
-  const heatPts=[];
-  const geoFeats={};
+  const heatPts=[], geoFeats={};
 
-  geoLayer = L.geoJSON(GEO,{
+  geoLayer=L.geoJSON(GEO,{
     style:f=>{
       const nm=norm(nomeBairroGeo(f.properties));
       const d=byBairro[nm];
-      if(!d) return{color:CFG.lineColor||'#294866',weight:.4,fillColor:'#0d1b2f',fillOpacity:.06};
+      if(!d) return{color:'#294866',weight:.4,fillColor:'#0d1b2f',fillOpacity:.06};
       const cor=notaCor(d.media);
       return{color:cor,weight:1,fillColor:cor,fillOpacity:.22};
     },
@@ -699,7 +715,7 @@ function renderMap(){
       l.bindPopup(`<b>${nm}</b>${d?`<br>Nota IPL: ${fmt(d.media)}%<br>Trechos: ${d.n}`:'<br>Sem avaliação no filtro'}`);
     }
   }).addTo(map);
-  map._geoFeats = geoFeats;
+  map._geoFeats=geoFeats;
 
   Object.values(byBairro).forEach(d=>{
     const feat=GEO.features.find(f=>norm(nomeBairroGeo(f.properties))===norm(d.k));
@@ -707,23 +723,20 @@ function renderMap(){
     const c=centrGeo(feat); if(!c) return;
     const cor=notaCor(d.media);
     heatPts.push([c.lat,c.lon,Math.max(.1,Math.min(1,(100-d.media)/55))]);
-    L.circleMarker([c.lat,c.lon],{
-      radius:Math.max(5,Math.min(18,d.n/3+4)),
-      color:cor,fillColor:cor,fillOpacity:.7,weight:1
-    })
+    L.circleMarker([c.lat,c.lon],{radius:Math.max(5,Math.min(18,d.n/3+4)),
+      color:cor,fillColor:cor,fillOpacity:.7,weight:1})
     .bindPopup(`<b>${d.k}</b><br>Nota IPL: ${fmt(d.media)}%<br>Trechos: ${d.n}`)
     .on('click',()=>{
       preenche('fBairro','bairro','Todos',filtBase('mes','sup','ger'),false);
       $('fBairro').value=d.k; resetDrill();render();abrirBairro(d.k);
-    })
-    .addTo(markerLayer);
+    }).addTo(markerLayer);
   });
 
   if(heatPts.length){
     heatLayer=L.heatLayer(heatPts,{radius:34,blur:24,maxZoom:13,
-      gradient:{0.2:'#5b9bd5',0.5:'#e87535',0.85:'#ef6a5d',1:'#ffffff'}}).addTo(map);
+      gradient:{0.2:'#5b9bd5',0.5:'#e87535',0.85:'#ef6a5d',1:'#fff'}}).addTo(map);
   }
-  try{ map.fitBounds(geoLayer.getBounds(),{padding:[18,18]}); }catch(e){}
+  try{map.fitBounds(geoLayer.getBounds(),{padding:[18,18]});}catch(e){}
 }
 function focarGer(ger){
   if(!map||!GEO) return;
@@ -732,8 +745,9 @@ function focarGer(ger){
   if(geoLayer){
     geoLayer.eachLayer(l=>{
       const nm=norm(nomeBairroGeo(l.feature?.properties||{}));
-      if(bairrosGer.has(nm)) l.setStyle({color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:.18});
-      else l.setStyle({color:'#1e3050',weight:.3,fillColor:'#0d1b2f',fillOpacity:.55});
+      l.setStyle(bairrosGer.has(nm)?
+        {color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:.18}:
+        {color:'#1e3050',weight:.3,fillColor:'#0d1b2f',fillOpacity:.55});
     });
   }
   const feats=map._geoFeats||{};
@@ -741,16 +755,15 @@ function focarGer(ger){
   if(layers.length) try{map.fitBounds(L.latLngBounds(layers.map(l=>l.getBounds())),{padding:[30,30],maxZoom:13});}catch(e){}
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════
    DRILLDOWN
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════ */
 function resetDrill(){
-  $('drillBanner').style.display='none';
+  $('drillBannerEl').style.display='none';
   $('drillTitle').textContent='Explosão territorial';
-  $('drilldown').innerHTML='<div class="loading">Selecione um bairro ou trecho para visualizar ruas e notas.</div>';
+  $('drilldown').innerHTML='<div class="loading">Selecione um bairro para visualizar o detalhe.</div>';
 }
 function abrirBairro(bairro){
-  // foca mapa
   const feats=map?._geoFeats||{};
   const l=feats[norm(bairro)];
   if(l){
@@ -760,11 +773,9 @@ function abrirBairro(bairro){
       style:{color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:.07}
     }).addTo(map);
   }
-
   const rows=FILTERED.filter(r=>norm(r.bairro)===norm(bairro));
-  if(!rows.length){ resetDrill(); return; }
+  if(!rows.length){resetDrill();return;}
 
-  // agrupa por logradouro
   const logs={};
   rows.forEach(r=>{
     const k=r.log||'—';
@@ -774,7 +785,6 @@ function abrirBairro(bairro){
       logs[k].perda[item]=(logs[k].perda[item]||0)+v;
     });
   });
-
   const dados=Object.values(logs).map(x=>{
     const media=x.notas.reduce((s,v)=>s+v,0)/x.notas.length;
     const topItens=Object.entries(x.perda).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
@@ -782,8 +792,8 @@ function abrirBairro(bairro){
   }).sort((a,b)=>a.media-b.media);
 
   const gerBairro=FILTERED.find(r=>norm(r.bairro)===norm(bairro))?.ger||'';
-  $('drillBanner').style.display='flex';
-  $('drillBannerTxt').innerHTML=`<span>▸</span> ${bairro}${gerBairro?' · '+gerBairro:''}`;
+  $('drillBannerEl').style.display='flex';
+  $('drillBannerTxt').textContent=`${bairro}${gerBairro?' · '+gerBairro:''}`;
   $('drillTitle').textContent=`Logradouros · ${bairro}`;
 
   $('drilldown').innerHTML=dados.map(d=>{
@@ -791,7 +801,7 @@ function abrirBairro(bairro){
     return`<div class="barRow">
       <div>
         <b>${d.log}</b>
-        <small>${d.n} avaliação(ões) &nbsp;·&nbsp; ${d.topItens.map(i=>`<span class="pill">${i}</span>`).join('')}</small>
+        <small>${d.n} avaliação(ões) · ${d.topItens.map(i=>`<span class="pill">${i}</span>`).join('')}</small>
         <div class="track"><div class="fill" style="width:${Math.max(4,d.media)}%;background:${cor}"></div></div>
       </div>
       <span class="notaBadge" style="color:${cor};border-color:${cor}44;background:${cor}11">${fmt(d.media)}</span>

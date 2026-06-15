@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coleta Seletiva | HUB COMLURB</title>
+<link rel="stylesheet" href="../../assets/css/hub-premium.css">
+<link rel="stylesheet" href="../compartilhado/operacional.css">
+</head>
+<body><div class="app">
+<header class="header">
+  <div class="logoWrap"><img class="logoImg" src="../../assets/logos/RIOPREFEITURA Comlurb horizontal monocromatica branco.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><div class="logoTextFallback" style="display:none">HUB COMLURB</div></div>
+  <div class="headerContent"><div class="systemLabel">HUB COMLURB • Centro de Inteligência Operacional</div><h1 class="mainTitle">Coleta Seletiva</h1><div class="subtitle">Camada operacional de acompanhamento da utilização da capacidade da frota nos serviços de coleta e remoção.</div></div>
+</header>
+<div class="op-topline"><div class="op-pill">Última competência disponível: mai/2026</div><div id="dataSource" class="data-badge">Carregando dados...</div></div>
+<nav class="op-nav"><a class="" href="../index.html">Visão Geral</a><a class="" href="../coleta-domiciliar/index.html">Coleta Domiciliar</a><a class="active" href="../coleta-seletiva/index.html">Coleta Seletiva</a><a class="" href="../lixo-publico/index.html">Lixo Público</a><a class="" href="../frota/index.html">Frota</a></nav>
+<section class="op-filters"><div class="op-filter"><label>Competência</label><select id="fMes"></select></div><div class="op-filter"><label>Serviço</label><select id="fServico"></select></div><div class="op-filter"><label>Gerência</label><select id="fGerencia"></select></div><div class="op-filter"><label>Fonte</label><select disabled><option>Planilha única publicada</option></select></div></section>
+<section id="kpis" class="op-kpis"></section>
+<section class="op-grid">
+  <div class="op-panel"><div class="op-panel-head"><h2>Ranking por gerência</h2><span class="hint">Competência selecionada</span></div><div class="op-body" id="ranking"></div></div>
+  <div class="op-panel"><div class="op-panel-head"><h2>Leitura executiva</h2><span class="hint">não acusativa</span></div><div class="op-body" id="insights"></div></div>
+</section>
+<section class="op-grid">
+  <div class="op-panel"><div class="op-panel-head"><h2>Evolução mensal</h2><span class="hint">2026</span></div><div class="op-body" id="mensal"></div></div>
+  <div class="op-panel"><div class="op-panel-head"><h2>Destaques do período</h2><span class="hint">maior e menor utilização observada</span></div><div class="op-body" id="extremos"></div></div>
+</section>
+<section class="op-panel"><div class="op-panel-head"><h2>Base gerencial do período</h2><span class="hint">dados consolidados da planilha</span></div><div class="op-body" id="tabela"></div></section>
+<div class="footer-note">Fonte: planilha única de utilização de frota publicada no Google Drive. Quando a conexão externa não estiver disponível, a página utiliza uma base local de segurança com os dados de maio/2026 enviados para montagem do HUB.</div>
+</div>
+<script>window.OP_PAGE='seletiva';</script><script src="../compartilhado/dados.js"></script><script src="../compartilhado/operacional.js"></script>
+</body></html>

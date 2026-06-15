@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utilização da Frota | HUB COMLURB</title>
+  <link rel="stylesheet" href="../assets/css/hub-premium.css">
+  <style>
+
+    /* ── KPI de serviço (3 cards superiores) ── */
+    .servico-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .servico-kpi {
+      background: var(--painel);
+      border: 1px solid var(--linha);
+      border-radius: 20px;
+      padding: 22px 24px 18px;
+      min-height: 130px;
+    }
+    .servico-kpi .sk-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #b8d4f2;
+      margin-bottom: 10px;
+    }
+    .servico-kpi .sk-value {
+      font-size: 44px;
+      font-weight: 950;
+      line-height: 1;
+    }
+    .servico-kpi .sk-sub {
+      font-size: 12px;
+      color: var(--silenciado);
+      margin-top: 6px;
+    }
+    .sk-value.ok      { color: #4caf7d; }
+    .sk-value.alerta  { color: var(--amarelo); }
+    .sk-value.critico { color: var(--vermelho); }
+    .servico-kpi.ok     { border-color: rgba(76,175,125,0.35); }
+    .servico-kpi.alerta { border-color: rgba(255,160,43,0.35); }
+    .servico-kpi.critico{ border-color: rgba(239,106,93,0.35); }
+
+    /* ── Barras por gerência ── */
+    .ger-row {
+      display: grid;
+      grid-template-columns: 76px 1fr 48px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 3px 4px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .ger-row:hover { background: rgba(91,155,213,0.06); }
+    .ger-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--silenciado);
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ger-track {
+      height: 12px;
+      background: rgba(19,41,65,0.9);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .ger-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+    .ger-fill.ok      { background: linear-gradient(90deg,#2e7d52,#4caf7d); }
+    .ger-fill.alerta  { background: linear-gradient(90deg,#b87a00,#ffa02b); }
+    .ger-fill.critico { background: linear-gradient(90deg,#a83e36,#ef6a5d); }
+    .ger-pct {
+      font-size: 12px;
+      font-weight: 800;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .ger-pct.ok      { color: #4caf7d; }
+    .ger-pct.alerta  { color: var(--amarelo); }
+    .ger-pct.critico { color: var(--vermelho); }
+
+    /* ── Destaques Operacionais ── */
+    .destaques-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .destaque-panel {
+      background: var(--painel);
+      border: 1px solid var(--linha);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .destaque-head {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid var(--linha);
+    }
+    .destaque-head .dh-eyebrow {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--silenciado);
+      margin-bottom: 2px;
+    }
+    .destaque-head .dh-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--texto);
+    }
+    .destaque-body {
+      padding: 14px 18px 16px;
+    }
+
+    /* amplitude */
+    .amplitude-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(41,72,102,0.5);
+    }
+    .amplitude-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .amp-item { text-align: center; }
+    .amp-item .amp-val {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .amp-item .amp-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--silenciado);
+      margin-top: 3px;
+    }
+    .amp-item .amp-ger {
+      font-size: 11px;
+      color: var(--silenciado);
+      margin-top: 2px;
+    }
+    .amp-div { color: var(--linha); font-size: 20px; align-self: center; }
+
+    /* texto narrativo */
+    .destaque-texto {
+      font-size: 12px;
+      line-height: 1.65;
+      color: #c7d8ee;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(41,72,102,0.5);
+    }
+
+    /* ── Toggle detalhe ── */
+    .toggle-det {
+      width: 100%;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--linha);
+      color: var(--silenciado);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.15s;
+    }
+    .toggle-det:hover { color: var(--texto); background: rgba(255,255,255,0.02); }
+    .detail-wrap { display: none; border-top: 1px solid var(--linha); max-height: 240px; overflow-y: auto; }
+    .detail-wrap.open { display: block; }
+
+    /* ── Tabela detalhe ── */
+    .det-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .det-table th {
+      padding: 7px 16px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--silenciado);
+      border-bottom: 1px solid var(--linha);
+      background: rgba(0,0,0,0.2);
+      position: sticky; top: 0;
+    }
+    .det-table td { padding: 6px 16px; border-bottom: 1px solid rgba(41,72,102,0.3); }
+    .det-table tr:last-child td { border-bottom: none; }
+    .det-table td.r { text-align: right; font-variant-numeric: tabular-nums; }
+    .det-table td.fw { font-weight: 700; text-align: right; }
+
+    /* ── Chart evolução ── */
+    .chart-tall { padding: 16px 20px 22px; height: 240px; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--linha); border-radius: 3px; }
+
+    /* ── empty ── */
+    .vazio { padding: 28px 18px; color: var(--silenciado); font-size: 12px; text-align: center; }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div id="header"></div>
+
+  <!-- FILTROS -->
+  <section class="filters">
+    <div class="field">
+      <label>Período</label>
+      <select id="fPeriodo" onchange="applyFilters()">
+        <option value="">Todos</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Superintendência</label>
+      <select id="fSuper" onchange="applyFilters()">
+        <option value="">Todas</option>
+      </select>
+    </div>
+    <button class="actionBtn" onclick="clearAll()">Limpar filtros</button>
+  </section>
+
+  <!-- SCOREBOARD DE SERVIÇOS -->
+  <div class="servico-strip">
+    <div class="servico-kpi" id="cardDOM">
+      <div class="sk-label">Coleta Domiciliar</div>
+      <div class="sk-value" id="scDOM">—</div>
+      <div class="sk-sub" id="scDOM-sub">% utilização média</div>
+    </div>
+    <div class="servico-kpi" id="cardLP">
+      <div class="sk-label">Lixo Público</div>
+      <div class="sk-value" id="scLP">—</div>
+      <div class="sk-sub" id="scLP-sub">% utilização média</div>
+    </div>
+    <div class="servico-kpi" id="cardSEL">
+      <div class="sk-label">Coleta Seletiva</div>
+      <div class="sk-value" id="scSEL">—</div>
+      <div class="sk-sub" id="scSEL-sub">% utilização média</div>
+    </div>
+  </div>
+
+  <!-- PAINÉIS DE BARRAS POR GERÊNCIA -->
+  <div class="grid" style="margin-bottom:14px">
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Coleta Domiciliar</h2>
+        <div class="hint" id="avgDOM">—</div>
+      </div>
+      <div class="body" id="barsDOM"><div class="loading">Carregando...</div></div>
+      <button class="toggle-det" onclick="toggleDetail('DOM')">▸ Detalhe por tipo de veículo</button>
+      <div class="detail-wrap" id="tableDOM"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Lixo Público</h2>
+        <div class="hint" id="avgLP">—</div>
+      </div>
+      <div class="body" id="barsLP"><div class="loading">Carregando...</div></div>
+      <button class="toggle-det" onclick="toggleDetail('LP')">▸ Detalhe por tipo de veículo</button>
+      <div class="detail-wrap" id="tableLP"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Coleta Seletiva</h2>
+        <div class="hint" id="avgSEL">—</div>
+      </div>
+      <div class="body" id="barsSEL"><div class="loading">Carregando...</div></div>
+      <button class="toggle-det" onclick="toggleDetail('SEL')">▸ Detalhe por tipo de veículo</button>
+      <div class="detail-wrap" id="tableSEL"></div>
+    </div>
+
+  </div>
+
+  <!-- DESTAQUES OPERACIONAIS -->
+  <div class="destaques-grid" id="destaquesGrid">
+    <!-- gerado via JS -->
+  </div>
+
+  <!-- EVOLUÇÃO MENSAL -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panelHead">
+      <h2>Evolução Mensal</h2>
+      <div class="hint">% utilização média por serviço · 2026</div>
+    </div>
+    <div class="chart-tall">
+      <canvas id="chartEvolucao"></canvas>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer"></div>
+
+</div>
+
+<!-- DEPENDÊNCIAS -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- COMPONENTES HUB -->
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-cards.js"></script>
+<script src="../assets/components/hub-charts.js"></script>
+<script src="../assets/components/hub-filters.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const CONFIG = {
+  systemLabel: "OPERAÇÕES",
+  title:       "Utilização da Frota",
+  subtitle:    "Peso coletado vs. capacidade operacional por serviço e gerência · 2026",
+  author:      "Greicy Moreira",
+  version:     "1.0",
+  urls: {
+    DOM: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1898137343&single=true&output=csv",
+    LP:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1599396593&single=true&output=csv",
+    SEL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1210816191&single=true&output=csv"
+  },
+  nomes: { DOM: "Coleta Domiciliar", LP: "Lixo Público", SEL: "Coleta Seletiva" },
+  thresholds: { ok: 90, alerta: 70 }
+};
+
+// ─── ESTADO ───────────────────────────────────────────────────────────────────
+let RAW         = { DOM: [], LP: [], SEL: [] };
+let FILTERED    = { DOM: [], LP: [], SEL: [] };
+let allPeriodos = [];
+let allSupers   = [];
+let evolChart   = null;
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function parseNum(s) {
+  if (!s) return null;
+  const v = parseFloat(String(s).replace(/"/g,"").replace(",","."));
+  return isNaN(v) ? null : v;
+}
+
+function sem(v) {
+  if (v === null) return "";
+  if (v >= CONFIG.thresholds.ok) return "ok";
+  if (v >= CONFIG.thresholds.alerta) return "alerta";
+  return "critico";
+}
+
+function corSem(cls) {
+  return cls === "ok" ? "#4caf7d" : cls === "alerta" ? "var(--amarelo)" : cls === "critico" ? "var(--vermelho)" : "var(--silenciado)";
+}
+
+function avgPct(rows) {
+  const vals = rows.map(r => r.pct).filter(v => v !== null && v < 300);
+  if (!vals.length) return null;
+  return vals.reduce((a,b) => a+b,0) / vals.length;
+}
+
+function orderPeriodo(p) {
+  const mo = {jan:1,fev:2,mar:3,abr:4,mai:5,jun:6,jul:7,ago:8,set:9,out:10,nov:11,dez:12};
+  const m = p.split(".")[0].toLowerCase().trim();
+  const y = p.includes("26") ? 26 : 25;
+  return y * 100 + (mo[m] || 0);
+}
+
+function periodoLabel() {
+  const p = document.getElementById("fPeriodo").value;
+  return p || "no período selecionado";
+}
+
+// ─── LOAD ─────────────────────────────────────────────────────────────────────
+async function loadBase(key) {
+  const rows = await HUB.data.loadCSV(CONFIG.urls[key], { name: key });
+  return rows.map(r => ({
+    periodo:  HUB.pick(r, ["Período","Periodo"]),
+    sup:      HUB.pick(r, ["Superintendencia","Superintendência"]),
+    gerencia: HUB.pick(r, ["Gerencia","Gerência"]),
+    tipo:     HUB.pick(r, ["Tipo de Veiculo","Tipo de Veículo"]),
+    peso:     parseNum(HUB.pick(r, ["Peso Total (ton)"])),
+    cap:      parseNum(HUB.pick(r, ["Capacidade Total (ton)"])),
+    pct:      parseNum(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"])),
+  })).filter(r => r.periodo && r.periodo.includes("26") && r.pct !== null);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  HUB.header.render("header", {
+    systemLabel: CONFIG.systemLabel,
+    title:       CONFIG.title,
+    subtitle:    CONFIG.subtitle
+  });
+
+  HUB.loading.showMultiple(["barsDOM","barsLP","barsSEL"]);
+
+  const [dom, lp, sel] = await Promise.all([
+    loadBase("DOM"), loadBase("LP"), loadBase("SEL")
+  ]);
+
+  RAW.DOM = dom; RAW.LP = lp; RAW.SEL = sel;
+
+  const all = [...dom, ...lp, ...sel];
+  allPeriodos = [...new Set(all.map(r => r.periodo).filter(Boolean))]
+    .sort((a,b) => orderPeriodo(a) - orderPeriodo(b));
+  allSupers = [...new Set(all.map(r => r.sup).filter(Boolean))].sort();
+
+  populateFilters();
+  applyFilters();
+
+  HUB.footer.render("footer", {
+    author: CONFIG.author,
+    version: CONFIG.version,
+    showTimestamp: true
+  });
+}
+
+// ─── FILTROS ──────────────────────────────────────────────────────────────────
+function populateFilters() {
+  const latest = allPeriodos[allPeriodos.length - 1];
+  const selPer = document.getElementById("fPeriodo");
+  selPer.innerHTML = '<option value="">Todos os meses</option>' +
+    allPeriodos.map(p =>
+      `<option value="${p}" ${p === latest ? "selected" : ""}>${p}</option>`
+    ).join("");
+
+  const selSup = document.getElementById("fSuper");
+  selSup.innerHTML = '<option value="">Todas</option>' +
+    allSupers.map(s => `<option value="${s}">${s}</option>`).join("");
+}
+
+function applyFilters() {
+  const per = document.getElementById("fPeriodo").value;
+  const sup = document.getElementById("fSuper").value;
+
+  function filter(arr) {
+    return arr.filter(r =>
+      (!per || r.periodo === per) &&
+      (!sup || r.sup === sup)
+    );
+  }
+
+  FILTERED.DOM = filter(RAW.DOM);
+  FILTERED.LP  = filter(RAW.LP);
+  FILTERED.SEL = filter(RAW.SEL);
+
+  render();
+}
+
+function clearAll() {
+  document.getElementById("fPeriodo").value = "";
+  document.getElementById("fSuper").value   = "";
+  applyFilters();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  renderScoreboard();
+  ["DOM","LP","SEL"].forEach(k => { renderBars(k); renderTable(k); });
+  renderDestaques();
+  renderChart();
+}
+
+// scoreboard
+function renderScoreboard() {
+  [["DOM","scDOM","cardDOM"],["LP","scLP","cardLP"],["SEL","scSEL","cardSEL"]].forEach(([key,id,cardId]) => {
+    const a = avgPct(FILTERED[key]);
+    const cls = sem(a);
+    const el = document.getElementById(id);
+    el.textContent = a !== null ? Math.round(a) + "%" : "—";
+    el.className = "sk-value " + cls;
+    const card = document.getElementById(cardId);
+    card.className = "servico-kpi " + cls;
+    document.getElementById(id + "-sub").textContent =
+      FILTERED[key].length + " registros · % utilização média";
+  });
+}
+
+// barras por gerência
+function renderBars(key) {
+  const data   = FILTERED[key];
+  const barsEl = document.getElementById("bars" + key);
+  const avgEl  = document.getElementById("avg"  + key);
+
+  if (!data.length) {
+    barsEl.innerHTML = '<div class="vazio">Sem dados para o filtro selecionado.</div>';
+    avgEl.textContent = "—";
+    return;
+  }
+
+  const groups = {};
+  data.forEach(r => {
+    const g = r.gerencia || "N/D";
+    if (!groups[g]) groups[g] = [];
+    if (r.pct !== null && r.pct < 300) groups[g].push(r.pct);
+  });
+
+  const rows = Object.entries(groups)
+    .map(([g, vals]) => ({ g, v: vals.reduce((a,b)=>a+b,0)/vals.length }))
+    .sort((a,b) => b.v - a.v);
+
+  const overall = avgPct(data);
+  const cls = sem(overall);
+  avgEl.textContent = overall !== null ? Math.round(overall) + "%" : "—";
+  avgEl.style.color = corSem(cls);
+
+  barsEl.innerHTML = rows.map(({g, v}) => {
+    const c = sem(v);
+    const w = Math.min(v, 100).toFixed(1);
+    return `
+      <div class="ger-row">
+        <span class="ger-label" title="${g}">${g}</span>
+        <div class="ger-track">
+          <div class="ger-fill ${c}" style="width:${w}%"></div>
+        </div>
+        <span class="ger-pct ${c}">${Math.round(v)}%</span>
+      </div>`;
+  }).join("");
+}
+
+// tabela de detalhe
+function renderTable(key) {
+  const data = FILTERED[key];
+  const el   = document.getElementById("table" + key);
+
+  if (!data.length) {
+    el.innerHTML = '<div class="vazio">Sem dados.</div>';
+    return;
+  }
+
+  const groups = {};
+  data.forEach(r => {
+    const t = r.tipo || "N/D";
+    if (!groups[t]) groups[t] = { peso: 0, cap: 0, vals: [] };
+    if (r.peso) groups[t].peso += r.peso;
+    if (r.cap)  groups[t].cap  += r.cap;
+    if (r.pct !== null && r.pct < 300) groups[t].vals.push(r.pct);
+  });
+
+  const rows = Object.entries(groups)
+    .map(([t, g]) => ({
+      t,
+      peso: g.peso,
+      cap:  g.cap,
+      pct:  g.vals.length ? g.vals.reduce((a,b)=>a+b,0)/g.vals.length : null
+    }))
+    .sort((a,b) => (b.pct||0) - (a.pct||0));
+
+  el.innerHTML = `
+    <table class="det-table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th style="text-align:right">Peso (t)</th>
+          <th style="text-align:right">Cap. (t)</th>
+          <th style="text-align:right">% Util.</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => {
+          const c = sem(r.pct);
+          return `<tr>
+            <td>${r.t}</td>
+            <td class="r">${r.peso ? r.peso.toLocaleString("pt-BR",{maximumFractionDigits:1}) : "—"}</td>
+            <td class="r">${r.cap  ? r.cap.toLocaleString ("pt-BR",{maximumFractionDigits:1}) : "—"}</td>
+            <td class="fw" style="color:${corSem(c)}">${r.pct !== null ? Math.round(r.pct)+"%" : "—"}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>`;
+}
+
+// ─── DESTAQUES OPERACIONAIS ───────────────────────────────────────────────────
+function renderDestaques() {
+  const grid = document.getElementById("destaquesGrid");
+  const per  = document.getElementById("fPeriodo").value || "no período selecionado";
+
+  const cards = ["DOM","LP","SEL"].map(key => {
+    const data = FILTERED[key];
+    const nome = CONFIG.nomes[key];
+
+    if (!data.length) {
+      return `
+        <div class="destaque-panel">
+          <div class="destaque-head">
+            <div class="dh-eyebrow">Destaques Operacionais</div>
+            <div class="dh-title">${nome}</div>
+          </div>
+          <div class="destaque-body"><div class="vazio" style="padding:12px 0">Sem dados.</div></div>
+        </div>`;
+    }
+
+    // agrupa por gerência
+    const groups = {};
+    data.forEach(r => {
+      const g = r.gerencia || "N/D";
+      if (!groups[g]) groups[g] = [];
+      if (r.pct !== null && r.pct < 300) groups[g].push(r.pct);
+    });
+
+    const gerRows = Object.entries(groups)
+      .map(([g, vals]) => ({ g, v: vals.reduce((a,b)=>a+b,0)/vals.length }))
+      .filter(x => x.v > 0)
+      .sort((a,b) => b.v - a.v);
+
+    if (!gerRows.length) return `<div class="destaque-panel"><div class="destaque-body"><div class="vazio">Sem dados.</div></div></div>`;
+
+    const maior  = gerRows[0];
+    const menor  = gerRows[gerRows.length - 1];
+    const amp    = maior.v - menor.v;
+    const clsMaior = sem(maior.v);
+    const clsMenor = sem(menor.v);
+
+    const texto = `${maior.g} registrou o maior índice de utilização da capacidade operacional em ${per}. ` +
+      `${menor.g} apresentou o menor índice entre as gerências monitoradas. ` +
+      `A diferença entre os extremos observados foi de ${amp.toFixed(1).replace(".",",")} pontos percentuais, ` +
+      `evidenciando comportamentos operacionais distintos entre os territórios atendidos.`;
+
+    return `
+      <div class="destaque-panel">
+        <div class="destaque-head">
+          <div class="dh-eyebrow">Destaques Operacionais</div>
+          <div class="dh-title">${nome}</div>
+        </div>
+        <div class="destaque-body">
+          <div class="amplitude-row">
+            <div class="amp-item">
+              <div class="amp-val" style="color:${corSem(clsMaior)}">${Math.round(maior.v)}%</div>
+              <div class="amp-label">Maior utilização</div>
+              <div class="amp-ger">${maior.g}</div>
+            </div>
+            <div class="amp-div">·</div>
+            <div class="amp-item">
+              <div class="amp-val" style="color:${corSem(clsMenor)}">${Math.round(menor.v)}%</div>
+              <div class="amp-label">Menor utilização</div>
+              <div class="amp-ger">${menor.g}</div>
+            </div>
+            <div class="amp-div">·</div>
+            <div class="amp-item">
+              <div class="amp-val" style="color:var(--silenciado)">${amp.toFixed(1).replace(".",",")} p.p.</div>
+              <div class="amp-label">Amplitude</div>
+              <div class="amp-ger">entre extremos</div>
+            </div>
+          </div>
+          <div class="destaque-texto">${texto}</div>
+        </div>
+      </div>`;
+  });
+
+  grid.innerHTML = cards.join("");
+}
+
+// ─── EVOLUÇÃO ─────────────────────────────────────────────────────────────────
+function renderChart() {
+  const sup = document.getElementById("fSuper").value;
+
+  function buildSeries(rawData) {
+    const byP = {};
+    rawData.forEach(r => {
+      if (!r.periodo || r.pct === null || r.pct >= 300) return;
+      if (sup && r.sup !== sup) return;
+      if (!byP[r.periodo]) byP[r.periodo] = [];
+      byP[r.periodo].push(r.pct);
+    });
+    return byP;
+  }
+
+  function vals(byP) {
+    return allPeriodos.map(p => {
+      const v = byP[p];
+      return v && v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : null;
+    });
+  }
+
+  const ctx = document.getElementById("chartEvolucao").getContext("2d");
+  if (evolChart) evolChart.destroy();
+
+  evolChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: allPeriodos,
+      datasets: [
+        { label:"Coleta Domiciliar", data:vals(buildSeries(RAW.DOM)), borderColor:"#5b9bd5", backgroundColor:"rgba(91,155,213,0.07)",  borderWidth:2.5, pointRadius:4, pointHoverRadius:6, tension:0.35, spanGaps:true },
+        { label:"Lixo Público",      data:vals(buildSeries(RAW.LP)),  borderColor:"#e87535", backgroundColor:"rgba(232,117,53,0.07)",  borderWidth:2.5, pointRadius:4, pointHoverRadius:6, tension:0.35, spanGaps:true },
+        { label:"Coleta Seletiva",   data:vals(buildSeries(RAW.SEL)), borderColor:"#78aaa3", backgroundColor:"rgba(120,170,163,0.07)", borderWidth:2.5, pointRadius:4, pointHoverRadius:6, tension:0.35, spanGaps:true }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode:"index", intersect:false },
+      plugins: {
+        legend: { labels:{ color:"#b8c9de", font:{size:11}, boxWidth:12, padding:20 } },
+        tooltip: {
+          backgroundColor:"rgba(6,17,31,0.97)",
+          borderColor:"#294866", borderWidth:1,
+          titleColor:"#f7f9ff", bodyColor:"#b8c9de", padding:12,
+          callbacks: { label: c => `  ${c.dataset.label}: ${c.parsed.y !== null ? c.parsed.y+"%" : "—"}` }
+        }
+      },
+      scales: {
+        x: { ticks:{color:"#b8c9de",font:{size:10}}, grid:{color:"rgba(41,72,102,0.3)"} },
+        y: {
+          ticks:{ color:"#b8c9de", font:{size:10}, callback: v => v+"%" },
+          grid:{ color:"rgba(41,72,102,0.3)" },
+          min: 0
+        }
+      }
+    }
+  });
+}
+
+// ─── TOGGLE ───────────────────────────────────────────────────────────────────
+function toggleDetail(key) {
+  const wrap = document.getElementById("table" + key);
+  const btn  = wrap.previousElementSibling;
+  const open = wrap.classList.toggle("open");
+  btn.textContent = (open ? "▾" : "▸") + " Detalhe por tipo de veículo";
+}
+
+// ─── START ────────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", init);
+</script>
+
+</body>
+</html>

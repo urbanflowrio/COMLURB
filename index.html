@@ -4,53 +4,404 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>HUB COMLURB | Centro de Inteligência Operacional</title>
+
 <style>
 :root{
-  --bg:#06111f;--panel:#0d1f36;--panel2:#0a1b31;
-  --line:#294866;--text:#f7f9ff;--muted:#b8c9de;
-  --blue:#5b9bd5;--orange:#e87535;--green:#78aaa3;
-  --red:#ef6a5d;--purple:#a78bfa;
+  --bg:#06111f;
+  --bg2:#08182b;
+  --panel:#0d1f36;
+  --panel2:#0a1b31;
+  --panel3:#102844;
+  --line:#294866;
+  --line2:rgba(91,155,213,.32);
+  --text:#f7f9ff;
+  --muted:#b8c9de;
+  --muted2:#7f96ad;
+  --blue:#5b9bd5;
+  --cyan:#7cc7ff;
+  --orange:#e87535;
+  --green:#78aaa3;
+  --red:#ef6a5d;
+  --purple:#a78bfa;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5}
-.app{max-width:1400px;margin:0 auto;padding:32px 28px}
 
-.hero{border:1px solid var(--line);border-radius:22px;background:var(--panel2);padding:28px 32px;display:flex;gap:28px;align-items:center;margin-bottom:28px}
-.logo{width:260px;max-height:68px;object-fit:contain;padding-right:24px;border-right:1px solid rgba(255,255,255,.2)}
-.logoFallback{font-size:14px;font-weight:900;letter-spacing:.12em;color:#fff;padding-right:24px;border-right:1px solid rgba(255,255,255,.2);white-space:nowrap}
-.eyebrow{font-size:11px;font-weight:900;letter-spacing:.22em;color:#b8d4f2;text-transform:uppercase}
-.heroTitle{font-size:36px;font-weight:950;margin:6px 0;color:#fff}
-.heroSub{color:#c7d8ee;font-size:14px;line-height:1.5}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-.sectionLabel{font-size:11px;font-weight:900;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:28px 0 12px}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(91,155,213,.20), transparent 28%),
+    radial-gradient(circle at 85% 12%, rgba(120,170,163,.12), transparent 28%),
+    linear-gradient(135deg, #06111f 0%, #07182c 45%, #04101e 100%);
+  color:var(--text);
+  font-family:"Segoe UI", Arial, sans-serif;
+  line-height:1.5;
+}
 
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+.app{
+  max-width:1440px;
+  margin:0 auto;
+  padding:34px 30px 28px;
+}
 
-.card{display:block;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;transition:.15s;position:relative;overflow:hidden}
-.card:hover{transform:translateY(-2px);border-color:#5b9bd5}
-.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)}
+.hero{
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:
+    linear-gradient(135deg, rgba(13,31,54,.94), rgba(8,24,43,.90)),
+    radial-gradient(circle at 90% 15%, rgba(91,155,213,.18), transparent 30%);
+  padding:30px 34px;
+  display:flex;
+  gap:30px;
+  align-items:center;
+  margin-bottom:26px;
+  box-shadow:0 22px 60px rgba(0,0,0,.28);
+  position:relative;
+  overflow:hidden;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  right:-120px;
+  top:-120px;
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  border:1px solid rgba(91,155,213,.18);
+}
+
+.logo{
+  width:270px;
+  max-height:74px;
+  object-fit:contain;
+  padding-right:28px;
+  border-right:1px solid rgba(255,255,255,.18);
+  position:relative;
+  z-index:2;
+}
+
+.logoFallback{
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:#fff;
+  padding-right:28px;
+  border-right:1px solid rgba(255,255,255,.18);
+  white-space:nowrap;
+  position:relative;
+  z-index:2;
+}
+
+.heroText{
+  position:relative;
+  z-index:2;
+}
+
+.eyebrow{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.24em;
+  color:#b8d4f2;
+  text-transform:uppercase;
+}
+
+.heroTitle{
+  font-size:42px;
+  line-height:1.05;
+  font-weight:950;
+  margin:8px 0 8px;
+  color:#fff;
+  letter-spacing:-.04em;
+}
+
+.heroSub{
+  color:#c7d8ee;
+  font-size:15px;
+  line-height:1.55;
+  max-width:760px;
+}
+
+.heroMeta{
+  margin-top:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  border:1px solid rgba(91,155,213,.28);
+  background:rgba(91,155,213,.10);
+  color:#d8eaff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.overview{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:14px;
+  margin-bottom:28px;
+}
+
+.overviewCard{
+  border:1px solid var(--line);
+  background:rgba(13,31,54,.78);
+  border-radius:20px;
+  padding:20px 22px;
+}
+
+.overviewLabel{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.18em;
+  color:var(--muted2);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.overviewTitle{
+  font-size:20px;
+  font-weight:950;
+  color:#fff;
+  margin-bottom:6px;
+}
+
+.overviewDesc{
+  font-size:13px;
+  color:#c7d8ee;
+  line-height:1.45;
+}
+
+.axis{
+  margin-top:24px;
+}
+
+.sectionHead{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:12px;
+}
+
+.sectionLabel{
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.22em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.sectionHint{
+  font-size:12px;
+  color:var(--muted2);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.card{
+  min-height:168px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  text-decoration:none;
+  color:var(--text);
+  background:
+    linear-gradient(180deg, rgba(16,40,68,.92), rgba(10,27,49,.92));
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
+  transition:.18s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(91,155,213,.75);
+  box-shadow:0 18px 36px rgba(0,0,0,.26);
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  background:var(--blue);
+}
+
+.card::after{
+  content:"";
+  position:absolute;
+  right:-46px;
+  top:-46px;
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  background:rgba(91,155,213,.08);
+}
+
 .card.orange::before{background:var(--orange)}
 .card.green::before{background:var(--green)}
 .card.purple::before{background:var(--purple)}
 .card.red::before{background:var(--red)}
-.card.wip{opacity:.65;cursor:default}
-.card.wip:hover{transform:none}
 
-.cardLabel{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
-.cardTitle{font-size:22px;font-weight:950;margin:8px 0 6px;color:#fff}
-.cardDesc{font-size:13px;color:#c7d8ee;line-height:1.4}
-.cardBadge{display:inline-block;margin-top:10px;font-size:10px;font-weight:900;letter-spacing:.12em;padding:3px 8px;border-radius:999px;background:rgba(91,155,213,.15);border:1px solid rgba(91,155,213,.3);color:#b8d4f2}
-.cardBadge.wip{background:rgba(232,117,53,.12);border-color:rgba(232,117,53,.3);color:#e87535}
-.cardBadge.ok{background:rgba(120,170,163,.12);border-color:rgba(120,170,163,.3);color:#78aaa3}
+.card.wip{
+  opacity:.68;
+  cursor:default;
+}
 
-.footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:#7a8fa5;font-size:12px;letter-spacing:.04em}
+.card.wip:hover{
+  transform:none;
+  box-shadow:none;
+}
 
-@media(max-width:900px){
-  .grid,.grid2{grid-template-columns:1fr}
-  .hero{flex-direction:column;align-items:flex-start}
-  .logo{border-right:0;padding-right:0}
-  .heroTitle{font-size:28px}
+.cardTop{
+  position:relative;
+  z-index:2;
+}
+
+.cardLabel{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.18em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.cardTitle{
+  font-size:23px;
+  line-height:1.12;
+  font-weight:950;
+  margin:10px 0 8px;
+  color:#fff;
+  letter-spacing:-.02em;
+}
+
+.cardDesc{
+  font-size:13px;
+  color:#c7d8ee;
+  line-height:1.42;
+}
+
+.cardFooter{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-top:16px;
+}
+
+.cardBadge{
+  display:inline-block;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  padding:4px 9px;
+  border-radius:999px;
+  background:rgba(91,155,213,.15);
+  border:1px solid rgba(91,155,213,.3);
+  color:#b8d4f2;
+  text-transform:uppercase;
+}
+
+.cardBadge.wip{
+  background:rgba(232,117,53,.12);
+  border-color:rgba(232,117,53,.3);
+  color:#f0a273;
+}
+
+.cardBadge.ok{
+  background:rgba(120,170,163,.12);
+  border-color:rgba(120,170,163,.3);
+  color:#9ed3cb;
+}
+
+.cardPath{
+  color:var(--muted2);
+  font-size:11px;
+  font-weight:700;
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  color:#7a8fa5;
+  font-size:12px;
+  letter-spacing:.04em;
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+@media(max-width:1050px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .overview{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:760px){
+  .app{
+    padding:22px 16px;
+  }
+
+  .hero{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:24px;
+  }
+
+  .logo{
+    border-right:0;
+    padding-right:0;
+    width:240px;
+  }
+
+  .heroTitle{
+    font-size:32px;
+  }
+
+  .grid,
+  .grid2{
+    grid-template-columns:1fr;
+  }
+
+  .sectionHead{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:4px;
+  }
 }
 </style>
 </head>
@@ -63,110 +414,225 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-se
          src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png"
          alt="COMLURB"
          onerror="this.style.display='none';document.getElementById('logoFb').style.display='block'">
-    <div class="logoFallback" id="logoFb" style="display:none">PREFEITURA DO RIO | COMLURB</div>
 
-    <div>
-      <div class="eyebrow">Gabinete da Presidência · HUB COMLURB</div>
-      <div class="heroTitle">HUB COMLURB</div>
+    <div class="logoFallback" id="logoFb" style="display:none">
+      PREFEITURA DO RIO | COMLURB
+    </div>
+
+    <div class="heroText">
+      <div class="eyebrow">HUB COMLURB</div>
+      <div class="heroTitle">Centro de Inteligência Operacional</div>
       <div class="heroSub">
-        Centro de Inteligência Operacional — visão executiva integrada por diretoria, contrato, território e indicadores estratégicos.
+        Visão executiva integrada para acompanhamento da operação, contratos, território, pessoas e indicadores estratégicos da Companhia.
+      </div>
+
+      <div class="heroMeta">
+        <span class="pill">Presidência</span>
+        <span class="pill">Operação</span>
+        <span class="pill">Contratos</span>
+        <span class="pill">Território</span>
       </div>
     </div>
   </section>
 
-  <div class="sectionLabel">Painéis operacionais</div>
-  <div class="grid">
+  <section class="overview">
+    <div class="overviewCard">
+      <div class="overviewLabel">Arquitetura do HUB</div>
+      <div class="overviewTitle">Uma camada única para leitura executiva da Companhia</div>
+      <div class="overviewDesc">
+        A home organiza os painéis por eixo de decisão, reduzindo ruído visual e preservando a navegação rápida para os módulos ativos e em estruturação.
+      </div>
+    </div>
 
-    <a class="card" href="dte/">
-      <div class="cardLabel">Painel · Área Técnica</div>
-      <div class="cardTitle">Área Técnica Operacional</div>
-      <div class="cardDesc">Frota, ETR, utilização e semáforo operacional.</div>
-      <span class="cardBadge ok">Ativo</span>
-    </a>
+    <div class="overviewCard">
+      <div class="overviewLabel">Escopo atual</div>
+      <div class="overviewTitle">Operação, pessoas, contratos e governança</div>
+      <div class="overviewDesc">
+        Os módulos foram organizados para apoiar leitura institucional, comparação entre áreas e evolução futura do ambiente de inteligência operacional.
+      </div>
+    </div>
+  </section>
 
-    <a class="card orange" href="pessoas/">
-      <div class="cardLabel">Painel · DAF / Pessoas</div>
-      <div class="cardTitle">Gestão de Pessoas</div>
-      <div class="cardDesc">Força de trabalho, afastamentos, disponibilidade e perfil funcional.</div>
-      <span class="cardBadge ok">Ativo</span>
-    </a>
+  <section class="axis">
+    <div class="sectionHead">
+      <div class="sectionLabel">Operação</div>
+      <div class="sectionHint">Ativos técnicos, qualidade da limpeza e leitura territorial</div>
+    </div>
 
-    <a class="card purple" href="ipl/">
-      <div class="cardLabel">Painel · DLU / IPL</div>
-      <div class="cardTitle">IPL Territorial</div>
-      <div class="cardDesc">Índice de Padrão de Limpeza por bairro, gerência e superintendência.</div>
-      <span class="cardBadge ok">Ativo</span>
-    </a>
+    <div class="grid">
+      <a class="card" href="dte/">
+        <div class="cardTop">
+          <div class="cardLabel">Painel · DTE</div>
+          <div class="cardTitle">Engenharia e Infraestrutura</div>
+          <div class="cardDesc">
+            Frota, instalações operacionais, ETRs e ativos de engenharia.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge ok">Ativo</span>
+          <span class="cardPath">dte/</span>
+        </div>
+      </a>
 
-  </div>
+      <a class="card purple" href="ipl/">
+        <div class="cardTop">
+          <div class="cardLabel">Painel · DLU</div>
+          <div class="cardTitle">Índice Padrão de Limpeza (IPL)</div>
+          <div class="cardDesc">
+            Avaliação da qualidade da limpeza urbana por bairro, gerência e superintendência.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge ok">Ativo</span>
+          <span class="cardPath">ipl/</span>
+        </div>
+      </a>
 
-  <div class="sectionLabel">Gestão contratual</div>
-  <div class="grid">
+      <a class="card green" href="territorial/">
+        <div class="cardTop">
+          <div class="cardLabel">Mapa · Operacional</div>
+          <div class="cardTitle">Inteligência Territorial</div>
+          <div class="cardDesc">
+            Estrutura operacional da Companhia representada sobre o território do Município.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge ok">Ativo</span>
+          <span class="cardPath">territorial/</span>
+        </div>
+      </a>
+    </div>
+  </section>
 
-    <a class="card orange" href="contratos/">
-      <div class="cardLabel">Painel · Contratos</div>
-      <div class="cardTitle">Gestão Contratual</div>
-      <div class="cardDesc">Acompanhamento executivo de contratos, fornecedores, faturamento, glosas e desempenho contratual.</div>
-      <span class="cardBadge wip">Em refatoração</span>
-    </a>
+  <section class="axis">
+    <div class="sectionHead">
+      <div class="sectionLabel">Pessoas</div>
+      <div class="sectionHint">Força de trabalho, disponibilidade e aderência territorial</div>
+    </div>
 
-    <a class="card green" href="sme/">
-      <div class="cardLabel">Contrato de Receita · SME</div>
-      <div class="cardTitle">Limpeza Escolar</div>
-      <div class="cardDesc">Monitoramento contratual da limpeza escolar, postos, faltas, faturamento e glosas.</div>
-      <span class="cardBadge wip">Em refatoração</span>
-    </a>
+    <div class="grid2">
+      <a class="card orange" href="pessoas/">
+        <div class="cardTop">
+          <div class="cardLabel">Painel · DAF</div>
+          <div class="cardTitle">Gestão de Pessoas</div>
+          <div class="cardDesc">
+            Força de trabalho, afastamentos, disponibilidade e perfil funcional.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge ok">Ativo</span>
+          <span class="cardPath">pessoas/</span>
+        </div>
+      </a>
 
-    <a class="card green" href="sms/">
-      <div class="cardLabel">Contrato de Receita · SMS</div>
-      <div class="cardTitle">Unidades de Saúde</div>
-      <div class="cardDesc">Monitoramento contratual dos serviços vinculados à rede municipal de saúde.</div>
-      <span class="cardBadge wip">Em estruturação</span>
-    </a>
+      <a class="card orange wip" onclick="return false">
+        <div class="cardTop">
+          <div class="cardLabel">Mapa · Pessoas</div>
+          <div class="cardTitle">Distribuição da Força de Trabalho</div>
+          <div class="cardDesc">
+            Leitura territorial da força de trabalho e aderência entre residência, lotação e operação.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge wip">Previsto</span>
+          <span class="cardPath">em estruturação</span>
+        </div>
+      </a>
+    </div>
+  </section>
 
-  </div>
+  <section class="axis">
+    <div class="sectionHead">
+      <div class="sectionLabel">Receita e Contratos</div>
+      <div class="sectionHint">Contratos, faturamento, glosas e desempenho financeiro</div>
+    </div>
 
-  <div class="sectionLabel">Inteligência territorial</div>
-  <div class="grid">
+    <div class="grid">
+      <a class="card orange" href="contratos/">
+        <div class="cardTop">
+          <div class="cardLabel">Painel · Contratos</div>
+          <div class="cardTitle">Gestão Contratual</div>
+          <div class="cardDesc">
+            Visão executiva dos contratos e desempenho financeiro.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge wip">Em refatoração</span>
+          <span class="cardPath">contratos/</span>
+        </div>
+      </a>
 
-    <a class="card green" href="territorial/">
-      <div class="cardLabel">Mapa · Operacional</div>
-      <div class="cardTitle">Território Operacional</div>
-      <div class="cardDesc">Malha de gerências DSU e setores DLU sobre o mapa do Rio.</div>
-      <span class="cardBadge ok">Ativo</span>
-    </a>
+      <a class="card green" href="contratos/sme/">
+        <div class="cardTop">
+          <div class="cardLabel">Contrato de Receita · SME</div>
+          <div class="cardTitle">Contrato SME</div>
+          <div class="cardDesc">
+            Limpeza e higienização escolar da rede municipal de ensino.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge wip">Em refatoração</span>
+          <span class="cardPath">contratos/sme/</span>
+        </div>
+      </a>
 
-    <a class="card wip" onclick="return false">
-      <div class="cardLabel">Mapa · Pessoas</div>
-      <div class="cardTitle">Dispersão da Força</div>
-      <div class="cardDesc">Localização residencial e aderência territorial dos colaboradores.</div>
-      <span class="cardBadge wip">Previsto</span>
-    </a>
+      <a class="card green" href="contratos/sms/">
+        <div class="cardTop">
+          <div class="cardLabel">Contrato de Receita · SMS</div>
+          <div class="cardTitle">Contrato SMS</div>
+          <div class="cardDesc">
+            Limpeza e desinfecção hospitalar das unidades municipais de saúde.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge wip">Em estruturação</span>
+          <span class="cardPath">contratos/sms/</span>
+        </div>
+      </a>
+    </div>
+  </section>
 
-  </div>
+  <section class="axis">
+    <div class="sectionHead">
+      <div class="sectionLabel">Governança</div>
+      <div class="sectionHint">Indicadores corporativos e relacionamento com o cidadão</div>
+    </div>
 
-  <div class="sectionLabel">Presidência</div>
-  <div class="grid2">
+    <div class="grid2">
+      <a class="card wip" onclick="return false">
+        <div class="cardTop">
+          <div class="cardLabel">Painel · Presidência</div>
+          <div class="cardTitle">Painel Executivo</div>
+          <div class="cardDesc">
+            Visão consolidada dos principais indicadores corporativos da Companhia.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge wip">Em desenvolvimento</span>
+          <span class="cardPath">em estruturação</span>
+        </div>
+      </a>
 
-    <a class="card wip" onclick="return false">
-      <div class="cardLabel">Painel · Presidência</div>
-      <div class="cardTitle">Radar de Indicadores</div>
-      <div class="cardDesc">Matriz executiva de desempenho por eixo: Pessoas, Operação, Atendimento, Sustentabilidade, Receita e Contratos.</div>
-      <span class="cardBadge wip">Em desenvolvimento</span>
-    </a>
+      <a class="card red wip" onclick="return false">
+        <div class="cardTop">
+          <div class="cardLabel">Painel · Atendimento</div>
+          <div class="cardTitle">Atendimento ao Cidadão</div>
+          <div class="cardDesc">
+            Demandas registradas pela população, nível de atendimento e satisfação dos serviços prestados.
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="cardBadge wip">Em desenvolvimento</span>
+          <span class="cardPath">em estruturação</span>
+        </div>
+      </a>
+    </div>
+  </section>
 
-    <a class="card wip" onclick="return false">
-      <div class="cardLabel">Painel · Atendimento</div>
-      <div class="cardTitle">1746 / Ouvidoria</div>
-      <div class="cardDesc">Chamados, satisfação cidadã e análise de conformidade operacional.</div>
-      <span class="cardBadge wip">Em desenvolvimento</span>
-    </a>
-
-  </div>
-
-  <div class="footer">
-    HUB COMLURB · Centro de Inteligência Operacional · Gabinete da Presidência
-  </div>
+  <footer class="footer">
+    <span>HUB COMLURB · Centro de Inteligência Operacional</span>
+    <span>Gabinete da Presidência</span>
+  </footer>
 
 </div>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HUB COMLURB | Central de Inteligência Operacional</title>
+<title>HUB COMLURB | Centro de Inteligência Operacional</title>
 <style>
 :root{
   --bg:#06111f;--panel:#0d1f36;--panel2:#0a1b31;
@@ -44,11 +44,17 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-se
 .cardBadge.wip{background:rgba(232,117,53,.12);border-color:rgba(232,117,53,.3);color:#e87535}
 .cardBadge.ok{background:rgba(120,170,163,.12);border-color:rgba(120,170,163,.3);color:#78aaa3}
 
-.footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:#7a8fa5;font-size:12px}
+.footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:#7a8fa5;font-size:12px;letter-spacing:.04em}
 
-@media(max-width:900px){.grid,.grid2{grid-template-columns:1fr}.hero{flex-direction:column}.logo{border-right:0;padding-right:0}.heroTitle{font-size:28px}}
+@media(max-width:900px){
+  .grid,.grid2{grid-template-columns:1fr}
+  .hero{flex-direction:column;align-items:flex-start}
+  .logo{border-right:0;padding-right:0}
+  .heroTitle{font-size:28px}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
 
@@ -58,92 +64,110 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-se
          alt="COMLURB"
          onerror="this.style.display='none';document.getElementById('logoFb').style.display='block'">
     <div class="logoFallback" id="logoFb" style="display:none">PREFEITURA DO RIO | COMLURB</div>
+
     <div>
       <div class="eyebrow">Gabinete da Presidência · HUB COMLURB</div>
       <div class="heroTitle">HUB COMLURB</div>
-      <div class="heroSub">Centro de inteligência operacional com visão executiva integrada por diretoria, contrato, território e indicadores estratégicos.</div>
+      <div class="heroSub">
+        Centro de Inteligência Operacional — visão executiva integrada por diretoria, contrato, território e indicadores estratégicos.
+      </div>
     </div>
   </section>
 
   <div class="sectionLabel">Painéis operacionais</div>
   <div class="grid">
+
     <a class="card" href="dte/">
       <div class="cardLabel">Painel · Área Técnica</div>
       <div class="cardTitle">Área Técnica Operacional</div>
       <div class="cardDesc">Frota, ETR, utilização e semáforo operacional.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
+
     <a class="card orange" href="pessoas/">
       <div class="cardLabel">Painel · DAF / Pessoas</div>
       <div class="cardTitle">Gestão de Pessoas</div>
       <div class="cardDesc">Força de trabalho, afastamentos, disponibilidade e perfil funcional.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
+
     <a class="card purple" href="ipl/">
       <div class="cardLabel">Painel · DLU / IPL</div>
       <div class="cardTitle">IPL Territorial</div>
       <div class="cardDesc">Índice de Padrão de Limpeza por bairro, gerência e superintendência.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
+
   </div>
 
   <div class="sectionLabel">Gestão contratual</div>
   <div class="grid">
+
     <a class="card orange" href="contratos/">
       <div class="cardLabel">Painel · Contratos</div>
       <div class="cardTitle">Gestão Contratual</div>
-      <div class="cardDesc">Visão executiva dos contratos e desempenho financeiro.</div>
+      <div class="cardDesc">Acompanhamento executivo de contratos, fornecedores, faturamento, glosas e desempenho contratual.</div>
       <span class="cardBadge wip">Em refatoração</span>
     </a>
-    <a class="card green" href="contratos/sme/">
+
+    <a class="card green" href="sme/">
       <div class="cardLabel">Contrato de Receita · SME</div>
-      <div class="cardTitle">Limpeza e Higienização Escolar</div>
-      <div class="cardDesc">Monitoramento contratual da limpeza e higienização escolar.</div>
+      <div class="cardTitle">Limpeza Escolar</div>
+      <div class="cardDesc">Monitoramento contratual da limpeza escolar, postos, faltas, faturamento e glosas.</div>
       <span class="cardBadge wip">Em refatoração</span>
     </a>
-    <a class="card green" href="contratos/sms/">
+
+    <a class="card green" href="sms/">
       <div class="cardLabel">Contrato de Receita · SMS</div>
-      <div class="cardTitle">Limpeza e Desinfecção Hospitalar</div>
-      <div class="cardDesc">Monitoramento contratual da limpeza e desinfecção hospitalar.</div>
+      <div class="cardTitle">Unidades de Saúde</div>
+      <div class="cardDesc">Monitoramento contratual dos serviços vinculados à rede municipal de saúde.</div>
       <span class="cardBadge wip">Em estruturação</span>
     </a>
+
   </div>
 
   <div class="sectionLabel">Inteligência territorial</div>
   <div class="grid">
+
     <a class="card green" href="territorial/">
       <div class="cardLabel">Mapa · Operacional</div>
       <div class="cardTitle">Território Operacional</div>
       <div class="cardDesc">Malha de gerências DSU e setores DLU sobre o mapa do Rio.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
-    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+
+    <a class="card wip" onclick="return false">
       <div class="cardLabel">Mapa · Pessoas</div>
       <div class="cardTitle">Dispersão da Força</div>
       <div class="cardDesc">Localização residencial e aderência territorial dos colaboradores.</div>
       <span class="cardBadge wip">Previsto</span>
     </a>
+
   </div>
 
   <div class="sectionLabel">Presidência</div>
   <div class="grid2">
-    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+
+    <a class="card wip" onclick="return false">
       <div class="cardLabel">Painel · Presidência</div>
       <div class="cardTitle">Radar de Indicadores</div>
       <div class="cardDesc">Matriz executiva de desempenho por eixo: Pessoas, Operação, Atendimento, Sustentabilidade, Receita e Contratos.</div>
       <span class="cardBadge wip">Em desenvolvimento</span>
     </a>
-    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
+
+    <a class="card wip" onclick="return false">
       <div class="cardLabel">Painel · Atendimento</div>
-      <div class="cardTitle">1746</div>
-      <div class="cardDesc">Chamados, prazos, demanda cidadã e conformidade operacional.</div>
+      <div class="cardTitle">1746 / Ouvidoria</div>
+      <div class="cardDesc">Chamados, satisfação cidadã e análise de conformidade operacional.</div>
       <span class="cardBadge wip">Em desenvolvimento</span>
     </a>
+
   </div>
 
   <div class="footer">
-    HUB COMLURB &bull; Centro de Inteligência Operacional &bull; Gabinete da Presidência
+    HUB COMLURB · Centro de Inteligência Operacional · Gabinete da Presidência
   </div>
+
 </div>
 </body>
 </html>

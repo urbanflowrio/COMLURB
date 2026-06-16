@@ -59,30 +59,24 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-se
          onerror="this.style.display='none';document.getElementById('logoFb').style.display='block'">
     <div class="logoFallback" id="logoFb" style="display:none">PREFEITURA DO RIO | COMLURB</div>
     <div>
-      <div class="eyebrow">Gabinete da Presidência · Núcleo de Inteligência e Gestão Estratégica</div>
+      <div class="eyebrow">Gabinete da Presidência · HUB COMLURB</div>
       <div class="heroTitle">HUB COMLURB</div>
-      <div class="heroSub">Central de inteligência operacional — painéis executivos por diretoria, eixo temático e território.</div>
+      <div class="heroSub">Centro de inteligência operacional com visão executiva integrada por diretoria, contrato, território e indicadores estratégicos.</div>
     </div>
   </section>
 
   <div class="sectionLabel">Painéis operacionais</div>
   <div class="grid">
     <a class="card" href="dte/">
-      <div class="cardLabel">Painel · DTE</div>
-      <div class="cardTitle">Diretoria Técnica</div>
+      <div class="cardLabel">Painel · Área Técnica</div>
+      <div class="cardTitle">Área Técnica Operacional</div>
       <div class="cardDesc">Frota, ETR, utilização e semáforo operacional.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
     <a class="card orange" href="pessoas/">
       <div class="cardLabel">Painel · DAF / Pessoas</div>
       <div class="cardTitle">Gestão de Pessoas</div>
-      <div class="cardDesc">Força de trabalho, saúde ocupacional, afastamentos e perfil demográfico.</div>
-      <span class="cardBadge ok">Ativo</span>
-    </a>
-    <a class="card green" href="sms/">
-      <div class="cardLabel">Painel · SMS / Saúde</div>
-      <div class="cardTitle">Monitoramento Saúde</div>
-      <div class="cardDesc">Indicadores operacionais de saúde e segurança do trabalho.</div>
+      <div class="cardDesc">Força de trabalho, afastamentos, disponibilidade e perfil funcional.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
     <a class="card purple" href="ipl/">
@@ -91,17 +85,27 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-se
       <div class="cardDesc">Índice de Padrão de Limpeza por bairro, gerência e superintendência.</div>
       <span class="cardBadge ok">Ativo</span>
     </a>
+  </div>
+
+  <div class="sectionLabel">Gestão contratual</div>
+  <div class="grid">
     <a class="card orange" href="contratos/">
       <div class="cardLabel">Painel · Contratos</div>
       <div class="cardTitle">Gestão Contratual</div>
-      <div class="cardDesc">Acompanhamento executivo de contratos e fornecedores.</div>
+      <div class="cardDesc">Visão executiva dos contratos e desempenho financeiro.</div>
       <span class="cardBadge wip">Em refatoração</span>
     </a>
-    <a class="card wip" href="sme/" onclick="return false">
-      <div class="cardLabel">Painel · SME</div>
-      <div class="cardTitle">Limpeza Escolar</div>
-      <div class="cardDesc">Higienização e limpeza da rede municipal de ensino.</div>
+    <a class="card green" href="contratos/sme/">
+      <div class="cardLabel">Contrato de Receita · SME</div>
+      <div class="cardTitle">Limpeza e Higienização Escolar</div>
+      <div class="cardDesc">Monitoramento contratual da limpeza e higienização escolar.</div>
       <span class="cardBadge wip">Em refatoração</span>
+    </a>
+    <a class="card green" href="contratos/sms/">
+      <div class="cardLabel">Contrato de Receita · SMS</div>
+      <div class="cardTitle">Limpeza e Desinfecção Hospitalar</div>
+      <div class="cardDesc">Monitoramento contratual da limpeza e desinfecção hospitalar.</div>
+      <span class="cardBadge wip">Em estruturação</span>
     </a>
   </div>
 
@@ -119,32 +123,26 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-se
       <div class="cardDesc">Localização residencial e aderência territorial dos colaboradores.</div>
       <span class="cardBadge wip">Previsto</span>
     </a>
-    <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
-      <div class="cardLabel">Mapa · IPL</div>
-      <div class="cardTitle">Calor de Limpeza</div>
-      <div class="cardDesc">Heatmap de notas IPL sobre o território — visão integrada.</div>
-      <span class="cardBadge wip">Previsto</span>
-    </a>
   </div>
 
   <div class="sectionLabel">Presidência</div>
   <div class="grid2">
     <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
-      <div class="cardLabel">Painel · PRE</div>
+      <div class="cardLabel">Painel · Presidência</div>
       <div class="cardTitle">Radar de Indicadores</div>
-      <div class="cardDesc">Matriz executiva de desempenho por eixo — Pessoas, Operação, Segurança, Atendimento, Sustentabilidade, Receita.</div>
+      <div class="cardDesc">Matriz executiva de desempenho por eixo: Pessoas, Operação, Atendimento, Sustentabilidade, Receita e Contratos.</div>
       <span class="cardBadge wip">Em desenvolvimento</span>
     </a>
     <a class="card wip" onclick="return false" style="cursor:default;opacity:.55">
-      <div class="cardLabel">Painel · Ouvidoria</div>
-      <div class="cardTitle">1746 / Ouvidoria</div>
-      <div class="cardDesc">Chamados, satisfação cidadã e análise de conformidade operacional.</div>
+      <div class="cardLabel">Painel · Atendimento</div>
+      <div class="cardTitle">1746</div>
+      <div class="cardDesc">Chamados, prazos, demanda cidadã e conformidade operacional.</div>
       <span class="cardBadge wip">Em desenvolvimento</span>
     </a>
   </div>
 
   <div class="footer">
-    Gabinete da Presidência / HUB COMLURB &bull; Núcleo de Inteligência e Gestão Estratégica Operacional &bull; Greicy Moreira
+    HUB COMLURB &bull; Centro de Inteligência Operacional &bull; Gabinete da Presidência
   </div>
 </div>
 </body>

@@ -224,4 +224,3 @@ HUB.indicadores = (function () {
   };
 
 })();
-

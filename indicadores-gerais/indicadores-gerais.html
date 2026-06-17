@@ -7,6 +7,9 @@
 
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-cards.js"></script>
+<script src="../assets/js/indicadores-registro.js"></script>
 </head>
 <body>
 <div class="app">
@@ -49,193 +52,23 @@
 </div>
 
 <script>
-/* ============================================================
-   Tudo embutido nesta página (registro de indicadores + o
-   componente real HUB.cards que você me passou) pra eliminar
-   qualquer problema de caminho de arquivo nesta rodada de teste.
-   Quando estiver validado, dá pra voltar a carregar
-   assets/js/indicadores-registro.js e o hub-cards.js de verdade
-   via <script src>, em vez de deixar duplicado aqui.
-   ============================================================ */
-
-window.HUB = window.HUB || {};
-
-// shim mínimo, só entra em ação se hub-utils.js não estiver carregado nesta página
-HUB.dom = HUB.dom || { $: function (id) { return document.getElementById(id); } };
-HUB.format = HUB.format || {};
-HUB.format.esc = HUB.format.esc || function (s) {
-  return String(s).replace(/[&<>"']/g, function (c) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-  });
-};
-
-/* ---------------- HUB.indicadores (registro de eixos) ---------------- */
-
-HUB.indicadores = (function () {
-
-  const EIXOS = ['Pessoas', 'Segurança', 'Operação', 'Atendimento', 'Sustentabilidade', 'Receita'];
-
-  const REGISTRO = [
-
-    { indicador: 'Absenteísmo - Gerenciável', eixo: 'Pessoas', exibicao: 'card' },
-    { indicador: 'Adicional Noturno Realizado', eixo: 'Pessoas', exibicao: 'card' },
-    { indicador: 'Empregados Afastados', eixo: 'Pessoas', exibicao: 'card' },
-    { indicador: 'Hora Extra Realizada', eixo: 'Pessoas', exibicao: 'card' },
-    { indicador: 'Horas Domingos e Feriados Realizadas', eixo: 'Pessoas', exibicao: 'card' },
-
-    { indicador: 'Acidente de Trabalho – Típico', eixo: 'Segurança', exibicao: 'card' },
-    { indicador: 'Acidente de Trabalho – Trajeto', eixo: 'Segurança', exibicao: 'card' },
-    { indicador: 'Índice de Conformidade - PGR', eixo: 'Segurança', exibicao: 'card' },
-    { indicador: 'Taxa de Frequência de Acidentes', eixo: 'Segurança', exibicao: 'card' },
-    { indicador: 'Taxa de Gravidade de Acidentes', eixo: 'Segurança', exibicao: 'card' },
-    { indicador: 'Treinamentos Realizados (NR)', eixo: 'Segurança', exibicao: 'card' },
-
-    { indicador: 'Índice Padrão de Limpeza - IPL', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Desvio Padrão - IPL Setorial', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Índice Padrão de Roçada - IPR', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Índice de Utilização da Frota de Coleta Domiciliar', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Índice de Utilização da Frota de Remoção de Lixo Público', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Praças', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Produção do Serviço de Manejo Arbóreo', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Resíduos Coletados no RJ', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Resíduos Recebidos nas ETRs', eixo: 'Operação', exibicao: 'card' },
-    { indicador: 'Resíduos Recebidos no CTR Gericinó', eixo: 'Operação', exibicao: 'card' },
-
-    { indicador: 'Cadastro de Grandes Geradores', eixo: 'Sustentabilidade', exibicao: 'card' },
-    { indicador: 'Cadastro de Grandes Geradores com segregação de resíduos', eixo: 'Sustentabilidade', exibicao: 'card' },
-    { indicador: 'Ecopontos', eixo: 'Sustentabilidade', exibicao: 'card' },
-    { indicador: 'Índice do Coletado em Relação ao Potencial Reciclável', eixo: 'Sustentabilidade', exibicao: 'card' },
-    { indicador: 'Resíduos Desviados do Aterro', eixo: 'Sustentabilidade', exibicao: 'card' },
-    { indicador: 'Resíduos Orgânicos (Biometanização)', eixo: 'Sustentabilidade', exibicao: 'card' },
-
-    { indicador: 'Índice de Eficiência da Arrecadação - Órgãos Públicos', eixo: 'Receita', exibicao: 'card' },
-    { indicador: 'Índice de Eficiência da Arrecadação - Receitas Diversas', eixo: 'Receita', exibicao: 'card' },
-
-    { indicador: 'Índice de Atendimento das Solicitações 1746', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Solicitações 1746', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Solicitações Ouvidoria', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Performance de Atendimento da Remoção Gratuita', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Performance de Atendimento de Capina em Logradouro', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Performance de Atendimento de Controle de Roedores e Caramujos', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Performance de Atendimento de Poda de Árvore', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Tempo Médio de Atendimento - Remoção Gratuita', eixo: 'Atendimento', exibicao: 'card' },
-    { indicador: 'Tempo Médio de Atendimento - Vetores', eixo: 'Atendimento', exibicao: 'card' },
-
-    { indicador: 'Solicitações 1746 - Capina', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Capina' },
-    { indicador: 'Solicitações 1746 - Coleta', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Coleta' },
-    { indicador: 'Solicitações 1746 - Destoca de Toco e Raiz', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Destoca de Toco e Raiz' },
-    { indicador: 'Solicitações 1746 - Limpeza', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Limpeza' },
-    { indicador: 'Solicitações 1746 - Limpeza de Ralos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Limpeza de Ralos' },
-    { indicador: 'Solicitações 1746 - Poda de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Poda de Árvore' },
-    { indicador: 'Solicitações 1746 - Praças', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Praças' },
-    { indicador: 'Solicitações 1746 - Remoção de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Remoção de Árvore' },
-    { indicador: 'Solicitações 1746 - Remoção de Resíduos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Remoção de Resíduos' },
-    { indicador: 'Solicitações 1746 - Remoção Gratuita', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Remoção Gratuita' },
-    { indicador: 'Solicitações 1746 - Risco de Queda', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Risco de Queda' },
-    { indicador: 'Solicitações 1746 - Varrição', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Varrição' },
-    { indicador: 'Solicitações 1746 - Vetores', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Vetores' },
-
-    { indicador: 'Solicitações Ouvidoria - Capina', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Capina' },
-    { indicador: 'Solicitações Ouvidoria - Coleta', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Coleta' },
-    { indicador: 'Solicitações Ouvidoria - Destoca de Toco e Raiz', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Destoca de Toco e Raiz' },
-    { indicador: 'Solicitações Ouvidoria - Limpeza de Ralos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Limpeza de Ralos' },
-    { indicador: 'Solicitações Ouvidoria - Poda de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Poda de Árvore' },
-    { indicador: 'Solicitações Ouvidoria - Praças', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Praças' },
-    { indicador: 'Solicitações Ouvidoria - Remoção de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Remoção de Árvore' },
-    { indicador: 'Solicitações Ouvidoria - Remoção de Resíduos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Remoção de Resíduos' },
-    { indicador: 'Solicitações Ouvidoria - Remoção Gratuita', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Remoção Gratuita' },
-    { indicador: 'Solicitações Ouvidoria - Risco de Queda', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Risco de Queda' },
-    { indicador: 'Solicitações Ouvidoria - Varrição', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Varrição' },
-    { indicador: 'Solicitações Ouvidoria - Vetores', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Vetores' }
-
-  ];
-
-  function porIndicador(nome) { return REGISTRO.find(function (r) { return r.indicador === nome; }); }
-  function porEixo(eixo) { return REGISTRO.filter(function (r) { return r.eixo === eixo; }); }
-  function cardsDoEixo(eixo) { return REGISTRO.filter(function (r) { return r.eixo === eixo && r.exibicao === 'card'; }); }
-  function drillsDoCard(nomeCardPai) { return REGISTRO.filter(function (r) { return r.cardPai === nomeCardPai; }); }
-  function getEixo(nome) { const r = porIndicador(nome); return r ? r.eixo : null; }
-  function ehCard(nome) { const r = porIndicador(nome); return r ? r.exibicao === 'card' : false; }
-  function listaIndicadoresValidos() { return REGISTRO.map(function (r) { return r.indicador; }); }
-
-  return {
-    EIXOS: EIXOS, REGISTRO: REGISTRO, porIndicador: porIndicador, porEixo: porEixo,
-    cardsDoEixo: cardsDoEixo, drillsDoCard: drillsDoCard, getEixo: getEixo,
-    ehCard: ehCard, listaIndicadoresValidos: listaIndicadoresValidos
-  };
-
-})();
-
-/* ---------------- HUB.cards (componente real, igual ao seu hub-cards.js) ---------------- */
-
-HUB.cards = {
-  render(containerId, kpis) {
-    const container = HUB.dom.$(containerId);
-    if (!container) {
-      console.warn(`Container ${containerId} não encontrado`);
-      return;
-    }
-    container.innerHTML = kpis.map(kpi => this._renderCard(kpi)).join("");
-  },
-
-  _renderCard(kpi) {
-    const {
-      label, value, note = "", color = "", feature = false, onclick = "",
-      format = "int", customFormatter = null, tooltip = ""
-    } = kpi;
-
-    let formattedValue;
-    if (customFormatter) {
-      formattedValue = customFormatter(value);
-    } else if (format === "pct") {
-      formattedValue = HUB.format.pct(value);
-    } else {
-      formattedValue = HUB.format.int(value);
-    }
-
-    const classes = ["kpi", feature ? "feature" : "", color ? color : ""].filter(Boolean).join(" ");
-
-    const attrs = [
-      onclick ? `onclick="${onclick}"` : "",
-      onclick ? 'style="cursor:pointer"' : "",
-      tooltip ? `data-tooltip="${HUB.format.esc(tooltip)}"` : ""
-    ].filter(Boolean).join(" ");
-
-    return `
-      <div class="${classes}" ${attrs}>
-        <div class="label">${HUB.format.esc(label)}</div>
-        <div class="value">${formattedValue}</div>
-        ${note ? `<div class="note">${HUB.format.esc(note)}</div>` : ""}
-      </div>
-    `;
-  },
-
-  update(containerId, updates) {
-    const container = HUB.dom.$(containerId);
-    if (!container) return;
-    Object.entries(updates).forEach(([label, value]) => {
-      const card = [...container.querySelectorAll(".kpi")].find(
-        el => el.querySelector(".label")?.textContent === label
-      );
-      if (card) {
-        const valueEl = card.querySelector(".value");
-        if (valueEl) valueEl.textContent = HUB.format.int(value);
-      }
-    });
-  }
-};
-
-/* ---------------- lógica desta página ---------------- */
-
 (function () {
+
+  // shim mínimo, só entra em ação se hub-utils.js falhar ao carregar
+  window.HUB = window.HUB || {};
+  HUB.dom = HUB.dom || { $: function (id) { return document.getElementById(id); } };
+  HUB.format = HUB.format || {};
+  HUB.format.esc = HUB.format.esc || function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
 
   const CONFIG = {
     csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv',
     diretoriaDefault: 'COMLURB',
     limiteAtencao: 0.10 // desvio percentual da meta até virar "crítico". É um rascunho, ajustar com a Greicy.
   };
-
-  const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
   const IDS_EIXO = {
     'Pessoas': 'grid-pessoas',
@@ -246,110 +79,42 @@ HUB.cards = {
     'Receita': 'grid-receita'
   };
 
+  const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
+
   let DATA = [];
   let anoSelecionado = null;
   let diretoriaSelecionada = CONFIG.diretoriaDefault;
 
-  function parseNumeroBR(v) {
-    if (v === undefined || v === null) return null;
-    const s = String(v).trim();
-    if (s === '' || s === '-') return null;
-    const n = parseFloat(s.replace(',', '.'));
-    return isNaN(n) ? null : n;
-  }
-
-  function linhaCorporativa(indicador, diretoria, ano) {
-    return DATA.find(function (r) {
-      return r.Indicador === indicador &&
-        r.Diretoria === diretoria &&
-        r['Superint.'] === '-' &&
-        r['Gerência'] === '-' &&
-        String(r.Ano) === String(ano);
-    });
-  }
-
-  const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
-
-  function calcularStatus(valor, meta, sentido) {
-    if (valor === null) return { cor: '', label: 'sem dado' };
-    if (meta === null) return { cor: '', label: 'sem meta definida' };
-    const atingiu = sentido === '↑' ? valor >= meta : valor <= meta;
-    if (atingiu) return { cor: 'green', label: 'dentro da meta' };
-    if (meta === 0) return { cor: 'red', label: 'crítico' };
-    const desvio = sentido === '↑' ? (meta - valor) / Math.abs(meta) : (valor - meta) / Math.abs(meta);
-    if (desvio <= CONFIG.limiteAtencao) return { cor: 'orange', label: 'atenção' };
-    return { cor: 'red', label: 'crítico' };
-  }
-
-  // tendência simples: olha as transições mês a mês e conta quantos ciclos
-  // consecutivos mantêm a mesma direção, a partir do mês mais recente.
-  // Sem gráfico, sem sparkline, só o texto.
-  function calcularTendencia(row, sentido) {
-    const valores = [];
-    MESES.forEach(function (m) {
-      const v = parseNumeroBR(row[m]);
-      if (v !== null) valores.push(v);
-    });
-    if (valores.length < 2) return null;
-
-    const direcoes = [];
-    for (let i = 1; i < valores.length; i++) {
-      const diff = valores[i] - valores[i - 1];
-      direcoes.push(Math.abs(diff) < 1e-9 ? 0 : (diff > 0 ? 1 : -1));
-    }
-
-    const ultimaDirecao = direcoes[direcoes.length - 1];
-    if (ultimaDirecao === 0) return { simbolo: '→', texto: 'estável', ciclos: 0 };
-
-    let ciclos = 0;
-    for (let i = direcoes.length - 1; i >= 0; i--) {
-      if (direcoes[i] === ultimaDirecao) ciclos++;
-      else break;
-    }
-
-    const melhorando = (sentido === '↑' && ultimaDirecao === 1) || (sentido === '↓' && ultimaDirecao === -1);
-    return { simbolo: melhorando ? '↑' : '↓', texto: melhorando ? 'melhorando' : 'piorando', ciclos: ciclos };
-  }
-
   function montarKpi(registroEntry) {
-    const indicadorNome = registroEntry.indicador;
-    const row = linhaCorporativa(indicadorNome, diretoriaSelecionada, anoSelecionado);
+    const av = HUB.indicadores.avaliarIndicador(DATA, registroEntry.indicador, diretoriaSelecionada, anoSelecionado, CONFIG.limiteAtencao);
 
-    if (!row) {
+    if (!av.row) {
       return {
-        eixo: registroEntry.eixo, label: indicadorNome, value: null, color: '',
+        eixo: registroEntry.eixo, label: registroEntry.indicador, value: null, color: '',
         note: 'sem dado para esse recorte', format: 'custom', customFormatter: function () { return '—'; }
       };
     }
 
-    const acumulado = parseNumeroBR(row.Acumulado);
-    const meta = parseNumeroBR(row.Meta);
-    const sentido = row.Sentido;
-    const unidade = row.Unidade || '';
-    const status = calcularStatus(acumulado, meta, sentido);
-    const tendencia = calcularTendencia(row, sentido);
-
     const partesNota = [];
-    if (meta !== null && acumulado !== null) {
-      const delta = acumulado - meta;
-      const sinal = delta > 0 ? '+' : '';
-      partesNota.push('meta ' + meta.toLocaleString('pt-BR') + unidade);
-      partesNota.push('Δ ' + sinal + delta.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + unidade);
-      if (tendencia) partesNota.push(tendencia.simbolo + ' ' + tendencia.texto + (tendencia.ciclos > 1 ? ' há ' + tendencia.ciclos + ' ciclos' : ''));
-      partesNota.push(status.label);
+    if (av.meta !== null && av.acumulado !== null) {
+      const sinal = av.delta > 0 ? '+' : '';
+      partesNota.push('meta ' + av.meta.toLocaleString('pt-BR') + av.unidade);
+      partesNota.push('Δ ' + sinal + av.delta.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + av.unidade);
+      if (av.tendencia) partesNota.push(av.tendencia.simbolo + ' ' + av.tendencia.texto + (av.tendencia.ciclos > 1 ? ' há ' + av.tendencia.ciclos + ' ciclos' : ''));
+      partesNota.push(av.status.label);
     } else {
       partesNota.push('sem meta definida');
-      if (tendencia) partesNota.push(tendencia.simbolo + ' ' + tendencia.texto + (tendencia.ciclos > 1 ? ' há ' + tendencia.ciclos + ' ciclos' : ''));
+      if (av.tendencia) partesNota.push(av.tendencia.simbolo + ' ' + av.tendencia.texto + (av.tendencia.ciclos > 1 ? ' há ' + av.tendencia.ciclos + ' ciclos' : ''));
     }
 
     return {
       eixo: registroEntry.eixo,
-      label: indicadorNome,
-      value: acumulado,
+      label: registroEntry.indicador,
+      value: av.acumulado,
       note: partesNota.join(' · '),
-      color: status.cor,
+      color: av.status.cor,
       format: 'custom',
-      customFormatter: function (v) { return v === null ? '—' : v.toLocaleString('pt-BR') + unidade; }
+      customFormatter: function (v) { return v === null ? '—' : v.toLocaleString('pt-BR') + av.unidade; }
     };
   }
 
@@ -395,9 +160,7 @@ HUB.cards = {
     const conteudo = document.getElementById('conteudo');
     conteudo.innerHTML = '';
 
-    const todosKpis = HUB.indicadores.REGISTRO
-      .filter(function (r) { return r.exibicao === 'card'; })
-      .map(montarKpi);
+    const todosKpis = HUB.indicadores.todosOsCards().map(montarKpi);
 
     renderResumo(todosKpis);
 

@@ -1,1 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indicadores Gerais · HUB COMLURB</title>
 
+<link rel="stylesheet" href="../assets/css/hub-premium.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<!-- Sem Chart.js aqui de propósito: essa é a visão corporativa, sem gráfico.
+     Gráfico só entra depois, no modo Ficha de cada indicador. -->
+
+<style>
+  /* Fallback mínimo, usando os mesmos tokens já em uso no HUB.
+     Se hub-premium.css carregar certo, essas regras só reforçam. */
+  :root{
+    --bg:#0d1f36; --border:#294866; --text:#f7f9ff; --muted:#b8c9de;
+    --blue:#5b9bd5; --orange:#e87535; --green:#78aaa3; --red:#ef6a5d; --purple:#a78bfa;
+  }
+  body{ background:var(--bg); color:var(--text); font-family:Arial, sans-serif; margin:0; }
+  .app{ max-width:1200px; margin:0 auto; padding:24px; }
+  .header{ border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:24px; }
+  .header h1{ font-size:1.4rem; font-weight:600; margin:0 0 4px; }
+  .header .subtitle{ color:var(--muted); font-size:0.9rem; }
+  .filters{ display:flex; gap:16px; margin:16px 0; }
+  .filters .field label{ display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px; }
+  .filters select{ background:var(--bg); color:var(--text); border:1px solid var(--border); padding:6px 10px; border-radius:4px; }
+  .panel{ border:1px solid var(--border); border-radius:6px; margin-bottom:24px; }
+  .panelHead{ padding:12px 16px; border-bottom:1px solid var(--border); font-weight:600; display:flex; justify-content:space-between; }
+  .panelHead .count{ color:var(--muted); font-weight:400; font-size:0.85rem; }
+  .panel .body{ padding:16px; }
+  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:800px){ .grid{ grid-template-columns:1fr; } }
+  .kpi{ border:1px solid var(--border); border-radius:6px; padding:12px; }
+  .kpi .label{ font-size:0.8rem; color:var(--muted); margin-bottom:6px; }
+  .kpi .value{ font-size:1.5rem; font-weight:700; }
+  .kpi .note{ font-size:0.75rem; color:var(--muted); margin-top:6px; }
+  .kpi.green .value{ color:var(--green); }
+  .kpi.orange .value{ color:var(--orange); }
+  .kpi.red .value{ color:var(--red); }
+  .kpi.neutral .value{ color:var(--text); }
+  .loading, .errorState{ text-align:center; padding:40px; color:var(--muted); }
+  .errorState{ color:var(--red); border:1px solid var(--red); border-radius:6px; }
+  .footer{ border-top:1px solid var(--border); margin-top:32px; padding-top:16px; color:var(--muted); font-size:0.75rem; text-align:center; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>Indicadores Gerais</h1>
+    <div class="subtitle">Gabinete da Presidência / HUB COMLURB</div>
+    <div class="filters">
+      <div class="field">
+        <label for="filtroAno">Ano</label>
+        <select id="filtroAno"></select>
+      </div>
+      <div class="field">
+        <label for="filtroDiretoria">Diretoria</label>
+        <select id="filtroDiretoria"></select>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading" class="loading">Carregando dados...</div>
+  <div id="errorState" class="errorState" style="display:none"></div>
+  <div id="conteudo" style="display:none"></div>
+
+  <div class="footer">
+    Gabinete da Presidência / HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional<br>
+    Greicy Moreira
+  </div>
+
+</div>
+
+<script src="../assets/js/indicadores-registro.js"></script>
+<script>
+(function(){
+
+  const CONFIG = {
+    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv',
+    diretoriaDefault: 'COMLURB',
+    limiteAtencao: 0.10 // desvio percentual da meta até virar "crítico". É um rascunho, ajustar com a Greicy.
+  };
+
+  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+  let DATA = [];
+  let anoSelecionado = null;
+  let diretoriaSelecionada = CONFIG.diretoriaDefault;
+
+  function parseNumeroBR(v) {
+    if (v === undefined || v === null) return null;
+    const s = String(v).trim();
+    if (s === '' || s === '-') return null;
+    const n = parseFloat(s.replace(',', '.'));
+    return isNaN(n) ? null : n;
+  }
+
+  function linhaCorporativa(indicador, diretoria, ano) {
+    return DATA.find(function(r){
+      return r.Indicador === indicador &&
+             r.Diretoria === diretoria &&
+             r['Superint.'] === '-' &&
+             r['Gerência'] === '-' &&
+             String(r.Ano) === String(ano);
+    });
+  }
+
+  function valorMesMaisRecente(row) {
+    for (let i = MESES.length - 1; i >= 0; i--) {
+      const v = parseNumeroBR(row[MESES[i]]);
+      if (v !== null) return { mes: MESES[i], valor: v };
+    }
+    return null;
+  }
+
+  function calcularStatus(valor, meta, sentido) {
+    if (valor === null) return { classe: '', label: 'sem dado' };
+    if (meta === null) return { classe: 'neutral', label: 'sem meta definida' };
+    const atingiu = sentido === '↑' ? valor >= meta : valor <= meta;
+    if (atingiu) return { classe: 'green', label: 'dentro da meta' };
+    if (meta === 0) return { classe: 'red', label: 'crítico' };
+    const desvio = sentido === '↑' ? (meta - valor) / Math.abs(meta) : (valor - meta) / Math.abs(meta);
+    if (desvio <= CONFIG.limiteAtencao) return { classe: 'orange', label: 'atenção' };
+    return { classe: 'red', label: 'crítico' };
+  }
+
+  function renderCard(indicadorNome) {
+    const row = linhaCorporativa(indicadorNome, diretoriaSelecionada, anoSelecionado);
+    const div = document.createElement('div');
+
+    if (!row) {
+      div.className = 'kpi';
+      div.innerHTML = '<div class="label">' + indicadorNome + '</div><div class="note">sem dado para esse recorte</div>';
+      return div;
+    }
+
+    const acumulado = parseNumeroBR(row.Acumulado);
+    const meta = parseNumeroBR(row.Meta);
+    const sentido = row.Sentido;
+    const unidade = row.Unidade || '';
+    const status = calcularStatus(acumulado, meta, sentido);
+    const mesRecente = valorMesMaisRecente(row);
+
+    div.className = 'kpi ' + status.classe;
+    div.innerHTML =
+      '<div class="label">' + indicadorNome + '</div>' +
+      '<div class="value">' + (acumulado !== null ? acumulado.toLocaleString('pt-BR') + unidade : '—') + '</div>' +
+      '<div class="note">' +
+        (meta !== null ? 'meta ' + meta.toLocaleString('pt-BR') + unidade + ' · ' : 'sem meta definida · ') +
+        status.label +
+        (mesRecente ? ' · último mês: ' + mesRecente.mes : '') +
+      '</div>';
+    return div;
+  }
+
+  function renderEixo(eixo) {
+    const cards = HUB.indicadores.cardsDoEixo(eixo);
+    const panel = document.createElement('div');
+    panel.className = 'panel';
+    panel.innerHTML = '<div class="panelHead">' + eixo + '<span class="count">' + cards.length + ' indicadores</span></div>';
+    const body = document.createElement('div');
+    body.className = 'body';
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    cards.forEach(function(c){ grid.appendChild(renderCard(c.indicador)); });
+    body.appendChild(grid);
+    panel.appendChild(body);
+    return panel;
+  }
+
+  function render() {
+    const conteudo = document.getElementById('conteudo');
+    conteudo.innerHTML = '';
+    HUB.indicadores.EIXOS.forEach(function(eixo){
+      conteudo.appendChild(renderEixo(eixo));
+    });
+  }
+
+  function popularFiltros() {
+    const anos = Array.from(new Set(DATA.map(function(r){ return r.Ano; }))).sort();
+    const selAno = document.getElementById('filtroAno');
+    selAno.innerHTML = anos.map(function(a){ return '<option value="' + a + '">' + a + '</option>'; }).join('');
+    anoSelecionado = anos[anos.length - 1];
+    selAno.value = anoSelecionado;
+    selAno.onchange = function(){ anoSelecionado = this.value; render(); };
+
+    const diretorias = Array.from(new Set(
+      DATA.filter(function(r){ return r['Superint.'] === '-' && r['Gerência'] === '-'; })
+          .map(function(r){ return r.Diretoria; })
+    )).sort();
+    const selDir = document.getElementById('filtroDiretoria');
+    selDir.innerHTML = diretorias.map(function(d){ return '<option value="' + d + '">' + d + '</option>'; }).join('');
+    selDir.value = diretoriaSelecionada;
+    selDir.onchange = function(){ diretoriaSelecionada = this.value; render(); };
+  }
+
+  function init() {
+    Papa.parse(CONFIG.csvUrl, {
+      download: true,
+      header: true,
+      complete: function(results) {
+        DATA = results.data.filter(function(r){ return r.Indicador; });
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('conteudo').style.display = 'block';
+        popularFiltros();
+        render();
+      },
+      error: function(err) {
+        document.getElementById('loading').style.display = 'none';
+        const el = document.getElementById('errorState');
+        el.style.display = 'block';
+        el.textContent = 'Não foi possível carregar os dados da planilha. Verifique se o CSV ainda está publicado (Arquivo > Compartilhar > Publicar na Web).';
+      }
+    });
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>

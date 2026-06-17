@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar PRE · HUB COMLURB</title>
+
+<link rel="stylesheet" href="../assets/css/hub-premium.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-cards.js"></script>
+<script src="../assets/js/indicadores-registro.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="logoWrap">
+      <!-- troca por <img class="logoImg" src="../assets/logos/SEU-ARQUIVO.png" alt="COMLURB"> quando me passar o nome do arquivo -->
+      <div class="logoTextFallback">COMLURB</div>
+    </div>
+    <div class="headerContent">
+      <div class="systemLabel">HUB COMLURB</div>
+      <h1 class="mainTitle">Radar PRE</h1>
+      <div class="subtitle">Briefing Executivo · Gabinete da Presidência</div>
+    </div>
+  </div>
+
+  <div class="filters" style="grid-template-columns: 1fr auto;">
+    <div class="field">
+      <label for="filtroAno">Ano</label>
+      <select id="filtroAno"></select>
+    </div>
+  </div>
+
+  <div id="loading" class="loading">Carregando dados...</div>
+  <div id="errorState" class="empty" style="display:none; color:var(--vermelho)"></div>
+  <div id="conteudo" style="display:none">
+
+    <!-- SÍNTESE EXECUTIVA: texto editado à mão por enquanto.
+         Sprint 2 troca isso por leitura de uma aba RADAR_PRE_EDITORIAL na planilha. -->
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="body">
+        <p id="sinteseTexto" style="margin:0; font-size:16px; line-height:1.5; color:var(--texto);">
+          Texto de síntese editorial. Ajuste este parágrafo a cada ciclo com a leitura institucional do momento, este é só um espaço reservado.
+        </p>
+      </div>
+    </div>
+
+    <div id="kpis-resumo" class="kpis" style="margin-bottom:24px;"></div>
+
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="panelHead"><h2>Matriz Executiva</h2><span class="hint">por eixo estratégico</span></div>
+      <div class="body" id="matrizEixos"></div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:24px;">
+      <div class="panel">
+        <div class="panelHead"><h2>Top Riscos</h2><span class="hint">maior desvio da meta</span></div>
+        <div class="body" id="topDesvios"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><h2>Top Evoluções</h2><span class="hint">tendência mecânica</span></div>
+        <div class="body">
+          <div style="margin-bottom:14px;">
+            <div class="hint" style="margin-bottom:6px;">Maior deterioração</div>
+            <div id="topPiora"></div>
+          </div>
+          <div>
+            <div class="hint" style="margin-bottom:6px;">Maior evolução</div>
+            <div id="topMelhora"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="panelHead"><h2>Resultado por Diretoria</h2><span class="hint">indicadores que cada diretoria reporta</span></div>
+      <div class="body" id="resultadoDiretorias"></div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="footerContent">
+      Gabinete da Presidência / HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional<br>
+      Greicy Moreira
+      <div class="footerTimestamp" id="footerTimestamp"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+
+  // shim mínimo, só entra em ação se hub-utils.js falhar ao carregar
+  window.HUB = window.HUB || {};
+  HUB.dom = HUB.dom || { $: function (id) { return document.getElementById(id); } };
+  HUB.format = HUB.format || {};
+  HUB.format.esc = HUB.format.esc || function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+
+  const CONFIG = {
+    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv',
+    corporativo: 'COMLURB',
+    limiteAtencao: 0.10,
+    topN: 5
+  };
+
+  let DATA = [];
+  let anoSelecionado = null;
+
+  function tagClasse(cor) {
+    if (cor === 'green') return 'tag ok';
+    if (cor === 'orange') return 'tag att';
+    if (cor === 'red') return 'tag crit';
+    return 'tag';
+  }
+
+  function avaliarTodos() {
+    return HUB.indicadores.todosOsCards().map(function (entry) {
+      const av = HUB.indicadores.avaliarIndicador(DATA, entry.indicador, CONFIG.corporativo, anoSelecionado, CONFIG.limiteAtencao);
+      av.eixo = entry.eixo;
+      return av;
+    });
+  }
+
+  function renderResumo(avaliacoes) {
+    const cont = { green: 0, orange: 0, red: 0, semMeta: 0 };
+    avaliacoes.forEach(function (av) {
+      if (av.status.cor === 'green') cont.green++;
+      else if (av.status.cor === 'orange') cont.orange++;
+      else if (av.status.cor === 'red') cont.red++;
+      else cont.semMeta++;
+    });
+
+    HUB.cards.render('kpis-resumo', [
+      { label: 'Indicadores monitorados', value: avaliacoes.length, feature: true, format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Dentro da meta', value: cont.green, color: 'green', format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Em atenção', value: cont.orange, color: 'orange', format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Críticos', value: cont.red, color: 'red', format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Sem meta ou dado', value: cont.semMeta, format: 'custom', customFormatter: function (v) { return String(v); } }
+    ]);
+  }
+
+  function renderMatriz(avaliacoes) {
+    const porEixo = HUB.indicadores.EIXOS.map(function (eixo) {
+      const itens = avaliacoes.filter(function (av) { return av.eixo === eixo; });
+      const green = itens.filter(function (a) { return a.status.cor === 'green'; }).length;
+      const red = itens.filter(function (a) { return a.status.cor === 'red'; }).length;
+      const orange = itens.filter(function (a) { return a.status.cor === 'orange'; }).length;
+      const pct = itens.length ? Math.round((green / itens.length) * 100) : 0;
+      const corFill = red > 0 ? 'red' : (orange > 0 ? 'orange' : (green > 0 ? 'green' : ''));
+      return { eixo: eixo, total: itens.length, green: green, orange: orange, red: red, pct: pct, corFill: corFill };
+    });
+
+    porEixo.sort(function (a, b) { return b.red - a.red || b.orange - a.orange; });
+
+    const html = porEixo.map(function (e) {
+      return '<div class="barRow">' +
+        '<div class="barName">' + HUB.format.esc(e.eixo) + '</div>' +
+        '<div class="track"><div class="fill ' + e.corFill + '" style="width:' + e.pct + '%"></div></div>' +
+        '<div class="num">' + e.red + ' crít.</div>' +
+        '<div class="pct">' + e.pct + '%</div>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById('matrizEixos').innerHTML = html;
+  }
+
+  function renderResultadoDiretorias() {
+    const diretorias = Array.from(new Set(
+      DATA.filter(function (r) { return r['Superint.'] === '-' && r['Gerência'] === '-' && r.Diretoria !== CONFIG.corporativo; })
+        .map(function (r) { return r.Diretoria; })
+    ));
+
+    const resultado = diretorias.map(function (dir) {
+      let total = 0, green = 0, orange = 0, red = 0;
+      HUB.indicadores.todosOsCards().forEach(function (entry) {
+        const av = HUB.indicadores.avaliarIndicador(DATA, entry.indicador, dir, anoSelecionado, CONFIG.limiteAtencao);
+        if (!av.row) return; // esse indicador não se aplica a essa diretoria
+        total++;
+        if (av.status.cor === 'green') green++;
+        else if (av.status.cor === 'orange') orange++;
+        else if (av.status.cor === 'red') red++;
+      });
+      const pct = total ? Math.round((green / total) * 100) : 0;
+      const corFill = red > 0 ? 'red' : (orange > 0 ? 'orange' : (green > 0 ? 'green' : ''));
+      return { dir: dir, total: total, green: green, orange: orange, red: red, pct: pct, corFill: corFill };
+    }).filter(function (r) { return r.total > 0; });
+
+    resultado.sort(function (a, b) { return b.red - a.red || b.orange - a.orange; });
+
+    const html = resultado.map(function (r) {
+      return '<div class="barRow">' +
+        '<div class="barName">' + HUB.format.esc(r.dir) + '</div>' +
+        '<div class="track"><div class="fill ' + r.corFill + '" style="width:' + r.pct + '%"></div></div>' +
+        '<div class="num">' + r.red + ' crít.</div>' +
+        '<div class="pct">' + r.pct + '%</div>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById('resultadoDiretorias').innerHTML = html || '<div class="empty">sem diretorias com dado nesse ano</div>';
+  }
+
+  function linhaSimples(label, direita) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--linha);gap:12px;">' +
+      '<div style="flex:1;min-width:0;color:var(--texto);">' + HUB.format.esc(label) + '</div>' +
+      direita +
+      '</div>';
+  }
+
+  function renderTopDesvios(avaliacoes) {
+    const lista = avaliacoes
+      .filter(function (av) { return av.status.desvio !== null && av.status.desvio > 0; })
+      .sort(function (a, b) { return b.status.desvio - a.status.desvio; })
+      .slice(0, CONFIG.topN);
+
+    const html = lista.map(function (av) {
+      const sinal = av.delta > 0 ? '+' : '';
+      const direita =
+        '<div style="color:var(--silenciado);font-size:13px;white-space:nowrap;">Δ ' + sinal + av.delta.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + av.unidade + '</div>' +
+        '<span class="' + tagClasse(av.status.cor) + '">' + av.status.label + '</span>';
+      return linhaSimples(av.indicador, direita);
+    }).join('');
+
+    document.getElementById('topDesvios').innerHTML = html || '<div class="empty">nenhum desvio com meta definida nesse recorte</div>';
+  }
+
+  function renderTopTendencia(avaliacoes, direcaoTexto, containerId) {
+    const lista = avaliacoes
+      .filter(function (av) { return av.tendencia && av.tendencia.texto === direcaoTexto; })
+      .sort(function (a, b) { return b.tendencia.ciclos - a.tendencia.ciclos; })
+      .slice(0, CONFIG.topN);
+
+    const html = lista.map(function (av) {
+      const direita = '<div style="color:var(--silenciado);font-size:13px;white-space:nowrap;">' +
+        av.tendencia.simbolo + ' ' + (av.tendencia.ciclos > 1 ? 'há ' + av.tendencia.ciclos + ' ciclos' : '') + '</div>';
+      return linhaSimples(av.indicador, direita);
+    }).join('');
+
+    document.getElementById(containerId).innerHTML = html || '<div class="empty">nenhum indicador nessa direção no momento</div>';
+  }
+
+  function render() {
+    const avaliacoes = avaliarTodos();
+    renderResumo(avaliacoes);
+    renderMatriz(avaliacoes);
+    renderTopDesvios(avaliacoes);
+    renderTopTendencia(avaliacoes, 'piorando', 'topPiora');
+    renderTopTendencia(avaliacoes, 'melhorando', 'topMelhora');
+    renderResultadoDiretorias();
+  }
+
+  function popularFiltros() {
+    const anos = Array.from(new Set(DATA.map(function (r) { return r.Ano; }))).sort();
+    const selAno = document.getElementById('filtroAno');
+    selAno.innerHTML = anos.map(function (a) { return '<option value="' + a + '">' + a + '</option>'; }).join('');
+    anoSelecionado = anos[anos.length - 1];
+    selAno.value = anoSelecionado;
+    selAno.onchange = function () { anoSelecionado = this.value; render(); };
+  }
+
+  function init() {
+    Papa.parse(CONFIG.csvUrl, {
+      download: true,
+      header: true,
+      complete: function (results) {
+        DATA = results.data.filter(function (r) { return r.Indicador; });
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('conteudo').style.display = 'block';
+        document.getElementById('footerTimestamp').textContent = 'Atualizado em ' + new Date().toLocaleString('pt-BR');
+        popularFiltros();
+        render();
+      },
+      error: function () {
+        document.getElementById('loading').style.display = 'none';
+        const el = document.getElementById('errorState');
+        el.style.display = 'block';
+        el.textContent = 'Não foi possível carregar os dados da planilha. Verifique se o CSV ainda está publicado (Arquivo > Compartilhar > Publicar na Web).';
+      }
+    });
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>

@@ -6,77 +6,228 @@
 <title>Indicadores Gerais · HUB COMLURB</title>
 
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<!-- Sem Chart.js aqui de propósito: essa é a visão corporativa, sem gráfico.
-     Gráfico só entra depois, no modo Ficha de cada indicador. -->
-
-<style>
-  /* Fallback mínimo, usando os mesmos tokens já em uso no HUB.
-     Se hub-premium.css carregar certo, essas regras só reforçam. */
-  :root{
-    --bg:#0d1f36; --border:#294866; --text:#f7f9ff; --muted:#b8c9de;
-    --blue:#5b9bd5; --orange:#e87535; --green:#78aaa3; --red:#ef6a5d; --purple:#a78bfa;
-  }
-  body{ background:var(--bg); color:var(--text); font-family:Arial, sans-serif; margin:0; }
-  .app{ max-width:1200px; margin:0 auto; padding:24px; }
-  .header{ border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:24px; }
-  .header h1{ font-size:1.4rem; font-weight:600; margin:0 0 4px; }
-  .header .subtitle{ color:var(--muted); font-size:0.9rem; }
-  .filters{ display:flex; gap:16px; margin:16px 0; }
-  .filters .field label{ display:block; font-size:0.75rem; color:var(--muted); margin-bottom:4px; }
-  .filters select{ background:var(--bg); color:var(--text); border:1px solid var(--border); padding:6px 10px; border-radius:4px; }
-  .panel{ border:1px solid var(--border); border-radius:6px; margin-bottom:24px; }
-  .panelHead{ padding:12px 16px; border-bottom:1px solid var(--border); font-weight:600; display:flex; justify-content:space-between; }
-  .panelHead .count{ color:var(--muted); font-weight:400; font-size:0.85rem; }
-  .panel .body{ padding:16px; }
-  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-  @media (max-width:800px){ .grid{ grid-template-columns:1fr; } }
-  .kpi{ border:1px solid var(--border); border-radius:6px; padding:12px; }
-  .kpi .label{ font-size:0.8rem; color:var(--muted); margin-bottom:6px; }
-  .kpi .value{ font-size:1.5rem; font-weight:700; }
-  .kpi .note{ font-size:0.75rem; color:var(--muted); margin-top:6px; }
-  .kpi.green .value{ color:var(--green); }
-  .kpi.orange .value{ color:var(--orange); }
-  .kpi.red .value{ color:var(--red); }
-  .kpi.neutral .value{ color:var(--text); }
-  .loading, .errorState{ text-align:center; padding:40px; color:var(--muted); }
-  .errorState{ color:var(--red); border:1px solid var(--red); border-radius:6px; }
-  .footer{ border-top:1px solid var(--border); margin-top:32px; padding-top:16px; color:var(--muted); font-size:0.75rem; text-align:center; }
-</style>
 </head>
 <body>
 <div class="app">
 
   <div class="header">
-    <h1>Indicadores Gerais</h1>
-    <div class="subtitle">Gabinete da Presidência / HUB COMLURB</div>
-    <div class="filters">
-      <div class="field">
-        <label for="filtroAno">Ano</label>
-        <select id="filtroAno"></select>
-      </div>
-      <div class="field">
-        <label for="filtroDiretoria">Diretoria</label>
-        <select id="filtroDiretoria"></select>
-      </div>
+    <div class="logoWrap">
+      <!-- troca por <img class="logoImg" src="../assets/logos/SEU-ARQUIVO.png" alt="COMLURB"> quando me passar o nome do arquivo -->
+      <div class="logoTextFallback">COMLURB</div>
+    </div>
+    <div class="headerContent">
+      <div class="systemLabel">HUB COMLURB</div>
+      <h1 class="mainTitle">Indicadores Gerais</h1>
+      <div class="subtitle">Gabinete da Presidência · Núcleo de Inteligência e Gestão Estratégica Operacional</div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="field">
+      <label for="filtroAno">Ano</label>
+      <select id="filtroAno"></select>
+    </div>
+    <div class="field">
+      <label for="filtroDiretoria">Diretoria</label>
+      <select id="filtroDiretoria"></select>
     </div>
   </div>
 
   <div id="loading" class="loading">Carregando dados...</div>
-  <div id="errorState" class="errorState" style="display:none"></div>
+  <div id="errorState" class="empty" style="display:none; color:var(--vermelho)"></div>
   <div id="conteudo" style="display:none"></div>
 
   <div class="footer">
-    Gabinete da Presidência / HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional<br>
-    Greicy Moreira
+    <div class="footerContent">
+      Gabinete da Presidência / HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional<br>
+      Greicy Moreira
+      <div class="footerTimestamp" id="footerTimestamp"></div>
+    </div>
   </div>
 
 </div>
 
-<script src="../assets/js/indicadores-registro.js"></script>
 <script>
-(function(){
+/* ============================================================
+   Tudo embutido nesta página (registro de indicadores + o
+   componente real HUB.cards que você me passou) pra eliminar
+   qualquer problema de caminho de arquivo nesta rodada de teste.
+   Quando estiver validado, dá pra voltar a carregar
+   assets/js/indicadores-registro.js e o hub-cards.js de verdade
+   via <script src>, em vez de deixar duplicado aqui.
+   ============================================================ */
+
+window.HUB = window.HUB || {};
+
+// shim mínimo, só entra em ação se hub-utils.js não estiver carregado nesta página
+HUB.dom = HUB.dom || { $: function (id) { return document.getElementById(id); } };
+HUB.format = HUB.format || {};
+HUB.format.esc = HUB.format.esc || function (s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+};
+
+/* ---------------- HUB.indicadores (registro de eixos) ---------------- */
+
+HUB.indicadores = (function () {
+
+  const EIXOS = ['Pessoas', 'Segurança', 'Operação', 'Atendimento', 'Sustentabilidade', 'Receita'];
+
+  const REGISTRO = [
+
+    { indicador: 'Absenteísmo - Gerenciável', eixo: 'Pessoas', exibicao: 'card' },
+    { indicador: 'Adicional Noturno Realizado', eixo: 'Pessoas', exibicao: 'card' },
+    { indicador: 'Empregados Afastados', eixo: 'Pessoas', exibicao: 'card' },
+    { indicador: 'Hora Extra Realizada', eixo: 'Pessoas', exibicao: 'card' },
+    { indicador: 'Horas Domingos e Feriados Realizadas', eixo: 'Pessoas', exibicao: 'card' },
+
+    { indicador: 'Acidente de Trabalho – Típico', eixo: 'Segurança', exibicao: 'card' },
+    { indicador: 'Acidente de Trabalho – Trajeto', eixo: 'Segurança', exibicao: 'card' },
+    { indicador: 'Índice de Conformidade - PGR', eixo: 'Segurança', exibicao: 'card' },
+    { indicador: 'Taxa de Frequência de Acidentes', eixo: 'Segurança', exibicao: 'card' },
+    { indicador: 'Taxa de Gravidade de Acidentes', eixo: 'Segurança', exibicao: 'card' },
+    { indicador: 'Treinamentos Realizados (NR)', eixo: 'Segurança', exibicao: 'card' },
+
+    { indicador: 'Índice Padrão de Limpeza - IPL', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Desvio Padrão - IPL Setorial', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Índice Padrão de Roçada - IPR', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Índice de Utilização da Frota de Coleta Domiciliar', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Índice de Utilização da Frota de Remoção de Lixo Público', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Praças', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Produção do Serviço de Manejo Arbóreo', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Resíduos Coletados no RJ', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Resíduos Recebidos nas ETRs', eixo: 'Operação', exibicao: 'card' },
+    { indicador: 'Resíduos Recebidos no CTR Gericinó', eixo: 'Operação', exibicao: 'card' },
+
+    { indicador: 'Cadastro de Grandes Geradores', eixo: 'Sustentabilidade', exibicao: 'card' },
+    { indicador: 'Cadastro de Grandes Geradores com segregação de resíduos', eixo: 'Sustentabilidade', exibicao: 'card' },
+    { indicador: 'Ecopontos', eixo: 'Sustentabilidade', exibicao: 'card' },
+    { indicador: 'Índice do Coletado em Relação ao Potencial Reciclável', eixo: 'Sustentabilidade', exibicao: 'card' },
+    { indicador: 'Resíduos Desviados do Aterro', eixo: 'Sustentabilidade', exibicao: 'card' },
+    { indicador: 'Resíduos Orgânicos (Biometanização)', eixo: 'Sustentabilidade', exibicao: 'card' },
+
+    { indicador: 'Índice de Eficiência da Arrecadação - Órgãos Públicos', eixo: 'Receita', exibicao: 'card' },
+    { indicador: 'Índice de Eficiência da Arrecadação - Receitas Diversas', eixo: 'Receita', exibicao: 'card' },
+
+    { indicador: 'Índice de Atendimento das Solicitações 1746', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Solicitações 1746', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Solicitações Ouvidoria', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Performance de Atendimento da Remoção Gratuita', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Performance de Atendimento de Capina em Logradouro', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Performance de Atendimento de Controle de Roedores e Caramujos', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Performance de Atendimento de Poda de Árvore', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Tempo Médio de Atendimento - Remoção Gratuita', eixo: 'Atendimento', exibicao: 'card' },
+    { indicador: 'Tempo Médio de Atendimento - Vetores', eixo: 'Atendimento', exibicao: 'card' },
+
+    { indicador: 'Solicitações 1746 - Capina', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Capina' },
+    { indicador: 'Solicitações 1746 - Coleta', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Coleta' },
+    { indicador: 'Solicitações 1746 - Destoca de Toco e Raiz', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Destoca de Toco e Raiz' },
+    { indicador: 'Solicitações 1746 - Limpeza', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Limpeza' },
+    { indicador: 'Solicitações 1746 - Limpeza de Ralos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Limpeza de Ralos' },
+    { indicador: 'Solicitações 1746 - Poda de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Poda de Árvore' },
+    { indicador: 'Solicitações 1746 - Praças', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Praças' },
+    { indicador: 'Solicitações 1746 - Remoção de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Remoção de Árvore' },
+    { indicador: 'Solicitações 1746 - Remoção de Resíduos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Remoção de Resíduos' },
+    { indicador: 'Solicitações 1746 - Remoção Gratuita', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Remoção Gratuita' },
+    { indicador: 'Solicitações 1746 - Risco de Queda', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Risco de Queda' },
+    { indicador: 'Solicitações 1746 - Varrição', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Varrição' },
+    { indicador: 'Solicitações 1746 - Vetores', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações 1746', tipoServico: 'Vetores' },
+
+    { indicador: 'Solicitações Ouvidoria - Capina', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Capina' },
+    { indicador: 'Solicitações Ouvidoria - Coleta', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Coleta' },
+    { indicador: 'Solicitações Ouvidoria - Destoca de Toco e Raiz', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Destoca de Toco e Raiz' },
+    { indicador: 'Solicitações Ouvidoria - Limpeza de Ralos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Limpeza de Ralos' },
+    { indicador: 'Solicitações Ouvidoria - Poda de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Poda de Árvore' },
+    { indicador: 'Solicitações Ouvidoria - Praças', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Praças' },
+    { indicador: 'Solicitações Ouvidoria - Remoção de Árvore', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Remoção de Árvore' },
+    { indicador: 'Solicitações Ouvidoria - Remoção de Resíduos', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Remoção de Resíduos' },
+    { indicador: 'Solicitações Ouvidoria - Remoção Gratuita', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Remoção Gratuita' },
+    { indicador: 'Solicitações Ouvidoria - Risco de Queda', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Risco de Queda' },
+    { indicador: 'Solicitações Ouvidoria - Varrição', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Varrição' },
+    { indicador: 'Solicitações Ouvidoria - Vetores', eixo: 'Atendimento', exibicao: 'drill', cardPai: 'Solicitações Ouvidoria', tipoServico: 'Vetores' }
+
+  ];
+
+  function porIndicador(nome) { return REGISTRO.find(function (r) { return r.indicador === nome; }); }
+  function porEixo(eixo) { return REGISTRO.filter(function (r) { return r.eixo === eixo; }); }
+  function cardsDoEixo(eixo) { return REGISTRO.filter(function (r) { return r.eixo === eixo && r.exibicao === 'card'; }); }
+  function drillsDoCard(nomeCardPai) { return REGISTRO.filter(function (r) { return r.cardPai === nomeCardPai; }); }
+  function getEixo(nome) { const r = porIndicador(nome); return r ? r.eixo : null; }
+  function ehCard(nome) { const r = porIndicador(nome); return r ? r.exibicao === 'card' : false; }
+  function listaIndicadoresValidos() { return REGISTRO.map(function (r) { return r.indicador; }); }
+
+  return {
+    EIXOS: EIXOS, REGISTRO: REGISTRO, porIndicador: porIndicador, porEixo: porEixo,
+    cardsDoEixo: cardsDoEixo, drillsDoCard: drillsDoCard, getEixo: getEixo,
+    ehCard: ehCard, listaIndicadoresValidos: listaIndicadoresValidos
+  };
+
+})();
+
+/* ---------------- HUB.cards (componente real, igual ao seu hub-cards.js) ---------------- */
+
+HUB.cards = {
+  render(containerId, kpis) {
+    const container = HUB.dom.$(containerId);
+    if (!container) {
+      console.warn(`Container ${containerId} não encontrado`);
+      return;
+    }
+    container.innerHTML = kpis.map(kpi => this._renderCard(kpi)).join("");
+  },
+
+  _renderCard(kpi) {
+    const {
+      label, value, note = "", color = "", feature = false, onclick = "",
+      format = "int", customFormatter = null, tooltip = ""
+    } = kpi;
+
+    let formattedValue;
+    if (customFormatter) {
+      formattedValue = customFormatter(value);
+    } else if (format === "pct") {
+      formattedValue = HUB.format.pct(value);
+    } else {
+      formattedValue = HUB.format.int(value);
+    }
+
+    const classes = ["kpi", feature ? "feature" : "", color ? color : ""].filter(Boolean).join(" ");
+
+    const attrs = [
+      onclick ? `onclick="${onclick}"` : "",
+      onclick ? 'style="cursor:pointer"' : "",
+      tooltip ? `data-tooltip="${HUB.format.esc(tooltip)}"` : ""
+    ].filter(Boolean).join(" ");
+
+    return `
+      <div class="${classes}" ${attrs}>
+        <div class="label">${HUB.format.esc(label)}</div>
+        <div class="value">${formattedValue}</div>
+        ${note ? `<div class="note">${HUB.format.esc(note)}</div>` : ""}
+      </div>
+    `;
+  },
+
+  update(containerId, updates) {
+    const container = HUB.dom.$(containerId);
+    if (!container) return;
+    Object.entries(updates).forEach(([label, value]) => {
+      const card = [...container.querySelectorAll(".kpi")].find(
+        el => el.querySelector(".label")?.textContent === label
+      );
+      if (card) {
+        const valueEl = card.querySelector(".value");
+        if (valueEl) valueEl.textContent = HUB.format.int(value);
+      }
+    });
+  }
+};
+
+/* ---------------- lógica desta página ---------------- */
+
+(function () {
 
   const CONFIG = {
     csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv',
@@ -84,7 +235,16 @@
     limiteAtencao: 0.10 // desvio percentual da meta até virar "crítico". É um rascunho, ajustar com a Greicy.
   };
 
-  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+  const IDS_EIXO = {
+    'Pessoas': 'grid-pessoas',
+    'Segurança': 'grid-seguranca',
+    'Operação': 'grid-operacao',
+    'Atendimento': 'grid-atendimento',
+    'Sustentabilidade': 'grid-sustentabilidade',
+    'Receita': 'grid-receita'
+  };
 
   let DATA = [];
   let anoSelecionado = null;
@@ -99,42 +259,34 @@
   }
 
   function linhaCorporativa(indicador, diretoria, ano) {
-    return DATA.find(function(r){
+    return DATA.find(function (r) {
       return r.Indicador === indicador &&
-             r.Diretoria === diretoria &&
-             r['Superint.'] === '-' &&
-             r['Gerência'] === '-' &&
-             String(r.Ano) === String(ano);
+        r.Diretoria === diretoria &&
+        r['Superint.'] === '-' &&
+        r['Gerência'] === '-' &&
+        String(r.Ano) === String(ano);
     });
   }
 
-  function valorMesMaisRecente(row) {
-    for (let i = MESES.length - 1; i >= 0; i--) {
-      const v = parseNumeroBR(row[MESES[i]]);
-      if (v !== null) return { mes: MESES[i], valor: v };
-    }
-    return null;
-  }
-
   function calcularStatus(valor, meta, sentido) {
-    if (valor === null) return { classe: '', label: 'sem dado' };
-    if (meta === null) return { classe: 'neutral', label: 'sem meta definida' };
+    if (valor === null) return { cor: '', label: 'sem dado' };
+    if (meta === null) return { cor: '', label: 'sem meta definida' };
     const atingiu = sentido === '↑' ? valor >= meta : valor <= meta;
-    if (atingiu) return { classe: 'green', label: 'dentro da meta' };
-    if (meta === 0) return { classe: 'red', label: 'crítico' };
+    if (atingiu) return { cor: 'green', label: 'dentro da meta' };
+    if (meta === 0) return { cor: 'red', label: 'crítico' };
     const desvio = sentido === '↑' ? (meta - valor) / Math.abs(meta) : (valor - meta) / Math.abs(meta);
-    if (desvio <= CONFIG.limiteAtencao) return { classe: 'orange', label: 'atenção' };
-    return { classe: 'red', label: 'crítico' };
+    if (desvio <= CONFIG.limiteAtencao) return { cor: 'orange', label: 'atenção' };
+    return { cor: 'red', label: 'crítico' };
   }
 
-  function renderCard(indicadorNome) {
+  function montarKpi(indicadorNome) {
     const row = linhaCorporativa(indicadorNome, diretoriaSelecionada, anoSelecionado);
-    const div = document.createElement('div');
 
     if (!row) {
-      div.className = 'kpi';
-      div.innerHTML = '<div class="label">' + indicadorNome + '</div><div class="note">sem dado para esse recorte</div>';
-      return div;
+      return {
+        label: indicadorNome, value: null, note: 'sem dado para esse recorte',
+        format: 'custom', customFormatter: function () { return '—'; }
+      };
     }
 
     const acumulado = parseNumeroBR(row.Acumulado);
@@ -142,73 +294,74 @@
     const sentido = row.Sentido;
     const unidade = row.Unidade || '';
     const status = calcularStatus(acumulado, meta, sentido);
-    const mesRecente = valorMesMaisRecente(row);
 
-    div.className = 'kpi ' + status.classe;
-    div.innerHTML =
-      '<div class="label">' + indicadorNome + '</div>' +
-      '<div class="value">' + (acumulado !== null ? acumulado.toLocaleString('pt-BR') + unidade : '—') + '</div>' +
-      '<div class="note">' +
-        (meta !== null ? 'meta ' + meta.toLocaleString('pt-BR') + unidade + ' · ' : 'sem meta definida · ') +
-        status.label +
-        (mesRecente ? ' · último mês: ' + mesRecente.mes : '') +
-      '</div>';
-    return div;
+    const nota = (meta !== null ? 'meta ' + meta.toLocaleString('pt-BR') + unidade + ' · ' : 'sem meta definida · ') + status.label;
+
+    return {
+      label: indicadorNome,
+      value: acumulado,
+      note: nota,
+      color: status.cor,
+      format: 'custom',
+      customFormatter: function (v) { return v === null ? '—' : v.toLocaleString('pt-BR') + unidade; }
+    };
   }
 
   function renderEixo(eixo) {
     const cards = HUB.indicadores.cardsDoEixo(eixo);
+    const gridId = IDS_EIXO[eixo];
+
     const panel = document.createElement('div');
     panel.className = 'panel';
-    panel.innerHTML = '<div class="panelHead">' + eixo + '<span class="count">' + cards.length + ' indicadores</span></div>';
-    const body = document.createElement('div');
-    body.className = 'body';
-    const grid = document.createElement('div');
-    grid.className = 'grid';
-    cards.forEach(function(c){ grid.appendChild(renderCard(c.indicador)); });
-    body.appendChild(grid);
-    panel.appendChild(body);
-    return panel;
+    panel.style.marginBottom = '24px';
+    panel.innerHTML =
+      '<div class="panelHead"><h2>' + eixo + '</h2><span class="hint">' + cards.length + ' indicadores</span></div>' +
+      '<div class="body"><div class="grid" id="' + gridId + '"></div></div>';
+
+    document.getElementById('conteudo').appendChild(panel);
+
+    const kpis = cards.map(function (c) { return montarKpi(c.indicador); });
+    HUB.cards.render(gridId, kpis);
   }
 
   function render() {
     const conteudo = document.getElementById('conteudo');
     conteudo.innerHTML = '';
-    HUB.indicadores.EIXOS.forEach(function(eixo){
-      conteudo.appendChild(renderEixo(eixo));
-    });
+    HUB.indicadores.EIXOS.forEach(renderEixo);
   }
 
   function popularFiltros() {
-    const anos = Array.from(new Set(DATA.map(function(r){ return r.Ano; }))).sort();
+    const anos = Array.from(new Set(DATA.map(function (r) { return r.Ano; }))).sort();
     const selAno = document.getElementById('filtroAno');
-    selAno.innerHTML = anos.map(function(a){ return '<option value="' + a + '">' + a + '</option>'; }).join('');
+    selAno.innerHTML = anos.map(function (a) { return '<option value="' + a + '">' + a + '</option>'; }).join('');
     anoSelecionado = anos[anos.length - 1];
     selAno.value = anoSelecionado;
-    selAno.onchange = function(){ anoSelecionado = this.value; render(); };
+    selAno.onchange = function () { anoSelecionado = this.value; render(); };
 
     const diretorias = Array.from(new Set(
-      DATA.filter(function(r){ return r['Superint.'] === '-' && r['Gerência'] === '-'; })
-          .map(function(r){ return r.Diretoria; })
+      DATA.filter(function (r) { return r['Superint.'] === '-' && r['Gerência'] === '-'; })
+        .map(function (r) { return r.Diretoria; })
     )).sort();
     const selDir = document.getElementById('filtroDiretoria');
-    selDir.innerHTML = diretorias.map(function(d){ return '<option value="' + d + '">' + d + '</option>'; }).join('');
+    selDir.innerHTML = diretorias.map(function (d) { return '<option value="' + d + '">' + d + '</option>'; }).join('');
+    if (diretorias.indexOf(diretoriaSelecionada) === -1) diretoriaSelecionada = diretorias[0];
     selDir.value = diretoriaSelecionada;
-    selDir.onchange = function(){ diretoriaSelecionada = this.value; render(); };
+    selDir.onchange = function () { diretoriaSelecionada = this.value; render(); };
   }
 
   function init() {
     Papa.parse(CONFIG.csvUrl, {
       download: true,
       header: true,
-      complete: function(results) {
-        DATA = results.data.filter(function(r){ return r.Indicador; });
+      complete: function (results) {
+        DATA = results.data.filter(function (r) { return r.Indicador; });
         document.getElementById('loading').style.display = 'none';
         document.getElementById('conteudo').style.display = 'block';
+        document.getElementById('footerTimestamp').textContent = 'Atualizado em ' + new Date().toLocaleString('pt-BR');
         popularFiltros();
         render();
       },
-      error: function(err) {
+      error: function () {
         document.getElementById('loading').style.display = 'none';
         const el = document.getElementById('errorState');
         el.style.display = 'block';

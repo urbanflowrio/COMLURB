@@ -268,6 +268,8 @@ HUB.cards = {
     });
   }
 
+  const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
+
   function calcularStatus(valor, meta, sentido) {
     if (valor === null) return { cor: '', label: 'sem dado' };
     if (meta === null) return { cor: '', label: 'sem meta definida' };
@@ -279,13 +281,44 @@ HUB.cards = {
     return { cor: 'red', label: 'crítico' };
   }
 
-  function montarKpi(indicadorNome) {
+  // tendência simples: olha as transições mês a mês e conta quantos ciclos
+  // consecutivos mantêm a mesma direção, a partir do mês mais recente.
+  // Sem gráfico, sem sparkline, só o texto.
+  function calcularTendencia(row, sentido) {
+    const valores = [];
+    MESES.forEach(function (m) {
+      const v = parseNumeroBR(row[m]);
+      if (v !== null) valores.push(v);
+    });
+    if (valores.length < 2) return null;
+
+    const direcoes = [];
+    for (let i = 1; i < valores.length; i++) {
+      const diff = valores[i] - valores[i - 1];
+      direcoes.push(Math.abs(diff) < 1e-9 ? 0 : (diff > 0 ? 1 : -1));
+    }
+
+    const ultimaDirecao = direcoes[direcoes.length - 1];
+    if (ultimaDirecao === 0) return { simbolo: '→', texto: 'estável', ciclos: 0 };
+
+    let ciclos = 0;
+    for (let i = direcoes.length - 1; i >= 0; i--) {
+      if (direcoes[i] === ultimaDirecao) ciclos++;
+      else break;
+    }
+
+    const melhorando = (sentido === '↑' && ultimaDirecao === 1) || (sentido === '↓' && ultimaDirecao === -1);
+    return { simbolo: melhorando ? '↑' : '↓', texto: melhorando ? 'melhorando' : 'piorando', ciclos: ciclos };
+  }
+
+  function montarKpi(registroEntry) {
+    const indicadorNome = registroEntry.indicador;
     const row = linhaCorporativa(indicadorNome, diretoriaSelecionada, anoSelecionado);
 
     if (!row) {
       return {
-        label: indicadorNome, value: null, note: 'sem dado para esse recorte',
-        format: 'custom', customFormatter: function () { return '—'; }
+        eixo: registroEntry.eixo, label: indicadorNome, value: null, color: '',
+        note: 'sem dado para esse recorte', format: 'custom', customFormatter: function () { return '—'; }
       };
     }
 
@@ -294,40 +327,85 @@ HUB.cards = {
     const sentido = row.Sentido;
     const unidade = row.Unidade || '';
     const status = calcularStatus(acumulado, meta, sentido);
+    const tendencia = calcularTendencia(row, sentido);
 
-    const nota = (meta !== null ? 'meta ' + meta.toLocaleString('pt-BR') + unidade + ' · ' : 'sem meta definida · ') + status.label;
+    const partesNota = [];
+    if (meta !== null && acumulado !== null) {
+      const delta = acumulado - meta;
+      const sinal = delta > 0 ? '+' : '';
+      partesNota.push('meta ' + meta.toLocaleString('pt-BR') + unidade);
+      partesNota.push('Δ ' + sinal + delta.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + unidade);
+      if (tendencia) partesNota.push(tendencia.simbolo + ' ' + tendencia.texto + (tendencia.ciclos > 1 ? ' há ' + tendencia.ciclos + ' ciclos' : ''));
+      partesNota.push(status.label);
+    } else {
+      partesNota.push('sem meta definida');
+      if (tendencia) partesNota.push(tendencia.simbolo + ' ' + tendencia.texto + (tendencia.ciclos > 1 ? ' há ' + tendencia.ciclos + ' ciclos' : ''));
+    }
 
     return {
+      eixo: registroEntry.eixo,
       label: indicadorNome,
       value: acumulado,
-      note: nota,
+      note: partesNota.join(' · '),
       color: status.cor,
       format: 'custom',
       customFormatter: function (v) { return v === null ? '—' : v.toLocaleString('pt-BR') + unidade; }
     };
   }
 
-  function renderEixo(eixo) {
-    const cards = HUB.indicadores.cardsDoEixo(eixo);
+  function renderResumo(todosKpis) {
+    const cont = { green: 0, orange: 0, red: 0, semMeta: 0 };
+    todosKpis.forEach(function (k) {
+      if (k.color === 'green') cont.green++;
+      else if (k.color === 'orange') cont.orange++;
+      else if (k.color === 'red') cont.red++;
+      else cont.semMeta++;
+    });
+
+    const div = document.createElement('div');
+    div.className = 'kpis';
+    div.id = 'kpis-resumo';
+    div.style.marginBottom = '20px';
+    document.getElementById('conteudo').appendChild(div);
+
+    HUB.cards.render('kpis-resumo', [
+      { label: 'Indicadores monitorados', value: todosKpis.length, feature: true, format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Dentro da meta', value: cont.green, color: 'green', format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Em atenção', value: cont.orange, color: 'orange', format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Críticos', value: cont.red, color: 'red', format: 'custom', customFormatter: function (v) { return String(v); } },
+      { label: 'Sem meta ou dado', value: cont.semMeta, format: 'custom', customFormatter: function (v) { return String(v); } }
+    ]);
+  }
+
+  function renderEixo(eixo, kpisDoEixo) {
     const gridId = IDS_EIXO[eixo];
 
     const panel = document.createElement('div');
     panel.className = 'panel';
     panel.style.marginBottom = '24px';
     panel.innerHTML =
-      '<div class="panelHead"><h2>' + eixo + '</h2><span class="hint">' + cards.length + ' indicadores</span></div>' +
+      '<div class="panelHead"><h2>' + eixo + '</h2><span class="hint">' + kpisDoEixo.length + ' indicadores</span></div>' +
       '<div class="body"><div class="grid" id="' + gridId + '"></div></div>';
 
     document.getElementById('conteudo').appendChild(panel);
-
-    const kpis = cards.map(function (c) { return montarKpi(c.indicador); });
-    HUB.cards.render(gridId, kpis);
+    HUB.cards.render(gridId, kpisDoEixo);
   }
 
   function render() {
     const conteudo = document.getElementById('conteudo');
     conteudo.innerHTML = '';
-    HUB.indicadores.EIXOS.forEach(renderEixo);
+
+    const todosKpis = HUB.indicadores.REGISTRO
+      .filter(function (r) { return r.exibicao === 'card'; })
+      .map(montarKpi);
+
+    renderResumo(todosKpis);
+
+    HUB.indicadores.EIXOS.forEach(function (eixo) {
+      const kpisDoEixo = todosKpis.filter(function (k) { return k.eixo === eixo; });
+      kpisDoEixo.sort(function (a, b) { return PRIORIDADE_STATUS[a.color || ''] - PRIORIDADE_STATUS[b.color || '']; });
+      renderEixo(eixo, kpisDoEixo);
+    });
   }
 
   function popularFiltros() {

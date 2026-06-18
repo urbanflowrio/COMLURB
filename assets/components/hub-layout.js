@@ -1,13 +1,13 @@
 /**
  * HUB COMLURB - Componentes de Header e Footer
- * Cabeçalho e rodapé reutilizáveis
+ * Cabeçalho, rodapé, drill down e loading reutilizáveis
  */
 
 HUB.header = {
   /**
    * Renderiza header do painel
    */
-  render(containerId, config) {
+  render(containerId, config = {}) {
     const {
       logo = true,
       systemLabel = "",
@@ -21,11 +21,12 @@ HUB.header = {
     if (!container) return;
 
     let logoHTML = "";
+
     if (logo) {
       logoHTML = `
         <div class="logoWrap">
-          <img id="logoComlurb" class="logoImg" 
-               src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" 
+          <img id="logoComlurb" class="logoImg"
+               src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png"
                alt="Prefeitura do Rio + Comlurb"
                style="display:block">
           <div id="logoFallback" class="logoTextFallback" style="display:none">
@@ -36,6 +37,7 @@ HUB.header = {
     }
 
     let statusHTML = "";
+
     if (status) {
       statusHTML = `
         <div class="statusIndicator">
@@ -46,11 +48,12 @@ HUB.header = {
     }
 
     let navHTML = "";
+
     if (navigation.length) {
       navHTML = `
         <div class="navTabs">
           ${navigation.map((nav, i) => `
-            <button class="tabBtn ${i === 0 ? 'active' : ''}" data-tab="${nav.id}">
+            <button class="tabBtn ${i === 0 ? "active" : ""}" data-tab="${nav.id}">
               ${HUB.format.esc(nav.label)}
             </button>
           `).join("")}
@@ -71,21 +74,20 @@ HUB.header = {
       ${navHTML}
     `;
 
-    // Inicializa fallback de logo
     this._initLogoFallback();
 
-    // Anexa listeners de navegação
     if (navigation.length) {
       this._attachNavListeners(navigation);
     }
   },
 
   /**
-   * Inicializa fallback de logo (caso imagem não carregue)
+   * Inicializa fallback de logo caso a imagem principal não carregue
    */
   _initLogoFallback() {
     const img = HUB.dom.$("logoComlurb");
     const fallback = HUB.dom.$("logoFallback");
+
     if (!img) return;
 
     const candidates = [
@@ -98,8 +100,10 @@ HUB.header = {
     ];
 
     let i = 0;
+
     img.onerror = () => {
       i++;
+
       if (i < candidates.length) {
         img.src = candidates[i] + "?v=" + Date.now();
       } else {
@@ -122,17 +126,16 @@ HUB.header = {
   _attachNavListeners(navigation) {
     document.querySelectorAll(".tabBtn").forEach(btn => {
       btn.addEventListener("click", () => {
-        // Remove active de todos
         document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
         document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
 
-        // Adiciona active no clicado
         btn.classList.add("active");
+
         const targetId = btn.dataset.tab;
         HUB.dom.addClass(targetId, "active");
 
-        // Callback opcional
         const nav = navigation.find(n => n.id === targetId);
+
         if (nav && nav.onActivate) {
           nav.onActivate();
         }
@@ -141,7 +144,7 @@ HUB.header = {
   },
 
   /**
-   * Atualiza status
+   * Atualiza status do header
    */
   updateStatus(label, value) {
     const el = document.querySelector(".statusIndicator");
@@ -154,14 +157,11 @@ HUB.header = {
 
 HUB.footer = {
   /**
-   * Renderiza footer do painel
+   * Renderiza footer institucional padrão do HUB COMLURB
    */
   render(containerId, config = {}) {
     const {
-      author = "Greicy Moreira",
-      contact = "greicymoreira@comlurb.rio",
-      version = "1.0",
-      showTimestamp = true,
+      showTimestamp = false,
       customText = null
     } = config;
 
@@ -173,9 +173,8 @@ HUB.footer = {
       : "";
 
     const text = customText || `
-      Desenvolvido por <strong>${HUB.format.esc(author)}</strong> • 
-      ${HUB.format.esc(contact)} • 
-      Versão ${HUB.format.esc(version)}
+      <strong>Gabinete da Presidência</strong><br>
+      HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional
     `;
 
     container.innerHTML = `
@@ -189,13 +188,14 @@ HUB.footer = {
   },
 
   /**
-   * Atualiza timestamp
+   * Atualiza timestamp do footer, se existir
    */
   updateTimestamp(containerId) {
     const el = HUB.dom.$(containerId);
     if (!el) return;
 
     const timestamp = el.querySelector(".footerTimestamp");
+
     if (timestamp) {
       timestamp.textContent = `Atualizado em ${new Date().toLocaleString("pt-BR")}`;
     }
@@ -209,8 +209,13 @@ HUB.drillBanner = {
   /**
    * Mostra banner de drill down
    */
-  show(containerId, config) {
-    const { title, description, onClear } = config;
+  show(containerId, config = {}) {
+    const {
+      title = "",
+      description = "",
+      onClear = "clearDrill()"
+    } = config;
+
     const container = HUB.dom.$(containerId);
     if (!container) return;
 
@@ -220,7 +225,7 @@ HUB.drillBanner = {
           <b>${HUB.format.esc(title)}</b>
           <span>${HUB.format.esc(description)}</span>
         </div>
-        <button class="actionBtn primary" onclick="${onClear || 'clearDrill()'}">
+        <button class="actionBtn primary" onclick="${onClear}">
           Fechar drill down
         </button>
       </div>
@@ -232,13 +237,14 @@ HUB.drillBanner = {
    */
   hide(containerId) {
     const container = HUB.dom.$(containerId);
+
     if (container) {
       container.innerHTML = "";
     }
   },
 
   /**
-   * Atualiza texto
+   * Atualiza texto do banner
    */
   update(containerId, title, description) {
     const container = HUB.dom.$(containerId);
@@ -261,18 +267,21 @@ HUB.loading = {
    */
   show(containerId, message = "Carregando dados...") {
     const container = HUB.dom.$(containerId);
+
     if (container) {
       container.innerHTML = `<div class="loading">${HUB.format.esc(message)}</div>`;
     }
   },
 
   /**
-   * Remove loading
+   * Remove loading de um container
    */
   hide(containerId) {
     const container = HUB.dom.$(containerId);
+
     if (container) {
       const loading = container.querySelector(".loading");
+
       if (loading) loading.remove();
     }
   },

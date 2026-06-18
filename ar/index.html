@@ -4,24 +4,584 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Indicadores AR 2026 · HUB COMLURB</title>
-<link rel="stylesheet" href="../assets/css/hub-premium.css">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <style>
-.app{max-width:1800px}.header{margin-bottom:16px}.arFilters{grid-template-columns:180px 220px 1fr auto!important}.summaryLine{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.summaryCard{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:112px}.summaryCard small{display:block;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#b8d4f2;margin-bottom:8px}.summaryCard b{display:block;color:#fff;font-size:34px;line-height:1;margin-bottom:7px}.summaryCard span{display:block;color:#c7d8ee;font-size:12px;line-height:1.35}.summaryCard.ok{border-color:rgba(120,170,163,.52)}.summaryCard.att{border-color:rgba(255,160,43,.46)}.summaryCard.crit{border-color:rgba(239,106,93,.52)}.summaryCard.nd{border-color:rgba(167,139,250,.42)}.sectionIntro{color:var(--silenciado);font-size:14px;line-height:1.5;margin:0 0 14px;max-width:1180px}.arBlock{margin-top:18px}.arBlockHead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:12px}.arBlockTitle{margin:0;color:#fff;font-size:20px;font-weight:950}.arBlockMeta{color:#c7d8ee;font-size:12px;font-weight:800}.indicatorGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.indicatorCard{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:246px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}.indicatorCard.ok{border-left:4px solid var(--verde)}.indicatorCard.att{border-left:4px solid var(--amarelo)}.indicatorCard.crit{border-left:4px solid var(--vermelho)}.indicatorCard.nd{border-left:4px solid var(--roxo)}.indicatorTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.indicatorCode{color:#b8d4f2;font-size:11px;letter-spacing:.12em;font-weight:950}.indicatorName{color:#fff;font-size:15px;font-weight:950;line-height:1.28;min-height:42px;margin-bottom:10px;overflow-wrap:anywhere}.indicatorDesc{color:#b8c9de;font-size:12px;line-height:1.38;min-height:34px;margin-bottom:12px}.metricGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.metricMini{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);border-radius:12px;padding:10px;min-width:0}.metricMini small{display:block;color:#9fb0c7;font-size:9px;font-weight:950;letter-spacing:.09em;text-transform:uppercase;margin-bottom:4px}.metricMini b{display:block;color:#fff;font-size:16px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cardFoot{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.footItem{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);border-radius:12px;padding:9px 10px;min-width:0}.footItem small{display:block;color:#9fb0c7;font-size:9px;font-weight:950;letter-spacing:.09em;text-transform:uppercase;margin-bottom:4px}.footItem b{display:block;color:#eaf3ff;font-size:12px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag{display:inline-flex;align-items:center;justify-content:center;border:1px solid #345978;border-radius:999px;padding:5px 9px;font-weight:950;font-size:11px;line-height:1;white-space:nowrap}.tag.ok{border-color:#3f7d55;color:#83d99d}.tag.att{border-color:#8d6a23;color:#ffa02b}.tag.crit{border-color:#8b3f38;color:#ff7d72}.tag.nd{border-color:#6d5ba0;color:#cdbdff}.govNote{margin:16px 0 0;border:1px solid rgba(167,139,250,.28);background:rgba(167,139,250,.06);border-radius:16px;padding:13px 15px;color:#cdbdff;font-size:12px;line-height:1.45}.emptyBlock{color:#aebfd5;border:1px solid var(--linha);background:var(--painel);border-radius:16px;padding:18px;text-align:center}@media(max-width:1280px){.indicatorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.summaryLine{grid-template-columns:repeat(2,minmax(0,1fr))}.arFilters{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:720px){.indicatorGrid,.summaryLine,.arFilters{grid-template-columns:1fr!important}.arBlockHead{flex-direction:column;align-items:flex-start}.metricGrid,.cardFoot{grid-template-columns:1fr}}
+/* ============================================================
+   HUB COMLURB — hub-premium.css v2.1 (inlineado)
+   ============================================================ */
+:root {
+  --bg:#06111f; --painel:#0d1f36; --painel2:#0a1b31; --linha:#294866;
+  --texto:#f7f9ff; --silenciado:#b8c9de;
+  --azul:#4b86bd; --azul2:#5b9bd5;
+  --laranja:#e87535; --verde:#78aaa3; --vermelho:#ef6a5d;
+  --amarelo:#ffa02b; --roxo:#a78bfa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--texto);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5}
+input,select,button{font-family:inherit}
+
+.app{max-width:1800px;margin:0 auto;padding:28px}
+
+/* Header */
+.header{display:flex;align-items:center;gap:28px;padding:26px;border:1px solid var(--linha);border-radius:22px;background:var(--painel2);margin-bottom:20px}
+.logoWrap{display:flex;align-items:center;min-width:0}
+.logoImg{width:310px;max-height:82px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,.28)}
+.headerContent{flex:1;min-width:0}
+.systemLabel{font-size:12px;font-weight:900;letter-spacing:.25em;color:#b8d4f2;text-transform:uppercase}
+.mainTitle{margin:6px 0;font-size:38px;line-height:1.1;color:#fff;font-weight:900}
+.subtitle{color:#c7d8ee;font-size:15px;line-height:1.4}
+
+/* Filters */
+.filters{display:grid;grid-template-columns:220px 220px auto;gap:12px;margin:16px 0;align-items:stretch}
+.field{background:var(--painel);border:1px solid var(--linha);border-radius:16px;padding:12px;min-width:0}
+label{display:block;font-size:10px;font-weight:900;letter-spacing:.18em;color:#b8d4f2;margin-bottom:8px;text-transform:uppercase}
+select{width:100%;background:transparent;color:#fff;border:0;font-weight:800;font-size:15px;outline:none}
+option{background:#0d1f36}
+.actionBtn{border:1px solid var(--linha);background:#0a1b31;color:#dcecff;border-radius:16px;padding:12px 18px;font-weight:900;cursor:pointer;transition:.2s;white-space:nowrap}
+.actionBtn:hover{border-color:var(--azul)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:18px;min-height:110px;overflow:hidden}
+.kpi.green{border-color:rgba(120,170,163,.52)}
+.kpi.orange{border-color:rgba(255,160,43,.46)}
+.kpi.red{border-color:rgba(239,106,93,.52)}
+.kpi.purple{border-color:rgba(167,139,250,.42)}
+.kpi .label{font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#b8d4f2;display:block;margin-bottom:10px}
+.kpi .value{font-size:clamp(28px,2.6vw,38px);font-weight:950;line-height:1;display:block;margin-bottom:6px}
+.kpi .note{color:#c7d8ee;font-size:12px;line-height:1.35}
+.kpi.green .value{color:#78aaa3}
+.kpi.orange .value{color:#ffa02b}
+.kpi.red .value{color:#ef6a5d}
+.kpi.purple .value{color:#a78bfa}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;border:1px solid #345978;border-radius:999px;padding:5px 10px;font-weight:950;font-size:11px;white-space:nowrap}
+.tag.ok{border-color:#3f7d55;color:#83d99d}
+.tag.att{border-color:#8d6a23;color:#ffa02b}
+.tag.crit{border-color:#8b3f38;color:#ff7d72}
+.tag.nd{border-color:#6d5ba0;color:#cdbdff}
+.tag.fav{border-color:#3f7d55;color:#83d99d}
+.tag.desf{border-color:#8b3f38;color:#ff7d72}
+.tag.est{border-color:#8d6a23;color:#ffa02b}
+
+/* Bloco por grupo */
+.arBlock{margin-bottom:28px}
+.arBlockHead{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--linha)}
+.arBlockTitle{margin:0;font-size:18px;font-weight:950;color:#fff;letter-spacing:.02em}
+.arBlockMeta{color:#b8d4f2;font-size:12px;font-weight:800}
+
+/* Grid de cards */
+.indicatorGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+
+/* Card do indicador — limpo, sem border-left */
+.indCard{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.indCard.ok{border-color:rgba(120,170,163,.42)}
+.indCard.att{border-color:rgba(255,160,43,.38)}
+.indCard.crit{border-color:rgba(239,106,93,.42)}
+.indCard.nd{border-color:rgba(167,139,250,.32)}
+
+/* Topo do card */
+.indTop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.indCodigo{font-size:11px;font-weight:950;letter-spacing:.14em;color:#b8d4f2}
+
+/* Nome */
+.indNome{font-size:14px;font-weight:950;color:#fff;line-height:1.3}
+
+/* Métricas: 3 colunas */
+.indMetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.indMetric{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);border-radius:12px;padding:10px}
+.indMetric small{display:block;color:#9fb0c7;font-size:9px;font-weight:950;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.indMetric b{display:block;font-size:15px;font-weight:950;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Rodapé do card: tendência */
+.indFoot{display:flex;align-items:center;gap:8px}
+.indFoot small{color:#9fb0c7;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+
+/* Loading / empty */
+.loading{color:#a8b8cf;padding:16px 0;font-size:14px}
+.empty{color:#a8b8cf;border:1px solid var(--linha);background:var(--painel);border-radius:16px;padding:18px;text-align:center;font-size:13px}
+
+/* Footer */
+.footer{margin-top:40px;padding:20px;color:#a8b8cf;font-size:12px;border-top:1px solid var(--linha);opacity:.75}
+
+/* Responsive */
+@media(max-width:1280px){
+  .indicatorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .filters{grid-template-columns:1fr 1fr auto}
+}
+@media(max-width:720px){
+  .app{padding:14px}
+  .header{flex-direction:column;align-items:flex-start}
+  .logoImg{width:200px;border-right:0;padding-right:0}
+  .mainTitle{font-size:28px}
+  .indicatorGrid,.kpis,.filters{grid-template-columns:1fr!important}
+  .arBlockHead{flex-direction:column;align-items:flex-start}
+  .indMetrics{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="header"><div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB"></div><div class="headerContent"><div class="systemLabel">HUB COMLURB · ACORDO DE RESULTADOS</div><h1 class="mainTitle">Indicadores AR 2026</h1><div class="subtitle">Acompanhamento dos indicadores pactuados, com status canônico, tendência dos últimos meses e referência à fonte oficial.</div></div></header>
-<section class="filters arFilters"><div class="field"><label>Grupo</label><select id="fGrupo"><option value="">Todos</option></select></div><div class="field"><label>Status</label><select id="fStatus"><option value="">Todos</option></select></div><div class="field"><label>Busca</label><input id="fBusca" type="search" placeholder="Código, indicador ou fonte"></div><button class="actionBtn" id="btnLimpar">Limpar filtros</button></section>
-<div id="loading" class="loading">Carregando indicadores publicados...</div><div id="errorState" class="emptyBlock" style="display:none"></div>
-<main id="conteudo" style="display:none"><p class="sectionIntro">Esta tela não calcula bonificação final e não projeta metas. A leitura é operacional-institucional: resultado atual, meta pactuada, percentual de atingimento, status e tendência textual baseada na série mensal disponível.</p><section class="summaryLine"><div class="summaryCard ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Indicadores atingidos ou acima da meta.</span></div><div class="summaryCard att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Indicadores entre 90% e 99,9% da meta.</span></div><div class="summaryCard crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Indicadores abaixo de 90% da meta.</span></div><div class="summaryCard nd"><small>Sem dado</small><b id="kpiSemDado">—</b><span>Resultado, meta ou regra oficial ausente.</span></div></section><div id="indicadoresContainer"></div><div class="govNote"><strong>Nota de governança:</strong> “Sem dado” foi usado quando Atual, Meta ou Atingimento não estavam disponíveis, ou quando o indicador dependia de confirmação metodológica. A tendência é textual e não substitui análise da ficha do indicador.</div></main>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logoWrap">
+      <img class="logoImg"
+        src="https://raw.githubusercontent.com/urbanflowrio/HUB-COMLURB/main/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+        alt="COMLURB">
+      <span style="display:none;font-size:22px;font-weight:950;color:#fff">COMLURB</span>
+    </div>
+    <div class="headerContent">
+      <div class="systemLabel">HUB COMLURB · Acordo de Resultados</div>
+      <h1 class="mainTitle">Indicadores AR 2026</h1>
+      <div class="subtitle">Status canônico, tendência dos últimos meses e referência à fonte oficial para os 13 indicadores pactuados.</div>
+    </div>
+  </header>
+
+  <!-- FILTROS: só Grupo e Status -->
+  <section class="filters">
+    <div class="field">
+      <label>Grupo</label>
+      <select id="fGrupo"><option value="">Todos</option></select>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select id="fStatus"><option value="">Todos</option></select>
+    </div>
+    <button class="actionBtn" id="btnLimpar">Limpar</button>
+  </section>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi green">
+      <span class="label">Dentro da Meta</span>
+      <span class="value" id="kpiDentro">—</span>
+      <span class="note">Atingimento ≥ 100%</span>
+    </div>
+    <div class="kpi orange">
+      <span class="label">Atenção</span>
+      <span class="value" id="kpiAtencao">—</span>
+      <span class="note">Entre 90% e 99,9%</span>
+    </div>
+    <div class="kpi red">
+      <span class="label">Crítico</span>
+      <span class="value" id="kpiCritico">—</span>
+      <span class="note">Abaixo de 90%</span>
+    </div>
+    <div class="kpi purple">
+      <span class="label">Sem dado</span>
+      <span class="value" id="kpiSemDado">—</span>
+      <span class="note">Resultado ou meta ausente</span>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" class="loading">Carregando indicadores publicados…</div>
+  <div id="errorState" class="empty" style="display:none"></div>
+
+  <!-- CONTEÚDO -->
+  <main id="conteudo" style="display:none">
+    <div id="indicadoresContainer"></div>
+  </main>
+
+  <footer class="footer">
+    Gabinete da Presidência / HUB COMLURB &nbsp;·&nbsp; Núcleo de Inteligência e Gestão Estratégica Operacional &nbsp;·&nbsp; Greicy Moreira
+  </footer>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
-const URLS={geral:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",ar:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",map:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"};
-const MESES=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];let RAW={geral:[],ar:[],map:[]},DATA=[],FILTRADOS=[];const $=id=>document.getElementById(id);function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}function norm(v){return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim()}function key(v){return norm(v).replace(/[^a-z0-9]/g,"")}function get(row,names,fallback=""){if(!row)return fallback;for(const n of names){if(row[n]!==undefined&&String(row[n]).trim()!=="")return row[n]}const dict={};Object.keys(row).forEach(k=>dict[key(k)]=k);for(const n of names){const k=dict[key(n)];if(k&&row[k]!==undefined&&String(row[k]).trim()!=="")return row[k]}return fallback}function csv(url){return new Promise((resolve,reject)=>Papa.parse(url,{download:true,header:true,skipEmptyLines:true,complete:r=>resolve((r.data||[]).filter(row=>Object.values(row).some(v=>String(v??"").trim()!==""))),error:reject}))}function num(v){if(v===null||v===undefined)return null;if(typeof v==="number"&&Number.isFinite(v))return v;let s=String(v).trim();if(!s||s==="-"||s==="—")return null;s=s.replace(/\s/g,"").replace("%","");if(s.includes(",")&&s.includes("."))s=s.replace(/\./g,"").replace(",",".");else if(s.includes(","))s=s.replace(",",".");const n=Number(s);return Number.isFinite(n)?n:null}function isPercent(u){const x=norm(u);return x.includes("percent")||x==="%"}function valueForCalc(v,u){let n=num(v);if(n===null)return null;if(isPercent(u)&&n>1.5)n=n/100;return n}function fmtValor(v,u){let n=num(v);if(n===null)return "—";if(isPercent(u)){if(n<=1.5)n=n*100;return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%"}if(norm(u).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});return n.toLocaleString("pt-BR",{maximumFractionDigits:2})}function fmtPct(v){const n=num(v);if(n===null)return "—";return(n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%"}function maiorMelhor(s){const x=norm(s);return x.includes("maior")||x.includes("↑")||x===""}function statusCanonico(atual,meta,sentido,statusPlanilha){const raw=norm(statusPlanilha);if(raw.includes("indispon")||raw.includes("sem dado"))return"Sem dado";const a=num(atual),m=num(meta);if(a===null||m===null||a===0||m===0)return"Sem dado";const ating=maiorMelhor(sentido)?a/m:m/a;if(ating>=1)return"Dentro da Meta";if(ating>=.9)return"Atenção";return"Crítico"}function tagClass(s){const x=norm(s);if(x.includes("dentro"))return"ok";if(x.includes("aten"))return"att";if(x.includes("critic"))return"crit";return"nd"}function grupoOrdem(g){const x=norm(g);if(x.includes("estrateg"))return 1;if(x.includes("condicion"))return 2;if(x.includes("performance"))return 3;return 9}function montarMapeamento(){const map=new Map();RAW.map.forEach(r=>{const codigo=String(get(r,["Código_AR","Codigo_AR","Código","Codigo","Código AR","Codigo AR"])).trim();if(!codigo)return;map.set(codigo,{indicadorGeral:String(get(r,["Indicador_Geral","Indicador Geral","Indicador Real","Nome na geral","Indicador"])).trim(),diretoria:String(get(r,["Filtro_Diretoria","Diretoria"])).trim(),superint:String(get(r,["Filtro_Superint","Filtro_Superintendência","Superint.","Superintendência"])).trim(),gerencia:String(get(r,["Filtro_Gerência","Filtro_Gerencia","Gerência","Gerencia"])).trim()})});return map}function encontrarGeral(ind,mapItem){const nomeMap=norm(mapItem?.indicadorGeral||""),nomeInd=norm(ind.indicador);let rows=RAW.geral.filter(r=>{const ano=String(get(r,["Ano"])).trim();if(ano&&ano!=="2026")return false;const nomeGeral=norm(get(r,["Indicador"]));if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false}else{if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral))return false}const fDir=norm(mapItem?.diretoria||""),fSup=norm(mapItem?.superint||""),fGer=norm(mapItem?.gerencia||"");if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir)return false;if(fSup&&fSup!=="-"&&norm(get(r,["Superint.","Superintendência","Superint"]))!==fSup)return false;if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer)return false;return true});return rows[0]||null}function ultimosValores(row,u){if(!row)return[];return MESES.map(m=>valueForCalc(get(row,[m]),u)).filter(v=>v!==null)}function tendenciaTexto(row,u,sentido){const vals=ultimosValores(row,u);if(vals.length<4)return"Sem série";const ult3=vals.slice(-3),ant3=vals.slice(-6,-3);if(ant3.length<3)return"Sem série";const mediaUlt=ult3.reduce((s,v)=>s+v,0)/ult3.length,mediaAnt=ant3.reduce((s,v)=>s+v,0)/ant3.length,dif=mediaUlt-mediaAnt;if(Math.abs(dif)<.00001)return"Estável";const fav=maiorMelhor(sentido)?dif>0:dif<0;return fav?"Favorável":"Desfavorável"}function classTendencia(t){const x=norm(t);if(x.includes("favor"))return"ok";if(x.includes("desfavor"))return"crit";if(x.includes("estavel"))return"att";return"nd"}
-function processar(){const map=montarMapeamento();DATA=RAW.ar.map((r,idx)=>{const codigo=String(get(r,["Código","Codigo"])).trim()||`AR${idx+1}`;const d={codigo,grupo:String(get(r,["Grupo"],"Sem grupo")).trim()||"Sem grupo",ordem:num(get(r,["Ordem"]))??idx+1,indicador:String(get(r,["Indicador Executivo","Indicador_Executivo","Indicador"],codigo)).trim(),descricao:String(get(r,["Descrição Resumida","Descricao Resumida","Descrição","Descricao"])).trim(),unidade:String(get(r,["Unidade"])).trim(),sentido:String(get(r,["Sentido"],"maior_melhor")).trim(),metaRaw:get(r,["Meta_2026","Meta 2026","Meta"]),atualRaw:get(r,["Atual","Resultado Atual","Acumulado"]),atingRaw:get(r,["Atingimento_%","Atingimento %","Atingimento"]),statusRaw:String(get(r,["Status"])).trim(),fonte:String(get(r,["Fonte_Dados","Fonte Dados","Fonte"])).trim(),pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim()};const linha=encontrarGeral(d,map.get(codigo));if(linha){d.unidade=d.unidade||String(get(linha,["Unidade"])).trim();d.sentido=d.sentido||String(get(linha,["Sentido"],"maior_melhor")).trim();d.atualRaw=d.atualRaw||get(linha,["Acumulado"]);d.metaRaw=d.metaRaw||get(linha,["Meta"])}const atual=valueForCalc(d.atualRaw,d.unidade),meta=valueForCalc(d.metaRaw,d.unidade);let ating=num(d.atingRaw);if(ating!==null&&ating>1.5)ating=ating/100;if(ating===null&&atual!==null&&meta!==null&&atual!==0&&meta!==0)ating=maiorMelhor(d.sentido)?atual/meta:meta/atual;d.atual=atual;d.meta=meta;d.atingimento=ating;d.status=statusCanonico(atual,meta,d.sentido,d.statusRaw);d.statusClass=tagClass(d.status);d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);d.tendenciaClass=classTendencia(d.tendencia);d.temGeral=!!linha;return d}).filter(d=>d.codigo||d.indicador).sort((a,b)=>grupoOrdem(a.grupo)-grupoOrdem(b.grupo)||a.ordem-b.ordem)}
-function popularFiltros(){const grupos=[...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));const status=["Dentro da Meta","Atenção","Crítico","Sem dado"];$('fGrupo').innerHTML='<option value="">Todos</option>'+grupos.map(g=>`<option>${esc(g)}</option>`).join('');$('fStatus').innerHTML='<option value="">Todos</option>'+status.map(s=>`<option>${esc(s)}</option>`).join('')}function aplicarFiltros(){const grupo=$('fGrupo').value,status=$('fStatus').value,busca=norm($('fBusca').value);FILTRADOS=DATA.filter(d=>{if(grupo&&d.grupo!==grupo)return false;if(status&&d.status!==status)return false;if(busca&&!norm([d.codigo,d.indicador,d.fonte,d.grupo].join(' ')).includes(busca))return false;return true})}function renderResumo(){$('kpiDentro').textContent=FILTRADOS.filter(d=>d.status==='Dentro da Meta').length;$('kpiAtencao').textContent=FILTRADOS.filter(d=>d.status==='Atenção').length;$('kpiCritico').textContent=FILTRADOS.filter(d=>d.status==='Crítico').length;$('kpiSemDado').textContent=FILTRADOS.filter(d=>d.status==='Sem dado').length}function renderCards(){const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,'pt-BR'));if(!FILTRADOS.length){$('indicadoresContainer').innerHTML='<div class="emptyBlock">Nenhum indicador encontrado no recorte selecionado.</div>';return}$('indicadoresContainer').innerHTML=grupos.map(grupo=>{const rows=FILTRADOS.filter(d=>d.grupo===grupo);const dentro=rows.filter(d=>d.status==='Dentro da Meta').length,atencao=rows.filter(d=>d.status==='Atenção').length,critico=rows.filter(d=>d.status==='Crítico').length,sem=rows.filter(d=>d.status==='Sem dado').length;return `<section class="arBlock"><div class="arBlockHead"><div><h2 class="arBlockTitle">${esc(grupo)}</h2><div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div></div></div><div class="indicatorGrid">${rows.map(cardIndicador).join('')}</div></section>`}).join('')}function cardIndicador(d){const desc=d.descricao||d.pendencia||'Indicador pactuado no Acordo de Resultados 2026.';return `<article class="indicatorCard ${esc(d.statusClass)}"><div><div class="indicatorTop"><span class="indicatorCode">${esc(d.codigo)}</span><span class="tag ${esc(d.statusClass)}">${esc(d.status)}</span></div><div class="indicatorName">${esc(d.indicador)}</div><div class="indicatorDesc">${esc(desc)}</div></div><div><div class="metricGrid"><div class="metricMini"><small>Atual</small><b title="${esc(fmtValor(d.atual,d.unidade))}">${esc(fmtValor(d.atual,d.unidade))}</b></div><div class="metricMini"><small>Meta</small><b title="${esc(fmtValor(d.meta,d.unidade))}">${esc(fmtValor(d.meta,d.unidade))}</b></div><div class="metricMini"><small>Ating.</small><b>${esc(fmtPct(d.atingimento))}</b></div></div><div class="cardFoot"><div class="footItem"><small>Tendência</small><b><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></b></div><div class="footItem"><small>Fonte</small><b title="${esc(d.fonte||'—')}">${esc(d.fonte||'—')}</b></div></div></div></article>`}function render(){aplicarFiltros();renderResumo();renderCards()}function bind(){$('fGrupo').addEventListener('change',render);$('fStatus').addEventListener('change',render);$('fBusca').addEventListener('input',render);$('btnLimpar').addEventListener('click',()=>{$('fGrupo').value='';$('fStatus').value='';$('fBusca').value='';render()})}async function init(){try{const[geral,ar,map]=await Promise.all([csv(URLS.geral),csv(URLS.ar),csv(URLS.map)]);RAW={geral,ar,map};processar();popularFiltros();bind();render();$('loading').style.display='none';$('conteudo').style.display='block'}catch(e){console.error(e);$('loading').style.display='none';$('errorState').style.display='block';$('errorState').textContent='Erro ao carregar indicadores: '+(e.message||e)}}document.addEventListener('DOMContentLoaded',init);
+/* ================================================================
+   URLs
+   ================================================================ */
+const URLS = {
+  geral: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",
+  ar:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",
+  map:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"
+};
+
+const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+let RAW = {geral:[], ar:[], map:[]};
+let DATA = [], FILTRADOS = [];
+
+/* ================================================================
+   UTILITÁRIOS (preservados do original)
+   ================================================================ */
+const $ = id => document.getElementById(id);
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))
+}
+
+function norm(v){
+  return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim()
+}
+
+function key(v){ return norm(v).replace(/[^a-z0-9]/g,"") }
+
+function get(row, names, fallback=""){
+  if(!row) return fallback;
+  for(const n of names){
+    if(row[n]!==undefined && String(row[n]).trim()!=="") return row[n];
+  }
+  const dict={};
+  Object.keys(row).forEach(k=>dict[key(k)]=k);
+  for(const n of names){
+    const k=dict[key(n)];
+    if(k && row[k]!==undefined && String(row[k]).trim()!=="") return row[k];
+  }
+  return fallback;
+}
+
+function csv(url){
+  return new Promise((resolve,reject)=>Papa.parse(url,{
+    download:true, header:true, skipEmptyLines:true,
+    complete:r=>resolve((r.data||[]).filter(row=>Object.values(row).some(v=>String(v??"").trim()!==""))),
+    error:reject
+  }))
+}
+
+function num(v){
+  if(v===null||v===undefined) return null;
+  if(typeof v==="number"&&Number.isFinite(v)) return v;
+  let s=String(v).trim();
+  if(!s||s==="-"||s==="—") return null;
+  s=s.replace(/\s/g,"").replace("%","");
+  if(s.includes(",")&&s.includes(".")) s=s.replace(/\./g,"").replace(",",".");
+  else if(s.includes(",")) s=s.replace(",",".");
+  const n=Number(s);
+  return Number.isFinite(n)?n:null;
+}
+
+function isPercent(u){ const x=norm(u); return x.includes("percent")||x==="%"; }
+
+function valueForCalc(v,u){
+  let n=num(v);
+  if(n===null) return null;
+  if(isPercent(u)&&n>1.5) n=n/100;
+  return n;
+}
+
+function fmtValor(v,u){
+  let n=num(v);
+  if(n===null) return "—";
+  if(isPercent(u)){ if(n<=1.5) n=n*100; return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%" }
+  if(norm(u).includes("posi")) return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";
+  if(Math.abs(n)>=1000) return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
+  return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
+}
+
+function fmtPct(v){
+  const n=num(v);
+  if(n===null) return "—";
+  return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";
+}
+
+function maiorMelhor(s){ const x=norm(s); return x.includes("maior")||x.includes("↑")||x===""; }
+
+/* ================================================================
+   STATUS CANÔNICO (Dentro da Meta / Atenção / Crítico / Sem dado)
+   ================================================================ */
+function statusCanonico(atual, meta, sentido, statusPlanilha){
+  const raw = norm(statusPlanilha);
+  if(raw.includes("indispon")||raw.includes("sem dado")) return "Sem dado";
+  const a=num(atual), m=num(meta);
+  if(a===null||m===null||a===0||m===0) return "Sem dado";
+  const ating = maiorMelhor(sentido) ? a/m : m/a;
+  if(ating>=1)   return "Dentro da Meta";
+  if(ating>=.9)  return "Atenção";
+  return "Crítico";
+}
+
+function tagClass(s){
+  const x=norm(s);
+  if(x.includes("dentro")) return "ok";
+  if(x.includes("aten"))   return "att";
+  if(x.includes("critic")) return "crit";
+  return "nd";
+}
+
+/* ================================================================
+   TENDÊNCIA — últimos 3 meses vs 3 anteriores (regra canônica)
+   ================================================================ */
+function ultimosValores(row, u){
+  if(!row) return [];
+  return MESES.map(m=>valueForCalc(get(row,[m]),u)).filter(v=>v!==null);
+}
+
+function tendenciaTexto(row, u, sentido){
+  const vals = ultimosValores(row, u);
+  if(vals.length < 4) return "Sem série";
+  const ult3 = vals.slice(-3), ant3 = vals.slice(-6,-3);
+  if(ant3.length < 3) return "Sem série";
+  const mUlt = ult3.reduce((s,v)=>s+v,0)/ult3.length;
+  const mAnt = ant3.reduce((s,v)=>s+v,0)/ant3.length;
+  const dif  = mUlt - mAnt;
+  if(Math.abs(dif) < 0.00001) return "Estável";
+  return (maiorMelhor(sentido) ? dif>0 : dif<0) ? "Favorável" : "Desfavorável";
+}
+
+function tendenciaTagClass(t){
+  const x=norm(t);
+  if(x.includes("favor"))   return "fav";
+  if(x.includes("desfavor")) return "desf";
+  if(x.includes("estavel"))  return "est";
+  return "nd";
+}
+
+/* ================================================================
+   ORDENAÇÃO DE GRUPO
+   ================================================================ */
+function grupoOrdem(g){
+  const x=norm(g);
+  if(x.includes("estrateg"))  return 1;
+  if(x.includes("condicion")) return 2;
+  if(x.includes("performance")) return 3;
+  return 9;
+}
+
+/* ================================================================
+   MAPEAMENTO AR → GERAL (preservado)
+   ================================================================ */
+function montarMapeamento(){
+  const map = new Map();
+  RAW.map.forEach(r=>{
+    const codigo = String(get(r,["Código_AR","Codigo_AR","Código","Codigo","Código AR","Codigo AR"])).trim();
+    if(!codigo) return;
+    map.set(codigo,{
+      indicadorGeral: String(get(r,["Indicador_Geral","Indicador Geral","Indicador Real","Nome na geral","Indicador"])).trim(),
+      diretoria:      String(get(r,["Filtro_Diretoria","Diretoria"])).trim(),
+      superint:       String(get(r,["Filtro_Superint","Filtro_Superintendência","Superint.","Superintendência"])).trim(),
+      gerencia:       String(get(r,["Filtro_Gerência","Filtro_Gerencia","Gerência","Gerencia"])).trim()
+    });
+  });
+  return map;
+}
+
+function encontrarGeral(ind, mapItem){
+  const nomeMap = norm(mapItem?.indicadorGeral||"");
+  const nomeInd = norm(ind.indicador);
+  let rows = RAW.geral.filter(r=>{
+    const ano = String(get(r,["Ano"])).trim();
+    if(ano && ano!=="2026") return false;
+    const nomeGeral = norm(get(r,["Indicador"]));
+    if(nomeMap){
+      if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral)) return false;
+    } else {
+      if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral)) return false;
+    }
+    const fDir=norm(mapItem?.diretoria||""), fSup=norm(mapItem?.superint||""), fGer=norm(mapItem?.gerencia||"");
+    if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir) return false;
+    if(fSup&&fSup!=="-"&&norm(get(r,["Superint.","Superintendência","Superint"]))!==fSup) return false;
+    if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer) return false;
+    return true;
+  });
+  return rows[0]||null;
+}
+
+/* ================================================================
+   PROCESSAR DADOS (preservado + simplificado)
+   ================================================================ */
+function processar(){
+  const map = montarMapeamento();
+  DATA = RAW.ar.map((r,idx)=>{
+    const codigo = String(get(r,["Código","Codigo"])).trim() || `AR${idx+1}`;
+    const d = {
+      codigo,
+      grupo:    String(get(r,["Grupo"],"Sem grupo")).trim() || "Sem grupo",
+      ordem:    num(get(r,["Ordem"])) ?? idx+1,
+      indicador:String(get(r,["Indicador Executivo","Indicador_Executivo","Indicador"],codigo)).trim(),
+      unidade:  String(get(r,["Unidade"])).trim(),
+      sentido:  String(get(r,["Sentido"],"maior_melhor")).trim(),
+      metaRaw:  get(r,["Meta_2026","Meta 2026","Meta"]),
+      atualRaw: get(r,["Atual","Resultado Atual","Acumulado"]),
+      atingRaw: get(r,["Atingimento_%","Atingimento %","Atingimento"]),
+      statusRaw:String(get(r,["Status"])).trim()
+    };
+
+    const linha = encontrarGeral(d, map.get(codigo));
+    if(linha){
+      d.unidade  = d.unidade  || String(get(linha,["Unidade"])).trim();
+      d.sentido  = d.sentido  || String(get(linha,["Sentido"],"maior_melhor")).trim();
+      d.atualRaw = d.atualRaw || get(linha,["Acumulado"]);
+      d.metaRaw  = d.metaRaw  || get(linha,["Meta"]);
+    }
+
+    const atual = valueForCalc(d.atualRaw, d.unidade);
+    const meta  = valueForCalc(d.metaRaw,  d.unidade);
+    let ating   = num(d.atingRaw);
+    if(ating!==null && ating>1.5) ating=ating/100;
+    if(ating===null && atual!==null && meta!==null && atual!==0 && meta!==0)
+      ating = maiorMelhor(d.sentido) ? atual/meta : meta/atual;
+
+    d.atual      = atual;
+    d.meta       = meta;
+    d.atingimento= ating;
+    d.status     = statusCanonico(atual, meta, d.sentido, d.statusRaw);
+    d.statusClass= tagClass(d.status);
+    d.tendencia  = tendenciaTexto(linha, d.unidade, d.sentido);
+    d.tendenciaTagClass = tendenciaTagClass(d.tendencia);
+
+    return d;
+  })
+  .filter(d=>d.codigo||d.indicador)
+  .sort((a,b)=>grupoOrdem(a.grupo)-grupoOrdem(b.grupo)||a.ordem-b.ordem);
+}
+
+/* ================================================================
+   FILTROS
+   ================================================================ */
+function popularFiltros(){
+  const grupos = [...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
+  const status = ["Dentro da Meta","Atenção","Crítico","Sem dado"];
+  $("fGrupo").innerHTML = '<option value="">Todos</option>' + grupos.map(g=>`<option>${esc(g)}</option>`).join('');
+  $("fStatus").innerHTML= '<option value="">Todos</option>' + status.map(s=>`<option>${esc(s)}</option>`).join('');
+}
+
+function aplicarFiltros(){
+  const grupo  = $("fGrupo").value;
+  const status = $("fStatus").value;
+  FILTRADOS = DATA.filter(d=>{
+    if(grupo  && d.grupo  !== grupo)  return false;
+    if(status && d.status !== status) return false;
+    return true;
+  });
+}
+
+/* ================================================================
+   RENDER — KPIs
+   ================================================================ */
+function renderKPIs(){
+  $("kpiDentro").textContent  = FILTRADOS.filter(d=>d.status==="Dentro da Meta").length;
+  $("kpiAtencao").textContent = FILTRADOS.filter(d=>d.status==="Atenção").length;
+  $("kpiCritico").textContent = FILTRADOS.filter(d=>d.status==="Crítico").length;
+  $("kpiSemDado").textContent = FILTRADOS.filter(d=>d.status==="Sem dado").length;
+}
+
+/* ================================================================
+   RENDER — CARD DO INDICADOR
+   ================================================================ */
+function cardIndicador(d){
+  const atual   = esc(fmtValor(d.atual, d.unidade));
+  const meta    = esc(fmtValor(d.meta,  d.unidade));
+  const ating   = esc(fmtPct(d.atingimento));
+
+  return `
+    <article class="indCard ${esc(d.statusClass)}">
+      <div class="indTop">
+        <span class="indCodigo">${esc(d.codigo)}</span>
+        <span class="tag ${esc(d.statusClass)}">${esc(d.status)}</span>
+      </div>
+      <div class="indNome">${esc(d.indicador)}</div>
+      <div class="indMetrics">
+        <div class="indMetric">
+          <small>Atual</small>
+          <b title="${atual}">${atual}</b>
+        </div>
+        <div class="indMetric">
+          <small>Meta</small>
+          <b title="${meta}">${meta}</b>
+        </div>
+        <div class="indMetric">
+          <small>Ating.</small>
+          <b>${ating}</b>
+        </div>
+      </div>
+      <div class="indFoot">
+        <small>Tendência</small>
+        <span class="tag ${esc(d.tendenciaTagClass)}">${esc(d.tendencia)}</span>
+      </div>
+    </article>
+  `;
+}
+
+/* ================================================================
+   RENDER — BLOCOS POR GRUPO
+   ================================================================ */
+function renderCards(){
+  const grupos = [...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
+
+  if(!FILTRADOS.length){
+    $("indicadoresContainer").innerHTML = '<div class="empty">Nenhum indicador encontrado no recorte selecionado.</div>';
+    return;
+  }
+
+  $("indicadoresContainer").innerHTML = grupos.map(grupo=>{
+    const rows   = FILTRADOS.filter(d=>d.grupo===grupo);
+    const dentro = rows.filter(d=>d.status==="Dentro da Meta").length;
+    const atencao= rows.filter(d=>d.status==="Atenção").length;
+    const critico= rows.filter(d=>d.status==="Crítico").length;
+    const sem    = rows.filter(d=>d.status==="Sem dado").length;
+
+    const partes = [];
+    if(dentro)  partes.push(`${dentro} dentro da meta`);
+    if(atencao) partes.push(`${atencao} atenção`);
+    if(critico) partes.push(`${critico} crítico`);
+    if(sem)     partes.push(`${sem} sem dado`);
+
+    return `
+      <section class="arBlock">
+        <div class="arBlockHead">
+          <h2 class="arBlockTitle">${esc(grupo)}</h2>
+          <span class="arBlockMeta">${rows.length} indicador${rows.length>1?'es':''} · ${partes.join(' · ')}</span>
+        </div>
+        <div class="indicatorGrid">
+          ${rows.map(cardIndicador).join('')}
+        </div>
+      </section>
+    `;
+  }).join('');
+}
+
+/* ================================================================
+   RENDER PRINCIPAL
+   ================================================================ */
+function render(){
+  aplicarFiltros();
+  renderKPIs();
+  renderCards();
+}
+
+/* ================================================================
+   BIND
+   ================================================================ */
+function bind(){
+  $("fGrupo").addEventListener("change", render);
+  $("fStatus").addEventListener("change", render);
+  $("btnLimpar").addEventListener("click", ()=>{
+    $("fGrupo").value  = "";
+    $("fStatus").value = "";
+    render();
+  });
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+async function init(){
+  try{
+    const [geral, ar, map] = await Promise.all([csv(URLS.geral), csv(URLS.ar), csv(URLS.map)]);
+    RAW = {geral, ar, map};
+    processar();
+    popularFiltros();
+    bind();
+    render();
+    $("loading").style.display  = "none";
+    $("conteudo").style.display = "block";
+  } catch(e){
+    console.error(e);
+    $("loading").style.display    = "none";
+    $("errorState").style.display = "block";
+    $("errorState").textContent   = "Erro ao carregar indicadores: " + (e.message||e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>

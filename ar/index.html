@@ -6,9 +6,232 @@
 <title>Acordo de Resultados 2026 · HUB COMLURB</title>
 
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="ar.css">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+<style>
+.bonusHero{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.bonusMain{
+  background:linear-gradient(135deg,#0d1f36,#12365c);
+  border:1px solid #4074a2;
+  border-radius:24px;
+  padding:28px;
+}
+
+.bonusLabel{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#b8d4f2;
+}
+
+.bonusValue{
+  font-size:76px;
+  font-weight:950;
+  line-height:1;
+  margin:10px 0;
+}
+
+.bonusNote{
+  color:#c7d8ee;
+  font-size:15px;
+  line-height:1.45;
+  max-width:720px;
+}
+
+.bonusBreakdown{
+  display:grid;
+  gap:12px;
+}
+
+.bonusMini{
+  background:var(--painel);
+  border:1px solid var(--linha);
+  border-radius:20px;
+  padding:18px;
+}
+
+.bonusMini small{
+  display:block;
+  color:#b8d4f2;
+  text-transform:uppercase;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+
+.bonusMini b{
+  display:block;
+  font-size:30px;
+  color:#fff;
+  margin-top:6px;
+}
+
+.bonusMini span{
+  display:block;
+  color:#c7d8ee;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.faixaLinha{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.faixaCard{
+  background:var(--painel);
+  border:1px solid var(--linha);
+  border-radius:18px;
+  padding:18px;
+}
+
+.faixaCard .label{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#b8d4f2;
+}
+
+.faixaCard .val{
+  margin-top:8px;
+  font-size:28px;
+  font-weight:950;
+}
+
+.faixaCard .sub{
+  margin-top:4px;
+  color:#c7d8ee;
+  font-size:13px;
+}
+
+.proximaFaixa{
+  background:var(--painel2);
+  border:1px solid var(--linha);
+  border-radius:20px;
+  padding:18px 20px;
+  margin-bottom:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+}
+
+.proximaFaixa p{
+  margin:0;
+  color:#eaf3ff;
+  font-size:15px;
+}
+
+.proximaFaixa b{
+  color:#5b9bd5;
+}
+
+.metaDots{
+  display:flex;
+  gap:7px;
+}
+
+.metaDots i{
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  background:#132941;
+  border:1px solid var(--linha);
+}
+
+.metaDots i.feito{
+  background:var(--azul2);
+  border-color:var(--azul2);
+}
+
+.metaDots i.proxima{
+  background:transparent;
+  border:2px dashed var(--laranja);
+}
+
+.arExecutiveGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.attentionRow{
+  display:grid;
+  grid-template-columns:80px minmax(0,1fr) 130px 110px;
+  gap:12px;
+  align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.attentionRow:last-child{
+  border-bottom:0;
+}
+
+.attentionRow.crit{
+  border-left:4px solid var(--vermelho);
+}
+
+.attentionRow.att{
+  border-left:4px solid var(--amarelo);
+}
+
+.attentionInfo b{
+  display:block;
+  color:#fff;
+  font-size:14px;
+}
+
+.attentionInfo span{
+  display:block;
+  color:#c7d8ee;
+  font-size:12px;
+  margin-top:3px;
+}
+
+.tag{
+  display:inline-flex;
+  justify-content:center;
+  border:1px solid #345978;
+  border-radius:999px;
+  padding:5px 9px;
+  font-weight:900;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.tag.ok{border-color:#3f7d55;color:#83d99d;}
+.tag.att{border-color:#8d6a23;color:#ffa02b;}
+.tag.crit{border-color:#8b3f38;color:#ff7d72;}
+.tag.purple{border-color:#6d5ba0;color:#a78bfa;}
+
+@media(max-width:1100px){
+  .bonusHero,
+  .arExecutiveGrid,
+  .faixaLinha{
+    grid-template-columns:1fr;
+  }
+
+  .attentionRow{
+    grid-template-columns:1fr;
+  }
+
+  .bonusValue{
+    font-size:58px;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -19,152 +242,142 @@
       <img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB">
     </div>
     <div class="headerContent">
-      <div class="systemLabel">HUB COMLURB</div>
+      <div class="systemLabel">HUB COMLURB · GABINETE DA PRESIDÊNCIA</div>
       <h1 class="mainTitle">Acordo de Resultados 2026</h1>
-      <div class="subtitle">Gabinete da Presidência · Monitoramento executivo das metas pactuadas</div>
+      <div class="subtitle">Painel executivo de acompanhamento das metas pactuadas e impacto na bonificação institucional</div>
     </div>
   </div>
 
-  <div class="navTabs">
-    <button class="tabBtn active" data-screen="screenExecutivo">Visão Executiva</button>
-    <button class="tabBtn" data-screen="screenAnalitico">Base Analítica</button>
-    <button class="tabBtn" data-screen="screenGovernanca">Governança</button>
-  </div>
-
-  <div class="filters arFilters">
+  <div class="filters" style="grid-template-columns:160px 220px 220px 1fr auto">
     <div class="field">
-      <label for="fAno">Ano</label>
-      <select id="fAno"></select>
+      <label>Ano</label>
+      <select id="fAno">
+        <option value="2026">2026</option>
+      </select>
     </div>
 
     <div class="field">
-      <label for="fGrupo">Grupo</label>
-      <select id="fGrupo"></select>
+      <label>Grupo</label>
+      <select id="fGrupo">
+        <option value="">Todos</option>
+      </select>
     </div>
 
     <div class="field">
-      <label for="fStatus">Status</label>
-      <select id="fStatus"></select>
+      <label>Status</label>
+      <select id="fStatus">
+        <option value="">Todos</option>
+      </select>
     </div>
 
     <div class="field">
-      <label for="fDiretoria">Diretoria</label>
-      <select id="fDiretoria"></select>
-    </div>
-
-    <div class="field arSearchField">
-      <label for="fBusca">Busca</label>
-      <input id="fBusca" type="search" placeholder="Indicador, código ou fonte">
+      <label>Busca</label>
+      <input id="fBusca" type="search" placeholder="Indicador ou código">
     </div>
 
     <button id="btnLimpar" class="actionBtn">Limpar filtros</button>
   </div>
 
-  <div id="loading" class="loading">Carregando bases publicadas do Google Sheets...</div>
-  <div id="errorState" class="empty arError" style="display:none"></div>
-
+  <div id="loading" class="loading">Carregando dados publicados...</div>
   <div id="conteudo" style="display:none">
 
-    <section id="screenExecutivo" class="screen active">
-
-      <div id="kpisResumo" class="kpis arKpis"></div>
-
-      <div class="arInsightGrid">
-        <div class="panel arInsightPanel">
-          <div class="panelHead">
-            <h2>Leitura executiva</h2>
-            <span class="hint">recorte filtrado</span>
-          </div>
-          <div class="body">
-            <div id="leituraExecutiva"></div>
-          </div>
-        </div>
-
-        <div class="panel arInsightPanel">
-          <div class="panelHead">
-            <h2>Prioridade de acompanhamento</h2>
-            <span class="hint">maior atenção no ciclo</span>
-          </div>
-          <div class="body">
-            <div id="prioridadeExecutiva"></div>
-          </div>
+    <section class="bonusHero">
+      <div class="bonusMain">
+        <div class="bonusLabel">Potencial de bonificação atual</div>
+        <div class="bonusValue" id="bonusTotal">—</div>
+        <div class="bonusNote" id="bonusTexto">
+          Calculado a partir das metas atingidas no recorte atual, considerando as faixas conhecidas de bonificação.
         </div>
       </div>
 
-      <div id="gruposAR"></div>
-
-      <div class="grid2 arBottomGrid">
-        <div class="panel">
-          <div class="panelHead">
-            <h2>Indicadores em atenção</h2>
-            <span class="hint">risco para a meta</span>
-          </div>
-          <div class="body" id="topRiscos"></div>
+      <div class="bonusBreakdown">
+        <div class="bonusMini">
+          <small>Metas Estratégicas</small>
+          <b id="estrategicasResumo">—</b>
+          <span id="estrategicasBonus">—</span>
         </div>
 
-        <div class="panel">
-          <div class="panelHead">
-            <h2>Distribuição por diretoria</h2>
-            <span class="hint">responsabilidade informada</span>
-          </div>
-          <div class="body" id="porDiretoria"></div>
+        <div class="bonusMini">
+          <small>Metas Condicionadas</small>
+          <b id="condicionadasResumo">—</b>
+          <span id="condicionadasBonus">—</span>
+        </div>
+
+        <div class="bonusMini">
+          <small>Performance</small>
+          <b id="performanceResumo">—</b>
+          <span id="performanceBonus">—</span>
         </div>
       </div>
-
     </section>
 
-    <section id="screenAnalitico" class="screen">
+    <section class="faixaLinha">
+      <div class="faixaCard">
+        <div class="label">Indicadores monitorados</div>
+        <div class="val" id="kpiTotal">—</div>
+        <div class="sub">metas no recorte</div>
+      </div>
+
+      <div class="faixaCard">
+        <div class="label">Atingidas</div>
+        <div class="val" id="kpiAtingidas">—</div>
+        <div class="sub">dentro ou acima da meta</div>
+      </div>
+
+      <div class="faixaCard">
+        <div class="label">Em atenção</div>
+        <div class="val" id="kpiAtencao">—</div>
+        <div class="sub">entre 90% e 99,9%</div>
+      </div>
+
+      <div class="faixaCard">
+        <div class="label">Críticas</div>
+        <div class="val" id="kpiCriticas">—</div>
+        <div class="sub">abaixo de 90%</div>
+      </div>
+    </section>
+
+    <section class="proximaFaixa">
+      <p id="proximaFaixaTexto">Calculando caminho até a próxima faixa...</p>
+      <div class="metaDots" id="metaDots"></div>
+    </section>
+
+    <section class="arExecutiveGrid">
       <div class="panel">
         <div class="panelHead">
-          <h2>Base analítica do AR</h2>
-          <span class="hint">dados do dicionário executivo e cruzamento com a base geral</span>
-        </div>
-        <div class="body">
-          <div class="arToolbar">
-            <button id="btnExportar" class="actionBtn">Exportar CSV filtrado</button>
-            <span id="contagemTabela" class="hint"></span>
-          </div>
-          <div class="tableWrap">
-            <table class="dataTable" id="tabelaAnalitica">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
+          <div>
+            <h2>Leitura executiva</h2>
+            <div class="hint">síntese para decisão</div>
           </div>
         </div>
+        <div class="body" id="leituraExecutiva"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <h2>Indicadores que travam avanço</h2>
+            <div class="hint">priorizados por criticidade</div>
+          </div>
+        </div>
+        <div class="body" style="padding:0" id="listaAtencao"></div>
       </div>
     </section>
 
-    <section id="screenGovernanca" class="screen">
-      <div class="grid2">
-        <div class="panel">
-          <div class="panelHead">
-            <h2>Regras do painel</h2>
-            <span class="hint">memória técnica</span>
-          </div>
-          <div class="body" id="regrasPainel"></div>
-        </div>
-
-        <div class="panel">
-          <div class="panelHead">
-            <h2>Fontes e pendências</h2>
-            <span class="hint">controle institucional</span>
-          </div>
-          <div class="body" id="fontesPendencias"></div>
+    <section class="panel">
+      <div class="panelHead">
+        <div>
+          <h2>Painel executivo das metas</h2>
+          <div class="hint">visão consolidada por grupo, resultado atual, meta e status</div>
         </div>
       </div>
 
-      <div class="panel arGovernancaTable">
-        <div class="panelHead">
-          <h2>Governança importada da planilha</h2>
-          <span class="hint">aba publicada</span>
-        </div>
-        <div class="body">
-          <div class="tableWrap">
-            <table class="dataTable" id="tabelaGovernanca">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
-          </div>
+      <div class="body">
+        <div class="tableWrap">
+          <table class="dataTable" id="tabelaMetas">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -172,9 +385,281 @@
   </div>
 </div>
 
-</div>
+<script>
+const CSV_AR = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv";
 
-<script src="ar-config.js"></script>
-<script src="ar.js"></script>
+const bonusEstrategicas = {
+  1:{nota:"6,0", bonus:0},
+  2:{nota:"7,0", bonus:20},
+  3:{nota:"8,0", bonus:60},
+  4:{nota:"8,4", bonus:68},
+  5:{nota:"8,7", bonus:74}
+};
+
+const bonusCondicionadas = {
+  2:{acrescimo:"+0,2", bonus:4},
+  3:{acrescimo:"+0,3", bonus:6}
+};
+
+const bonusPerformance = {
+  1:{acrescimo:"+1,0", bonus:20}
+};
+
+let dados = [];
+let filtrados = [];
+
+function $(id){return document.getElementById(id);}
+
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function norm(v){
+  return String(v ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .trim();
+}
+
+function num(v){
+  if(v === null || v === undefined) return null;
+  let s = String(v).trim().replace("%","").replace(/\./g,"").replace(",",".");
+  if(!s || s === "-") return null;
+  let n = Number(s);
+  if(!Number.isFinite(n)) return null;
+  return n;
+}
+
+function fmtValor(v, unidade){
+  let n = num(v);
+  if(n === null) return "—";
+  if(norm(unidade).includes("percentual")){
+    if(n <= 1.5) n = n * 100;
+    return n.toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
+  }
+  return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
+}
+
+function fmtPct(v){
+  const n = num(v);
+  if(n === null) return "—";
+  return (n > 1.5 ? n : n * 100).toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
+}
+
+function get(row, nomes){
+  for(const n of nomes){
+    if(row[n] !== undefined && row[n] !== "") return row[n];
+  }
+  return "";
+}
+
+function statusClasse(status){
+  const s = norm(status);
+  if(s.includes("super") || s.includes("dentro")) return "ok";
+  if(s.includes("aten")) return "att";
+  if(s.includes("crit")) return "crit";
+  return "purple";
+}
+
+function isAtingida(status){
+  const s = norm(status);
+  return s.includes("super") || s.includes("dentro") || s.includes("cumprido");
+}
+
+function prepararDados(rows){
+  dados = rows.map(r => ({
+    codigo: get(r,["Código","Codigo"]),
+    grupo: get(r,["Grupo"]),
+    indicador: get(r,["Indicador Executivo","Indicador_Executivo","Indicador"]),
+    unidade: get(r,["Unidade"]),
+    tipo: get(r,["Tipo_Acumulado","Tipo Acumulado"]),
+    diretoria: get(r,["Diretoria Responsável","Diretoria Responsavel","Diretoria"]),
+    referencia: get(r,["Referência","Referencia"]),
+    meta: get(r,["Meta_2026","Meta 2026","Meta"]),
+    atual: get(r,["Atual"]),
+    atingimento: get(r,["Atingimento_%","Atingimento %","Atingimento"]),
+    status: get(r,["Status"]) || "Indisponível",
+    tendencia: get(r,["Tendência","Tendencia"]),
+    fonte: get(r,["Fonte_Dados","Fonte Dados","Fonte"]),
+    pendencia: get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])
+  })).filter(r => r.codigo || r.indicador);
+}
+
+function atualizarFiltros(){
+  const grupos = [...new Set(dados.map(d => d.grupo).filter(Boolean))].sort();
+  const status = [...new Set(dados.map(d => d.status).filter(Boolean))].sort();
+
+  $("fGrupo").innerHTML = `<option value="">Todos</option>` + grupos.map(g => `<option>${esc(g)}</option>`).join("");
+  $("fStatus").innerHTML = `<option value="">Todos</option>` + status.map(s => `<option>${esc(s)}</option>`).join("");
+}
+
+function aplicarFiltros(){
+  const grupo = $("fGrupo").value;
+  const status = $("fStatus").value;
+  const busca = norm($("fBusca").value);
+
+  filtrados = dados.filter(d => {
+    if(grupo && d.grupo !== grupo) return false;
+    if(status && d.status !== status) return false;
+    if(busca && !norm([d.codigo,d.indicador,d.grupo,d.fonte].join(" ")).includes(busca)) return false;
+    return true;
+  });
+}
+
+function calcularBonus(){
+  const estrategicas = dados.filter(d => norm(d.grupo).includes("estrateg"));
+  const condicionadas = dados.filter(d => norm(d.grupo).includes("condicion"));
+  const performance = dados.filter(d => norm(d.grupo).includes("performance"));
+
+  const eOk = estrategicas.filter(d => isAtingida(d.status)).length;
+  const cOk = condicionadas.filter(d => isAtingida(d.status)).length;
+  const pOk = performance.filter(d => isAtingida(d.status)).length;
+
+  const faixaE = bonusEstrategicas[eOk] || {nota:"Indef.", bonus:0};
+  const faixaC = bonusCondicionadas[cOk] || {acrescimo:"Indef.", bonus:0};
+  const faixaP = bonusPerformance[pOk] || {acrescimo:"Indef.", bonus:0};
+
+  const total = faixaE.bonus + faixaC.bonus + faixaP.bonus;
+
+  $("bonusTotal").textContent = total + "%";
+  $("bonusTexto").innerHTML = `
+    Estimativa composta por <strong>${faixaE.bonus}%</strong> das Metas Estratégicas,
+    <strong>${faixaC.bonus}%</strong> das Condicionadas e
+    <strong>${faixaP.bonus}%</strong> da Performance.
+    Valor sujeito à validação oficial da regra final de composição.
+  `;
+
+  $("estrategicasResumo").textContent = `${eOk} / ${estrategicas.length}`;
+  $("estrategicasBonus").textContent = `Nota ${faixaE.nota} · ${faixaE.bonus}% de bônus`;
+
+  $("condicionadasResumo").textContent = `${cOk} / ${condicionadas.length}`;
+  $("condicionadasBonus").textContent = `${faixaC.acrescimo} · ${faixaC.bonus}% adicional`;
+
+  $("performanceResumo").textContent = `${pOk} / ${performance.length}`;
+  $("performanceBonus").textContent = `${faixaP.acrescimo} · ${faixaP.bonus}% adicional`;
+
+  const prox = bonusEstrategicas[eOk + 1];
+
+  if(prox){
+    $("proximaFaixaTexto").innerHTML = `
+      Falta <b>1 Meta Estratégica</b> para avançar à próxima faixa:
+      nota <b>${prox.nota}</b> e <b>${prox.bonus}%</b> de bônus estratégico.
+    `;
+  }else{
+    $("proximaFaixaTexto").innerHTML = `Faixa estratégica máxima conhecida atingida ou próxima faixa sem regra oficial publicada.`;
+  }
+
+  $("metaDots").innerHTML = Array.from({length: estrategicas.length || 8}).map((_,i) => {
+    if(i < eOk) return "<i class='feito'></i>";
+    if(i === eOk) return "<i class='proxima'></i>";
+    return "<i></i>";
+  }).join("");
+}
+
+function renderResumo(){
+  const total = filtrados.length;
+  const atingidas = filtrados.filter(d => isAtingida(d.status)).length;
+  const atencao = filtrados.filter(d => norm(d.status).includes("aten")).length;
+  const criticas = filtrados.filter(d => norm(d.status).includes("crit")).length;
+
+  $("kpiTotal").textContent = total;
+  $("kpiAtingidas").textContent = atingidas;
+  $("kpiAtencao").textContent = atencao;
+  $("kpiCriticas").textContent = criticas;
+
+  const pct = total ? ((atingidas/total)*100).toLocaleString("pt-BR",{maximumFractionDigits:1}) : "0";
+
+  $("leituraExecutiva").innerHTML = `
+    <p style="margin-top:0;font-size:16px;line-height:1.6;color:#eaf3ff">
+      No recorte atual, <strong>${pct}%</strong> das metas monitoradas estão atingidas ou superadas.
+      O painel prioriza o impacto institucional do AR, destacando o efeito direto das metas no potencial de bonificação.
+    </p>
+    <p style="margin-bottom:0;color:#c7d8ee;line-height:1.6">
+      A atenção executiva deve se concentrar nos indicadores críticos e nos que impedem avanço de faixa estratégica,
+      especialmente quando há tendência negativa ou pendência oficial de regra.
+    </p>
+  `;
+}
+
+function renderAtencao(){
+  const rows = filtrados
+    .filter(d => norm(d.status).includes("crit") || norm(d.status).includes("aten"))
+    .sort((a,b) => {
+      const ca = norm(a.status).includes("crit") ? 0 : 1;
+      const cb = norm(b.status).includes("crit") ? 0 : 1;
+      return ca - cb;
+    })
+    .slice(0,6);
+
+  $("listaAtencao").innerHTML = rows.length ? rows.map(d => `
+    <div class="attentionRow ${statusClasse(d.status)}">
+      <span class="tag ${statusClasse(d.status)}">${esc(d.codigo)}</span>
+      <div class="attentionInfo">
+        <b>${esc(d.indicador)}</b>
+        <span>${esc(d.grupo)} · Atual ${esc(fmtValor(d.atual,d.unidade))} · Meta ${esc(fmtValor(d.meta,d.unidade))}</span>
+      </div>
+      <span class="tag ${statusClasse(d.status)}">${esc(d.status)}</span>
+      <span>${esc(d.tendencia || "—")}</span>
+    </div>
+  `).join("") : `<div class="empty">Sem indicadores críticos ou em atenção no recorte.</div>`;
+}
+
+function renderTabela(){
+  const cols = ["Código","Indicador","Grupo","Atual","Meta 2026","Atingimento","Status"];
+
+  $("tabelaMetas").querySelector("thead").innerHTML = `
+    <tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr>
+  `;
+
+  $("tabelaMetas").querySelector("tbody").innerHTML = filtrados.map(d => `
+    <tr>
+      <td>${esc(d.codigo)}</td>
+      <td>${esc(d.indicador)}</td>
+      <td>${esc(d.grupo)}</td>
+      <td>${esc(fmtValor(d.atual,d.unidade))}</td>
+      <td>${esc(fmtValor(d.meta,d.unidade))}</td>
+      <td>${esc(fmtPct(d.atingimento))}</td>
+      <td><span class="tag ${statusClasse(d.status)}">${esc(d.status)}</span></td>
+    </tr>
+  `).join("");
+}
+
+function render(){
+  aplicarFiltros();
+  calcularBonus();
+  renderResumo();
+  renderAtencao();
+  renderTabela();
+}
+
+$("fGrupo").addEventListener("change",render);
+$("fStatus").addEventListener("change",render);
+$("fBusca").addEventListener("input",render);
+$("btnLimpar").addEventListener("click",()=>{
+  $("fGrupo").value = "";
+  $("fStatus").value = "";
+  $("fBusca").value = "";
+  render();
+});
+
+Papa.parse(CSV_AR,{
+  download:true,
+  header:true,
+  skipEmptyLines:true,
+  complete:(res)=>{
+    prepararDados(res.data || []);
+    atualizarFiltros();
+    render();
+    $("loading").style.display = "none";
+    $("conteudo").style.display = "block";
+  },
+  error:(err)=>{
+    $("loading").innerHTML = "Erro ao carregar dados: " + err.message;
+  }
+});
+</script>
 </body>
 </html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Unidades COMLURB | Território Operacional</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="unidades.css">
+</head>
+<body>
+<div class="app mapApp">
+  <header class="topbar compact">
+    <div class="brand">
+      <img src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB" onerror="this.style.display='none'">
+      <div>
+        <div class="eyebrow">HUB COMLURB • Território Operacional</div>
+        <h1>Unidades COMLURB</h1>
+        <p>Setores georreferenciados para leitura territorial executiva.</p>
+      </div>
+    </div>
+    <a class="backLink" href="./index.html">Voltar</a>
+  </header>
+
+  <section class="filters panel">
+    <div class="field"><label>Categoria</label><select id="fCategoria"><option value="">Todas</option></select></div>
+    <div class="field"><label>Diretoria</label><select id="fDiretoria"><option value="">Todas</option></select></div>
+    <div class="field"><label>Tipo</label><select id="fTipo"><option value="">Todos</option></select></div>
+    <div class="field"><label>Bairro</label><select id="fBairro"><option value="">Todos</option></select></div>
+    <div class="field wide"><label>Buscar</label><input id="fBusca" placeholder="Setor, nome, endereço ou bairro"></div>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi"><span>Total</span><strong id="kTotal">0</strong></div>
+    <div class="kpi"><span>Operacionais</span><strong id="kOperacional">0</strong></div>
+    <div class="kpi"><span>Diretorias</span><strong id="kDiretorias">0</strong></div>
+    <div class="kpi"><span>Bairros</span><strong id="kBairros">0</strong></div>
+  </section>
+
+  <main class="geoLayout">
+    <section class="mapPanel panel">
+      <div id="map"></div>
+      <div class="mapLegend">
+        <span><i class="dot op"></i>Operacional</span><span><i class="dot adm"></i>Administrativo</span><span><i class="dot apo"></i>Apoio</span><span><i class="dot man"></i>Manutenção</span><span><i class="dot eng"></i>Engenharia</span><span><i class="dot gp"></i>Gestão de Pessoas</span><span><i class="dot fin"></i>Financeiro</span><span><i class="dot jur"></i>Jurídico</span><span><i class="dot tec"></i>Tecnologia</span><span><i class="dot pre"></i>Presidência</span>
+      </div>
+    </section>
+    <aside class="side panel">
+      <div class="sideHead"><div><span class="pill">Leitura executiva</span><h2>Distribuição</h2></div></div>
+      <div class="miniBlock"><h3>Por categoria</h3><div id="rankingCategoria"></div></div>
+      <div class="miniBlock"><h3>Por diretoria</h3><div id="rankingDiretoria"></div></div>
+      <div class="miniBlock"><h3>Registros filtrados</h3><div id="listaUnidades" class="unitList"></div></div>
+    </aside>
+  </main>
+  <footer>COMLURB • Monitoramento Territorial • Base administrativa georreferenciada 2026</footer>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="unidades.js"></script>
+</body>
+</html>

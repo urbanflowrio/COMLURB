@@ -124,6 +124,32 @@ function renderConcentration(){const abaixo=FILTERED.filter(r=>r.nota<META).leng
 function totalNok(){let total=0;FILTERED.forEach(r=>total+=r.itensNok.length);return total}
 function gerenciaContribuicao(){const g=group('ger').filter(x=>x.k!=='Não informado').sort((a,b)=>b.abaixo-a.abaixo||a.media-b.media)[0];const total=FILTERED.filter(r=>r.nota<META).length;return g?{...g,pct:total?g.abaixo/total*100:0}:null}
 function fatorContribuicao(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(item=>{const label=itemLabel(item);itens[label]=(itens[label]||0)+1}));const total=Object.values(itens).reduce((a,b)=>a+b,0);const top=Object.entries(itens).map(([item,n])=>({item,n,pct:total?n/total*100:0})).sort((a,b)=>b.n-a.n)[0];return top||null}
+
+function renderDesempenhoTerritorial(){
+  const ranking = officialGerRank().filter(x=>x.media!==null && x.k && x.k!=='-');
+  const renderLista = (arr,tipo) => {
+    if(!arr.length) return '<div class="status">Sem ranking oficial SARC para o recorte selecionado.</div>';
+    return arr.map((g,i)=>{
+      const cls = g.media>=META ? 'good' : 'bad';
+      const cor = tipo==='best' ? '#78aaa3' : (g.media>=META ? '#6da5d8' : '#e84855');
+      const delta = g.media - META;
+      return `<div class="metricRow">
+        <div class="pos">${i+1}</div>
+        <div>
+          <b>${g.k}</b>
+          <div class="hint">${delta>=0?'+':''}${fmt(delta)} p.p. vs meta</div>
+          <div class="bar"><i style="width:${Math.max(4,Math.min(100,g.media))}%;background:${cor}"></i></div>
+        </div>
+        <span class="val ${cls}">${fmt(g.media)}%</span>
+      </div>`;
+    }).join('');
+  };
+  const melhores = ranking.slice().sort((a,b)=>b.media-a.media).slice(0,5);
+  const atencao = ranking.slice().sort((a,b)=>a.media-b.media).slice(0,5);
+  $('bestGers').innerHTML = renderLista(melhores,'best');
+  $('attentionGers').innerHTML = renderLista(atencao,'attention');
+}
+
 function renderTrend(){const serie=serieOficial();const canvas=$('trendChart');if(!serie.length){$('trendFoot').innerHTML='<div class="status">Sem série oficial para o recorte.</div>';return}if(trendChart)trendChart.destroy();trendChart=new Chart(canvas,{type:'line',data:{labels:serie.map(x=>x.mes),datasets:[{label:'Nota IPL média acumulada',data:serie.map(x=>x.media),borderColor:'#6da5d8',backgroundColor:'rgba(109,165,216,.16)',tension:.35,fill:true,pointRadius:4,pointHoverRadius:6},{label:'Meta',data:serie.map(()=>META),borderColor:'#e87535',borderDash:[7,6],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c5d5e8',boxWidth:11,font:{weight:'700'}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}%`}}},scales:{x:{ticks:{color:'#9fb0c7',font:{weight:'700'}},grid:{color:'rgba(255,255,255,.055)'}},y:{ticks:{color:'#9fb0c7',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.055)'},suggestedMin:Math.max(0,Math.min(...serie.map(x=>x.media),META)-8),suggestedMax:Math.min(100,Math.max(...serie.map(x=>x.media),META)+8)}}}});if(serie.length){const first=serie[0],last=serie[serie.length-1],best=serie.slice().sort((a,b)=>b.media-a.media)[0],worst=serie.slice().sort((a,b)=>a.media-b.media)[0],delta=last.media-first.media;$('trendFoot').innerHTML=`<div class="tf"><span>Δ período</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${fmt(delta)} p.p.</b></div><div class="tf"><span>Melhor mês</span><b>${best.mes} · ${fmt(best.media)}%</b></div><div class="tf"><span>Pior mês</span><b>${worst.mes} · ${fmt(worst.media)}%</b></div><div class="tf"><span>Tendência</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'Crescente':'Em atenção'}</b></div>`}else $('trendFoot').innerHTML=''}
 function renderFactors(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(item=>{const label=itemLabel(item);itens[label]=(itens[label]||0)+1}));const ranking=Object.entries(itens).map(([item,n])=>({item,n})).sort((a,b)=>b.n-a.n).slice(0,6);const max=Math.max(...ranking.map(x=>x.n),1);$('factorsPanel').innerHTML=ranking.map((x,i)=>`<div class="factor"><div class="idx">${i+1}</div><div><b>${x.item}</b><small><div class="bar" style="margin-top:7px"><i style="width:${Math.max(4,x.n/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#6da5d8'}"></i></div></small></div><div class="num">${x.n.toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="status">Sem NOK no recorte.</div>'}
 function rankHTML(arr,field='bairro'){return arr.map(x=>{const badge=field==='bairro'?(FILTERED.find(r=>normaliza(r.bairro)===normaliza(x.k))?.ger||''):'';const crit=calculaCriticidade(x.rows);return`<div class="rank" ${field==='bairro'?`onclick="abrirBairro('${encodeURIComponent(x.k)}')"`:''}><div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}<div class="hint">${x.n} avaliações · ${fmt(x.media)}% nota média · ${x.abaixo} abaixo da meta</div><div class="bar"><i style="width:${Math.min(100,Math.max(8,crit))}%;background:${corCriticidade(crit)}"></i></div></div><small style="color:${corNota(x.media)}">${fmt(x.media)}%</small></div>`}).join('')||'<div class="status">Sem dados</div>'}

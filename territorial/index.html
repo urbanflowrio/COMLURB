@@ -5,394 +5,96 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>HUB COMLURB | Território Operacional</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
   --bg:#050e1a;
-  --bg2:#071426;
   --panel:#0b1b31;
   --panel2:#0d2038;
-  --panel3:#102844;
-  --line:#254764;
-  --line2:rgba(117,165,214,.22);
+  --line:rgba(117,165,214,.24);
   --text:#f7f9ff;
   --muted:#b8c9de;
-  --muted2:#8faac5;
   --blue:#5b9bd5;
-  --blue2:#7db7ed;
   --green:#78aaa3;
   --orange:#e87535;
-  --danger:#f28482;
-  --shadow:0 20px 60px rgba(0,0,0,.35);
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
-  background:
-    radial-gradient(circle at top left, rgba(91,155,213,.16), transparent 34%),
-    linear-gradient(180deg,#050e1a 0%,#06111f 48%,#040a13 100%);
+  background:radial-gradient(circle at top left,rgba(91,155,213,.14),transparent 34%),linear-gradient(180deg,#050e1a,#06111f 55%,#040a13);
   color:var(--text);
   font-family:Segoe UI,Arial,sans-serif;
 }
-
-.app{
-  max-width:1820px;
-  margin:0 auto;
-  padding:28px;
-}
-
+.app{max-width:1820px;margin:0 auto;padding:28px}
 .header{
-  display:flex;
-  align-items:center;
-  gap:28px;
-  padding:26px;
-  border:1px solid var(--line2);
-  border-radius:24px;
+  display:flex;align-items:center;gap:28px;
+  padding:26px;border:1px solid var(--line);border-radius:24px;
   background:linear-gradient(135deg,rgba(13,32,56,.96),rgba(7,20,38,.96));
-  box-shadow:var(--shadow);
   margin-bottom:16px;
 }
-
-.logo{
-  width:300px;
-  max-height:80px;
-  object-fit:contain;
-  padding-right:26px;
-  border-right:1px solid rgba(255,255,255,.22);
-}
-
-.eyebrow{
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.25em;
-  color:#b8d4f2;
-  text-transform:uppercase;
-}
-
-h1{
-  margin:6px 0;
-  font-size:38px;
-  letter-spacing:-.04em;
-}
-
-.sub{
-  color:#c7d8ee;
-  line-height:1.5;
-  max-width:920px;
-}
-
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:0 0 14px;
-}
-
-.navPill{
-  border:1px solid var(--line2);
-  background:rgba(13,32,56,.78);
-  color:#dcecff;
-  border-radius:999px;
-  padding:10px 13px;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-bottom:14px;
-}
-
+.logo{width:300px;max-height:80px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,.22)}
+.eyebrow{font-size:12px;font-weight:900;letter-spacing:.25em;color:#b8d4f2}
+h1{margin:6px 0;font-size:38px;letter-spacing:-.04em}
+.sub{color:#c7d8ee;line-height:1.5;max-width:920px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.navPill{border:1px solid var(--line);background:rgba(13,32,56,.78);color:#dcecff;border-radius:999px;padding:10px 13px;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
 .kpi{
-  position:relative;
-  overflow:hidden;
+  position:relative;overflow:hidden;
   background:linear-gradient(180deg,rgba(13,32,56,.98),rgba(8,22,40,.98));
-  border:1px solid var(--line2);
-  border-radius:20px;
-  padding:18px;
-  min-height:118px;
-  box-shadow:0 12px 34px rgba(0,0,0,.24);
+  border:1px solid var(--line);border-radius:20px;padding:18px;min-height:118px;
 }
-
-.kpi::after{
-  content:"";
-  position:absolute;
-  inset:auto 0 0 0;
-  height:3px;
-  background:linear-gradient(90deg,transparent,var(--blue),transparent);
-  opacity:.75;
-}
-
-.kpi .label{
-  font-size:11px;
-  letter-spacing:.16em;
-  color:#b8d4f2;
-  font-weight:900;
-  text-transform:uppercase;
-}
-
-.kpi .value{
-  font-size:34px;
-  font-weight:950;
-  margin:14px 0 4px;
-  letter-spacing:-.04em;
-}
-
-.kpi .note{
-  color:#c7d8ee;
-  font-size:13px;
-  line-height:1.35;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);
-  gap:14px;
-}
-
+.kpi:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.kpi .label{font-size:11px;letter-spacing:.16em;color:#b8d4f2;font-weight:900;text-transform:uppercase}
+.kpi .value{font-size:34px;font-weight:950;margin:14px 0 4px;letter-spacing:-.04em}
+.kpi .note{color:#c7d8ee;font-size:13px;line-height:1.35}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);gap:14px}
 .panel{
   background:linear-gradient(180deg,rgba(11,27,49,.98),rgba(7,20,38,.98));
-  border:1px solid var(--line2);
-  border-radius:22px;
-  overflow:hidden;
-  min-height:420px;
-  box-shadow:0 14px 44px rgba(0,0,0,.26);
+  border:1px solid var(--line);border-radius:22px;overflow:hidden;min-height:420px;
 }
-
-.panelHead{
-  padding:18px;
-  border-bottom:1px solid var(--line2);
-  background:rgba(255,255,255,.025);
-}
-
-h2{
-  margin:0;
-  font-size:18px;
-  letter-spacing:-.02em;
-}
-
-.hint{
-  color:#c7d8ee;
-  font-size:13px;
-  margin-top:5px;
-}
-
-.body{
-  padding:18px;
-}
-
+.panelHead{padding:18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+h2{margin:0;font-size:18px}
+.hint{color:#c7d8ee;font-size:13px;margin-top:5px}
+.body{padding:18px}
 #map{
-  height:735px;
-  width:100%;
-  border-radius:20px;
+  height:735px;width:100%;border-radius:20px;
   border:1px solid rgba(255,255,255,.12);
-  overflow:hidden;
-  background:#06111f;
-  box-shadow:inset 0 0 0 1px rgba(91,155,213,.08);
+  background:#06111f;overflow:hidden;
 }
-
-.leaflet-container{
-  background:#06111f;
-  font-family:Segoe UI,Arial,sans-serif;
-}
-
-.leaflet-control-zoom a{
-  background:#0d2038!important;
-  color:#fff!important;
-  border-color:#294866!important;
-}
-
-.leaflet-control-attribution{
-  background:rgba(5,14,26,.78)!important;
-  color:#8faac5!important;
-}
-
-.layers{
-  display:grid;
-  gap:10px;
-}
-
+.leaflet-container{background:#06111f;font-family:Segoe UI,Arial,sans-serif}
+.leaflet-control-zoom a{background:#0d2038!important;color:#fff!important;border-color:#294866!important}
+.leaflet-control-attribution{background:rgba(5,14,26,.78)!important;color:#8faac5!important}
+.layers{display:grid;gap:10px}
 .layerBtn{
-  width:100%;
-  text-align:left;
-  border:1px solid var(--line2);
+  width:100%;text-align:left;border:1px solid var(--line);
   background:linear-gradient(180deg,#102844,#0b1c32);
-  color:#fff;
-  border-radius:16px;
-  padding:14px;
-  font-weight:900;
-  cursor:pointer;
-  transition:.18s ease;
+  color:#fff;border-radius:16px;padding:14px;font-weight:900;cursor:pointer;
 }
-
-.layerBtn:hover{
-  transform:translateY(-1px);
-  border-color:rgba(125,183,237,.55);
-}
-
-.layerBtn.active{
-  background:linear-gradient(90deg,#244f82,#5b9bd5);
-  border-color:#7db7ed;
-  box-shadow:0 12px 28px rgba(91,155,213,.2);
-}
-
-.filters{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:14px;
-}
-
-.filters input,.filters select{
-  width:100%;
-  border:1px solid var(--line2);
-  background:#071426;
-  color:#fff;
-  border-radius:13px;
-  padding:11px;
-  font-weight:700;
-  outline:none;
-}
-
-.insightBox{
-  margin-top:14px;
-  background:linear-gradient(180deg,#102844,#0b1c32);
-  border:1px solid var(--line2);
-  border-radius:18px;
-  padding:16px;
-  color:#dcecff;
-  line-height:1.5;
-}
-
-.insightTitle{
-  font-size:12px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:#b8d4f2;
-  font-weight:950;
-  margin-bottom:8px;
-}
-
-.insightText{
-  font-size:14px;
-  color:#eaf3ff;
-}
-
-.rank{
-  margin-top:14px;
-  display:grid;
-  gap:10px;
-  max-height:380px;
-  overflow:auto;
-  padding-right:3px;
-}
-
-.rankItem{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
-  align-items:center;
-  background:rgba(16,40,68,.82);
-  border-radius:15px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.rankItem b{
-  color:#fff;
-  line-height:1.3;
-}
-
-.rankItem small{
-  display:block;
-  color:#aebfd5;
-  margin-top:4px;
-}
-
-.pill{
-  border:1px solid #345978;
-  background:rgba(91,155,213,.10);
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:12px;
-  font-weight:900;
-  color:#dcecff;
-  white-space:nowrap;
-}
-
-.footer{
-  margin-top:16px;
-  padding:16px 18px;
-  border:1px solid var(--line2);
-  border-radius:18px;
-  background:rgba(7,20,38,.72);
-  color:#aebfd5;
-  font-size:13px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.footer b{
-  color:#dcecff;
-}
-
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{
-  background:#0d2038;
-  color:#fff;
-  border:1px solid #294866;
-  box-shadow:0 18px 48px rgba(0,0,0,.42);
-}
-
-.leaflet-popup-content{
-  margin:14px;
-}
-
-.popupTitle{
-  font-size:15px;
-  font-weight:950;
-  margin-bottom:8px;
-  color:#fff;
-}
-
-.popupLine{
-  font-size:12px;
-  color:#c7d8ee;
-  margin:4px 0;
-}
-
-.popupLine b{
-  color:#fff;
-}
-
-.loading{
-  color:#b8c9de;
-}
-
-.errorBox{
-  color:#ffd2d2;
-  border-color:rgba(242,132,130,.35);
-}
-
-@media(max-width:1200px){
-  .grid,.kpis{grid-template-columns:1fr}
-}
-
+.layerBtn.active{background:linear-gradient(90deg,#244f82,#5b9bd5);border-color:#7db7ed}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.filters input,.filters select{width:100%;border:1px solid var(--line);background:#071426;color:#fff;border-radius:13px;padding:11px;font-weight:700;outline:none}
+.insightBox{margin-top:14px;background:linear-gradient(180deg,#102844,#0b1c32);border:1px solid var(--line);border-radius:18px;padding:16px;color:#dcecff;line-height:1.5}
+.insightTitle{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#b8d4f2;font-weight:950;margin-bottom:8px}
+.insightText{font-size:14px;color:#eaf3ff}
+.rank{margin-top:14px;display:grid;gap:10px;max-height:380px;overflow:auto;padding-right:3px}
+.rankItem{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:rgba(16,40,68,.82);border-radius:15px;padding:12px;border:1px solid rgba(255,255,255,.08)}
+.rankItem b{color:#fff;line-height:1.3}
+.rankItem small{display:block;color:#aebfd5;margin-top:4px}
+.pill{border:1px solid #345978;background:rgba(91,155,213,.10);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;color:#dcecff;white-space:nowrap}
+.footer{margin-top:16px;padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(7,20,38,.72);color:#aebfd5;font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.footer b{color:#dcecff}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0d2038;color:#fff;border:1px solid #294866}
+.popupTitle{font-size:15px;font-weight:950;margin-bottom:8px;color:#fff}
+.popupLine{font-size:12px;color:#c7d8ee;margin:4px 0}
+.popupLine b{color:#fff}
+.errorBox{color:#ffd2d2}
+@media(max-width:1200px){.grid,.kpis{grid-template-columns:1fr}}
 @media(max-width:700px){
-  .app{padding:16px}
-  .header{flex-direction:column;align-items:flex-start}
+  .app{padding:16px}.header{flex-direction:column;align-items:flex-start}
   .logo{width:220px;border-right:0;padding-right:0}
-  h1{font-size:30px}
-  .filters{grid-template-columns:1fr}
-  #map{height:620px}
+  h1{font-size:30px}.filters{grid-template-columns:1fr}#map{height:620px}
 }
 </style>
 </head>
@@ -400,98 +102,411 @@ h2{
 <body>
 <div class="app">
 
-  <header class="header">
-    <img class="logo" src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio + Comlurb">
-    <div>
-      <div class="eyebrow">HUB COMLURB</div>
-      <h1>Território Operacional</h1>
-      <div class="sub">
-        Leitura geoespacial das estruturas da COMLURB, integrando áreas territoriais, gerências e unidades físicas em uma camada executiva de apoio à gestão.
-      </div>
-    </div>
-  </header>
+<header class="header">
+  <img class="logo" src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio + Comlurb">
+  <div>
+    <div class="eyebrow">HUB COMLURB</div>
+    <h1>Território Operacional</h1>
+    <div class="sub">Leitura geoespacial das estruturas da COMLURB, integrando áreas territoriais, gerências e unidades físicas em uma camada executiva de apoio à gestão.</div>
+  </div>
+</header>
 
-  <div class="toolbar">
-    <span class="navPill">Base territorial</span>
-    <span class="navPill">Unidades georreferenciadas</span>
-    <span class="navPill">Camadas GIS</span>
+<div class="toolbar">
+  <span class="navPill">Base territorial</span>
+  <span class="navPill">Unidades georreferenciadas</span>
+  <span class="navPill">Camadas GIS</span>
+</div>
+
+<section class="kpis">
+  <div class="kpi"><div class="label">Camada ativa</div><div class="value" id="kpiCamada">-</div><div class="note">Camada carregada no mapa</div></div>
+  <div class="kpi"><div class="label">Total mapeado</div><div class="value" id="kpiFeicoes">0</div><div class="note" id="kpi2Note">Registros identificados</div></div>
+  <div class="kpi"><div class="label">Principal concentração</div><div class="value" id="kpiPrincipal" style="font-size:28px">-</div><div class="note" id="kpi3Note">Maior grupo no recorte ativo</div></div>
+  <div class="kpi"><div class="label">Cobertura</div><div class="value" id="kpiCobertura" style="font-size:28px">-</div><div class="note" id="kpi4Note">Leitura territorial do recorte</div></div>
+</section>
+
+<section class="grid">
+  <div class="panel">
+    <div class="panelHead">
+      <h2>Mapa territorial</h2>
+      <div class="hint">Mapa dark no padrão HUB. Clique nas áreas ou unidades para consultar detalhes.</div>
+    </div>
+    <div class="body"><div id="map"></div></div>
   </div>
 
-  <section class="kpis">
-    <div class="kpi">
-      <div class="label" id="kpi1Label">Camada ativa</div>
-      <div class="value" id="kpiCamada">-</div>
-      <div class="note" id="kpi1Note">Camada carregada no mapa</div>
+  <div class="panel">
+    <div class="panelHead">
+      <h2>Camadas e leitura executiva</h2>
+      <div class="hint">Selecione a camada para atualizar mapa, cards e ranking lateral.</div>
     </div>
-
-    <div class="kpi">
-      <div class="label" id="kpi2Label">Total mapeado</div>
-      <div class="value" id="kpiFeicoes">0</div>
-      <div class="note" id="kpi2Note">Registros identificados</div>
-    </div>
-
-    <div class="kpi">
-      <div class="label" id="kpi3Label">Principal concentração</div>
-      <div class="value" id="kpiPrincipal" style="font-size:28px">-</div>
-      <div class="note" id="kpi3Note">Maior grupo no recorte ativo</div>
-    </div>
-
-    <div class="kpi">
-      <div class="label" id="kpi4Label">Cobertura</div>
-      <div class="value" id="kpiCobertura" style="font-size:28px">-</div>
-      <div class="note" id="kpi4Note">Leitura territorial do recorte</div>
-    </div>
-  </section>
-
-  <section class="grid">
-    <div class="panel">
-      <div class="panelHead">
-        <h2>Mapa territorial</h2>
-        <div class="hint">Mapa dark no padrão HUB. Clique nas áreas ou unidades para consultar detalhes.</div>
+    <div class="body">
+      <div class="layers">
+        <button class="layerBtn active" id="btnDSU" onclick="loadLayer('dsu')">Gerências DSU</button>
+        <button class="layerBtn" id="btnDLU" onclick="loadLayer('dlu')">DLU | Novos Bairros 2025</button>
+        <button class="layerBtn" id="btnUNI" onclick="loadLayer('unidades')">Unidades COMLURB</button>
       </div>
-      <div class="body">
-        <div id="map"></div>
+
+      <div class="filters" id="filtrosUnidades" style="display:none">
+        <select id="fCategoria" onchange="applyUnitFilters()"><option value="">Todas as categorias</option></select>
+        <select id="fDiretoria" onchange="applyUnitFilters()"><option value="">Todas as diretorias</option></select>
+        <select id="fBairro" onchange="applyUnitFilters()"><option value="">Todos os bairros</option></select>
+        <input id="fBusca" oninput="applyUnitFilters()" placeholder="Buscar unidade, bairro ou endereço">
       </div>
+
+      <div class="insightBox" id="infoBox">
+        <div class="insightTitle">Leitura executiva</div>
+        <div class="insightText">Carregando camada territorial...</div>
+      </div>
+
+      <div class="rank" id="rankBox"></div>
     </div>
-
-    <div class="panel">
-      <div class="panelHead">
-        <h2>Camadas e leitura executiva</h2>
-        <div class="hint">Selecione a camada para atualizar mapa, cards e ranking lateral.</div>
-      </div>
-      <div class="body">
-        <div class="layers">
-          <button class="layerBtn active" id="btnDSU" onclick="loadLayer('dsu')">Gerências DSU</button>
-          <button class="layerBtn" id="btnDLU" onclick="loadLayer('dlu')">DLU | Novos Bairros 2025</button>
-          <button class="layerBtn" id="btnUNI" onclick="loadLayer('unidades')">Unidades COMLURB</button>
-        </div>
-
-        <div class="filters" id="filtrosUnidades" style="display:none">
-          <select id="fCategoria" onchange="applyUnitFilters()"><option value="">Todas as categorias</option></select>
-          <select id="fDiretoria" onchange="applyUnitFilters()"><option value="">Todas as diretorias</option></select>
-          <select id="fBairro" onchange="applyUnitFilters()"><option value="">Todos os bairros</option></select>
-          <input id="fBusca" oninput="applyUnitFilters()" placeholder="Buscar unidade, bairro ou endereço">
-        </div>
-
-        <div class="insightBox" id="infoBox">
-          <div class="insightTitle">Leitura executiva</div>
-          <div class="insightText">Carregando camada territorial...</div>
-        </div>
-
-        <div class="rank" id="rankBox"></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="footer">
-    <span><b>COMLURB</b> • HUB de Inteligência Operacional</span>
-    <span>Fonte: bases georreferenciadas do módulo territorial</span>
   </div>
+</section>
+
+<div class="footer">
+  <span><b>COMLURB</b> • HUB de Inteligência Operacional</span>
+  <span>Fonte: bases georreferenciadas do módulo territorial</span>
+</div>
 
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="app.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+if(typeof L === 'undefined'){
+  document.getElementById('infoBox').innerHTML = '<div class="insightTitle">Erro</div><div class="insightText">Leaflet não carregou. Verifique conexão com a CDN.</div>';
+  return;
+}
+
+const map = L.map('map',{zoomControl:true,preferCanvas:true}).setView([-22.9068,-43.1729],11);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  maxZoom:20,
+  attribution:'&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
+
+let activeLayer = null;
+let unitLayer = null;
+let unidades = [];
+
+const meta = {
+  dsu:{
+    label:'Gerências DSU',
+    paths:[
+      '/COMLURB/assets/geojson/GERENCIAS_DSU.geojson',
+      '../assets/geojson/GERENCIAS_DSU.geojson',
+      'assets/geojson/GERENCIAS_DSU.geojson'
+    ],
+    color:'#5b9bd5',fill:'#244f82',
+    insight:'Camada usada para leitura das áreas de atuação das Gerências da Diretoria de Serviços Urbanos.'
+  },
+  dlu:{
+    label:'Bairros DLU',
+    paths:[
+      '/COMLURB/assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson',
+      '../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson',
+      'assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson'
+    ],
+    color:'#78aaa3',fill:'#1d6b62',
+    insight:'Camada de referência territorial para leitura por bairros e estrutura DLU 2025.'
+  },
+  unidades:{
+    label:'Unidades COMLURB',
+    paths:[
+      '/COMLURB/territorial/data/unidades_comlurb.csv',
+      'data/unidades_comlurb.csv',
+      './data/unidades_comlurb.csv'
+    ],
+    insight:'Camada de setores e unidades físicas da COMLURB, classificada por categoria, diretoria e bairro.'
+  }
+};
+
+function $(id){return document.getElementById(id)}
+function br(n){return Number(n||0).toLocaleString('pt-BR')}
+function pct(n){return Number(n||0).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%'}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function setButtons(key){
+  ['btnDSU','btnDLU','btnUNI'].forEach(id=>$(id).classList.remove('active'));
+  ({dsu:'btnDSU',dlu:'btnDLU',unidades:'btnUNI'}[key] && $(({dsu:'btnDSU',dlu:'btnDLU',unidades:'btnUNI'}[key])).classList.add('active'));
+}
+
+function clear(){
+  if(activeLayer){map.removeLayer(activeLayer);activeLayer=null}
+  if(unitLayer){map.removeLayer(unitLayer);unitLayer=null}
+}
+
+function insight(title,text,error=false){
+  $('infoBox').classList.toggle('errorBox',error);
+  $('infoBox').innerHTML = '<div class="insightTitle">'+title+'</div><div class="insightText">'+text+'</div>';
+}
+
+function kpis(camada,total,principal,cobertura,note2,note3,note4){
+  $('kpiCamada').textContent = camada || '-';
+  $('kpiFeicoes').textContent = br(total || 0);
+  $('kpiPrincipal').textContent = principal || '-';
+  $('kpiCobertura').textContent = cobertura || '-';
+  $('kpi2Note').textContent = note2 || 'Registros identificados';
+  $('kpi3Note').textContent = note3 || 'Maior grupo no recorte ativo';
+  $('kpi4Note').textContent = note4 || 'Leitura territorial do recorte';
+}
+
+async function fetchFirst(paths,type){
+  let errors=[];
+  for(const p of paths){
+    try{
+      const r = await fetch(p + (p.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+      if(!r.ok) throw new Error(r.status + ' ' + p);
+      return type === 'json' ? await r.json() : await r.text();
+    }catch(e){errors.push(e.message)}
+  }
+  throw new Error(errors.join(' | '));
+}
+
+function prop(o,keys){
+  o=o||{};
+  const lower={};
+  Object.keys(o).forEach(k=>lower[k.toLowerCase()]=o[k]);
+  for(const k of keys){
+    if(o[k]!==undefined && o[k]!==null && String(o[k]).trim()!=='') return o[k];
+    if(lower[k.toLowerCase()]!==undefined && String(lower[k.toLowerCase()]).trim()!=='') return lower[k.toLowerCase()];
+  }
+  return '';
+}
+
+function nomeGeo(p){
+  return prop(p,['GERENCIA','Gerencia','GERÊNCIA','NM_GERENCIA','BAIRRO','Bairro','NM_BAIRRO','NOME','Nome','name']) || 'Território';
+}
+
+function popupGeo(p){
+  const nome = nomeGeo(p);
+  const ger = prop(p,['GERENCIA','Gerencia','GERÊNCIA','NM_GERENCIA']);
+  const bairro = prop(p,['BAIRRO','Bairro','NM_BAIRRO']);
+  const ap = prop(p,['AP','AREA_PLANEJAMENTO']);
+  return '<div class="popupTitle">'+esc(nome)+'</div>' +
+    (ger?'<div class="popupLine"><b>Gerência:</b> '+esc(ger)+'</div>':'') +
+    (bairro?'<div class="popupLine"><b>Bairro:</b> '+esc(bairro)+'</div>':'') +
+    (ap?'<div class="popupLine"><b>AP:</b> '+esc(ap)+'</div>':'');
+}
+
+async function loadGeo(key){
+  clear();
+  $('filtrosUnidades').style.display='none';
+  setButtons(key);
+  kpis(meta[key].label,0,'-','-');
+  insight('Leitura executiva','Carregando '+meta[key].label+'...');
+  $('rankBox').innerHTML='';
+
+  try{
+    const data = await fetchFirst(meta[key].paths,'json');
+    const features = data.features || [];
+
+    activeLayer = L.geoJSON(data,{
+      style:{color:meta[key].color,weight:1.8,fillColor:meta[key].fill,fillOpacity:.22,opacity:.95},
+      onEachFeature:function(feature,layer){
+        layer.bindPopup(popupGeo(feature.properties||{}));
+        layer.on({
+          mouseover:e=>e.target.setStyle({weight:3,fillOpacity:.34}),
+          mouseout:e=>activeLayer.resetStyle(e.target)
+        });
+      }
+    }).addTo(map);
+
+    if(activeLayer.getBounds && activeLayer.getBounds().isValid()){
+      map.fitBounds(activeLayer.getBounds(),{padding:[24,24]});
+    }
+
+    const counts={};
+    features.forEach(f=>{
+      const n = nomeGeo(f.properties||{});
+      counts[n]=(counts[n]||0)+1;
+    });
+
+    const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const top = entries[0] || ['-',0];
+    let principal = top[0];
+    if(principal.length>18) principal=principal.slice(0,18)+'…';
+
+    kpis(meta[key].label,features.length,principal,br(entries.length),'Feições carregadas','Maior recorrência nominal','Grupos identificados');
+
+    $('rankBox').innerHTML = entries.slice(0,14).map(([n,v])=>
+      '<div class="rankItem"><div><b>'+esc(n)+'</b><small>Camada territorial</small></div><span class="pill">'+br(v)+'</span></div>'
+    ).join('');
+
+    insight('Leitura executiva', meta[key].insight + ' Foram carregadas <b>'+br(features.length)+'</b> feições e <b>'+br(entries.length)+'</b> grupos territoriais identificáveis.');
+  }catch(e){
+    insight('Camada não carregada','Não consegui carregar <b>'+meta[key].label+'</b>. Confira se o arquivo está em <b>assets/geojson</b> e se o nome está exatamente igual. Erro: '+esc(e.message),true);
+    kpis(meta[key].label,0,'-','Erro');
+  }
+}
+
+function splitCSV(line,sep){
+  const out=[]; let cur=''; let inside=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i], next=line[i+1];
+    if(ch==='"' && inside && next==='"'){cur+='"';i++}
+    else if(ch==='"'){inside=!inside}
+    else if(ch===sep && !inside){out.push(cur);cur=''}
+    else cur+=ch;
+  }
+  out.push(cur); return out;
+}
+
+function parseCSV(text){
+  text = text.replace(/\r/g,'').trim();
+  if(!text) return [];
+  const lines=text.split('\n');
+  const sep=lines[0].includes(';')?';':',';
+  const heads=splitCSV(lines[0],sep).map(h=>h.trim().replace(/^\uFEFF/,''));
+  return lines.slice(1).filter(Boolean).map(line=>{
+    const vals=splitCSV(line,sep); const r={};
+    heads.forEach((h,i)=>r[h]=(vals[i]||'').trim());
+    return r;
+  });
+}
+
+function normUnit(r){
+  const lower={}; Object.keys(r).forEach(k=>lower[k.toLowerCase().trim()]=r[k]);
+  const get=keys=>{
+    for(const k of keys){
+      if(r[k]!==undefined && String(r[k]).trim()!=='') return r[k];
+      if(lower[k.toLowerCase()]!==undefined && String(lower[k.toLowerCase()]).trim()!=='') return lower[k.toLowerCase()];
+    }
+    return '';
+  };
+  let lat=Number(String(get(['lat','latitude','y','coord_y','coordenada_y'])).replace(',','.'));
+  let lon=Number(String(get(['lon','long','longitude','x','coord_x','coordenada_x'])).replace(',','.'));
+  if(Math.abs(lat)>30 && Math.abs(lon)<30){const t=lat;lat=lon;lon=t}
+  return {
+    nome:get(['nome','descricao','descrição','unidade','local']),
+    categoria:get(['categoria','categoria_hub','classificacao','classificação'])||'Administrativo',
+    diretoria:get(['diretoria','dir','sigla_diretoria']),
+    tipo:get(['tipo','natureza','tipo_unidade']),
+    bairro:get(['bairro']),
+    endereco:get(['endereco','endereço','logradouro']),
+    lat,lon
+  };
+}
+
+function colorCat(cat){
+  const c=String(cat||'').toLowerCase();
+  if(c.includes('operacional')) return '#5b9bd5';
+  if(c.includes('manutenção')||c.includes('manutencao')) return '#e87535';
+  if(c.includes('engenharia')) return '#78aaa3';
+  if(c.includes('presid')) return '#d7b56d';
+  if(c.includes('tecnologia')) return '#9c7ad9';
+  if(c.includes('financeiro')) return '#74c69d';
+  if(c.includes('jur')) return '#f28482';
+  if(c.includes('gestão')||c.includes('gestao')) return '#90dbf4';
+  if(c.includes('apoio')) return '#b8c9de';
+  return '#ffffff';
+}
+
+function unitPopup(d){
+  return '<div class="popupTitle">'+esc(d.nome||'Unidade COMLURB')+'</div>'+
+    (d.categoria?'<div class="popupLine"><b>Categoria:</b> '+esc(d.categoria)+'</div>':'')+
+    (d.diretoria?'<div class="popupLine"><b>Diretoria:</b> '+esc(d.diretoria)+'</div>':'')+
+    (d.tipo?'<div class="popupLine"><b>Tipo:</b> '+esc(d.tipo)+'</div>':'')+
+    (d.bairro?'<div class="popupLine"><b>Bairro:</b> '+esc(d.bairro)+'</div>':'')+
+    (d.endereco?'<div class="popupLine"><b>Endereço:</b> '+esc(d.endereco)+'</div>':'');
+}
+
+function unique(field){
+  return [...new Set(unidades.map(d=>d[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));
+}
+
+function fillSelect(id,values,first){
+  $(id).innerHTML = '<option value="">'+first+'</option>' + values.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');
+}
+
+function fillFilters(){
+  fillSelect('fCategoria',unique('categoria'),'Todas as categorias');
+  fillSelect('fDiretoria',unique('diretoria'),'Todas as diretorias');
+  fillSelect('fBairro',unique('bairro'),'Todos os bairros');
+}
+
+function countBy(rows,field){
+  const o={}; rows.forEach(d=>{const k=d[field]||'Não informado'; o[k]=(o[k]||0)+1});
+  return Object.entries(o).sort((a,b)=>b[1]-a[1]);
+}
+
+function renderUnits(rows){
+  if(unitLayer) map.removeLayer(unitLayer);
+  unitLayer=L.layerGroup();
+
+  rows.forEach(d=>{
+    L.circleMarker([d.lat,d.lon],{
+      radius:6.5,color:'#06111f',weight:1.4,fillColor:colorCat(d.categoria),fillOpacity:.92
+    }).bindPopup(unitPopup(d)).addTo(unitLayer);
+  });
+
+  unitLayer.addTo(map);
+
+  if(rows.length){
+    const bounds=L.latLngBounds(rows.map(d=>[d.lat,d.lon]));
+    if(bounds.isValid()) map.fitBounds(bounds,{padding:[30,30]});
+  }
+
+  const byCat=countBy(rows,'categoria');
+  const byDir=countBy(rows,'diretoria');
+  const byBairro=countBy(rows,'bairro');
+  const topCat=byCat[0]||['-',0], topDir=byDir[0]||['-',0];
+  const bairros=byBairro.filter(([k])=>k!=='Não informado').length;
+  const operacional=rows.filter(d=>String(d.categoria).toLowerCase().includes('operacional')).length;
+  let principal=topCat[0]; if(principal.length>18) principal=principal.slice(0,18)+'…';
+
+  kpis('Unidades COMLURB',rows.length,principal,br(bairros),'Unidades no recorte ativo',br(topCat[1])+' na categoria dominante','Bairros com unidades mapeadas');
+
+  insight('Leitura executiva','O recorte atual apresenta <b>'+br(rows.length)+'</b> unidades mapeadas. A categoria de maior presença é <b>'+esc(topCat[0])+'</b>, com <b>'+br(topCat[1])+'</b> registros. A diretoria mais representada é <b>'+esc(topDir[0])+'</b>. A presença operacional representa <b>'+pct(rows.length?operacional/rows.length*100:0)+'</b> do recorte.');
+
+  $('rankBox').innerHTML = [
+    ...byCat.slice(0,8).map(([k,v])=>({grupo:k,valor:v,tipo:'Categoria'})),
+    ...byBairro.slice(0,6).map(([k,v])=>({grupo:k,valor:v,tipo:'Bairro'}))
+  ].map(i=>'<div class="rankItem"><div><b>'+esc(i.grupo)+'</b><small>'+i.tipo+'</small></div><span class="pill">'+br(i.valor)+'</span></div>').join('');
+}
+
+async function loadUnits(){
+  clear();
+  setButtons('unidades');
+  $('filtrosUnidades').style.display='grid';
+  insight('Leitura executiva','Carregando unidades COMLURB...');
+  $('rankBox').innerHTML='';
+
+  try{
+    const text=await fetchFirst(meta.unidades.paths,'text');
+    unidades=parseCSV(text).map(normUnit).filter(d=>Number.isFinite(d.lat)&&Number.isFinite(d.lon)&&d.lat!==0&&d.lon!==0);
+    fillFilters();
+    renderUnits(unidades);
+  }catch(e){
+    insight('Unidades não carregadas','Não consegui carregar <b>territorial/data/unidades_comlurb.csv</b>. Erro: '+esc(e.message),true);
+    kpis('Unidades COMLURB',0,'-','Erro');
+  }
+}
+
+window.applyUnitFilters=function(){
+  const cat=$('fCategoria').value;
+  const dir=$('fDiretoria').value;
+  const bairro=$('fBairro').value;
+  const busca=$('fBusca').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+  const rows=unidades.filter(d=>{
+    const hay=(d.nome+' '+d.categoria+' '+d.diretoria+' '+d.bairro+' '+d.endereco+' '+d.tipo).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return (!cat||d.categoria===cat)&&(!dir||d.diretoria===dir)&&(!bairro||d.bairro===bairro)&&(!busca||hay.includes(busca));
+  });
+
+  renderUnits(rows);
+};
+
+window.loadLayer=function(key){
+  if(key==='unidades') return loadUnits();
+  return loadGeo(key);
+};
+
+loadGeo('dsu');
+
+});
+</script>
 
 </body>
 </html>

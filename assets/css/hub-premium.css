@@ -881,27 +881,34 @@ h2 {
 }
 
 /* ============================================
-   FOOTER
+   FOOTER INSTITUCIONAL HUB COMLURB
    ============================================ */
+
 .footer {
-  margin-top: 40px;
-  padding: 20px;
-  color: #aebfd5;
+  margin-top: 48px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: #8fa6bf;
   font-size: 12px;
   text-align: left;
-  border-top: 1px solid var(--linha);
-  opacity: 0.7;
+  opacity: .75;
 }
 
 .footerContent {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0;
+  line-height: 1.6;
+}
+
+.footerContent strong {
+  color: #dcecff;
+  font-weight: 700;
 }
 
 .footerTimestamp {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #7a8fa5;
+  margin-top: 6px;
+  color: #70849a;
+  font-size: 11px;
 }
 
 /* ============================================

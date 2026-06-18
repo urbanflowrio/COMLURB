@@ -1,144 +1,240 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Acordo de Resultados 2026 · HUB COMLURB</title>
 
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
-.bonusHero{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:16px;
-  margin-bottom:18px;
+:root{
+  --ar-bg:#07111f;
+  --ar-panel:#0d1b2f;
+  --ar-panel2:#0b1a2e;
+  --ar-line:#274260;
+  --ar-ink:#f2f6ff;
+  --ar-muted:#9fb0c7;
+  --ar-soft:#c5d5e8;
+  --ar-blue:#6da5d8;
+  --ar-orange:#e87535;
+  --ar-green:#78aaa3;
+  --ar-red:#e84855;
+  --ar-violet:#a78bfa;
+  --ar-shadow:0 18px 45px rgba(0,0,0,.28);
 }
 
-.bonusMain{
-  background:linear-gradient(135deg,#0d1f36,#12365c);
-  border:1px solid #4074a2;
+body{
+  background:
+    radial-gradient(circle at top left,rgba(109,165,216,.10),transparent 34%),
+    var(--ar-bg);
+}
+
+.app{
+  max-width:1880px;
+  padding:18px;
+}
+
+.header{
+  border-color:rgba(111,164,216,.25);
   border-radius:24px;
-  padding:28px;
+  background:linear-gradient(135deg,#0b1a2e,#081525);
+  box-shadow:var(--ar-shadow);
+  margin-bottom:14px;
 }
 
-.bonusLabel{
+.logoImg{
+  width:250px;
+  max-height:76px;
+}
+
+.filters.arFilters{
+  grid-template-columns:160px 220px 220px 1fr auto !important;
+  margin:14px 0;
+}
+
+.statusLine{
+  margin:12px 0;
+  padding:10px 12px;
+  border:1px solid rgba(75,126,172,.55);
+  background:#1b2130;
+  border-radius:14px;
+  color:#b8d4f2;
+  font-size:13px;
+}
+
+.heroGrid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.heroBonus{
+  min-height:300px;
+  background:linear-gradient(135deg,#0b1a2e,#081525);
+  border:1px solid rgba(109,165,216,.45);
+  border-radius:24px;
+  box-shadow:var(--ar-shadow);
+  overflow:hidden;
+  position:relative;
+}
+
+.heroBonus:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 10%,rgba(109,165,216,.18),transparent 30%),
+    linear-gradient(90deg,rgba(109,165,216,.08),transparent 55%);
+  pointer-events:none;
+}
+
+.heroInner{
+  position:relative;
+  padding:26px;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:28px;
+  align-items:center;
+  min-height:300px;
+}
+
+.heroNumber{
+  font-size:clamp(78px,8vw,126px);
+  font-weight:950;
+  letter-spacing:-.075em;
+  line-height:.88;
+  color:var(--ar-blue);
+  white-space:nowrap;
+}
+
+.heroNumber small{
+  font-size:.28em;
+  letter-spacing:-.03em;
+  color:#b8d4f2;
+}
+
+.heroText .eyebrow2{
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#b9c9dc;
+  margin-bottom:8px;
+}
+
+.heroText h2{
+  font-size:clamp(26px,2vw,38px);
+  line-height:1.05;
+  letter-spacing:-.035em;
+  margin:0 0 10px;
+}
+
+.heroText p{
+  margin:0;
+  color:var(--ar-soft);
+  line-height:1.45;
+  max-width:760px;
+}
+
+.heroChips{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.miniChip{
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.035);
+  border-radius:999px;
+  padding:7px 10px;
   font-size:12px;
   font-weight:900;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:#b8d4f2;
+  color:#cfe0f5;
 }
 
-.bonusValue{
-  font-size:76px;
-  font-weight:950;
-  line-height:1;
-  margin:10px 0;
+.miniChip.good{color:#9fe2c3;background:rgba(120,170,163,.10)}
+.miniChip.att{color:#ffd0a8;background:rgba(232,117,53,.10)}
+.miniChip.bad{color:#ff9aa4;background:rgba(232,72,85,.10)}
+
+.sideStack{
+  display:grid;
+  gap:14px;
 }
 
-.bonusNote{
-  color:#c7d8ee;
-  font-size:15px;
-  line-height:1.45;
-  max-width:720px;
+.panel.cleanPanel{
+  border-radius:22px;
+  box-shadow:var(--ar-shadow);
+  background:var(--ar-panel);
 }
 
-.bonusBreakdown{
+.panelHead.clean{
+  background:#0b1a2e;
+}
+
+.scoreDetails{
   display:grid;
   gap:12px;
 }
 
-.bonusMini{
-  background:var(--painel);
-  border:1px solid var(--linha);
-  border-radius:20px;
-  padding:18px;
+.scoreBox{
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.025);
+  border-radius:16px;
+  padding:14px;
 }
 
-.bonusMini small{
+.scoreBox span{
   display:block;
-  color:#b8d4f2;
-  text-transform:uppercase;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.14em;
-}
-
-.bonusMini b{
-  display:block;
-  font-size:30px;
-  color:#fff;
-  margin-top:6px;
-}
-
-.bonusMini span{
-  display:block;
-  color:#c7d8ee;
-  font-size:13px;
-  margin-top:4px;
-}
-
-.faixaLinha{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.faixaCard{
-  background:var(--painel);
-  border:1px solid var(--linha);
-  border-radius:18px;
-  padding:18px;
-}
-
-.faixaCard .label{
+  color:#9fb0c7;
   font-size:11px;
-  font-weight:900;
-  letter-spacing:.12em;
   text-transform:uppercase;
-  color:#b8d4f2;
-}
-
-.faixaCard .val{
-  margin-top:8px;
-  font-size:28px;
+  letter-spacing:.11em;
   font-weight:950;
 }
 
-.faixaCard .sub{
-  margin-top:4px;
-  color:#c7d8ee;
-  font-size:13px;
+.scoreBox b{
+  display:block;
+  font-size:28px;
+  margin-top:8px;
+  color:#fff;
+  line-height:1.05;
 }
 
-.proximaFaixa{
-  background:var(--painel2);
-  border:1px solid var(--linha);
-  border-radius:20px;
-  padding:18px 20px;
-  margin-bottom:18px;
-  display:flex;
-  justify-content:space-between;
+.scoreBox small{
+  display:block;
+  color:#9fb0c7;
+  margin-top:5px;
+  line-height:1.35;
+}
+
+.scoreBox b.good{color:#78e0a8}
+.scoreBox b.att{color:#ffbf74}
+.scoreBox b.bad{color:#ff8090}
+
+.pathPanel{
+  margin-bottom:14px;
+}
+
+.pathBody{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
   align-items:center;
-  gap:16px;
 }
 
-.proximaFaixa p{
-  margin:0;
-  color:#eaf3ff;
-  font-size:15px;
-}
-
-.proximaFaixa b{
-  color:#5b9bd5;
+.pathText b{
+  color:var(--ar-blue);
 }
 
 .metaDots{
   display:flex;
   gap:7px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
 
 .metaDots i{
@@ -146,90 +242,251 @@
   height:13px;
   border-radius:50%;
   background:#132941;
-  border:1px solid var(--linha);
+  border:1px solid var(--ar-line);
 }
 
 .metaDots i.feito{
-  background:var(--azul2);
-  border-color:var(--azul2);
+  background:var(--ar-blue);
+  border-color:var(--ar-blue);
 }
 
 .metaDots i.proxima{
   background:transparent;
-  border:2px dashed var(--laranja);
+  border:2px dashed var(--ar-orange);
 }
 
-.arExecutiveGrid{
+.rhythmGrid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:1.1fr .9fr;
   gap:14px;
-  margin-bottom:18px;
+  margin-bottom:14px;
 }
 
-.attentionRow{
+.rhythmBars{
   display:grid;
-  grid-template-columns:80px minmax(0,1fr) 130px 110px;
+  gap:14px;
+}
+
+.rhythmRow{
+  display:grid;
+  grid-template-columns:130px 1fr 80px;
   gap:12px;
   align-items:center;
-  padding:14px 16px;
-  border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-.attentionRow:last-child{
-  border-bottom:0;
+.rhythmRow b{
+  color:#eaf3ff;
+  font-size:13px;
 }
 
-.attentionRow.crit{
-  border-left:4px solid var(--vermelho);
+.track{
+  height:12px;
+  border-radius:999px;
+  background:#1b3657;
+  overflow:hidden;
 }
 
-.attentionRow.att{
-  border-left:4px solid var(--amarelo);
+.track i{
+  display:block;
+  height:100%;
+  border-radius:999px;
 }
 
-.attentionInfo b{
+.fillGood{background:linear-gradient(90deg,#437b76,#78aaa3)}
+.fillAtt{background:linear-gradient(90deg,#b95023,#e87535)}
+.fillBad{background:linear-gradient(90deg,#a83e36,#e84855)}
+.fillVio{background:linear-gradient(90deg,#7c5fd8,#a78bfa)}
+
+.val{
+  font-weight:950;
+  text-align:right;
+  color:#fff;
+}
+
+.unlockList,
+.attentionList{
+  display:grid;
+  gap:10px;
+}
+
+.unlockItem,
+.attentionItem{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.025);
+  border-radius:16px;
+  padding:14px;
+}
+
+.unlockItem strong,
+.attentionItem strong{
   display:block;
   color:#fff;
   font-size:14px;
+  line-height:1.25;
 }
 
-.attentionInfo span{
+.unlockItem small,
+.attentionItem small{
   display:block;
-  color:#c7d8ee;
-  font-size:12px;
-  margin-top:3px;
+  color:#a8b8cf;
+  margin-top:4px;
+  line-height:1.35;
 }
 
-.tag{
+.bonusTag{
   display:inline-flex;
+  align-items:center;
   justify-content:center;
-  border:1px solid #345978;
   border-radius:999px;
-  padding:5px 9px;
-  font-weight:900;
+  padding:7px 10px;
   font-size:12px;
+  font-weight:950;
+  white-space:nowrap;
+  border:1px solid rgba(109,165,216,.42);
+  color:#ddecff;
+}
+
+.bonusTag.good{border-color:#3f7d55;color:#83d99d}
+.bonusTag.att{border-color:#8d6a23;color:#ffa02b}
+.bonusTag.bad{border-color:#8b3f38;color:#ff7d72}
+.bonusTag.vio{border-color:#6d5ba0;color:#cdbdff}
+
+.splitExecutive{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.splitTitle{
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.splitTitle.green{color:#78aaa3}
+.splitTitle.red{color:#e84855}
+
+.metricRow{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) 84px;
+  gap:10px;
+  align-items:center;
+  margin:12px 0;
+}
+
+.metricRow .pos{
+  font-weight:950;
+  color:#cfe0f5;
+}
+
+.metricRow b{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.metricRow .bar{
+  height:7px;
+  border-radius:999px;
+  background:#1b3657;
+  overflow:hidden;
+  grid-column:2/3;
+}
+
+.metricRow .bar i{
+  display:block;
+  height:100%;
+  border-radius:999px;
+}
+
+.execTable{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1180px;
+}
+
+.execTable th{
+  position:sticky;
+  top:0;
+  background:#102844;
+  color:#b8d4f2;
+  text-align:left;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  z-index:1;
   white-space:nowrap;
 }
 
-.tag.ok{border-color:#3f7d55;color:#83d99d;}
-.tag.att{border-color:#8d6a23;color:#ffa02b;}
-.tag.crit{border-color:#8b3f38;color:#ff7d72;}
-.tag.purple{border-color:#6d5ba0;color:#a78bfa;}
+.execTable td,
+.execTable th{
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
 
-@media(max-width:1100px){
-  .bonusHero,
-  .arExecutiveGrid,
-  .faixaLinha{
+.execTable td{
+  color:#eaf3ff;
+  white-space:nowrap;
+}
+
+.execTable td.indName{
+  white-space:normal;
+  min-width:320px;
+  max-width:520px;
+  line-height:1.35;
+}
+
+.projCell{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:160px;
+}
+
+.projCell .track{
+  flex:1;
+  height:7px;
+}
+
+.tableWrap{
+  max-height:620px;
+}
+
+@media(max-width:1280px){
+  .heroGrid,
+  .rhythmGrid,
+  .splitExecutive{
     grid-template-columns:1fr;
   }
 
-  .attentionRow{
+  .heroInner{
     grid-template-columns:1fr;
   }
 
-  .bonusValue{
-    font-size:58px;
+  .pathBody{
+    grid-template-columns:1fr;
   }
+
+  .metaDots{
+    justify-content:flex-start;
+  }
+}
+
+@media(max-width:760px){
+  .app{padding:12px}
+  .filters.arFilters{grid-template-columns:1fr !important}
+  .heroNumber{font-size:74px}
+  .rhythmRow{grid-template-columns:1fr}
+  .val{text-align:left}
+  .metricRow{grid-template-columns:1fr}
+  .metricRow .bar{grid-column:1}
 }
 </style>
 </head>
@@ -237,144 +494,152 @@
 <body>
 <div class="app">
 
-  <div class="header">
+  <header class="header">
     <div class="logoWrap">
       <img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB">
     </div>
     <div class="headerContent">
       <div class="systemLabel">HUB COMLURB · GABINETE DA PRESIDÊNCIA</div>
       <h1 class="mainTitle">Acordo de Resultados 2026</h1>
-      <div class="subtitle">Painel executivo de acompanhamento das metas pactuadas e impacto na bonificação institucional</div>
+      <div class="subtitle">Painel executivo de bonificação, ritmo das metas e tendência de cumprimento anual</div>
     </div>
-  </div>
+  </header>
 
-  <div class="filters" style="grid-template-columns:160px 220px 220px 1fr auto">
+  <section class="filters arFilters">
     <div class="field">
       <label>Ano</label>
-      <select id="fAno">
-        <option value="2026">2026</option>
-      </select>
+      <select id="fAno"><option value="2026">2026</option></select>
     </div>
 
     <div class="field">
       <label>Grupo</label>
-      <select id="fGrupo">
-        <option value="">Todos</option>
-      </select>
+      <select id="fGrupo"><option value="">Todos</option></select>
     </div>
 
     <div class="field">
-      <label>Status</label>
-      <select id="fStatus">
-        <option value="">Todos</option>
-      </select>
+      <label>Situação</label>
+      <select id="fRitmo"><option value="">Todas</option></select>
     </div>
 
     <div class="field">
       <label>Busca</label>
-      <input id="fBusca" type="search" placeholder="Indicador ou código">
+      <input id="fBusca" type="search" placeholder="Indicador, código ou fonte">
     </div>
 
-    <button id="btnLimpar" class="actionBtn">Limpar filtros</button>
-  </div>
+    <button class="actionBtn" id="btnLimpar">Limpar</button>
+  </section>
 
-  <div id="loading" class="loading">Carregando dados publicados...</div>
-  <div id="conteudo" style="display:none">
+  <div id="status" class="statusLine">Carregando bases publicadas do Google Sheets...</div>
 
-    <section class="bonusHero">
-      <div class="bonusMain">
-        <div class="bonusLabel">Potencial de bonificação atual</div>
-        <div class="bonusValue" id="bonusTotal">—</div>
-        <div class="bonusNote" id="bonusTexto">
-          Calculado a partir das metas atingidas no recorte atual, considerando as faixas conhecidas de bonificação.
-        </div>
-      </div>
+  <main id="conteudo" style="display:none">
 
-      <div class="bonusBreakdown">
-        <div class="bonusMini">
-          <small>Metas Estratégicas</small>
-          <b id="estrategicasResumo">—</b>
-          <span id="estrategicasBonus">—</span>
-        </div>
-
-        <div class="bonusMini">
-          <small>Metas Condicionadas</small>
-          <b id="condicionadasResumo">—</b>
-          <span id="condicionadasBonus">—</span>
-        </div>
-
-        <div class="bonusMini">
-          <small>Performance</small>
-          <b id="performanceResumo">—</b>
-          <span id="performanceBonus">—</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="faixaLinha">
-      <div class="faixaCard">
-        <div class="label">Indicadores monitorados</div>
-        <div class="val" id="kpiTotal">—</div>
-        <div class="sub">metas no recorte</div>
-      </div>
-
-      <div class="faixaCard">
-        <div class="label">Atingidas</div>
-        <div class="val" id="kpiAtingidas">—</div>
-        <div class="sub">dentro ou acima da meta</div>
-      </div>
-
-      <div class="faixaCard">
-        <div class="label">Em atenção</div>
-        <div class="val" id="kpiAtencao">—</div>
-        <div class="sub">entre 90% e 99,9%</div>
-      </div>
-
-      <div class="faixaCard">
-        <div class="label">Críticas</div>
-        <div class="val" id="kpiCriticas">—</div>
-        <div class="sub">abaixo de 90%</div>
-      </div>
-    </section>
-
-    <section class="proximaFaixa">
-      <p id="proximaFaixaTexto">Calculando caminho até a próxima faixa...</p>
-      <div class="metaDots" id="metaDots"></div>
-    </section>
-
-    <section class="arExecutiveGrid">
-      <div class="panel">
-        <div class="panelHead">
-          <div>
-            <h2>Leitura executiva</h2>
-            <div class="hint">síntese para decisão</div>
+    <section class="heroGrid">
+      <div class="heroBonus">
+        <div class="heroInner">
+          <div class="heroNumber" id="bonusProjetado">—</div>
+          <div class="heroText">
+            <div class="eyebrow2">Bonificação projetada</div>
+            <h2 id="heroTitle">Mantido o ritmo atual</h2>
+            <p id="heroText">Calculando projeção anual das metas e impacto estimado na bonificação institucional.</p>
+            <div class="heroChips">
+              <span class="miniChip" id="chipAtual">Atual —</span>
+              <span class="miniChip good" id="chipProjetado">Projetado —</span>
+              <span class="miniChip att" id="chipMaximo">Potencial máximo —</span>
+            </div>
           </div>
         </div>
-        <div class="body" id="leituraExecutiva"></div>
       </div>
 
-      <div class="panel">
-        <div class="panelHead">
-          <div>
-            <h2>Indicadores que travam avanço</h2>
-            <div class="hint">priorizados por criticidade</div>
+      <div class="sideStack">
+        <div class="panel cleanPanel">
+          <div class="panelHead clean">
+            <div>
+              <h2>Composição do resultado</h2>
+              <div class="hint">Estratégicas, Condicionadas e Performance</div>
+            </div>
           </div>
+          <div class="body scoreDetails" id="scoreDetails"></div>
         </div>
-        <div class="body" style="padding:0" id="listaAtencao"></div>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panelHead">
+    <section class="panel cleanPanel pathPanel">
+      <div class="panelHead clean">
+        <div>
+          <h2>Caminho para avanço de faixa</h2>
+          <div class="hint">O que muda se o ritmo projetado se confirmar</div>
+        </div>
+      </div>
+      <div class="body pathBody">
+        <div class="pathText" id="pathText">Calculando próxima faixa...</div>
+        <div class="metaDots" id="metaDots"></div>
+      </div>
+    </section>
+
+    <section class="rhythmGrid">
+      <div class="panel cleanPanel">
+        <div class="panelHead clean">
+          <div>
+            <h2>Ritmo de cumprimento anual</h2>
+            <div class="hint">Leitura por projeção anual para metas de soma e tendência para médias</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="rhythmBars" id="rhythmBars"></div>
+        </div>
+      </div>
+
+      <div class="panel cleanPanel">
+        <div class="panelHead clean">
+          <div>
+            <h2>O que destrava bônus</h2>
+            <div class="hint">Metas mais próximas de mudar a faixa</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="unlockList" id="unlockList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="splitExecutive">
+      <div class="panel cleanPanel">
+        <div class="panelHead clean">
+          <div>
+            <h2>Destaques positivos</h2>
+            <div class="hint">Indicadores que sustentam o resultado projetado</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="splitTitle green">Melhores trajetórias</div>
+          <div id="bestList"></div>
+        </div>
+      </div>
+
+      <div class="panel cleanPanel">
+        <div class="panelHead clean">
+          <div>
+            <h2>Áreas de atenção</h2>
+            <div class="hint">Indicadores com risco de não cumprimento</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="splitTitle red">Risco para o AR</div>
+          <div id="riskList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel cleanPanel">
+      <div class="panelHead clean">
         <div>
           <h2>Painel executivo das metas</h2>
-          <div class="hint">visão consolidada por grupo, resultado atual, meta e status</div>
+          <div class="hint">Atual, esperado até o mês, projeção de dezembro e situação do ritmo</div>
         </div>
       </div>
-
       <div class="body">
         <div class="tableWrap">
-          <table class="dataTable" id="tabelaMetas">
+          <table class="execTable" id="tabelaAR">
             <thead></thead>
             <tbody></tbody>
           </table>
@@ -382,33 +647,48 @@
       </div>
     </section>
 
-  </div>
+  </main>
 </div>
 
 <script>
-const CSV_AR = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv";
+const URLS = {
+  geral: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",
+  ar: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",
+  map: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"
+};
 
-const bonusEstrategicas = {
+const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+const BONUS_E = {
+  0:{nota:"—", bonus:0},
   1:{nota:"6,0", bonus:0},
   2:{nota:"7,0", bonus:20},
   3:{nota:"8,0", bonus:60},
   4:{nota:"8,4", bonus:68},
-  5:{nota:"8,7", bonus:74}
+  5:{nota:"8,7", bonus:74},
+  6:{nota:"Indef.", bonus:74},
+  7:{nota:"Indef.", bonus:74},
+  8:{nota:"Indef.", bonus:74}
 };
 
-const bonusCondicionadas = {
+const BONUS_C = {
+  0:{acrescimo:"—", bonus:0},
+  1:{acrescimo:"—", bonus:0},
   2:{acrescimo:"+0,2", bonus:4},
-  3:{acrescimo:"+0,3", bonus:6}
+  3:{acrescimo:"+0,3", bonus:6},
+  4:{acrescimo:"Indef.", bonus:6}
 };
 
-const bonusPerformance = {
+const BONUS_P = {
+  0:{acrescimo:"—", bonus:0},
   1:{acrescimo:"+1,0", bonus:20}
 };
 
-let dados = [];
-let filtrados = [];
+let RAW = {geral:[], ar:[], map:[]};
+let DATA = [];
+let FILTERED = [];
 
-function $(id){return document.getElementById(id);}
+const $ = id => document.getElementById(id);
 
 function esc(v){
   return String(v ?? "").replace(/[&<>"']/g, c => ({
@@ -421,245 +701,521 @@ function norm(v){
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g,"")
     .toLowerCase()
+    .replace(/\s+/g," ")
     .trim();
+}
+
+function key(v){
+  return norm(v).replace(/[^a-z0-9]/g,"");
+}
+
+function get(row, names, fallback=""){
+  if(!row) return fallback;
+  for(const n of names){
+    if(row[n] !== undefined && String(row[n]).trim() !== "") return row[n];
+  }
+  const dict = {};
+  Object.keys(row).forEach(k => dict[key(k)] = k);
+  for(const n of names){
+    const k = dict[key(n)];
+    if(k && row[k] !== undefined && String(row[k]).trim() !== "") return row[k];
+  }
+  return fallback;
 }
 
 function num(v){
   if(v === null || v === undefined) return null;
-  let s = String(v).trim().replace("%","").replace(/\./g,"").replace(",",".");
-  if(!s || s === "-") return null;
-  let n = Number(s);
-  if(!Number.isFinite(n)) return null;
+  if(typeof v === "number" && Number.isFinite(v)) return v;
+
+  let s = String(v).trim();
+  if(!s || s === "-" || s === "—") return null;
+
+  s = s.replace(/\s/g,"").replace("%","");
+  if(s.includes(",") && s.includes(".")) s = s.replace(/\./g,"").replace(",",".");
+  else if(s.includes(",")) s = s.replace(",",".");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function isPercent(unidade){
+  const u = norm(unidade);
+  return u.includes("percent") || u === "%";
+}
+
+function normalizePercentValue(v, unidade){
+  let n = num(v);
+  if(n === null) return null;
+  if(isPercent(unidade) && n > 1.5) n = n / 100;
   return n;
 }
 
-function fmtValor(v, unidade){
+function fmtNumber(v, unidade){
   let n = num(v);
   if(n === null) return "—";
-  if(norm(unidade).includes("percentual")){
+  if(isPercent(unidade)){
     if(n <= 1.5) n = n * 100;
     return n.toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
   }
+  if(norm(unidade).includes("posi")) return n.toLocaleString("pt-BR",{maximumFractionDigits:0}) + "º";
+  if(Math.abs(n) >= 1000) return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
   return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
 }
 
 function fmtPct(v){
   const n = num(v);
   if(n === null) return "—";
-  return (n > 1.5 ? n : n * 100).toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
+  return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
 }
 
-function get(row, nomes){
-  for(const n of nomes){
-    if(row[n] !== undefined && row[n] !== "") return row[n];
+function csv(url){
+  return new Promise((resolve,reject)=>{
+    Papa.parse(url,{
+      download:true,
+      header:true,
+      skipEmptyLines:true,
+      complete:r=>resolve((r.data||[]).filter(row=>Object.values(row).some(v=>String(v??"").trim() !== ""))),
+      error:reject
+    });
+  });
+}
+
+function isMaiorMelhor(sentido){
+  const s = norm(sentido);
+  return s.includes("maior") || s.includes("↑") || s === "";
+}
+
+function statusFromAting(a){
+  if(a === null) return "Sem dado";
+  if(a >= 1) return "No ritmo";
+  if(a >= .9) return "Atenção ao ritmo";
+  return "Fora do ritmo";
+}
+
+function statusClass(s){
+  const x = norm(s);
+  if(x.includes("no ritmo") || x.includes("dentro") || x.includes("super") || x.includes("cumpr")) return "good";
+  if(x.includes("aten")) return "att";
+  if(x.includes("fora") || x.includes("critic") || x.includes("risco")) return "bad";
+  return "vio";
+}
+
+function grupoTipo(grupo){
+  const g = norm(grupo);
+  if(g.includes("estrateg")) return "E";
+  if(g.includes("condicion")) return "C";
+  if(g.includes("performance")) return "P";
+  return "O";
+}
+
+function isAtingidaAtual(d){
+  const s = norm(d.statusAtual);
+  return s.includes("super") || s.includes("dentro") || s.includes("cumpr") || s.includes("no ritmo");
+}
+
+function isAtingidaProjetada(d){
+  return d.ritmo === "No ritmo";
+}
+
+function montarMapeamento(){
+  const map = new Map();
+  RAW.map.forEach(r=>{
+    const codigo = String(get(r,["Código_AR","Codigo_AR","Código","Codigo","Código AR","Codigo AR"])).trim();
+    if(!codigo) return;
+    map.set(codigo,{
+      indicadorGeral:String(get(r,["Indicador_Geral","Indicador Geral","Indicador Real","Nome na geral","Indicador"])).trim(),
+      diretoria:String(get(r,["Filtro_Diretoria","Diretoria"])).trim(),
+      superint:String(get(r,["Filtro_Superint","Filtro_Superintendência","Superint.","Superintendência"])).trim(),
+      gerencia:String(get(r,["Filtro_Gerência","Filtro_Gerencia","Gerência","Gerencia"])).trim()
+    });
+  });
+  return map;
+}
+
+function linhaGeral(ind, mapItem){
+  const nomeMap = norm(mapItem?.indicadorGeral || "");
+  const nomeInd = norm(ind.indicador);
+  const ano = "2026";
+
+  let rows = RAW.geral.filter(r=>{
+    const anoRow = String(get(r,["Ano"])).trim();
+    if(anoRow && anoRow !== ano) return false;
+
+    const indicador = norm(get(r,["Indicador"]));
+    if(nomeMap){
+      if(indicador !== nomeMap && !indicador.includes(nomeMap) && !nomeMap.includes(indicador)) return false;
+    }else{
+      if(indicador !== nomeInd && !indicador.includes(nomeInd) && !nomeInd.includes(indicador)) return false;
+    }
+
+    const fDir = norm(mapItem?.diretoria || "");
+    const fSup = norm(mapItem?.superint || "");
+    const fGer = norm(mapItem?.gerencia || "");
+
+    if(fDir && fDir !== "-" && norm(get(r,["Diretoria"])) !== fDir) return false;
+    if(fSup && fSup !== "-" && norm(get(r,["Superint.","Superintendência","Superint"])) !== fSup) return false;
+    if(fGer && fGer !== "-" && norm(get(r,["Gerência","Gerencia"])) !== fGer) return false;
+
+    return true;
+  });
+
+  return rows[0] || null;
+}
+
+function ultimoMesDisponivel(row, unidade){
+  if(!row) return {idx:-1, mes:"", valor:null};
+  for(let i=MESES.length-1;i>=0;i--){
+    const v = normalizePercentValue(get(row,[MESES[i]]), unidade);
+    if(v !== null) return {idx:i, mes:MESES[i], valor:v};
   }
-  return "";
+  return {idx:-1, mes:"", valor:null};
 }
 
-function statusClasse(status){
-  const s = norm(status);
-  if(s.includes("super") || s.includes("dentro")) return "ok";
-  if(s.includes("aten")) return "att";
-  if(s.includes("crit")) return "crit";
-  return "purple";
+function tendenciaMedia(row, unidade, sentido){
+  if(!row) return "Sem dado";
+  const vals = MESES.map(m=>normalizePercentValue(get(row,[m]), unidade)).filter(v=>v !== null);
+  if(vals.length < 2) return "Sem dado";
+  const first = vals[0], last = vals[vals.length-1];
+  const diff = last - first;
+  if(Math.abs(diff) < 0.00001) return "Estável";
+  const positiva = isMaiorMelhor(sentido) ? diff > 0 : diff < 0;
+  return positiva ? "Favorável" : "Desfavorável";
 }
 
-function isAtingida(status){
-  const s = norm(status);
-  return s.includes("super") || s.includes("dentro") || s.includes("cumprido");
+function processar(){
+  const map = montarMapeamento();
+
+  DATA = RAW.ar.map((r,idx)=>{
+    const codigo = String(get(r,["Código","Codigo"])).trim() || `AR${idx+1}`;
+    const m = map.get(codigo);
+
+    const d = {
+      codigo,
+      grupo:String(get(r,["Grupo"],"Sem grupo")).trim() || "Sem grupo",
+      indicador:String(get(r,["Indicador Executivo","Indicador_Executivo","Indicador"],codigo)).trim(),
+      unidade:String(get(r,["Unidade"])).trim(),
+      tipo:String(get(r,["Tipo_Acumulado","Tipo Acumulado"])).trim(),
+      sentido:String(get(r,["Sentido"],"maior_melhor")).trim(),
+      metaRaw:get(r,["Meta_2026","Meta 2026","Meta"]),
+      atualRaw:get(r,["Atual"]),
+      statusOriginal:String(get(r,["Status"])).trim(),
+      atingRaw:get(r,["Atingimento_%","Atingimento %","Atingimento"]),
+      fonte:String(get(r,["Fonte_Dados","Fonte Dados","Fonte"])).trim(),
+      pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim()
+    };
+
+    const geral = linhaGeral(d,m);
+    if(geral){
+      d.unidade = d.unidade || String(get(geral,["Unidade"])).trim();
+      d.metaRaw = d.metaRaw || get(geral,["Meta"]);
+      d.atualRaw = d.atualRaw || get(geral,["Acumulado"]);
+      d.sentido = d.sentido || get(geral,["Sentido"],"maior_melhor");
+    }
+
+    const ultimo = ultimoMesDisponivel(geral,d.unidade);
+    const mesAtual = ultimo.idx + 1;
+
+    d.meta = normalizePercentValue(d.metaRaw,d.unidade);
+    d.atual = normalizePercentValue(d.atualRaw,d.unidade);
+    if(d.atual === null && ultimo.valor !== null) d.atual = ultimo.valor;
+
+    d.mesAtual = mesAtual;
+    d.mesLabel = ultimo.mes || "—";
+    d.linhaGeral = !!geral;
+
+    const tipo = norm(d.tipo);
+    const maior = isMaiorMelhor(d.sentido);
+
+    d.esperado = null;
+    d.projecao = null;
+    d.atingProjetado = null;
+    d.tendencia = tendenciaMedia(geral,d.unidade,d.sentido);
+
+    if(tipo.includes("soma") && d.meta !== null && d.atual !== null && mesAtual > 0){
+      d.esperado = d.meta * (mesAtual / 12);
+      d.projecao = (d.atual / mesAtual) * 12;
+      d.atingProjetado = maior ? d.projecao / d.meta : d.meta / d.projecao;
+    }else if(d.meta !== null && d.atual !== null){
+      d.esperado = d.meta;
+      d.projecao = d.atual;
+      d.atingProjetado = maior ? d.atual / d.meta : d.meta / d.atual;
+    }
+
+    d.ritmo = statusFromAting(d.atingProjetado);
+
+    let atingAtual = null;
+    if(d.meta !== null && d.atual !== null){
+      atingAtual = maior ? d.atual/d.meta : d.meta/d.atual;
+    }
+
+    d.statusAtual = d.statusOriginal || statusFromAting(atingAtual);
+    d.atingAtual = atingAtual;
+
+    return d;
+  }).filter(d=>d.codigo || d.indicador);
 }
 
-function prepararDados(rows){
-  dados = rows.map(r => ({
-    codigo: get(r,["Código","Codigo"]),
-    grupo: get(r,["Grupo"]),
-    indicador: get(r,["Indicador Executivo","Indicador_Executivo","Indicador"]),
-    unidade: get(r,["Unidade"]),
-    tipo: get(r,["Tipo_Acumulado","Tipo Acumulado"]),
-    diretoria: get(r,["Diretoria Responsável","Diretoria Responsavel","Diretoria"]),
-    referencia: get(r,["Referência","Referencia"]),
-    meta: get(r,["Meta_2026","Meta 2026","Meta"]),
-    atual: get(r,["Atual"]),
-    atingimento: get(r,["Atingimento_%","Atingimento %","Atingimento"]),
-    status: get(r,["Status"]) || "Indisponível",
-    tendencia: get(r,["Tendência","Tendencia"]),
-    fonte: get(r,["Fonte_Dados","Fonte Dados","Fonte"]),
-    pendencia: get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])
-  })).filter(r => r.codigo || r.indicador);
+function populateFilters(){
+  const grupos = [...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const ritmos = [...new Set(DATA.map(d=>d.ritmo).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  $("fGrupo").innerHTML = `<option value="">Todos</option>` + grupos.map(g=>`<option>${esc(g)}</option>`).join("");
+  $("fRitmo").innerHTML = `<option value="">Todas</option>` + ritmos.map(r=>`<option>${esc(r)}</option>`).join("");
 }
 
-function atualizarFiltros(){
-  const grupos = [...new Set(dados.map(d => d.grupo).filter(Boolean))].sort();
-  const status = [...new Set(dados.map(d => d.status).filter(Boolean))].sort();
-
-  $("fGrupo").innerHTML = `<option value="">Todos</option>` + grupos.map(g => `<option>${esc(g)}</option>`).join("");
-  $("fStatus").innerHTML = `<option value="">Todos</option>` + status.map(s => `<option>${esc(s)}</option>`).join("");
-}
-
-function aplicarFiltros(){
+function filtrar(){
   const grupo = $("fGrupo").value;
-  const status = $("fStatus").value;
+  const ritmo = $("fRitmo").value;
   const busca = norm($("fBusca").value);
 
-  filtrados = dados.filter(d => {
+  FILTERED = DATA.filter(d=>{
     if(grupo && d.grupo !== grupo) return false;
-    if(status && d.status !== status) return false;
+    if(ritmo && d.ritmo !== ritmo) return false;
     if(busca && !norm([d.codigo,d.indicador,d.grupo,d.fonte].join(" ")).includes(busca)) return false;
     return true;
   });
 }
 
-function calcularBonus(){
-  const estrategicas = dados.filter(d => norm(d.grupo).includes("estrateg"));
-  const condicionadas = dados.filter(d => norm(d.grupo).includes("condicion"));
-  const performance = dados.filter(d => norm(d.grupo).includes("performance"));
+function bonusBy(list, projected=false){
+  const e = list.filter(d=>grupoTipo(d.grupo)==="E");
+  const c = list.filter(d=>grupoTipo(d.grupo)==="C");
+  const p = list.filter(d=>grupoTipo(d.grupo)==="P");
 
-  const eOk = estrategicas.filter(d => isAtingida(d.status)).length;
-  const cOk = condicionadas.filter(d => isAtingida(d.status)).length;
-  const pOk = performance.filter(d => isAtingida(d.status)).length;
+  const countFn = projected ? isAtingidaProjetada : isAtingidaAtual;
 
-  const faixaE = bonusEstrategicas[eOk] || {nota:"Indef.", bonus:0};
-  const faixaC = bonusCondicionadas[cOk] || {acrescimo:"Indef.", bonus:0};
-  const faixaP = bonusPerformance[pOk] || {acrescimo:"Indef.", bonus:0};
+  const eOk = e.filter(countFn).length;
+  const cOk = c.filter(countFn).length;
+  const pOk = p.filter(countFn).length;
 
-  const total = faixaE.bonus + faixaC.bonus + faixaP.bonus;
+  const bE = BONUS_E[Math.min(eOk,8)] || BONUS_E[0];
+  const bC = BONUS_C[Math.min(cOk,4)] || BONUS_C[0];
+  const bP = BONUS_P[Math.min(pOk,1)] || BONUS_P[0];
 
-  $("bonusTotal").textContent = total + "%";
-  $("bonusTexto").innerHTML = `
-    Estimativa composta por <strong>${faixaE.bonus}%</strong> das Metas Estratégicas,
-    <strong>${faixaC.bonus}%</strong> das Condicionadas e
-    <strong>${faixaP.bonus}%</strong> da Performance.
-    Valor sujeito à validação oficial da regra final de composição.
+  return {
+    e,eOk,c,cOk,p,pOk,
+    estrategico:bE.bonus,
+    condicionado:bC.bonus,
+    performance:bP.bonus,
+    total:bE.bonus + bC.bonus + bP.bonus,
+    nota:bE.nota,
+    acrescimoC:bC.acrescimo,
+    acrescimoP:bP.acrescimo
+  };
+}
+
+function renderHero(){
+  const atual = bonusBy(DATA,false);
+  const proj = bonusBy(DATA,true);
+  const max = {
+    total:(BONUS_E[5]?.bonus||74) + (BONUS_C[3]?.bonus||6) + (BONUS_P[1]?.bonus||20)
+  };
+
+  $("bonusProjetado").innerHTML = `${proj.total}<small>%</small>`;
+  $("heroTitle").textContent = "Mantido o ritmo atual";
+  $("heroText").innerHTML = `
+    A projeção considera o ritmo acumulado até o último mês disponível. Para metas de soma, estima dezembro pela média mensal.
+    Para metas de média ou percentual, usa a posição atual frente à meta e a tendência dos meses.
   `;
 
-  $("estrategicasResumo").textContent = `${eOk} / ${estrategicas.length}`;
-  $("estrategicasBonus").textContent = `Nota ${faixaE.nota} · ${faixaE.bonus}% de bônus`;
+  $("chipAtual").textContent = `Atual ${atual.total}%`;
+  $("chipProjetado").textContent = `Projetado ${proj.total}%`;
+  $("chipMaximo").textContent = `Potencial conhecido ${max.total}%`;
 
-  $("condicionadasResumo").textContent = `${cOk} / ${condicionadas.length}`;
-  $("condicionadasBonus").textContent = `${faixaC.acrescimo} · ${faixaC.bonus}% adicional`;
+  $("scoreDetails").innerHTML = `
+    <div class="scoreBox">
+      <span>Metas Estratégicas</span>
+      <b class="${proj.eOk>=atual.eOk?'good':'att'}">${proj.eOk} / ${proj.e.length}</b>
+      <small>Nota ${proj.nota} · ${proj.estrategico}% projetado</small>
+    </div>
+    <div class="scoreBox">
+      <span>Metas Condicionadas</span>
+      <b class="${proj.cOk>=2?'good':'att'}">${proj.cOk} / ${proj.c.length}</b>
+      <small>${proj.acrescimoC} · ${proj.condicionado}% adicional</small>
+    </div>
+    <div class="scoreBox">
+      <span>Performance</span>
+      <b class="${proj.pOk>=1?'good':'att'}">${proj.pOk} / ${proj.p.length}</b>
+      <small>${proj.acrescimoP} · ${proj.performance}% adicional</small>
+    </div>
+  `;
 
-  $("performanceResumo").textContent = `${pOk} / ${performance.length}`;
-  $("performanceBonus").textContent = `${faixaP.acrescimo} · ${faixaP.bonus}% adicional`;
+  renderPath(atual,proj);
+}
 
-  const prox = bonusEstrategicas[eOk + 1];
+function renderPath(atual,proj){
+  const nextE = proj.eOk + 1;
+  const next = BONUS_E[nextE];
 
-  if(prox){
-    $("proximaFaixaTexto").innerHTML = `
-      Falta <b>1 Meta Estratégica</b> para avançar à próxima faixa:
-      nota <b>${prox.nota}</b> e <b>${prox.bonus}%</b> de bônus estratégico.
+  if(next && nextE <= proj.e.length){
+    $("pathText").innerHTML = `
+      <p style="margin:0;color:#eaf3ff;font-size:15px;line-height:1.5">
+        Falta <b>1 Meta Estratégica</b> projetada para avançar a faixa estratégica:
+        nota <b>${next.nota}</b> e <b>${next.bonus}%</b> de bônus no bloco principal.
+      </p>
     `;
   }else{
-    $("proximaFaixaTexto").innerHTML = `Faixa estratégica máxima conhecida atingida ou próxima faixa sem regra oficial publicada.`;
+    $("pathText").innerHTML = `
+      <p style="margin:0;color:#eaf3ff;font-size:15px;line-height:1.5">
+        A faixa estratégica projetada está no limite das regras conhecidas. Faixas superiores dependem de confirmação oficial.
+      </p>
+    `;
   }
 
-  $("metaDots").innerHTML = Array.from({length: estrategicas.length || 8}).map((_,i) => {
-    if(i < eOk) return "<i class='feito'></i>";
-    if(i === eOk) return "<i class='proxima'></i>";
-    return "<i></i>";
+  const totalDots = Math.max(proj.e.length,8);
+  $("metaDots").innerHTML = Array.from({length:totalDots}).map((_,i)=>{
+    if(i < proj.eOk) return `<i class="feito"></i>`;
+    if(i === proj.eOk) return `<i class="proxima"></i>`;
+    return `<i></i>`;
   }).join("");
 }
 
-function renderResumo(){
-  const total = filtrados.length;
-  const atingidas = filtrados.filter(d => isAtingida(d.status)).length;
-  const atencao = filtrados.filter(d => norm(d.status).includes("aten")).length;
-  const criticas = filtrados.filter(d => norm(d.status).includes("crit")).length;
+function renderRhythm(){
+  const total = FILTERED.length || 1;
+  const no = FILTERED.filter(d=>d.ritmo==="No ritmo").length;
+  const att = FILTERED.filter(d=>d.ritmo==="Atenção ao ritmo").length;
+  const fora = FILTERED.filter(d=>d.ritmo==="Fora do ritmo").length;
+  const sem = FILTERED.filter(d=>d.ritmo==="Sem dado").length;
 
-  $("kpiTotal").textContent = total;
-  $("kpiAtingidas").textContent = atingidas;
-  $("kpiAtencao").textContent = atencao;
-  $("kpiCriticas").textContent = criticas;
+  const rows = [
+    ["No ritmo", no, "fillGood"],
+    ["Atenção", att, "fillAtt"],
+    ["Fora do ritmo", fora, "fillBad"],
+    ["Sem dado", sem, "fillVio"]
+  ];
 
-  const pct = total ? ((atingidas/total)*100).toLocaleString("pt-BR",{maximumFractionDigits:1}) : "0";
-
-  $("leituraExecutiva").innerHTML = `
-    <p style="margin-top:0;font-size:16px;line-height:1.6;color:#eaf3ff">
-      No recorte atual, <strong>${pct}%</strong> das metas monitoradas estão atingidas ou superadas.
-      O painel prioriza o impacto institucional do AR, destacando o efeito direto das metas no potencial de bonificação.
-    </p>
-    <p style="margin-bottom:0;color:#c7d8ee;line-height:1.6">
-      A atenção executiva deve se concentrar nos indicadores críticos e nos que impedem avanço de faixa estratégica,
-      especialmente quando há tendência negativa ou pendência oficial de regra.
-    </p>
-  `;
-}
-
-function renderAtencao(){
-  const rows = filtrados
-    .filter(d => norm(d.status).includes("crit") || norm(d.status).includes("aten"))
-    .sort((a,b) => {
-      const ca = norm(a.status).includes("crit") ? 0 : 1;
-      const cb = norm(b.status).includes("crit") ? 0 : 1;
-      return ca - cb;
-    })
-    .slice(0,6);
-
-  $("listaAtencao").innerHTML = rows.length ? rows.map(d => `
-    <div class="attentionRow ${statusClasse(d.status)}">
-      <span class="tag ${statusClasse(d.status)}">${esc(d.codigo)}</span>
-      <div class="attentionInfo">
-        <b>${esc(d.indicador)}</b>
-        <span>${esc(d.grupo)} · Atual ${esc(fmtValor(d.atual,d.unidade))} · Meta ${esc(fmtValor(d.meta,d.unidade))}</span>
-      </div>
-      <span class="tag ${statusClasse(d.status)}">${esc(d.status)}</span>
-      <span>${esc(d.tendencia || "—")}</span>
+  $("rhythmBars").innerHTML = rows.map(([label,val,cls])=>`
+    <div class="rhythmRow">
+      <b>${esc(label)}</b>
+      <div class="track"><i class="${cls}" style="width:${Math.max(val/total*100, val?6:0)}%"></i></div>
+      <div class="val">${val}</div>
     </div>
-  `).join("") : `<div class="empty">Sem indicadores críticos ou em atenção no recorte.</div>`;
-}
-
-function renderTabela(){
-  const cols = ["Código","Indicador","Grupo","Atual","Meta 2026","Atingimento","Status"];
-
-  $("tabelaMetas").querySelector("thead").innerHTML = `
-    <tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr>
-  `;
-
-  $("tabelaMetas").querySelector("tbody").innerHTML = filtrados.map(d => `
-    <tr>
-      <td>${esc(d.codigo)}</td>
-      <td>${esc(d.indicador)}</td>
-      <td>${esc(d.grupo)}</td>
-      <td>${esc(fmtValor(d.atual,d.unidade))}</td>
-      <td>${esc(fmtValor(d.meta,d.unidade))}</td>
-      <td>${esc(fmtPct(d.atingimento))}</td>
-      <td><span class="tag ${statusClasse(d.status)}">${esc(d.status)}</span></td>
-    </tr>
   `).join("");
 }
 
-function render(){
-  aplicarFiltros();
-  calcularBonus();
-  renderResumo();
-  renderAtencao();
-  renderTabela();
+function impactoTexto(d){
+  const gt = grupoTipo(d.grupo);
+  if(gt==="E") return "Pode destravar próxima faixa estratégica";
+  if(gt==="C") return "Pode ampliar adicional condicionado";
+  if(gt==="P") return "Impacta adicional de performance";
+  return "Relevante para o resultado institucional";
 }
 
-$("fGrupo").addEventListener("change",render);
-$("fStatus").addEventListener("change",render);
-$("fBusca").addEventListener("input",render);
-$("btnLimpar").addEventListener("click",()=>{
-  $("fGrupo").value = "";
-  $("fStatus").value = "";
-  $("fBusca").value = "";
-  render();
-});
+function renderUnlock(){
+  const candidatos = DATA
+    .filter(d=>!isAtingidaProjetada(d) && d.atingProjetado !== null)
+    .sort((a,b)=>(b.atingProjetado||0)-(a.atingProjetado||0))
+    .slice(0,5);
 
-Papa.parse(CSV_AR,{
-  download:true,
-  header:true,
-  skipEmptyLines:true,
-  complete:(res)=>{
-    prepararDados(res.data || []);
-    atualizarFiltros();
+  $("unlockList").innerHTML = candidatos.length ? candidatos.map(d=>`
+    <div class="unlockItem">
+      <div>
+        <strong>${esc(d.codigo)} · ${esc(d.indicador)}</strong>
+        <small>${esc(impactoTexto(d))} · projeção ${esc(fmtNumber(d.projecao,d.unidade))} para meta ${esc(fmtNumber(d.meta,d.unidade))}</small>
+      </div>
+      <span class="bonusTag ${statusClass(d.ritmo)}">${esc(fmtPct(d.atingProjetado))}</span>
+    </div>
+  `).join("") : `<div class="empty">Sem metas próximas de destravar faixa no recorte.</div>`;
+}
+
+function metricRows(rows, positive=true){
+  if(!rows.length) return `<div class="empty">Sem dados no recorte.</div>`;
+  return rows.map((d,i)=>{
+    const pct = Math.max(0,Math.min(120,(d.atingProjetado||0)*100));
+    const cls = statusClass(d.ritmo)==="good" ? "fillGood" : statusClass(d.ritmo)==="att" ? "fillAtt" : "fillBad";
+    return `
+      <div class="metricRow">
+        <div class="pos">${i+1}</div>
+        <b title="${esc(d.indicador)}">${esc(d.codigo)} · ${esc(d.indicador)}</b>
+        <div class="val ${positive?'good':'bad'}">${esc(fmtPct(d.atingProjetado))}</div>
+        <div class="bar"><i class="${cls}" style="width:${pct}%"></i></div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderSplit(){
+  const best = FILTERED
+    .filter(d=>d.atingProjetado !== null)
+    .sort((a,b)=>(b.atingProjetado||0)-(a.atingProjetado||0))
+    .slice(0,6);
+
+  const risk = FILTERED
+    .filter(d=>d.ritmo==="Fora do ritmo" || d.ritmo==="Atenção ao ritmo")
+    .sort((a,b)=>(a.atingProjetado||0)-(b.atingProjetado||0))
+    .slice(0,6);
+
+  $("bestList").innerHTML = metricRows(best,true);
+  $("riskList").innerHTML = metricRows(risk,false);
+}
+
+function renderTable(){
+  const rows = FILTERED;
+  const cols = ["Código","Indicador","Grupo","Atual","Esperado até mês","Projeção Dez","Meta","Ritmo","Ating. proj."];
+
+  $("tabelaAR").querySelector("thead").innerHTML = `<tr>${cols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr>`;
+
+  $("tabelaAR").querySelector("tbody").innerHTML = rows.map(d=>{
+    const cls = statusClass(d.ritmo);
+    const barCls = cls==="good" ? "fillGood" : cls==="att" ? "fillAtt" : cls==="bad" ? "fillBad" : "fillVio";
+    const pct = Math.max(0,Math.min(120,(d.atingProjetado||0)*100));
+    return `
+      <tr>
+        <td><strong>${esc(d.codigo)}</strong></td>
+        <td class="indName">${esc(d.indicador)}</td>
+        <td>${esc(d.grupo)}</td>
+        <td>${esc(fmtNumber(d.atual,d.unidade))}</td>
+        <td>${esc(fmtNumber(d.esperado,d.unidade))}</td>
+        <td>${esc(fmtNumber(d.projecao,d.unidade))}</td>
+        <td>${esc(fmtNumber(d.meta,d.unidade))}</td>
+        <td><span class="bonusTag ${cls}">${esc(d.ritmo)}</span></td>
+        <td>
+          <div class="projCell">
+            <span>${esc(fmtPct(d.atingProjetado))}</span>
+            <div class="track"><i class="${barCls}" style="width:${pct}%"></i></div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function render(){
+  filtrar();
+  renderHero();
+  renderRhythm();
+  renderUnlock();
+  renderSplit();
+  renderTable();
+}
+
+function bind(){
+  ["fGrupo","fRitmo"].forEach(id=>$(id).addEventListener("change",render));
+  $("fBusca").addEventListener("input",render);
+  $("btnLimpar").addEventListener("click",()=>{
+    $("fGrupo").value = "";
+    $("fRitmo").value = "";
+    $("fBusca").value = "";
     render();
-    $("loading").style.display = "none";
+  });
+}
+
+async function init(){
+  try{
+    const [geral, ar, map] = await Promise.all([csv(URLS.geral), csv(URLS.ar), csv(URLS.map)]);
+    RAW = {geral, ar, map};
+    processar();
+    populateFilters();
+    bind();
+    render();
+
+    $("status").style.display = "none";
     $("conteudo").style.display = "block";
-  },
-  error:(err)=>{
-    $("loading").innerHTML = "Erro ao carregar dados: " + err.message;
+  }catch(e){
+    console.error(e);
+    $("status").textContent = "Erro ao carregar dados: " + (e.message || e);
   }
-});
+}
+
+document.addEventListener("DOMContentLoaded",init);
 </script>
 </body>
 </html>

@@ -20,211 +20,44 @@
   --orange:#e87535;
   --green:#78aaa3;
 }
-
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Segoe UI,Arial,sans-serif;
-}
-
-.app{
-  max-width:1800px;
-  margin:0 auto;
-  padding:28px;
-}
-
-.header{
-  display:flex;
-  align-items:center;
-  gap:28px;
-  padding:26px;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:var(--panel2);
-  margin-bottom:16px;
-}
-
-.logo{
-  width:310px;
-  max-height:82px;
-  object-fit:contain;
-  padding-right:26px;
-  border-right:1px solid rgba(255,255,255,.28);
-}
-
-.eyebrow{
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.25em;
-  color:#b8d4f2;
-}
-
-h1{
-  margin:6px 0;
-  font-size:38px;
-}
-
-.sub{
-  color:#c7d8ee;
-  line-height:1.5;
-}
-
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-bottom:14px;
-}
-
-.kpi{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:18px;
-  min-height:115px;
-}
-
-.kpi .label{
-  font-size:11px;
-  letter-spacing:.16em;
-  color:#b8d4f2;
-  font-weight:900;
-  text-transform:uppercase;
-}
-
-.kpi .value{
-  font-size:34px;
-  font-weight:950;
-  margin:14px 0 4px;
-}
-
-.kpi .note{
-  color:#c7d8ee;
-  font-size:13px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:14px;
-}
-
-.panel{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:20px;
-  overflow:hidden;
-  min-height:420px;
-}
-
-.panelHead{
-  padding:18px;
-  border-bottom:1px solid var(--line);
-}
-
-h2{
-  margin:0;
-  font-size:18px;
-}
-
-.hint{
-  color:#c7d8ee;
-  font-size:13px;
-  margin-top:5px;
-}
-
-.body{
-  padding:18px;
-}
-
-#map{
-  height:720px;
-  width:100%;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.12);
-  overflow:hidden;
-  background:#09182a;
-}
-
-.layers{
-  display:grid;
-  gap:10px;
-}
-
-.layerBtn{
-  width:100%;
-  text-align:left;
-  border:1px solid var(--line);
-  background:#132840;
-  color:#fff;
-  border-radius:14px;
-  padding:14px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-.layerBtn.active{
-  background:linear-gradient(90deg,#2f67a5,#5b9bd5);
-  border-color:#6fa7d8;
-}
-
-.infoBox{
-  margin-top:14px;
-  background:#132840;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;
-  padding:16px;
-  color:#dcecff;
-  line-height:1.5;
-}
-
-.rank{
-  margin-top:14px;
-  display:grid;
-  gap:10px;
-}
-
-.rankItem{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
-  align-items:center;
-  background:#132840;
-  border-radius:14px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.rankItem b{
-  color:#fff;
-}
-
-.rankItem small{
-  display:block;
-  color:#aebfd5;
-  margin-top:4px;
-}
-
-.pill{
-  border:1px solid #345978;
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:12px;
-  font-weight:900;
-  color:#dcecff;
-}
-
-.footer{
-  margin-top:16px;
-  color:#aebfd5;
-  font-size:13px;
-}
-
+body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Arial,sans-serif}
+.app{max-width:1800px;margin:0 auto;padding:28px}
+.header{display:flex;align-items:center;gap:28px;padding:26px;border:1px solid var(--line);border-radius:22px;background:var(--panel2);margin-bottom:16px}
+.logo{width:310px;max-height:82px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,.28)}
+.eyebrow{font-size:12px;font-weight:900;letter-spacing:.25em;color:#b8d4f2}
+h1{margin:6px 0;font-size:38px}
+.sub{color:#c7d8ee;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;min-height:115px}
+.kpi .label{font-size:11px;letter-spacing:.16em;color:#b8d4f2;font-weight:900;text-transform:uppercase}
+.kpi .value{font-size:34px;font-weight:950;margin:14px 0 4px}
+.kpi .note{color:#c7d8ee;font-size:13px}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:420px}
+.panelHead{padding:18px;border-bottom:1px solid var(--line)}
+h2{margin:0;font-size:18px}
+.hint{color:#c7d8ee;font-size:13px;margin-top:5px}
+.body{padding:18px}
+#map{height:720px;width:100%;border-radius:18px;border:1px solid rgba(255,255,255,.12);overflow:hidden;background:#09182a}
+.layers{display:grid;gap:10px}
+.layerBtn{width:100%;text-align:left;border:1px solid var(--line);background:#132840;color:#fff;border-radius:14px;padding:14px;font-weight:900;cursor:pointer}
+.layerBtn.active{background:linear-gradient(90deg,#2f67a5,#5b9bd5);border-color:#6fa7d8}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.filters input,.filters select{width:100%;border:1px solid #345978;background:#09182a;color:#fff;border-radius:12px;padding:11px;font-weight:700;outline:none}
+.infoBox{margin-top:14px;background:#132840;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;color:#dcecff;line-height:1.5}
+.rank{margin-top:14px;display:grid;gap:10px;max-height:360px;overflow:auto;padding-right:3px}
+.rankItem{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#132840;border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.08)}
+.rankItem b{color:#fff}
+.rankItem small{display:block;color:#aebfd5;margin-top:4px}
+.pill{border:1px solid #345978;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;color:#dcecff;white-space:nowrap}
+.footer{margin-top:16px;color:#aebfd5;font-size:13px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0d1f36;color:#fff;border:1px solid #294866}
+.popupTitle{font-size:15px;font-weight:950;margin-bottom:8px;color:#fff}
+.popupLine{font-size:12px;color:#c7d8ee;margin:4px 0}
+.popupLine b{color:#fff}
 @media(max-width:1100px){
-  .grid,.kpis{grid-template-columns:1fr}
+  .grid,.kpis,.filters{grid-template-columns:1fr}
   .header{flex-direction:column;align-items:flex-start}
   .logo{width:220px;border-right:0;padding-right:0}
   h1{font-size:32px}
@@ -250,7 +83,7 @@ h2{
     <div class="kpi">
       <div class="label">Camada ativa</div>
       <div class="value" id="kpiCamada">-</div>
-      <div class="note">Arquivo GIS carregado no mapa</div>
+      <div class="note">Arquivo GIS ou base georreferenciada carregada</div>
     </div>
 
     <div class="kpi">
@@ -267,8 +100,8 @@ h2{
 
     <div class="kpi">
       <div class="label">Fonte</div>
-      <div class="value" style="font-size:24px">ArcGIS</div>
-      <div class="note">Dados exportados para o HUB</div>
+      <div class="value" style="font-size:24px">HUB GEO</div>
+      <div class="note">GeoJSON e unidades georreferenciadas</div>
     </div>
   </section>
 
@@ -276,7 +109,7 @@ h2{
     <div class="panel">
       <div class="panelHead">
         <h2>Mapa territorial</h2>
-        <div class="hint">Clique nas áreas do mapa para abrir os detalhes da camada.</div>
+        <div class="hint">Clique nas áreas ou unidades do mapa para abrir os detalhes.</div>
       </div>
       <div class="body">
         <div id="map"></div>
@@ -286,30 +119,30 @@ h2{
     <div class="panel">
       <div class="panelHead">
         <h2>Camadas disponíveis</h2>
-        <div class="hint">Selecione a camada GIS que deseja visualizar.</div>
+        <div class="hint">Selecione a camada que deseja visualizar.</div>
       </div>
       <div class="body">
         <div class="layers">
-          <button class="layerBtn active" id="btnDSU" onclick="loadLayer('dsu')">
-            Gerências DSU
-          </button>
-
-          <button class="layerBtn" id="btnDLU" onclick="loadLayer('dlu')">
-            DLU | Novos Bairros 2025
-          </button>
+          <button class="layerBtn active" id="btnDSU" onclick="loadLayer('dsu')">Gerências DSU</button>
+          <button class="layerBtn" id="btnDLU" onclick="loadLayer('dlu')">DLU | Novos Bairros 2025</button>
+          <button class="layerBtn" id="btnUNI" onclick="loadLayer('unidades')">Unidades COMLURB</button>
         </div>
 
-        <div class="infoBox" id="infoBox">
-          Carregando camada territorial...
+        <div class="filters" id="filtrosUnidades" style="display:none">
+          <select id="fCategoria" onchange="applyUnitFilters()"><option value="">Todas as categorias</option></select>
+          <select id="fDiretoria" onchange="applyUnitFilters()"><option value="">Todas as diretorias</option></select>
+          <select id="fBairro" onchange="applyUnitFilters()"><option value="">Todos os bairros</option></select>
+          <input id="fBusca" oninput="applyUnitFilters()" placeholder="Buscar unidade, bairro ou endereço">
         </div>
 
+        <div class="infoBox" id="infoBox">Carregando camada territorial...</div>
         <div class="rank" id="rankBox"></div>
       </div>
     </div>
   </section>
 
   <div class="footer">
-    COMLURB • HUB de Inteligência Operacional • Dados geográficos em territorial/data/
+    COMLURB • HUB de Inteligência Operacional • GeoJSON em assets/geojson/ • Unidades em territorial/data/
   </div>
 
 </div>

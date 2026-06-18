@@ -26,6 +26,14 @@ canvas{width:100%!important;height:100%!important}
 
 /* EXECUTIVO LIMPO */
 .executiveCore{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.executiveMid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px}.panelHead.clean{background:linear-gradient(135deg,#0b1a2e,#081525)}.resultHero .body{min-height:245px}.officialScore{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}.bigScore{font-size:clamp(76px,7vw,118px);font-weight:950;letter-spacing:-.07em;line-height:.9;color:#6da5d8}.scoreMeta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.miniChip{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:#cfe0f5}.miniChip.good{color:#9fe2c3;background:rgba(120,170,163,.10)}.miniChip.bad{color:#ff9aa4;background:rgba(232,72,85,.10)}.scoreDetails{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scoreBox{border-left:1px solid rgba(255,255,255,.10);padding-left:18px}.scoreBox span{display:block;color:#9fb0c7;font-size:11px;text-transform:uppercase;letter-spacing:.11em;font-weight:950}.scoreBox b{display:block;font-size:28px;margin-top:8px}.scoreBox small{color:#9fb0c7}.concWrap{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center}.concNumber{font-size:58px;font-weight:950;letter-spacing:-.05em}.concNumber small{display:block;font-size:13px;color:#9fb0c7;letter-spacing:0;font-weight:700;margin-top:5px}.concList{display:grid;gap:12px}.concItem{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:12px;align-items:center}.concItem b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.agendaList{display:grid;gap:14px}.agendaItem{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;background:rgba(255,255,255,.025)}.agendaItem span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:950;margin-bottom:6px}.agendaItem.territorial span{color:#e87535}.agendaItem.gerencial span{color:#e84855}.agendaItem.operacional span{color:#78aaa3}.agendaItem b{font-size:16px}.agendaItem p{margin:6px 0 0;color:#c5d5e8;font-size:13px;line-height:1.4}.trendPanel{margin-bottom:14px}.chartBox.compact{height:310px}.trendFoot.compact{grid-template-columns:repeat(5,1fr);margin-top:0}.metricRow{grid-template-columns:30px minmax(0,1fr) 72px}.metricRow .bar{grid-column:2/3}.cta{margin:16px 0 2px}.cta button{width:100%;min-height:72px;border-radius:22px;background:linear-gradient(135deg,#e87535,#b94f12);border:1px solid #ff9b55;color:#fff;box-shadow:0 12px 30px rgba(232,117,53,.22);font-size:22px;font-weight:950;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
+
+.cleanTerritory{grid-template-columns:minmax(0,1.75fr) minmax(340px,.65fr)}
+.cleanTerritory .sideStack .body{max-height:300px;overflow:auto}
+.drillPanel{margin-top:14px}
+.reincBadge{display:inline-block;margin-left:8px;padding:2px 7px;border:1px solid rgba(232,117,53,.45);background:rgba(232,117,53,.12);border-radius:999px;color:#ffb278;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
+.rank.compact{padding:9px 8px}
+.rank.compact .hint{font-size:11px}
+
 @media(max-width:1250px){.executiveCore,.executiveMid,.officialScore{grid-template-columns:1fr}.scoreDetails{grid-template-columns:1fr}.concWrap{grid-template-columns:1fr}.trendFoot.compact{grid-template-columns:1fr 1fr}}
 
 @media(max-width:1250px){.kpiRow{grid-template-columns:1fr 1fr}.execGrid,.trendGrid,.territorialGrid,.grid2{grid-template-columns:1fr}.controls{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.app{padding:12px}.header{flex-direction:column;align-items:flex-start}.logo{width:220px;border-right:0;padding-right:0}.kpiRow,.controls,.split,.trendFoot{grid-template-columns:1fr}.tf{border-right:0;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:10px}.kpi.hero strong{font-size:48px}#map{height:520px}}
@@ -57,17 +65,14 @@ canvas{width:100%!important;height:100%!important}
   <div class="panel trendPanel"><div class="panelHead clean"><div><h2>Tendência oficial</h2><div class="hint">Evolução acumulada SARC até o mês selecionado</div></div></div><div class="chartBox compact"><canvas id="trendChart"></canvas></div><div class="trendFoot compact" id="trendFoot"></div></div>
 </section>
 <section id="page-territorial" class="page">
-  <div class="territorialGrid">
-    <div class="panel"><div class="panelHead"><div><h2>Mapa Territorial de Criticidade</h2><div class="hint">Bairros coloridos por nota calculada por trecho · clique para detalhar</div></div></div><div id="map"></div></div>
+  <div class="territorialGrid cleanTerritory">
+    <div class="panel"><div class="panelHead"><div><h2>Mapa Territorial</h2><div class="hint">Bairros por nota calculada no recorte. Clique no bairro para abrir o detalhe.</div></div></div><div id="map"></div></div>
     <div class="sideStack">
-      <div class="panel"><div class="panelHead"><div><h2>Bairros Críticos</h2><div class="hint">Ranking por nota, volume e reincidência</div></div></div><div class="body" id="rankBairros"></div></div>
-      <div class="panel"><div class="panelHead"><div><h2>Gerências</h2><div class="hint">Contribuição dos trechos abaixo da meta</div></div></div><div class="body" id="rankGerencias"></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Bairros de Atenção</h2><div class="hint">Criticidade combinando nota, volume e trechos abaixo da meta</div></div></div><div class="body" id="rankBairros"></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Trechos Reincidentes</h2><div class="hint">Mesmo bairro, logradouro e trecho avaliados 2 ou mais vezes no recorte</div></div></div><div class="body" id="rankReincidencias"></div></div>
     </div>
   </div>
-  <div class="grid2">
-    <div class="panel"><div class="panelHead"><div><h2>Logradouros Críticos</h2><div class="hint">Piores logradouros no recorte atual</div></div></div><div class="body" id="rankLogradouros"></div></div>
-    <div class="panel"><div class="panelHead"><div><h2 id="drillTitle">Explosão Territorial</h2><div class="hint">Bairro → logradouro → trecho</div></div></div><div class="body" id="drilldown"><div class="status">Selecione um bairro crítico para visualizar ruas e trechos.</div></div></div>
-  </div>
+  <div class="panel drillPanel"><div class="panelHead"><div><h2 id="drillTitle">Detalhe Territorial</h2><div class="hint">Bairro → logradouro → trecho reincidente</div></div></div><div class="body" id="drilldown"><div class="status">Selecione um bairro no mapa ou no ranking lateral.</div></div></div>
 </section>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -128,10 +133,14 @@ function fatorContribuicao(){const itens={};FILTERED.forEach(r=>r.itensNok.forEa
 function renderDesempenhoTerritorial(){
   const ranking = officialGerRank().filter(x=>x.media!==null && x.k && x.k!=='-');
   const renderLista = (arr,tipo) => {
-    if(!arr.length) return '<div class="status">Sem ranking oficial SARC para o recorte selecionado.</div>';
+    if(!arr.length){
+      return tipo==='attention'
+        ? '<div class="status">Nenhuma gerência abaixo da meta no recorte oficial.</div>'
+        : '<div class="status">Sem ranking oficial SARC para o recorte selecionado.</div>';
+    }
     return arr.map((g,i)=>{
       const cls = g.media>=META ? 'good' : 'bad';
-      const cor = tipo==='best' ? '#78aaa3' : (g.media>=META ? '#6da5d8' : '#e84855');
+      const cor = tipo==='best' ? '#78aaa3' : '#e84855';
       const delta = g.media - META;
       return `<div class="metricRow">
         <div class="pos">${i+1}</div>
@@ -144,24 +153,82 @@ function renderDesempenhoTerritorial(){
       </div>`;
     }).join('');
   };
-  const melhores = ranking.slice().sort((a,b)=>b.media-a.media).slice(0,5);
-  const atencao = ranking.slice().sort((a,b)=>a.media-b.media).slice(0,5);
+
+  const melhores = ranking
+    .slice()
+    .sort((a,b)=>b.media-a.media)
+    .slice(0,5);
+
+  const usadosMelhores = new Set(melhores.map(x=>normaliza(x.k)));
+
+  const atencao = ranking
+    .filter(x=>x.media < META && !usadosMelhores.has(normaliza(x.k)))
+    .sort((a,b)=>a.media-b.media)
+    .slice(0,5);
+
   $('bestGers').innerHTML = renderLista(melhores,'best');
   $('attentionGers').innerHTML = renderLista(atencao,'attention');
 }
 
 function renderTrend(){const serie=serieOficial();const canvas=$('trendChart');if(!serie.length){$('trendFoot').innerHTML='<div class="status">Sem série oficial para o recorte.</div>';return}if(trendChart)trendChart.destroy();trendChart=new Chart(canvas,{type:'line',data:{labels:serie.map(x=>x.mes),datasets:[{label:'Nota IPL média acumulada',data:serie.map(x=>x.media),borderColor:'#6da5d8',backgroundColor:'rgba(109,165,216,.16)',tension:.35,fill:true,pointRadius:4,pointHoverRadius:6},{label:'Meta',data:serie.map(()=>META),borderColor:'#e87535',borderDash:[7,6],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c5d5e8',boxWidth:11,font:{weight:'700'}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}%`}}},scales:{x:{ticks:{color:'#9fb0c7',font:{weight:'700'}},grid:{color:'rgba(255,255,255,.055)'}},y:{ticks:{color:'#9fb0c7',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.055)'},suggestedMin:Math.max(0,Math.min(...serie.map(x=>x.media),META)-8),suggestedMax:Math.min(100,Math.max(...serie.map(x=>x.media),META)+8)}}}});if(serie.length){const first=serie[0],last=serie[serie.length-1],best=serie.slice().sort((a,b)=>b.media-a.media)[0],worst=serie.slice().sort((a,b)=>a.media-b.media)[0],delta=last.media-first.media;$('trendFoot').innerHTML=`<div class="tf"><span>Δ período</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${fmt(delta)} p.p.</b></div><div class="tf"><span>Melhor mês</span><b>${best.mes} · ${fmt(best.media)}%</b></div><div class="tf"><span>Pior mês</span><b>${worst.mes} · ${fmt(worst.media)}%</b></div><div class="tf"><span>Tendência</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'Crescente':'Em atenção'}</b></div>`}else $('trendFoot').innerHTML=''}
 function renderFactors(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(item=>{const label=itemLabel(item);itens[label]=(itens[label]||0)+1}));const ranking=Object.entries(itens).map(([item,n])=>({item,n})).sort((a,b)=>b.n-a.n).slice(0,6);const max=Math.max(...ranking.map(x=>x.n),1);$('factorsPanel').innerHTML=ranking.map((x,i)=>`<div class="factor"><div class="idx">${i+1}</div><div><b>${x.item}</b><small><div class="bar" style="margin-top:7px"><i style="width:${Math.max(4,x.n/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#6da5d8'}"></i></div></small></div><div class="num">${x.n.toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="status">Sem NOK no recorte.</div>'}
-function rankHTML(arr,field='bairro'){return arr.map(x=>{const badge=field==='bairro'?(FILTERED.find(r=>normaliza(r.bairro)===normaliza(x.k))?.ger||''):'';const crit=calculaCriticidade(x.rows);return`<div class="rank" ${field==='bairro'?`onclick="abrirBairro('${encodeURIComponent(x.k)}')"`:''}><div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}<div class="hint">${x.n} avaliações · ${fmt(x.media)}% nota média · ${x.abaixo} abaixo da meta</div><div class="bar"><i style="width:${Math.min(100,Math.max(8,crit))}%;background:${corCriticidade(crit)}"></i></div></div><small style="color:${corNota(x.media)}">${fmt(x.media)}%</small></div>`}).join('')||'<div class="status">Sem dados</div>'}
-function renderRanks(){const bairros=group('bairro').sort((a,b)=>calculaCriticidade(b.rows)-calculaCriticidade(a.rows)).slice(0,10);$('rankBairros').innerHTML=rankHTML(bairros,'bairro');const ger=group('ger').filter(x=>x.k!=='Não informado').sort((a,b)=>b.abaixo-a.abaixo||a.media-b.media).slice(0,10);$('rankGerencias').innerHTML=rankHTML(ger,'ger');const logs=group('logradouro').sort((a,b)=>a.media-b.media||b.abaixo-a.abaixo).slice(0,12);$('rankLogradouros').innerHTML=rankHTML(logs,'logradouro')}
+function rankHTML(arr,field='bairro'){
+  return arr.map(x=>{
+    const badge=field==='bairro'?(FILTERED.find(r=>normaliza(r.bairro)===normaliza(x.k))?.ger||''):'';
+    const crit=calculaCriticidade(x.rows);
+    return`<div class="rank compact" ${field==='bairro'?`onclick="abrirBairro('${encodeURIComponent(x.k)}')"`:''}>
+      <div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}
+        <div class="hint">${x.n} avaliações · ${fmt(x.media)}% média · ${x.abaixo} abaixo da meta · ${x.reincidentes} reincid.</div>
+        <div class="bar"><i style="width:${Math.min(100,Math.max(8,crit))}%;background:${corCriticidade(crit)}"></i></div>
+      </div>
+      <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
+    </div>`
+  }).join('')||'<div class="status">Sem dados</div>'
+}
+
+function trechosReincidentes(rows=FILTERED){
+  const t={};
+  rows.forEach(r=>{
+    const k=[normaliza(r.bairro),normaliza(r.logradouro),normaliza(r.trecho)].join('|');
+    if(!t[k])t[k]={bairro:r.bairro,logradouro:r.logradouro,trecho:r.trecho||'trecho não informado',ger:r.ger,avaliacoes:0,notas:[],itens:{}};
+    t[k].avaliacoes++;
+    t[k].notas.push(r.nota);
+    r.itensNok.forEach(item=>{const label=itemLabel(item);t[k].itens[label]=(t[k].itens[label]||0)+1});
+  });
+  return Object.values(t)
+    .map(x=>({...x,media:x.notas.reduce((s,v)=>s+v,0)/x.notas.length}))
+    .filter(x=>x.avaliacoes>=2)
+    .sort((a,b)=>b.avaliacoes-a.avaliacoes || a.media-b.media);
+}
+
+function renderReincidencias(){
+  const dados=trechosReincidentes().slice(0,8);
+  $('rankReincidencias').innerHTML=dados.map(x=>{
+    const itemTop=Object.entries(x.itens).sort((a,b)=>b[1]-a[1])[0];
+    return `<div class="rank compact" onclick="abrirLogradouro('${encodeURIComponent(x.bairro)}','${encodeURIComponent(x.logradouro)}','${encodeURIComponent(x.trecho)}')">
+      <div><b>${x.bairro}</b><span class="reincBadge">${x.avaliacoes}x</span>
+        <div class="hint">${x.logradouro} · ${x.trecho}</div>
+        <div class="hint">Nota média ${fmt(x.media)}%${itemTop?' · principal: '+itemTop[0]:''}</div>
+      </div>
+      <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
+    </div>`
+  }).join('')||'<div class="status">Sem trechos reincidentes no recorte atual.</div>';
+}
+
+function renderRanks(){
+  const bairros=group('bairro').sort((a,b)=>calculaCriticidade(b.rows)-calculaCriticidade(a.rows)).slice(0,8);
+  $('rankBairros').innerHTML=rankHTML(bairros,'bairro');
+  renderReincidencias();
+}
+
 function montarTrechos(rows){const t={};rows.forEach(r=>{const k=[r.bairro,r.logradouro,r.trecho].join(' | ');if(!t[k])t[k]={bairro:r.bairro,logradouro:r.logradouro,trecho:r.trecho||'trecho não informado',avaliacoes:0,notas:[],itens:{}};t[k].avaliacoes++;t[k].notas.push(r.nota);r.itensNok.forEach(item=>{const label=itemLabel(item);t[k].itens[label]=(t[k].itens[label]||0)+1})});Object.values(t).forEach(x=>{x.nota=x.notas.reduce((s,v)=>s+v,0)/x.notas.length});return t}
-function resetDrill(){$('drillTitle').textContent='Explosão Territorial';$('drilldown').innerHTML='<div class="status">Selecione um bairro crítico para visualizar ruas e trechos.</div>'}
+function resetDrill(){$('drillTitle').textContent='Detalhe Territorial';$('drilldown').innerHTML='<div class="status">Selecione um bairro no mapa ou no ranking lateral.</div>'}
 function initMap(){map=L.map('map').setView([-22.91,-43.35],10);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &amp; CARTO'}).addTo(map);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',{attribution:''}).addTo(map);pointLayer=L.layerGroup().addTo(map)}
 function renderMap(){if(!map||!GEO)return;if(geoLayer)map.removeLayer(geoLayer);if(heatLayer)map.removeLayer(heatLayer);if(pointLayer)pointLayer.clearLayers();const byBairro={};group('bairro').forEach(x=>{byBairro[normaliza(x.k)]=x});const geoFeatures={};geoLayer=L.geoJSON(GEO,{style:f=>{const nome=nomeBairroGeo(f.properties);const d=byBairro[normaliza(nome)];if(!d)return{color:'#274260',weight:.5,fillColor:'#1c2a3d',fillOpacity:.08};const cor=corNota(d.media);return{color:cor,weight:.9,fillColor:cor,fillOpacity:.25}},onEachFeature:(f,l)=>{const nome=nomeBairroGeo(f.properties);const d=byBairro[normaliza(nome)];geoFeatures[normaliza(nome)]=l;l.on('click',()=>{if(nome){$('fBairro').value=nome;resetDrill();render();abrirBairro(encodeURIComponent(nome))}});l.bindPopup(`<b>${nome}</b><br>${d?`Nota calculada: ${fmt(d.media)}%<br>Avaliações: ${d.n}<br>Abaixo da meta: ${d.abaixo}`:'Sem avaliação no filtro'}`)}}).addTo(map);map._geoFeatures=geoFeatures;const centroiGeo=construirCentroidesGeo(GEO),pontos=[];Object.values(byBairro).forEach(d=>{const c=centroiGeo[normaliza(d.k)]||COORDS[normaliza(d.k)]||(GEO_CENTROIDS[normaliza(d.k)]?{lat:GEO_CENTROIDS[normaliza(d.k)][0],lon:GEO_CENTROIDS[normaliza(d.k)][1]}:null);if(!c)return;const crit=calculaCriticidade(d.rows);pontos.push([c.lat,c.lon,Math.max(.15,Math.min(1,crit/100))]);L.circleMarker([c.lat,c.lon],{radius:Math.max(5,Math.min(20,d.n/3+4)),color:corNota(d.media),fillColor:corNota(d.media),fillOpacity:.7,weight:1}).on('click',()=>{$('fBairro').value=d.k;resetDrill();render();abrirBairro(encodeURIComponent(d.k))}).bindPopup(`<b>${d.k}</b><br>Nota calculada: ${fmt(d.media)}%<br>Avaliações: ${d.n}`).addTo(pointLayer)});if(pontos.length)heatLayer=L.heatLayer(pontos,{radius:34,blur:24,maxZoom:13,gradient:{0.2:'#6da5d8',0.5:'#e87535',0.8:'#e84855',1:'#fff'}}).addTo(map);try{map.fitBounds(geoLayer.getBounds(),{padding:[20,20]})}catch(e){}}
 function focarGerenciaNoMapa(ger){if(!map||!GEO)return;const gerNorm=normaliza(ger);const bairrosGer=new Set(DATA.filter(r=>normaliza(r.ger)===gerNorm).map(r=>normaliza(r.bairro)));if(geoLayer)geoLayer.eachLayer(l=>{const nm=normaliza(nomeBairroGeo(l.feature?.properties||{}));l.setStyle(bairrosGer.has(nm)?{color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:.18}:{color:'#1e3050',weight:.4,fillColor:'#0d1b2f',fillOpacity:.55})})}
 function focarBairroNoMapa(bairro){if(!map)return;if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}const layer=(map._geoFeatures||{})[normaliza(bairro)];if(layer){try{map.fitBounds(layer.getBounds(),{padding:[40,40],maxZoom:14})}catch(e){}highlightLayer=L.geoJSON(layer.feature,{style:{color:'#5b9bd5',weight:3,fillColor:'#5b9bd5',fillOpacity:.08}}).addTo(map);const center=layer.getBounds().getCenter();L.popup({className:'bairro-popup',closeButton:false,autoClose:true,offset:[0,-4]}).setLatLng(center).setContent(`<b>${bairro}</b>`).openOn(map)}}
-function abrirBairro(bairroEncoded){const bairro=decodeURIComponent(bairroEncoded);showPage('territorial');focarBairroNoMapa(bairro);const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro));const logs={};rows.forEach(r=>{const k=r.logradouro||'Não informado';if(!logs[k])logs[k]={logradouro:k,avaliacoes:0,notas:[],itens:{}};logs[k].avaliacoes++;logs[k].notas.push(r.nota);r.itensNok.forEach(item=>{const label=itemLabel(item);logs[k].itens[label]=(logs[k].itens[label]||0)+1})});const dados=Object.values(logs).map(x=>({...x,media:x.notas.reduce((s,v)=>s+v,0)/x.notas.length})).sort((a,b)=>a.media-b.media).slice(0,20);const gerBairro=FILTERED.find(r=>normaliza(r.bairro)===normaliza(bairro))?.ger||'';$('drillTitle').textContent=`${bairro}${gerBairro?' · '+gerBairro:''}`;$('drilldown').innerHTML=dados.map(l=>`<div class="rank" onclick="abrirLogradouro('${encodeURIComponent(bairro)}','${encodeURIComponent(l.logradouro)}')"><div><b>${l.logradouro}</b><div class="hint">${l.avaliacoes} avaliações · nota média ${fmt(l.media)}%</div><div class="bar"><i style="width:${Math.max(4,l.media)}%;background:${corNota(l.media)}"></i></div></div><small style="color:${corNota(l.media)}">${fmt(l.media)}%</small></div>`).join('')||'<div class="status">Sem dados para este bairro.</div>'}
-function abrirLogradouro(bairroEncoded,logradouroEncoded,trechoHighlight=''){const bairro=decodeURIComponent(bairroEncoded),logradouro=decodeURIComponent(logradouroEncoded),alvo=trechoHighlight?normaliza(decodeURIComponent(trechoHighlight)):'';const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro)&&normaliza(r.logradouro)===normaliza(logradouro));const dados=Object.values(montarTrechos(rows)).sort((a,b)=>a.nota-b.nota);$('drillTitle').textContent=`Trechos · ${bairro} · ${logradouro}`;$('drilldown').innerHTML=dados.map(t=>{const isAlvo=alvo&&normaliza(t.trecho)===alvo;const itensTop=Object.entries(t.itens).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([item,n])=>`<span class="pill">${item}: ${n}</span>`).join('');return`<div class="rank${isAlvo?' destaque':''}"><div><b>${t.trecho}</b><div class="hint">${t.avaliacoes} avaliações · nota ${fmt(t.nota)}%</div><div>${itensTop||'<span class="pill">Sem NOK</span>'}</div><div class="bar"><i style="width:${Math.max(4,t.nota)}%;background:${corNota(t.nota)}"></i></div></div><small style="color:${corNota(t.nota)}">${fmt(t.nota)}%</small></div>`}).join('')||'<div class="status">Sem trechos para este logradouro.</div>'}
+function abrirBairro(bairroEncoded){const bairro=decodeURIComponent(bairroEncoded);showPage('territorial');focarBairroNoMapa(bairro);const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro));const logs={};rows.forEach(r=>{const k=r.logradouro||'Não informado';if(!logs[k])logs[k]={logradouro:k,avaliacoes:0,notas:[],itens:{}};logs[k].avaliacoes++;logs[k].notas.push(r.nota);r.itensNok.forEach(item=>{const label=itemLabel(item);logs[k].itens[label]=(logs[k].itens[label]||0)+1})});const dados=Object.values(logs).map(x=>({...x,media:x.notas.reduce((s,v)=>s+v,0)/x.notas.length,reincidentes:Object.values(montarTrechos(rows.filter(r=>normaliza(r.logradouro)===normaliza(x.logradouro)))).filter(t=>t.avaliacoes>=2).length})).sort((a,b)=>b.reincidentes-a.reincidentes||a.media-b.media).slice(0,12);const gerBairro=FILTERED.find(r=>normaliza(r.bairro)===normaliza(bairro))?.ger||'';$('drillTitle').textContent=`${bairro}${gerBairro?' · '+gerBairro:''}`;$('drilldown').innerHTML=dados.map(l=>`<div class="rank compact" onclick="abrirLogradouro('${encodeURIComponent(bairro)}','${encodeURIComponent(l.logradouro)}')"><div><b>${l.logradouro}</b>${l.reincidentes?`<span class="reincBadge">${l.reincidentes} reincid.</span>`:''}<div class="hint">${l.avaliacoes} avaliações · nota média ${fmt(l.media)}%</div><div class="bar"><i style="width:${Math.max(4,l.media)}%;background:${corNota(l.media)}"></i></div></div><small style="color:${corNota(l.media)}">${fmt(l.media)}%</small></div>`).join('')||'<div class="status">Sem dados para este bairro.</div>'}
+function abrirLogradouro(bairroEncoded,logradouroEncoded,trechoHighlight=''){const bairro=decodeURIComponent(bairroEncoded),logradouro=decodeURIComponent(logradouroEncoded),alvo=trechoHighlight?normaliza(decodeURIComponent(trechoHighlight)):'';const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro)&&normaliza(r.logradouro)===normaliza(logradouro));const dados=Object.values(montarTrechos(rows)).sort((a,b)=>a.nota-b.nota);$('drillTitle').textContent=`Trechos · ${bairro} · ${logradouro}`;$('drilldown').innerHTML=dados.map(t=>{const isAlvo=alvo&&normaliza(t.trecho)===alvo;const itensTop=Object.entries(t.itens).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([item,n])=>`<span class="pill">${item}: ${n}</span>`).join('');return`<div class="rank${isAlvo?' destaque':''}"><div><b>${t.trecho}</b>${t.avaliacoes>=2?`<span class="reincBadge">${t.avaliacoes}x</span>`:''}<div class="hint">${t.avaliacoes} avaliações · nota ${fmt(t.nota)}%</div><div>${itensTop||'<span class="pill">Sem NOK</span>'}</div><div class="bar"><i style="width:${Math.max(4,t.nota)}%;background:${corNota(t.nota)}"></i></div></div><small style="color:${corNota(t.nota)}">${fmt(t.nota)}%</small></div>`}).join('')||'<div class="status">Sem trechos para este logradouro.</div>'}
 function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();renderMap();try{if(geoLayer)map.fitBounds(geoLayer.getBounds(),{padding:[20,20]})}catch(e){}},160)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
 document.addEventListener('DOMContentLoaded',init);
 </script>

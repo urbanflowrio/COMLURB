@@ -1,11 +1,17 @@
 /**
- * HUB COMLURB - Componentes de Header e Footer
- * Cabeçalho, rodapé, drill down e loading reutilizáveis
+ * HUB COMLURB - Componentes de Header, Footer, Drill Down e Loading
+ * Componentes reutilizáveis do ecossistema HUB COMLURB
  */
+
+window.HUB = window.HUB || {};
+
+/* ============================================
+   HEADER
+   ============================================ */
 
 HUB.header = {
   /**
-   * Renderiza header do painel
+   * Renderiza o cabeçalho padrão do painel
    */
   render(containerId, config = {}) {
     const {
@@ -29,6 +35,7 @@ HUB.header = {
                src="/COMLURB/assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png"
                alt="Prefeitura do Rio + Comlurb"
                style="display:block">
+
           <div id="logoFallback" class="logoTextFallback" style="display:none">
             PREFEITURA DO RIO | COMLURB
           </div>
@@ -64,13 +71,16 @@ HUB.header = {
     container.innerHTML = `
       <header class="header">
         ${logoHTML}
+
         <div class="headerContent">
           ${systemLabel ? `<div class="systemLabel">${HUB.format.esc(systemLabel)}</div>` : ""}
           ${title ? `<h1 class="mainTitle">${HUB.format.esc(title)}</h1>` : ""}
           ${subtitle ? `<div class="subtitle">${HUB.format.esc(subtitle)}</div>` : ""}
         </div>
+
         ${statusHTML}
       </header>
+
       ${navHTML}
     `;
 
@@ -82,7 +92,7 @@ HUB.header = {
   },
 
   /**
-   * Inicializa fallback de logo caso a imagem principal não carregue
+   * Inicializa fallback da logo caso a imagem principal não carregue
    */
   _initLogoFallback() {
     const img = HUB.dom.$("logoComlurb");
@@ -108,13 +118,19 @@ HUB.header = {
         img.src = candidates[i] + "?v=" + Date.now();
       } else {
         img.style.display = "none";
-        if (fallback) fallback.style.display = "block";
+
+        if (fallback) {
+          fallback.style.display = "block";
+        }
       }
     };
 
     img.onload = () => {
       img.style.display = "block";
-      if (fallback) fallback.style.display = "none";
+
+      if (fallback) {
+        fallback.style.display = "none";
+      }
     };
 
     img.src = candidates[0] + "?v=" + Date.now();
@@ -126,8 +142,13 @@ HUB.header = {
   _attachNavListeners(navigation) {
     document.querySelectorAll(".tabBtn").forEach(btn => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+        document.querySelectorAll(".tabBtn").forEach(b => {
+          b.classList.remove("active");
+        });
+
+        document.querySelectorAll(".screen").forEach(s => {
+          s.classList.remove("active");
+        });
 
         btn.classList.add("active");
 
@@ -150,14 +171,21 @@ HUB.header = {
     const el = document.querySelector(".statusIndicator");
     if (!el) return;
 
-    el.querySelector("small").textContent = label;
-    el.querySelector("b").textContent = value;
+    const labelEl = el.querySelector("small");
+    const valueEl = el.querySelector("b");
+
+    if (labelEl) labelEl.textContent = label;
+    if (valueEl) valueEl.textContent = value;
   }
 };
 
+/* ============================================
+   FOOTER INSTITUCIONAL
+   ============================================ */
+
 HUB.footer = {
   /**
-   * Renderiza footer institucional padrão do HUB COMLURB
+   * Renderiza o rodapé institucional padrão do HUB COMLURB
    */
   render(containerId, config = {}) {
     const {
@@ -188,7 +216,7 @@ HUB.footer = {
   },
 
   /**
-   * Atualiza timestamp do footer, se existir
+   * Atualiza o timestamp do footer, caso exista
    */
   updateTimestamp(containerId) {
     const el = HUB.dom.$(containerId);
@@ -202,9 +230,10 @@ HUB.footer = {
   }
 };
 
-/**
- * Componente de Banner de Drill Down
- */
+/* ============================================
+   DRILL DOWN BANNER
+   ============================================ */
+
 HUB.drillBanner = {
   /**
    * Mostra banner de drill down
@@ -225,6 +254,7 @@ HUB.drillBanner = {
           <b>${HUB.format.esc(title)}</b>
           <span>${HUB.format.esc(description)}</span>
         </div>
+
         <button class="actionBtn primary" onclick="${onClear}">
           Fechar drill down
         </button>
@@ -253,14 +283,18 @@ HUB.drillBanner = {
     const banner = container.querySelector(".drillBanner");
     if (!banner) return;
 
-    banner.querySelector("b").textContent = title;
-    banner.querySelector("span").textContent = description;
+    const titleEl = banner.querySelector("b");
+    const descEl = banner.querySelector("span");
+
+    if (titleEl) titleEl.textContent = title;
+    if (descEl) descEl.textContent = description;
   }
 };
 
-/**
- * Componente de Loading State
- */
+/* ============================================
+   LOADING
+   ============================================ */
+
 HUB.loading = {
   /**
    * Mostra loading em um container
@@ -269,7 +303,11 @@ HUB.loading = {
     const container = HUB.dom.$(containerId);
 
     if (container) {
-      container.innerHTML = `<div class="loading">${HUB.format.esc(message)}</div>`;
+      container.innerHTML = `
+        <div class="loading">
+          ${HUB.format.esc(message)}
+        </div>
+      `;
     }
   },
 
@@ -279,10 +317,12 @@ HUB.loading = {
   hide(containerId) {
     const container = HUB.dom.$(containerId);
 
-    if (container) {
-      const loading = container.querySelector(".loading");
+    if (!container) return;
 
-      if (loading) loading.remove();
+    const loading = container.querySelector(".loading");
+
+    if (loading) {
+      loading.remove();
     }
   },
 

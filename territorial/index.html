@@ -9,58 +9,390 @@
 
 <style>
 :root{
-  --bg:#06111f;
-  --panel:#0d1f36;
-  --panel2:#0a1b31;
-  --line:#294866;
+  --bg:#050e1a;
+  --bg2:#071426;
+  --panel:#0b1b31;
+  --panel2:#0d2038;
+  --panel3:#102844;
+  --line:#254764;
+  --line2:rgba(117,165,214,.22);
   --text:#f7f9ff;
   --muted:#b8c9de;
-  --blue:#4b86bd;
-  --blue2:#5b9bd5;
-  --orange:#e87535;
+  --muted2:#8faac5;
+  --blue:#5b9bd5;
+  --blue2:#7db7ed;
   --green:#78aaa3;
+  --orange:#e87535;
+  --danger:#f28482;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
 }
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Arial,sans-serif}
-.app{max-width:1800px;margin:0 auto;padding:28px}
-.header{display:flex;align-items:center;gap:28px;padding:26px;border:1px solid var(--line);border-radius:22px;background:var(--panel2);margin-bottom:16px}
-.logo{width:310px;max-height:82px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,.28)}
-.eyebrow{font-size:12px;font-weight:900;letter-spacing:.25em;color:#b8d4f2}
-h1{margin:6px 0;font-size:38px}
-.sub{color:#c7d8ee;line-height:1.5}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;min-height:115px}
-.kpi .label{font-size:11px;letter-spacing:.16em;color:#b8d4f2;font-weight:900;text-transform:uppercase}
-.kpi .value{font-size:34px;font-weight:950;margin:14px 0 4px}
-.kpi .note{color:#c7d8ee;font-size:13px}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:420px}
-.panelHead{padding:18px;border-bottom:1px solid var(--line)}
-h2{margin:0;font-size:18px}
-.hint{color:#c7d8ee;font-size:13px;margin-top:5px}
-.body{padding:18px}
-#map{height:720px;width:100%;border-radius:18px;border:1px solid rgba(255,255,255,.12);overflow:hidden;background:#09182a}
-.layers{display:grid;gap:10px}
-.layerBtn{width:100%;text-align:left;border:1px solid var(--line);background:#132840;color:#fff;border-radius:14px;padding:14px;font-weight:900;cursor:pointer}
-.layerBtn.active{background:linear-gradient(90deg,#2f67a5,#5b9bd5);border-color:#6fa7d8}
-.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.filters input,.filters select{width:100%;border:1px solid #345978;background:#09182a;color:#fff;border-radius:12px;padding:11px;font-weight:700;outline:none}
-.infoBox{margin-top:14px;background:#132840;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;color:#dcecff;line-height:1.5}
-.rank{margin-top:14px;display:grid;gap:10px;max-height:360px;overflow:auto;padding-right:3px}
-.rankItem{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#132840;border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.08)}
-.rankItem b{color:#fff}
-.rankItem small{display:block;color:#aebfd5;margin-top:4px}
-.pill{border:1px solid #345978;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;color:#dcecff;white-space:nowrap}
-.footer{margin-top:16px;color:#aebfd5;font-size:13px}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0d1f36;color:#fff;border:1px solid #294866}
-.popupTitle{font-size:15px;font-weight:950;margin-bottom:8px;color:#fff}
-.popupLine{font-size:12px;color:#c7d8ee;margin:4px 0}
-.popupLine b{color:#fff}
-@media(max-width:1100px){
-  .grid,.kpis,.filters{grid-template-columns:1fr}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at top left, rgba(91,155,213,.16), transparent 34%),
+    linear-gradient(180deg,#050e1a 0%,#06111f 48%,#040a13 100%);
+  color:var(--text);
+  font-family:Segoe UI,Arial,sans-serif;
+}
+
+.app{
+  max-width:1820px;
+  margin:0 auto;
+  padding:28px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  padding:26px;
+  border:1px solid var(--line2);
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(13,32,56,.96),rgba(7,20,38,.96));
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+
+.logo{
+  width:300px;
+  max-height:80px;
+  object-fit:contain;
+  padding-right:26px;
+  border-right:1px solid rgba(255,255,255,.22);
+}
+
+.eyebrow{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.25em;
+  color:#b8d4f2;
+  text-transform:uppercase;
+}
+
+h1{
+  margin:6px 0;
+  font-size:38px;
+  letter-spacing:-.04em;
+}
+
+.sub{
+  color:#c7d8ee;
+  line-height:1.5;
+  max-width:920px;
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 14px;
+}
+
+.navPill{
+  border:1px solid var(--line2);
+  background:rgba(13,32,56,.78);
+  color:#dcecff;
+  border-radius:999px;
+  padding:10px 13px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.kpi{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg,rgba(13,32,56,.98),rgba(8,22,40,.98));
+  border:1px solid var(--line2);
+  border-radius:20px;
+  padding:18px;
+  min-height:118px;
+  box-shadow:0 12px 34px rgba(0,0,0,.24);
+}
+
+.kpi::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0 0;
+  height:3px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  opacity:.75;
+}
+
+.kpi .label{
+  font-size:11px;
+  letter-spacing:.16em;
+  color:#b8d4f2;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.kpi .value{
+  font-size:34px;
+  font-weight:950;
+  margin:14px 0 4px;
+  letter-spacing:-.04em;
+}
+
+.kpi .note{
+  color:#c7d8ee;
+  font-size:13px;
+  line-height:1.35;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);
+  gap:14px;
+}
+
+.panel{
+  background:linear-gradient(180deg,rgba(11,27,49,.98),rgba(7,20,38,.98));
+  border:1px solid var(--line2);
+  border-radius:22px;
+  overflow:hidden;
+  min-height:420px;
+  box-shadow:0 14px 44px rgba(0,0,0,.26);
+}
+
+.panelHead{
+  padding:18px;
+  border-bottom:1px solid var(--line2);
+  background:rgba(255,255,255,.025);
+}
+
+h2{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.02em;
+}
+
+.hint{
+  color:#c7d8ee;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.body{
+  padding:18px;
+}
+
+#map{
+  height:735px;
+  width:100%;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.12);
+  overflow:hidden;
+  background:#06111f;
+  box-shadow:inset 0 0 0 1px rgba(91,155,213,.08);
+}
+
+.leaflet-container{
+  background:#06111f;
+  font-family:Segoe UI,Arial,sans-serif;
+}
+
+.leaflet-control-zoom a{
+  background:#0d2038!important;
+  color:#fff!important;
+  border-color:#294866!important;
+}
+
+.leaflet-control-attribution{
+  background:rgba(5,14,26,.78)!important;
+  color:#8faac5!important;
+}
+
+.layers{
+  display:grid;
+  gap:10px;
+}
+
+.layerBtn{
+  width:100%;
+  text-align:left;
+  border:1px solid var(--line2);
+  background:linear-gradient(180deg,#102844,#0b1c32);
+  color:#fff;
+  border-radius:16px;
+  padding:14px;
+  font-weight:900;
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.layerBtn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(125,183,237,.55);
+}
+
+.layerBtn.active{
+  background:linear-gradient(90deg,#244f82,#5b9bd5);
+  border-color:#7db7ed;
+  box-shadow:0 12px 28px rgba(91,155,213,.2);
+}
+
+.filters{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:14px;
+}
+
+.filters input,.filters select{
+  width:100%;
+  border:1px solid var(--line2);
+  background:#071426;
+  color:#fff;
+  border-radius:13px;
+  padding:11px;
+  font-weight:700;
+  outline:none;
+}
+
+.insightBox{
+  margin-top:14px;
+  background:linear-gradient(180deg,#102844,#0b1c32);
+  border:1px solid var(--line2);
+  border-radius:18px;
+  padding:16px;
+  color:#dcecff;
+  line-height:1.5;
+}
+
+.insightTitle{
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#b8d4f2;
+  font-weight:950;
+  margin-bottom:8px;
+}
+
+.insightText{
+  font-size:14px;
+  color:#eaf3ff;
+}
+
+.rank{
+  margin-top:14px;
+  display:grid;
+  gap:10px;
+  max-height:380px;
+  overflow:auto;
+  padding-right:3px;
+}
+
+.rankItem{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  background:rgba(16,40,68,.82);
+  border-radius:15px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.rankItem b{
+  color:#fff;
+  line-height:1.3;
+}
+
+.rankItem small{
+  display:block;
+  color:#aebfd5;
+  margin-top:4px;
+}
+
+.pill{
+  border:1px solid #345978;
+  background:rgba(91,155,213,.10);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:900;
+  color:#dcecff;
+  white-space:nowrap;
+}
+
+.footer{
+  margin-top:16px;
+  padding:16px 18px;
+  border:1px solid var(--line2);
+  border-radius:18px;
+  background:rgba(7,20,38,.72);
+  color:#aebfd5;
+  font-size:13px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.footer b{
+  color:#dcecff;
+}
+
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{
+  background:#0d2038;
+  color:#fff;
+  border:1px solid #294866;
+  box-shadow:0 18px 48px rgba(0,0,0,.42);
+}
+
+.leaflet-popup-content{
+  margin:14px;
+}
+
+.popupTitle{
+  font-size:15px;
+  font-weight:950;
+  margin-bottom:8px;
+  color:#fff;
+}
+
+.popupLine{
+  font-size:12px;
+  color:#c7d8ee;
+  margin:4px 0;
+}
+
+.popupLine b{
+  color:#fff;
+}
+
+.loading{
+  color:#b8c9de;
+}
+
+.errorBox{
+  color:#ffd2d2;
+  border-color:rgba(242,132,130,.35);
+}
+
+@media(max-width:1200px){
+  .grid,.kpis{grid-template-columns:1fr}
+}
+
+@media(max-width:700px){
+  .app{padding:16px}
   .header{flex-direction:column;align-items:flex-start}
   .logo{width:220px;border-right:0;padding-right:0}
-  h1{font-size:32px}
+  h1{font-size:30px}
+  .filters{grid-template-columns:1fr}
+  #map{height:620px}
 }
 </style>
 </head>
@@ -74,34 +406,40 @@ h2{margin:0;font-size:18px}
       <div class="eyebrow">HUB COMLURB</div>
       <h1>Território Operacional</h1>
       <div class="sub">
-        Base territorial corporativa para leitura operacional, visualização das camadas GIS e apoio à gestão por território.
+        Leitura geoespacial das estruturas da COMLURB, integrando áreas territoriais, gerências e unidades físicas em uma camada executiva de apoio à gestão.
       </div>
     </div>
   </header>
 
+  <div class="toolbar">
+    <span class="navPill">Base territorial</span>
+    <span class="navPill">Unidades georreferenciadas</span>
+    <span class="navPill">Camadas GIS</span>
+  </div>
+
   <section class="kpis">
     <div class="kpi">
-      <div class="label">Camada ativa</div>
+      <div class="label" id="kpi1Label">Camada ativa</div>
       <div class="value" id="kpiCamada">-</div>
-      <div class="note">Arquivo GIS ou base georreferenciada carregada</div>
+      <div class="note" id="kpi1Note">Camada carregada no mapa</div>
     </div>
 
     <div class="kpi">
-      <div class="label">Feições</div>
+      <div class="label" id="kpi2Label">Total mapeado</div>
       <div class="value" id="kpiFeicoes">0</div>
-      <div class="note">Registros geográficos identificados</div>
+      <div class="note" id="kpi2Note">Registros identificados</div>
     </div>
 
     <div class="kpi">
-      <div class="label">Tipo de geometria</div>
-      <div class="value" id="kpiTipo">-</div>
-      <div class="note">Polígono, linha ou ponto</div>
+      <div class="label" id="kpi3Label">Principal concentração</div>
+      <div class="value" id="kpiPrincipal" style="font-size:28px">-</div>
+      <div class="note" id="kpi3Note">Maior grupo no recorte ativo</div>
     </div>
 
     <div class="kpi">
-      <div class="label">Fonte</div>
-      <div class="value" style="font-size:24px">HUB GEO</div>
-      <div class="note">GeoJSON e unidades georreferenciadas</div>
+      <div class="label" id="kpi4Label">Cobertura</div>
+      <div class="value" id="kpiCobertura" style="font-size:28px">-</div>
+      <div class="note" id="kpi4Note">Leitura territorial do recorte</div>
     </div>
   </section>
 
@@ -109,7 +447,7 @@ h2{margin:0;font-size:18px}
     <div class="panel">
       <div class="panelHead">
         <h2>Mapa territorial</h2>
-        <div class="hint">Clique nas áreas ou unidades do mapa para abrir os detalhes.</div>
+        <div class="hint">Mapa dark no padrão HUB. Clique nas áreas ou unidades para consultar detalhes.</div>
       </div>
       <div class="body">
         <div id="map"></div>
@@ -118,8 +456,8 @@ h2{margin:0;font-size:18px}
 
     <div class="panel">
       <div class="panelHead">
-        <h2>Camadas disponíveis</h2>
-        <div class="hint">Selecione a camada que deseja visualizar.</div>
+        <h2>Camadas e leitura executiva</h2>
+        <div class="hint">Selecione a camada para atualizar mapa, cards e ranking lateral.</div>
       </div>
       <div class="body">
         <div class="layers">
@@ -135,14 +473,19 @@ h2{margin:0;font-size:18px}
           <input id="fBusca" oninput="applyUnitFilters()" placeholder="Buscar unidade, bairro ou endereço">
         </div>
 
-        <div class="infoBox" id="infoBox">Carregando camada territorial...</div>
+        <div class="insightBox" id="infoBox">
+          <div class="insightTitle">Leitura executiva</div>
+          <div class="insightText">Carregando camada territorial...</div>
+        </div>
+
         <div class="rank" id="rankBox"></div>
       </div>
     </div>
   </section>
 
   <div class="footer">
-    COMLURB • HUB de Inteligência Operacional • GeoJSON em assets/geojson/ • Unidades em territorial/data/
+    <span><b>COMLURB</b> • HUB de Inteligência Operacional</span>
+    <span>Fonte: bases georreferenciadas do módulo territorial</span>
   </div>
 
 </div>

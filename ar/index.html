@@ -4,17 +4,18 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Indicadores AR 2026 · HUB COMLURB</title>
-
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
 <style>
+/* ── Layout base ── */
 .app{max-width:1880px;padding:18px}
 .header{margin-bottom:14px}
 .arFilters{grid-template-columns:190px 190px 1fr auto !important;margin:14px 0}
+
+/* ── Resumo executivo ── */
 .execSummary{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}
 .summaryHero{background:var(--painel);border:1px solid var(--linha);border-radius:22px;overflow:hidden;min-height:260px}
-.summaryHero .body{min-height:210px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:28px}
+.summaryHero .body{min-height:210px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:28px;padding:0 28px 20px}
 .bigNumber{font-size:clamp(70px,7vw,112px);font-weight:950;letter-spacing:-.07em;line-height:.9;color:#5b9bd5;white-space:nowrap}
 .heroText h2{margin:0 0 10px;font-size:clamp(24px,2vw,36px);line-height:1.08;letter-spacing:-.03em}
 .heroText p{margin:0;color:#c7d8ee;line-height:1.5;max-width:760px}
@@ -27,16 +28,54 @@
 .statusMini.att{border-color:rgba(255,160,43,.46)}
 .statusMini.crit{border-color:rgba(239,106,93,.52)}
 .statusMini.nd{border-color:rgba(167,139,250,.42)}
+
+/* ── Painel de Bonificação ── */
+.bonusPanel{background:var(--painel);border:1px solid rgba(91,155,213,.3);border-radius:22px;padding:20px 22px;margin-bottom:14px}
+.bonusPanelHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.bonusPanelHead h2{margin:0;font-size:16px;font-weight:950;color:#fff;letter-spacing:.01em}
+.bonusPanelHead .hint{color:#9fb0c7;font-size:11px}
+.bonusGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bonusCard{background:rgba(255,255,255,.04);border:1px solid var(--linha);border-radius:16px;padding:14px 16px}
+.bonusCard .label{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:6px}
+.bonusCard .valor{font-size:28px;font-weight:950;color:#fff;line-height:1;margin-bottom:6px}
+.bonusCard .detalhe{font-size:11px;color:#c7d8ee;line-height:1.4}
+.bonusCard.destaque{border-color:rgba(91,155,213,.5);background:rgba(91,155,213,.08)}
+.bonusCard.destaque .valor{color:#5b9bd5}
+.metaContagem{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--linha);border-radius:14px;padding:12px 16px}
+.metaContagem .tituloContagem{font-size:11px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#9fb0c7;margin-bottom:10px}
+.metaLinhas{display:grid;gap:6px}
+.metaLinha{display:grid;grid-template-columns:22px 1fr auto auto;gap:10px;align-items:center;font-size:12px}
+.metaLinha .cod{color:#9fb0c7;font-weight:950;font-size:10px}
+.metaLinha .desc{color:#c7d8ee}
+.metaLinha .status-mini{font-size:10px;font-weight:950}
+.metaLinha.ok .status-mini{color:#83d99d}
+.metaLinha.att .status-mini{color:#ffa02b}
+.metaLinha.crit .status-mini{color:#ff7d72}
+.metaLinha.nd .status-mini{color:#cdbdff}
+.casadoBadge{font-size:9px;background:rgba(91,155,213,.15);border:1px solid rgba(91,155,213,.4);color:#7ec3f5;border-radius:6px;padding:2px 6px;white-space:nowrap}
+
+/* ── Blocos de indicadores ── */
 .arBlock{margin-top:14px}
 .arBlockHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 2px;margin-bottom:10px}
 .arBlockTitle{margin:0;font-size:18px;font-weight:950;color:#fff;letter-spacing:.01em}
 .arBlockMeta{color:#c7d8ee;font-size:12px;font-weight:800}
 .indicatorList{display:grid;gap:10px}
+
+/* ── Linha de indicador ── */
 .indicatorRow{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:15px 16px;display:grid;grid-template-columns:72px minmax(280px,1.3fr) repeat(5,minmax(110px,.55fr));gap:14px;align-items:center;min-height:96px;overflow:hidden}
 .indicatorRow.ok{border-left:4px solid var(--verde)}
 .indicatorRow.att{border-left:4px solid var(--amarelo)}
 .indicatorRow.crit{border-left:4px solid var(--vermelho)}
 .indicatorRow.nd{border-left:4px solid var(--roxo)}
+.indicatorRow.superado{border-left:4px solid #5b9bd5}
+
+/* ── Grupo casado: wrapper visual ── */
+.casadoWrap{background:rgba(91,155,213,.04);border:1px solid rgba(91,155,213,.22);border-radius:20px;padding:10px;margin-bottom:10px}
+.casadoLabel{display:flex;align-items:center;gap:8px;padding:0 6px 8px;font-size:11px;font-weight:950;color:#7ec3f5;letter-spacing:.1em;text-transform:uppercase}
+.casadoLabel svg{opacity:.7}
+.casadoBonusNote{margin-top:8px;padding:8px 12px;background:rgba(91,155,213,.08);border:1px solid rgba(91,155,213,.25);border-radius:12px;font-size:11px;color:#7ec3f5;line-height:1.4}
+
+/* ── Células ── */
 .codeBox{font-size:12px;font-weight:950;letter-spacing:.14em;color:#b8d4f2}
 .indName b{display:block;color:#fff;font-size:15px;line-height:1.25;margin-bottom:5px}
 .indName span{display:block;color:#aebfd5;font-size:12px;line-height:1.35;max-width:520px}
@@ -47,36 +86,70 @@
 .tag.att{border-color:#8d6a23;color:#ffa02b}
 .tag.crit{border-color:#8b3f38;color:#ff7d72}
 .tag.nd{border-color:#6d5ba0;color:#cdbdff}
+.tag.superado{border-color:#2a5a82;color:#7ec3f5}
+
+/* ── Nota de governança ── */
 .govNote{margin:16px 0 0;border:1px solid rgba(167,139,250,.28);background:rgba(167,139,250,.06);border-radius:16px;padding:13px 15px;color:#cdbdff;font-size:12px;line-height:1.45}
 .emptyBlock{color:#aebfd5;border:1px solid var(--linha);background:var(--painel);border-radius:16px;padding:18px;text-align:center}
-@media(max-width:1380px){.indicatorRow{grid-template-columns:70px minmax(250px,1.4fr) repeat(3,minmax(110px,.6fr))}.indicatorRow .metricCell:nth-child(6),.indicatorRow .metricCell:nth-child(7){grid-column:auto}}
-@media(max-width:1180px){.execSummary{grid-template-columns:1fr}.indicatorRow{grid-template-columns:70px 1fr 1fr 1fr}.indName{grid-column:2/5}}
-@media(max-width:760px){.arFilters,.statusGrid,.summaryHero .body{grid-template-columns:1fr !important}.indicatorRow{grid-template-columns:1fr}.indName{grid-column:auto}.arBlockHead{flex-direction:column;align-items:flex-start}}
+
+/* ── Responsivo ── */
+@media(max-width:1380px){
+  .indicatorRow{grid-template-columns:70px minmax(250px,1.4fr) repeat(3,minmax(110px,.6fr))}
+  .indicatorRow .metricCell:nth-child(6),.indicatorRow .metricCell:nth-child(7){grid-column:auto}
+  .bonusGrid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:1180px){
+  .execSummary{grid-template-columns:1fr}
+  .indicatorRow{grid-template-columns:70px 1fr 1fr 1fr}
+  .indName{grid-column:2/5}
+  .bonusGrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .arFilters,.statusGrid,.summaryHero .body{grid-template-columns:1fr !important}
+  .indicatorRow{grid-template-columns:1fr}
+  .indName{grid-column:auto}
+  .arBlockHead{flex-direction:column;align-items:flex-start}
+  .bonusGrid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <div class="app">
+
+<!-- HEADER -->
 <header class="header">
   <div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB"></div>
   <div class="headerContent">
     <div class="systemLabel">HUB COMLURB · ACORDO DE RESULTADOS</div>
     <h1 class="mainTitle">Indicadores AR 2026</h1>
-    <div class="subtitle">Lista executiva dos indicadores pactuados, com status canônico e tendência calculada pela série mensal da SARC.</div>
+    <div class="subtitle">Lista executiva dos indicadores pactuados, com lógica de metas casadas, status canônico e projeção de bonificação.</div>
   </div>
 </header>
+
+<!-- FILTROS -->
 <section class="filters arFilters">
   <div class="field"><label>Grupo</label><select id="fGrupo"><option value="">Todos</option></select></div>
   <div class="field"><label>Status</label><select id="fStatus"><option value="">Todos</option></select></div>
   <div class="field"><label>Busca</label><input id="fBusca" type="search" placeholder="Código, indicador ou fonte"></div>
   <button class="actionBtn" id="btnLimpar">Limpar filtros</button>
 </section>
+
 <div id="loading" class="loading">Carregando indicadores publicados...</div>
 <div id="errorState" class="emptyBlock" style="display:none"></div>
+
 <main id="conteudo" style="display:none">
+
+  <!-- RESUMO EXECUTIVO -->
   <section class="execSummary">
     <div class="summaryHero">
       <div class="panelHead"><div><h2>Situação institucional dos indicadores</h2><div class="hint">leitura consolidada do recorte selecionado</div></div></div>
-      <div class="body"><div class="bigNumber" id="heroPct">—</div><div class="heroText"><h2 id="heroTitle">Carregando leitura executiva</h2><p id="heroText">O painel organiza os indicadores por bloco do AR, evitando projeção não oficial e bonificação agregada sem validação.</p></div></div>
+      <div class="body">
+        <div class="bigNumber" id="heroPct">—</div>
+        <div class="heroText">
+          <h2 id="heroTitle">Carregando leitura executiva</h2>
+          <p id="heroText">O painel organiza os indicadores por bloco do AR, respeitando a lógica de metas casadas para fins de bonificação.</p>
+        </div>
+      </div>
     </div>
     <div class="statusGrid">
       <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Atingidos ou acima da meta.</span></div>
@@ -85,43 +158,603 @@
       <div class="statusMini nd"><small>Sem dado</small><b id="kpiSemDado">—</b><span>Sem resultado, meta ou regra confirmada.</span></div>
     </div>
   </section>
+
+  <!-- PAINEL DE BONIFICAÇÃO -->
+  <section class="bonusPanel" id="bonusPanel"></section>
+
+  <!-- INDICADORES -->
   <div id="indicadoresContainer"></div>
-  <div class="govNote"><strong>Governança da leitura:</strong> a tendência compara a média dos últimos 3 meses disponíveis contra os 3 meses anteriores. Quando não há série suficiente, o painel exibe “Série curta”. A composição de bonificação final não é somada nesta tela.</div>
+
+  <div class="govNote">
+    <strong>Governança da leitura:</strong> a tendência compara a média dos últimos 3 meses disponíveis contra os 3 meses anteriores. Quando não há série suficiente, o painel exibe "Série curta". 
+    <strong>Metas casadas:</strong> quando dois indicadores formam uma dupla (ex: atendimento + satisfação), ambos precisam ser atingidos para contar uma meta no cálculo de bonificação — o resultado de um não compensa o outro.
+    A composição final de bonificação fica sujeita à validação oficial pela CVL/Presidência.
+  </div>
 </main>
 </div>
+
 <script>
-const URLS={geral:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",ar:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",map:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"};
-const MESES=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-let RAW={geral:[],ar:[],map:[]},DATA=[],FILTRADOS=[];
-const $=id=>document.getElementById(id);
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURAÇÃO CENTRAL — METAS CASADAS E BONIFICAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+
+/**
+ * GRUPOS CASADOS: pares/trios que contam como UMA ÚNICA META de bonificação.
+ * Se qualquer membro do grupo não atingir a meta, o grupo inteiro não conta.
+ *
+ * Regra do AR (conforme imagem 2):
+ *  - Indicador 2: E02 (Recuperação %) + E03 (Ranking)  → 1 meta
+ *  - Indicador 3: E04 (Atendimento Poda) + E05 (Satisfação Poda) → 1 meta
+ *  - Indicador 4: E06 (Atendimento Remoção) + E07 (Satisfação Remoção) → 1 meta
+ *  - Indicador 6 (Condicionada): C01 (Conformidade IPL) + C02 (Desvio IPL) → 1 meta
+ *
+ * Indicadores individuais (cada um = 1 meta):
+ *  - E01, E08
+ *
+ * Condicionadas individuais: C03, C04
+ * Performance: P01
+ */
+const CASADOS = [
+  {
+    id: "par-02",
+    label: "Meta dupla: Recuperação de Resíduos + Ranking Nacional",
+    membros: ["E02","E03"],
+    bonusNote: "Ambos precisam ser atingidos para contar 1 meta no bloco Estratégico."
+  },
+  {
+    id: "par-03",
+    label: "Meta dupla: Atendimento 1746 Poda + Satisfação Poda",
+    membros: ["E04","E05"],
+    bonusNote: "Atingir apenas o SLA não garante a meta se a nota de satisfação ficar abaixo de 4,5. Os dois contam como 1 meta."
+  },
+  {
+    id: "par-04",
+    label: "Meta dupla: Atendimento 1746 Remoção + Satisfação Remoção",
+    membros: ["E06","E07"],
+    bonusNote: "Mesma lógica: SLA de 85% e Nota ≥ 4,4 precisam ser atingidos juntos para contar 1 meta."
+  },
+  {
+    id: "par-c06",
+    label: "Meta dupla (Condicionada): Conformidade IPL + Desvio Padrão IPL",
+    membros: ["C01","C02"],
+    bonusNote: "Os dois sub-indicadores do IPL precisam ser atingidos para contar 1 meta no bloco Condicionado."
+  }
+];
+
+/**
+ * TABELA DE BONIFICAÇÃO ESTRATÉGICA (conforme imagem 2)
+ * N° de metas estratégicas atingidas → Nota → % Bônus
+ */
+const BONUS_ESTRATEGICO = [
+  {metas: 5, nota: 8.7, pct: 74},
+  {metas: 4, nota: 8.4, pct: 68},
+  {metas: 3, nota: 8,   pct: 60},
+  {metas: 2, nota: 7,   pct: 20},
+  {metas: 1, nota: 6,   pct: 0},
+  {metas: 0, nota: 0,   pct: 0}
+];
+
+/**
+ * BONIFICAÇÃO CONDICIONADA
+ * Válida apenas se ≥ 50% das metas estratégicas forem atingidas.
+ * N° de metas condicionadas → Ponto adicional → % Bônus adicional
+ */
+const BONUS_CONDICIONADO = [
+  {metas: 3, ponto: 0.3, pct: 6},
+  {metas: 2, ponto: 0.2, pct: 4},
+  {metas: 1, ponto: 0,   pct: 0},
+  {metas: 0, ponto: 0,   pct: 0}
+];
+
+/** PERFORMANCE: 1 ponto adicional = +20% se ≥ 50% das estratégicas atingidas */
+const BONUS_PERFORMANCE = {ponto: 1, pct: 20};
+
+/* ═══════════════════════════════════════════════════════════
+   FONTES DE DADOS
+   ═══════════════════════════════════════════════════════════ */
+const URLS = {
+  geral: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",
+  ar:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",
+  map:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"
+};
+
+const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+let RAW = {geral:[], ar:[], map:[]}, DATA = [], FILTRADOS = [];
+const $ = id => document.getElementById(id);
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITÁRIOS
+   ═══════════════════════════════════════════════════════════ */
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function norm(v){return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim();}
 function key(v){return norm(v).replace(/[^a-z0-9]/g,"");}
-function get(row,names,fallback=""){if(!row)return fallback;for(const n of names){if(row[n]!==undefined&&String(row[n]).trim()!=="")return row[n];}const dict={};Object.keys(row).forEach(k=>dict[key(k)]=k);for(const n of names){const k=dict[key(n)];if(k&&row[k]!==undefined&&String(row[k]).trim()!=="")return row[k];}return fallback;}
-function csv(url){return new Promise((resolve,reject)=>{Papa.parse(url,{download:true,header:true,skipEmptyLines:true,complete:r=>resolve((r.data||[]).filter(row=>Object.values(row).some(v=>String(v??"").trim()!==""))),error:reject});});}
-function num(v){if(v===null||v===undefined)return null;if(typeof v==="number"&&Number.isFinite(v))return v;let s=String(v).trim();if(!s||s==="-"||s==="—")return null;s=s.replace(/\s/g,"").replace("%","");if(s.includes(",")&&s.includes("."))s=s.replace(/\./g,"").replace(",",".");else if(s.includes(","))s=s.replace(",",".");const n=Number(s);return Number.isFinite(n)?n:null;}
+function get(row,names,fallback=""){
+  if(!row)return fallback;
+  for(const n of names){if(row[n]!==undefined&&String(row[n]).trim()!=="")return row[n];}
+  const dict={};Object.keys(row).forEach(k=>dict[key(k)]=k);
+  for(const n of names){const k=dict[key(n)];if(k&&row[k]!==undefined&&String(row[k]).trim()!=="")return row[k];}
+  return fallback;
+}
+function csv(url){
+  return new Promise((resolve,reject)=>{
+    Papa.parse(url,{download:true,header:true,skipEmptyLines:true,
+      complete:r=>resolve((r.data||[]).filter(row=>Object.values(row).some(v=>String(v??"").trim()!==""))),
+      error:reject});
+  });
+}
+function num(v){
+  if(v===null||v===undefined)return null;
+  if(typeof v==="number"&&Number.isFinite(v))return v;
+  let s=String(v).trim();
+  if(!s||s==="-"||s==="—")return null;
+  s=s.replace(/\s/g,"").replace("%","");
+  if(s.includes(",")&&s.includes("."))s=s.replace(/\./g,"").replace(",",".");
+  else if(s.includes(","))s=s.replace(",",".");
+  const n=Number(s);return Number.isFinite(n)?n:null;
+}
 function isPercent(unidade){const u=norm(unidade);return u.includes("percent")||u==="%";}
 function calcValue(v,unidade){let n=num(v);if(n===null)return null;if(isPercent(unidade)&&n>1.5)n=n/100;return n;}
-function fmtValor(v,unidade){if(v===null||v===undefined||v==="")return "—";let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "—";if(isPercent(unidade)){if(n<=1.5)n=n*100;return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}if(norm(unidade).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});return n.toLocaleString("pt-BR",{maximumFractionDigits:2});}
+function fmtValor(v,unidade){
+  if(v===null||v===undefined||v==="")return "—";
+  let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "—";
+  if(isPercent(unidade)){if(n<=1.5)n=n*100;return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
+  if(norm(unidade).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";
+  if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
+  return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
+}
 function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "—";return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
 function maiorMelhor(sentido){const s=norm(sentido);return s.includes("maior")||s.includes("↑")||s==="";}
-function statusCanonico(atual,meta,sentido){if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";const ating=maiorMelhor(sentido)?atual/meta:meta/atual;if(ating>=1)return "Dentro da Meta";if(ating>=.9)return "Atenção";return "Crítico";}
-function tagClass(status){const s=norm(status);if(s.includes("dentro"))return "ok";if(s.includes("aten"))return "att";if(s.includes("critic"))return "crit";return "nd";}
-function grupoOrdem(grupo){const g=norm(grupo);if(g.includes("estrateg"))return 1;if(g.includes("condicion"))return 2;if(g.includes("performance"))return 3;return 9;}
-function montarMapeamento(){const map=new Map();RAW.map.forEach(r=>{const codigo=String(get(r,["Código_AR","Codigo_AR","Código","Codigo","Código AR","Codigo AR"])).trim();if(!codigo)return;map.set(codigo,{indicadorGeral:String(get(r,["Indicador_Geral","Indicador Geral","Indicador Real","Nome na geral","Indicador"])).trim(),diretoria:String(get(r,["Filtro_Diretoria","Diretoria"])).trim(),superint:String(get(r,["Filtro_Superint","Filtro_Superintendência","Superint.","Superintendência"])).trim(),gerencia:String(get(r,["Filtro_Gerência","Filtro_Gerencia","Gerência","Gerencia"])).trim()});});return map;}
-function encontrarGeral(indicador,mapItem){const nomeMap=norm(mapItem?.indicadorGeral||""),nomeInd=norm(indicador.indicador);const rows=RAW.geral.filter(r=>{const ano=String(get(r,["Ano"])).trim();if(ano&&ano!=="2026")return false;const nomeGeral=norm(get(r,["Indicador"]));if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}else{if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral))return false;}const fDir=norm(mapItem?.diretoria||""),fSup=norm(mapItem?.superint||""),fGer=norm(mapItem?.gerencia||"");if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir)return false;if(fSup&&fSup!=="-"&&norm(get(r,["Superint.","Superintendência","Superint"]))!==fSup)return false;if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer)return false;return true;});return rows[0]||null;}
-function valoresMensais(row,unidade){if(!row)return [];return MESES.map(m=>calcValue(get(row,[m]),unidade)).filter(v=>v!==null);}
-function tendenciaTexto(row,unidade,sentido){const vals=valoresMensais(row,unidade);if(vals.length<6)return "Série curta";const ult3=vals.slice(-3),ant3=vals.slice(-6,-3);const mediaUlt=ult3.reduce((s,v)=>s+v,0)/ult3.length,mediaAnt=ant3.reduce((s,v)=>s+v,0)/ant3.length;const dif=mediaUlt-mediaAnt;if(Math.abs(dif)<0.00001)return "Estável";const favoravel=maiorMelhor(sentido)?dif>0:dif<0;return favoravel?"Favorável":"Desfavorável";}
-function tendenciaClass(t){const x=norm(t);if(x.includes("favor"))return "ok";if(x.includes("desfavor"))return "crit";if(x.includes("estavel"))return "att";return "nd";}
-function processar(){const map=montarMapeamento();DATA=RAW.ar.map((r,idx)=>{const codigo=String(get(r,["Código","Codigo"])).trim()||`AR${idx+1}`;const d={codigo,grupo:String(get(r,["Grupo"],"Sem grupo")).trim()||"Sem grupo",ordem:num(get(r,["Ordem"]))??idx+1,indicador:String(get(r,["Indicador Executivo","Indicador_Executivo","Indicador"],codigo)).trim(),descricao:String(get(r,["Descrição Resumida","Descricao Resumida","Descrição","Descricao"])).trim(),unidade:String(get(r,["Unidade"])).trim(),sentido:String(get(r,["Sentido"],"maior_melhor")).trim(),metaRaw:get(r,["Meta_2026","Meta 2026","Meta"]),atualRaw:get(r,["Atual","Resultado Atual","Acumulado"]),fonte:String(get(r,["Fonte_Dados","Fonte Dados","Fonte"])).trim(),pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim()};const linha=encontrarGeral(d,map.get(codigo));if(linha){d.unidade=d.unidade||String(get(linha,["Unidade"])).trim();d.sentido=d.sentido||String(get(linha,["Sentido"],"maior_melhor")).trim();d.atualRaw=d.atualRaw||get(linha,["Acumulado"]);d.metaRaw=d.metaRaw||get(linha,["Meta"]);}d.atual=calcValue(d.atualRaw,d.unidade);d.meta=calcValue(d.metaRaw,d.unidade);d.atingimento=(d.atual!==null&&d.meta!==null&&d.atual!==0&&d.meta!==0)?(maiorMelhor(d.sentido)?d.atual/d.meta:d.meta/d.atual):null;d.status=statusCanonico(d.atual,d.meta,d.sentido);d.statusClass=tagClass(d.status);d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);d.tendenciaClass=tendenciaClass(d.tendencia);return d;}).filter(d=>d.codigo||d.indicador).sort((a,b)=>grupoOrdem(a.grupo)-grupoOrdem(b.grupo)||a.ordem-b.ordem);}
-function popularFiltros(){const grupos=[...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));$("fGrupo").innerHTML=`<option value="">Todos</option>`+grupos.map(g=>`<option>${esc(g)}</option>`).join("");const status=["Dentro da Meta","Atenção","Crítico","Sem dado"];$("fStatus").innerHTML=`<option value="">Todos</option>`+status.map(s=>`<option>${esc(s)}</option>`).join("");}
-function aplicarFiltros(){const grupo=$("fGrupo").value,status=$("fStatus").value,busca=norm($("fBusca").value);FILTRADOS=DATA.filter(d=>{if(grupo&&d.grupo!==grupo)return false;if(status&&d.status!==status)return false;if(busca&&!norm([d.codigo,d.indicador,d.fonte,d.grupo].join(" ")).includes(busca))return false;return true;});}
-function renderResumo(){const total=FILTRADOS.length,dentro=FILTRADOS.filter(d=>d.status==="Dentro da Meta").length,atencao=FILTRADOS.filter(d=>d.status==="Atenção").length,critico=FILTRADOS.filter(d=>d.status==="Crítico").length,sem=FILTRADOS.filter(d=>d.status==="Sem dado").length,pct=total?dentro/total:0;$("kpiDentro").textContent=dentro;$("kpiAtencao").textContent=atencao;$("kpiCritico").textContent=critico;$("kpiSemDado").textContent=sem;$("heroPct").textContent=(pct*100).toLocaleString("pt-BR",{maximumFractionDigits:0})+"%";$("heroTitle").textContent=`${dentro} de ${total} indicadores dentro da meta`;$("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) exigem acompanhamento e ${critico} estão em condição crítica. A leitura preserva a separação entre Estratégicas, Condicionadas e Performance, sem soma final de bonificação nesta tela.`;}
-function renderIndicadores(){const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));if(!FILTRADOS.length){$("indicadoresContainer").innerHTML=`<div class="emptyBlock">Nenhum indicador encontrado no recorte selecionado.</div>`;return;}$("indicadoresContainer").innerHTML=grupos.map(grupo=>{const rows=FILTRADOS.filter(d=>d.grupo===grupo);const dentro=rows.filter(d=>d.status==="Dentro da Meta").length,atencao=rows.filter(d=>d.status==="Atenção").length,critico=rows.filter(d=>d.status==="Crítico").length,sem=rows.filter(d=>d.status==="Sem dado").length;return `<section class="arBlock"><div class="arBlockHead"><div><h2 class="arBlockTitle">${esc(grupo)}</h2><div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div></div></div><div class="indicatorList">${rows.map(renderRow).join("")}</div></section>`;}).join("");}
-function renderRow(d){const desc=d.descricao||d.pendencia||d.fonte||"Indicador pactuado no Acordo de Resultados 2026.";return `<article class="indicatorRow ${esc(d.statusClass)}"><div class="codeBox">${esc(d.codigo)}</div><div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span></div><div class="metricCell"><small>Atual</small><b title="${esc(fmtValor(d.atual,d.unidade))}">${esc(fmtValor(d.atual,d.unidade))}</b></div><div class="metricCell"><small>Meta</small><b title="${esc(fmtValor(d.meta,d.unidade))}">${esc(fmtValor(d.meta,d.unidade))}</b></div><div class="metricCell"><small>Atingimento</small><b>${esc(fmtPct(d.atingimento))}</b></div><div class="metricCell"><small>Status</small><span class="tag ${esc(d.statusClass)}">${esc(d.status)}</span></div><div class="metricCell"><small>Tendência</small><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></div></article>`;}
-function render(){aplicarFiltros();renderResumo();renderIndicadores();}
-function bind(){$("fGrupo").addEventListener("change",render);$("fStatus").addEventListener("change",render);$("fBusca").addEventListener("input",render);$("btnLimpar").addEventListener("click",()=>{$("fGrupo").value="";$("fStatus").value="";$("fBusca").value="";render();});}
-async function init(){try{const[geral,ar,map]=await Promise.all([csv(URLS.geral),csv(URLS.ar),csv(URLS.map)]);RAW={geral,ar,map};processar();popularFiltros();bind();render();$("loading").style.display="none";$("conteudo").style.display="block";}catch(e){console.error(e);$("loading").style.display="none";$("errorState").style.display="block";$("errorState").textContent="Erro ao carregar indicadores: "+(e.message||e);}}
+
+/* ═══════════════════════════════════════════════════════════
+   STATUS
+   ═══════════════════════════════════════════════════════════ */
+function statusCanonico(atual,meta,sentido){
+  if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
+  const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
+  if(ating>=1)return "Dentro da Meta";
+  if(ating>=.9)return "Atenção";
+  return "Crítico";
+}
+function tagClass(status){
+  const s=norm(status);
+  if(s.includes("superado"))return "superado";
+  if(s.includes("dentro"))return "ok";
+  if(s.includes("aten"))return "att";
+  if(s.includes("critic"))return "crit";
+  return "nd";
+}
+function grupoOrdem(grupo){
+  const g=norm(grupo);
+  if(g.includes("estrateg"))return 1;
+  if(g.includes("condicion"))return 2;
+  if(g.includes("performance"))return 3;
+  return 9;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TENDÊNCIA
+   ═══════════════════════════════════════════════════════════ */
+function montarMapeamento(){
+  const map=new Map();
+  RAW.map.forEach(r=>{
+    const codigo=String(get(r,["Código_AR","Codigo_AR","Código","Codigo","Código AR","Codigo AR"])).trim();
+    if(!codigo)return;
+    map.set(codigo,{
+      indicadorGeral:String(get(r,["Indicador_Geral","Indicador Geral","Indicador Real","Nome na geral","Indicador"])).trim(),
+      diretoria:String(get(r,["Filtro_Diretoria","Diretoria"])).trim(),
+      superint:String(get(r,["Filtro_Superint","Filtro_Superintendência","Superint.","Superintendência"])).trim(),
+      gerencia:String(get(r,["Filtro_Gerência","Filtro_Gerencia","Gerência","Gerencia"])).trim()
+    });
+  });
+  return map;
+}
+function encontrarGeral(indicador,mapItem){
+  const nomeMap=norm(mapItem?.indicadorGeral||""),nomeInd=norm(indicador.indicador);
+  const rows=RAW.geral.filter(r=>{
+    const ano=String(get(r,["Ano"])).trim();
+    if(ano&&ano!=="2026")return false;
+    const nomeGeral=norm(get(r,["Indicador"]));
+    if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}
+    else{if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral))return false;}
+    const fDir=norm(mapItem?.diretoria||""),fSup=norm(mapItem?.superint||""),fGer=norm(mapItem?.gerencia||"");
+    if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir)return false;
+    if(fSup&&fSup!=="-"&&norm(get(r,["Superint.","Superintendência","Superint"]))!==fSup)return false;
+    if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer)return false;
+    return true;
+  });
+  return rows[0]||null;
+}
+function valoresMensais(row,unidade){
+  if(!row)return [];
+  return MESES.map(m=>calcValue(get(row,[m]),unidade)).filter(v=>v!==null);
+}
+function tendenciaTexto(row,unidade,sentido){
+  const vals=valoresMensais(row,unidade);
+  if(vals.length<6)return "Série curta";
+  const ult3=vals.slice(-3),ant3=vals.slice(-6,-3);
+  const mediaUlt=ult3.reduce((s,v)=>s+v,0)/ult3.length,mediaAnt=ant3.reduce((s,v)=>s+v,0)/ant3.length;
+  const dif=mediaUlt-mediaAnt;
+  if(Math.abs(dif)<0.00001)return "Estável";
+  const favoravel=maiorMelhor(sentido)?dif>0:dif<0;
+  return favoravel?"Favorável":"Desfavorável";
+}
+function tendenciaClass(t){
+  const x=norm(t);
+  if(x.includes("favor"))return "ok";
+  if(x.includes("desfavor"))return "crit";
+  if(x.includes("estavel"))return "att";
+  return "nd";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROCESSAMENTO PRINCIPAL
+   ═══════════════════════════════════════════════════════════ */
+function processar(){
+  const map=montarMapeamento();
+  DATA=RAW.ar.map((r,idx)=>{
+    const codigo=String(get(r,["Código","Codigo"])).trim()||`AR${idx+1}`;
+    const d={
+      codigo,
+      grupo:String(get(r,["Grupo"],"Sem grupo")).trim()||"Sem grupo",
+      ordem:num(get(r,["Ordem"]))??idx+1,
+      indicador:String(get(r,["Indicador Executivo","Indicador_Executivo","Indicador"],codigo)).trim(),
+      descricao:String(get(r,["Descrição Resumida","Descricao Resumida","Descrição","Descricao"])).trim(),
+      unidade:String(get(r,["Unidade"])).trim(),
+      sentido:String(get(r,["Sentido"],"maior_melhor")).trim(),
+      metaRaw:get(r,["Meta_2026","Meta 2026","Meta"]),
+      atualRaw:get(r,["Atual","Resultado Atual","Acumulado"]),
+      fonte:String(get(r,["Fonte_Dados","Fonte Dados","Fonte"])).trim(),
+      pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim()
+    };
+    const linha=encontrarGeral(d,map.get(codigo));
+    if(linha){
+      d.unidade=d.unidade||String(get(linha,["Unidade"])).trim();
+      d.sentido=d.sentido||String(get(linha,["Sentido"],"maior_melhor")).trim();
+      d.atualRaw=d.atualRaw||get(linha,["Acumulado"]);
+      d.metaRaw=d.metaRaw||get(linha,["Meta"]);
+    }
+    d.atual=calcValue(d.atualRaw,d.unidade);
+    d.meta=calcValue(d.metaRaw,d.unidade);
+    d.atingimento=(d.atual!==null&&d.meta!==null&&d.atual!==0&&d.meta!==0)?
+      (maiorMelhor(d.sentido)?d.atual/d.meta:d.meta/d.atual):null;
+
+    // Normalizar status (tratar "Superado" como variante de "Dentro da Meta" para fins de bonificação)
+    const rawStatus=String(get(r,["Status"])).trim();
+    if(rawStatus==="Superado"){d.status="Dentro da Meta";d.statusDisplay="Superado";}
+    else{d.status=statusCanonico(d.atual,d.meta,d.sentido);d.statusDisplay=d.status;}
+
+    d.statusClass=tagClass(d.statusDisplay);
+    d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);
+    d.tendenciaClass=tendenciaClass(d.tendencia);
+
+    // Lookup de grupo casado
+    const par=CASADOS.find(c=>c.membros.includes(codigo));
+    d.casadoId=par?par.id:null;
+    d.casadoLabel=par?par.label:null;
+
+    return d;
+  })
+  .filter(d=>d.codigo||d.indicador)
+  .sort((a,b)=>grupoOrdem(a.grupo)-grupoOrdem(b.grupo)||a.ordem-b.ordem);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CÁLCULO DE BONIFICAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function calcularBonificacao(lista){
+  const byId=Object.fromEntries(lista.map(d=>[d.codigo,d]));
+
+  // --- Estratégicas ---
+  // Contagem de metas independentes
+  const estratIndividuais=["E01","E08"];
+  const estratCasados=CASADOS.filter(c=>lista.some(d=>d.grupo.toLowerCase().includes("estrateg")&&c.membros.includes(d.codigo)));
+
+  let metasEstrategicasAtingidas=0;
+  const detalhesEstrategicos=[];
+
+  // Individuais
+  estratIndividuais.forEach(cod=>{
+    const d=byId[cod];
+    if(!d)return;
+    const atingiu=d.status==="Dentro da Meta";
+    if(atingiu)metasEstrategicasAtingidas++;
+    detalhesEstrategicos.push({cod,label:d.indicador,atingiu,casado:false});
+  });
+
+  // Casados estratégicos
+  estratCasados.forEach(par=>{
+    const todos=par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    if(todos)metasEstrategicasAtingidas++;
+    const statuses=par.membros.map(m=>{const d=byId[m];return d?d.statusDisplay:"Sem dado";});
+    detalhesEstrategicos.push({
+      cod:par.membros.join("+"),
+      label:par.label,
+      atingiu:todos,
+      casado:true,
+      membros:par.membros.map(m=>({cod:m,indicador:byId[m]?.indicador||m,status:byId[m]?.statusDisplay||"Sem dado",statusClass:byId[m]?.statusClass||"nd"})),
+      bonusNote:par.bonusNote
+    });
+  });
+
+  const totalEstrategicas=estratIndividuais.filter(c=>byId[c]).length + estratCasados.length;
+  const pctEstrategicasAtingidas=totalEstrategicas?metasEstrategicasAtingidas/totalEstrategicas:0;
+  const condicionalAtiva=pctEstrategicasAtingidas>=0.5;
+
+  const regE=BONUS_ESTRATEGICO.find(r=>metasEstrategicasAtingidas>=r.metas)||BONUS_ESTRATEGICO[BONUS_ESTRATEGICO.length-1];
+
+  // --- Condicionadas ---
+  const condIndividuais=["C03","C04"];
+  const condCasados=CASADOS.filter(c=>lista.some(d=>d.grupo.toLowerCase().includes("condicion")&&c.membros.includes(d.codigo)));
+
+  let metasCondicionadasAtingidas=0;
+  const detalhesCondicionados=[];
+
+  condIndividuais.forEach(cod=>{
+    const d=byId[cod];
+    if(!d)return;
+    const atingiu=condicionalAtiva&&d.status==="Dentro da Meta";
+    if(atingiu)metasCondicionadasAtingidas++;
+    detalhesCondicionados.push({cod,label:d.indicador,atingiu,casado:false,bloqueado:!condicionalAtiva});
+  });
+
+  condCasados.forEach(par=>{
+    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    if(todos)metasCondicionadasAtingidas++;
+    detalhesCondicionados.push({
+      cod:par.membros.join("+"),
+      label:par.label,
+      atingiu:todos,
+      casado:true,
+      bloqueado:!condicionalAtiva,
+      membros:par.membros.map(m=>({cod:m,indicador:byId[m]?.indicador||m,status:byId[m]?.statusDisplay||"Sem dado",statusClass:byId[m]?.statusClass||"nd"})),
+      bonusNote:par.bonusNote
+    });
+  });
+
+  const regC=BONUS_CONDICIONADO.find(r=>metasCondicionadasAtingidas>=r.metas)||BONUS_CONDICIONADO[BONUS_CONDICIONADO.length-1];
+
+  // --- Performance ---
+  const p01=byId["P01"];
+  const performanceAtingida=condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
+  const bonusPerformance=performanceAtingida?BONUS_PERFORMANCE.pct:0;
+
+  // --- Total ---
+  const bonusTotal=regE.pct+(condicionalAtiva?regC.pct:0)+(condicionalAtiva?bonusPerformance:0);
+
+  return {
+    metasEstrategicasAtingidas,totalEstrategicas,
+    regE,condicionalAtiva,
+    metasCondicionadasAtingidas,regC,
+    performanceAtingida,bonusPerformance,
+    bonusTotal,pctEstrategicasAtingidas,
+    detalhesEstrategicos,detalhesCondicionados
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FILTROS E POPULAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function popularFiltros(){
+  const grupos=[...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
+  $("fGrupo").innerHTML=`<option value="">Todos</option>`+grupos.map(g=>`<option>${esc(g)}</option>`).join("");
+  const status=["Dentro da Meta","Atenção","Crítico","Sem dado"];
+  $("fStatus").innerHTML=`<option value="">Todos</option>`+status.map(s=>`<option>${esc(s)}</option>`).join("");
+}
+function aplicarFiltros(){
+  const grupo=$("fGrupo").value,status=$("fStatus").value,busca=norm($("fBusca").value);
+  FILTRADOS=DATA.filter(d=>{
+    if(grupo&&d.grupo!==grupo)return false;
+    // para filtro de status, mapear "Superado" como "Dentro da Meta"
+    if(status&&d.status!==status)return false;
+    if(busca&&!norm([d.codigo,d.indicador,d.fonte,d.grupo].join(" ")).includes(busca))return false;
+    return true;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: RESUMO
+   ═══════════════════════════════════════════════════════════ */
+function renderResumo(){
+  const total=FILTRADOS.length;
+  const dentro=FILTRADOS.filter(d=>d.status==="Dentro da Meta").length;
+  const atencao=FILTRADOS.filter(d=>d.status==="Atenção").length;
+  const critico=FILTRADOS.filter(d=>d.status==="Crítico").length;
+  const sem=FILTRADOS.filter(d=>d.status==="Sem dado").length;
+  const pct=total?dentro/total:0;
+  $("kpiDentro").textContent=dentro;
+  $("kpiAtencao").textContent=atencao;
+  $("kpiCritico").textContent=critico;
+  $("kpiSemDado").textContent=sem;
+  $("heroPct").textContent=(pct*100).toLocaleString("pt-BR",{maximumFractionDigits:0})+"%";
+  $("heroTitle").textContent=`${dentro} de ${total} indicadores dentro da meta`;
+  $("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) exigem acompanhamento e ${critico} estão em condição crítica. Metas casadas requerem que ambos os indicadores da dupla sejam atingidos para contar na bonificação.`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: PAINEL DE BONIFICAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function renderBonus(){
+  const b=calcularBonificacao(DATA); // sempre usa DATA completa, não filtrado
+  const panel=$("bonusPanel");
+
+  function detalheLinhas(lista){
+    return lista.map(item=>{
+      if(item.casado){
+        const membrosHtml=item.membros.map(m=>`
+          <div class="metaLinha ${esc(m.statusClass)}" style="padding-left:20px">
+            <span class="cod">${esc(m.cod)}</span>
+            <span class="desc">${esc(m.indicador)}</span>
+            <span class="status-mini">${esc(m.status)}</span>
+            <span></span>
+          </div>`).join("");
+        return `
+          <div class="metaLinha ${item.atingiu?'ok':'crit'}" style="flex-wrap:wrap">
+            <span class="cod">⊞</span>
+            <span class="desc" style="color:#fff;font-weight:950">${esc(item.label.replace("Meta dupla: ","").replace("Meta dupla (Condicionada): ",""))}</span>
+            <span class="status-mini">${item.bloqueado?"Bloqueado":item.atingiu?"Atingido":"Não atingido"}</span>
+            <span class="casadoBadge">Par</span>
+          </div>
+          ${membrosHtml}`;
+      }
+      return `
+        <div class="metaLinha ${item.atingiu?'ok':'crit'}">
+          <span class="cod">${esc(item.cod)}</span>
+          <span class="desc">${esc(item.label)}</span>
+          <span class="status-mini">${item.bloqueado?"Bloqueado":item.atingiu?"Atingido":"Não atingido"}</span>
+          <span></span>
+        </div>`;
+    }).join("");
+  }
+
+  panel.innerHTML=`
+    <div class="bonusPanelHead">
+      <h2>Projeção de Bonificação AR 2026</h2>
+      <div class="hint">Simulação com base no status atual · sujeita a validação CVL/Presidência</div>
+    </div>
+    <div class="bonusGrid">
+      <div class="bonusCard destaque">
+        <div class="label">Bônus Total Projetado</div>
+        <div class="valor">${b.bonusTotal}%</div>
+        <div class="detalhe">Estratégico (${b.regE.pct}%) + Condicionado (${b.condicionalAtiva?b.regC.pct:0}%) + Performance (${b.condicionalAtiva?b.bonusPerformance:0}%)</div>
+      </div>
+      <div class="bonusCard">
+        <div class="label">Estratégicas</div>
+        <div class="valor">${b.metasEstrategicasAtingidas}/${b.totalEstrategicas}</div>
+        <div class="detalhe">Nota projetada: <strong>${b.regE.nota}</strong> → ${b.regE.pct}% bônus<br>Metas casadas contam como 1</div>
+      </div>
+      <div class="bonusCard ${b.condicionalAtiva?'ok':'nd'}" style="${b.condicionalAtiva?'':'opacity:.6'}">
+        <div class="label">Condicionadas${!b.condicionalAtiva?' · Bloqueado':''}</div>
+        <div class="valor">${b.metasCondicionadasAtingidas}/${[...["C03","C04"].filter(c=>DATA.some(d=>d.codigo===c)),...CASADOS.filter(p=>p.membros.some(m=>DATA.some(d=>d.codigo===m&&d.grupo.toLowerCase().includes("condicion"))))].length}</div>
+        <div class="detalhe">${b.condicionalAtiva?`Ponto adicional: ${b.regC.ponto} → ${b.regC.pct}% bônus`:"Requer ≥ 50% das estratégicas atingidas"}</div>
+      </div>
+    </div>
+    <div class="metaContagem">
+      <div class="tituloContagem">Detalhamento por meta — Estratégicas</div>
+      <div class="metaLinhas">${detalheLinhas(b.detalhesEstrategicos)}</div>
+    </div>
+    <div class="metaContagem" style="margin-top:10px">
+      <div class="tituloContagem">Detalhamento por meta — Condicionadas${!b.condicionalAtiva?' (bloqueadas)':''}</div>
+      <div class="metaLinhas">${detalheLinhas(b.detalhesCondicionados)}</div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: INDICADORES
+   ═══════════════════════════════════════════════════════════ */
+function renderIndicadores(){
+  const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
+  if(!FILTRADOS.length){
+    $("indicadoresContainer").innerHTML=`<div class="emptyBlock">Nenhum indicador encontrado no recorte selecionado.</div>`;
+    return;
+  }
+  $("indicadoresContainer").innerHTML=grupos.map(grupo=>{
+    const rows=FILTRADOS.filter(d=>d.grupo===grupo);
+    const dentro=rows.filter(d=>d.status==="Dentro da Meta").length;
+    const atencao=rows.filter(d=>d.status==="Atenção").length;
+    const critico=rows.filter(d=>d.status==="Crítico").length;
+    const sem=rows.filter(d=>d.status==="Sem dado").length;
+
+    // Agrupar rows: pares casados ficam juntos
+    const renderizados=new Set();
+    const blocos=[];
+    rows.forEach(d=>{
+      if(renderizados.has(d.codigo))return;
+      if(d.casadoId){
+        const par=CASADOS.find(c=>c.id===d.casadoId);
+        if(par){
+          const membrosNoFiltro=par.membros.filter(m=>rows.find(r=>r.codigo===m));
+          if(membrosNoFiltro.length>1){
+            membrosNoFiltro.forEach(m=>renderizados.add(m));
+            const membrosData=membrosNoFiltro.map(m=>rows.find(r=>r.codigo===m));
+            blocos.push({tipo:"casado",par,membros:membrosData});
+            return;
+          }
+        }
+      }
+      renderizados.add(d.codigo);
+      blocos.push({tipo:"individual",data:d});
+    });
+
+    const blocosHtml=blocos.map(bloco=>{
+      if(bloco.tipo==="casado"){
+        const par=bloco.par;
+        const todosOk=bloco.membros.every(m=>m.status==="Dentro da Meta");
+        return `
+          <div class="casadoWrap">
+            <div class="casadoLabel">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Meta dupla — contam como 1 meta de bonificação · ${todosOk?"✓ Ambas atingidas":"⚠ Não atingida (falha em ao menos 1)"}
+            </div>
+            ${bloco.membros.map(d=>renderRow(d,true)).join("")}
+            <div class="casadoBonusNote">⊞ ${esc(par.bonusNote)}</div>
+          </div>`;
+      }
+      return renderRow(bloco.data,false);
+    }).join("");
+
+    return `
+      <section class="arBlock">
+        <div class="arBlockHead">
+          <div>
+            <h2 class="arBlockTitle">${esc(grupo)}</h2>
+            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
+          </div>
+        </div>
+        <div class="indicatorList">${blocosHtml}</div>
+      </section>`;
+  }).join("");
+}
+
+function renderRow(d,dentroCasado){
+  const desc=d.descricao||d.pendencia||d.fonte||"Indicador pactuado no Acordo de Resultados 2026.";
+  return `
+    <article class="indicatorRow ${esc(d.statusClass)}${dentroCasado?" style='border-radius:14px;margin-bottom:8px'":""}">
+      <div class="codeBox">${esc(d.codigo)}</div>
+      <div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span></div>
+      <div class="metricCell"><small>Atual</small><b title="${esc(fmtValor(d.atual,d.unidade))}">${esc(fmtValor(d.atual,d.unidade))}</b></div>
+      <div class="metricCell"><small>Meta</small><b title="${esc(fmtValor(d.meta,d.unidade))}">${esc(fmtValor(d.meta,d.unidade))}</b></div>
+      <div class="metricCell"><small>Atingimento</small><b>${esc(fmtPct(d.atingimento))}</b></div>
+      <div class="metricCell"><small>Status</small><span class="tag ${esc(d.statusClass)}">${esc(d.statusDisplay)}</span></div>
+      <div class="metricCell"><small>Tendência</small><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></div>
+    </article>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER COMPLETO
+   ═══════════════════════════════════════════════════════════ */
+function render(){
+  aplicarFiltros();
+  renderResumo();
+  renderBonus();
+  renderIndicadores();
+}
+function bind(){
+  $("fGrupo").addEventListener("change",render);
+  $("fStatus").addEventListener("change",render);
+  $("fBusca").addEventListener("input",render);
+  $("btnLimpar").addEventListener("click",()=>{$("fGrupo").value="";$("fStatus").value="";$("fBusca").value="";render();});
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INICIALIZAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+async function init(){
+  try{
+    const [geral,ar,map]=await Promise.all([csv(URLS.geral),csv(URLS.ar),csv(URLS.map)]);
+    RAW={geral,ar,map};
+    processar();
+    popularFiltros();
+    bind();
+    render();
+    $("loading").style.display="none";
+    $("conteudo").style.display="block";
+  }catch(e){
+    console.error(e);
+    $("loading").style.display="none";
+    $("errorState").style.display="block";
+    $("errorState").textContent="Erro ao carregar indicadores: "+(e.message||e);
+  }
+}
 document.addEventListener("DOMContentLoaded",init);
 </script>
 </body>

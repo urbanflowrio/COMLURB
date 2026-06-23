@@ -10,7 +10,7 @@
 /* ── Layout base ── */
 .app{max-width:1880px;padding:18px}
 .header{margin-bottom:14px}
-.arFilters{grid-template-columns:190px 190px auto !important;margin:14px 0}
+.arFilters{grid-template-columns:190px 190px 1fr auto !important;margin:14px 0;align-items:end}
 
 /* ── Resumo executivo ── */
 .execSummary{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}
@@ -53,6 +53,9 @@
 .metaLinha.crit .status-mini{color:#ff7d72}
 .metaLinha.nd .status-mini{color:#cdbdff}
 .casadoBadge{font-size:9px;background:rgba(91,155,213,.15);border:1px solid rgba(91,155,213,.4);color:#7ec3f5;border-radius:6px;padding:2px 6px;white-space:nowrap}
+
+.btnLimpar{background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#7a9bbf;font-size:11px;font-weight:950;letter-spacing:.08em;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s}
+.btnLimpar:hover{border-color:rgba(255,255,255,.28);color:#c7d8ee}
 
 /* ── Blocos de indicadores ── */
 .arBlock{margin-top:14px}
@@ -150,7 +153,7 @@
 <section class="filters arFilters">
   <div class="field"><label>Grupo</label><select id="fGrupo"><option value="">Todos</option></select></div>
   <div class="field"><label>Status</label><select id="fStatus"><option value="">Todos</option></select></div>
-  <button class="actionBtn" id="btnLimpar">Limpar filtros</button>
+  <button class="btnLimpar" id="btnLimpar">✕ Limpar</button>
 </section>
 
 <div id="loading" class="loading">Carregando indicadores publicados...</div>
@@ -841,8 +844,25 @@ function bind(){
    INICIALIZAÇÃO
    ═══════════════════════════════════════════════════════════ */
 async function init(){
+  const mostrarErro=(fonte,msg)=>{
+    $("loading").style.display="none";
+    $("errorState").style.display="block";
+    $("errorState").innerHTML=`
+      <strong style="color:#ff7d72">Falha ao carregar dados</strong><br>
+      <span style="color:#c7d8ee;font-size:12px">Fonte: <code>${fonte}</code></span><br>
+      <span style="color:#9fb0c7;font-size:11px;margin-top:6px;display:block">${msg}</span><br>
+      <span style="color:#7a9bbf;font-size:11px">
+        Verifique se a planilha está publicada como CSV no Google Sheets
+        (Arquivo → Compartilhar → Publicar na web → CSV) e se o GID está correto.
+      </span>`;
+  };
   try{
-    const [geral,ar,map]=await Promise.all([csv(URLS.geral),csv(URLS.ar),csv(URLS.map)]);
+    $("loading").textContent="Carregando aba geral...";
+    const geral=await csv(URLS.geral).catch(e=>{throw Object.assign(e,{fonte:"geral"});});
+    $("loading").textContent="Carregando aba AR_2026...";
+    const ar=await csv(URLS.ar).catch(e=>{throw Object.assign(e,{fonte:"ar"});});
+    $("loading").textContent="Carregando mapeamento...";
+    const map=await csv(URLS.map).catch(e=>{throw Object.assign(e,{fonte:"map"});});
     RAW={geral,ar,map};
     processar();
     popularFiltros();
@@ -852,9 +872,7 @@ async function init(){
     $("conteudo").style.display="block";
   }catch(e){
     console.error(e);
-    $("loading").style.display="none";
-    $("errorState").style.display="block";
-    $("errorState").textContent="Erro ao carregar indicadores: "+(e.message||e);
+    mostrarErro(e.fonte||"desconhecida", e.message||String(e));
   }
 }
 document.addEventListener("DOMContentLoaded",init);

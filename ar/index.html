@@ -35,7 +35,7 @@
 .bonusPanelHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .bonusPanelHead h2{margin:0;font-size:16px;font-weight:950;color:#fff;letter-spacing:.01em}
 .bonusPanelHead .hint{color:#9fb0c7;font-size:11px}
-.bonusGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bonusGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .bonusCard{background:rgba(255,255,255,.04);border:1px solid var(--linha);border-radius:16px;padding:14px 16px}
 .bonusCard .label{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:6px}
 .bonusCard .valor{font-size:28px;font-weight:950;color:#fff;line-height:1;margin-bottom:6px}
@@ -103,7 +103,7 @@
 @media(max-width:1380px){
   .indicatorRow{grid-template-columns:70px minmax(250px,1.4fr) repeat(3,minmax(110px,.6fr))}
   .indicatorRow .metricCell:nth-child(6),.indicatorRow .metricCell:nth-child(7){grid-column:auto}
-  .bonusGrid{grid-template-columns:1fr 1fr 1fr}
+  .bonusGrid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:1180px){
   .execSummary{grid-template-columns:1fr}
@@ -683,11 +683,6 @@ function renderBonus(){
       '<div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>'+
     '</div>'+
     '<div class="bonusGrid">'+
-      '<div class="bonusCard destaque">'+
-        '<div class="label">Bônus Total Projetado</div>'+
-        '<div class="valor">'+b.bonusTotal+'%</div>'+
-        '<div class="detalhe">Estratégico ('+b.regE.pct+'%) + Condicionado ('+(b.condicionalAtiva?b.regC.pct:0)+'%) + Performance ('+(b.condicionalAtiva?b.bonusPerformance:0)+'%)</div>'+
-      '</div>'+
       '<div class="bonusCard">'+
         '<div class="label">Estratégicas</div>'+
         '<div class="valor">'+b.metasEstrategicasAtingidas+'/'+b.totalEstrategicas+'</div>'+

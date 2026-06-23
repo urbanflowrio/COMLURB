@@ -170,9 +170,15 @@
 <main id="conteudo" style="display:none">
 
   <!-- PLACAR EXECUTIVO -->
+  <div style="margin-bottom:10px;padding:0 2px">
+    <span style="font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#516a82">Situação do Acordo</span>
+  </div>
   <div class="placarGrid" id="placarGrid"></div>
 
   <!-- PAINEL DE BONIFICAÇÃO -->
+  <div style="margin:6px 0 10px;padding:0 2px">
+    <span style="font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#516a82">Detalhamento da Bonificação</span>
+  </div>
   <section class="bonusPanel" id="bonusPanel"></section>
 
   <!-- INDICADORES -->
@@ -185,6 +191,12 @@
     <strong>Bonificação:</strong> a projeção é calculada com base no status atual e está sujeita à validação oficial pela CVL.
   </div>
 </main>
+
+<footer style="margin-top:32px;padding:16px 0 8px;border-top:1px solid var(--linha);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+  <span style="font-size:11px;color:#516a82;font-weight:950;letter-spacing:.06em;text-transform:uppercase">Gabinete da Presidência / HUB COMLURB · Núcleo de Inteligência e Gestão Estratégica Operacional</span>
+  <span style="font-size:11px;color:#3a5068">Greicy Moreira</span>
+</footer>
+
 </div>
 
 <script>
@@ -596,7 +608,10 @@ function renderResumo(){
 
   // Card Bônus
   const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
-  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
+  const notaProjetada=b.regE.nota+(b.condicionalAtiva?b.regC.ponto:0)+(b.condicionalAtiva&&b.performanceAtingida?BONUS_PERFORMANCE.ponto:0);
+  const descBonus=b.bonusTotal>0
+    ?"Nota projetada: <strong>"+notaProjetada.toFixed(1).replace(".",",")+"</strong> · Estratégico "+b.regE.pct+"% + Condicionado "+(b.condicionalAtiva?b.regC.pct:0)+"% + Performance "+(b.condicionalAtiva?b.bonusPerformance:0)+"%"
+    :"Nenhuma meta estratégica atingida até o momento.";
 
   $("placarGrid").innerHTML=
     '<div class="placarCard bonus">'+

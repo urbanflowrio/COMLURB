@@ -647,124 +647,155 @@ function renderResumo(){
   const b=calcularBonificacao(DATA);
 
   function pcStatusHtml(atingidas,total,bloqueado){
-    if(bloqueado)return `<span class="pcStatus pcStatusBloq">Bloqueado</span>`;
-    if(atingidas===0)return `<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>`;
-    if(atingidas>=total)return `<span class="pcStatus pcStatusOk">Todas atingidas</span>`;
-    return `<span class="pcStatus pcStatusAtt">${atingidas} de ${total}</span>`;
+    if(bloqueado)return '<span class="pcStatus pcStatusBloq">Bloqueado</span>';
+    if(atingidas===0)return '<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>';
+    if(atingidas>=total)return '<span class="pcStatus pcStatusOk">Todas atingidas</span>';
+    return '<span class="pcStatus pcStatusAtt">'+atingidas+' de '+total+'</span>';
   }
 
-  const p01=DATA.find(d=>d.codigo==="P01");
+  const p01=DATA.find(function(d){return d.codigo==="P01";});
   const perfAtingida=b.condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
   const perfStatus=!b.condicionalAtiva
-    ?`<span class="pcStatus pcStatusBloq">Bloqueada</span>`
-    :perfAtingida
-      ?`<span class="pcStatus pcStatusOk">Cumprida</span>`
-      :`<span class="pcStatus pcStatusCrit">Não cumprida</span>`;
+    ?'<span class="pcStatus pcStatusBloq">Bloqueada</span>'
+    :(perfAtingida
+      ?'<span class="pcStatus pcStatusOk">Cumprida</span>'
+      :'<span class="pcStatus pcStatusCrit">Não cumprida</span>');
   const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
 
-  $("placarGrid").innerHTML=`
-    <div class="placarCard estr">
-      <div class="pcLabel">Metas Estratégicas</div>
-      <div class="pcPlacar">${b.metasEstrategicasAtingidas}<span> / 5</span></div>
-      <div class="pcDesc">8 indicadores monitorados. Pares contam como uma meta na bonificação.</div>
-      ${pcStatusHtml(b.metasEstrategicasAtingidas,5,false)}
-    </div>
-    <div class="placarCard cond">
-      <div class="pcLabel">Metas Condicionadas</div>
-      <div class="pcPlacar">${b.condicionalAtiva?b.metasCondicionadasAtingidas:"—"}<span>${b.condicionalAtiva?" / 3":""}</span></div>
-      <div class="pcDesc">Entram na avaliação só se 3 ou mais estratégicas forem atingidas.</div>
-      ${pcStatusHtml(b.metasCondicionadasAtingidas,3,!b.condicionalAtiva)}
-    </div>
-    <div class="placarCard perf">
-      <div class="pcLabel">Meta de Performance</div>
-      <div class="pcPlacar">${b.condicionalAtiva?(perfAtingida?"1":"0"):"—"}<span>${b.condicionalAtiva?" / 1":""}</span></div>
-      <div class="pcDesc">Definida pela CVL. Mesma condição das condicionadas.</div>
-      ${perfStatus}
-    </div>
-    <div class="placarCard bonus">
-      <div class="pcLabel">Bônus Projetado</div>
-      <div class="pcPlacar">${b.bonusTotal}<span>%</span></div>
-      <div class="pcDesc">Estratégico ${b.regE.pct}% + Condicionado ${b.condicionalAtiva?b.regC.pct:0}% + Performance ${b.condicionalAtiva?b.bonusPerformance:0}%</div>
-      <span class="pcStatus ${bonusClass}">${b.bonusTotal>0?"Bônus ativo":"Sem bônus"}</span>
-    </div>`;
+  const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"—";
+  const condSub=b.condicionalAtiva?" / 3":"";
+  const perfVal=b.condicionalAtiva?(perfAtingida?"1":"0"):"—";
+  const perfSub=b.condicionalAtiva?" / 1":"";
+  const bonusAtivo=b.bonusTotal>0?"Bônus ativo":"Sem bônus";
+  const descBonus="Estratégico "+b.regE.pct+"% + Condicionado "+(b.condicionalAtiva?b.regC.pct:0)+"% + Performance "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
 
-  $("regraAtivacao").className=`regraAtivacao ${b.condicionalAtiva?"ativa":"bloqueada"}`;
-  $("regraAtivacao").innerHTML=`
-    <div class="raIcone">${b.condicionalAtiva?"✅":"🔒"}</div>
-    <div class="raTexto">
-      <strong>${b.condicionalAtiva?"Condicionadas e Performance estão ativas":"Condicionadas e Performance estão bloqueadas"}</strong>
-      <span>${b.condicionalAtiva
-        ?`A COMLURB atingiu ${b.metasEstrategicasAtingidas} de 5 metas estratégicas, superando o mínimo de 3. As metas condicionadas e a performance entram na avaliação.`
-        :`Para que as metas condicionadas e a performance entrem na avaliação, é preciso atingir pelo menos 3 das 5 metas estratégicas. Situação atual: ${b.metasEstrategicasAtingidas} atingidas.`
-      }</span>
-    </div>
-    <div class="raBadge">${b.condicionalAtiva?"Ativado":"Bloqueado"}</div>`;
+  $("placarGrid").innerHTML=
+    '<div class="placarCard estr">'+
+      '<div class="pcLabel">Metas Estratégicas</div>'+
+      '<div class="pcPlacar">'+b.metasEstrategicasAtingidas+'<span> / 5</span></div>'+
+      '<div class="pcDesc">8 indicadores monitorados. Pares de indicadores contam como uma meta na bonificação.</div>'+
+      pcStatusHtml(b.metasEstrategicasAtingidas,5,false)+
+    '</div>'+
+    '<div class="placarCard cond">'+
+      '<div class="pcLabel">Metas Condicionadas</div>'+
+      '<div class="pcPlacar">'+condVal+'<span>'+condSub+'</span></div>'+
+      '<div class="pcDesc">Entram na avaliação só se 3 ou mais estratégicas forem atingidas.</div>'+
+      pcStatusHtml(b.metasCondicionadasAtingidas,3,!b.condicionalAtiva)+
+    '</div>'+
+    '<div class="placarCard perf">'+
+      '<div class="pcLabel">Meta de Performance</div>'+
+      '<div class="pcPlacar">'+perfVal+'<span>'+perfSub+'</span></div>'+
+      '<div class="pcDesc">Definida pela CVL. Mesma condição das condicionadas.</div>'+
+      perfStatus+
+    '</div>'+
+    '<div class="placarCard bonus">'+
+      '<div class="pcLabel">Bônus Projetado</div>'+
+      '<div class="pcPlacar">'+b.bonusTotal+'<span>%</span></div>'+
+      '<div class="pcDesc">'+descBonus+'</div>'+
+      '<span class="pcStatus '+bonusClass+'">'+bonusAtivo+'</span>'+
+    '</div>';
+
+  var regraClass="regraAtivacao "+(b.condicionalAtiva?"ativa":"bloqueada");
+  var regraIcone=b.condicionalAtiva?"✅":"🔒";
+  var regraTitulo=b.condicionalAtiva
+    ?"Condicionadas e Performance estão ativas"
+    :"Condicionadas e Performance estão bloqueadas";
+  var regraTexto=b.condicionalAtiva
+    ?"A COMLURB atingiu "+b.metasEstrategicasAtingidas+" de 5 metas estratégicas, superando o mínimo de 3. As metas condicionadas e a performance entram na avaliação."
+    :"Para que as metas condicionadas e a performance entrem na avaliação, é preciso atingir pelo menos 3 das 5 metas estratégicas. Situação atual: "+b.metasEstrategicasAtingidas+" atingidas.";
+
+  $("regraAtivacao").className=regraClass;
+  $("regraAtivacao").innerHTML=
+    '<div class="raIcone">'+regraIcone+'</div>'+
+    '<div class="raTexto">'+
+      '<strong>'+regraTitulo+'</strong>'+
+      '<span>'+regraTexto+'</span>'+
+    '</div>'+
+    '<div class="raBadge">'+(b.condicionalAtiva?"Ativado":"Bloqueado")+'</div>';
 }
 
+
 function renderBonus(){
-  const b=calcularBonificacao(DATA); // sempre usa DATA completa, não filtrado
+  const b=calcularBonificacao(DATA);
   const panel=$("bonusPanel");
 
+  function linhaSimples(item){
+    var cls=item.atingiu?"ok":"crit";
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    return '<div class="metaLinha '+cls+'">'+
+      '<span class="cod">'+esc(item.cod)+'</span>'+
+      '<span class="desc">'+esc(item.label)+'</span>'+
+      '<span class="status-mini">'+statusTxt+'</span>'+
+      '<span></span>'+
+    '</div>';
+  }
+
+  function linhaCasada(item){
+    var cls=item.atingiu?"ok":"crit";
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    var membrosHtml=item.membros.map(function(m){
+      return '<div class="metaLinha '+esc(m.statusClass)+'" style="padding-left:20px">'+
+        '<span class="cod">'+esc(m.cod)+'</span>'+
+        '<span class="desc">'+esc(m.indicador)+'</span>'+
+        '<span class="status-mini">'+esc(m.status)+'</span>'+
+        '<span></span>'+
+      '</div>';
+    }).join("");
+    var labelTxt=item.label.replace("Meta dupla: ","").replace("Meta dupla (Condicionada): ","");
+    return '<div class="metaLinha '+cls+'" style="flex-wrap:wrap">'+
+        '<span class="cod">⊞</span>'+
+        '<span class="desc" style="color:#fff;font-weight:950">'+esc(labelTxt)+'</span>'+
+        '<span class="status-mini">'+statusTxt+'</span>'+
+        '<span class="casadoBadge">Par</span>'+
+      '</div>'+membrosHtml;
+  }
+
   function detalheLinhas(lista){
-    return lista.map(item=>{
-      if(item.casado){
-        const membrosHtml=item.membros.map(m=>`
-          <div class="metaLinha ${esc(m.statusClass)}" style="padding-left:20px">
-            <span class="cod">${esc(m.cod)}</span>
-            <span class="desc">${esc(m.indicador)}</span>
-            <span class="status-mini">${esc(m.status)}</span>
-            <span></span>
-          </div>`).join("");
-        return `
-          <div class="metaLinha ${item.atingiu?'ok':'crit'}" style="flex-wrap:wrap">
-            <span class="cod">⊞</span>
-            <span class="desc" style="color:#fff;font-weight:950">${esc(item.label.replace("Meta dupla: ","").replace("Meta dupla (Condicionada): "," "))}</span>
-            <span class="status-mini">${item.bloqueado?"Bloqueado":item.atingiu?"Atingido":"Não atingido"}</span>
-            <span class="casadoBadge">Par</span>
-          </div>
-          ${membrosHtml}`;
-      }
-      return `
-        <div class="metaLinha ${item.atingiu?'ok':'crit'}">
-          <span class="cod">${esc(item.cod)}</span>
-          <span class="desc">${esc(item.label)}</span>
-          <span class="status-mini">${item.bloqueado?"Bloqueado":item.atingiu?"Atingido":"Não atingido"}</span>
-          <span></span>
-        </div>`;
+    return lista.map(function(item){
+      return item.casado?linhaCasada(item):linhaSimples(item);
     }).join("");
   }
 
-  panel.innerHTML=`
-    <div class="bonusPanelHead">
-      <h2>Projeção de Bonificação</h2>
-      <div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>
-    </div>
-    <div class="bonusGrid">
-      <div class="bonusCard destaque">
-        <div class="label">Bônus Total Projetado</div>
-        <div class="valor">${b.bonusTotal}%</div>
-        <div class="detalhe">Estratégico (${b.regE.pct}%) + Condicionado (${b.condicionalAtiva?b.regC.pct:0}%) + Performance (${b.condicionalAtiva?b.bonusPerformance:0}%)</div>
-      </div>
-      <div class="bonusCard">
-        <div class="label">Estratégicas</div>
-        <div class="valor">${b.metasEstrategicasAtingidas}/${b.totalEstrategicas}</div>
-        <div class="detalhe">Nota projetada: <strong>${b.regE.nota}</strong>, equivalente a ${b.regE.pct}% de bônus. Pares de indicadores contam como uma meta.</div>
-      </div>
-      <div class="bonusCard ${b.condicionalAtiva?'ok':'nd'}" style="${b.condicionalAtiva?'':'opacity:.6'}">
-        <div class="label">Condicionadas${!b.condicionalAtiva?' · Bloqueado':''}</div>
-        <div class="valor">${b.metasCondicionadasAtingidas}/${[...["C03","C04"].filter(c=>DATA.some(d=>d.codigo===c)),...CASADOS.filter(p=>p.membros.some(m=>DATA.some(d=>d.codigo===m&&d.grupo.toLowerCase().includes("condicion"))))].length}</div>
-        <div class="detalhe">${b.condicionalAtiva?`Ponto adicional: ${b.regC.ponto} → ${b.regC.pct}% bônus`:"Estas metas só são consideradas se pelo menos 3 estratégicas forem atingidas"}</div>
-      </div>
-    </div>
-    <div class="metaContagem">
-      <div class="tituloContagem">Detalhamento por meta: Estratégicas</div>
-      <div class="metaLinhas">${detalheLinhas(b.detalhesEstrategicos)}</div>
-    </div>
-    <div class="metaContagem" style="margin-top:10px">
-      <div class="tituloContagem">Detalhamento por meta: Condicionadas${!b.condicionalAtiva?' (bloqueadas)':''}</div>
-      <div class="metaLinhas">${detalheLinhas(b.detalhesCondicionados)}</div>
-    </div>`;
+  var condTotal=[...["C03","C04"].filter(function(c){return DATA.some(function(d){return d.codigo===c;});}),...CASADOS.filter(function(p){return p.membros.some(function(m){return DATA.some(function(d){return d.codigo===m&&d.grupo.toLowerCase().includes("condicion");});});})].length;
+  var condDetalhe=b.condicionalAtiva
+    ?"Ponto adicional: "+b.regC.ponto+" — "+b.regC.pct+"% de bônus adicional"
+    :"Estas metas só são consideradas se pelo menos 3 estratégicas forem atingidas";
+  var condCls=b.condicionalAtiva?"ok":"nd";
+  var condStyle=b.condicionalAtiva?"":"opacity:.6";
+  var condLabel="Condicionadas"+(b.condicionalAtiva?"":" · Bloqueado");
+
+  panel.innerHTML=
+    '<div class="bonusPanelHead">'+
+      '<h2>Projeção de Bonificação</h2>'+
+      '<div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>'+
+    '</div>'+
+    '<div class="bonusGrid">'+
+      '<div class="bonusCard destaque">'+
+        '<div class="label">Bônus Total Projetado</div>'+
+        '<div class="valor">'+b.bonusTotal+'%</div>'+
+        '<div class="detalhe">Estratégico ('+b.regE.pct+'%) + Condicionado ('+(b.condicionalAtiva?b.regC.pct:0)+'%) + Performance ('+(b.condicionalAtiva?b.bonusPerformance:0)+'%)</div>'+
+      '</div>'+
+      '<div class="bonusCard">'+
+        '<div class="label">Estratégicas</div>'+
+        '<div class="valor">'+b.metasEstrategicasAtingidas+'/'+b.totalEstrategicas+'</div>'+
+        '<div class="detalhe">Nota projetada: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% de bônus. Pares de indicadores contam como uma meta.</div>'+
+      '</div>'+
+      '<div class="bonusCard '+condCls+'" style="'+condStyle+'">'+
+        '<div class="label">'+condLabel+'</div>'+
+        '<div class="valor">'+b.metasCondicionadasAtingidas+'/'+condTotal+'</div>'+
+        '<div class="detalhe">'+condDetalhe+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="metaContagem">'+
+      '<div class="tituloContagem">Detalhamento por meta: Estratégicas</div>'+
+      '<div class="metaLinhas">'+detalheLinhas(b.detalhesEstrategicos)+'</div>'+
+    '</div>'+
+    '<div class="metaContagem" style="margin-top:10px">'+
+      '<div class="tituloContagem">Detalhamento por meta: Condicionadas'+(b.condicionalAtiva?"":" (bloqueadas)")+'</div>'+
+      '<div class="metaLinhas">'+detalheLinhas(b.detalhesCondicionados)+'</div>'+
+    '</div>';
 }
+
 
 /* ═══════════════════════════════════════════════════════════
    RENDER: INDICADORES

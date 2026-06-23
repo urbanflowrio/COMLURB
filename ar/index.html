@@ -146,7 +146,7 @@
   <div class="headerContent">
     <div class="systemLabel">HUB COMLURB · ACORDO DE RESULTADOS</div>
     <h1 class="mainTitle">Acordo de Resultados 2026</h1>
-    <div class="subtitle">Monitoramento executivo dos indicadores pactuados · Projeção de bonificação com lógica de metas casadas · Atingimentos proporcionais ao período para indicadores de volume acumulado.</div>
+    <div class="subtitle">Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas.</div>
   </div>
 </header>
 
@@ -165,7 +165,7 @@
   <!-- RESUMO EXECUTIVO -->
   <section class="execSummary">
     <div class="summaryHero">
-      <div class="panelHead"><div><h2>Situação atual dos indicadores</h2><div class="hint">consolidado do recorte selecionado · atingimentos proporcionais ao período</div></div></div>
+      <div class="panelHead"><div><h2>Situação atual dos indicadores</h2><div class="hint">leitura consolidada do recorte selecionado</div></div></div>
       <div class="body">
         <div class="bigNumber" id="heroPct">—</div>
         <div class="heroText">
@@ -175,10 +175,10 @@
       </div>
     </div>
     <div class="statusGrid">
-      <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Atingimento ≥ 100% da meta proporcional ao período.</span></div>
-      <div class="statusMini att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Entre 75% e 99,9% — monitoramento próximo necessário.</span></div>
-      <div class="statusMini crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Abaixo de 75% da meta — ação corretiva imediata.</span></div>
-      <div class="statusMini nd"><small>Sem Dado / Externo</small><b id="kpiSemDado">—</b><span>Aguardando resultado, fonte externa ou validação.</span></div>
+      <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Indicador atingiu ou superou a meta.</span></div>
+      <div class="statusMini att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Entre 85% e 99,9% da meta. Requer acompanhamento.</span></div>
+      <div class="statusMini crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Abaixo de 85% da meta. Ação corretiva necessária.</span></div>
+      <div class="statusMini nd"><small>Sem Dado / Externo</small><b id="kpiSemDado">—</b><span>Resultado ainda não disponível ou depende de fonte externa.</span></div>
     </div>
   </section>
 
@@ -192,7 +192,7 @@
   <!-- TABELA DE REGRAS DE BONIFICAÇÃO -->
   <div class="bonusRules">
     <div class="bonusRulesHead">
-      <span class="bonusRulesTitle">Critérios de Bonificação · Tabela oficial AR 2026</span>
+      <span class="bonusRulesTitle">Como funciona a bonificação</span>
     </div>
     <div class="bonusRulesTables">
       <div class="ruleBlock">
@@ -207,7 +207,7 @@
             <tr><td>5</td><td>8,7</td><td class="ok">74%</td></tr>
           </tbody>
         </table>
-        <div class="ruleNote">Metas casadas contam como 1 unidade</div>
+        <div class="ruleNote">Pares de indicadores valem como uma meta</div>
       </div>
       <div class="ruleBlock">
         <div class="ruleBlockTitle">Metas Condicionadas <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
@@ -219,7 +219,7 @@
             <tr><td>3</td><td>+0,3</td><td class="ok">6%</td></tr>
           </tbody>
         </table>
-        <div class="ruleNote">Par IPL (C01+C02) conta como 1 meta</div>
+        <div class="ruleNote">C01 e C02 precisam ser atingidos juntos</div>
       </div>
       <div class="ruleBlock">
         <div class="ruleBlockTitle">Meta de Performance <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
@@ -229,16 +229,16 @@
             <tr><td>1</td><td>+1,0</td><td class="ok">20%</td></tr>
           </tbody>
         </table>
-        <div class="ruleNote">Ponto adicional CVL</div>
+        <div class="ruleNote">Definido pela CVL</div>
       </div>
     </div>
   </div>
 
   <div class="govNote">
-    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado (SOMA mensal) são avaliados contra a meta proporcional ao mês corrente — não contra a meta anual cheia. O badge <em>prop.</em> identifica esses casos.
-    <strong>Tendência:</strong> compara a média dos últimos 3 meses contra os 3 anteriores. Com menos de 6 pontos, exibe "Série curta".
-    <strong>Metas casadas:</strong> ambos os indicadores do par precisam ser atingidos para contar 1 meta de bonificação — o resultado positivo de um não compensa o outro.
-    <strong>Bonificação:</strong> projeção com base no status atual, sujeita a validação oficial pela CVL/Presidência.
+    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado são comparados à meta do período, não à meta anual cheia. O badge <em>prop.</em> identifica esses casos.
+    <strong>Tendência:</strong> compara a média dos últimos 3 meses com os 3 anteriores. Quando há menos de 6 meses de histórico, aparece "Série curta".
+    <strong>Metas casadas:</strong> nos pares de indicadores, os dois precisam ser atingidos para contar uma meta na bonificação. O bom resultado de um não compensa o outro.
+    <strong>Bonificação:</strong> a projeção é calculada com base no status atual e está sujeita à validação oficial pela CVL.
   </div>
 </main>
 </div>
@@ -269,25 +269,25 @@ const CASADOS = [
     id: "par-02",
     label: "Meta dupla: Recuperação de Resíduos + Ranking Nacional",
     membros: ["E02","E03"],
-    bonusNote: "Ambos precisam ser atingidos para contar 1 meta no bloco Estratégico."
+    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação."
   },
   {
     id: "par-03",
     label: "Meta dupla: Atendimento 1746 Poda + Satisfação Poda",
     membros: ["E04","E05"],
-    bonusNote: "Atingir apenas o SLA não garante a meta se a nota de satisfação ficar abaixo de 4,5. Os dois contam como 1 meta."
+    bonusNote: "Atingir o prazo de atendimento não garante a meta se a nota de satisfação ficar abaixo de 4,5."
   },
   {
     id: "par-04",
     label: "Meta dupla: Atendimento 1746 Remoção + Satisfação Remoção",
     membros: ["E06","E07"],
-    bonusNote: "Mesma lógica: SLA de 85% e Nota ≥ 4,4 precisam ser atingidos juntos para contar 1 meta."
+    bonusNote: "O prazo de atendimento e a nota de satisfação precisam ser atingidos juntos."
   },
   {
     id: "par-c06",
     label: "Meta dupla (Condicionada): Conformidade IPL + Desvio Padrão IPL",
     membros: ["C01","C02"],
-    bonusNote: "Os dois sub-indicadores do IPL precisam ser atingidos para contar 1 meta no bloco Condicionado."
+    bonusNote: "A conformidade e o desvio padrão do IPL precisam ser atingidos juntos."
   }
 ];
 
@@ -387,7 +387,7 @@ function statusCanonico(atual,meta,sentido){
   if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
   const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
   if(ating>=1)return "Dentro da Meta";
-  if(ating>=.75)return "Atenção";
+  if(ating>=.85)return "Atenção";
   return "Crítico";
 }
 function tagClass(status){
@@ -663,7 +663,7 @@ function renderResumo(){
   $("kpiSemDado").textContent=sem;
   $("heroPct").textContent=(pct*100).toLocaleString("pt-BR",{maximumFractionDigits:0})+"%";
   $("heroTitle").textContent=`${dentro} de ${total} indicadores dentro da meta`;
-  $("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) estão em Atenção (75–99,9%) e ${critico} em situação Crítica (abaixo de 75%). Condicionadas ativam com ≥ 3 metas estratégicas. Metas casadas requerem que ambos os indicadores do par sejam atingidos para contar na bonificação.`;
+  $("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) pedem atenção e ${critico} estão em situação crítica. As metas condicionadas só entram em jogo se pelo menos 3 estratégicas forem atingidas.. Metas casadas requerem que ambos os indicadores do par sejam atingidos para contar na bonificação.`;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -686,7 +686,7 @@ function renderBonus(){
         return `
           <div class="metaLinha ${item.atingiu?'ok':'crit'}" style="flex-wrap:wrap">
             <span class="cod">⊞</span>
-            <span class="desc" style="color:#fff;font-weight:950">${esc(item.label.replace("Meta dupla: ","").replace("Meta dupla (Condicionada): ",""))}</span>
+            <span class="desc" style="color:#fff;font-weight:950">${esc(item.label.replace("Meta dupla: ","").replace("Meta dupla (Condicionada): "," "))}</span>
             <span class="status-mini">${item.bloqueado?"Bloqueado":item.atingiu?"Atingido":"Não atingido"}</span>
             <span class="casadoBadge">Par</span>
           </div>
@@ -704,8 +704,8 @@ function renderBonus(){
 
   panel.innerHTML=`
     <div class="bonusPanelHead">
-      <h2>Projeção de Bonificação AR 2026</h2>
-      <div class="hint">Simulação com base no status atual · sujeita a validação CVL/Presidência</div>
+      <h2>Projeção de Bonificação</h2>
+      <div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>
     </div>
     <div class="bonusGrid">
       <div class="bonusCard destaque">
@@ -716,20 +716,20 @@ function renderBonus(){
       <div class="bonusCard">
         <div class="label">Estratégicas</div>
         <div class="valor">${b.metasEstrategicasAtingidas}/${b.totalEstrategicas}</div>
-        <div class="detalhe">Nota projetada: <strong>${b.regE.nota}</strong> → ${b.regE.pct}% bônus<br>Metas casadas contam como 1</div>
+        <div class="detalhe">Nota projetada: <strong>${b.regE.nota}</strong>, equivalente a ${b.regE.pct}% de bônus. Pares de indicadores contam como uma meta.</div>
       </div>
       <div class="bonusCard ${b.condicionalAtiva?'ok':'nd'}" style="${b.condicionalAtiva?'':'opacity:.6'}">
         <div class="label">Condicionadas${!b.condicionalAtiva?' · Bloqueado':''}</div>
         <div class="valor">${b.metasCondicionadasAtingidas}/${[...["C03","C04"].filter(c=>DATA.some(d=>d.codigo===c)),...CASADOS.filter(p=>p.membros.some(m=>DATA.some(d=>d.codigo===m&&d.grupo.toLowerCase().includes("condicion"))))].length}</div>
-        <div class="detalhe">${b.condicionalAtiva?`Ponto adicional: ${b.regC.ponto} → ${b.regC.pct}% bônus`:"Requer ≥ 3 metas estratégicas atingidas (50% de 5)"}</div>
+        <div class="detalhe">${b.condicionalAtiva?`Ponto adicional: ${b.regC.ponto} → ${b.regC.pct}% bônus`:"Estas metas só são consideradas se pelo menos 3 estratégicas forem atingidas"}</div>
       </div>
     </div>
     <div class="metaContagem">
-      <div class="tituloContagem">Detalhamento por meta — Estratégicas</div>
+      <div class="tituloContagem">Detalhamento por meta: Estratégicas</div>
       <div class="metaLinhas">${detalheLinhas(b.detalhesEstrategicos)}</div>
     </div>
     <div class="metaContagem" style="margin-top:10px">
-      <div class="tituloContagem">Detalhamento por meta — Condicionadas${!b.condicionalAtiva?' (bloqueadas)':''}</div>
+      <div class="tituloContagem">Detalhamento por meta: Condicionadas${!b.condicionalAtiva?' (bloqueadas)':''}</div>
       <div class="metaLinhas">${detalheLinhas(b.detalhesCondicionados)}</div>
     </div>`;
 }
@@ -779,7 +779,7 @@ function renderIndicadores(){
           <div class="casadoWrap">
             <div class="casadoLabel">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Meta dupla — contam como 1 meta de bonificação · ${todosOk?"✓ Ambas atingidas":"⚠ Não atingida (falha em ao menos 1)"}
+              Indicadores casados: contam como uma meta na bonificação · ${todosOk?"✓ Ambas atingidas":"⚠ Pelo menos uma não foi atingida"}
             </div>
             ${bloco.membros.map(d=>renderRow(d,true)).join("")}
             <div class="casadoBonusNote">⊞ ${esc(par.bonusNote)}</div>

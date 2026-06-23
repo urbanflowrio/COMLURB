@@ -120,7 +120,7 @@
 }
 
 /* ── Placar executivo ── */
-.placarGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.placarGrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .placarCard{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:18px 20px}
 .placarCard .pcLabel{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:8px}
 .placarCard .pcPlacar{font-size:44px;font-weight:950;line-height:1;color:#fff;margin-bottom:6px}
@@ -130,15 +130,18 @@
 .placarCard.estr{border-top:3px solid #5b9bd5}
 .placarCard.cond{border-top:3px solid var(--amarelo)}
 .placarCard.perf{border-top:3px solid var(--roxo)}
-.placarCard.bonus{border-top:3px solid var(--verde)}
-.placarCard.bonus .pcPlacar{color:#5b9bd5}
+.placarCard.bonus{border-top:3px solid #5b9bd5;border-color:rgba(91,155,213,.4);background:rgba(91,155,213,.05)}
+.placarCard.bonus .pcPlacar{font-size:clamp(72px,8vw,108px);font-weight:950;letter-spacing:-.05em;line-height:.9;color:#5b9bd5;margin-bottom:14px}
+.placarCard.bonus .pcPlacar span{font-size:clamp(28px,3vw,40px);color:rgba(91,155,213,.6);font-weight:700}
+.placarCard.bonus .pcLabel{font-size:11px;margin-bottom:14px}
+.placarCard.bonus .pcDesc{font-size:11px;margin-bottom:14px}
 .pcStatusOk{color:#83d99d;border-color:rgba(120,170,163,.4);background:rgba(120,170,163,.08)}
 .pcStatusAtt{color:#ffa02b;border-color:rgba(255,160,43,.35);background:rgba(255,160,43,.07)}
-.pcStatusCrit{color:#ff7d72;border-color:rgba(239,106,93,.35);background:rgba(239,106,93,.07)}
+.pcStatusCrit{color:#ff7d72;border-color:rgba(239,106,93,.35);background:rgba(239,106,63,.07)}
 .pcStatusBloq{color:#6a8099;border-color:rgba(106,128,153,.3);background:rgba(106,128,153,.06)}
 
 @media(max-width:1180px){.placarGrid{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.placarGrid{grid-template-columns:1fr}.regraAtivacao{flex-direction:column;text-align:center}}
+@media(max-width:760px){.placarGrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -596,6 +599,12 @@ function renderResumo(){
   const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
 
   $("placarGrid").innerHTML=
+    '<div class="placarCard bonus">'+
+      '<div class="pcLabel">Bônus Projetado</div>'+
+      '<div class="pcPlacar">'+b.bonusTotal+'<span>%</span></div>'+
+      '<div class="pcDesc">'+descBonus+'</div>'+
+      '<span class="pcStatus '+bonusClass+'">'+(b.bonusTotal>0?"Bônus ativo":"Sem bônus")+'</span>'+
+    '</div>'+
     '<div class="placarCard estr">'+
       '<div class="pcLabel">Metas Estratégicas</div>'+
       '<div class="pcPlacar">'+b.metasEstrategicasAtingidas+'<span> / 5</span></div>'+
@@ -613,12 +622,6 @@ function renderResumo(){
       '<div class="pcPlacar">'+perfVal+'<span>'+perfSub+'</span></div>'+
       '<div class="pcDesc">'+perfDesc+'</div>'+
       perfStatus+
-    '</div>'+
-    '<div class="placarCard bonus">'+
-      '<div class="pcLabel">Bônus Projetado</div>'+
-      '<div class="pcPlacar">'+b.bonusTotal+'<span>%</span></div>'+
-      '<div class="pcDesc">'+descBonus+'</div>'+
-      '<span class="pcStatus '+bonusClass+'">'+(b.bonusTotal>0?"Bônus ativo":"Sem bônus")+'</span>'+
     '</div>';
 }
 

@@ -162,25 +162,19 @@
 
 <main id="conteudo" style="display:none">
 
-  <!-- RESUMO EXECUTIVO -->
-  <section class="execSummary">
-    <div class="summaryHero">
-      <div class="panelHead"><div><h2>Situação atual dos indicadores</h2><div class="hint">leitura consolidada do recorte selecionado</div></div></div>
-      <div class="body">
-        <div class="bigNumber" id="heroPct">—</div>
-        <div class="heroText">
-          <h2 id="heroTitle">Carregando leitura executiva</h2>
-          <p id="heroText">O painel organiza os indicadores por bloco do AR, respeitando a lógica de metas casadas para fins de bonificação.</p>
-        </div>
-      </div>
-    </div>
-    <div class="statusGrid">
-      <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Indicador atingiu ou superou a meta.</span></div>
-      <div class="statusMini att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Entre 85% e 99,9% da meta. Requer acompanhamento.</span></div>
-      <div class="statusMini crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Abaixo de 85% da meta. Ação corretiva necessária.</span></div>
-      <div class="statusMini nd"><small>Sem Dado / Externo</small><b id="kpiSemDado">—</b><span>Resultado ainda não disponível ou depende de fonte externa.</span></div>
-    </div>
-  </section>
+  <!-- PLACAR EXECUTIVO -->
+  <div class="placarGrid" id="placarGrid"></div>
+
+  <!-- LEGENDA DE STATUS -->
+  <div class="statusLegenda">
+    <div class="statusLeg"><div class="slDot ok"></div><div class="slTxt"><strong>Dentro da Meta</strong><span>Atingimento igual ou acima de 100%</span></div></div>
+    <div class="statusLeg"><div class="slDot att"></div><div class="slTxt"><strong>Atenção</strong><span>Entre 85% e 99,9%</span></div></div>
+    <div class="statusLeg"><div class="slDot crit"></div><div class="slTxt"><strong>Crítico</strong><span>Abaixo de 85%</span></div></div>
+    <div class="statusLeg"><div class="slDot nd"></div><div class="slTxt"><strong>Sem Dado</strong><span>Fonte externa ou resultado pendente</span></div></div>
+  </div>
+
+  <!-- RÉGUA DE ATIVAÇÃO -->
+  <div class="regraAtivacao" id="regraAtivacao"></div>
 
   <!-- PAINEL DE BONIFICAÇÃO -->
   <section class="bonusPanel" id="bonusPanel"></section>
@@ -188,15 +182,14 @@
   <!-- INDICADORES -->
   <div id="indicadoresContainer"></div>
 
-
-  <!-- TABELA DE REGRAS DE BONIFICAÇÃO -->
+  <!-- TABELA DE REGRAS -->
   <div class="bonusRules">
     <div class="bonusRulesHead">
       <span class="bonusRulesTitle">Como funciona a bonificação</span>
     </div>
     <div class="bonusRulesTables">
       <div class="ruleBlock">
-        <div class="ruleBlockTitle">Escala de Status</div>
+        <div class="ruleBlockTitle">Metas Estratégicas</div>
         <table class="ruleTable">
           <thead><tr><th>Metas atingidas</th><th>Nota</th><th>% Bônus</th></tr></thead>
           <tbody>
@@ -210,7 +203,7 @@
         <div class="ruleNote">Pares de indicadores valem como uma meta</div>
       </div>
       <div class="ruleBlock">
-        <div class="ruleBlockTitle">Metas Condicionadas <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
+        <div class="ruleBlockTitle">Metas Condicionadas <span class="ruleCondNote">se 3 ou mais estratégicas</span></div>
         <table class="ruleTable">
           <thead><tr><th>Metas atingidas</th><th>Acréscimo</th><th>% Bônus</th></tr></thead>
           <tbody>
@@ -222,7 +215,7 @@
         <div class="ruleNote">C01 e C02 precisam ser atingidos juntos</div>
       </div>
       <div class="ruleBlock">
-        <div class="ruleBlockTitle">Meta de Performance <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
+        <div class="ruleBlockTitle">Meta de Performance <span class="ruleCondNote">se 3 ou mais estratégicas</span></div>
         <table class="ruleTable">
           <thead><tr><th>Itens cumpridos</th><th>Acréscimo</th><th>% Bônus</th></tr></thead>
           <tbody>
@@ -651,24 +644,63 @@ function aplicarFiltros(){
    RENDER: RESUMO
    ═══════════════════════════════════════════════════════════ */
 function renderResumo(){
-  const total=FILTRADOS.length;
-  const dentro=FILTRADOS.filter(d=>d.status==="Dentro da Meta").length;
-  const atencao=FILTRADOS.filter(d=>d.status==="Atenção").length;
-  const critico=FILTRADOS.filter(d=>d.status==="Crítico").length;
-  const sem=FILTRADOS.filter(d=>d.status==="Sem dado").length;
-  const pct=total?dentro/total:0;
-  $("kpiDentro").textContent=dentro;
-  $("kpiAtencao").textContent=atencao;
-  $("kpiCritico").textContent=critico;
-  $("kpiSemDado").textContent=sem;
-  $("heroPct").textContent=(pct*100).toLocaleString("pt-BR",{maximumFractionDigits:0})+"%";
-  $("heroTitle").textContent=`${dentro} de ${total} indicadores dentro da meta`;
-  $("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) pedem atenção e ${critico} estão em situação crítica. As metas condicionadas só entram em jogo se pelo menos 3 estratégicas forem atingidas.. Metas casadas requerem que ambos os indicadores do par sejam atingidos para contar na bonificação.`;
+  const b=calcularBonificacao(DATA);
+
+  function pcStatusHtml(atingidas,total,bloqueado){
+    if(bloqueado)return `<span class="pcStatus pcStatusBloq">Bloqueado</span>`;
+    if(atingidas===0)return `<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>`;
+    if(atingidas>=total)return `<span class="pcStatus pcStatusOk">Todas atingidas</span>`;
+    return `<span class="pcStatus pcStatusAtt">${atingidas} de ${total}</span>`;
+  }
+
+  const p01=DATA.find(d=>d.codigo==="P01");
+  const perfAtingida=b.condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
+  const perfStatus=!b.condicionalAtiva
+    ?`<span class="pcStatus pcStatusBloq">Bloqueada</span>`
+    :perfAtingida
+      ?`<span class="pcStatus pcStatusOk">Cumprida</span>`
+      :`<span class="pcStatus pcStatusCrit">Não cumprida</span>`;
+  const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
+
+  $("placarGrid").innerHTML=`
+    <div class="placarCard estr">
+      <div class="pcLabel">Metas Estratégicas</div>
+      <div class="pcPlacar">${b.metasEstrategicasAtingidas}<span> / 5</span></div>
+      <div class="pcDesc">8 indicadores monitorados. Pares contam como uma meta na bonificação.</div>
+      ${pcStatusHtml(b.metasEstrategicasAtingidas,5,false)}
+    </div>
+    <div class="placarCard cond">
+      <div class="pcLabel">Metas Condicionadas</div>
+      <div class="pcPlacar">${b.condicionalAtiva?b.metasCondicionadasAtingidas:"—"}<span>${b.condicionalAtiva?" / 3":""}</span></div>
+      <div class="pcDesc">Entram na avaliação só se 3 ou mais estratégicas forem atingidas.</div>
+      ${pcStatusHtml(b.metasCondicionadasAtingidas,3,!b.condicionalAtiva)}
+    </div>
+    <div class="placarCard perf">
+      <div class="pcLabel">Meta de Performance</div>
+      <div class="pcPlacar">${b.condicionalAtiva?(perfAtingida?"1":"0"):"—"}<span>${b.condicionalAtiva?" / 1":""}</span></div>
+      <div class="pcDesc">Definida pela CVL. Mesma condição das condicionadas.</div>
+      ${perfStatus}
+    </div>
+    <div class="placarCard bonus">
+      <div class="pcLabel">Bônus Projetado</div>
+      <div class="pcPlacar">${b.bonusTotal}<span>%</span></div>
+      <div class="pcDesc">Estratégico ${b.regE.pct}% + Condicionado ${b.condicionalAtiva?b.regC.pct:0}% + Performance ${b.condicionalAtiva?b.bonusPerformance:0}%</div>
+      <span class="pcStatus ${bonusClass}">${b.bonusTotal>0?"Bônus ativo":"Sem bônus"}</span>
+    </div>`;
+
+  $("regraAtivacao").className=`regraAtivacao ${b.condicionalAtiva?"ativa":"bloqueada"}`;
+  $("regraAtivacao").innerHTML=`
+    <div class="raIcone">${b.condicionalAtiva?"✅":"🔒"}</div>
+    <div class="raTexto">
+      <strong>${b.condicionalAtiva?"Condicionadas e Performance estão ativas":"Condicionadas e Performance estão bloqueadas"}</strong>
+      <span>${b.condicionalAtiva
+        ?`A COMLURB atingiu ${b.metasEstrategicasAtingidas} de 5 metas estratégicas, superando o mínimo de 3. As metas condicionadas e a performance entram na avaliação.`
+        :`Para que as metas condicionadas e a performance entrem na avaliação, é preciso atingir pelo menos 3 das 5 metas estratégicas. Situação atual: ${b.metasEstrategicasAtingidas} atingidas.`
+      }</span>
+    </div>
+    <div class="raBadge">${b.condicionalAtiva?"Ativado":"Bloqueado"}</div>`;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RENDER: PAINEL DE BONIFICAÇÃO
-   ═══════════════════════════════════════════════════════════ */
 function renderBonus(){
   const b=calcularBonificacao(DATA); // sempre usa DATA completa, não filtrado
   const panel=$("bonusPanel");

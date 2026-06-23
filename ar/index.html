@@ -135,6 +135,50 @@
   .arBlockHead{flex-direction:column;align-items:flex-start}
   .bonusGrid{grid-template-columns:1fr}
 }
+
+/* ── Placar executivo ── */
+.placarGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.placarCard{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:18px 20px}
+.placarCard .pcLabel{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:8px}
+.placarCard .pcPlacar{font-size:44px;font-weight:950;line-height:1;color:#fff;margin-bottom:6px}
+.placarCard .pcPlacar span{font-size:20px;color:#6a8099;font-weight:700}
+.placarCard .pcDesc{font-size:12px;color:#9fb0c7;line-height:1.35;margin-bottom:10px}
+.placarCard .pcStatus{display:inline-flex;align-items:center;font-size:11px;font-weight:950;padding:4px 10px;border-radius:999px;border:1px solid}
+.placarCard.estr{border-top:3px solid #5b9bd5}
+.placarCard.cond{border-top:3px solid var(--amarelo)}
+.placarCard.perf{border-top:3px solid var(--roxo)}
+.placarCard.bonus{border-top:3px solid var(--verde)}
+.placarCard.bonus .pcPlacar{color:#5b9bd5}
+.pcStatusOk{color:#83d99d;border-color:rgba(120,170,163,.4);background:rgba(120,170,163,.08)}
+.pcStatusAtt{color:#ffa02b;border-color:rgba(255,160,43,.35);background:rgba(255,160,43,.07)}
+.pcStatusCrit{color:#ff7d72;border-color:rgba(239,106,93,.35);background:rgba(239,106,93,.07)}
+.pcStatusBloq{color:#6a8099;border-color:rgba(106,128,153,.3);background:rgba(106,128,153,.06)}
+
+/* ── Legenda de status ── */
+.statusLegenda{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.statusLeg{background:var(--painel);border:1px solid var(--linha);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.statusLeg .slDot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.statusLeg .slDot.ok{background:#83d99d}
+.statusLeg .slDot.att{background:#ffa02b}
+.statusLeg .slDot.crit{background:#ff7d72}
+.statusLeg .slDot.nd{background:#cdbdff}
+.statusLeg .slTxt strong{display:block;font-size:12px;font-weight:950;color:#fff}
+.statusLeg .slTxt span{display:block;font-size:10px;color:#7a9bbf}
+
+/* ── Régua de ativação ── */
+.regraAtivacao{margin-bottom:14px;border-radius:16px;padding:14px 20px;display:flex;align-items:center;gap:16px;border:1px solid}
+.regraAtivacao.ativa{background:rgba(120,170,163,.07);border-color:rgba(120,170,163,.35)}
+.regraAtivacao.bloqueada{background:rgba(239,106,93,.05);border-color:rgba(239,106,93,.25)}
+.regraAtivacao .raIcone{font-size:20px;flex-shrink:0}
+.regraAtivacao .raTexto{flex:1}
+.regraAtivacao .raTexto strong{display:block;font-size:14px;font-weight:950;color:#fff;margin-bottom:3px}
+.regraAtivacao .raTexto span{font-size:12px;color:#9fb0c7;line-height:1.4}
+.regraAtivacao .raBadge{flex-shrink:0;font-size:12px;font-weight:950;padding:6px 14px;border-radius:999px;border:1px solid;white-space:nowrap}
+.regraAtivacao.ativa .raBadge{color:#83d99d;border-color:rgba(120,170,163,.5);background:rgba(120,170,163,.1)}
+.regraAtivacao.bloqueada .raBadge{color:#ff7d72;border-color:rgba(239,106,93,.4);background:rgba(239,106,93,.08)}
+
+@media(max-width:1180px){.placarGrid{grid-template-columns:1fr 1fr}.statusLegenda{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.placarGrid{grid-template-columns:1fr}.statusLegenda{grid-template-columns:1fr 1fr}.regraAtivacao{flex-direction:column;text-align:center}}
 </style>
 </head>
 <body>

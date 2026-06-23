@@ -75,6 +75,9 @@
 .casadoLabel svg{opacity:.7}
 .casadoBonusNote{margin-top:8px;padding:8px 12px;background:rgba(91,155,213,.08);border:1px solid rgba(91,155,213,.25);border-radius:12px;font-size:11px;color:#7ec3f5;line-height:1.4}
 
+/* ── Badge proporcional ── */
+.propBadge{font-size:9px;font-weight:950;color:#7ec3f5;background:rgba(91,155,213,.12);border:1px solid rgba(91,155,213,.3);border-radius:5px;padding:1px 5px;margin-left:3px;white-space:nowrap;vertical-align:middle;cursor:help}
+
 /* ── Células ── */
 .codeBox{font-size:12px;font-weight:950;letter-spacing:.14em;color:#b8d4f2}
 .indName b{display:block;color:#fff;font-size:15px;line-height:1.25;margin-bottom:5px}
@@ -88,25 +91,21 @@
 .tag.nd{border-color:#6d5ba0;color:#cdbdff}
 .tag.superado{border-color:#2a5a82;color:#7ec3f5}
 
-
-/* ── Tabela de regras de bonificação ── */
-.bonusRules{margin:14px 0;background:rgba(255,255,255,.02);border:1px solid rgba(91,155,213,.18);border-radius:18px;padding:16px 20px}
-.bonusRulesHead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.bonusRulesIcon{font-size:14px;color:#5b9bd5;opacity:.7}
-.bonusRulesTitle{font-size:13px;font-weight:950;color:#c7d8ee;letter-spacing:.04em}
-.bonusRulesHint{margin-left:auto;font-size:10px;color:#6a8099;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
-.bonusRulesTables{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.ruleBlock{}
-.ruleBlockTitle{font-size:11px;font-weight:950;color:#9fb0c7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.ruleCondNote{font-size:9px;font-weight:800;color:#6a8099;letter-spacing:.05em;text-transform:none;border:1px solid rgba(91,155,213,.25);border-radius:6px;padding:1px 5px}
+/* ── Tabela de regras ── */
+.bonusRules{margin:14px 0;background:rgba(255,255,255,.02);border:1px solid rgba(91,155,213,.15);border-radius:18px;padding:16px 20px}
+.bonusRulesHead{margin-bottom:14px}
+.bonusRulesTitle{font-size:12px;font-weight:950;color:#7a9bbf;letter-spacing:.08em;text-transform:uppercase}
+.bonusRulesTables{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ruleBlockTitle{font-size:11px;font-weight:950;color:#9fb0c7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ruleCondNote{font-size:9px;font-weight:800;color:#516a82;letter-spacing:.04em;text-transform:none;border:1px solid rgba(91,155,213,.2);border-radius:5px;padding:1px 5px}
 .ruleTable{width:100%;border-collapse:collapse;font-size:12px}
-.ruleTable th{color:#6a8099;font-weight:950;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.07);text-align:left}
-.ruleTable td{padding:5px 6px;color:#c7d8ee;border-bottom:1px solid rgba(255,255,255,.04)}
+.ruleTable th{color:#516a82;font-weight:950;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+.ruleTable td{padding:5px 6px;color:#c7d8ee;border-bottom:1px solid rgba(255,255,255,.03)}
 .ruleTable tr:last-child td{border-bottom:none}
 .ruleTable td.ok{color:#83d99d;font-weight:950}
 .ruleTable td.att{color:#ffa02b;font-weight:950}
-.ruleTable td.nd{color:#9fb0c7}
-.ruleNote{margin-top:7px;font-size:10px;color:#516a82;font-style:italic}
+.ruleTable td.nd{color:#6a8099}
+.ruleNote{margin-top:7px;font-size:10px;color:#435a6e;font-style:italic}
 @media(max-width:760px){.bonusRulesTables{grid-template-columns:1fr}}
 
 /* ── Nota de governança ── */
@@ -142,8 +141,8 @@
   <div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB"></div>
   <div class="headerContent">
     <div class="systemLabel">HUB COMLURB · ACORDO DE RESULTADOS</div>
-    <h1 class="mainTitle">Indicadores AR 2026</h1>
-    <div class="subtitle">Lista executiva dos indicadores pactuados, com lógica de metas casadas, status canônico e projeção de bonificação.</div>
+    <h1 class="mainTitle">Acordo de Resultados 2026</h1>
+    <div class="subtitle">Monitoramento executivo dos indicadores pactuados · Projeção de bonificação com lógica de metas casadas · Atingimentos proporcionais ao período para indicadores de volume acumulado.</div>
   </div>
 </header>
 
@@ -162,7 +161,7 @@
   <!-- RESUMO EXECUTIVO -->
   <section class="execSummary">
     <div class="summaryHero">
-      <div class="panelHead"><div><h2>Situação institucional dos indicadores</h2><div class="hint">leitura consolidada do recorte selecionado</div></div></div>
+      <div class="panelHead"><div><h2>Situação atual dos indicadores</h2><div class="hint">consolidado do recorte selecionado · atingimentos proporcionais ao período</div></div></div>
       <div class="body">
         <div class="bigNumber" id="heroPct">—</div>
         <div class="heroText">
@@ -172,10 +171,10 @@
       </div>
     </div>
     <div class="statusGrid">
-      <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Atingidos ou acima da meta.</span></div>
-      <div class="statusMini att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Entre 90% e 99,9% da meta.</span></div>
-      <div class="statusMini crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Abaixo de 90% da meta.</span></div>
-      <div class="statusMini nd"><small>Sem dado</small><b id="kpiSemDado">—</b><span>Sem resultado, meta ou regra confirmada.</span></div>
+      <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Atingimento ≥ 100% da meta proporcional ao período.</span></div>
+      <div class="statusMini att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Entre 90% e 99,9% — requer acompanhamento próximo.</span></div>
+      <div class="statusMini crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Abaixo de 90% da meta — ação corretiva necessária.</span></div>
+      <div class="statusMini nd"><small>Sem Dado / Externo</small><b id="kpiSemDado">—</b><span>Aguardando resultado, fonte externa ou validação.</span></div>
     </div>
   </section>
 
@@ -187,15 +186,13 @@
 
 
   <!-- TABELA DE REGRAS DE BONIFICAÇÃO -->
-  <div class="bonusRules" id="bonusRules">
+  <div class="bonusRules">
     <div class="bonusRulesHead">
-      <span class="bonusRulesIcon">⊟</span>
-      <span class="bonusRulesTitle">Critérios de Bonificação · AR 2026</span>
-      <span class="bonusRulesHint">Tabela oficial de referência</span>
+      <span class="bonusRulesTitle">Critérios de Bonificação · Tabela oficial AR 2026</span>
     </div>
     <div class="bonusRulesTables">
       <div class="ruleBlock">
-        <div class="ruleBlockTitle">Estratégicas</div>
+        <div class="ruleBlockTitle">Metas Estratégicas</div>
         <table class="ruleTable">
           <thead><tr><th>Metas atingidas</th><th>Nota</th><th>% Bônus</th></tr></thead>
           <tbody>
@@ -209,7 +206,7 @@
         <div class="ruleNote">Metas casadas contam como 1 unidade</div>
       </div>
       <div class="ruleBlock">
-        <div class="ruleBlockTitle">Condicionadas <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
+        <div class="ruleBlockTitle">Metas Condicionadas <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
         <table class="ruleTable">
           <thead><tr><th>Metas atingidas</th><th>Acréscimo</th><th>% Bônus</th></tr></thead>
           <tbody>
@@ -218,10 +215,10 @@
             <tr><td>3</td><td>+0,3</td><td class="ok">6%</td></tr>
           </tbody>
         </table>
-        <div class="ruleNote">Par IPL conta como 1 meta</div>
+        <div class="ruleNote">Par IPL (C01+C02) conta como 1 meta</div>
       </div>
       <div class="ruleBlock">
-        <div class="ruleBlockTitle">Performance <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
+        <div class="ruleBlockTitle">Meta de Performance <span class="ruleCondNote">se ≥ 50% estratégicas</span></div>
         <table class="ruleTable">
           <thead><tr><th>Itens cumpridos</th><th>Acréscimo</th><th>% Bônus</th></tr></thead>
           <tbody>
@@ -234,9 +231,10 @@
   </div>
 
   <div class="govNote">
-    <strong>Governança da leitura:</strong> a tendência compara a média dos últimos 3 meses disponíveis contra os 3 meses anteriores. Quando não há série suficiente, o painel exibe "Série curta". 
-    <strong>Metas casadas:</strong> quando dois indicadores formam uma dupla (ex: atendimento + satisfação), ambos precisam ser atingidos para contar uma meta no cálculo de bonificação — o resultado de um não compensa o outro.
-    A composição final de bonificação fica sujeita à validação oficial pela CVL/Presidência.
+    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado (SOMA mensal) são avaliados contra a meta proporcional ao mês corrente — não contra a meta anual cheia. O badge <em>prop.</em> identifica esses casos.
+    <strong>Tendência:</strong> compara a média dos últimos 3 meses contra os 3 anteriores. Com menos de 6 pontos, exibe "Série curta".
+    <strong>Metas casadas:</strong> ambos os indicadores do par precisam ser atingidos para contar 1 meta de bonificação — o resultado positivo de um não compensa o outro.
+    <strong>Bonificação:</strong> projeção com base no status atual, sujeita a validação oficial pela CVL/Presidência.
   </div>
 </main>
 </div>
@@ -357,7 +355,12 @@ function num(v){
   if(!s||s==="-"||s==="—")return null;
   s=s.replace(/\s/g,"").replace("%","");
   if(s.includes(",")&&s.includes("."))s=s.replace(/\./g,"").replace(",",".");
-  else if(s.includes(","))s=s.replace(",",".");
+  else if(s.includes(",")&&!s.includes("."))s=s.replace(",",".");
+  else if(s.includes(".")&&!s.includes(",")){
+    const pts=s.split(".");
+    if(pts.length===2&&pts[1].length===3&&/^\d+$/.test(pts[0])&&/^\d+$/.test(pts[1]))
+      s=pts[0]+pts[1];
+  }
   const n=Number(s);return Number.isFinite(n)?n:null;
 }
 function isPercent(unidade){const u=norm(unidade);return u.includes("percent")||u==="%";}
@@ -472,7 +475,9 @@ function processar(){
       metaRaw:get(r,["Meta_2026","Meta 2026","Meta"]),
       atualRaw:get(r,["Atual","Resultado Atual","Acumulado"]),
       fonte:String(get(r,["Fonte_Dados","Fonte Dados","Fonte"])).trim(),
-      pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim()
+      pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim(),
+      tipoAcumulado:String(get(r,["Tipo_Acumulado","Tipo Acumulado"],"SOMA")).trim().toUpperCase(),
+      periodicidade:String(get(r,["Periodicidade"],"Mensal")).trim()
     };
     const linha=encontrarGeral(d,map.get(codigo));
     if(linha){
@@ -483,13 +488,37 @@ function processar(){
     }
     d.atual=calcValue(d.atualRaw,d.unidade);
     d.meta=calcValue(d.metaRaw,d.unidade);
-    d.atingimento=(d.atual!==null&&d.meta!==null&&d.atual!==0&&d.meta!==0)?
-      (maiorMelhor(d.sentido)?d.atual/d.meta:d.meta/d.atual):null;
+    if(d.atual!==null&&d.meta!==null&&d.meta!==0){
+      const isSomaAnual=d.tipoAcumulado==="SOMA"&&norm(d.periodicidade).includes("mensal");
+      if(isSomaAnual){
+        const mesAtual=new Date().getMonth()+1;
+        d.metaProporcional=d.meta*(mesAtual/12);
+        d.atingimento=d.metaProporcional>0?
+          (maiorMelhor(d.sentido)?d.atual/d.metaProporcional:d.metaProporcional/d.atual):null;
+        d.atingimentoProporcional=true;
+      } else {
+        d.metaProporcional=null;
+        d.atingimento=maiorMelhor(d.sentido)?d.atual/d.meta:d.meta/d.atual;
+        d.atingimentoProporcional=false;
+      }
+    } else {
+      d.atingimento=null;d.metaProporcional=null;d.atingimentoProporcional=false;
+    }
 
-    // Normalizar status (tratar "Superado" como variante de "Dentro da Meta" para fins de bonificação)
     const rawStatus=String(get(r,["Status"])).trim();
-    if(rawStatus==="Superado"){d.status="Dentro da Meta";d.statusDisplay="Superado";}
-    else{d.status=statusCanonico(d.atual,d.meta,d.sentido);d.statusDisplay=d.status;}
+    if(rawStatus==="Superado"){
+      d.status="Dentro da Meta";d.statusDisplay="Superado";
+    } else if(rawStatus&&rawStatus!=="Indisponível"){
+      // Status calculado pela planilha via fórmula — usar diretamente
+      d.status=(rawStatus==="Dentro da Meta"||rawStatus==="Superado")?"Dentro da Meta":
+               rawStatus==="Atenção"?"Atenção":
+               rawStatus==="Crítico"?"Crítico":"Sem dado";
+      d.statusDisplay=rawStatus;
+    } else {
+      const metaRef=d.metaProporcional??d.meta;
+      d.status=statusCanonico(d.atual,metaRef,d.sentido);
+      d.statusDisplay=d.status;
+    }
 
     d.statusClass=tagClass(d.statusDisplay);
     d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);
@@ -773,13 +802,21 @@ function renderIndicadores(){
 
 function renderRow(d,dentroCasado){
   const desc=d.descricao||d.pendencia||d.fonte||"Indicador pactuado no Acordo de Resultados 2026.";
+  const atingTxt=fmtPct(d.atingimento);
+  const atingHtml=d.atingimentoProporcional
+    ?`${atingTxt} <span class="propBadge" title="Calculado sobre meta proporcional ao mês corrente (${new Date().getMonth()+1}/12)">prop.</span>`
+    :atingTxt;
+  const metaLabel=d.metaProporcional?"Meta anual → mês":"Meta";
+  const metaHtml=d.metaProporcional
+    ?`${fmtValor(d.meta,d.unidade)} <span class="propBadge" title="Meta proporcional ao mês: ${fmtValor(d.metaProporcional,d.unidade)}">→ ${fmtValor(d.metaProporcional,d.unidade)}</span>`
+    :fmtValor(d.meta,d.unidade);
   return `
     <article class="indicatorRow ${esc(d.statusClass)}${dentroCasado?" style='border-radius:14px;margin-bottom:8px'":""}">
       <div class="codeBox">${esc(d.codigo)}</div>
       <div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span></div>
-      <div class="metricCell"><small>Atual</small><b title="${esc(fmtValor(d.atual,d.unidade))}">${esc(fmtValor(d.atual,d.unidade))}</b></div>
-      <div class="metricCell"><small>Meta</small><b title="${esc(fmtValor(d.meta,d.unidade))}">${esc(fmtValor(d.meta,d.unidade))}</b></div>
-      <div class="metricCell"><small>Atingimento</small><b>${esc(fmtPct(d.atingimento))}</b></div>
+      <div class="metricCell"><small>Atual</small><b>${esc(fmtValor(d.atual,d.unidade))}</b></div>
+      <div class="metricCell"><small>${esc(metaLabel)}</small><b>${metaHtml}</b></div>
+      <div class="metricCell"><small>Atingimento</small><b>${atingHtml}</b></div>
       <div class="metricCell"><small>Status</small><span class="tag ${esc(d.statusClass)}">${esc(d.statusDisplay)}</span></div>
       <div class="metricCell"><small>Tendência</small><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></div>
     </article>`;

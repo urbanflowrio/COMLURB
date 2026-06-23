@@ -93,7 +93,7 @@
 .tag.att{border-color:#8d6a23;color:#ffa02b}
 .tag.crit{border-color:#8b3f38;color:#ff7d72}
 .tag.nd{border-color:#6d5ba0;color:#cdbdff}
-.tag.superado{border-color:#2a5a82;color:#7ec3f5}
+.tag.superado{border-color:#3f7d55;color:#83d99d}
 
 /* ── Tabela de regras ── */
 .bonusRules{margin:14px 0;background:rgba(255,255,255,.02);border:1px solid rgba(91,155,213,.15);border-radius:18px;padding:16px 20px}
@@ -175,7 +175,7 @@
       </div>
     </div>
     <div class="statusGrid">
-      <div class="statusMini superado"><small>Superado</small><b id="kpiDentro">—</b><span>Atingimento ≥ 100% da meta proporcional ao período.</span></div>
+      <div class="statusMini ok"><small>Dentro da Meta</small><b id="kpiDentro">—</b><span>Atingimento ≥ 100% da meta proporcional ao período.</span></div>
       <div class="statusMini att"><small>Atenção</small><b id="kpiAtencao">—</b><span>Entre 75% e 99,9% — monitoramento próximo necessário.</span></div>
       <div class="statusMini crit"><small>Crítico</small><b id="kpiCritico">—</b><span>Abaixo de 75% da meta — ação corretiva imediata.</span></div>
       <div class="statusMini nd"><small>Sem Dado / Externo</small><b id="kpiSemDado">—</b><span>Aguardando resultado, fonte externa ou validação.</span></div>
@@ -386,13 +386,13 @@ function maiorMelhor(sentido){const s=norm(sentido);return s.includes("maior")||
 function statusCanonico(atual,meta,sentido){
   if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
   const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
-  if(ating>=1)return "Superado";
+  if(ating>=1)return "Dentro da Meta";
   if(ating>=.75)return "Atenção";
   return "Crítico";
 }
 function tagClass(status){
   const s=norm(status);
-  if(s.includes("superado"))return "superado";
+  if(s.includes("dentro")||s.includes("superado"))return "ok";
   if(s.includes("aten"))return "att";
   if(s.includes("critic"))return "crit";
   return "nd";
@@ -511,7 +511,7 @@ function processar(){
     const rawStatus=String(get(r,["Status"])).trim();
     if(rawStatus&&rawStatus!=="Indisponível"){
       // Mapear status da planilha para nova escala de 3
-      d.status=(rawStatus==="Superado"||rawStatus==="Dentro da Meta")?"Superado":
+      d.status=(rawStatus==="Superado"||rawStatus==="Dentro da Meta")?"Dentro da Meta":
                rawStatus==="Atenção"?"Atenção":
                rawStatus==="Crítico"?"Crítico":"Sem dado";
       d.statusDisplay=d.status;
@@ -554,14 +554,14 @@ function calcularBonificacao(lista){
   estratIndividuais.forEach(cod=>{
     const d=byId[cod];
     if(!d)return;
-    const atingiu=d.status==="Superado";
+    const atingiu=d.status==="Dentro da Meta";
     if(atingiu)metasEstrategicasAtingidas++;
     detalhesEstrategicos.push({cod,label:d.indicador,atingiu,casado:false});
   });
 
   // Casados estratégicos
   estratCasados.forEach(par=>{
-    const todos=par.membros.every(m=>{const d=byId[m];return d&&d.status==="Superado";});
+    const todos=par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
     if(todos)metasEstrategicasAtingidas++;
     const statuses=par.membros.map(m=>{const d=byId[m];return d?d.statusDisplay:"Sem dado";});
     detalhesEstrategicos.push({
@@ -576,7 +576,7 @@ function calcularBonificacao(lista){
 
   const totalEstrategicas=estratIndividuais.filter(c=>byId[c]).length + estratCasados.length;
   const pctEstrategicasAtingidas=totalEstrategicas?metasEstrategicasAtingidas/totalEstrategicas:0;
-  const condicionalAtiva=pctEstrategicasAtingidas>=0.5;
+  const condicionalAtiva=metasEstrategicasAtingidas>=3; // ≥50% de 5 metas = 2,5 → gatilho em 3
 
   const regE=BONUS_ESTRATEGICO.find(r=>metasEstrategicasAtingidas>=r.metas)||BONUS_ESTRATEGICO[BONUS_ESTRATEGICO.length-1];
 
@@ -590,13 +590,13 @@ function calcularBonificacao(lista){
   condIndividuais.forEach(cod=>{
     const d=byId[cod];
     if(!d)return;
-    const atingiu=condicionalAtiva&&d.status==="Superado";
+    const atingiu=condicionalAtiva&&d.status==="Dentro da Meta";
     if(atingiu)metasCondicionadasAtingidas++;
     detalhesCondicionados.push({cod,label:d.indicador,atingiu,casado:false,bloqueado:!condicionalAtiva});
   });
 
   condCasados.forEach(par=>{
-    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&d.status==="Superado";});
+    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
     if(todos)metasCondicionadasAtingidas++;
     detalhesCondicionados.push({
       cod:par.membros.join("+"),
@@ -613,7 +613,7 @@ function calcularBonificacao(lista){
 
   // --- Performance ---
   const p01=byId["P01"];
-  const performanceAtingida=condicionalAtiva&&p01&&p01.status==="Superado";
+  const performanceAtingida=condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
   const bonusPerformance=performanceAtingida?BONUS_PERFORMANCE.pct:0;
 
   // --- Total ---
@@ -635,7 +635,7 @@ function calcularBonificacao(lista){
 function popularFiltros(){
   const grupos=[...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
   $("fGrupo").innerHTML=`<option value="">Todos</option>`+grupos.map(g=>`<option>${esc(g)}</option>`).join("");
-  const status=["Superado","Atenção","Crítico","Sem dado"];
+  const status=["Dentro da Meta","Atenção","Crítico","Sem dado"];
   $("fStatus").innerHTML=`<option value="">Todos</option>`+status.map(s=>`<option>${esc(s)}</option>`).join("");
 }
 function aplicarFiltros(){
@@ -652,7 +652,7 @@ function aplicarFiltros(){
    ═══════════════════════════════════════════════════════════ */
 function renderResumo(){
   const total=FILTRADOS.length;
-  const dentro=FILTRADOS.filter(d=>d.status==="Superado").length;
+  const dentro=FILTRADOS.filter(d=>d.status==="Dentro da Meta").length;
   const atencao=FILTRADOS.filter(d=>d.status==="Atenção").length;
   const critico=FILTRADOS.filter(d=>d.status==="Crítico").length;
   const sem=FILTRADOS.filter(d=>d.status==="Sem dado").length;
@@ -662,8 +662,8 @@ function renderResumo(){
   $("kpiCritico").textContent=critico;
   $("kpiSemDado").textContent=sem;
   $("heroPct").textContent=(pct*100).toLocaleString("pt-BR",{maximumFractionDigits:0})+"%";
-  $("heroTitle").textContent=`${dentro} de ${total} indicadores superados`;
-  $("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) estão em Atenção (75–99,9%) e ${critico} em situação Crítica (abaixo de 75%). Metas casadas requerem que ambos os indicadores do par sejam atingidos para contar na bonificação.`;
+  $("heroTitle").textContent=`${dentro} de ${total} indicadores dentro da meta`;
+  $("heroText").innerHTML=`No recorte atual, ${atencao} indicador(es) estão em Atenção (75–99,9%) e ${critico} em situação Crítica (abaixo de 75%). Condicionadas ativam com ≥ 3 metas estratégicas. Metas casadas requerem que ambos os indicadores do par sejam atingidos para contar na bonificação.`;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -721,7 +721,7 @@ function renderBonus(){
       <div class="bonusCard ${b.condicionalAtiva?'ok':'nd'}" style="${b.condicionalAtiva?'':'opacity:.6'}">
         <div class="label">Condicionadas${!b.condicionalAtiva?' · Bloqueado':''}</div>
         <div class="valor">${b.metasCondicionadasAtingidas}/${[...["C03","C04"].filter(c=>DATA.some(d=>d.codigo===c)),...CASADOS.filter(p=>p.membros.some(m=>DATA.some(d=>d.codigo===m&&d.grupo.toLowerCase().includes("condicion"))))].length}</div>
-        <div class="detalhe">${b.condicionalAtiva?`Ponto adicional: ${b.regC.ponto} → ${b.regC.pct}% bônus`:"Requer ≥ 50% das estratégicas atingidas"}</div>
+        <div class="detalhe">${b.condicionalAtiva?`Ponto adicional: ${b.regC.ponto} → ${b.regC.pct}% bônus`:"Requer ≥ 3 metas estratégicas atingidas (50% de 5)"}</div>
       </div>
     </div>
     <div class="metaContagem">
@@ -745,7 +745,7 @@ function renderIndicadores(){
   }
   $("indicadoresContainer").innerHTML=grupos.map(grupo=>{
     const rows=FILTRADOS.filter(d=>d.grupo===grupo);
-    const dentro=rows.filter(d=>d.status==="Superado").length;
+    const dentro=rows.filter(d=>d.status==="Dentro da Meta").length;
     const atencao=rows.filter(d=>d.status==="Atenção").length;
     const critico=rows.filter(d=>d.status==="Crítico").length;
     const sem=rows.filter(d=>d.status==="Sem dado").length;
@@ -774,7 +774,7 @@ function renderIndicadores(){
     const blocosHtml=blocos.map(bloco=>{
       if(bloco.tipo==="casado"){
         const par=bloco.par;
-        const todosOk=bloco.membros.every(m=>m.status==="Superado");
+        const todosOk=bloco.membros.every(m=>m.status==="Dentro da Meta");
         return `
           <div class="casadoWrap">
             <div class="casadoLabel">

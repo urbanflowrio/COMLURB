@@ -812,7 +812,7 @@ async function init(){
     title: "Acordo de Resultados 2026",
     subtitle: "Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas."
   });
-  HUB.footer.render("footer", { showTimestamp: true });
+  HUB.footer.render("footer");
   const mostrarErro=(fonte,msg)=>{
     $("loading").style.display="none";
     $("errorState").style.display="block";
@@ -839,6 +839,7 @@ async function init(){
     render();
     $("loading").style.display="none";
     $("conteudo").style.display="block";
+    HUB.footer.updateTimestamp();
   }catch(e){
     console.error(e);
     mostrarErro(e.fonte||"desconhecida", e.message||String(e));

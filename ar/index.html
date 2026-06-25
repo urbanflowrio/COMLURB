@@ -192,25 +192,25 @@ const CASADOS = [
     id: "par-02",
     label: "Meta dupla: Recuperação de Resíduos + Ranking Nacional",
     membros: ["E02","E03"],
-    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação."
+    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação. O ranking nacional é apurado pela SINISA com dados do ano anterior — o resultado de 2026 só será publicado em 2027."
   },
   {
     id: "par-03",
     label: "Meta dupla: Atendimento 1746 Poda + Satisfação Poda",
     membros: ["E04","E05"],
-    bonusNote: "Atingir o prazo de atendimento não garante a meta se a nota de satisfação ficar abaixo de 4,5."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 95% no prazo e nota de satisfação igual ou superior a 4,5. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-04",
     label: "Meta dupla: Atendimento 1746 Remoção + Satisfação Remoção",
     membros: ["E06","E07"],
-    bonusNote: "O prazo de atendimento e a nota de satisfação precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85% no prazo em cada subprefeitura e nota de satisfação igual ou superior a 4,4 para a cidade. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-c06",
     label: "Meta dupla (Condicionada): Conformidade IPL + Desvio Padrão IPL",
     membros: ["C01","C02"],
-    bonusNote: "A conformidade e o desvio padrão do IPL precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: conformidade acumulada igual ou superior a 80% e desvio padrão entre gerências igual ou inferior a 5,9. Os dois precisam ser atingidos juntos."
   }
 ];
 
@@ -300,7 +300,7 @@ function statusCanonico(atual,meta,sentido){
   if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
   const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
   if(ating>=1)return "Dentro da Meta";
-  if(ating>=.85)return "Atenção";
+  if(ating>=.90)return "Atenção";
   return "Crítico";
 }
 function tagClass(status){
@@ -555,14 +555,12 @@ function aplicarFiltros(){
 function renderResumo(){
   const b=calcularBonificacao(DATA);
 
-  // Card Estratégicas
   const eStrStatus=b.metasEstrategicasAtingidas===0
     ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
     :b.metasEstrategicasAtingidas>=5
     ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
     :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5</span>`;
 
-  // Card Condicionadas — inclui inline a nota de ativação, sem bloco separado
   const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"—";
   const condSub=b.condicionalAtiva?" / 3":"";
   const condStatus=!b.condicionalAtiva
@@ -576,7 +574,6 @@ function renderResumo(){
     ?"Ativas: "+b.metasEstrategicasAtingidas+" metas estratégicas atingidas."
     :"Entram na avaliação após 3 metas estratégicas. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
 
-  // Card Performance
   const p01=DATA.find(d=>d.codigo==="P01");
   const perfAtingida=b.condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
   const perfVal=b.condicionalAtiva?(perfAtingida?"1":"0"):"—";
@@ -590,7 +587,6 @@ function renderResumo(){
     ?"Mesma condição de ativação das condicionadas."
     :"Mesma condição de ativação das condicionadas.";
 
-  // Card Bônus
   const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
   const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
 

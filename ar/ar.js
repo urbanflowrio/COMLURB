@@ -1,759 +1,850 @@
-/*
- * HUB COMLURB · Acordo de Resultados
- * Motor do painel executivo.
- */
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Indicadores AR 2026 · HUB COMLURB</title>
+<link rel="stylesheet" href="../assets/css/hub-premium.css">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
+<style>
+/* ── Layout base ── */
+.app{max-width:1880px;padding:18px}
+.arFilters{display:flex !important;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0}
 
-(function(){
-  const CFG = window.AR_CONFIG || {};
-  const MESES = CFG.meses || [];
-  const STATUS_CFG = CFG.status || { superado: 1.000001, dentroMeta: 1, atencao: 0.9 };
+/* ── Resumo executivo ── */
+.execSummary{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}
+.summaryHero{background:var(--painel);border:1px solid var(--linha);border-radius:22px;overflow:hidden;min-height:260px}
+.summaryHero .body{min-height:210px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:28px;padding:0 28px 20px}
+.bigNumber{font-size:clamp(70px,7vw,112px);font-weight:950;letter-spacing:-.07em;line-height:.9;color:#5b9bd5;white-space:nowrap}
+.heroText h2{margin:0 0 10px;font-size:clamp(24px,2vw,36px);line-height:1.08;letter-spacing:-.03em}
+.heroText p{margin:0;color:#c7d8ee;line-height:1.5;max-width:760px}
+.statusGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.statusMini{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:120px}
+.statusMini small{display:block;font-size:10px;color:#b8d4f2;font-weight:950;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.statusMini b{display:block;color:#fff;font-size:32px;line-height:1;margin-bottom:7px}
+.statusMini span{display:block;color:#c7d8ee;font-size:12px;line-height:1.35}
+.statusMini.ok{border-color:rgba(120,170,163,.52)}
+.statusMini.att{border-color:rgba(255,160,43,.46)}
+.statusMini.crit{border-color:rgba(239,106,93,.52)}
+.statusMini.nd{border-color:rgba(167,139,250,.42)}
+.statusMini.superado{border-color:rgba(91,155,213,.52)}
 
-  const state = {
-    raw: {
-      geral: [],
-      ar: [],
-      mapeamento: [],
-      governanca: []
-    },
-    indicadores: [],
-    filtrados: [],
-    filters: {
-      ano: "",
-      grupo: "",
-      status: "",
-      diretoria: "",
-      busca: ""
+/* ── Painel de Bonificação ── */
+.bonusPanel{background:var(--painel);border:1px solid rgba(91,155,213,.3);border-radius:22px;padding:20px 22px;margin-bottom:14px}
+.bonusPanelHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.bonusPanelHead h2{margin:0;font-size:16px;font-weight:950;color:#fff;letter-spacing:.01em}
+.bonusPanelHead .hint{color:#9fb0c7;font-size:11px}
+.bonusGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.bonusCard{background:rgba(255,255,255,.04);border:1px solid var(--linha);border-radius:16px;padding:14px 16px}
+.bonusCard .label{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:6px}
+.bonusCard .valor{font-size:28px;font-weight:950;color:#fff;line-height:1;margin-bottom:6px}
+.bonusCard .detalhe{font-size:11px;color:#c7d8ee;line-height:1.4}
+.bonusCard.destaque{border-color:rgba(91,155,213,.5);background:rgba(91,155,213,.08)}
+.bonusCard.destaque .valor{color:#5b9bd5}
+.metaContagem{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--linha);border-radius:14px;padding:12px 16px}
+.metaContagem .tituloContagem{font-size:11px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#9fb0c7;margin-bottom:10px}
+.metaLinhas{display:grid;gap:6px}
+.metaLinha{display:grid;grid-template-columns:22px 1fr auto auto;gap:10px;align-items:center;font-size:12px}
+.metaLinha .cod{color:#9fb0c7;font-weight:950;font-size:10px}
+.metaLinha .desc{color:#c7d8ee}
+.metaLinha .status-mini{font-size:10px;font-weight:950}
+.metaLinha.ok .status-mini{color:#83d99d}
+.metaLinha.att .status-mini{color:#ffa02b}
+.metaLinha.crit .status-mini{color:#ff7d72}
+.metaLinha.nd .status-mini{color:#cdbdff}
+.casadoBadge{font-size:9px;background:rgba(91,155,213,.15);border:1px solid rgba(91,155,213,.4);color:#7ec3f5;border-radius:6px;padding:2px 6px;white-space:nowrap}
+
+.btnLimpar{background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#7a9bbf;font-size:11px;font-weight:950;letter-spacing:.08em;padding:0 16px;height:44px;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s;flex-shrink:0}
+.btnLimpar:hover{border-color:rgba(255,255,255,.28);color:#c7d8ee}
+
+/* ── Blocos de indicadores ── */
+.arBlock{margin-top:14px}
+.arBlockHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 2px;margin-bottom:10px}
+.arBlockTitle{margin:0;font-size:18px;font-weight:950;color:#fff;letter-spacing:.01em}
+.arBlockMeta{color:#c7d8ee;font-size:12px;font-weight:800}
+.indicatorList{display:grid;gap:10px}
+
+/* ── Linha de indicador ── */
+.indicatorRow{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:15px 16px;display:grid;grid-template-columns:72px minmax(280px,1.3fr) repeat(5,minmax(110px,.55fr));gap:14px;align-items:center;min-height:96px;overflow:hidden}
+.indicatorRow.ok{border-left:4px solid var(--verde)}
+.indicatorRow.att{border-left:4px solid var(--amarelo)}
+.indicatorRow.crit{border-left:4px solid var(--vermelho)}
+.indicatorRow.nd{border-left:4px solid var(--roxo)}
+.indicatorRow.superado{border-left:4px solid #5b9bd5}
+
+/* ── Grupo casado: wrapper visual ── */
+.casadoWrap{background:rgba(91,155,213,.04);border:1px solid rgba(91,155,213,.22);border-radius:20px;padding:10px;margin-bottom:10px}
+.casadoLabel{display:flex;align-items:center;gap:8px;padding:0 6px 8px;font-size:11px;font-weight:950;color:#7ec3f5;letter-spacing:.1em;text-transform:uppercase}
+.casadoLabel svg{opacity:.7}
+.casadoBonusNote{margin-top:8px;padding:8px 12px;background:rgba(91,155,213,.08);border:1px solid rgba(91,155,213,.25);border-radius:12px;font-size:11px;color:#7ec3f5;line-height:1.4}
+
+/* ── Badge proporcional ── */
+.propBadge{font-size:9px;font-weight:950;color:#7ec3f5;background:rgba(91,155,213,.12);border:1px solid rgba(91,155,213,.3);border-radius:5px;padding:1px 5px;margin-left:3px;white-space:nowrap;vertical-align:middle;cursor:help}
+
+/* ── Células ── */
+.codeBox{font-size:12px;font-weight:950;letter-spacing:.14em;color:#b8d4f2}
+.indName b{display:block;color:#fff;font-size:15px;line-height:1.25;margin-bottom:5px}
+.indName span{display:block;color:#aebfd5;font-size:12px;line-height:1.35;max-width:520px}
+.metricCell small{display:block;color:#9fb0c7;font-size:9px;font-weight:950;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.metricCell b{display:block;color:#fff;font-size:16px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-flex;align-items:center;justify-content:center;border:1px solid #345978;border-radius:999px;padding:6px 10px;font-weight:950;font-size:11px;line-height:1;white-space:nowrap;max-width:100%}
+.tag.ok{border-color:#3f7d55;color:#83d99d}
+.tag.att{border-color:#8d6a23;color:#ffa02b}
+.tag.crit{border-color:#8b3f38;color:#ff7d72}
+.tag.nd{border-color:#6d5ba0;color:#cdbdff}
+.tag.superado{border-color:#3f7d55;color:#83d99d}
+
+/* ── Nota de governança ── */
+.govNote{margin:16px 0 0;border:1px solid rgba(167,139,250,.28);background:rgba(167,139,250,.06);border-radius:16px;padding:13px 15px;color:#cdbdff;font-size:12px;line-height:1.45}
+.emptyBlock{color:#aebfd5;border:1px solid var(--linha);background:var(--painel);border-radius:16px;padding:18px;text-align:center}
+
+/* ── Responsivo ── */
+@media(max-width:1380px){
+  .indicatorRow{grid-template-columns:70px minmax(250px,1.4fr) repeat(3,minmax(110px,.6fr))}
+  .indicatorRow .metricCell:nth-child(6),.indicatorRow .metricCell:nth-child(7){grid-column:auto}
+  .bonusGrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:1180px){
+  .execSummary{grid-template-columns:1fr}
+  .indicatorRow{grid-template-columns:70px 1fr 1fr 1fr}
+  .indName{grid-column:2/5}
+  .bonusGrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .arFilters,.statusGrid,.summaryHero .body{grid-template-columns:1fr !important}
+  .indicatorRow{grid-template-columns:1fr}
+  .indName{grid-column:auto}
+  .arBlockHead{flex-direction:column;align-items:flex-start}
+  .bonusGrid{grid-template-columns:1fr}
+}
+
+/* ── Placar executivo ── */
+.placarGrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.placarCard{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:18px 20px}
+.placarCard .pcLabel{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:8px}
+.placarCard .pcPlacar{font-size:44px;font-weight:950;line-height:1;color:#fff;margin-bottom:6px}
+.placarCard .pcPlacar span{font-size:20px;color:#6a8099;font-weight:700}
+.placarCard .pcDesc{font-size:12px;color:#9fb0c7;line-height:1.35;margin-bottom:10px}
+.placarCard .pcStatus{display:inline-flex;align-items:center;font-size:11px;font-weight:950;padding:4px 10px;border-radius:999px;border:1px solid}
+.placarCard.estr{border-top:3px solid #5b9bd5}
+.placarCard.cond{border-top:3px solid var(--amarelo)}
+.placarCard.perf{border-top:3px solid var(--roxo)}
+.placarCard.bonus{border-top:3px solid #5b9bd5;border-color:rgba(91,155,213,.4);background:rgba(91,155,213,.05)}
+.placarCard.bonus .pcPlacar{font-size:clamp(72px,8vw,108px);font-weight:950;letter-spacing:-.05em;line-height:.9;color:#5b9bd5;margin-bottom:14px}
+.placarCard.bonus .pcPlacar span{font-size:clamp(28px,3vw,40px);color:rgba(91,155,213,.6);font-weight:700}
+.placarCard.bonus .pcLabel{font-size:11px;margin-bottom:14px}
+.placarCard.bonus .pcDesc{font-size:11px;margin-bottom:14px}
+.pcStatusOk{color:#83d99d;border-color:rgba(120,170,163,.4);background:rgba(120,170,163,.08)}
+.pcStatusAtt{color:#ffa02b;border-color:rgba(255,160,43,.35);background:rgba(255,160,43,.07)}
+.pcStatusCrit{color:#ff7d72;border-color:rgba(239,106,93,.35);background:rgba(239,106,63,.07)}
+.pcStatusBloq{color:#6a8099;border-color:rgba(106,128,153,.3);background:rgba(106,128,153,.06)}
+
+@media(max-width:1180px){.placarGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.placarGrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div id="header"></div>
+
+<!-- FILTROS -->
+<section class="filters arFilters">
+  <div class="field"><label>Grupo</label><select id="fGrupo"><option value="">Todos</option></select></div>
+  <div class="field"><label>Status</label><select id="fStatus"><option value="">Todos</option></select></div>
+  <button class="btnLimpar" id="btnLimpar">✕ Limpar</button>
+</section>
+
+<div id="loading" class="loading">Carregando indicadores publicados...</div>
+<div id="errorState" class="emptyBlock" style="display:none"></div>
+
+<main id="conteudo" style="display:none">
+
+  <!-- PLACAR EXECUTIVO -->
+  <div class="placarGrid" id="placarGrid"></div>
+
+  <!-- PAINEL DE BONIFICAÇÃO -->
+  <section class="bonusPanel" id="bonusPanel"></section>
+
+  <!-- INDICADORES -->
+  <div id="indicadoresContainer"></div>
+
+  <div class="govNote">
+    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado são comparados à meta do período, não à meta anual cheia. O badge <em>prop.</em> identifica esses casos.
+    <strong>Tendência:</strong> compara a média dos últimos 3 meses com os 3 anteriores. Quando há menos de 6 meses de histórico, aparece "Série curta".
+    <strong>Metas casadas:</strong> nos pares de indicadores, os dois precisam ser atingidos para contar uma meta na bonificação. O bom resultado de um não compensa o outro.
+    <strong>Bonificação:</strong> a projeção é calculada com base no status atual e está sujeita à validação oficial pela CVL.
+  </div>
+</main>
+
+<div id="footer"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURAÇÃO CENTRAL — METAS CASADAS E BONIFICAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+const CASADOS = [
+  {
+    id: "par-02",
+    label: "Meta dupla: Recuperação de Resíduos + Ranking Nacional",
+    membros: ["E02","E03"],
+    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação."
+  },
+  {
+    id: "par-03",
+    label: "Meta dupla: Atendimento 1746 Poda + Satisfação Poda",
+    membros: ["E04","E05"],
+    bonusNote: "Atingir o prazo de atendimento não garante a meta se a nota de satisfação ficar abaixo de 4,5."
+  },
+  {
+    id: "par-04",
+    label: "Meta dupla: Atendimento 1746 Remoção + Satisfação Remoção",
+    membros: ["E06","E07"],
+    bonusNote: "O prazo de atendimento e a nota de satisfação precisam ser atingidos juntos."
+  },
+  {
+    id: "par-c06",
+    label: "Meta dupla (Condicionada): Conformidade IPL + Desvio Padrão IPL",
+    membros: ["C01","C02"],
+    bonusNote: "A conformidade e o desvio padrão do IPL precisam ser atingidos juntos."
+  }
+];
+
+const BONUS_ESTRATEGICO = [
+  {metas: 5, nota: 8.7, pct: 74},
+  {metas: 4, nota: 8.4, pct: 68},
+  {metas: 3, nota: 8,   pct: 60},
+  {metas: 2, nota: 7,   pct: 20},
+  {metas: 1, nota: 6,   pct: 0},
+  {metas: 0, nota: 0,   pct: 0}
+];
+
+const BONUS_CONDICIONADO = [
+  {metas: 3, ponto: 0.3, pct: 6},
+  {metas: 2, ponto: 0.2, pct: 4},
+  {metas: 1, ponto: 0,   pct: 0},
+  {metas: 0, ponto: 0,   pct: 0}
+];
+
+const BONUS_PERFORMANCE = {ponto: 1, pct: 20};
+
+/* ═══════════════════════════════════════════════════════════
+   FONTES DE DADOS
+   ═══════════════════════════════════════════════════════════ */
+const URLS = {
+  geral: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",
+  ar:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",
+  map:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"
+};
+
+const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+let RAW = {geral:[], ar:[], map:[]}, DATA = [], FILTRADOS = [];
+const $ = id => document.getElementById(id);
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITÁRIOS
+   ═══════════════════════════════════════════════════════════ */
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function norm(v){return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim();}
+function key(v){return norm(v).replace(/[^a-z0-9]/g,"");}
+function get(row,names,fallback=""){
+  if(!row)return fallback;
+  for(const n of names){if(row[n]!==undefined&&String(row[n]).trim()!=="")return row[n];}
+  const dict={};Object.keys(row).forEach(k=>dict[key(k)]=k);
+  for(const n of names){const k=dict[key(n)];if(k&&row[k]!==undefined&&String(row[k]).trim()!=="")return row[k];}
+  return fallback;
+}
+function csv(url){
+  return new Promise((resolve,reject)=>{
+    Papa.parse(url,{download:true,header:true,skipEmptyLines:true,
+      complete:r=>resolve((r.data||[]).filter(row=>Object.values(row).some(v=>String(v??"").trim()!==""))),
+      error:reject});
+  });
+}
+function num(v){
+  if(v===null||v===undefined)return null;
+  if(typeof v==="number"&&Number.isFinite(v))return v;
+  let s=String(v).trim();
+  if(!s||s==="-"||s==="—")return null;
+  s=s.replace(/\s/g,"").replace("%","");
+  if(s.includes(",")&&s.includes("."))s=s.replace(/\./g,"").replace(",",".");
+  else if(s.includes(",")&&!s.includes("."))s=s.replace(",",".");
+  else if(s.includes(".")&&!s.includes(",")){
+    const pts=s.split(".");
+    if(pts.length===2&&pts[1].length===3&&/^\d+$/.test(pts[0])&&/^\d+$/.test(pts[1]))
+      s=pts[0]+pts[1];
+  }
+  const n=Number(s);return Number.isFinite(n)?n:null;
+}
+function isPercent(unidade){const u=norm(unidade);return u.includes("percent")||u==="%";}
+function calcValue(v,unidade){let n=num(v);if(n===null)return null;if(isPercent(unidade)&&n>1.5)n=n/100;return n;}
+function fmtValor(v,unidade){
+  if(v===null||v===undefined||v==="")return "—";
+  let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "—";
+  if(isPercent(unidade)){if(n<=1.5)n=n*100;return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
+  if(norm(unidade).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";
+  if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
+  return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
+}
+function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "—";return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
+function maiorMelhor(sentido){const s=norm(sentido);return s.includes("maior")||s.includes("↑")||s==="";}
+
+/* ═══════════════════════════════════════════════════════════
+   STATUS
+   ═══════════════════════════════════════════════════════════ */
+function statusCanonico(atual,meta,sentido){
+  if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
+  const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
+  if(ating>=1)return "Dentro da Meta";
+  if(ating>=.85)return "Atenção";
+  return "Crítico";
+}
+function tagClass(status){
+  const s=norm(status);
+  if(s.includes("dentro")||s.includes("superado"))return "ok";
+  if(s.includes("aten"))return "att";
+  if(s.includes("critic"))return "crit";
+  return "nd";
+}
+function grupoOrdem(grupo){
+  const g=norm(grupo);
+  if(g.includes("estrateg"))return 1;
+  if(g.includes("condicion"))return 2;
+  if(g.includes("performance"))return 3;
+  return 9;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TENDÊNCIA
+   ═══════════════════════════════════════════════════════════ */
+function montarMapeamento(){
+  const map=new Map();
+  RAW.map.forEach(r=>{
+    const codigo=String(get(r,["Código_AR","Codigo_AR","Código","Codigo","Código AR","Codigo AR"])).trim();
+    if(!codigo)return;
+    map.set(codigo,{
+      indicadorGeral:String(get(r,["Indicador_Geral","Indicador Geral","Indicador Real","Nome na geral","Indicador"])).trim(),
+      diretoria:String(get(r,["Filtro_Diretoria","Diretoria"])).trim(),
+      superint:String(get(r,["Filtro_Superint","Filtro_Superintendência","Superint.","Superintendência"])).trim(),
+      gerencia:String(get(r,["Filtro_Gerência","Filtro_Gerencia","Gerência","Gerencia"])).trim()
+    });
+  });
+  return map;
+}
+function encontrarGeral(indicador,mapItem){
+  const nomeMap=norm(mapItem?.indicadorGeral||""),nomeInd=norm(indicador.indicador);
+  const rows=RAW.geral.filter(r=>{
+    const ano=String(get(r,["Ano"])).trim();
+    if(ano&&ano!=="2026")return false;
+    const nomeGeral=norm(get(r,["Indicador"]));
+    if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}
+    else{if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral))return false;}
+    const fDir=norm(mapItem?.diretoria||""),fSup=norm(mapItem?.superint||""),fGer=norm(mapItem?.gerencia||"");
+    if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir)return false;
+    if(fSup&&fSup!=="-"&&norm(get(r,["Superint.","Superintendência","Superint"]))!==fSup)return false;
+    if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer)return false;
+    return true;
+  });
+  return rows[0]||null;
+}
+function valoresMensais(row,unidade){
+  if(!row)return [];
+  return MESES.map(m=>calcValue(get(row,[m]),unidade)).filter(v=>v!==null);
+}
+function tendenciaTexto(row,unidade,sentido){
+  const vals=valoresMensais(row,unidade);
+  if(vals.length<6)return "Série curta";
+  const ult3=vals.slice(-3),ant3=vals.slice(-6,-3);
+  const mediaUlt=ult3.reduce((s,v)=>s+v,0)/ult3.length,mediaAnt=ant3.reduce((s,v)=>s+v,0)/ant3.length;
+  const dif=mediaUlt-mediaAnt;
+  if(Math.abs(dif)<0.00001)return "Estável";
+  const favoravel=maiorMelhor(sentido)?dif>0:dif<0;
+  return favoravel?"Favorável":"Desfavorável";
+}
+function tendenciaClass(t){
+  const x=norm(t);
+  if(x.includes("favor"))return "ok";
+  if(x.includes("desfavor"))return "crit";
+  if(x.includes("estavel"))return "att";
+  return "nd";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROCESSAMENTO PRINCIPAL
+   ═══════════════════════════════════════════════════════════ */
+function processar(){
+  const map=montarMapeamento();
+  DATA=RAW.ar.map((r,idx)=>{
+    const codigo=String(get(r,["Código","Codigo"])).trim()||`AR${idx+1}`;
+    const d={
+      codigo,
+      grupo:String(get(r,["Grupo"],"Sem grupo")).trim()||"Sem grupo",
+      ordem:num(get(r,["Ordem"]))??idx+1,
+      indicador:String(get(r,["Indicador Executivo","Indicador_Executivo","Indicador"],codigo)).trim(),
+      descricao:String(get(r,["Descrição Resumida","Descricao Resumida","Descrição","Descricao"])).trim(),
+      unidade:String(get(r,["Unidade"])).trim(),
+      sentido:String(get(r,["Sentido"],"maior_melhor")).trim(),
+      metaRaw:get(r,["Meta_2026","Meta 2026","Meta"]),
+      atualRaw:get(r,["Atual","Resultado Atual","Acumulado"]),
+      fonte:String(get(r,["Fonte_Dados","Fonte Dados","Fonte"])).trim(),
+      pendencia:String(get(r,["Pendência_Oficial","Pendencia Oficial","Pendência","Pendencia"])).trim(),
+      tipoAcumulado:String(get(r,["Tipo_Acumulado","Tipo Acumulado"],"SOMA")).trim().toUpperCase(),
+      periodicidade:String(get(r,["Periodicidade"],"Mensal")).trim()
+    };
+    const linha=encontrarGeral(d,map.get(codigo));
+    if(linha){
+      d.unidade=d.unidade||String(get(linha,["Unidade"])).trim();
+      d.sentido=d.sentido||String(get(linha,["Sentido"],"maior_melhor")).trim();
+      d.atualRaw=d.atualRaw||get(linha,["Acumulado"]);
+      d.metaRaw=d.metaRaw||get(linha,["Meta"]);
     }
+    d.atual=calcValue(d.atualRaw,d.unidade);
+    d.meta=calcValue(d.metaRaw,d.unidade);
+    if(d.atual!==null&&d.meta!==null&&d.meta!==0){
+      const isSomaAnual=d.tipoAcumulado==="SOMA"&&norm(d.periodicidade).includes("mensal");
+      if(isSomaAnual){
+        const mesAtual=new Date().getMonth()+1;
+        d.metaProporcional=d.meta*(mesAtual/12);
+        d.atingimento=d.metaProporcional>0?
+          (maiorMelhor(d.sentido)?d.atual/d.metaProporcional:d.metaProporcional/d.atual):null;
+        d.atingimentoProporcional=true;
+      } else {
+        d.metaProporcional=null;
+        d.atingimento=maiorMelhor(d.sentido)?d.atual/d.meta:d.meta/d.atual;
+        d.atingimentoProporcional=false;
+      }
+    } else {
+      d.atingimento=null;d.metaProporcional=null;d.atingimentoProporcional=false;
+    }
+
+    const rawStatus=String(get(r,["Status"])).trim();
+    if(rawStatus&&rawStatus!=="Indisponível"){
+      d.status=(rawStatus==="Superado"||rawStatus==="Dentro da Meta")?"Dentro da Meta":
+               rawStatus==="Atenção"?"Atenção":
+               rawStatus==="Crítico"?"Crítico":"Sem dado";
+      d.statusDisplay=d.status;
+    } else {
+      const metaRef=d.metaProporcional??d.meta;
+      d.status=statusCanonico(d.atual,metaRef,d.sentido);
+      d.statusDisplay=d.status;
+    }
+
+    d.statusClass=tagClass(d.statusDisplay);
+    d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);
+    d.tendenciaClass=tendenciaClass(d.tendencia);
+
+    const par=CASADOS.find(c=>c.membros.includes(codigo));
+    d.casadoId=par?par.id:null;
+    d.casadoLabel=par?par.label:null;
+
+    return d;
+  })
+  .filter(d=>d.codigo||d.indicador)
+  .sort((a,b)=>grupoOrdem(a.grupo)-grupoOrdem(b.grupo)||a.ordem-b.ordem);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CÁLCULO DE BONIFICAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function calcularBonificacao(lista){
+  const byId=Object.fromEntries(lista.map(d=>[d.codigo,d]));
+
+  const estratIndividuais=["E01","E08"];
+  const estratCasados=CASADOS.filter(c=>lista.some(d=>d.grupo.toLowerCase().includes("estrateg")&&c.membros.includes(d.codigo)));
+
+  let metasEstrategicasAtingidas=0;
+  const detalhesEstrategicos=[];
+
+  estratIndividuais.forEach(cod=>{
+    const d=byId[cod];
+    if(!d)return;
+    const atingiu=d.status==="Dentro da Meta";
+    if(atingiu)metasEstrategicasAtingidas++;
+    detalhesEstrategicos.push({cod,label:d.indicador,atingiu,casado:false});
+  });
+
+  estratCasados.forEach(par=>{
+    const todos=par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    if(todos)metasEstrategicasAtingidas++;
+    detalhesEstrategicos.push({
+      cod:par.membros.join("+"),
+      label:par.label,
+      atingiu:todos,
+      casado:true,
+      membros:par.membros.map(m=>({cod:m,indicador:byId[m]?.indicador||m,status:byId[m]?.statusDisplay||"Sem dado",statusClass:byId[m]?.statusClass||"nd"})),
+      bonusNote:par.bonusNote
+    });
+  });
+
+  const totalEstrategicas=estratIndividuais.filter(c=>byId[c]).length + estratCasados.length;
+  const condicionalAtiva=metasEstrategicasAtingidas>=3;
+
+  const regE=BONUS_ESTRATEGICO.find(r=>metasEstrategicasAtingidas>=r.metas)||BONUS_ESTRATEGICO[BONUS_ESTRATEGICO.length-1];
+
+  const condIndividuais=["C03","C04"];
+  const condCasados=CASADOS.filter(c=>lista.some(d=>d.grupo.toLowerCase().includes("condicion")&&c.membros.includes(d.codigo)));
+
+  let metasCondicionadasAtingidas=0;
+  const detalhesCondicionados=[];
+
+  condIndividuais.forEach(cod=>{
+    const d=byId[cod];
+    if(!d)return;
+    const atingiu=condicionalAtiva&&d.status==="Dentro da Meta";
+    if(atingiu)metasCondicionadasAtingidas++;
+    detalhesCondicionados.push({cod,label:d.indicador,atingiu,casado:false,bloqueado:!condicionalAtiva});
+  });
+
+  condCasados.forEach(par=>{
+    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    if(todos)metasCondicionadasAtingidas++;
+    detalhesCondicionados.push({
+      cod:par.membros.join("+"),
+      label:par.label,
+      atingiu:todos,
+      casado:true,
+      bloqueado:!condicionalAtiva,
+      membros:par.membros.map(m=>({cod:m,indicador:byId[m]?.indicador||m,status:byId[m]?.statusDisplay||"Sem dado",statusClass:byId[m]?.statusClass||"nd"})),
+      bonusNote:par.bonusNote
+    });
+  });
+
+  const regC=BONUS_CONDICIONADO.find(r=>metasCondicionadasAtingidas>=r.metas)||BONUS_CONDICIONADO[BONUS_CONDICIONADO.length-1];
+
+  const p01=byId["P01"];
+  const performanceAtingida=condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
+  const bonusPerformance=performanceAtingida?BONUS_PERFORMANCE.pct:0;
+
+  const bonusTotal=regE.pct+(condicionalAtiva?regC.pct:0)+(condicionalAtiva?bonusPerformance:0);
+
+  return {
+    metasEstrategicasAtingidas,totalEstrategicas,
+    regE,condicionalAtiva,
+    metasCondicionadasAtingidas,regC,
+    performanceAtingida,bonusPerformance,
+    bonusTotal,
+    detalhesEstrategicos,detalhesCondicionados
   };
+}
 
-  const $ = (id) => document.getElementById(id);
+/* ═══════════════════════════════════════════════════════════
+   FILTROS E POPULAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function popularFiltros(){
+  const grupos=[...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
+  $("fGrupo").innerHTML=`<option value="">Todos</option>`+grupos.map(g=>`<option>${esc(g)}</option>`).join("");
+  const status=["Dentro da Meta","Atenção","Crítico","Sem dado"];
+  $("fStatus").innerHTML=`<option value="">Todos</option>`+status.map(s=>`<option>${esc(s)}</option>`).join("");
+}
+function aplicarFiltros(){
+  const grupo=$("fGrupo").value,status=$("fStatus").value;
+  FILTRADOS=DATA.filter(d=>{
+    if(grupo&&d.grupo!==grupo)return false;
+    if(status&&d.status!==status)return false;
+    return true;
+  });
+}
 
-  function esc(value){
-    return String(value ?? "").replace(/[&<>"']/g, c => ({
-      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-    }[c]));
+/* ═══════════════════════════════════════════════════════════
+   RENDER: PLACAR EXECUTIVO
+   ═══════════════════════════════════════════════════════════ */
+function renderResumo(){
+  const b=calcularBonificacao(DATA);
+
+  // Card Estratégicas
+  const eStrStatus=b.metasEstrategicasAtingidas===0
+    ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
+    :b.metasEstrategicasAtingidas>=5
+    ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
+    :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5</span>`;
+
+  // Card Condicionadas — inclui inline a nota de ativação, sem bloco separado
+  const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"—";
+  const condSub=b.condicionalAtiva?" / 3":"";
+  const condStatus=!b.condicionalAtiva
+    ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
+    :b.metasCondicionadasAtingidas===0
+    ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
+    :b.metasCondicionadasAtingidas>=3
+    ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
+    :`<span class="pcStatus pcStatusAtt">${b.metasCondicionadasAtingidas} de 3</span>`;
+  const condDesc=b.condicionalAtiva
+    ?"Ativas: "+b.metasEstrategicasAtingidas+" metas estratégicas atingidas."
+    :"Entram na avaliação após 3 metas estratégicas. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
+
+  // Card Performance
+  const p01=DATA.find(d=>d.codigo==="P01");
+  const perfAtingida=b.condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
+  const perfVal=b.condicionalAtiva?(perfAtingida?"1":"0"):"—";
+  const perfSub=b.condicionalAtiva?" / 1":"";
+  const perfStatus=!b.condicionalAtiva
+    ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
+    :perfAtingida
+    ?'<span class="pcStatus pcStatusOk">Cumprida</span>'
+    :'<span class="pcStatus pcStatusCrit">Não cumprida</span>';
+  const perfDesc=b.condicionalAtiva
+    ?"Mesma condição de ativação das condicionadas."
+    :"Mesma condição de ativação das condicionadas.";
+
+  // Card Bônus
+  const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
+  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
+
+  $("placarGrid").innerHTML=
+    '<div class="placarCard bonus">'+
+      '<div class="pcLabel">Bônus Projetado</div>'+
+      '<div class="pcPlacar">'+b.bonusTotal+'<span>%</span></div>'+
+      '<div class="pcDesc">'+descBonus+'</div>'+
+      '<span class="pcStatus '+bonusClass+'">'+(b.bonusTotal>0?"Bônus ativo":"Sem bônus")+'</span>'+
+    '</div>'+
+    '<div class="placarCard estr">'+
+      '<div class="pcLabel">Metas Estratégicas</div>'+
+      '<div class="pcPlacar">'+b.metasEstrategicasAtingidas+'<span> / 5</span></div>'+
+      '<div class="pcDesc">8 indicadores monitorados. Pares contam como uma meta.</div>'+
+      eStrStatus+
+    '</div>'+
+    '<div class="placarCard cond">'+
+      '<div class="pcLabel">Metas Condicionadas</div>'+
+      '<div class="pcPlacar">'+condVal+'<span>'+condSub+'</span></div>'+
+      '<div class="pcDesc">'+condDesc+'</div>'+
+      condStatus+
+    '</div>'+
+    '<div class="placarCard perf">'+
+      '<div class="pcLabel">Meta de Performance</div>'+
+      '<div class="pcPlacar">'+perfVal+'<span>'+perfSub+'</span></div>'+
+      '<div class="pcDesc">'+perfDesc+'</div>'+
+      perfStatus+
+    '</div>';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: PAINEL DE BONIFICAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function renderBonus(){
+  const b=calcularBonificacao(DATA);
+  const panel=$("bonusPanel");
+
+  function linhaSimples(item){
+    var cls=item.atingiu?"ok":"crit";
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    return '<div class="metaLinha '+cls+'">'+
+      '<span class="cod">'+esc(item.cod)+'</span>'+
+      '<span class="desc">'+esc(item.label)+'</span>'+
+      '<span class="status-mini">'+statusTxt+'</span>'+
+      '<span></span>'+
+    '</div>';
   }
 
-  function first(row, names, fallback = ""){
-    if(!row) return fallback;
-    for(const name of names){
-      if(Object.prototype.hasOwnProperty.call(row, name) && row[name] !== undefined && row[name] !== null && String(row[name]).trim() !== ""){
-        return row[name];
-      }
-    }
-    const normalized = {};
-    Object.keys(row).forEach(k => normalized[normKey(k)] = k);
-    for(const name of names){
-      const k = normalized[normKey(name)];
-      if(k && row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== ""){
-        return row[k];
-      }
-    }
-    return fallback;
+  function linhaCasada(item){
+    var cls=item.atingiu?"ok":"crit";
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    var membrosHtml=item.membros.map(function(m){
+      return '<div class="metaLinha '+esc(m.statusClass)+'" style="padding-left:20px">'+
+        '<span class="cod">'+esc(m.cod)+'</span>'+
+        '<span class="desc">'+esc(m.indicador)+'</span>'+
+        '<span class="status-mini">'+esc(m.status)+'</span>'+
+        '<span></span>'+
+      '</div>';
+    }).join("");
+    var labelTxt=item.label.replace("Meta dupla: ","").replace("Meta dupla (Condicionada): ","");
+    return '<div class="metaLinha '+cls+'" style="flex-wrap:wrap">'+
+        '<span class="cod">⊞</span>'+
+        '<span class="desc" style="color:#fff;font-weight:950">'+esc(labelTxt)+'</span>'+
+        '<span class="status-mini">'+statusTxt+'</span>'+
+        '<span class="casadoBadge">Par</span>'+
+      '</div>'+membrosHtml;
   }
 
-  function normKey(s){
-    return String(s ?? "")
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "");
-  }
-
-  function normText(s){
-    return String(s ?? "")
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .trim();
-  }
-
-  function toNumber(value){
-    if(value === null || value === undefined) return null;
-    if(typeof value === "number" && Number.isFinite(value)) return value;
-
-    let s = String(value).trim();
-    if(!s || s === "-" || s === "—") return null;
-
-    s = s.replace(/\s/g, "").replace(/%/g, "");
-
-    if(s.includes(",") && s.includes(".")){
-      s = s.replace(/\./g, "").replace(",", ".");
-    } else if(s.includes(",")){
-      s = s.replace(",", ".");
-    }
-
-    const n = Number(s);
-    return Number.isFinite(n) ? n : null;
-  }
-
-  function fmtNumber(value, unit){
-    const n = toNumber(value);
-    if(n === null) return "—";
-
-    const u = String(unit || "").toLowerCase();
-
-    if(u.includes("percent") || u === "%" || (Math.abs(n) <= 1.5 && u.includes("%"))){
-      const pct = Math.abs(n) <= 1.5 ? n * 100 : n;
-      return pct.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%";
-    }
-
-    if(u.includes("posição")){
-      return n.toLocaleString("pt-BR", { maximumFractionDigits: 0 }) + "º";
-    }
-
-    return n.toLocaleString("pt-BR", { maximumFractionDigits: n >= 100 ? 0 : 2 });
-  }
-
-  function fmtAting(value){
-    const n = toNumber(value);
-    if(n === null) return "—";
-    return (n * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%";
-  }
-
-  function isMaiorMelhor(sentido){
-    const s = normText(sentido);
-    return s.includes("maior") || s.includes("↑") || s.includes("subir") || s === "";
-  }
-
-  function classeStatus(status){
-    const s = normText(status);
-    if(s.includes("super") || s.includes("dentro") || s.includes("meta atingida")) return "green";
-    if(s.includes("aten")) return "orange";
-    if(s.includes("critic") || s.includes("abaixo")) return "red";
-    return "purple";
-  }
-
-  function calcularAtingimento(atual, meta, sentido){
-    const a = toNumber(atual);
-    const m = toNumber(meta);
-    if(a === null || m === null || a === 0 || m === 0) return null;
-    return isMaiorMelhor(sentido) ? a / m : m / a;
-  }
-
-  function calcularStatus(atingimento){
-    const a = toNumber(atingimento);
-    if(a === null) return "Indisponível";
-    if(a > STATUS_CFG.superado) return "Superado";
-    if(a >= STATUS_CFG.dentroMeta) return "Dentro da Meta";
-    if(a >= STATUS_CFG.atencao) return "Atenção";
-    return "Crítico";
-  }
-
-  function calcularTendencia(atual, referencia, sentido){
-    const a = toNumber(atual);
-    const r = toNumber(referencia);
-    if(a === null || r === null || r === 0) return "Indisponível";
-
-    const diff = a - r;
-    if(Math.abs(diff) < 0.00001) return "Estável";
-
-    const positivo = isMaiorMelhor(sentido) ? diff > 0 : diff < 0;
-    return positivo ? "Positiva" : "Negativa";
-  }
-
-  function inferirAno(){
-    const anos = new Set();
-
-    state.raw.geral.forEach(r => {
-      const ano = first(r, ["Ano"]);
-      if(ano) anos.add(String(ano).trim());
-    });
-
-    if(!anos.size && CFG.anoDefault) anos.add(String(CFG.anoDefault));
-
-    return Array.from(anos).sort().reverse();
-  }
-
-  async function loadCSV(url, nome, required){
-    if(!url) {
-      if(required) throw new Error("URL não informada para " + nome);
-      return [];
-    }
-
-    return new Promise((resolve, reject) => {
-      Papa.parse(url, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        dynamicTyping: false,
-        complete: (res) => {
-          if(res.errors && res.errors.length){
-            console.warn("Avisos ao carregar", nome, res.errors);
-          }
-          resolve((res.data || []).filter(row => Object.values(row).some(v => String(v ?? "").trim() !== "")));
-        },
-        error: (err) => {
-          if(required) reject(new Error("Falha ao carregar " + nome + ": " + err.message));
-          else {
-            console.warn("Falha opcional ao carregar", nome, err);
-            resolve([]);
-          }
-        }
-      });
-    });
-  }
-
-  async function carregarDados(){
-    const urls = CFG.urls || {};
-    const [geral, ar, mapeamento, governanca] = await Promise.all([
-      loadCSV(urls.geral, "geral", true),
-      loadCSV(urls.ar2026, "AR_2026", true),
-      loadCSV(urls.mapeamento, "mapeamento", false),
-      loadCSV(urls.governanca, "governança", false)
-    ]);
-
-    state.raw.geral = geral;
-    state.raw.ar = ar;
-    state.raw.mapeamento = mapeamento;
-    state.raw.governanca = governanca;
-  }
-
-  function montarIndiceMapeamento(){
-    const map = new Map();
-
-    state.raw.mapeamento.forEach(r => {
-      const codigo = String(first(r, ["Código_AR", "Codigo_AR", "Código", "Codigo", "Codigo AR", "Código AR"])).trim();
-      if(!codigo) return;
-
-      map.set(codigo, {
-        indicadorGeral: String(first(r, ["Indicador_Geral", "Indicador Geral", "Indicador Real", "Nome na geral", "Indicador"])).trim(),
-        diretoria: String(first(r, ["Filtro_Diretoria", "Diretoria", "Diretoria_Geral"])).trim(),
-        superint: String(first(r, ["Filtro_Superint", "Superint.", "Superint", "Superintendência"])).trim(),
-        gerencia: String(first(r, ["Filtro_Gerência", "Filtro_Gerencia", "Gerência", "Gerencia"])).trim(),
-        usar: String(first(r, ["Usar_no_Painel", "Usar no Painel", "Usar"], "SIM")).trim()
-      });
-    });
-
-    return map;
-  }
-
-  function encontrarLinhaGeral(indicadorAR, mapItem, ano){
-    const nomeMap = normText(mapItem && mapItem.indicadorGeral);
-    const nomeAR = normText(indicadorAR.indicadorExecutivo);
-
-    let candidatos = state.raw.geral.filter(r => {
-      const anoRow = String(first(r, ["Ano"])).trim();
-      if(ano && anoRow && anoRow !== String(ano)) return false;
-
-      const indicador = normText(first(r, ["Indicador"]));
-      const matchNome = nomeMap ? indicador === nomeMap : indicador === nomeAR || indicador.includes(nomeAR) || nomeAR.includes(indicador);
-      if(!matchNome) return false;
-
-      const dirFiltro = normText(mapItem && mapItem.diretoria);
-      const supFiltro = normText(mapItem && mapItem.superint);
-      const gerFiltro = normText(mapItem && mapItem.gerencia);
-
-      if(dirFiltro && dirFiltro !== "-" && normText(first(r, ["Diretoria"])) !== dirFiltro) return false;
-      if(supFiltro && supFiltro !== "-" && normText(first(r, ["Superint.", "Superint", "Superintendência"])) !== supFiltro) return false;
-      if(gerFiltro && gerFiltro !== "-" && normText(first(r, ["Gerência", "Gerencia"])) !== gerFiltro) return false;
-
-      return true;
-    });
-
-    if(!candidatos.length && nomeMap){
-      candidatos = state.raw.geral.filter(r => {
-        const anoRow = String(first(r, ["Ano"])).trim();
-        if(ano && anoRow && anoRow !== String(ano)) return false;
-        const indicador = normText(first(r, ["Indicador"]));
-        return indicador.includes(nomeMap) || nomeMap.includes(indicador);
-      });
-    }
-
-    return candidatos[0] || null;
-  }
-
-  function ultimoMesComDado(row){
-    if(!row) return null;
-    for(let i = MESES.length - 1; i >= 0; i--){
-      const m = MESES[i];
-      const val = toNumber(first(row, [m.key, m.label]));
-      if(val !== null) return { mes: m.key, valor: val };
-    }
-    return null;
-  }
-
-  function processarIndicadores(){
-    const mapa = montarIndiceMapeamento();
-    const anoDefault = String(CFG.anoDefault || "");
-    const anoSelecionado = state.filters.ano || anoDefault;
-
-    state.indicadores = state.raw.ar.map((r, idx) => {
-      const codigo = String(first(r, ["Código", "Codigo"])).trim() || `AR${idx+1}`;
-      const mapItem = mapa.get(codigo) || null;
-
-      const indicador = {
-        codigo,
-        grupo: String(first(r, ["Grupo"], "Sem grupo")).trim() || "Sem grupo",
-        ordem: toNumber(first(r, ["Ordem"])) ?? idx + 1,
-        indicadorExecutivo: String(first(r, ["Indicador Executivo", "Indicador_Executivo", "Indicador"], codigo)).trim(),
-        descricao: String(first(r, ["Descrição Resumida", "Descricao Resumida", "Descrição", "Descricao"])).trim(),
-        diretoria: String(first(r, ["Diretoria Responsável", "Diretoria Responsavel", "Diretoria"], "A definir")).trim() || "A definir",
-        unidade: String(first(r, ["Unidade"])).trim(),
-        sentido: String(first(r, ["Sentido"], "maior_melhor")).trim(),
-        tipoAcumulado: String(first(r, ["Tipo_Acumulado", "Tipo Acumulado"])).trim(),
-        periodicidade: String(first(r, ["Periodicidade"])).trim(),
-        referencia: first(r, ["Referência", "Referencia"]),
-        meta: first(r, ["Meta_2026", "Meta 2026", "Meta"]),
-        atualOriginal: first(r, ["Atual", "Resultado Atual", "Acumulado"]),
-        atingimentoOriginal: first(r, ["Atingimento_%", "Atingimento %", "Atingimento"]),
-        statusOriginal: String(first(r, ["Status"])).trim(),
-        tendenciaOriginal: String(first(r, ["Tendência", "Tendencia"])).trim(),
-        fonte: String(first(r, ["Fonte_Dados", "Fonte Dados", "Fonte"])).trim(),
-        pendencia: String(first(r, ["Pendência_Oficial", "Pendencia Oficial", "Pendência", "Pendencia"])).trim(),
-        observacao: String(first(r, ["Observação", "Observacao"])).trim(),
-        indicadorGeral: mapItem ? mapItem.indicadorGeral : ""
-      };
-
-      const linhaGeral = encontrarLinhaGeral(indicador, mapItem, anoSelecionado);
-      const ultimoMes = ultimoMesComDado(linhaGeral);
-
-      const acumuladoGeral = linhaGeral ? first(linhaGeral, ["Acumulado"]) : "";
-      const metaGeral = linhaGeral ? first(linhaGeral, ["Meta"]) : "";
-      const unidadeGeral = linhaGeral ? first(linhaGeral, ["Unidade"]) : "";
-      const sentidoGeral = linhaGeral ? first(linhaGeral, ["Sentido"]) : "";
-
-      indicador.atual = first({v: indicador.atualOriginal}, ["v"]) || acumuladoGeral || (ultimoMes ? ultimoMes.valor : "");
-      indicador.meta = indicador.meta || metaGeral;
-      indicador.unidade = indicador.unidade || unidadeGeral;
-      indicador.sentido = indicador.sentido || sentidoGeral || "maior_melhor";
-      indicador.ultimoMes = ultimoMes ? ultimoMes.mes : "";
-      indicador.linhaGeralEncontrada = !!linhaGeral;
-
-      let ating = toNumber(indicador.atingimentoOriginal);
-      if(ating !== null && ating > 1.5) ating = ating / 100;
-      if(ating === null) ating = calcularAtingimento(indicador.atual, indicador.meta, indicador.sentido);
-
-      indicador.atingimento = ating;
-      indicador.status = indicador.statusOriginal || calcularStatus(ating);
-      indicador.tendencia = indicador.tendenciaOriginal || calcularTendencia(indicador.atual, indicador.referencia, indicador.sentido);
-      indicador.statusClass = classeStatus(indicador.status);
-
-      return indicador;
-    }).filter(i => i.codigo || i.indicadorExecutivo);
-  }
-
-  function aplicarFiltros(){
-    const f = state.filters;
-    state.filtrados = state.indicadores.filter(i => {
-      if(f.grupo && i.grupo !== f.grupo) return false;
-      if(f.status && i.status !== f.status) return false;
-      if(f.diretoria && i.diretoria !== f.diretoria) return false;
-
-      if(f.busca){
-        const alvo = normText([i.codigo, i.grupo, i.indicadorExecutivo, i.descricao, i.fonte, i.indicadorGeral].join(" "));
-        if(!alvo.includes(normText(f.busca))) return false;
-      }
-
-      return true;
-    }).sort((a,b) => {
-      const g = String(a.grupo).localeCompare(String(b.grupo), "pt-BR");
-      if(g !== 0) return g;
-      return (a.ordem || 0) - (b.ordem || 0);
-    });
-  }
-
-  function setOptions(id, values, labelTodos){
-    const el = $(id);
-    if(!el) return;
-    const atual = el.value;
-    el.innerHTML = `<option value="">${esc(labelTodos)}</option>` + values.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
-    if(values.includes(atual)) el.value = atual;
-  }
-
-  function initFiltros(){
-    const anos = inferirAno();
-    setOptions("fAno", anos, "Todos");
-    if(anos.includes(String(CFG.anoDefault))) $("fAno").value = String(CFG.anoDefault);
-    else if(anos.length) $("fAno").value = anos[0];
-
-    state.filters.ano = $("fAno").value;
-
-    ["fAno","fGrupo","fStatus","fDiretoria"].forEach(id => {
-      $(id).addEventListener("change", () => {
-        state.filters.ano = $("fAno").value;
-        state.filters.grupo = $("fGrupo").value;
-        state.filters.status = $("fStatus").value;
-        state.filters.diretoria = $("fDiretoria").value;
-        processarIndicadores();
-        atualizarFiltrosDerivados();
-        renderAll();
-      });
-    });
-
-    $("fBusca").addEventListener("input", () => {
-      state.filters.busca = $("fBusca").value;
-      renderAll();
-    });
-
-    $("btnLimpar").addEventListener("click", () => {
-      $("fGrupo").value = "";
-      $("fStatus").value = "";
-      $("fDiretoria").value = "";
-      $("fBusca").value = "";
-      state.filters.grupo = "";
-      state.filters.status = "";
-      state.filters.diretoria = "";
-      state.filters.busca = "";
-      renderAll();
-    });
-
-    document.querySelectorAll(".tabBtn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-        btn.classList.add("active");
-        const target = btn.dataset.screen;
-        const screen = $(target);
-        if(screen) screen.classList.add("active");
-      });
-    });
-
-    $("btnExportar").addEventListener("click", exportarCSV);
-  }
-
-  function atualizarFiltrosDerivados(){
-    const base = state.indicadores;
-    setOptions("fGrupo", unique(base.map(i => i.grupo)), "Todos");
-    setOptions("fStatus", unique(base.map(i => i.status)), "Todos");
-    setOptions("fDiretoria", unique(base.map(i => i.diretoria)), "Todas");
-
-    $("fGrupo").value = state.filters.grupo;
-    $("fStatus").value = state.filters.status;
-    $("fDiretoria").value = state.filters.diretoria;
-  }
-
-  function unique(arr){
-    return Array.from(new Set(arr.filter(v => String(v ?? "").trim() !== ""))).sort((a,b) => String(a).localeCompare(String(b), "pt-BR"));
-  }
-
-  function renderResumo(){
-    const rows = state.filtrados;
-    const total = rows.length;
-    const atingidas = rows.filter(i => ["Superado","Dentro da Meta"].includes(i.status)).length;
-    const atencao = rows.filter(i => i.status === "Atenção").length;
-    const critico = rows.filter(i => i.status === "Crítico").length;
-    const semDado = rows.filter(i => i.status === "Indisponível").length;
-    const pct = total ? atingidas / total : null;
-
-    $("kpisResumo").innerHTML = [
-      kpi("Indicadores monitorados", total, "metas pactuadas no recorte", "feature"),
-      kpi("Metas atingidas", pct === null ? "—" : fmtAting(pct), `${atingidas} de ${total} indicadores`, "green"),
-      kpi("Em atenção", atencao, "entre 90% e 99,9% da meta", "orange"),
-      kpi("Críticos", critico, "abaixo de 90% da meta", "red"),
-      kpi("Sem dado", semDado, "pendente ou não publicado", "purple")
-    ].join("");
-  }
-
-  function kpi(label, value, note, color){
-    return `
-      <div class="kpi ${color || ""}">
-        <div class="label">${esc(label)}</div>
-        <div class="value">${esc(value)}</div>
-        <div class="note">${esc(note || "")}</div>
-      </div>
-    `;
-  }
-
-  function renderLeitura(){
-    const rows = state.filtrados;
-    const total = rows.length;
-    const criticos = rows.filter(i => i.status === "Crítico");
-    const atencao = rows.filter(i => i.status === "Atenção");
-    const atingidas = rows.filter(i => ["Superado","Dentro da Meta"].includes(i.status));
-    const pct = total ? Math.round((atingidas.length / total) * 1000) / 10 : 0;
-
-    const pior = [...criticos, ...atencao].sort((a,b) => (toNumber(a.atingimento) ?? 999) - (toNumber(b.atingimento) ?? 999))[0];
-    const melhor = [...atingidas].sort((a,b) => (toNumber(b.atingimento) ?? 0) - (toNumber(a.atingimento) ?? 0))[0];
-
-    $("leituraExecutiva").innerHTML = `
-      <p class="arReadTitle">${total ? `${pct.toLocaleString("pt-BR")}% das metas do recorte estão atingidas ou superadas.` : "Sem indicadores no recorte selecionado."}</p>
-      <p class="arReadText">
-        O painel consolida os grupos Estratégica, Condicionada e Performance, com leitura automática de status a partir do resultado atual e da meta pactuada.
-        ${criticos.length ? `Há ${criticos.length} indicador(es) em condição crítica, exigindo acompanhamento direto.` : "Não há indicador crítico no recorte atual."}
-      </p>
-      <div class="arList">
-        ${melhor ? miniItem("Melhor posição no recorte", melhor) : ""}
-        ${pior ? miniItem("Principal ponto de atenção", pior) : ""}
-      </div>
-    `;
-
-    $("prioridadeExecutiva").innerHTML = pior ? `
-      <p class="arReadTitle">${esc(pior.indicadorExecutivo)}</p>
-      <p class="arReadText">
-        Status atual: <strong>${esc(pior.status)}</strong>. Resultado: <strong>${esc(fmtNumber(pior.atual, pior.unidade))}</strong>.
-        Meta: <strong>${esc(fmtNumber(pior.meta, pior.unidade))}</strong>.
-        ${pior.pendencia ? `<br>Registro de governança: ${esc(pior.pendencia)}` : ""}
-      </p>
-      <div class="arProgress">
-        ${progressBar(pior)}
-      </div>
-    ` : `
-      <p class="arReadTitle">Sem prioridade crítica no recorte.</p>
-      <p class="arReadText">Os indicadores filtrados não apresentam risco relevante pela regra de semáforo atual.</p>
-    `;
-  }
-
-  function miniItem(label, i){
-    return `
-      <div class="arListItem">
-        <div>
-          <div class="arListTitle">${esc(label)} · ${esc(i.codigo)} ${esc(i.indicadorExecutivo)}</div>
-          <div class="arListMeta">${esc(i.grupo)} · ${esc(i.status)} · atingimento ${esc(fmtAting(i.atingimento))}</div>
-        </div>
-        <span class="arTag ${esc(i.statusClass)}">${esc(i.status)}</span>
-      </div>
-    `;
-  }
-
-  function progressBar(i){
-    const a = toNumber(i.atingimento);
-    const width = a === null ? 0 : Math.max(0, Math.min(120, a * 100));
-    return `
-      <div class="arProgressTrack"><div class="arProgressBar" style="width:${width}%"></div></div>
-      <div class="arProgressText">
-        <span>Atingimento ${esc(fmtAting(i.atingimento))}</span>
-        <span>Meta ${esc(fmtNumber(i.meta, i.unidade))}</span>
-      </div>
-    `;
-  }
-
-  function renderGrupos(){
-    const grupos = unique(state.filtrados.map(i => i.grupo));
-    $("gruposAR").innerHTML = grupos.map(grupo => {
-      const rows = state.filtrados.filter(i => i.grupo === grupo);
-      const ok = rows.filter(i => ["Superado","Dentro da Meta"].includes(i.status)).length;
-      const pct = rows.length ? ok / rows.length : null;
-
-      return `
-        <section class="arGroup">
-          <div class="arGroupHead">
-            <div>
-              <h2 class="arGroupTitle">${esc(grupo)}</h2>
-              <div class="arGroupHint">${rows.length} indicador(es) · ${esc(fmtAting(pct))} atingidos ou superados</div>
-            </div>
-          </div>
-          <div class="arIndicatorGrid">
-            ${rows.map(cardIndicador).join("")}
-          </div>
-        </section>
-      `;
+  function detalheLinhas(lista){
+    return lista.map(function(item){
+      return item.casado?linhaCasada(item):linhaSimples(item);
     }).join("");
   }
 
-  function cardIndicador(i){
-    return `
-      <article class="arCard ${esc(i.statusClass)}">
-        <div>
-          <div class="arCardTop">
-            <span class="arCode">${esc(i.codigo)}</span>
-            <span class="arTag ${esc(i.statusClass)}">${esc(i.status)}</span>
-          </div>
+  var condTotal=[...["C03","C04"].filter(function(c){return DATA.some(function(d){return d.codigo===c;});}),...CASADOS.filter(function(p){return p.membros.some(function(m){return DATA.some(function(d){return d.codigo===m&&d.grupo.toLowerCase().includes("condicion");});});})].length;
+  var condDetalhe=b.condicionalAtiva
+    ?"Ponto adicional: "+b.regC.ponto+" — "+b.regC.pct+"% de bônus adicional"
+    :"Estas metas só são consideradas se pelo menos 3 estratégicas forem atingidas";
+  var condCls=b.condicionalAtiva?"ok":"nd";
+  var condStyle=b.condicionalAtiva?"":"opacity:.6";
+  var condLabel="Condicionadas"+(b.condicionalAtiva?"":" · Bloqueado");
 
-          <div class="arCardTitle">${esc(i.indicadorExecutivo)}</div>
-          <div class="arCardDesc">${esc(i.descricao || i.fonte || "Indicador pactuado no Acordo de Resultados.")}</div>
-        </div>
+  panel.innerHTML=
+    '<div class="bonusPanelHead">'+
+      '<h2>Projeção de Bonificação</h2>'+
+      '<div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>'+
+    '</div>'+
+    '<div class="bonusGrid">'+
+      '<div class="bonusCard">'+
+        '<div class="label">Estratégicas</div>'+
+        '<div class="valor">'+b.metasEstrategicasAtingidas+'/'+b.totalEstrategicas+'</div>'+
+        '<div class="detalhe">Nota projetada: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% de bônus. Pares de indicadores contam como uma meta.</div>'+
+      '</div>'+
+      '<div class="bonusCard '+condCls+'" style="'+condStyle+'">'+
+        '<div class="label">'+condLabel+'</div>'+
+        '<div class="valor">'+b.metasCondicionadasAtingidas+'/'+condTotal+'</div>'+
+        '<div class="detalhe">'+condDetalhe+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="metaContagem">'+
+      '<div class="tituloContagem">Detalhamento por meta: Estratégicas</div>'+
+      '<div class="metaLinhas">'+detalheLinhas(b.detalhesEstrategicos)+'</div>'+
+    '</div>'+
+    '<div class="metaContagem" style="margin-top:10px">'+
+      '<div class="tituloContagem">Detalhamento por meta: Condicionadas'+(b.condicionalAtiva?"":" (bloqueadas)")+'</div>'+
+      '<div class="metaLinhas">'+detalheLinhas(b.detalhesCondicionados)+'</div>'+
+    '</div>';
+}
 
-        <div>
-          <div class="arMetricRow">
-            <div class="arMetric">
-              <span>Atual</span>
-              <b title="${esc(fmtNumber(i.atual, i.unidade))}">${esc(fmtNumber(i.atual, i.unidade))}</b>
-            </div>
-            <div class="arMetric">
-              <span>Meta</span>
-              <b title="${esc(fmtNumber(i.meta, i.unidade))}">${esc(fmtNumber(i.meta, i.unidade))}</b>
-            </div>
-            <div class="arMetric">
-              <span>Ating.</span>
-              <b>${esc(fmtAting(i.atingimento))}</b>
-            </div>
-          </div>
-
-          <div class="arProgress">${progressBar(i)}</div>
-
-          <div class="arListMeta" style="margin-top:10px;">
-            ${esc(i.diretoria || "A definir")} · ${esc(i.periodicidade || "Periodicidade não informada")} · ${esc(i.tendencia || "Tendência indisponível")}
-          </div>
-        </div>
-      </article>
-    `;
+/* ═══════════════════════════════════════════════════════════
+   RENDER: INDICADORES
+   ═══════════════════════════════════════════════════════════ */
+function renderIndicadores(){
+  const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
+  if(!FILTRADOS.length){
+    $("indicadoresContainer").innerHTML=`<div class="emptyBlock">Nenhum indicador encontrado no recorte selecionado.</div>`;
+    return;
   }
+  $("indicadoresContainer").innerHTML=grupos.map(grupo=>{
+    const rows=FILTRADOS.filter(d=>d.grupo===grupo);
+    const dentro=rows.filter(d=>d.status==="Dentro da Meta").length;
+    const atencao=rows.filter(d=>d.status==="Atenção").length;
+    const critico=rows.filter(d=>d.status==="Crítico").length;
+    const sem=rows.filter(d=>d.status==="Sem dado").length;
 
-  function renderTopRiscos(){
-    const riscos = state.filtrados
-      .filter(i => ["Crítico","Atenção","Indisponível"].includes(i.status))
-      .sort((a,b) => (toNumber(a.atingimento) ?? -1) - (toNumber(b.atingimento) ?? -1))
-      .slice(0, 8);
-
-    $("topRiscos").innerHTML = riscos.length ? `<div class="arList">${riscos.map(i => miniItem(i.status, i)).join("")}</div>` : `<div class="empty">Sem indicadores em atenção no recorte.</div>`;
-  }
-
-  function renderDiretoria(){
-    const grupos = {};
-    state.filtrados.forEach(i => {
-      const d = i.diretoria || "A definir";
-      grupos[d] = grupos[d] || { total: 0, ok: 0, crit: 0 };
-      grupos[d].total += 1;
-      if(["Superado","Dentro da Meta"].includes(i.status)) grupos[d].ok += 1;
-      if(i.status === "Crítico") grupos[d].crit += 1;
+    const renderizados=new Set();
+    const blocos=[];
+    rows.forEach(d=>{
+      if(renderizados.has(d.codigo))return;
+      if(d.casadoId){
+        const par=CASADOS.find(c=>c.id===d.casadoId);
+        if(par){
+          const membrosNoFiltro=par.membros.filter(m=>rows.find(r=>r.codigo===m));
+          if(membrosNoFiltro.length>1){
+            membrosNoFiltro.forEach(m=>renderizados.add(m));
+            const membrosData=membrosNoFiltro.map(m=>rows.find(r=>r.codigo===m));
+            blocos.push({tipo:"casado",par,membros:membrosData});
+            return;
+          }
+        }
+      }
+      renderizados.add(d.codigo);
+      blocos.push({tipo:"individual",data:d});
     });
 
-    const rows = Object.entries(grupos).sort((a,b) => b[1].total - a[1].total);
-
-    $("porDiretoria").innerHTML = rows.length ? `
-      <div class="arList">
-        ${rows.map(([dir,v]) => `
-          <div class="arListItem">
-            <div>
-              <div class="arListTitle">${esc(dir)}</div>
-              <div class="arListMeta">${v.total} indicador(es) · ${v.ok} atingido(s) · ${v.crit} crítico(s)</div>
+    const blocosHtml=blocos.map(bloco=>{
+      if(bloco.tipo==="casado"){
+        const par=bloco.par;
+        const todosOk=bloco.membros.every(m=>m.status==="Dentro da Meta");
+        return `
+          <div class="casadoWrap">
+            <div class="casadoLabel">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Indicadores casados: contam como uma meta na bonificação · ${todosOk?"✓ Ambas atingidas":"⚠ Pelo menos uma não foi atingida"}
             </div>
-            <span class="arTag ${v.crit ? "red" : "green"}">${esc(fmtAting(v.total ? v.ok / v.total : null))}</span>
+            ${bloco.membros.map(d=>renderRow(d,true)).join("")}
+            <div class="casadoBonusNote">⊞ ${esc(par.bonusNote)}</div>
+          </div>`;
+      }
+      return renderRow(bloco.data,false);
+    }).join("");
+
+    return `
+      <section class="arBlock">
+        <div class="arBlockHead">
+          <div>
+            <h2 class="arBlockTitle">${esc(grupo)}</h2>
+            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
           </div>
-        `).join("")}
-      </div>
-    ` : `<div class="empty">Sem dados para distribuição.</div>`;
+        </div>
+        <div class="indicatorList">${blocosHtml}</div>
+      </section>`;
+  }).join("");
+}
+
+function renderRow(d,dentroCasado){
+  const desc=d.descricao||d.pendencia||d.fonte||"Indicador pactuado no Acordo de Resultados 2026.";
+  const atingTxt=fmtPct(d.atingimento);
+  const atingHtml=d.atingimentoProporcional
+    ?`${atingTxt} <span class="propBadge" title="Calculado sobre meta proporcional ao mês corrente (${new Date().getMonth()+1}/12)">prop.</span>`
+    :atingTxt;
+  const metaLabel=d.metaProporcional?"Meta anual → mês":"Meta";
+  const metaHtml=d.metaProporcional
+    ?`${fmtValor(d.meta,d.unidade)} <span class="propBadge" title="Meta proporcional ao mês: ${fmtValor(d.metaProporcional,d.unidade)}">→ ${fmtValor(d.metaProporcional,d.unidade)}</span>`
+    :fmtValor(d.meta,d.unidade);
+  return `
+    <article class="indicatorRow ${esc(d.statusClass)}${dentroCasado?" style='border-radius:14px;margin-bottom:8px'":""}">
+      <div class="codeBox">${esc(d.codigo)}</div>
+      <div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span></div>
+      <div class="metricCell"><small>Atual</small><b>${esc(fmtValor(d.atual,d.unidade))}</b></div>
+      <div class="metricCell"><small>${esc(metaLabel)}</small><b>${metaHtml}</b></div>
+      <div class="metricCell"><small>Atingimento</small><b>${atingHtml}</b></div>
+      <div class="metricCell"><small>Status</small><span class="tag ${esc(d.statusClass)}">${esc(d.statusDisplay)}</span></div>
+      <div class="metricCell"><small>Tendência</small><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></div>
+    </article>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER COMPLETO
+   ═══════════════════════════════════════════════════════════ */
+function render(){
+  aplicarFiltros();
+  renderResumo();
+  renderBonus();
+  renderIndicadores();
+}
+function bind(){
+  $("fGrupo").addEventListener("change",render);
+  $("fStatus").addEventListener("change",render);
+  $("btnLimpar").addEventListener("click",()=>{$("fGrupo").value="";$("fStatus").value="";render();});
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INICIALIZAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+async function init(){
+  HUB.header.render("header", {
+    systemLabel: "HUB COMLURB · ACORDO DE RESULTADOS",
+    title: "Acordo de Resultados 2026",
+    subtitle: "Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas."
+  });
+  HUB.footer.render("footer", { showTimestamp: true });
+  const mostrarErro=(fonte,msg)=>{
+    $("loading").style.display="none";
+    $("errorState").style.display="block";
+    $("errorState").innerHTML=`
+      <strong style="color:#ff7d72">Falha ao carregar dados</strong><br>
+      <span style="color:#c7d8ee;font-size:12px">Fonte: <code>${fonte}</code></span><br>
+      <span style="color:#9fb0c7;font-size:11px;margin-top:6px;display:block">${msg}</span><br>
+      <span style="color:#7a9bbf;font-size:11px">
+        Verifique se a planilha está publicada como CSV no Google Sheets
+        (Arquivo → Compartilhar → Publicar na web → CSV) e se o GID está correto.
+      </span>`;
+  };
+  try{
+    $("loading").textContent="Carregando aba geral...";
+    const geral=await csv(URLS.geral).catch(e=>{throw Object.assign(e,{fonte:"geral"});});
+    $("loading").textContent="Carregando aba AR_2026...";
+    const ar=await csv(URLS.ar).catch(e=>{throw Object.assign(e,{fonte:"ar"});});
+    $("loading").textContent="Carregando mapeamento...";
+    const map=await csv(URLS.map).catch(e=>{throw Object.assign(e,{fonte:"map"});});
+    RAW={geral,ar,map};
+    processar();
+    popularFiltros();
+    bind();
+    render();
+    $("loading").style.display="none";
+    $("conteudo").style.display="block";
+  }catch(e){
+    console.error(e);
+    mostrarErro(e.fonte||"desconhecida", e.message||String(e));
   }
-
-  function renderTabelaAnalitica(){
-    const rows = state.filtrados;
-    $("contagemTabela").textContent = `${rows.length} registro(s)`;
-
-    const cols = [
-      ["codigo","Código"],
-      ["grupo","Grupo"],
-      ["indicadorExecutivo","Indicador Executivo"],
-      ["diretoria","Diretoria"],
-      ["atual","Atual"],
-      ["meta","Meta"],
-      ["atingimento","Atingimento"],
-      ["status","Status"],
-      ["tendencia","Tendência"],
-      ["fonte","Fonte"],
-      ["pendencia","Pendência"]
-    ];
-
-    const table = $("tabelaAnalitica");
-    table.querySelector("thead").innerHTML = `<tr>${cols.map(c => `<th>${esc(c[1])}</th>`).join("")}</tr>`;
-    table.querySelector("tbody").innerHTML = rows.map(i => `
-      <tr>
-        ${cols.map(([key]) => {
-          let val = i[key];
-          if(key === "atual" || key === "meta") val = fmtNumber(val, i.unidade);
-          if(key === "atingimento") val = fmtAting(val);
-          const wrap = ["indicadorExecutivo","fonte","pendencia"].includes(key) ? " arWrapCell" : "";
-          return `<td class="${wrap}">${esc(val || "—")}</td>`;
-        }).join("")}
-      </tr>
-    `).join("");
-  }
-
-  function renderGovernanca(){
-    $("regrasPainel").innerHTML = `
-      <div class="arList">
-        <div class="arListItem"><div><div class="arListTitle">Status</div><div class="arListMeta">Superado acima de 100%, Dentro da Meta em 100%, Atenção de 90% a 99,9%, Crítico abaixo de 90%.</div></div></div>
-        <div class="arListItem"><div><div class="arListTitle">Sentido do indicador</div><div class="arListMeta">maior_melhor usa Atual ÷ Meta. menor_melhor usa Meta ÷ Atual.</div></div></div>
-        <div class="arListItem"><div><div class="arListTitle">Atualização</div><div class="arListMeta">O painel lê os CSVs publicados. Ao atualizar a planilha oficial, o GitHub Pages carrega os dados mais recentes.</div></div></div>
-      </div>
-    `;
-
-    const pend = state.indicadores.filter(i => i.pendencia || !i.linhaGeralEncontrada || i.status === "Indisponível").slice(0, 12);
-
-    $("fontesPendencias").innerHTML = pend.length ? `
-      <div class="arList">
-        ${pend.map(i => `
-          <div class="arListItem">
-            <div>
-              <div class="arListTitle">${esc(i.codigo)} · ${esc(i.indicadorExecutivo)}</div>
-              <div class="arListMeta">${esc(i.pendencia || (i.linhaGeralEncontrada ? "Sem resultado atual disponível." : "Sem cruzamento encontrado na aba geral."))}</div>
-            </div>
-            <span class="arTag ${esc(i.statusClass)}">${esc(i.status)}</span>
-          </div>
-        `).join("")}
-      </div>
-    ` : `<div class="empty">Sem pendências registradas.</div>`;
-
-    renderTabelaGenerica("tabelaGovernanca", state.raw.governanca);
-  }
-
-  function renderTabelaGenerica(id, rows){
-    const table = $(id);
-    if(!table) return;
-    if(!rows || !rows.length){
-      table.querySelector("thead").innerHTML = "";
-      table.querySelector("tbody").innerHTML = `<tr><td>Sem registros publicados.</td></tr>`;
-      return;
-    }
-
-    const cols = Object.keys(rows[0]).filter(k => String(k).trim() !== "").slice(0, 8);
-    table.querySelector("thead").innerHTML = `<tr>${cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr>`;
-    table.querySelector("tbody").innerHTML = rows.map(r => `
-      <tr>${cols.map(c => `<td class="arWrapCell">${esc(r[c] || "—")}</td>`).join("")}</tr>
-    `).join("");
-  }
-
-  function exportarCSV(){
-    const rows = state.filtrados.map(i => ({
-      Código: i.codigo,
-      Grupo: i.grupo,
-      Indicador: i.indicadorExecutivo,
-      Diretoria: i.diretoria,
-      Atual: fmtNumber(i.atual, i.unidade),
-      Meta: fmtNumber(i.meta, i.unidade),
-      Atingimento: fmtAting(i.atingimento),
-      Status: i.status,
-      Tendência: i.tendencia,
-      Fonte: i.fonte,
-      Pendência: i.pendencia
-    }));
-
-    const csv = Papa.unparse(rows, { delimiter: ";" });
-    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ar_comlurb_filtrado.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function renderAll(){
-    aplicarFiltros();
-    renderResumo();
-    renderLeitura();
-    renderGrupos();
-    renderTopRiscos();
-    renderDiretoria();
-    renderTabelaAnalitica();
-    renderGovernanca();
-
-    const now = new Date();
-  }
-
-  async function init(){
-    try{
-      $("loading").style.display = "block";
-      $("conteudo").style.display = "none";
-      $("errorState").style.display = "none";
-
-      await carregarDados();
-      processarIndicadores();
-      initFiltros();
-      atualizarFiltrosDerivados();
-      renderAll();
-
-      $("loading").style.display = "none";
-      $("conteudo").style.display = "block";
-    }catch(err){
-      console.error(err);
-      $("loading").style.display = "none";
-      $("errorState").style.display = "block";
-      $("errorState").innerHTML = `
-        <strong>Erro ao carregar o painel.</strong><br>
-        ${esc(err.message || err)}<br><br>
-        Verifique se os CSVs estão publicados como "Qualquer pessoa com o link pode visualizar" e se as abas continuam com o mesmo gid.
-      `;
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", init);
-})();
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>

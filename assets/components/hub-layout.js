@@ -185,47 +185,38 @@ HUB.header = {
 
 HUB.footer = {
   /**
-   * Renderiza o rodapé institucional padrão do HUB COMLURB
+   * Renderiza o rodapé institucional padrão do HUB COMLURB.
+   * showTimestamp: true → exibe data/hora do carregamento dos dados.
+   * Chame HUB.footer.updateTimestamp("footer") após o carregamento do CSV
+   * para registrar o momento real da atualização dos dados.
    */
   render(containerId, config = {}) {
     const {
-      showTimestamp = false,
-      customText = null
+      showTimestamp = true
     } = config;
 
     const container = HUB.dom.$(containerId);
     if (!container) return;
 
-    const timestamp = showTimestamp
-      ? `Atualizado em ${new Date().toLocaleString("pt-BR")}`
-      : "";
-
-    const text = customText || `
-      <strong>Gabinete da Presidência</strong><br>
-      HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional
-    `;
-
     container.innerHTML = `
       <footer class="footer">
         <div class="footerContent">
-          ${text}
-          ${timestamp ? `<div class="footerTimestamp">${timestamp}</div>` : ""}
+          <strong>Gabinete da Presidência</strong><br>
+          HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional
+          ${showTimestamp ? `<div class="footerTimestamp" id="footerTs"></div>` : ""}
         </div>
       </footer>
     `;
   },
 
   /**
-   * Atualiza o timestamp do footer, caso exista
+   * Atualiza o timestamp do footer com a data/hora atual.
+   * Deve ser chamado após o carregamento e processamento dos dados CSV.
    */
-  updateTimestamp(containerId) {
-    const el = HUB.dom.$(containerId);
-    if (!el) return;
-
-    const timestamp = el.querySelector(".footerTimestamp");
-
-    if (timestamp) {
-      timestamp.textContent = `Atualizado em ${new Date().toLocaleString("pt-BR")}`;
+  updateTimestamp() {
+    const el = document.getElementById("footerTs");
+    if (el) {
+      el.textContent = "Atualizado em " + new Date().toLocaleString("pt-BR");
     }
   }
 };

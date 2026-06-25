@@ -6,10 +6,11 @@
 <title>Indicadores AR 2026 · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
 <style>
 /* ── Layout base ── */
 .app{max-width:1880px;padding:18px}
-.header{margin-bottom:14px}
 .arFilters{display:flex !important;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0}
 
 /* ── Resumo executivo ── */
@@ -148,14 +149,7 @@
 <div class="app">
 
 <!-- HEADER -->
-<header class="header">
-  <div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="COMLURB"></div>
-  <div class="headerContent">
-    <div class="systemLabel">HUB COMLURB · ACORDO DE RESULTADOS</div>
-    <h1 class="mainTitle">Acordo de Resultados 2026</h1>
-    <div class="subtitle">Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas.</div>
-  </div>
-</header>
+<div id="header"></div>
 
 <!-- FILTROS -->
 <section class="filters arFilters">
@@ -170,15 +164,9 @@
 <main id="conteudo" style="display:none">
 
   <!-- PLACAR EXECUTIVO -->
-  <div style="margin-bottom:10px;padding:0 2px">
-    <span style="font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#516a82">Situação do Acordo</span>
-  </div>
   <div class="placarGrid" id="placarGrid"></div>
 
   <!-- PAINEL DE BONIFICAÇÃO -->
-  <div style="margin:6px 0 10px;padding:0 2px">
-    <span style="font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#516a82">Detalhamento da Bonificação</span>
-  </div>
   <section class="bonusPanel" id="bonusPanel"></section>
 
   <!-- INDICADORES -->
@@ -192,11 +180,7 @@
   </div>
 </main>
 
-<footer style="margin-top:32px;padding:16px 0 8px;border-top:1px solid var(--linha);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-  <span style="font-size:11px;color:#516a82;font-weight:950;letter-spacing:.06em;text-transform:uppercase">Gabinete da Presidência / HUB COMLURB · Núcleo de Inteligência e Gestão Estratégica Operacional</span>
-  <span style="font-size:11px;color:#3a5068">Greicy Moreira</span>
-</footer>
-
+<div id="footer"></div>
 </div>
 
 <script>
@@ -608,10 +592,7 @@ function renderResumo(){
 
   // Card Bônus
   const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
-  const notaProjetada=b.regE.nota+(b.condicionalAtiva?b.regC.ponto:0)+(b.condicionalAtiva&&b.performanceAtingida?BONUS_PERFORMANCE.ponto:0);
-  const descBonus=b.bonusTotal>0
-    ?"Nota projetada: <strong>"+notaProjetada.toFixed(1).replace(".",",")+"</strong> · Estratégico "+b.regE.pct+"% + Condicionado "+(b.condicionalAtiva?b.regC.pct:0)+"% + Performance "+(b.condicionalAtiva?b.bonusPerformance:0)+"%"
-    :"Nenhuma meta estratégica atingida até o momento.";
+  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
 
   $("placarGrid").innerHTML=
     '<div class="placarCard bonus">'+
@@ -826,6 +807,12 @@ function bind(){
    INICIALIZAÇÃO
    ═══════════════════════════════════════════════════════════ */
 async function init(){
+  HUB.header.render("header", {
+    systemLabel: "HUB COMLURB · ACORDO DE RESULTADOS",
+    title: "Acordo de Resultados 2026",
+    subtitle: "Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas."
+  });
+  HUB.footer.render("footer", { showTimestamp: true });
   const mostrarErro=(fonte,msg)=>{
     $("loading").style.display="none";
     $("errorState").style.display="block";

@@ -1,155 +1,482 @@
-let map;
-let activeLayer;
 
-const layers = {
-  dsu: {
-    name: "Gerências DSU",
-    file: "../geojson/GERENCIAS_DSU.geojson",
-    color: "#5b9bd5",
-    type: "Polígono"
-  },
-  dlu: {
-    name: "DLU | Novos Bairros 2025",
-    file: "../geojson/DLU_Novos_Bairros_estrutura2025.geojson",
-    color: "#78aaa3",
-    type: "Polígono"
-  },
-  logradouros: {
-    name: "Logradouros RJ",
-    file: "../geojson/logradouros_rj_pontos.geojson",
-    color: "#e87535",
-    type: "Ponto"
-  }
-};
-
-function initMap() {
-  map = L.map("map", {
-    zoomControl: true,
-    attributionControl: false
-  }).setView([-22.9068, -43.1729], 11);
-
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 19
-  }).addTo(map);
-
-  loadLayer("dsu");
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HUB COMLURB · Centro de Inteligência Operacional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04101e;
+  --bg2:#071a2d;
+  --panel:#081b30;
+  --panel2:#0b223b;
+  --line:rgba(99,155,207,.28);
+  --line2:rgba(255,255,255,.08);
+  --text:#f5f8ff;
+  --muted:#a4b7cf;
+  --soft:#cbd8e8;
+  --blue:#6db6ff;
+  --blue2:#367fbd;
+  --orange:#ff8a24;
+  --shadow:0 28px 95px rgba(0,0,0,.46);
 }
-
-async function loadLayer(key) {
-  const cfg = layers[key];
-
-  document.querySelectorAll(".layerBtn").forEach(btn => btn.classList.remove("active"));
-  const btn = document.getElementById(key === "dsu" ? "btnDSU" : "btnDLU");
-  if (btn) btn.classList.add("active");
-
-  document.getElementById("infoBox").innerHTML = "Carregando camada territorial...";
-  document.getElementById("rankBox").innerHTML = "";
-
-  if (activeLayer) {
-    map.removeLayer(activeLayer);
-  }
-
-  try {
-    const response = await fetch(cfg.file);
-    if (!response.ok) throw new Error(`Arquivo não encontrado: ${cfg.file}`);
-
-    const data = await response.json();
-    const features = data.features || [];
-
-    activeLayer = L.geoJSON(data, {
-      style: {
-        color: cfg.color,
-        weight: 2,
-        opacity: 0.9,
-        fillColor: cfg.color,
-        fillOpacity: 0.22
-      },
-      pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, {
-          radius: 5,
-          color: cfg.color,
-          fillColor: cfg.color,
-          fillOpacity: 0.85,
-          weight: 1
-        });
-      },
-      onEachFeature: function (feature, layer) {
-        const props = feature.properties || {};
-        const title =
-          props.GERENCIA ||
-          props.Gerencia ||
-          props.NOME ||
-          props.nome ||
-          props.BAIRRO ||
-          props.bairro ||
-          props.Name ||
-          cfg.name;
-
-        let html = `<b>${title}</b><br><br>`;
-
-        Object.entries(props).slice(0, 12).forEach(([k, v]) => {
-          if (v !== null && v !== undefined && v !== "") {
-            html += `<b>${k}:</b> ${v}<br>`;
-          }
-        });
-
-        layer.bindPopup(html);
-      }
-    }).addTo(map);
-
-    const bounds = activeLayer.getBounds();
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, { padding: [24, 24] });
-    }
-
-    updateKPIs(cfg, features);
-    renderInfo(cfg, features);
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById("infoBox").innerHTML =
-      `Não foi possível carregar a camada.<br><br><b>Verifique o caminho:</b><br>${cfg.file}`;
-  }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  overflow-x:hidden;
 }
-
-function updateKPIs(cfg, features) {
-  document.getElementById("kpiCamada").innerText = cfg.name;
-  document.getElementById("kpiFeicoes").innerText = features.length.toLocaleString("pt-BR");
-  document.getElementById("kpiTipo").innerText = cfg.type;
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 84% 12%,rgba(70,143,205,.20),transparent 30%),
+    radial-gradient(circle at 12% 8%,rgba(255,138,36,.08),transparent 24%),
+    linear-gradient(180deg,#04101e 0%,#071a2d 44%,#04101e 100%);
 }
+body:after{
+  content:"";
+  position:fixed;
+  top:-220px;
+  right:-220px;
+  width:720px;
+  height:720px;
+  border-radius:50%;
+  opacity:.22;
+  pointer-events:none;
+  background:
+    repeating-radial-gradient(circle,transparent 0 48px,rgba(109,182,255,.18) 49px 50px);
+  z-index:-2;
+}
+a{text-decoration:none;color:inherit}
+.wrap{width:min(1480px,94vw);margin:auto;padding:34px 0 28px}
+.hero{
+  display:grid;
+  grid-template-columns:500px 1fr;
+  gap:34px;
+  align-items:center;
+  margin-bottom:28px;
+}
+.logoOfficial{
+  width:min(485px,100%);
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 18px 38px rgba(0,0,0,.32));
+}
+.heroText{
+  border-left:1px solid rgba(255,255,255,.72);
+  padding-left:34px;
+  min-height:132px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.heroText h1{
+  margin:0;
+  font-size:54px;
+  line-height:.95;
+  letter-spacing:1px;
+  font-weight:900;
+}
+.heroText h2{
+  margin:8px 0 0;
+  color:var(--blue);
+  font-size:22px;
+  line-height:1.15;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+  font-weight:600;
+}
+.heroText p{
+  margin:22px 0 0;
+  max-width:720px;
+  color:#d6e0ee;
+  font-size:17px;
+  line-height:1.55;
+}
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin-bottom:18px;
+}
+.metric{
+  min-height:144px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:linear-gradient(180deg,rgba(11,34,59,.76),rgba(5,17,31,.72));
+  box-shadow:inset 0 0 34px rgba(109,182,255,.045);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.metric:after{
+  content:"";
+  position:absolute;
+  left:8%;
+  right:8%;
+  bottom:16px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  opacity:.9;
+}
+.metric b{
+  display:block;
+  font-size:62px;
+  line-height:.9;
+  color:#7ab9ff;
+  letter-spacing:-3px;
+  text-shadow:0 0 24px rgba(109,182,255,.22);
+  font-weight:850;
+}
+.metric span{
+  display:block;
+  margin-top:14px;
+  color:#eef5ff;
+  font-size:15px;
+  text-transform:uppercase;
+  letter-spacing:1.3px;
+  font-weight:500;
+}
+.grid2{
+  display:grid;
+  grid-template-columns:.68fr 1fr;
+  gap:16px;
+  margin-bottom:12px;
+}
+.panel{
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:linear-gradient(180deg,rgba(8,27,48,.86),rgba(4,16,30,.80));
+  box-shadow:var(--shadow);
+  padding:20px;
+}
+.panelTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding-bottom:13px;
+  border-bottom:1px solid var(--line2);
+  margin-bottom:12px;
+}
+.panelTitle h3{
+  margin:0;
+  color:#e7eef8;
+  font-size:18px;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.panelTitle span{
+  color:var(--muted);
+  font-size:12px;
+}
+.radarRow{
+  display:grid;
+  grid-template-columns:1fr 94px 70px;
+  gap:18px;
+  align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.radarRow:last-child{border-bottom:0}
+.radarRow strong{
+  display:block;
+  font-size:16px;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.radarRow small{
+  display:block;
+  margin-top:5px;
+  color:#95aac3;
+  font-size:12px;
+  line-height:1.35;
+}
+.status{
+  color:var(--blue);
+  text-transform:uppercase;
+  font-weight:650;
+  letter-spacing:.8px;
+  font-size:14px;
+}
+.status.warn{color:var(--orange)}
+.lineMark{
+  height:2px;
+  background:var(--blue);
+  opacity:.95;
+  box-shadow:0 0 12px rgba(109,182,255,.35);
+}
+.lineMark.warn{background:var(--orange);box-shadow:0 0 12px rgba(255,138,36,.35)}
+.note{
+  margin-top:12px;
+  color:#7890ad;
+  font-size:12px;
+}
+.feature{
+  border:1px solid rgba(109,182,255,.58);
+  background:linear-gradient(180deg,rgba(6,21,39,.86),rgba(5,18,33,.76));
+  border-radius:9px;
+  padding:20px 24px;
+  margin-bottom:10px;
+}
+.feature strong{
+  display:block;
+  font-size:27px;
+  line-height:1.15;
+  letter-spacing:-1px;
+  font-weight:850;
+}
+.feature p{
+  margin:10px 0 0;
+  color:#d2dde9;
+  font-size:16px;
+  line-height:1.55;
+}
+.highItem{
+  display:grid;
+  grid-template-columns:12px 1fr;
+  gap:14px;
+  align-items:start;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.025);
+  border-radius:8px;
+  padding:12px 14px;
+  margin-top:8px;
+  color:#d7e2ef;
+  font-size:14px;
+  line-height:1.42;
+}
+.highItem:before{
+  content:"";
+  width:2px;
+  height:24px;
+  background:var(--blue);
+  box-shadow:0 0 12px rgba(109,182,255,.6);
+  margin-top:1px;
+}
+.highItem.warn:before{background:var(--orange);box-shadow:0 0 12px rgba(255,138,36,.55)}
+.modules{
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:linear-gradient(180deg,rgba(8,27,48,.84),rgba(4,16,30,.78));
+  padding:17px 20px 13px;
+  margin-bottom:12px;
+}
+.modules > h3{
+  margin:0 0 10px;
+  font-size:18px;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.moduleGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.domain{
+  border:1px solid rgba(99,155,207,.20);
+  background:rgba(5,18,33,.48);
+  border-radius:9px;
+  padding:14px 18px 12px;
+  min-height:162px;
+}
+.domain h4{
+  margin:0 0 10px;
+  color:var(--blue);
+  font-size:15px;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  font-weight:650;
+  padding-bottom:9px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.domain.financeiro h4{color:var(--orange)}
+.mod{
+  display:grid;
+  grid-template-columns:4px 1fr auto;
+  gap:12px;
+  align-items:center;
+  min-height:34px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transition:.18s ease;
+}
+.mod:last-child{border-bottom:0}
+.mod:hover{transform:translateX(3px);color:#fff}
+.mod:before{
+  content:"";
+  width:2px;
+  height:18px;
+  background:var(--blue);
+  box-shadow:0 0 10px rgba(109,182,255,.45);
+}
+.financeiro .mod:before{background:var(--orange);box-shadow:0 0 10px rgba(255,138,36,.45)}
+.mod span{font-size:15px;color:#f1f6ff;line-height:1.25}
+.mod em{font-style:normal;color:#fff;font-size:20px;font-weight:300;line-height:1;opacity:.9}
+.footer{
+  border:1px solid rgba(99,155,207,.25);
+  border-radius:8px;
+  background:rgba(8,27,48,.56);
+  padding:13px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  color:#aabbd0;
+  font-size:13px;
+}
+.footer strong{color:var(--blue);font-weight:650}
+@media(max-width:1180px){
+  .hero{grid-template-columns:1fr;gap:22px}
+  .heroText{border-left:0;border-top:1px solid rgba(255,255,255,.45);padding-left:0;padding-top:24px}
+  .grid2{grid-template-columns:1fr}
+  .moduleGrid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .wrap{width:94vw;padding-top:24px}
+  .metrics{grid-template-columns:1fr}
+  .moduleGrid{grid-template-columns:1fr}
+  .heroText h1{font-size:40px}
+  .heroText h2{font-size:17px}
+  .heroText p{font-size:15px}
+  .radarRow{grid-template-columns:1fr;gap:7px}
+  .metric b{font-size:54px}
+  .footer{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero" aria-label="Identidade institucional">
+    <div>
+      <img class="logoOfficial" src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | Comlurb">
+    </div>
+    <div class="heroText">
+      <h1>HUB COMLURB</h1>
+      <h2>Centro de Inteligência Operacional</h2>
+      <p>Monitoramento integrado dos indicadores corporativos, operacionais, funcionais, contratuais e ambientais para suporte à decisão estratégica.</p>
+    </div>
+  </section>
 
-function renderInfo(cfg, features) {
-  document.getElementById("infoBox").innerHTML = `
-    <b>${cfg.name}</b><br>
-    ${features.length.toLocaleString("pt-BR")} feições carregadas no mapa.<br>
-    Fonte: arquivo GeoJSON publicado no repositório.
-  `;
+  <section class="metrics" aria-label="Indicadores corporativos">
+    <article class="metric">
+      <b>87%</b>
+      <span>Indicadores na meta</span>
+    </article>
+    <article class="metric">
+      <b>7</b>
+      <span>Diretorias monitoradas</span>
+    </article>
+    <article class="metric">
+      <b>12</b>
+      <span>Módulos ativos</span>
+    </article>
+  </section>
 
-  const rankBox = document.getElementById("rankBox");
-  rankBox.innerHTML = "";
-
-  features.slice(0, 8).forEach((f, i) => {
-    const p = f.properties || {};
-    const nome =
-      p.GERENCIA ||
-      p.Gerencia ||
-      p.NOME ||
-      p.nome ||
-      p.BAIRRO ||
-      p.bairro ||
-      p.Name ||
-      `Registro ${i + 1}`;
-
-    rankBox.innerHTML += `
-      <div class="rankItem">
-        <div>
-          <b>${nome}</b>
-          <small>Registro geográfico da camada ativa</small>
-        </div>
-        <span class="pill">GIS</span>
+  <section class="grid2" id="centro-situacao">
+    <article class="panel">
+      <div class="panelTitle">
+        <h3>Radar Executivo</h3>
       </div>
-    `;
-  });
-}
+      <div class="radarRow">
+        <div><strong>Operações Urbanas</strong><small>Rotina operacional e execução em campo</small></div>
+        <span class="status">Normal</span>
+        <span class="lineMark"></span>
+      </div>
+      <div class="radarRow">
+        <div><strong>Governança</strong><small>Atendimento ao cidadão, metas e acompanhamento institucional</small></div>
+        <span class="status">Normal</span>
+        <span class="lineMark"></span>
+      </div>
+      <div class="radarRow">
+        <div><strong>Pessoas</strong><small>Quadro, disponibilidade e ocorrências funcionais</small></div>
+        <span class="status">Normal</span>
+        <span class="lineMark"></span>
+      </div>
+      <div class="radarRow">
+        <div><strong>Financeiro</strong><small>Contratos, receita, faturamento e execução financeira</small></div>
+        <span class="status warn">Atenção</span>
+        <span class="lineMark warn"></span>
+      </div>
+      <div class="radarRow">
+        <div><strong>Sustentabilidade</strong><small>Reciclagem, resíduos e indicadores ambientais</small></div>
+        <span class="status">Normal</span>
+        <span class="lineMark"></span>
+      </div>
+      <div class="note">Dados consolidados para leitura executiva da Companhia.</div>
+    </article>
 
-document.addEventListener("DOMContentLoaded", initMap);
+    <article class="panel">
+      <div class="panelTitle">
+        <h3>Destaques Operacionais</h3>
+      </div>
+      <div class="feature">
+        <strong>87% dos indicadores corporativos estão dentro da meta.</strong>
+        <p>Acompanhamento executivo consolidado para apoiar decisões de Diretoria, unidades e áreas técnicas.</p>
+      </div>
+      <div class="highItem">IPL mantém desempenho acima da meta corporativa.</div>
+      <div class="highItem warn">Contratos registram redução de glosas operacionais.</div>
+      <div class="highItem">Base funcional consolidada atualizada no módulo de Pessoas.</div>
+      <div class="highItem">Indicadores ambientais incorporados ao HUB e em monitoramento contínuo.</div>
+    </article>
+  </section>
+
+  <section class="modules" id="modulos">
+    <h3>Módulos Disponíveis</h3>
+    <div class="moduleGrid">
+      <article class="domain">
+        <h4>Estratégico</h4>
+        <a class="mod" href="ar/"><span>Indicadores do Acordo de Resultados</span><em>›</em></a>
+        <a class="mod" href="indicadores-gerais/"><span>Indicadores Gerais</span><em>›</em></a>
+        <a class="mod" href="radar-pre/"><span>Radar Presidência</span><em>›</em></a>
+      </article>
+
+      <article class="domain">
+        <h4>Operacional</h4>
+        <a class="mod" href="dte/"><span>DTE</span><em>›</em></a>
+        <a class="mod" href="ipl/"><span>IPL</span><em>›</em></a>
+        <a class="mod" href="operacional/"><span>Operações Urbanas</span><em>›</em></a>
+      </article>
+
+      <article class="domain financeiro">
+        <h4>Financeiro</h4>
+        <a class="mod" href="contratos/"><span>Contratos de Receita</span><em>›</em></a>
+        <a class="mod" href="contratos/sme/"><span>SME</span><em>›</em></a>
+        <a class="mod" href="contratos/sms/"><span>SMS</span><em>›</em></a>
+        <a class="mod" href="#"><span>Execução Financeira</span><em>›</em></a>
+      </article>
+
+      <article class="domain">
+        <h4>Gestão</h4>
+        <a class="mod" href="pessoas/"><span>Pessoas</span><em>›</em></a>
+        <a class="mod" href="sme/"><span>SME</span><em>›</em></a>
+        <a class="mod" href="sms/"><span>SMS</span><em>›</em></a>
+        <a class="mod" href="#"><span>BIAC</span><em>›</em></a>
+      </article>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div><strong>HUB COMLURB</strong> &nbsp;•&nbsp; Centro de Inteligência Operacional<br>Plataforma corporativa de monitoramento, análise e suporte à decisão.</div>
+    <div>Versão 1.0 &nbsp;•&nbsp; 2026</div>
+  </footer>
+</main>
+</body>
+</html>

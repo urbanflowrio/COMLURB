@@ -1,1 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SME · Glosas Contratuais | HUB COMLURB</title>
+  <link rel="stylesheet" href="../assets/css/hub-premium.css">
+  <style>
+    /* ── ESTILOS LOCAIS — apenas o que hub-premium.css não cobre ── */
 
+    /* Contrato strip */
+    .contractStrip {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .contractBox {
+      background: var(--panel-bg, #0b1a2e);
+      border: 1px solid var(--border-color, #294866);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .contractBox.main { border-color: rgba(91,155,213,.38); }
+    .contractBox .cLabel {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-muted, #b8c9de);
+      margin-bottom: 6px;
+    }
+    .contractBox .cVal {
+      display: block;
+      font-size: clamp(15px, 1.3vw, 21px);
+      font-weight: 800;
+      color: var(--text-primary, #f7f9ff);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .contractBox .cSub {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted, #b8c9de);
+      margin-top: 4px;
+    }
+
+    /* Views / abas */
+    .view { display: none; }
+    .view.active { display: block; animation: fadeUp .2s ease both; }
+    @keyframes fadeUp { from { opacity: .7; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+    /* Nav abas — complemento ao tabBtn do HUB */
+    .viewNav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .viewNav button {
+      color: var(--text-muted, #b8c9de);
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 9px 16px;
+      border-radius: 999px;
+      background: transparent;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+      white-space: nowrap;
+    }
+    .viewNav button:hover { border-color: var(--border-color, #294866); color: var(--text-primary, #f7f9ff); }
+    .viewNav button.active {
+      border-color: var(--accent-orange, #e87535);
+      background: rgba(232,117,53,.12);
+      color: var(--text-primary, #f7f9ff);
+    }
+
+    /* Status banner */
+    .statusBanner {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      background: var(--panel-bg, #0b1a2e);
+      border: 1px solid rgba(232,117,53,.4);
+      border-radius: 10px;
+      color: #ffd4b8;
+      font-size: 13px;
+    }
+    .statusBanner.err { border-color: rgba(239,106,93,.5); color: #ffc4c4; }
+
+    /* Leitura executiva */
+    .insightBlock {
+      margin: 14px 16px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--accent-orange, #e87535);
+      background: rgba(232,117,53,.05);
+      border-radius: 0 8px 8px 0;
+    }
+    .insightBlock p { font-size: 13px; color: #d7e4f7; line-height: 1.65; margin: 0; }
+    .insightBlock b { color: var(--text-primary, #f7f9ff); }
+
+    /* Rank rows — complementa .barRow do HUB sem sobrescrever */
+    .rankRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 6px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      border-radius: 8px;
+    }
+    .rankRow:last-child { border-bottom: 0; }
+    .rankRow:hover { background: rgba(91,155,213,.05); }
+    .rankRow .rLeft  { min-width: 0; flex: 1; }
+    .rankRow .rName  { font-size: 13px; font-weight: 700; color: var(--text-primary, #f7f9ff); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rankRow .rInfo  { font-size: 11px; color: var(--text-muted, #b8c9de); margin-top: 2px; }
+    .rankRow .rVal   { font-size: 13px; font-weight: 700; color: var(--text-primary, #f7f9ff); white-space: nowrap; flex-shrink: 0; }
+    .ranking { padding: 8px 12px; }
+
+    /* Pill status */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,.1);
+      white-space: nowrap;
+    }
+    .pill.good { color: #aee4d5; background: rgba(120,170,163,.15); }
+    .pill.warn { color: #ffd8b8; background: rgba(232,117,53,.15); }
+    .pill.bad  { color: #ffc4c4; background: rgba(239,106,93,.15); }
+
+    /* Tabela */
+    .tableWrap { max-height: 560px; overflow: auto; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,.06); vertical-align: middle; }
+    th {
+      position: sticky; top: 0;
+      background: #10243d;
+      color: var(--text-muted, #b8c9de);
+      font-size: 10px; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-align: left; z-index: 2;
+    }
+    td.num, th.num { text-align: right; }
+    tr:hover td { background: rgba(16,41,70,.5); }
+    td strong { color: var(--text-primary, #f7f9ff); }
+    td.mutedCell { color: var(--text-muted, #b8c9de); font-style: italic; }
+
+    /* Heatmap */
+    .heatWrap { overflow: auto; max-height: 520px; }
+    .heatmap { border-collapse: separate; border-spacing: 4px; min-width: 900px; }
+    .heatmap th, .heatmap td { border: 0; border-radius: 8px; text-align: center; padding: 6px 8px; font-size: 11px; }
+    .heatmap th:first-child, .heatmap td:first-child {
+      position: sticky; left: 0;
+      text-align: left; background: #10243d; z-index: 3;
+      min-width: 180px; font-size: 11px;
+    }
+    .heatmap th { color: var(--text-muted, #b8c9de); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+    /* Chart de barras */
+    .barChart {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 250px;
+      padding: 14px 16px 16px;
+      overflow-x: auto;
+    }
+    .barCol { min-width: 46px; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .barCol .bVal { font-size: 10px; color: var(--text-muted, #b8c9de); text-align: center; line-height: 1.2; min-height: 26px; display: flex; align-items: flex-end; justify-content: center; }
+    .barCol .bStick { width: 100%; max-width: 36px; border-radius: 4px 4px 0 0; background: var(--accent-blue, #5b9bd5); }
+    .barCol.o .bStick { background: var(--accent-orange, #e87535); }
+    .barCol.r .bStick { background: var(--accent-red, #ef6a5d); }
+    .barCol .bLab { font-size: 10px; color: var(--text-muted, #b8c9de); }
+
+    /* Grid auxiliar */
+    .mt { margin-top: 12px; }
+
+    @media (max-width: 1300px) {
+      .contractStrip { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 720px) {
+      .contractStrip { grid-template-columns: 1fr; }
+      .viewNav { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER CANÔNICO -->
+  <div id="header"></div>
+
+  <!-- STATUS -->
+  <div id="statusBanner" class="statusBanner"></div>
+
+  <!-- CONTRATO STRIP -->
+  <section class="contractStrip">
+    <div class="contractBox main">
+      <span class="cLabel">Contrato principal</span>
+      <span class="cVal">134/2021</span>
+      <span class="cSub">Limpeza e Higienização Escolar · SME</span>
+    </div>
+    <div class="contractBox">
+      <span class="cLabel">Postos contratados</span>
+      <span class="cVal">1.854</span>
+      <span class="cSub">Referência mensal fixa</span>
+    </div>
+    <div class="contractBox">
+      <span class="cLabel">Valor contrato/mês</span>
+      <span class="cVal">R$ 12,86 mi</span>
+      <span class="cSub">1.854 × R$ 6.933,78</span>
+    </div>
+    <div class="contractBox">
+      <span class="cLabel">Valor posto/mês</span>
+      <span class="cVal">R$ 6.933,78</span>
+      <span class="cSub">Referência por gari</span>
+    </div>
+    <div class="contractBox">
+      <span class="cLabel">Valor dia contratual</span>
+      <span class="cVal">R$ 231,13</span>
+      <span class="cSub">Base fixa de 30 dias</span>
+    </div>
+    <div class="contractBox">
+      <span class="cLabel">Estrutura</span>
+      <span class="cVal">10 CREs + SME</span>
+      <span class="cSub">UGE-S · UGE-N · UGE-O</span>
+    </div>
+  </section>
+
+  <!-- FILTROS CANÔNICOS -->
+  <section class="filters">
+    <div class="field"><label>Ano</label><select id="fAno"></select></div>
+    <div class="field"><label>Mês</label><select id="fMes"></select></div>
+    <div class="field"><label>Gerência</label><select id="fGerencia"></select></div>
+    <div class="field"><label>Unidade</label><select id="fUnidade"></select></div>
+    <div class="field">
+      <label>Indicador</label>
+      <select id="fIndicador">
+        <option value="glosa">Glosa R$</option>
+        <option value="glosaPct">% Glosa</option>
+        <option value="faturado">Faturado</option>
+        <option value="debito">Débito líquido</option>
+        <option value="faltas">Faltas estimadas</option>
+      </select>
+    </div>
+    <button class="actionBtn" id="limpar">Limpar</button>
+  </section>
+
+  <!-- NAV ABAS -->
+  <nav class="viewNav">
+    <button id="btnExec"   class="active">Executivo</button>
+    <button id="btnGlosas">Glosas</button>
+    <button id="btnOutros">Outros contratos</button>
+    <button id="btnGov">Governança</button>
+  </nav>
+
+  <!-- VIEW: EXECUTIVO -->
+  <main id="exec" class="view active">
+    <div class="kpis" id="kpisExec"></div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHead">
+          <h2>Leitura executiva</h2>
+          <div class="hint">Síntese do recorte selecionado.</div>
+        </div>
+        <div class="insightBlock"><p id="insight">Carregando...</p></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead">
+          <h2>Resumo do recorte</h2>
+          <div class="hint">Indicadores auxiliares para reunião.</div>
+          <span class="badge" id="badgeRecorte"></span>
+        </div>
+        <div class="ranking" id="resumoRecorte"></div>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr; margin-top:12px;">
+      <div class="panel">
+        <div class="panelHead"><h2>Top glosas por unidade</h2><span class="badge">R$</span></div>
+        <div class="ranking" id="topUnidades"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><h2>Top % glosa</h2><span class="badge">Proporção</span></div>
+        <div class="ranking" id="topPct"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><h2>Por gerência</h2><span class="badge">UGE</span></div>
+        <div class="ranking" id="rankGerencia"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW: GLOSAS -->
+  <main id="glosas" class="view">
+    <div class="grid">
+      <div class="panel">
+        <div class="panelHead">
+          <h2>Evolução mensal</h2>
+          <div class="hint">Série do indicador selecionado.</div>
+          <span class="badge" id="serieBadge"></span>
+        </div>
+        <div class="barChart" id="chartMensal"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead">
+          <h2>Radar de glosas</h2>
+          <div class="hint">Leitura objetiva do mês ou acumulado selecionado.</div>
+        </div>
+        <div class="ranking" id="radar"></div>
+      </div>
+    </div>
+
+    <div class="panel mt">
+      <div class="panelHead">
+        <h2>Mapa de calor mensal por unidade</h2>
+        <div class="hint">Percentual de glosa sobre o valor contratado.</div>
+      </div>
+      <div class="heatWrap"><table class="heatmap" id="heatmap"></table></div>
+    </div>
+
+    <div class="panel mt">
+      <div class="panelHead">
+        <h2>Base analítica — Contrato 134/2021</h2>
+        <div class="hint">Unidade, gerência, postos, contratado, faturado, glosa, faltas estimadas e débito líquido.</div>
+        <span class="badge" id="tableCount"></span>
+      </div>
+      <div class="tableWrap">
+        <table id="tblPrincipal">
+          <thead><tr>
+            <th>Unidade</th><th>Gerência</th>
+            <th class="num">Postos</th><th class="num">Contratado</th>
+            <th class="num">Faturado</th><th class="num">Glosa</th>
+            <th class="num">% Glosa</th><th class="num">Faltas est.</th>
+            <th class="num">Débito líq.</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW: OUTROS CONTRATOS -->
+  <main id="outros" class="view">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Resumo financeiro geral</h2>
+        <div class="hint">Demais anos e movimentos contratuais. A análise operacional completa permanece no Contrato 134/2021.</div>
+        <span class="badge">Contratado · Faturado · Débito</span>
+      </div>
+      <div class="tableWrap">
+        <table id="tblOutros">
+          <thead><tr>
+            <th>Ano</th><th>Contrato</th><th>Serviço</th>
+            <th class="num">Valor contratado</th>
+            <th class="num">Valor faturado</th>
+            <th class="num">Débito líquido</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW: GOVERNANÇA -->
+  <main id="gov" class="view">
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="panel">
+        <div class="panelHead"><h2>Parâmetros fixos</h2></div>
+        <div class="ranking" id="params"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><h2>Fórmulas do painel</h2></div>
+        <div class="ranking" id="formulas"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><h2>Estrutura gerencial</h2></div>
+        <div class="ranking" id="estrutura"></div>
+      </div>
+    </div>
+    <div class="panel mt">
+      <div class="panelHead"><h2>Nota metodológica</h2></div>
+      <div class="insightBlock">
+        <p>Todos os cálculos do Contrato 134/2021 utilizam a base contratual de 30 dias por mês. Meses com 28, 29 ou 31 dias mantêm a mesma referência diária de R$ 231,13 para fins de glosa e faltas estimadas. A taxa de presença não foi incluída para manter o painel focado em gestão contratual e financeira.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER CANÔNICO -->
+  <div id="footer"></div>
+
+</div><!-- .app -->
+
+<!-- DEPENDÊNCIAS EXTERNAS -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<!-- COMPONENTES HUB -->
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-cards.js"></script>
+<script src="../assets/components/hub-charts.js"></script>
+<script src="../assets/components/hub-filters.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
+
+<script>
+/* ── CONFIG ───────────────────────────────────────────────────── */
+const CONFIG = {
+  dataUrl:     "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaBL309w_BniO_LWq9_jWQXNsg22jdfZzIgnPJkgtKJRVYe1BEvZ06yI6BJ4s6yPMJmXacbPDka9hv/pub?gid=0&single=true&output=csv",
+  panelName:   "Glosas Contratuais · SME",
+  systemLabel: "SME · Gestão Contratual",
+  subtitle:    "Contrato 134/2021 · Limpeza e Higienização Escolar · Apuração contratual de 30 dias"
+};
+
+const VALOR_POSTO_MES       = 6933.78;
+const VALOR_DIA_CONTRATUAL  = 231.13;
+const CONTRATO_PRINCIPAL    = "134/2021";
+const TOTAL_POSTOS          = 1854;
+const VALOR_CONTRATO_MENSAL = 12855228.12;
+
+const MESES = {
+  "JANEIRO":1,"FEVEREIRO":2,"MARÇO":3,"MARCO":3,
+  "ABRIL":4,"MAIO":5,"JUNHO":6,"JULHO":7,
+  "AGOSTO":8,"SETEMBRO":9,"OUTUBRO":10,"NOVEMBRO":11,"DEZEMBRO":12
+};
+const MESES_NOME = ["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const MESES_3    = ["","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+const REF_UNIDADES = {
+  "10ª CRE":                        {postos:309, gerencia:"UGE-O"},
+  "11ª CRE":                        {postos:40,  gerencia:"UGE-N"},
+  "1ª CRE":                         {postos:127, gerencia:"UGE-S"},
+  "3ª CRE":                         {postos:152, gerencia:"UGE-S"},
+  "4ª CRE":                         {postos:362, gerencia:"UGE-S"},
+  "5ª CRE":                         {postos:178, gerencia:"UGE-N"},
+  "6ª CRE":                         {postos:160, gerencia:"UGE-N"},
+  "7ª CRE":                         {postos:133, gerencia:"UGE-N"},
+  "8ª CRE":                         {postos:182, gerencia:"UGE-O"},
+  "9ª CRE":                         {postos:196, gerencia:"UGE-O"},
+  "CENTRO ARQUIVÍSTICO":             {postos:1,   gerencia:"UGE-S"},
+  "CONSELHO MUNICIPAL DE EDUCAÇÃO":  {postos:1,   gerencia:"UGE-S"},
+  "CREJA":                           {postos:3,   gerencia:"UGE-S"},
+  "DEPÓSITOS (GME 1 e GME 2)":       {postos:6,   gerencia:"UGE-S"},
+  "ESCOLA DE FORMAÇÃO PAULO FREIRE": {postos:2,   gerencia:"UGE-S"},
+  "INSTITUTO HELENA ANTIPOFF":       {postos:2,   gerencia:"UGE-S"}
+};
+
+/* ── ESTADO ───────────────────────────────────────────────────── */
+let RAW = [], DATA = [], currentView = "exec";
+
+/* ── UTILITÁRIOS ──────────────────────────────────────────────── */
+const $      = id => document.getElementById(id);
+const brl    = v  => (Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
+const brl2   = v  => (Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2});
+const iFmt   = v  => Math.round(Number(v)||0).toLocaleString("pt-BR");
+const pct    = v  => (Number(v)||0).toLocaleString("pt-BR",{style:"percent",minimumFractionDigits:1,maximumFractionDigits:1});
+const short  = v  => { v=Number(v)||0; if(Math.abs(v)>=1e6) return "R$ "+(v/1e6).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+" mi"; return brl(v); };
+const norm   = s  => String(s??"").trim();
+const keyN   = s  => String(s??"").trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+
+function parseNum(v) {
+  if (v===null||v===undefined||v===""||v==="-") return 0;
+  let s = String(v).trim().replace(/R\$/g,"").replace(/\s/g,"");
+  if (s.includes(".")&&s.includes(",")) s=s.replace(/\./g,"").replace(",",".");
+  else if (s.includes(",")) s=s.replace(",",".");
+  const n=Number(s); return Number.isFinite(n)?n:0;
+}
+function getCol(row,names) {
+  for (const n of names) { if(row[n]!==undefined&&row[n]!==null&&String(row[n]).trim()!=="") return row[n]; }
+  return "";
+}
+function mesNum(v)      { const s=keyN(v); return MESES[s]||Number(v)||0; }
+function refUnidade(u)  { return REF_UNIDADES[norm(u)]||{postos:0,gerencia:"Não informado"}; }
+function isPrincipal(r) { return r.contrato===CONTRATO_PRINCIPAL; }
+function isMovimento(r) { return r.valorFatura>0||r.debitoLiquido>0; }
+
+function mapRow(r) {
+  const unidade = norm(getCol(r,["UNIDADES","Unidade","unidade"]));
+  const ref     = refUnidade(unidade);
+  return {
+    secretaria:            norm(getCol(r,["SECRETARIA","Secretaria"])),
+    servico:               norm(getCol(r,["SERVIÇO","Servico","Serviço"])),
+    unidade,
+    contrato:              norm(getCol(r,["Contrato","CONTRATO"])),
+    mes:                   mesNum(getCol(r,["MÊS COMPETÊNCIA","Mês Competência","MES COMPETÊNCIA","Mes"])),
+    ano:                   Number(getCol(r,["ANO COMPETÊNCIA","Ano Competência","ANO","Ano"]))||0,
+    valorFatura:           parseNum(getCol(r,["Valor Fatura","VALOR FATURA"])),
+    debitoLiquido:         parseNum(getCol(r,["Débito Liquido","Débito Líquido","Debito Liquido"])),
+    postos:                ref.postos,
+    gerencia:              ref.gerencia,
+    valorContratadoMensal: ref.postos*VALOR_POSTO_MES
+  };
+}
+
+/* ── HELPERS DE DADOS ─────────────────────────────────────────── */
+function anos() { return [...new Set(DATA.map(d=>d.ano).filter(Boolean))].sort((a,b)=>a-b); }
+function mesesAno(ano) {
+  const ms=[...new Set(DATA.filter(d=>d.ano==ano&&isPrincipal(d)&&isMovimento(d)).map(d=>d.mes))].filter(Boolean).sort((a,b)=>a-b);
+  return ms.length ? ms : [...new Set(DATA.filter(d=>d.ano==ano&&isPrincipal(d)).map(d=>d.mes))].filter(Boolean).sort((a,b)=>a-b);
+}
+function unidades()   { return Object.keys(REF_UNIDADES).sort((a,b)=>a.localeCompare(b,"pt-BR")); }
+function gerencias()  { return [...new Set(Object.values(REF_UNIDADES).map(x=>x.gerencia))].sort(); }
+function mesesSel()   { const ano=Number($("fAno").value),m=$("fMes").value; return m==="YTD"?mesesAno(ano):[Number(m)]; }
+
+function filtro() {
+  const ano=Number($("fAno").value),ger=$("fGerencia").value,uni=$("fUnidade").value,meses=mesesSel();
+  return DATA.filter(d=>isPrincipal(d)&&d.ano===ano&&meses.includes(d.mes)&&(!ger||d.gerencia===ger)&&(!uni||d.unidade===uni));
+}
+
+function agrupar(rows,campo) {
+  const map={};
+  rows.forEach(r=>{
+    const nome=r[campo]||"Não informado";
+    if(!map[nome]) map[nome]={nome,contratado:0,faturado:0,debito:0,unidades:new Set(),meses:new Set()};
+    const o=map[nome];
+    o.faturado+=r.valorFatura; o.debito+=r.debitoLiquido; o.contratado+=r.valorContratadoMensal;
+    o.unidades.add(r.unidade); o.meses.add(r.mes);
+  });
+  return Object.values(map).map(o=>{
+    o.glosa=Math.max(0,o.contratado-o.faturado);
+    o.glosaPct=o.contratado?o.glosa/o.contratado:0;
+    o.faltas=o.glosa/VALOR_DIA_CONTRATUAL;
+    o.mediaFaltas=o.meses.size?o.faltas/o.meses.size:0;
+    return o;
+  });
+}
+
+function total(rows) {
+  const contratado=rows.reduce((s,r)=>s+r.valorContratadoMensal,0);
+  const faturado  =rows.reduce((s,r)=>s+r.valorFatura,0);
+  const debito    =rows.reduce((s,r)=>s+r.debitoLiquido,0);
+  const glosa     =Math.max(0,contratado-faturado);
+  const meses     =[...new Set(rows.map(r=>r.mes))].filter(Boolean);
+  return {
+    contratado,faturado,debito,glosa,
+    glosaPct:    contratado?glosa/contratado:0,
+    faltas:      glosa/VALOR_DIA_CONTRATUAL,
+    mediaFaltas: meses.length?(glosa/VALOR_DIA_CONTRATUAL)/meses.length:0,
+    meses:       meses.length,
+    unidades:    new Set(rows.map(r=>r.unidade)).size,
+    postos:      [...new Map(rows.map(r=>[r.unidade,r.postos])).values()].reduce((a,b)=>a+b,0)
+  };
+}
+
+/* ── FILTROS ──────────────────────────────────────────────────── */
+function renderFilters() {
+  const la=anos(), aa=la[la.length-1];
+  $("fAno").innerHTML     = la.map(a=>'<option value="'+a+'"'+(a===aa?' selected':'')+'>'+a+'</option>').join("");
+  $("fGerencia").innerHTML= '<option value="">Todas</option>'+gerencias().map(g=>'<option>'+g+'</option>').join("");
+  $("fUnidade").innerHTML = '<option value="">Todas</option>'+unidades().map(u=>'<option>'+u+'</option>').join("");
+  renderMeses();
+}
+function renderMeses() {
+  const ms=mesesAno(Number($("fAno").value));
+  $("fMes").innerHTML='<option value="YTD" selected>YTD · meses com movimento</option>'+ms.map(m=>'<option value="'+m+'">'+MESES_NOME[m]+'</option>').join("");
+}
+
+/* ── RANK HTML ────────────────────────────────────────────────── */
+function rankHTML(items,vKey,fmtFn) {
+  if(!items.length) return '<div class="rankRow"><span class="rInfo">Sem dados no recorte.</span></div>';
+  return items.map(x=>{
+    const v=x[vKey]||0;
+    return '<div class="rankRow"><div class="rLeft"><div class="rName" title="'+x.nome+'">'+x.nome+'</div><div class="rInfo">'+(x.unidades?x.unidades.size||1:1)+' un. · '+iFmt(x.meses?x.meses.size||0:0)+' mês(es)</div></div><div class="rVal">'+fmtFn(v)+'</div></div>';
+  }).join("");
+}
+
+/* ── RENDER TUDO ──────────────────────────────────────────────── */
+function renderAll() {
+  const rows=filtro(), t=total(rows);
+  const periodo=$("fMes").value==="YTD"?t.meses+" mês(es) com movimento":MESES_NOME[Number($("fMes").value)];
+
+  /* KPIs via HUB.cards */
+  HUB.cards.render("kpisExec",[
+    {label:"Valor contratado",  value:short(t.contratado), note:"Referência · "+periodo},
+    {label:"Valor faturado",    value:short(t.faturado),   note:"Coluna Valor Fatura",    color:"green"},
+    {label:"Glosa estimada",    value:short(t.glosa),      note:pct(t.glosaPct)+" do contratado", color:"orange"},
+    {label:"Débito líquido",    value:short(t.debito),     note:"Pendente de pagamento",  color:"red"},
+    {label:"Faltas estimadas",  value:iFmt(t.faltas),      note:"Glosa ÷ R$ 231,13",      color:"yellow"},
+    {label:"Média mensal faltas",value:iFmt(t.mediaFaltas),note:"Base 30 dias por mês"}
+  ]);
+
+  const topUn =agrupar(rows,"unidade").sort((a,b)=>b.glosa-a.glosa);
+  const topPct=[...topUn].filter(x=>x.contratado>0).sort((a,b)=>b.glosaPct-a.glosaPct);
+  const ger   =agrupar(rows,"gerencia").sort((a,b)=>b.glosa-a.glosa);
+  const maior =topUn[0], gerMaior=ger[0];
+
+  $("topUnidades").innerHTML =rankHTML(topUn.slice(0,5),"glosa",short);
+  $("topPct").innerHTML      =rankHTML(topPct.slice(0,5),"glosaPct",pct);
+  $("rankGerencia").innerHTML=rankHTML(ger,"glosa",short);
+
+  $("badgeRecorte").textContent=iFmt(t.unidades)+" unidades · "+iFmt(t.postos)+" postos";
+  $("insight").innerHTML=rows.length
+    ?"No recorte selecionado, o valor contratado soma <b>"+brl(t.contratado)+"</b> e o faturamento registrado soma <b>"+brl(t.faturado)+"</b>. A glosa estimada é de <b>"+brl(t.glosa)+"</b>, equivalente a <b>"+pct(t.glosaPct)+"</b> do contratado e aproximadamente <b>"+iFmt(t.faltas)+"</b> faltas estimadas. A média mensal fica em <b>"+iFmt(t.mediaFaltas)+"</b> faltas. A maior concentração no recorte está em <b>"+(maior?maior.nome:"—")+"</b>, enquanto a gerência com maior peso é <b>"+(gerMaior?gerMaior.nome:"—")+"</b>."
+    :"Sem registros válidos no recorte selecionado.";
+
+  $("resumoRecorte").innerHTML=
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Meses considerados</div><div class="rInfo">Somente meses com movimento quando YTD</div></div><div class="rVal">'+iFmt(t.meses)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Unidades consideradas</div><div class="rInfo">CREs e unidades SME</div></div><div class="rVal">'+iFmt(t.unidades)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Postos no recorte</div><div class="rInfo">Referência contratual fixa</div></div><div class="rVal">'+iFmt(t.postos)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Representatividade da glosa</div><div class="rInfo">Glosa ÷ valor contratado</div></div><div class="rVal">'+pct(t.glosaPct)+'</div></div>';
+
+  renderChart(topUn,ger);
+  renderRadar(t,maior,gerMaior);
+  renderHeatmap();
+  renderTabela(topUn);
+  renderOutros();
+  renderGov();
+}
+
+function renderChart() {
+  const ano=Number($("fAno").value),ger=$("fGerencia").value,uni=$("fUnidade").value,ind=$("fIndicador").value;
+  const ms=mesesAno(ano);
+  const vals=ms.map(m=>({m,...total(DATA.filter(d=>isPrincipal(d)&&d.ano===ano&&d.mes===m&&(!ger||d.gerencia===ger)&&(!uni||d.unidade===uni)))}));
+  const fmtFn=ind==="glosaPct"?pct:ind==="faltas"?iFmt:short;
+  const arr=vals.map(x=>x[ind]||0), max=Math.max(...arr,ind==="glosaPct"?.01:1);
+  const selOpt=$("fIndicador").options[$("fIndicador").selectedIndex];
+  $("serieBadge").textContent=selOpt?selOpt.textContent:"";
+  $("chartMensal").innerHTML=vals.map(x=>{
+    const v=x[ind]||0,h=Math.max(10,Math.min((v/max)*210,210));
+    const cls=ind.includes("glosa")?"r":ind==="debito"?"o":"";
+    return '<div class="barCol '+cls+'"><div class="bVal">'+fmtFn(v)+'</div><div class="bStick" style="height:'+h+'px"></div><div class="bLab">'+MESES_3[x.m]+'</div></div>';
+  }).join("");
+}
+
+function renderRadar(t,maior,gerMaior) {
+  const cls=t.glosaPct<=.03?"good":t.glosaPct<=.10?"warn":"bad";
+  const txt=t.glosaPct<=.03?"Dentro de referência":t.glosaPct<=.10?"Atenção executiva":"Concentração relevante";
+  $("radar").innerHTML=
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Status do recorte</div><div class="rInfo">Parâmetro interno visual</div></div><span class="pill '+cls+'">'+txt+'</span></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Maior unidade</div><div class="rInfo">Concentração de glosa</div></div><div class="rVal">'+(maior?maior.nome:"—")+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Maior gerência</div><div class="rInfo">UGE com maior valor</div></div><div class="rVal">'+(gerMaior?gerMaior.nome:"—")+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Débito líquido</div><div class="rInfo">Pendente de pagamento</div></div><div class="rVal">'+short(t.debito)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Média mensal de faltas</div><div class="rInfo">Faltas estimadas ÷ meses</div></div><div class="rVal">'+iFmt(t.mediaFaltas)+'</div></div>';
+}
+
+function renderHeatmap() {
+  const ano=Number($("fAno").value),ger=$("fGerencia").value,uni=$("fUnidade").value,ms=mesesAno(ano);
+  const uns=unidades().filter(u=>(!uni||u===uni)&&(!ger||refUnidade(u).gerencia===ger));
+  let html='<tr><th>Unidade</th>'+ms.map(m=>'<th>'+MESES_3[m]+'</th>').join("")+'</tr>';
+  html+=uns.map(u=>{
+    return '<tr><td>'+u+'</td>'+ms.map(m=>{
+      const r=DATA.filter(d=>isPrincipal(d)&&d.ano===ano&&d.mes===m&&d.unidade===u);
+      const tp=total(r),p=tp.glosaPct||0;
+      const bg=p>.10?"rgba(239,106,93,.40)":p>.03?"rgba(232,117,53,.30)":"rgba(120,170,163,.20)";
+      return '<td style="background:'+bg+'" title="'+brl(tp.glosa)+'">'+(r.length?pct(p):"—")+'</td>';
+    }).join("")+'</tr>';
+  }).join("");
+  $("heatmap").innerHTML=html;
+}
+
+function renderTabela(items) {
+  $("tableCount").textContent=iFmt(items.length)+" unidades";
+  $("tblPrincipal").querySelector("tbody").innerHTML=items.map(r=>{
+    const ref=refUnidade(r.nome);
+    return '<tr><td><strong>'+r.nome+'</strong></td><td>'+ref.gerencia+'</td><td class="num">'+iFmt(ref.postos)+'</td><td class="num">'+brl(r.contratado)+'</td><td class="num">'+brl(r.faturado)+'</td><td class="num">'+brl(r.glosa)+'</td><td class="num">'+pct(r.glosaPct)+'</td><td class="num">'+iFmt(r.faltas)+'</td><td class="num">'+brl(r.debito)+'</td></tr>';
+  }).join("");
+}
+
+function renderOutros() {
+  const map={};
+  DATA.forEach(r=>{
+    const k=r.ano+"|"+r.contrato+"|"+r.servico;
+    if(!map[k]) map[k]={ano:r.ano,contrato:r.contrato,servico:r.servico,faturado:0,debito:0,meses:new Set()};
+    map[k].faturado+=r.valorFatura; map[k].debito+=r.debitoLiquido; map[k].meses.add(r.mes);
+  });
+  Object.values(map).forEach(o=>{ o.contratado=o.contrato===CONTRATO_PRINCIPAL?VALOR_CONTRATO_MENSAL*[...o.meses].filter(Boolean).length:null; });
+  $("tblOutros").querySelector("tbody").innerHTML=Object.values(map).sort((a,b)=>a.ano-b.ano||a.contrato.localeCompare(b.contrato)).map(o=>
+    '<tr><td>'+o.ano+'</td><td><strong>'+o.contrato+'</strong></td><td>'+o.servico+'</td><td class="num">'+(o.contratado===null?'<span class="mutedCell">Sem referência mensal</span>':brl(o.contratado))+'</td><td class="num">'+brl(o.faturado)+'</td><td class="num">'+brl(o.debito)+'</td></tr>'
+  ).join("");
+}
+
+function renderGov() {
+  $("params").innerHTML=
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Valor posto/mês</div><div class="rInfo">Referência por gari</div></div><div class="rVal">'+brl2(VALOR_POSTO_MES)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Valor dia contratual</div><div class="rInfo">Base fixa de 30 dias</div></div><div class="rVal">'+brl2(VALOR_DIA_CONTRATUAL)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Postos contratados</div><div class="rInfo">Total do contrato</div></div><div class="rVal">'+iFmt(TOTAL_POSTOS)+'</div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Contrato mensal</div><div class="rInfo">1.854 × valor posto/mês</div></div><div class="rVal">'+brl2(VALOR_CONTRATO_MENSAL)+'</div></div>';
+  $("formulas").innerHTML=
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Valor contratado</div><div class="rInfo">Postos × R$ 6.933,78 × meses</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Glosa estimada</div><div class="rInfo">Valor contratado - Valor Fatura</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">% Glosa</div><div class="rInfo">Glosa ÷ Valor contratado</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Faltas estimadas</div><div class="rInfo">Glosa ÷ R$ 231,13</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">Média mensal faltas</div><div class="rInfo">Faltas estimadas ÷ meses do filtro</div></div></div>';
+  $("estrutura").innerHTML=
+    '<div class="rankRow"><div class="rLeft"><div class="rName">UGE-S</div><div class="rInfo">1ª, 2ª, 3ª, 4ª CRE e unidades SME</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">UGE-N</div><div class="rInfo">5ª, 6ª, 7ª e 11ª CRE</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">UGE-O</div><div class="rInfo">8ª, 9ª e 10ª CRE</div></div></div>'+
+    '<div class="rankRow"><div class="rLeft"><div class="rName">SME</div><div class="rInfo">Centro Arquivístico, CME, CREJA, Depósitos, Escola Paulo Freire e Instituto Helena Antipoff</div></div></div>';
+}
+
+/* ── NAVEGAÇÃO ────────────────────────────────────────────────── */
+function setView(v) {
+  currentView=v;
+  ["exec","glosas","outros","gov"].forEach(id=>$(id).classList.toggle("active",id===v));
+  [["btnExec","exec"],["btnGlosas","glosas"],["btnOutros","outros"],["btnGov","gov"]].forEach(([b,id])=>$(b).classList.toggle("active",id===v));
+}
+
+/* ── STATUS ───────────────────────────────────────────────────── */
+function showStatus(msg,err=false) {
+  const s=$("statusBanner"); s.style.display="block"; s.textContent=msg; s.className="statusBanner"+(err?" err":"");
+}
+
+/* ── INIT ─────────────────────────────────────────────────────── */
+async function init() {
+  HUB.header.render("header",{
+    systemLabel: CONFIG.systemLabel,
+    title:       CONFIG.panelName,
+    subtitle:    CONFIG.subtitle
+  });
+
+  showStatus("Carregando dados publicados...");
+  try {
+    const resp = await fetch(CONFIG.dataUrl,{cache:"no-store"});
+    if (!resp.ok) throw new Error("Não foi possível carregar o CSV publicado.");
+    const txt = await resp.text();
+    if (txt.toLowerCase().includes("<html")) throw new Error("O link retornou HTML, não CSV. Verifique a publicação da aba.");
+    const parsed = Papa.parse(txt,{header:true,skipEmptyLines:true});
+    RAW  = parsed.data;
+    DATA = RAW.map(mapRow).filter(d=>d.ano&&d.mes&&d.unidade&&d.contrato);
+    if (!DATA.length) throw new Error("CSV carregado, mas sem linhas válidas.");
+    $("statusBanner").style.display="none";
+    renderFilters();
+    renderAll();
+  } catch(e) {
+    showStatus(e.message,true);
+  }
+
+  HUB.footer.render("footer",{
+    author:  "Greicy Moreira",
+    contact: "greicymoreira@comlurb.rio",
+    version: "1.0"
+  });
+}
+
+/* ── EVENTOS ──────────────────────────────────────────────────── */
+document.addEventListener("click",e=>{
+  if(e.target.id==="btnExec")   setView("exec");
+  if(e.target.id==="btnGlosas") setView("glosas");
+  if(e.target.id==="btnOutros") setView("outros");
+  if(e.target.id==="btnGov")    setView("gov");
+  if(e.target.id==="limpar")    { $("fGerencia").value=""; $("fUnidade").value=""; $("fIndicador").value="glosa"; renderAll(); }
+});
+["fAno","fMes","fGerencia","fUnidade","fIndicador"].forEach(id=>{
+  document.addEventListener("change",e=>{ if(e.target.id===id){ if(id==="fAno") renderMeses(); renderAll(); }});
+});
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

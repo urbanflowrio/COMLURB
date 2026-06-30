@@ -7,148 +7,228 @@
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root { --bg:#06111f; --painel:#0d1f36; --painel2:#0a1b31; --linha:#294866; --texto:#f7f9ff; --silenciado:#b8c9de; --azul:#4b86bd; --azul2:#5b9bd5; --laranja:#e87535; --verde:#78aaa3; --vermelho:#ef6a5d; --amarelo:#ffa02b; --roxo:#a78bfa; }
-*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 14% 5%,rgba(75,134,189,.20),transparent 28%),radial-gradient(circle at 88% 8%,rgba(167,139,250,.12),transparent 25%),var(--bg);color:var(--texto);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5} .app{max-width:1800px;margin:0 auto;padding:28px}
-.header{display:flex;align-items:center;gap:28px;padding:26px;border:1px solid var(--linha);border-radius:22px;background:linear-gradient(135deg,rgba(10,27,49,.98),rgba(13,31,54,.94));margin-bottom:18px;box-shadow:0 18px 50px rgba(0,0,0,.22)}
-.logoImg{width:310px;max-height:82px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,.28)} .headerContent{flex:1;min-width:0} .systemLabel{font-size:12px;font-weight:900;letter-spacing:.25em;color:#b8d4f2;text-transform:uppercase} .mainTitle{margin:6px 0;font-size:38px;line-height:1.1;color:#fff;font-weight:950} .subtitle{color:#c7d8ee;font-size:15px;line-height:1.4;max-width:980px}
-.commandbar{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:14px;margin-bottom:14px} .command{background:rgba(13,31,54,.86);border:1px solid var(--linha);border-radius:20px;padding:18px 20px;min-height:108px;position:relative;overflow:hidden} .command:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--azul2),transparent)} .command .ey{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:#b8d4f2;font-weight:900;margin-bottom:8px} .command .tx{font-size:18px;font-weight:850;line-height:1.25} .command .small{font-size:12px;color:#c7d8ee;margin-top:8px;line-height:1.45}
-.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:14px} .kpi{background:linear-gradient(180deg,rgba(13,31,54,.98),rgba(9,24,43,.98));border:1px solid var(--linha);border-radius:20px;padding:18px;min-height:138px;position:relative;overflow:hidden} .kpi:after{content:"";position:absolute;right:-40px;top:-40px;width:120px;height:120px;background:rgba(91,155,213,.08);border-radius:50%} .kpi.feature{background:linear-gradient(135deg,#12365c,#0d1f36);border-color:#5b9bd5} .label{font-size:10px;letter-spacing:.14em;color:#b8d4f2;font-weight:900;text-transform:uppercase;line-height:1.35} .value{font-size:clamp(26px,2.4vw,36px);font-weight:950;line-height:1;margin:12px 0 6px;white-space:nowrap} .note{color:#c7d8ee;font-size:12px;line-height:1.4} .txt-blue{color:#7bb9f0} .txt-green{color:#8bd0ba} .txt-red{color:#ff8a80} .txt-orange{color:#ffb35f} .txt-purple{color:#b9a7ff}
-.exec-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px} .panel{background:rgba(13,31,54,.94);border:1px solid var(--linha);border-radius:20px;overflow:hidden;min-height:320px} .panelHead{padding:18px 20px;border-bottom:1px solid var(--linha);display:flex;align-items:flex-start;justify-content:space-between;gap:14px} .panelHead h2{margin:0;font-size:18px;font-weight:900} .hint{color:#c7d8ee;font-size:12px;margin-top:4px} .body{padding:18px 20px} .chart-wrap{height:290px;position:relative}
-.health{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center} .ring{width:210px;height:210px;border-radius:50%;background:conic-gradient(var(--azul2) calc(var(--p)*1%),rgba(41,72,102,.52) 0);display:grid;place-items:center;box-shadow:inset 0 0 40px rgba(0,0,0,.35),0 0 40px rgba(91,155,213,.10)} .ring-inner{width:150px;height:150px;border-radius:50%;background:#071524;display:grid;place-items:center;text-align:center;border:1px solid rgba(255,255,255,.08)} .ring-v{font-size:42px;font-weight:950;line-height:1} .ring-l{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:#b8d4f2;margin-top:5px} .status-list{display:grid;gap:10px} .status-line{display:grid;grid-template-columns:120px 1fr 64px;gap:12px;align-items:center;padding:10px 12px;border:1px solid rgba(41,72,102,.75);border-radius:14px;background:rgba(10,27,49,.55)} .track{height:10px;background:#132840;border-radius:99px;overflow:hidden} .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#2f67a5,#5b9bd5)} .fill.red{background:linear-gradient(90deg,#a83e36,#ef6a5d)} .fill.green{background:linear-gradient(90deg,#3b827c,#78aaa3)} .fill.orange{background:linear-gradient(90deg,#b86b2f,#e87535)} .sl-l{font-size:11px;color:#b8d4f2;font-weight:900;text-transform:uppercase;letter-spacing:.09em} .sl-v{text-align:right;font-weight:950;font-size:13px}
-.contract-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px} .contract-card{background:linear-gradient(180deg,rgba(13,31,54,.95),rgba(8,22,39,.95));border:1px solid var(--linha);border-radius:20px;padding:17px;min-height:210px;position:relative;overflow:hidden} .contract-card.top{border-color:rgba(91,155,213,.62)} .contract-card.warn{border-color:rgba(255,160,43,.52)} .contract-card.crit{border-color:rgba(239,106,93,.55)} .contract-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px} .contract-id{font-size:19px;font-weight:950;line-height:1.1} .tag{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:950;border:1px solid var(--linha);padding:5px 8px;border-radius:999px;color:#dcecff;white-space:nowrap} .tag.crit{border-color:rgba(239,106,93,.58);color:#ffaaa2;background:rgba(239,106,93,.08)} .tag.warn{border-color:rgba(255,160,43,.55);color:#ffd09a;background:rgba(255,160,43,.08)} .tag.ok{border-color:rgba(120,170,163,.55);color:#aee1d8;background:rgba(120,170,163,.08)} .servico{color:#c7d8ee;font-size:12px;min-height:34px;line-height:1.35} .contract-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px} .mini{padding:10px;background:rgba(10,27,49,.70);border:1px solid rgba(41,72,102,.75);border-radius:14px} .mini-l{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#b8d4f2;font-weight:900} .mini-v{font-size:18px;font-weight:950;margin-top:3px} .exec-bar{margin-top:14px} .exec-meta{display:flex;justify-content:space-between;font-size:11px;color:#c7d8ee;font-weight:800;margin-bottom:6px}
-.structure{display:grid;grid-template-columns:.95fr 1.05fr;gap:14px;margin-bottom:14px} .tile-wrap{display:flex;height:290px;border-radius:16px;overflow:hidden;border:1px solid rgba(41,72,102,.7);background:#081a2e} .tile{display:flex;flex-direction:column;justify-content:flex-end;padding:16px;border-right:1px solid rgba(255,255,255,.08);min-width:52px} .tile:last-child{border-right:0} .tile .big{font-size:28px;font-weight:950;line-height:1} .tile .nm{font-size:11px;color:#dcecff;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-top:6px} .tile .sub{font-size:11px;color:#b8c9de;margin-top:4px} .radar{display:grid;gap:10px} .radar-item{display:grid;grid-template-columns:8px 1fr;gap:12px;align-items:start;padding:12px 13px;background:rgba(10,27,49,.62);border:1px solid rgba(41,72,102,.75);border-radius:14px} .dot{width:8px;height:8px;border-radius:50%;background:var(--azul2);margin-top:7px;box-shadow:0 0 18px rgba(91,155,213,.85)} .radar-item b{color:#fff} .radar-item span{font-size:13px;color:#c7d8ee;line-height:1.45}
-.detail{display:none;margin-bottom:14px} .detail.open{display:block} table{width:100%;border-collapse:collapse;font-size:12px} th{text-align:left;color:#b8d4f2;text-transform:uppercase;letter-spacing:.12em;font-size:10px;padding:0 10px 10px} td{padding:11px 10px;border-top:1px solid rgba(41,72,102,.7);color:#dcecff} td.num, th.num{text-align:right} .toggle{border:1px solid var(--linha);background:#0a1b31;color:#dcecff;border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer} .toggle:hover{border-color:var(--azul)} .footer{margin-top:28px;padding:18px 0;border-top:1px solid rgba(255,255,255,.08);color:#8fa6bf;font-size:12px;opacity:.78} .footer strong{color:#dcecff}
-@media(max-width:1280px){.kpis{grid-template-columns:repeat(2,1fr)}.commandbar,.exec-grid,.structure{grid-template-columns:1fr}.contract-grid{grid-template-columns:repeat(2,1fr)}.health{grid-template-columns:1fr}} @media(max-width:760px){.app{padding:16px}.header{flex-direction:column;align-items:flex-start}.logoImg{width:260px;border-right:0;padding-right:0}.mainTitle{font-size:28px}.kpis,.contract-grid{grid-template-columns:1fr}.commandbar{grid-template-columns:1fr}.value{font-size:30px}.tile-wrap{height:auto;flex-direction:column}.tile{min-height:90px;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}}
+/* Complemento visual específico do módulo. O padrão estrutural vem de hub-premium.css */
+:root{color-scheme:dark}
+.performanceHero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:14px;margin-bottom:14px}
+.heroCard{background:linear-gradient(135deg,#0a1b31 0%,#0d1f36 46%,#113b65 100%);border:1px solid rgba(91,155,213,.42);border-radius:22px;padding:26px;position:relative;overflow:hidden;min-height:260px}
+.heroCard:after{content:"";position:absolute;right:-120px;top:-140px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(91,155,213,.22),transparent 64%);pointer-events:none}
+.heroEyebrow{font-size:12px;font-weight:950;letter-spacing:.24em;text-transform:uppercase;color:#b8d4f2;margin-bottom:10px}
+.heroTitle{font-size:42px;line-height:1.06;font-weight:950;margin:0 0 14px;color:#fff;letter-spacing:-.04em;max-width:760px}
+.heroText{font-size:15px;color:#c7d8ee;max-width:820px;margin:0;line-height:1.55}
+.healthWrap{display:grid;grid-template-columns:160px 1fr;gap:22px;align-items:center;margin-top:26px}
+.healthGauge{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--verde) 0 calc(var(--p)*1%),rgba(19,41,65,.96) 0 100%);position:relative;box-shadow:0 0 38px rgba(120,170,163,.18)}
+.healthGauge:after{content:"";position:absolute;inset:16px;border-radius:50%;background:#0b1c30;border:1px solid rgba(255,255,255,.08)}
+.healthGauge b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:950;z-index:2;color:#fff}
+.healthLegend{display:grid;gap:9px}
+.healthLegend div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:8px;color:#c7d8ee;font-size:13px}
+.healthLegend strong{color:#fff;font-size:15px}
+.bigKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.metric{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:20px;min-height:148px;position:relative;overflow:hidden}
+.metric:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--azul)}
+.metric.green:before{background:var(--verde)}.metric.red:before{background:var(--vermelho)}.metric.orange:before{background:var(--laranja)}
+.metric .label{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#b8d4f2;min-height:34px}
+.metric .value{font-size:clamp(28px,2.8vw,42px);font-weight:950;margin:8px 0 6px;line-height:1;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric .note{font-size:12px;color:#c7d8ee;line-height:1.45}
+.execGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.contractGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.contractCard{background:#0d1f36;border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:194px;display:flex;flex-direction:column;justify-content:space-between}
+.contractCard.critico{border-color:rgba(239,106,93,.48)}.contractCard.atencao{border-color:rgba(255,160,43,.42)}.contractCard.saudavel{border-color:rgba(120,170,163,.45)}
+.contractTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.contractId{font-size:15px;font-weight:950;color:#fff;line-height:1.2}
+.contractSrv{font-size:11px;color:#b8c9de;line-height:1.35;margin-top:5px;min-height:30px}
+.secPill,.statusPill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.secPill{background:rgba(91,155,213,.13);border:1px solid rgba(91,155,213,.32);color:#b8d4f2}
+.statusPill.critico{background:rgba(239,106,93,.14);border:1px solid rgba(239,106,93,.42);color:#ffaaa3}
+.statusPill.atencao{background:rgba(255,160,43,.13);border:1px solid rgba(255,160,43,.38);color:#ffd08a}
+.statusPill.saudavel{background:rgba(120,170,163,.13);border:1px solid rgba(120,170,163,.38);color:#b8eee9}
+.contractNum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mini{border-top:1px solid rgba(255,255,255,.08);padding-top:10px}
+.mini b{display:block;font-size:17px;font-weight:950;color:#fff;white-space:nowrap}
+.mini span{font-size:10px;color:#95abc5;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+.progress{height:9px;background:#132941;border-radius:999px;overflow:hidden;margin-top:12px}
+.progress div{height:100%;background:linear-gradient(90deg,#2f67a5,#5b9bd5);border-radius:999px}
+.panel.tight .body{padding-top:8px}
+.secretariaRows{display:grid;gap:12px}
+.secRow{display:grid;grid-template-columns:74px minmax(0,1fr) 88px;gap:12px;align-items:center}
+.secRow b{font-size:13px;color:#fff}
+.secTrack{height:22px;background:#132941;border-radius:6px;overflow:hidden;position:relative}
+.secFill{height:100%;background:linear-gradient(90deg,#2f67a5,#5b9bd5)}
+.secVal{text-align:right;font-size:12px;font-weight:900;color:#c7d8ee}
+.radar{display:grid;gap:12px}
+.radarItem{display:grid;grid-template-columns:10px 1fr;gap:12px;align-items:start;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:13px 14px;color:#dbe9fb;font-size:13px;line-height:1.48}
+.radarDot{width:10px;height:10px;border-radius:50%;background:var(--azul);margin-top:5px;box-shadow:0 0 14px rgba(91,155,213,.55)}
+.chartBox{height:300px}
+.treemap{display:grid;grid-template-columns:2.6fr 1fr .2fr;gap:10px;height:308px}
+.tile{border:1px solid rgba(91,155,213,.3);background:linear-gradient(135deg,rgba(91,155,213,.22),rgba(91,155,213,.06));border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;overflow:hidden}
+.tile.sms{background:linear-gradient(135deg,rgba(167,139,250,.22),rgba(167,139,250,.05));border-color:rgba(167,139,250,.34)}
+.tile.smpda{background:linear-gradient(135deg,rgba(255,160,43,.22),rgba(255,160,43,.05));border-color:rgba(255,160,43,.34)}
+.tile h3{font-size:18px;margin:0;color:#fff;line-height:1.15}
+.tile small{color:#c7d8ee;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:10px}
+.tile b{font-size:26px;color:#fff;white-space:nowrap}
+details.analitico{margin-top:14px;background:var(--painel);border:1px solid var(--linha);border-radius:18px;overflow:hidden}
+details.analitico summary{cursor:pointer;padding:15px 18px;font-weight:950;color:#dcecff;letter-spacing:.06em;text-transform:uppercase;font-size:11px}
+.compactTable{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
+.compactTable th,.compactTable td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.08);text-align:right;white-space:nowrap}
+.compactTable th:first-child,.compactTable td:first-child{text-align:left}
+.compactTable th{color:#b8d4f2;font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+.footer{border-top:1px solid rgba(255,255,255,.12);padding:24px 18px;margin-top:20px;color:#7f8fa6;font-size:13px;background:transparent}
+.footer strong{color:#c7d8ee;font-weight:950}
+@media(max-width:1200px){.performanceHero,.execGrid{grid-template-columns:1fr}.contractGrid{grid-template-columns:repeat(2,1fr)}.bigKpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.app{padding:16px}.header{flex-direction:column;align-items:flex-start}.logoImg{width:240px;border-right:0;padding-right:0}.heroTitle{font-size:31px}.healthWrap{grid-template-columns:1fr}.contractGrid,.bigKpis{grid-template-columns:1fr}.treemap{grid-template-columns:1fr;height:auto}.tile{min-height:120px}}
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="header">
-    <div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio + COMLURB" onerror="this.style.display='none'"></div>
+  <div class="header">
+    <div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | COMLURB"></div>
     <div class="headerContent">
       <div class="systemLabel">HUB COMLURB</div>
-      <div class="mainTitle">Performance dos Contratos de Receita</div>
-      <div class="subtitle">Centro de Inteligência Operacional · leitura executiva da receita faturada, recebimento líquido, débito líquido e concentração dos contratos estratégicos em 2026.</div>
+      <h1 class="mainTitle">Performance dos Contratos de Receita</h1>
+      <div class="subtitle">Centro de Inteligência Operacional · visão executiva 2026 · secretarias contempladas: SME, SMS, SMPDA</div>
     </div>
-  </header>
+  </div>
 
-  <section class="commandbar">
-    <div class="command">
-      <div class="ey">Situação geral</div>
-      <div class="tx" id="situacaoTexto">—</div>
-      <div class="small">Base 2026 com meses de movimentação financeira identificados no arquivo: janeiro a março.</div>
+  <section class="performanceHero">
+    <div class="heroCard">
+      <div class="heroEyebrow">Situação Geral 2026</div>
+      <h2 class="heroTitle">Acompanhamento executivo da receita contratual.</h2>
+      <p class="heroText">O módulo consolida faturamento, recebimento líquido e débito líquido dos contratos de receita, com leitura por secretaria, contrato e evolução mensal. A visualização deixa a tabela como apoio analítico e prioriza sinais de gestão.</p>
+      <div class="healthWrap">
+        <div class="healthGauge" id="healthGauge"><b id="healthPct">—</b></div>
+        <div class="healthLegend">
+          <div><span>Execução financeira</span><strong id="legendExec">—</strong></div>
+          <div><span>Contratos monitorados</span><strong id="legendContratos">—</strong></div>
+          <div><span>Secretarias com receita</span><strong id="legendSecretarias">—</strong></div>
+        </div>
+      </div>
     </div>
-    <div class="command">
-      <div class="ey">Pergunta de presidência</div>
-      <div class="tx">Onde a receita está concentrada?</div>
-      <div class="small" id="depTexto">—</div>
-    </div>
-    <div class="command">
-      <div class="ey">Foco de gestão</div>
-      <div class="tx">Contratos com maior débito líquido</div>
-      <div class="small">A tela prioriza decisão. A base analítica fica recolhida no final.</div>
+    <div class="panel tight">
+      <div class="panelHead"><h2>Radar Executivo</h2><span class="hint">leitura automática</span></div>
+      <div class="body"><div class="radar" id="radarList"></div></div>
     </div>
   </section>
 
-  <section class="kpis" id="kpis"></section>
+  <section class="bigKpis" id="kpiRow"></section>
 
-  <section class="exec-grid">
+  <section class="execGrid">
     <div class="panel">
-      <div class="panelHead"><div><h2>Saúde financeira do portfólio</h2><div class="hint">Execução financeira e exposição por débito líquido.</div></div></div>
-      <div class="body health">
-        <div class="ring" id="ring"><div class="ring-inner"><div><div class="ring-v" id="ringVal">—</div><div class="ring-l">execução</div></div></div></div>
-        <div class="status-list" id="statusList"></div>
+      <div class="panelHead"><h2>Performance dos Contratos</h2><span class="hint">cards estratégicos, sem tabela dominante</span></div>
+      <div class="body"><div class="contractGrid" id="contractGrid"></div></div>
+    </div>
+    <div class="panel">
+      <div class="panelHead"><h2>Fluxo Financeiro 2026</h2><span class="hint">faturado × recebido × débito</span></div>
+      <div class="body"><div class="chartBox"><canvas id="fluxoChart"></canvas></div></div>
+    </div>
+  </section>
+
+  <section class="execGrid">
+    <div class="panel">
+      <div class="panelHead"><h2>Estrutura da Receita</h2><span class="hint">participação por secretaria</span></div>
+      <div class="body">
+        <div class="treemap" id="treemap"></div>
       </div>
     </div>
     <div class="panel">
-      <div class="panelHead"><div><h2>Radar executivo</h2><div class="hint">Leitura pronta para reunião, sem ruído contábil.</div></div></div>
-      <div class="body"><div class="radar" id="radar"></div></div>
+      <div class="panelHead"><h2>Concentração por Secretaria</h2><span class="hint">SME, SMS e SMPDA</span></div>
+      <div class="body"><div class="secretariaRows" id="secRows"></div></div>
     </div>
   </section>
 
-  <section class="contract-grid" id="contractCards"></section>
-
-  <section class="structure">
-    <div class="panel">
-      <div class="panelHead"><div><h2>Estrutura da receita</h2><div class="hint">Peso relativo por secretaria no faturamento de 2026.</div></div></div>
-      <div class="body"><div class="tile-wrap" id="tiles"></div></div>
+  <details class="analitico">
+    <summary>Base analítica compacta</summary>
+    <div style="overflow:auto">
+      <table class="compactTable" id="analiticoTable"></table>
     </div>
-    <div class="panel">
-      <div class="panelHead"><div><h2>Fluxo financeiro 2026</h2><div class="hint">Faturado, receita líquida recebida e débito líquido por competência.</div></div></div>
-      <div class="body"><div class="chart-wrap"><canvas id="fluxoChart"></canvas></div></div>
-    </div>
-  </section>
+  </details>
 
-  <section class="panel" style="min-height:auto;margin-bottom:14px">
-    <div class="panelHead"><div><h2>Base analítica compacta</h2><div class="hint">Detalhe apenas para conferência, sem protagonismo na tela executiva.</div></div><button class="toggle" onclick="toggleDetail()">Mostrar / ocultar</button></div>
-    <div class="body detail" id="detail"><table><thead><tr><th>Contrato</th><th>Secretaria</th><th>Serviço</th><th class="num">Faturado</th><th class="num">Recebido</th><th class="num">Débito</th><th class="num">Execução</th></tr></thead><tbody id="tbody"></tbody></table></div>
-  </section>
-
-  <footer class="footer"><div><strong>Gabinete da Presidência</strong><br>HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional</div><div id="stamp"></div></footer>
+  <footer class="footer">
+    <div><strong>Gabinete da Presidência</strong><br>HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional<br><span id="timestamp"></span></div>
+  </footer>
 </div>
+
 <script>
-const DATA = {"totais": {"faturado": 55422878.17, "recebido": 29010650.85, "debito": 18915011.570000004, "execucao": 52.34417953000364, "pct_debito": 34.12852633163783}, "top3": 90.69981356040428, "smeShare": 77.94619750257549, "months": [{"label": "Jan", "faturado": 16891616.67, "recebido": 14447806.39, "debito": 179672.06}, {"label": "Fev", "faturado": 18771534.04, "recebido": 14562844.46, "debito": 1657586.03}, {"label": "Mar", "faturado": 19759727.46, "recebido": 0.0, "debito": 17077753.48}], "contracts": [{"contrato": "134/2021", "secretaria": "SME", "servico": "LIMPEZA E HIGIENIZAÇÃO", "faturado": 34616058.910000004, "recebido": 19418209.31, "debito": 10490065.98, "unidades": 16, "execucao": 56.0959563897391, "pct_debito": 30.304044741989948}, {"contrato": "CONTRATO N° 2402909", "secretaria": "SMS", "servico": "LIMPEZA HOSPITALAR", "faturado": 12114779.219999999, "recebido": 6053849.9, "debito": 4613213.32, "unidades": 3, "execucao": 49.970781886027645, "pct_debito": 38.0792190780015}, {"contrato": "133/2021", "secretaria": "SME", "servico": "CONTROLE DE VETORES E PRAGAS URBANAS", "faturado": 3537609.04, "recebido": 1464373.01, "debito": 1514294.18, "unidades": 19, "execucao": 41.3944275198935, "pct_debito": 42.80558317433517}, {"contrato": "132/2021", "secretaria": "SME", "servico": "GESTÃO DE RESÍDUOS ESCOLARES", "faturado": 3527041.5300000003, "recebido": 1327442.6300000001, "debito": 1637738.48, "unidades": 18, "execucao": 37.636149693990134, "pct_debito": 46.433773633507506}, {"contrato": "69/2023", "secretaria": "SME", "servico": "MANEJO ARBÓREO", "faturado": 1519316.6, "recebido": 660576.72, "debito": 652112.84, "unidades": 1, "execucao": 43.47854291857273, "pct_debito": 42.92145823984283}, {"contrato": "133/2021", "secretaria": "SMS", "servico": "CONTROLE DE VETORES E PRAGAS URBANAS", "faturado": 82721.36, "recebido": 69651.4, "debito": 0.0, "unidades": 1, "execucao": 84.20001798809884, "pct_debito": 0.0}, {"contrato": "03/2022", "secretaria": "SMPDA", "servico": "GESTÃO DE RESÍDUOS - ANIMAIS", "faturado": 25351.510000000002, "recebido": 16547.88, "debito": 7586.77, "unidades": 1, "execucao": 65.27374503530558, "pct_debito": 29.926304192531333}], "secretarias": [{"secretaria": "SME", "faturado": 43200026.08, "recebido": 22870601.67, "debito": 14294211.48}, {"secretaria": "SMS", "faturado": 12197500.58, "recebido": 6123501.300000001, "debito": 4613213.32}, {"secretaria": "SMPDA", "faturado": 25351.510000000002, "recebido": 16547.88, "debito": 7586.77}]};
-const brl = v => 'R$ ' + (v>=1e6 ? (v/1e6).toFixed(1).replace('.',',')+' mi' : v>=1e3 ? (v/1e3).toFixed(0).replace('.',',')+' mil' : Math.round(v).toLocaleString('pt-BR'));
+const DATA = {"secretarias": [{"SECRETARIA": "SME", "faturado": 43200026.08, "recebido": 22870601.67, "debito": 14294211.48, "exec": 52.941175608660664, "deb_pct": 33.08843252439074}, {"SECRETARIA": "SMS", "faturado": 12197500.58, "recebido": 6123501.300000001, "debito": 4613213.32, "exec": 50.20291870320207, "deb_pct": 37.82097233562911}, {"SECRETARIA": "SMPDA", "faturado": 25351.510000000002, "recebido": 16547.88, "debito": 7586.77, "exec": 65.27374503530558, "deb_pct": 29.926304192531333}], "contratos": [{"SECRETARIA": "SME", "Contrato": "134/2021", "SERVIÇO": "LIMPEZA E HIGIENIZAÇÃO", "faturado": 34616058.910000004, "recebido": 19418209.31, "debito": 10490065.98, "unidades": 16.0, "exec": 56.0959563897391, "deb_pct": 30.304044741989948}, {"SECRETARIA": "SMS", "Contrato": "CONTRATO N° 2402909", "SERVIÇO": "LIMPEZA HOSPITALAR", "faturado": 12114779.219999999, "recebido": 6053849.9, "debito": 4613213.32, "unidades": 3.0, "exec": 49.970781886027645, "deb_pct": 38.0792190780015}, {"SECRETARIA": "SME", "Contrato": "133/2021", "SERVIÇO": "CONTROLE DE VETORES E PRAGAS URBANAS", "faturado": 3537609.04, "recebido": 1464373.01, "debito": 1514294.18, "unidades": 18.0, "exec": 41.3944275198935, "deb_pct": 42.80558317433517}, {"SECRETARIA": "SME", "Contrato": "132/2021", "SERVIÇO": "GESTÃO DE RESÍDUOS ESCOLARES", "faturado": 3527041.5300000003, "recebido": 1327442.6300000001, "debito": 1637738.48, "unidades": 18.0, "exec": 37.636149693990134, "deb_pct": 46.433773633507506}, {"SECRETARIA": "SME", "Contrato": "69/2023", "SERVIÇO": "MANEJO ARBÓREO", "faturado": 1519316.6, "recebido": 660576.72, "debito": 652112.84, "unidades": 1.0, "exec": 43.47854291857273, "deb_pct": 42.92145823984283}, {"SECRETARIA": "SMS", "Contrato": "133/2021", "SERVIÇO": "CONTROLE DE VETORES E PRAGAS URBANAS", "faturado": 82721.36, "recebido": 69651.4, "debito": 0.0, "unidades": 1.0, "exec": 84.20001798809884, "deb_pct": 0.0}, {"SECRETARIA": "SMPDA", "Contrato": "03/2022", "SERVIÇO": "GESTÃO DE RESÍDUOS - ANIMAIS", "faturado": 25351.510000000002, "recebido": 16547.88, "debito": 7586.77, "unidades": 1.0, "exec": 65.27374503530558, "deb_pct": 29.926304192531333}], "mensal": [{"MÊS COMPETÊNCIA": "JANEIRO", "faturado": 16891616.67, "recebido": 14447806.39, "debito": 179672.06}, {"MÊS COMPETÊNCIA": "FEVEREIRO", "faturado": 18771534.04, "recebido": 14562844.46, "debito": 1657586.03}, {"MÊS COMPETÊNCIA": "MARÇO", "faturado": 19759727.46, "recebido": 0.0, "debito": 17077753.48}]};
+const TOTAL = {"faturado": 55422878.17, "recebido": 29010650.85, "debito": 18915011.570000004, "exec": 52.34417953000364};
+const TOP3 = 90.699814;
+const brl = v => 'R$ ' + (v>=1e6 ? (v/1e6).toFixed(1).replace('.',',')+' mi' : v>=1e3 ? (v/1e3).toFixed(0).replace('.',',')+' mil' : v.toLocaleString('pt-BR',{maximumFractionDigits:0}));
 const brlFull = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const pct = v => v.toFixed(1).replace('.',',') + '%';
-const cls = c => c.pct_debito > 35 ? 'crit' : c.pct_debito > 15 ? 'warn' : 'ok';
-const status = c => c.pct_debito > 35 ? 'Crítico' : c.pct_debito > 15 ? 'Atenção' : 'Saudável';
-const corTag = c => cls(c);
-const T = DATA.totais;
-
-document.getElementById('kpis').innerHTML = `
-  <div class="kpi feature"><div class="label">Receita Bruta Faturada</div><div class="value txt-blue">${brl(T.faturado)}</div><div class="note">Total faturado nos contratos de receita em 2026.</div></div>
-  <div class="kpi"><div class="label">Receita Líquida Recebida</div><div class="value txt-green">${brl(T.recebido)}</div><div class="note">Valor efetivamente recebido pela Companhia.</div></div>
-  <div class="kpi red"><div class="label">Débito Líquido</div><div class="value txt-red">${brl(T.debito)}</div><div class="note">Valor líquido ainda pendente de recebimento.</div></div>
-  <div class="kpi orange"><div class="label">Execução Financeira</div><div class="value txt-orange">${pct(T.execucao)}</div><div class="note">Recebido sobre receita bruta faturada.</div></div>
-  <div class="kpi purple"><div class="label">Dependência Financeira</div><div class="value txt-purple">${pct(DATA.top3)}</div><div class="note">Da receita concentrada nos 3 maiores contratos.</div></div>`;
-
-document.getElementById('situacaoTexto').textContent = `Execução de ${pct(T.execucao)} com débito líquido equivalente a ${pct(T.pct_debito)} da receita faturada.`;
-document.getElementById('depTexto').textContent = `Os três maiores contratos concentram ${pct(DATA.top3)} da receita faturada em 2026.`;
-document.getElementById('ring').style.setProperty('--p', T.execucao);
-document.getElementById('ringVal').textContent = pct(T.execucao);
-
-document.getElementById('statusList').innerHTML = [
-  ['Receita recebida', T.recebido/T.faturado*100, 'green'],
-  ['Débito líquido', T.debito/T.faturado*100, 'red'],
-  ['Top 3 contratos', DATA.top3, 'orange'],
-  ['Peso SME', DATA.smeShare, '']
-].map(r=>`<div class="status-line"><div class="sl-l">${r[0]}</div><div class="track"><div class="fill ${r[2]}" style="width:${Math.min(100,r[1])}%"></div></div><div class="sl-v">${pct(r[1])}</div></div>`).join('');
-
-const topDebt = [...DATA.contracts].sort((a,b)=>b.debito-a.debito).slice(0,3);
-const topRevenue = DATA.contracts[0];
-document.getElementById('radar').innerHTML = [
-  `<b>Concentração elevada:</b> ${pct(DATA.top3)} da receita está nos três maiores contratos, o que torna o acompanhamento desses contratos central para a gestão.`,
-  `<b>Maior contrato:</b> ${topRevenue.contrato} responde sozinho por ${pct(topRevenue.faturado/T.faturado*100)} da receita bruta faturada de 2026.`,
-  `<b>Débito concentrado:</b> os três maiores débitos somam ${brl(topDebt.reduce((s,c)=>s+c.debito,0))}.`,
-  `<b>Leitura do ciclo:</b> março concentra o maior saldo em aberto na base disponível, indicando ponto de atenção no fluxo de recebimento.`
-].map(t=>`<div class="radar-item"><div class="dot"></div><span>${t}</span></div>`).join('');
-
-const cards = DATA.contracts.slice(0,6);
-document.getElementById('contractCards').innerHTML = cards.map((c,i)=>`<article class="contract-card ${i==0?'top ':''}${cls(c)}">
-  <div class="contract-head"><div><div class="contract-id">${c.contrato}</div><div class="servico">${c.servico}</div></div><div class="tag ${corTag(c)}">${status(c)}</div></div>
-  <div class="exec-bar"><div class="exec-meta"><span>Execução financeira</span><span>${pct(c.execucao)}</span></div><div class="track"><div class="fill ${cls(c)==='crit'?'red':cls(c)==='warn'?'orange':'green'}" style="width:${Math.min(100,c.execucao)}%"></div></div></div>
-  <div class="contract-metrics"><div class="mini"><div class="mini-l">Faturado</div><div class="mini-v txt-blue">${brl(c.faturado)}</div></div><div class="mini"><div class="mini-l">Recebido</div><div class="mini-v txt-green">${brl(c.recebido)}</div></div><div class="mini"><div class="mini-l">Débito</div><div class="mini-v txt-red">${brl(c.debito)}</div></div><div class="mini"><div class="mini-l">Peso receita</div><div class="mini-v txt-purple">${pct(c.faturado/T.faturado*100)}</div></div></div>
-</article>`).join('');
-
-const palette=['#1f5d91','#2f76ad','#5b9bd5','#78aaa3'];
-document.getElementById('tiles').innerHTML = DATA.secretarias.map((s,i)=>{ const p=s.faturado/T.faturado*100; return `<div class="tile" style="flex:${Math.max(4,p)};background:linear-gradient(180deg,${palette[i%palette.length]},rgba(8,22,39,.92))"><div class="big">${pct(p)}</div><div class="nm">${s.secretaria}</div><div class="sub">${brl(s.faturado)} faturados</div></div>`; }).join('');
-
-document.getElementById('tbody').innerHTML = DATA.contracts.map(c=>`<tr><td><b>${c.contrato}</b></td><td>${c.secretaria}</td><td>${c.servico}</td><td class="num">${brlFull(c.faturado)}</td><td class="num">${brlFull(c.recebido)}</td><td class="num">${brlFull(c.debito)}</td><td class="num">${pct(c.execucao)}</td></tr>`).join('');
-
-function toggleDetail(){ document.getElementById('detail').classList.toggle('open'); }
-
-new Chart(document.getElementById('fluxoChart'),{
- type:'line',
- data:{ labels: DATA.months.map(m=>m.label), datasets:[
-   {label:'Receita Bruta Faturada',data:DATA.months.map(m=>m.faturado),borderColor:'rgba(91,155,213,1)',backgroundColor:'rgba(91,155,213,.14)',tension:.35,fill:true,pointRadius:4},
-   {label:'Receita Líquida Recebida',data:DATA.months.map(m=>m.recebido),borderColor:'rgba(120,170,163,1)',backgroundColor:'rgba(120,170,163,.10)',tension:.35,fill:true,pointRadius:4},
-   {label:'Débito Líquido',data:DATA.months.map(m=>m.debito),borderColor:'rgba(239,106,93,1)',backgroundColor:'rgba(239,106,93,.10)',tension:.35,fill:true,pointRadius:4}
- ]},
- options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#b8c9de',font:{size:11,weight:'700'},boxWidth:10}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+brlFull(ctx.raw)}}},scales:{x:{ticks:{color:'#b8c9de'},grid:{color:'rgba(41,72,102,.45)'}},y:{ticks:{color:'#b8c9de',callback:v=>brl(v)},grid:{color:'rgba(41,72,102,.45)'}}}}
-});
-
-document.getElementById('stamp').textContent = 'Atualizado em ' + new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const pct = v => (v||0).toFixed(1).replace('.',',') + '%';
+function status(c){
+  if(c.exec >= 80 && c.deb_pct <= 12) return ['saudavel','Saudável'];
+  if(c.exec >= 55 || c.deb_pct <= 30) return ['atencao','Atenção'];
+  return ['critico','Crítico'];
+}
+function renderKpis(){
+  const cards = [
+    ['Receita Bruta Faturada', brl(TOTAL.faturado), 'Valor total faturado em 2026.', ''],
+    ['Receita Líquida Recebida', brl(TOTAL.recebido), 'Valor efetivamente recebido pela Companhia.', 'green'],
+    ['Débito Líquido', brl(TOTAL.debito), 'Valor pendente de recebimento no recorte.', 'red'],
+    ['Execução Financeira', pct(TOTAL.exec), 'Recebido sobre faturado no exercício.', 'orange']
+  ];
+  document.getElementById('kpiRow').innerHTML = cards.map(c=>`<div class="metric ${c[3]}"><div class="label">${c[0]}</div><div class="value">${c[1]}</div><div class="note">${c[2]}</div></div>`).join('');
+}
+function renderHero(){
+  document.getElementById('healthGauge').style.setProperty('--p', Math.max(0, Math.min(100, TOTAL.exec)));
+  document.getElementById('healthPct').textContent = pct(TOTAL.exec);
+  document.getElementById('legendExec').textContent = pct(TOTAL.exec);
+  document.getElementById('legendContratos').textContent = DATA.contratos.length;
+  document.getElementById('legendSecretarias').textContent = DATA.secretarias.map(s=>s.SECRETARIA).join(' · ');
+}
+function renderRadar(){
+  const maiorSec = DATA.secretarias[0];
+  const maiorDeb = [...DATA.contratos].sort((a,b)=>b.debito-a.debito)[0];
+  const melhor = [...DATA.contratos].sort((a,b)=>b.exec-a.exec)[0];
+  const criticos = DATA.contratos.filter(c=>status(c)[0]==='critico').length;
+  const items = [
+    `A receita de 2026 contempla ${DATA.secretarias.length} secretarias: ${DATA.secretarias.map(s=>s.SECRETARIA).join(', ')}.`,
+    `${maiorSec.SECRETARIA} concentra ${pct(maiorSec.faturado/TOTAL.faturado*100)} da receita bruta faturada do recorte.`,
+    `Os três maiores contratos concentram ${pct(TOP3)} da receita faturada, o que merece acompanhamento gerencial contínuo.`,
+    `O maior débito líquido está no contrato ${maiorDeb.Contrato} (${maiorDeb.SECRETARIA}), com ${brl(maiorDeb.debito)} pendente.`,
+    `${criticos} contrato(s) aparecem em condição crítica pela combinação entre execução financeira e débito líquido.`
+  ];
+  document.getElementById('radarList').innerHTML = items.map(t=>`<div class="radarItem"><span class="radarDot"></span><span>${t}</span></div>`).join('');
+}
+function renderContracts(){
+  document.getElementById('contractGrid').innerHTML = DATA.contratos.map(c=>{
+    const [cls,txt] = status(c);
+    return `<article class="contractCard ${cls}">
+      <div>
+        <div class="contractTop"><div><div class="contractId">${c.Contrato}</div><div class="contractSrv">${c.SERVIÇO}</div></div><span class="secPill">${c.SECRETARIA}</span></div>
+        <div class="progress"><div style="width:${Math.max(2, Math.min(100,c.exec))}%"></div></div>
+      </div>
+      <div>
+        <span class="statusPill ${cls}">${txt}</span>
+        <div class="contractNum">
+          <div class="mini"><b>${pct(c.exec)}</b><span>execução</span></div>
+          <div class="mini"><b>${brl(c.debito)}</b><span>débito</span></div>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+function renderSecretarias(){
+  const max = Math.max(...DATA.secretarias.map(s=>s.faturado));
+  document.getElementById('secRows').innerHTML = DATA.secretarias.map(s=>`<div class="secRow"><b>${s.SECRETARIA}</b><div class="secTrack"><div class="secFill" style="width:${s.faturado/max*100}%"></div></div><div class="secVal">${pct(s.faturado/TOTAL.faturado*100)}</div></div>`).join('');
+  document.getElementById('treemap').innerHTML = DATA.secretarias.map((s,i)=>`<div class="tile ${s.SECRETARIA.toLowerCase()}"><small>${s.SECRETARIA}</small><h3>${s.SECRETARIA==='SME'?'Educação':s.SECRETARIA==='SMS'?'Saúde':'Outras receitas'}</h3><b>${brl(s.faturado)}</b><small>${pct(s.faturado/TOTAL.faturado*100)} da receita</small></div>`).join('');
+}
+function renderChart(){
+  const labels = DATA.mensal.map(m=>({"JANEIRO": "Jan", "FEVEREIRO": "Fev", "MARÇO": "Mar", "ABRIL": "Abr", "MAIO": "Mai", "JUNHO": "Jun", "JULHO": "Jul", "AGOSTO": "Ago", "SETEMBRO": "Set", "OUTUBRO": "Out", "NOVEMBRO": "Nov", "DEZEMBRO": "Dez"}[m['MÊS COMPETÊNCIA']] || m['MÊS COMPETÊNCIA']);
+  new Chart(document.getElementById('fluxoChart'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Receita Bruta Faturada',data:DATA.mensal.map(m=>m.faturado),borderColor:'#5b9bd5',backgroundColor:'rgba(91,155,213,.12)',tension:.35,fill:true,pointRadius:4},
+      {label:'Receita Líquida Recebida',data:DATA.mensal.map(m=>m.recebido),borderColor:'#78aaa3',backgroundColor:'rgba(120,170,163,.08)',tension:.35,fill:false,pointRadius:4},
+      {label:'Débito Líquido',data:DATA.mensal.map(m=>m.debito),borderColor:'#ef6a5d',backgroundColor:'rgba(239,106,93,.10)',tension:.35,fill:false,pointRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#b8c9de',boxWidth:10,font:{size:11,weight:'bold'}}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+brlFull(ctx.raw)}}},scales:{x:{ticks:{color:'#b8c9de'},grid:{color:'rgba(41,72,102,.45)'}},y:{ticks:{color:'#b8c9de',callback:v=>brl(v)},grid:{color:'rgba(41,72,102,.45)'}}}}
+  });
+}
+function renderTable(){
+  const rows = DATA.contratos.map(c=>`<tr><td><b>${c.Contrato}</b><br><span style="color:#9fb4cc">${c.SERVIÇO}</span></td><td>${c.SECRETARIA}</td><td>${brlFull(c.faturado)}</td><td>${brlFull(c.recebido)}</td><td>${brlFull(c.debito)}</td><td>${pct(c.exec)}</td></tr>`).join('');
+  document.getElementById('analiticoTable').innerHTML = `<thead><tr><th>Contrato / Serviço</th><th>Secretaria</th><th>Receita Bruta</th><th>Receita Líquida</th><th>Débito Líquido</th><th>Execução</th></tr></thead><tbody>${rows}</tbody>`;
+}
+renderHero();renderKpis();renderRadar();renderContracts();renderSecretarias();renderChart();renderTable();
+document.getElementById('timestamp').textContent = 'Atualizado em ' + new Date().toLocaleString('pt-BR');
 </script>
 </body>
 </html>

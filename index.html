@@ -5,38 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Governança Corporativa · HUB COMLURB</title>
 
-<link rel="stylesheet" href="../assets/css/hub-premium.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/js/indicadores-registro.js"></script>
 
 <style>
 :root{
-  --gc-bg:#050f1d;
-  --gc-bg2:#07182b;
-  --gc-panel:#0b2037;
-  --gc-panel2:#0f2b49;
-  --gc-line:rgba(117,171,217,.25);
-  --gc-line2:rgba(255,255,255,.08);
-  --gc-text:#f5f8ff;
-  --gc-muted:#98acc7;
-  --gc-soft:#c7d8ee;
-  --gc-blue:#6da5d8;
-  --gc-orange:#f47b2a;
-  --gc-green:#6fe0b2;
-  --gc-yellow:#f6c75d;
-  --gc-red:#ff5f72;
-  --gc-shadow:0 26px 90px rgba(0,0,0,.38);
+  --bg:#050f1d;
+  --bg2:#07182b;
+  --panel:#0b2037;
+  --panel2:#102a46;
+  --line:rgba(117,171,217,.24);
+  --line2:rgba(255,255,255,.08);
+  --text:#f5f8ff;
+  --muted:#93a9c5;
+  --soft:#c4d5ea;
+  --blue:#6da5d8;
+  --blue2:#2e7fbf;
+  --orange:#f47b2a;
+  --green:#6fe0b2;
+  --yellow:#f6c75d;
+  --red:#ff5f72;
+  --shadow:0 26px 90px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{
   margin:0;
-  color:var(--gc-text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
   background:
-    radial-gradient(circle at 78% 6%,rgba(109,165,216,.17),transparent 30%),
-    radial-gradient(circle at 8% 4%,rgba(244,123,42,.08),transparent 25%),
-    linear-gradient(180deg,var(--gc-bg) 0%,var(--gc-bg2) 48%,var(--gc-bg) 100%);
-  font-family:Inter,Segoe UI,Arial,sans-serif;
+    radial-gradient(circle at 76% 4%,rgba(109,165,216,.18),transparent 28%),
+    radial-gradient(circle at 8% 10%,rgba(244,123,42,.08),transparent 24%),
+    linear-gradient(180deg,#050f1d 0%,#07182b 48%,#050f1d 100%);
+  z-index:-3;
 }
 body:after{
   content:"";
@@ -44,85 +57,554 @@ body:after{
   inset:0;
   pointer-events:none;
   opacity:.10;
-  background-image:linear-gradient(rgba(109,165,216,.20) 1px,transparent 1px),linear-gradient(90deg,rgba(109,165,216,.20) 1px,transparent 1px);
-  background-size:72px 72px;
-  mask-image:linear-gradient(to bottom,black,transparent 80%);
-  z-index:-1;
+  background-image:
+    linear-gradient(rgba(109,165,216,.20) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(109,165,216,.20) 1px,transparent 1px);
+  background-size:74px 74px;
+  mask-image:linear-gradient(to bottom,black,transparent 78%);
+  z-index:-2;
 }
-a{color:inherit;text-decoration:none}
-.app{width:min(1480px,94vw);margin:auto;padding:28px 0 26px}
-.gcHeader{
+a{text-decoration:none;color:inherit}
+button,input,select{font:inherit}
+.app{width:min(1500px,94vw);margin:auto;padding:28px 0 24px}
+
+.header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:26px;
+  gap:24px;
   margin-bottom:22px;
 }
-.brandBlock{display:flex;align-items:center;gap:24px;min-width:0}
-.brandBlock img{height:82px;width:auto;object-fit:contain;filter:drop-shadow(0 10px 28px rgba(0,0,0,.32))}
-.brandText{border-left:1px solid var(--gc-line);padding-left:22px;min-width:0}
-.brandText .system{font-size:13px;letter-spacing:4px;text-transform:uppercase;color:#9fd0ff;font-weight:900;margin-bottom:7px}
-.brandText h1{margin:0;font-size:42px;line-height:.98;letter-spacing:-1.8px;font-weight:950}
-.brandText .sub{margin-top:8px;color:var(--gc-soft);font-size:14px;letter-spacing:.2px}
-.headerMeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.metaPill{border:1px solid var(--gc-line);background:rgba(11,32,55,.72);padding:11px 14px;border-radius:999px;color:#cfe0f6;font-size:12px;font-weight:850;letter-spacing:.25px}
-.backLink{border-color:rgba(244,123,42,.36);color:#ffd2b2}
-.hero{
-  border:1px solid var(--gc-line);
-  background:linear-gradient(135deg,rgba(12,35,60,.96),rgba(5,15,29,.95));
-  box-shadow:var(--gc-shadow);
-  border-radius:34px;
-  padding:30px;
-  margin-bottom:18px;
-  display:grid;
-  grid-template-columns:1fr 420px;
-  gap:24px;
-  overflow:hidden;
-  position:relative;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  min-width:0;
 }
-.hero:before{content:"";position:absolute;right:-220px;top:-260px;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle,rgba(109,165,216,.22),transparent 68%);filter:blur(4px)}
-.heroMain,.heroAside{position:relative;z-index:1}
-.kicker{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#9fd0ff;font-weight:900;margin-bottom:14px}
-.hero h2{margin:0;font-size:56px;line-height:.98;letter-spacing:-2.8px;font-weight:950;max-width:880px}
-.hero p{max-width:900px;font-size:16px;line-height:1.62;color:#c8d9ef;margin:18px 0 0}
-.filters{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px;border:0;background:none;padding:0}
-.field{min-width:210px}.field label{display:block;color:#95aac5;text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:900;margin:0 0 8px}.field select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--gc-line);color:var(--gc-text);border-radius:14px;padding:13px 14px;font-size:14px;outline:none}.field select option{background:#091a2d;color:#fff}
-.heroAside{border:1px solid rgba(255,255,255,.08);background:rgba(4,14,27,.62);border-radius:26px;padding:22px;display:grid;gap:14px;align-content:start}
-.asideLabel{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#acd4ff;font-weight:900}.asideBig{font-size:46px;letter-spacing:-2.3px;font-weight:950;line-height:1}.asideText{color:#c8d9ef;font-size:14px;line-height:1.5}.asideRule{height:1px;background:var(--gc-line2);margin:3px 0}.sourceLine{font-size:12px;color:#92a7c2;line-height:1.5}
-.loading,.empty{border:1px solid var(--gc-line);background:rgba(11,32,55,.72);border-radius:22px;padding:24px;color:#c8d9ef;margin:18px 0}.empty{color:var(--gc-red)}
-.summaryGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 20px}.summaryCard{border:1px solid var(--gc-line);background:linear-gradient(180deg,rgba(16,42,70,.78),rgba(7,24,43,.74));border-radius:24px;padding:22px;min-height:140px}.summaryCard.feature{border-color:rgba(244,123,42,.42);background:linear-gradient(180deg,rgba(244,123,42,.10),rgba(7,24,43,.74))}.summaryCard small{display:block;text-transform:uppercase;letter-spacing:2px;color:#95aac5;font-size:11px;font-weight:950}.summaryCard b{display:block;font-size:50px;letter-spacing:-2.4px;line-height:1;margin:14px 0 6px}.summaryCard span{display:block;color:#bdcfe6;font-size:13px;line-height:1.45}.summaryCard.good b{color:var(--gc-green)}.summaryCard.warn b{color:var(--gc-yellow)}.summaryCard.bad b{color:var(--gc-red)}
-.sectionTitle{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:26px 0 13px}.sectionTitle h2{margin:0;font-size:25px;letter-spacing:-.8px}.sectionTitle p{margin:0;color:var(--gc-muted);font-size:13px;text-align:right}
-.execGrid{display:grid;grid-template-columns:1.04fr .96fr;gap:16px;margin-bottom:22px}.panel{border:1px solid var(--gc-line);background:rgba(11,32,55,.78);border-radius:28px;padding:22px;overflow:hidden}.panel h3{margin:0 0 14px;font-size:14px;letter-spacing:3px;text-transform:uppercase;color:#acd4ff}.reading{background:linear-gradient(135deg,rgba(244,123,42,.1),rgba(11,32,55,.78))}.readingLead{border:1px solid rgba(244,123,42,.24);background:rgba(244,123,42,.08);border-radius:22px;padding:19px;margin-bottom:13px}.readingLead b{font-size:29px;letter-spacing:-1.1px;line-height:1.12}.readingLead p{margin:11px 0 0;color:#d6e4f5;line-height:1.55}.readingLines{display:grid;gap:10px}.readingLine{display:grid;grid-template-columns:24px 1fr;gap:11px;align-items:start;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);padding:13px 14px;border-radius:16px;color:#c7d7ea;font-size:13px;line-height:1.4}.readingLine code{font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--gc-orange);font-weight:950;background:none;padding:0}
-.axisList{display:grid;gap:10px}.axisItem{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);border-radius:18px;padding:14px}.axisTop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.axisName b{display:block;font-size:15px}.axisName span{display:block;color:#93a9c5;font-size:12px;margin-top:4px}.axisPct{font-size:20px;font-weight:950;letter-spacing:-.5px}.axisBar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.axisBar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gc-blue),var(--gc-green));width:0%}.axisItem.warn .axisBar i{background:linear-gradient(90deg,var(--gc-orange),var(--gc-yellow))}.axisItem.bad .axisBar i{background:linear-gradient(90deg,var(--gc-red),var(--gc-orange))}.axisStats{margin-top:8px;color:#8fa5c1;font-size:12px}
-.priorityTable{width:100%;border-collapse:collapse}.priorityTable th{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8fa5c1;text-align:left;padding:0 10px 10px;border-bottom:1px solid var(--gc-line2)}.priorityTable td{padding:13px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;color:#c9d9eb;vertical-align:top}.priorityTable tr{cursor:pointer}.priorityTable tr:hover td{background:rgba(244,123,42,.045)}.statusText{font-weight:950;letter-spacing:.4px;text-transform:uppercase}.statusText.green{color:var(--gc-green)}.statusText.orange{color:var(--gc-yellow)}.statusText.red{color:var(--gc-red)}.statusText.none{color:#8fa5c1}.valuePair{white-space:nowrap;color:#eaf3ff}.muted{color:#93a9c5}.emptyMini{color:#93a9c5;font-size:13px;padding:18px;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:rgba(255,255,255,.025)}
-.indicatorSections{display:grid;gap:18px}.eixoPanel{border:1px solid var(--gc-line);background:linear-gradient(180deg,rgba(11,32,55,.78),rgba(7,24,43,.72));border-radius:28px;overflow:hidden}.eixoHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 21px;border-bottom:1px solid var(--gc-line2)}.eixoHead h3{margin:0;font-size:18px;letter-spacing:-.25px}.eixoHead span{color:#93a9c5;font-size:12px}.cardsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px}.indicatorCard{border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);border-radius:18px;padding:16px;min-height:154px;cursor:pointer;transition:.18s ease;position:relative;overflow:hidden}.indicatorCard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:rgba(109,165,216,.55)}.indicatorCard.green:before{background:var(--gc-green)}.indicatorCard.orange:before{background:var(--gc-yellow)}.indicatorCard.red:before{background:var(--gc-red)}.indicatorCard:hover{transform:translateY(-2px);border-color:rgba(244,123,42,.42);background:rgba(244,123,42,.055)}.indicatorCard .label{font-size:13px;line-height:1.34;color:#dceaff;font-weight:850;min-height:54px}.indicatorCard .value{font-size:32px;font-weight:950;letter-spacing:-1.2px;margin-top:10px}.indicatorCard .note{font-size:12px;line-height:1.38;color:#93a9c5;margin-top:8px}.indicatorCard .status{margin-top:12px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:950}.indicatorCard.green .status{color:var(--gc-green)}.indicatorCard.orange .status{color:var(--gc-yellow)}.indicatorCard.red .status{color:var(--gc-red)}
-.drawerBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.42);opacity:0;pointer-events:none;transition:.18s ease;z-index:20}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(520px,94vw);background:#07182b;border-left:1px solid var(--gc-line);box-shadow:-20px 0 70px rgba(0,0,0,.45);transform:translateX(102%);transition:.22s ease;z-index:21;display:flex;flex-direction:column}.drawer.open{transform:translateX(0)}.drawerBackdrop.open{opacity:1;pointer-events:auto}.drawerHead{padding:22px;border-bottom:1px solid var(--gc-line2)}.drawerHead button{float:right;background:rgba(255,255,255,.05);border:1px solid var(--gc-line);color:#fff;border-radius:12px;padding:8px 11px;cursor:pointer}.drawerHead .eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9fd0ff;font-weight:950}.drawerHead h3{clear:both;margin:9px 0 0;font-size:25px;line-height:1.12;letter-spacing:-.7px}.drawerBody{padding:20px 22px;overflow:auto}.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.detailBox{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);border-radius:16px;padding:14px}.detailBox small{display:block;color:#8fa5c1;letter-spacing:1.4px;text-transform:uppercase;font-size:10px;font-weight:900}.detailBox b{display:block;margin-top:8px;font-size:21px}.months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}.monthBox{border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:8px;text-align:center;background:rgba(255,255,255,.03)}.monthBox small{display:block;color:#8fa5c1;font-size:10px}.monthBox b{display:block;font-size:13px;margin-top:5px}.drawerSectionTitle{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#acd4ff;font-weight:950;margin:18px 0 10px}.footer{display:flex;align-items:center;justify-content:space-between;gap:18px;border-top:1px solid rgba(255,255,255,.08);margin-top:30px;padding-top:18px;color:#8ea6c2;font-size:12px}.footer strong{color:#c6d8ed}.footerTimestamp{margin-top:5px;color:#6f86a2}
-@media(max-width:1180px){.hero,.execGrid{grid-template-columns:1fr}.summaryGrid,.cardsGrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){.app{width:94vw;padding-top:18px}.gcHeader,.footer{align-items:flex-start;flex-direction:column}.brandBlock{align-items:flex-start;flex-direction:column;gap:12px}.brandBlock img{height:66px}.brandText{border-left:0;padding-left:0}.brandText h1{font-size:32px}.hero{padding:23px;border-radius:25px}.hero h2{font-size:38px}.summaryGrid,.cardsGrid{grid-template-columns:1fr}.sectionTitle{align-items:flex-start;flex-direction:column}.sectionTitle p{text-align:left}.priorityTable th:nth-child(3),.priorityTable td:nth-child(3){display:none}.detailGrid{grid-template-columns:1fr}.months{grid-template-columns:repeat(3,1fr)}}
+.logoImg{
+  height:88px;
+  max-width:360px;
+  object-fit:contain;
+  display:block;
+}
+.brandText{
+  min-width:0;
+  padding-left:24px;
+  border-left:1px solid rgba(255,255,255,.12);
+}
+.systemLabel{
+  color:#9fd0ff;
+  font-size:12px;
+  letter-spacing:4.2px;
+  text-transform:uppercase;
+  font-weight:900;
+  margin-bottom:8px;
+}
+.mainTitle{
+  margin:0;
+  font-size:44px;
+  line-height:1;
+  letter-spacing:-2px;
+  font-weight:950;
+}
+.subtitle{
+  color:#bdd0e7;
+  font-size:14px;
+  margin-top:9px;
+  line-height:1.45;
+}
+.topActions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.backHome,.dataBadge{
+  border:1px solid var(--line);
+  background:rgba(11,32,55,.62);
+  color:#d7e6f7;
+  padding:12px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:.2px;
+  white-space:nowrap;
+}
+.backHome:hover{border-color:rgba(244,123,42,.46);background:rgba(244,123,42,.08)}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,rgba(12,35,60,.96),rgba(5,15,29,.94));
+  box-shadow:var(--shadow);
+  border-radius:34px;
+  padding:34px;
+  display:grid;
+  grid-template-columns:1.08fr .92fr;
+  gap:24px;
+  margin-bottom:18px;
+}
+.hero:before{
+  content:"";
+  position:absolute;
+  right:-22%;
+  top:-62%;
+  width:720px;
+  height:720px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(109,165,216,.18),transparent 67%);
+  filter:blur(5px);
+}
+.heroBlock,.heroSide{position:relative;z-index:1}
+.kicker{
+  color:#9fd0ff;
+  font-size:12px;
+  letter-spacing:4.6px;
+  text-transform:uppercase;
+  font-weight:950;
+  margin-bottom:14px;
+}
+.hero h2{
+  margin:0;
+  font-size:58px;
+  line-height:.96;
+  letter-spacing:-3.4px;
+  font-weight:950;
+  max-width:880px;
+}
+.hero p{
+  color:#c8d9ef;
+  font-size:17px;
+  line-height:1.62;
+  max-width:850px;
+  margin:18px 0 0;
+}
+.filters{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(180px,1fr));
+  gap:14px;
+  margin-top:28px;
+  max-width:560px;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  color:#91a9c4;
+  font-weight:900;
+  margin-bottom:8px;
+}
+.field select{
+  width:100%;
+  min-height:48px;
+  border:1px solid var(--line);
+  color:var(--text);
+  background:#081a30;
+  border-radius:15px;
+  padding:0 14px;
+  outline:none;
+}
+.field select:focus{border-color:rgba(244,123,42,.55)}
+.heroSide{
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(4,14,27,.54);
+  border-radius:28px;
+  padding:22px;
+  backdrop-filter:blur(12px);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:265px;
+}
+.execTitle{
+  font-size:13px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#acd4ff;
+  font-weight:950;
+  margin:0 0 14px;
+}
+.execText{
+  font-size:26px;
+  line-height:1.18;
+  letter-spacing:-.9px;
+  font-weight:900;
+  color:#f7fbff;
+  margin:0;
+}
+.execText span{color:var(--orange)}
+.execNote{
+  margin:18px 0 0;
+  color:#a9bed8;
+  line-height:1.55;
+  font-size:13px;
+}
+
+.loading,.empty{
+  border:1px solid var(--line);
+  background:rgba(11,32,55,.74);
+  border-radius:24px;
+  padding:24px;
+  color:#cfe0f6;
+  margin-top:16px;
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin:18px 0 22px;
+}
+.metric{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(16,42,70,.80),rgba(7,24,43,.74));
+  border-radius:24px;
+  padding:21px;
+  min-height:132px;
+}
+.metric small{
+  display:block;
+  color:#95aac5;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-weight:950;
+}
+.metric b{
+  display:block;
+  font-size:46px;
+  line-height:.96;
+  letter-spacing:-2.1px;
+  margin:15px 0 8px;
+}
+.metric span{font-size:12px;color:#bdd0e7;line-height:1.35;display:block}
+.metric.good b{color:var(--green)}
+.metric.warn b{color:var(--yellow)}
+.metric.crit b{color:var(--red)}
+.metric.feature{border-color:rgba(244,123,42,.40)}
+.metric.feature b{color:var(--orange)}
+
+.sectionTitle{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+  margin:26px 0 14px;
+}
+.sectionTitle h2{
+  margin:0;
+  font-size:25px;
+  line-height:1;
+  letter-spacing:-.7px;
+}
+.sectionTitle p{margin:0;color:var(--muted);font-size:13px;line-height:1.45;max-width:680px;text-align:right}
+
+.situation{
+  display:grid;
+  grid-template-columns:.92fr 1.08fr;
+  gap:18px;
+  margin-bottom:22px;
+}
+.radar,.analysisPanel,.panel{
+  border:1px solid var(--line);
+  background:rgba(11,32,55,.78);
+  border-radius:28px;
+  padding:22px;
+}
+.analysisPanel{background:linear-gradient(135deg,rgba(244,123,42,.09),rgba(11,32,55,.78))}
+.panelHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding-bottom:14px;
+  margin-bottom:8px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.panelHead h3{
+  margin:0;
+  color:#acd4ff;
+  font-size:13px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  font-weight:950;
+}
+.panelHead span{font-size:12px;color:#91a9c4}
+.radarRows{display:grid;gap:0}
+.axisRow{
+  display:grid;
+  grid-template-columns:1fr 82px 96px;
+  gap:14px;
+  align-items:center;
+  padding:15px 0;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.axisRow:first-child{border-top:0}
+.axisName b{display:block;font-size:15px}
+.axisName span{display:block;color:#93a9c5;font-size:12px;margin-top:4px;line-height:1.35}
+.axisPct{font-weight:950;font-size:18px;text-align:right}
+.axisStatus{
+  font-size:11px;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+  font-weight:950;
+  text-align:right;
+}
+.axisStatus.ok{color:var(--green)}
+.axisStatus.warn{color:var(--yellow)}
+.axisStatus.crit{color:var(--red)}
+.axisBar{
+  grid-column:1/-1;
+  height:8px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+}
+.axisBar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--green));width:50%}
+.axisBar.warn i{background:linear-gradient(90deg,var(--orange),var(--yellow))}
+.axisBar.crit i{background:linear-gradient(90deg,var(--red),var(--orange))}
+.leituraBig{
+  border:1px solid rgba(244,123,42,.25);
+  background:rgba(244,123,42,.075);
+  border-radius:22px;
+  padding:20px;
+  margin-top:14px;
+}
+.leituraBig b{
+  display:block;
+  font-size:30px;
+  line-height:1.1;
+  letter-spacing:-1.2px;
+}
+.leituraBig p{color:#d6e4f5;line-height:1.55;margin:12px 0 0}
+.leituraList{display:grid;gap:10px;margin-top:14px}
+.leituraItem{
+  display:grid;
+  grid-template-columns:22px 1fr;
+  gap:10px;
+  align-items:start;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.035);
+  padding:13px 14px;
+  border-radius:16px;
+  color:#c7d7ea;
+  font-size:13px;
+  line-height:1.45;
+}
+.marker{
+  color:var(--orange);
+  font-weight:950;
+  font-style:normal;
+  font-size:13px;
+  line-height:1.45;
+}
+
+.toolbar{
+  display:grid;
+  grid-template-columns:1fr 220px;
+  gap:14px;
+  margin:14px 0 20px;
+}
+.searchBox input,.statusFilter select{
+  width:100%;
+  min-height:48px;
+  border:1px solid var(--line);
+  color:var(--text);
+  background:#081a30;
+  border-radius:15px;
+  padding:0 14px;
+  outline:none;
+}
+.searchBox input::placeholder{color:#7890ad}
+
+.eixoPanel{margin-bottom:22px}
+.cardsGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  padding-top:12px;
+}
+.indCard{
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));
+  border-radius:20px;
+  padding:17px;
+  min-height:188px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:.18s ease;
+  cursor:pointer;
+}
+.indCard:hover{
+  transform:translateY(-2px);
+  border-color:rgba(244,123,42,.44);
+  background:rgba(244,123,42,.055);
+}
+.indTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.indCard h4{
+  margin:0;
+  font-size:14px;
+  line-height:1.32;
+  letter-spacing:-.2px;
+}
+.statusTag{
+  flex:0 0 auto;
+  font-size:10px;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+  font-weight:950;
+  padding:6px 8px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  color:#aebfd6;
+}
+.statusTag.green{color:var(--green);border-color:rgba(111,224,178,.32);background:rgba(111,224,178,.07)}
+.statusTag.orange{color:var(--yellow);border-color:rgba(246,199,93,.36);background:rgba(246,199,93,.08)}
+.statusTag.red{color:var(--red);border-color:rgba(255,95,114,.36);background:rgba(255,95,114,.08)}
+.value{
+  font-size:36px;
+  letter-spacing:-1.6px;
+  font-weight:950;
+  margin-top:20px;
+  line-height:1;
+}
+.value.green{color:var(--green)}
+.value.orange{color:var(--yellow)}
+.value.red{color:var(--red)}
+.note{
+  color:#9fb3cd;
+  font-size:12px;
+  line-height:1.42;
+  margin-top:12px;
+}
+.cardFoot{
+  border-top:1px solid rgba(255,255,255,.07);
+  margin-top:16px;
+  padding-top:12px;
+  display:flex;
+  justify-content:space-between;
+  color:#aabdd6;
+  font-size:11px;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+  font-weight:850;
+}
+
+.drawerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.42);
+  opacity:0;
+  pointer-events:none;
+  transition:.18s ease;
+  z-index:40;
+}
+.drawerOverlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;
+  top:0;
+  right:0;
+  width:min(560px,94vw);
+  height:100vh;
+  background:linear-gradient(180deg,#07182b,#050f1d);
+  border-left:1px solid var(--line);
+  box-shadow:-30px 0 80px rgba(0,0,0,.45);
+  transform:translateX(102%);
+  transition:.22s ease;
+  z-index:50;
+  padding:26px;
+  overflow:auto;
+}
+.drawer.open{transform:translateX(0)}
+.drawerClose{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:12px;
+  width:40px;
+  height:40px;
+  cursor:pointer;
+  float:right;
+}
+.drawerKicker{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#9fd0ff;font-weight:950;margin-bottom:12px}
+.drawer h3{font-size:26px;line-height:1.15;letter-spacing:-.9px;margin:0 52px 18px 0}
+.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.detailBox{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:16px;padding:14px}
+.detailBox small{display:block;color:#8fa6c2;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;font-weight:900;margin-bottom:8px}
+.detailBox b{font-size:21px;letter-spacing:-.4px}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+.monthCell{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);border-radius:12px;padding:10px;text-align:center}
+.monthCell small{display:block;color:#7f97b5;font-size:10px;margin-bottom:5px}
+.monthCell b{font-size:12px}
+.drawerText{color:#c4d5ea;line-height:1.6;font-size:13px}
+
+.footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  border-top:1px solid rgba(255,255,255,.08);
+  margin-top:28px;
+  padding-top:18px;
+  color:#8ea6c2;
+  font-size:12px;
+  line-height:1.5;
+}
+.footer strong{color:#c6d8ed}
+.footerTimestamp{text-align:right}
+
+@media(max-width:1200px){
+  .hero,.situation{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(3,1fr)}
+  .cardsGrid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .header{align-items:flex-start;flex-direction:column}
+  .brand{align-items:flex-start;flex-direction:column;gap:16px}
+  .brandText{border-left:0;padding-left:0}
+  .logoImg{height:70px;max-width:310px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .cardsGrid{grid-template-columns:repeat(2,1fr)}
+  .sectionTitle{align-items:flex-start;flex-direction:column}
+  .sectionTitle p{text-align:left}
+  .toolbar{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .app{width:94vw;padding-top:18px}
+  .hero{padding:24px;border-radius:26px}
+  .hero h2{font-size:40px;letter-spacing:-2px}
+  .mainTitle{font-size:34px}
+  .filters,.metrics,.cardsGrid,.detailGrid{grid-template-columns:1fr}
+  .axisRow{grid-template-columns:1fr 80px}
+  .axisPct{grid-column:2}
+  .axisStatus{grid-column:1;text-align:left}
+  .footer{align-items:flex-start;flex-direction:column}
+  .footerTimestamp{text-align:left}
+  .months{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
-<main class="app">
-  <header class="gcHeader">
-    <div class="brandBlock">
-      <img src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio e COMLURB">
+<div class="app">
+
+  <header class="header">
+    <div class="brand">
+      <img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | COMLURB">
       <div class="brandText">
-        <div class="system">HUB COMLURB</div>
-        <h1>Governança Corporativa</h1>
-        <div class="sub">Acordo de Resultados e Indicadores Gerais</div>
+        <div class="systemLabel">HUB COMLURB</div>
+        <h1 class="mainTitle">Governança Corporativa</h1>
+        <div class="subtitle">Acordo de Resultados e Indicadores Gerais</div>
       </div>
     </div>
-    <div class="headerMeta">
-      <a class="metaPill backLink" href="../index.html">Voltar ao HUB</a>
-      <span class="metaPill">Gabinete da Presidência</span>
+    <div class="topActions">
+      <a class="backHome" href="../index.html">Voltar para a Home</a>
+      <div class="dataBadge" id="dataBadge">Carregando dados</div>
     </div>
   </header>
 
   <section class="hero">
-    <div class="heroMain">
+    <div class="heroBlock">
       <div class="kicker">Sala de situação corporativa</div>
-      <h2>Leitura executiva da performance institucional.</h2>
-      <p>Monitoramento mensal da SARC, consolidando metas, acumulado, tendência e situação dos indicadores corporativos da COMLURB. O painel é recalculado automaticamente a partir da planilha publicada.</p>
+      <h2>Leitura executiva dos indicadores da Companhia.</h2>
+      <p>Monitoramento consolidado dos indicadores do Acordo de Resultados e dos indicadores gerais da COMLURB, com visão por diretoria, eixo estratégico, meta, tendência e situação atual.</p>
       <div class="filters">
         <div class="field">
           <label for="filtroAno">Ano</label>
@@ -134,34 +616,79 @@ a{color:inherit;text-decoration:none}
         </div>
       </div>
     </div>
-    <aside class="heroAside">
-      <div class="asideLabel">Fonte oficial</div>
-      <div class="asideBig" id="asideQtd">—</div>
-      <div class="asideText">indicadores monitorados no recorte selecionado.</div>
-      <div class="asideRule"></div>
-      <div class="sourceLine">Base: SARC publicada em Google Sheets. Atualização mensal conforme publicação da planilha.</div>
-      <div class="sourceLine" id="lastUpdate">Aguardando carregamento.</div>
+    <aside class="heroSide">
+      <div>
+        <div class="execTitle">Leitura Executiva</div>
+        <p class="execText" id="execHeadline">Carregando indicadores corporativos.</p>
+        <p class="execNote" id="execNote">Aguarde a leitura da base publicada.</p>
+      </div>
     </aside>
   </section>
 
-  <div id="loading" class="loading">Carregando dados da SARC...</div>
-  <div id="errorState" class="empty" style="display:none"></div>
-  <div id="conteudo" style="display:none"></div>
+  <div id="loading" class="loading">Carregando dados da planilha publicada...</div>
+  <div id="errorState" class="empty" style="display:none; color:var(--red)"></div>
+
+  <main id="conteudo" style="display:none">
+    <section id="kpisResumo" class="metrics"></section>
+
+    <div class="sectionTitle">
+      <h2>Situação Corporativa</h2>
+      <p>Resumo por eixo estratégico para identificação rápida de concentração de risco, estabilidade e desempenho.</p>
+    </div>
+
+    <section class="situation">
+      <article class="radar">
+        <div class="panelHead"><h3>Radar Corporativo</h3><span id="radarHint">Status por eixo</span></div>
+        <div class="radarRows" id="radarRows"></div>
+      </article>
+
+      <article class="analysisPanel">
+        <div class="panelHead"><h3>Centro de Situação</h3><span>Leitura gerencial</span></div>
+        <div class="leituraBig">
+          <b id="leituraTitulo">Indicadores em consolidação.</b>
+          <p id="leituraTexto">A leitura executiva será montada automaticamente a partir dos indicadores disponíveis no recorte selecionado.</p>
+        </div>
+        <div class="leituraList" id="leituraList"></div>
+      </article>
+    </section>
+
+    <div class="sectionTitle">
+      <h2>Indicadores</h2>
+      <p>Cards corporativos por eixo. Clique em um indicador para abrir a ficha técnica lateral.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="searchBox"><input id="buscaIndicador" type="search" placeholder="Buscar indicador..."></div>
+      <div class="statusFilter">
+        <select id="filtroStatus">
+          <option value="todos">Todos os status</option>
+          <option value="green">Dentro da meta</option>
+          <option value="orange">Em atenção</option>
+          <option value="red">Críticos</option>
+          <option value="sem">Sem meta ou dado</option>
+        </select>
+      </div>
+    </div>
+
+    <section id="indicadoresContainer"></section>
+  </main>
 
   <footer class="footer">
-    <div><strong>Gabinete da Presidência</strong><br>HUB COMLURB &nbsp;•&nbsp; Núcleo de Inteligência e Gestão Estratégica Operacional</div>
-    <div>Governança Corporativa<br><span class="footerTimestamp" id="footerTimestamp"></span></div>
+    <div><strong>Gabinete da Presidência</strong><br>HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional</div>
+    <div class="footerTimestamp" id="footerTimestamp">Atualização pendente</div>
   </footer>
-</main>
 
-<div class="drawerBackdrop" id="drawerBackdrop" onclick="fecharDrawer()"></div>
-<aside class="drawer" id="drawer">
-  <div class="drawerHead">
-    <button onclick="fecharDrawer()">Fechar</button>
-    <div class="eyebrow" id="drawerEixo">Indicador</div>
-    <h3 id="drawerTitle">—</h3>
-  </div>
-  <div class="drawerBody" id="drawerBody"></div>
+</div>
+
+<div class="drawerOverlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="drawerClose" id="drawerClose" aria-label="Fechar">×</button>
+  <div class="drawerKicker" id="drawerEixo">Indicador</div>
+  <h3 id="drawerTitulo">Indicador</h3>
+  <div class="detailGrid" id="drawerDetails"></div>
+  <p class="drawerText" id="drawerNote"></p>
+  <div class="drawerKicker" style="margin-top:24px">Últimos ciclos</div>
+  <div class="months" id="drawerMonths"></div>
 </aside>
 
 <script>
@@ -181,330 +708,442 @@ a{color:inherit;text-decoration:none}
     limiteAtencao: 0.10
   };
 
-  const EIXO_NOME = {
+  const EIXO_LABEL = {
     'Pessoas': 'Pessoas',
-    'Segurança': 'Segurança e Saúde Ocupacional',
-    'Operação': 'Operação Urbana',
+    'Segurança': 'Segurança do Trabalho',
+    'Operação': 'Operação',
     'Atendimento': 'Governança e Atendimento ao Cidadão',
     'Sustentabilidade': 'Sustentabilidade',
-    'Receita': 'Receita e Financeiro'
+    'Receita': 'Financeiro e Receita'
   };
 
   const EIXO_DESC = {
-    'Pessoas': 'força de trabalho, disponibilidade e custos funcionais',
-    'Segurança': 'conformidade, prevenção e acidentes de trabalho',
-    'Operação': 'limpeza urbana, produção, frota e desempenho operacional',
-    'Atendimento': '1746, ouvidoria, prazo de resposta e serviços ao cidadão',
-    'Sustentabilidade': 'reciclagem, resíduos, grandes geradores e economia circular',
-    'Receita': 'arrecadação, receitas diversas e eficiência financeira'
+    'Pessoas': 'Quadro, disponibilidade e ocorrências funcionais',
+    'Segurança': 'Acidentes, conformidade e prevenção',
+    'Operação': 'Execução operacional e padrão de limpeza',
+    'Atendimento': '1746, Ouvidoria, prazos e resposta ao cidadão',
+    'Sustentabilidade': 'Reciclagem, desvio de aterro e indicadores ambientais',
+    'Receita': 'Arrecadação, receitas diversas e eficiência financeira'
   };
 
+  const EIXO_ORDEM = ['Operação', 'Atendimento', 'Pessoas', 'Segurança', 'Receita', 'Sustentabilidade'];
   const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
-  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
   let DATA = [];
-  let KPI_ATUAL = [];
+  let KPIDATA = [];
   let anoSelecionado = null;
   let diretoriaSelecionada = CONFIG.diretoriaDefault;
+  let buscaAtual = '';
+  let statusAtual = 'todos';
 
   function esc(s){ return HUB.format.esc(s); }
 
-  function parseNum(v){
-    if (window.HUB && HUB.indicadores && HUB.indicadores.parseNumeroBR) return HUB.indicadores.parseNumeroBR(v);
+  function limparTexto(v) {
+    return String(v == null ? '' : v).replace(/\uFEFF/g, '').replace(/\u00A0/g, ' ').trim();
+  }
+
+  function normalizarHeader(k) {
+    const h = limparTexto(k);
+    const mapa = {
+      'Superint': 'Superint.',
+      'Superintendência': 'Superint.',
+      'Superintendencia': 'Superint.',
+      'Gerencia': 'Gerência',
+      'Diretoria ': 'Diretoria',
+      'Indicador ': 'Indicador',
+      'Ano ': 'Ano'
+    };
+    return mapa[h] || h;
+  }
+
+  function normalizarRow(row) {
+    const out = {};
+    Object.keys(row || {}).forEach(function(k){
+      out[normalizarHeader(k)] = limparTexto(row[k]);
+    });
+    return out;
+  }
+
+  function normKey(v) {
+    return limparTexto(v)
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .toUpperCase();
+  }
+
+  function ehConsolidado(row) {
+    const sup = limparTexto(row['Superint.']);
+    const ger = limparTexto(row['Gerência']);
+    return (sup === '' || sup === '-') && (ger === '' || ger === '-');
+  }
+
+  function parseNumero(v) {
     if (v === undefined || v === null) return null;
-    const s = String(v).trim();
+    let s = limparTexto(v);
     if (!s || s === '-') return null;
-    const n = parseFloat(s.replace(',', '.'));
-    return isNaN(n) ? null : n;
+    s = s.replace(/%/g, '').replace(/\./g, '').replace(',', '.');
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
   }
 
-  function fmt(v, unidade, casas){
+  function statusCalculado(valor, meta, sentido) {
+    if (valor === null) return { cor:'', label:'sem dado', desvio:null };
+    if (meta === null) return { cor:'', label:'sem meta definida', desvio:null };
+    const s = limparTexto(sentido);
+    const maiorMelhor = s === '↑' || s === 'MAIOR' || s === 'CRESCENTE' || s === 'ACIMA';
+    const menorMelhor = s === '↓' || s === 'MENOR' || s === 'DECRESCENTE' || s === 'ABAIXO';
+    const atingiu = menorMelhor ? valor <= meta : valor >= meta;
+    if (atingiu) return { cor:'green', label:'dentro da meta', desvio:0 };
+    if (meta === 0) return { cor:'red', label:'crítico', desvio:1 };
+    const desvio = menorMelhor ? (valor - meta) / Math.abs(meta) : (meta - valor) / Math.abs(meta);
+    if (desvio <= CONFIG.limiteAtencao) return { cor:'orange', label:'atenção', desvio:desvio };
+    return { cor:'red', label:'crítico', desvio:desvio };
+  }
+
+  function tendenciaCalculada(row, sentido) {
+    const meses = (HUB.indicadores && HUB.indicadores.MESES) ? HUB.indicadores.MESES : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const valores = meses.map(m => parseNumero(row[m])).filter(v => v !== null);
+    if (valores.length < 2) return null;
+    const diffs = [];
+    for (let i = 1; i < valores.length; i++) {
+      const d = valores[i] - valores[i - 1];
+      diffs.push(Math.abs(d) < 1e-9 ? 0 : (d > 0 ? 1 : -1));
+    }
+    const ultima = diffs[diffs.length - 1];
+    if (ultima === 0) return { simbolo:'→', texto:'estável', ciclos:0 };
+    let ciclos = 0;
+    for (let i = diffs.length - 1; i >= 0; i--) { if (diffs[i] === ultima) ciclos++; else break; }
+    const s = limparTexto(sentido);
+    const menorMelhor = s === '↓' || s === 'MENOR' || s === 'DECRESCENTE' || s === 'ABAIXO';
+    const melhorando = menorMelhor ? ultima < 0 : ultima > 0;
+    return { simbolo: melhorando ? '↑' : '↓', texto: melhorando ? 'melhorando' : 'piorando', ciclos:ciclos };
+  }
+
+  function encontrarLinha(indicador, diretoria, ano) {
+    const ind = normKey(indicador);
+    const dir = normKey(diretoria);
+    const a = normKey(ano);
+    const base = DATA.filter(function(r){
+      return normKey(r.Indicador) === ind && normKey(r.Ano) === a;
+    });
+    const preferida = base.find(r => normKey(r.Diretoria) === dir && ehConsolidado(r));
+    if (preferida) return preferida;
+    const semConsolidado = base.find(r => normKey(r.Diretoria) === dir);
+    if (semConsolidado) return semConsolidado;
+    const comlurb = base.find(r => normKey(r.Diretoria) === 'COMLURB' && ehConsolidado(r));
+    if (comlurb) return comlurb;
+    return base.find(ehConsolidado) || base[0] || null;
+  }
+
+  function formatValor(v, unidade) {
     if (v === null || v === undefined || isNaN(v)) return '—';
-    const max = casas === undefined ? (Math.abs(v) < 10 ? 1 : 0) : casas;
-    return Number(v).toLocaleString('pt-BR', { maximumFractionDigits:max }) + (unidade || '');
+    const opts = Math.abs(v) >= 1000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 1 };
+    return Number(v).toLocaleString('pt-BR', opts) + (unidade || '');
   }
 
-  function classStatus(cor){
-    if (cor === 'green') return 'green';
-    if (cor === 'orange') return 'orange';
-    if (cor === 'red') return 'red';
-    return 'none';
+  function statusLabel(cor) {
+    if (cor === 'green') return 'Dentro da meta';
+    if (cor === 'orange') return 'Atenção';
+    if (cor === 'red') return 'Crítico';
+    return 'Sem meta';
   }
 
-  function labelStatus(cor){
-    if (cor === 'green') return 'normal';
-    if (cor === 'orange') return 'atenção';
-    if (cor === 'red') return 'crítico';
-    return 'sem meta/dado';
-  }
+  function statusClasse(cor) { return cor || ''; }
 
   function montarKpi(registroEntry) {
-    const av = HUB.indicadores.avaliarIndicador(DATA, registroEntry.indicador, diretoriaSelecionada, anoSelecionado, CONFIG.limiteAtencao);
-    const unidade = av.unidade || '';
-    let nota = '';
+    const eixo = registroEntry.eixo;
+    const row = encontrarLinha(registroEntry.indicador, diretoriaSelecionada, anoSelecionado);
 
-    if (!av.row) {
-      nota = 'sem dado para este recorte';
-    } else if (av.meta !== null && av.acumulado !== null) {
-      const sinal = av.delta > 0 ? '+' : '';
-      nota = 'meta ' + fmt(av.meta, unidade) + ' · Δ ' + sinal + fmt(av.delta, unidade, 1);
-      if (av.tendencia) nota += ' · ' + av.tendencia.texto + (av.tendencia.ciclos > 1 ? ' há ' + av.tendencia.ciclos + ' ciclos' : '');
+    if (!row) {
+      return {
+        eixo, eixoLabel:EIXO_LABEL[eixo] || eixo, indicador: registroEntry.indicador,
+        acumulado:null, meta:null, unidade:'', delta:null, tendencia:null,
+        status:{ cor:'', label:'sem dado', desvio:null }, row:null,
+        nota:'Sem dado para esse recorte.'
+      };
+    }
+
+    const acumulado = parseNumero(row.Acumulado);
+    const meta = parseNumero(row.Meta);
+    const unidade = limparTexto(row.Unidade);
+    const sentido = limparTexto(row.Sentido);
+    const status = statusCalculado(acumulado, meta, sentido);
+    const tendencia = tendenciaCalculada(row, sentido);
+    const delta = (meta !== null && acumulado !== null) ? (acumulado - meta) : null;
+
+    const partesNota = [];
+    if (meta !== null && acumulado !== null) {
+      const sinal = delta > 0 ? '+' : '';
+      partesNota.push('Meta ' + formatValor(meta, unidade));
+      partesNota.push('Delta ' + sinal + formatValor(delta, unidade));
+      if (tendencia) partesNota.push(tendencia.texto + (tendencia.ciclos > 1 ? ' há ' + tendencia.ciclos + ' ciclos' : ''));
     } else {
-      nota = 'sem meta definida';
-      if (av.tendencia) nota += ' · ' + av.tendencia.texto;
+      partesNota.push('Sem meta definida');
+      if (tendencia) partesNota.push(tendencia.texto + (tendencia.ciclos > 1 ? ' há ' + tendencia.ciclos + ' ciclos' : ''));
     }
 
     return {
-      eixo: registroEntry.eixo,
-      eixoNome: EIXO_NOME[registroEntry.eixo] || registroEntry.eixo,
-      indicador: registroEntry.indicador,
-      value: av.acumulado,
-      meta: av.meta,
-      unidade: unidade,
-      sentido: av.sentido,
-      row: av.row,
-      status: av.status,
-      tendencia: av.tendencia,
-      delta: av.delta,
-      note: nota,
-      color: av.status ? av.status.cor : ''
+      eixo, eixoLabel:EIXO_LABEL[eixo] || eixo, indicador: registroEntry.indicador,
+      acumulado, meta, unidade, delta, tendencia, status, row,
+      nota:partesNota.join(' · ')
     };
   }
 
-  function estatisticas(kpis){
-    const cont = { green:0, orange:0, red:0, none:0 };
+  function resumoStatus(kpis) {
+    const cont = { green:0, orange:0, red:0, sem:0 };
     kpis.forEach(k => {
-      if (k.color === 'green') cont.green++;
-      else if (k.color === 'orange') cont.orange++;
-      else if (k.color === 'red') cont.red++;
-      else cont.none++;
+      if (k.status.cor === 'green') cont.green++;
+      else if (k.status.cor === 'orange') cont.orange++;
+      else if (k.status.cor === 'red') cont.red++;
+      else cont.sem++;
     });
     cont.total = kpis.length;
     cont.comStatus = cont.green + cont.orange + cont.red;
-    cont.pctMeta = cont.comStatus ? Math.round((cont.green / cont.comStatus) * 100) : 0;
-    cont.pctAtencao = cont.comStatus ? Math.round(((cont.orange + cont.red) / cont.comStatus) * 100) : 0;
+    cont.percentualMeta = cont.comStatus ? Math.round((cont.green / cont.comStatus) * 100) : 0;
     return cont;
   }
 
-  function estatisticasEixo(kpis, eixo){
-    const arr = kpis.filter(k => k.eixo === eixo);
-    const e = estatisticas(arr);
-    e.eixo = eixo;
-    e.nome = EIXO_NOME[eixo] || eixo;
-    e.desc = EIXO_DESC[eixo] || '';
-    e.total = arr.length;
-    return e;
+  function renderResumo(kpis) {
+    const r = resumoStatus(kpis);
+    const el = document.getElementById('kpisResumo');
+    el.innerHTML = `
+      <article class="metric feature"><small>Indicadores monitorados</small><b>${r.total}</b><span>Cards corporativos avaliados no recorte</span></article>
+      <article class="metric good"><small>Dentro da meta</small><b>${r.green}</b><span>${r.percentualMeta}% dos indicadores com status calculado</span></article>
+      <article class="metric warn"><small>Em atenção</small><b>${r.orange}</b><span>Desvio moderado frente à meta</span></article>
+      <article class="metric crit"><small>Críticos</small><b>${r.red}</b><span>Requerem priorização gerencial</span></article>
+      <article class="metric"><small>Sem meta ou dado</small><b>${r.sem}</b><span>Dependem de validação metodológica</span></article>
+    `;
+
+    const headline = document.getElementById('execHeadline');
+    const note = document.getElementById('execNote');
+    if (!r.total) {
+      headline.textContent = 'Sem indicadores para o recorte selecionado.';
+      note.textContent = 'Verifique filtros, ano ou publicação da base.';
+    } else {
+      headline.innerHTML = `<span>${r.percentualMeta}%</span> dos indicadores com status calculado estão dentro da meta.`;
+      note.textContent = `${r.total} indicadores monitorados em ${anoSelecionado}, no recorte ${diretoriaSelecionada}.`;
+    }
   }
 
-  function piorEixo(axisStats){
-    const validos = axisStats.filter(a => a.comStatus > 0);
-    if (!validos.length) return null;
-    return validos.sort((a,b) => (a.pctMeta - b.pctMeta) || ((b.red + b.orange) - (a.red + a.orange)))[0];
+  function classEixoResumo(pct, criticos, atencao) {
+    if (criticos > 0 || pct < 60) return 'crit';
+    if (atencao > 0 || pct < 80) return 'warn';
+    return 'ok';
   }
 
-  function renderResumo(kpis){
-    const st = estatisticas(kpis);
-    document.getElementById('asideQtd').textContent = st.total;
-
-    return `
-      <section class="summaryGrid">
-        <article class="summaryCard feature"><small>Resultado corporativo</small><b>${st.pctMeta}%</b><span>Indicadores com meta definida dentro do esperado</span></article>
-        <article class="summaryCard"><small>Monitoramento</small><b>${st.total}</b><span>Indicadores acompanhados no recorte selecionado</span></article>
-        <article class="summaryCard warn"><small>Em atenção</small><b>${st.orange}</b><span>Indicadores próximos do limite de desempenho</span></article>
-        <article class="summaryCard bad"><small>Críticos</small><b>${st.red}</b><span>Indicadores que exigem priorização executiva</span></article>
-      </section>`;
-  }
-
-  function renderLeitura(kpis, axisStats){
-    const st = estatisticas(kpis);
-    const pior = piorEixo(axisStats);
-    const prioridade = kpis.filter(k => k.color === 'red' || k.color === 'orange').sort(ordenaPrioridade)[0];
-
-    let frasePrincipal = st.comStatus ? `${st.pctMeta}% dos indicadores com meta definida estão dentro do esperado.` : 'Ainda não há metas suficientes para leitura consolidada.';
-    let linha1 = pior ? `O eixo com maior necessidade de acompanhamento é ${pior.nome.toLowerCase()}, com ${pior.pctMeta}% dos indicadores dentro da meta.` : 'Os eixos ainda não possuem dados suficientes para comparação.';
-    let linha2 = prioridade ? `Principal ponto de atenção no recorte: ${prioridade.indicador}.` : 'Não há indicadores críticos ou em atenção no recorte atual.';
-    let linha3 = `${st.orange + st.red} indicadores exigem acompanhamento executivo; ${st.none} estão sem meta ou sem dado consolidado.`;
-
-    return `
-      <div class="sectionTitle"><h2>Centro de Situação</h2><p>Leitura automática calculada a partir da SARC.</p></div>
-      <section class="execGrid">
-        <article class="panel reading">
-          <h3>Leitura Executiva</h3>
-          <div class="readingLead"><b>${esc(frasePrincipal)}</b><p>O painel consolida a situação institucional por status, eixo e prioridade para apoiar a rotina do Gabinete da Presidência.</p></div>
-          <div class="readingLines">
-            <div class="readingLine"><code>01</code><span>${esc(linha1)}</span></div>
-            <div class="readingLine"><code>02</code><span>${esc(linha2)}</span></div>
-            <div class="readingLine"><code>03</code><span>${esc(linha3)}</span></div>
-          </div>
-        </article>
-        <article class="panel">
-          <h3>Radar Corporativo</h3>
-          <div class="axisList">${axisStats.map(renderAxis).join('')}</div>
-        </article>
-      </section>`;
-  }
-
-  function renderAxis(a){
-    const cls = a.pctMeta < 60 ? 'bad' : (a.pctMeta < 80 ? 'warn' : '');
-    return `
-      <div class="axisItem ${cls}">
-        <div class="axisTop">
-          <div class="axisName"><b>${esc(a.nome)}</b><span>${esc(a.desc)}</span></div>
-          <div class="axisPct">${a.comStatus ? a.pctMeta + '%' : '—'}</div>
+  function renderRadar(kpis) {
+    const rows = [];
+    EIXO_ORDEM.forEach(eixo => {
+      const arr = kpis.filter(k => k.eixo === eixo);
+      if (!arr.length) return;
+      const r = resumoStatus(arr);
+      const pct = r.comStatus ? Math.round((r.green / r.comStatus) * 100) : 0;
+      const cls = classEixoResumo(pct, r.red, r.orange);
+      const statusTxt = cls === 'ok' ? 'Normal' : (cls === 'warn' ? 'Atenção' : 'Crítico');
+      rows.push(`
+        <div class="axisRow">
+          <div class="axisName"><b>${esc(EIXO_LABEL[eixo] || eixo)}</b><span>${esc(EIXO_DESC[eixo] || '')}</span></div>
+          <div class="axisPct">${pct}%</div>
+          <div class="axisStatus ${cls}">${statusTxt}</div>
+          <div class="axisBar ${cls === 'warn' ? 'warn' : cls === 'crit' ? 'crit' : ''}"><i style="width:${Math.max(5,pct)}%"></i></div>
         </div>
-        <div class="axisBar"><i style="width:${a.comStatus ? a.pctMeta : 0}%"></i></div>
-        <div class="axisStats">${a.green} na meta · ${a.orange} em atenção · ${a.red} críticos · ${a.none} sem meta/dado</div>
-      </div>`;
+      `);
+    });
+    document.getElementById('radarRows').innerHTML = rows.join('');
+    document.getElementById('radarHint').textContent = `${kpis.length} indicadores avaliados`;
   }
 
-  function ordenaPrioridade(a,b){
-    const p = PRIORIDADE_STATUS[a.color || ''] - PRIORIDADE_STATUS[b.color || ''];
-    if (p !== 0) return p;
-    const da = Math.abs(a.delta || 0), db = Math.abs(b.delta || 0);
-    return db - da;
+  function renderLeitura(kpis) {
+    const r = resumoStatus(kpis);
+    const porEixo = EIXO_ORDEM.map(eixo => {
+      const arr = kpis.filter(k => k.eixo === eixo);
+      const res = resumoStatus(arr);
+      const risco = res.red * 3 + res.orange * 1.5 + res.sem * .3;
+      return { eixo, arr, res, risco };
+    }).filter(x => x.arr.length).sort((a,b) => b.risco - a.risco);
+
+    const principal = porEixo[0];
+    const melhor = porEixo.slice().sort((a,b) => b.res.percentualMeta - a.res.percentualMeta)[0];
+
+    document.getElementById('leituraTitulo').textContent = r.percentualMeta + '% dos indicadores com status calculado estão dentro da meta.';
+    document.getElementById('leituraTexto').textContent = `O recorte ${diretoriaSelecionada} apresenta ${r.green} indicadores dentro da meta, ${r.orange} em atenção e ${r.red} críticos no ano ${anoSelecionado}.`;
+
+    const itens = [];
+    if (principal && (principal.res.red || principal.res.orange)) {
+      itens.push(`<div class="leituraItem"><em class="marker">01</em><span>Maior concentração de atenção em <strong>${esc(EIXO_LABEL[principal.eixo] || principal.eixo)}</strong>, com ${principal.res.orange} indicador(es) em atenção e ${principal.res.red} crítico(s).</span></div>`);
+    }
+    if (melhor) {
+      itens.push(`<div class="leituraItem"><em class="marker">02</em><span>Melhor aderência relativa no eixo <strong>${esc(EIXO_LABEL[melhor.eixo] || melhor.eixo)}</strong>, com ${melhor.res.percentualMeta}% dos indicadores com status calculado dentro da meta.</span></div>`);
+    }
+    if (r.sem > 0) {
+      itens.push(`<div class="leituraItem"><em class="marker">03</em><span>${r.sem} indicador(es) aparecem sem meta ou sem dado no recorte. Recomenda-se validar metodologia, periodicidade e publicação da base.</span></div>`);
+    } else {
+      itens.push(`<div class="leituraItem"><em class="marker">03</em><span>Todos os indicadores do recorte possuem leitura calculada de status.</span></div>`);
+    }
+    itens.push(`<div class="leituraItem"><em class="marker">04</em><span>Use a ficha lateral de cada indicador para verificar meta, acumulado, tendência e últimos ciclos.</span></div>`);
+
+    document.getElementById('leituraList').innerHTML = itens.join('');
   }
 
-  function renderPrioritarios(kpis){
-    const prioritarios = kpis.filter(k => k.color === 'red' || k.color === 'orange').sort(ordenaPrioridade).slice(0,10);
-    const body = prioritarios.length ? `
-      <table class="priorityTable">
-        <thead><tr><th>Indicador</th><th>Status</th><th>Eixo</th><th>Atual / Meta</th></tr></thead>
-        <tbody>${prioritarios.map(k => `
-          <tr onclick="abrirDrawer('${escAttr(k.indicador)}')">
-            <td><strong>${esc(k.indicador)}</strong><br><span class="muted">${esc(k.note)}</span></td>
-            <td><span class="statusText ${classStatus(k.color)}">${esc(labelStatus(k.color))}</span></td>
-            <td>${esc(k.eixoNome)}</td>
-            <td class="valuePair">${fmt(k.value,k.unidade)} / ${fmt(k.meta,k.unidade)}</td>
-          </tr>`).join('')}</tbody>
-      </table>` : `<div class="emptyMini">Nenhum indicador crítico ou em atenção no recorte selecionado.</div>`;
-
+  function cardHTML(k) {
+    const cor = k.status.cor || '';
+    const metaTxt = k.meta !== null ? formatValor(k.meta, k.unidade) : '—';
     return `
-      <div class="sectionTitle"><h2>Indicadores Prioritários</h2><p>Itens que exigem acompanhamento mais próximo.</p></div>
-      <section class="panel">${body}</section>`;
+      <article class="indCard" data-indicador="${esc(k.indicador)}">
+        <div>
+          <div class="indTop">
+            <h4>${esc(k.indicador)}</h4>
+            <span class="statusTag ${statusClasse(cor)}">${statusLabel(cor)}</span>
+          </div>
+          <div class="value ${statusClasse(cor)}">${formatValor(k.acumulado, k.unidade)}</div>
+          <div class="note">${esc(k.nota)}</div>
+        </div>
+        <div class="cardFoot"><span>Meta ${esc(metaTxt)}</span><span>Ficha</span></div>
+      </article>
+    `;
   }
 
-  function escAttr(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+  function filtrarCards(kpis) {
+    const termo = buscaAtual.trim().toLowerCase();
+    return kpis.filter(k => {
+      const okBusca = !termo || k.indicador.toLowerCase().includes(termo) || (k.eixoLabel || '').toLowerCase().includes(termo);
+      let okStatus = true;
+      if (statusAtual === 'green') okStatus = k.status.cor === 'green';
+      else if (statusAtual === 'orange') okStatus = k.status.cor === 'orange';
+      else if (statusAtual === 'red') okStatus = k.status.cor === 'red';
+      else if (statusAtual === 'sem') okStatus = !k.status.cor;
+      return okBusca && okStatus;
+    });
+  }
 
-  function renderIndicadores(kpis){
-    const secoes = HUB.indicadores.EIXOS.map(eixo => {
-      const arr = kpis.filter(k => k.eixo === eixo).sort(ordenaPrioridade);
-      if (!arr.length) return '';
-      return `
-        <article class="eixoPanel">
-          <div class="eixoHead"><h3>${esc(EIXO_NOME[eixo] || eixo)}</h3><span>${arr.length} indicadores</span></div>
-          <div class="cardsGrid">${arr.map(renderCard).join('')}</div>
-        </article>`;
+  function renderIndicadores(kpis) {
+    const cont = document.getElementById('indicadoresContainer');
+    const filtrados = filtrarCards(kpis);
+    const blocos = [];
+
+    EIXO_ORDEM.forEach(eixo => {
+      let arr = filtrados.filter(k => k.eixo === eixo);
+      if (!arr.length) return;
+      arr.sort((a,b) => PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || ''] || a.indicador.localeCompare(b.indicador));
+      blocos.push(`
+        <article class="panel eixoPanel">
+          <div class="panelHead"><h3>${esc(EIXO_LABEL[eixo] || eixo)}</h3><span>${arr.length} indicador(es)</span></div>
+          <div class="cardsGrid">${arr.map(cardHTML).join('')}</div>
+        </article>
+      `);
+    });
+
+    cont.innerHTML = blocos.length ? blocos.join('') : '<div class="empty">Nenhum indicador encontrado para os filtros aplicados.</div>';
+    cont.querySelectorAll('.indCard').forEach(card => {
+      card.addEventListener('click', function(){
+        const nome = this.getAttribute('data-indicador');
+        const k = KPIDATA.find(x => x.indicador === nome);
+        if (k) abrirDrawer(k);
+      });
+    });
+  }
+
+  function abrirDrawer(k) {
+    document.getElementById('drawerEixo').textContent = k.eixoLabel || k.eixo;
+    document.getElementById('drawerTitulo').textContent = k.indicador;
+    const tendencia = k.tendencia ? (k.tendencia.texto + (k.tendencia.ciclos > 1 ? ' há ' + k.tendencia.ciclos + ' ciclos' : '')) : 'Sem tendência calculada';
+    const delta = k.delta !== null ? ((k.delta > 0 ? '+' : '') + formatValor(k.delta, k.unidade)) : '—';
+
+    document.getElementById('drawerDetails').innerHTML = `
+      <div class="detailBox"><small>Acumulado</small><b>${formatValor(k.acumulado, k.unidade)}</b></div>
+      <div class="detailBox"><small>Meta</small><b>${k.meta !== null ? formatValor(k.meta, k.unidade) : '—'}</b></div>
+      <div class="detailBox"><small>Status</small><b>${statusLabel(k.status.cor)}</b></div>
+      <div class="detailBox"><small>Delta</small><b>${esc(delta)}</b></div>
+      <div class="detailBox"><small>Tendência</small><b>${esc(tendencia)}</b></div>
+      <div class="detailBox"><small>Sentido</small><b>${esc(k.row ? (k.row.Sentido || '—') : '—')}</b></div>
+    `;
+
+    document.getElementById('drawerNote').textContent = k.nota || 'Sem observação calculada.';
+
+    const meses = HUB.indicadores.MESES || ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    document.getElementById('drawerMonths').innerHTML = meses.map(m => {
+      const v = k.row ? HUB.indicadores.parseNumeroBR(k.row[m]) : null;
+      return `<div class="monthCell"><small>${m}</small><b>${formatValor(v, k.unidade)}</b></div>`;
     }).join('');
 
-    return `
-      <div class="sectionTitle"><h2>Todos os Indicadores</h2><p>Cards calculados a partir do acumulado, meta, sentido e tendência.</p></div>
-      <section class="indicatorSections">${secoes}</section>`;
+    document.getElementById('drawerOverlay').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('drawer').setAttribute('aria-hidden','false');
   }
 
-  function renderCard(k){
-    return `
-      <article class="indicatorCard ${classStatus(k.color)}" onclick="abrirDrawer('${escAttr(k.indicador)}')">
-        <div class="label">${esc(k.indicador)}</div>
-        <div class="value">${fmt(k.value, k.unidade)}</div>
-        <div class="note">${esc(k.note)}</div>
-        <div class="status">${esc(labelStatus(k.color))}</div>
-      </article>`;
+  function fecharDrawer() {
+    document.getElementById('drawerOverlay').classList.remove('open');
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawer').setAttribute('aria-hidden','true');
   }
 
-  function render(){
-    if (!window.HUB || !HUB.indicadores) {
-      mostrarErro('O arquivo indicadores-registro.js não foi carregado. Verifique o caminho ../assets/js/indicadores-registro.js.');
-      return;
-    }
-    const conteudo = document.getElementById('conteudo');
-    KPI_ATUAL = HUB.indicadores.todosOsCards().map(montarKpi);
-    const axisStats = HUB.indicadores.EIXOS.map(e => estatisticasEixo(KPI_ATUAL, e));
-    conteudo.innerHTML = renderResumo(KPI_ATUAL) + renderLeitura(KPI_ATUAL, axisStats) + renderPrioritarios(KPI_ATUAL) + renderIndicadores(KPI_ATUAL);
+  function render() {
+    KPIDATA = HUB.indicadores.todosOsCards().map(montarKpi);
+    renderResumo(KPIDATA);
+    renderRadar(KPIDATA);
+    renderLeitura(KPIDATA);
+    renderIndicadores(KPIDATA);
   }
 
-  function popularFiltros(){
-    const anos = Array.from(new Set(DATA.map(r => r.Ano).filter(Boolean))).sort();
+  function popularFiltros() {
+    const anos = Array.from(new Set(DATA.map(r => limparTexto(r.Ano)).filter(Boolean)))
+      .sort((a,b) => Number(a) - Number(b));
     const selAno = document.getElementById('filtroAno');
     selAno.innerHTML = anos.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
-    anoSelecionado = anos[anos.length - 1];
+    anoSelecionado = anos.includes('2026') ? '2026' : (anos[anos.length - 1] || '');
     selAno.value = anoSelecionado;
-    selAno.onchange = function(){ anoSelecionado = this.value; render(); };
+    selAno.onchange = function () { anoSelecionado = this.value; render(); };
 
     const diretorias = Array.from(new Set(
-      DATA.filter(r => r['Superint.'] === '-' && r['Gerência'] === '-')
-        .map(r => r.Diretoria).filter(Boolean)
-    )).sort();
+      DATA.filter(r => ehConsolidado(r))
+        .map(r => limparTexto(r.Diretoria))
+        .filter(Boolean)
+    )).sort((a,b) => a.localeCompare(b, 'pt-BR'));
+
     const selDir = document.getElementById('filtroDiretoria');
     selDir.innerHTML = diretorias.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('');
-    if (diretorias.indexOf(diretoriaSelecionada) === -1) diretoriaSelecionada = diretorias[0];
+    if (!diretorias.some(d => normKey(d) === normKey(diretoriaSelecionada))) {
+      diretoriaSelecionada = diretorias.find(d => normKey(d) === 'COMLURB') || diretorias[0] || '';
+    }
     selDir.value = diretoriaSelecionada;
-    selDir.onchange = function(){ diretoriaSelecionada = this.value; render(); };
+    selDir.onchange = function () { diretoriaSelecionada = this.value; render(); };
   }
 
-  function mostrarErro(msg){
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('conteudo').style.display = 'none';
-    const el = document.getElementById('errorState');
-    el.style.display = 'block';
-    el.textContent = msg;
+  function initEventos() {
+    document.getElementById('buscaIndicador').addEventListener('input', function(){
+      buscaAtual = this.value || '';
+      renderIndicadores(KPIDATA);
+    });
+    document.getElementById('filtroStatus').addEventListener('change', function(){
+      statusAtual = this.value;
+      renderIndicadores(KPIDATA);
+    });
+    document.getElementById('drawerClose').addEventListener('click', fecharDrawer);
+    document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer);
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fecharDrawer(); });
   }
 
-  window.abrirDrawer = function(indicadorNome){
-    const k = KPI_ATUAL.find(x => x.indicador === indicadorNome);
-    if (!k) return;
-    const row = k.row || {};
-    document.getElementById('drawerEixo').textContent = k.eixoNome;
-    document.getElementById('drawerTitle').textContent = k.indicador;
-
-    const mesesHtml = MESES.map(m => {
-      const v = parseNum(row[m]);
-      return `<div class="monthBox"><small>${m}</small><b>${fmt(v,k.unidade)}</b></div>`;
-    }).join('');
-
-    document.getElementById('drawerBody').innerHTML = `
-      <div class="detailGrid">
-        <div class="detailBox"><small>Acumulado</small><b>${fmt(k.value,k.unidade)}</b></div>
-        <div class="detailBox"><small>Meta</small><b>${fmt(k.meta,k.unidade)}</b></div>
-        <div class="detailBox"><small>Status</small><b class="statusText ${classStatus(k.color)}">${esc(labelStatus(k.color))}</b></div>
-        <div class="detailBox"><small>Tendência</small><b>${k.tendencia ? esc(k.tendencia.texto) : '—'}</b></div>
-      </div>
-      <div class="drawerSectionTitle">Critério de leitura</div>
-      <div class="emptyMini">Sentido do indicador: <strong>${esc(k.sentido || '—')}</strong>. ${esc(k.note)}</div>
-      <div class="drawerSectionTitle">Série mensal</div>
-      <div class="months">${mesesHtml}</div>
-      <div class="drawerSectionTitle">Recorte</div>
-      <div class="emptyMini">Ano: <strong>${esc(anoSelecionado)}</strong>. Diretoria: <strong>${esc(diretoriaSelecionada)}</strong>.</div>
-    `;
-    document.getElementById('drawerBackdrop').classList.add('open');
-    document.getElementById('drawer').classList.add('open');
-  };
-
-  window.fecharDrawer = function(){
-    document.getElementById('drawerBackdrop').classList.remove('open');
-    document.getElementById('drawer').classList.remove('open');
-  };
-
-  function init(){
+  function init() {
+    initEventos();
     Papa.parse(CONFIG.csvUrl, {
       download: true,
       header: true,
-      skipEmptyLines: true,
-      complete: function(results){
-        DATA = (results.data || []).filter(r => r && r.Indicador);
-        if (!DATA.length) {
-          mostrarErro('A SARC foi carregada, mas não retornou linhas válidas. Verifique o gid da aba publicada e os nomes das colunas.');
-          return;
-        }
+      complete: function (results) {
+        DATA = results.data.map(normalizarRow).filter(r => r && limparTexto(r.Indicador));
         document.getElementById('loading').style.display = 'none';
         document.getElementById('conteudo').style.display = 'block';
         const now = new Date().toLocaleString('pt-BR');
-        document.getElementById('lastUpdate').textContent = 'Carregado em ' + now + '.';
         document.getElementById('footerTimestamp').textContent = 'Atualizado em ' + now;
+        document.getElementById('dataBadge').textContent = 'Atualizado em ' + now;
         popularFiltros();
         render();
       },
-      error: function(){
-        mostrarErro('Não foi possível carregar os dados da SARC. Verifique se a planilha continua publicada na Web e se o link CSV está acessível.');
+      error: function () {
+        document.getElementById('loading').style.display = 'none';
+        const el = document.getElementById('errorState');
+        el.style.display = 'block';
+        el.textContent = 'Não foi possível carregar os dados da planilha. Verifique se o CSV ainda está publicado.';
+        document.getElementById('dataBadge').textContent = 'Falha no carregamento';
       }
     });
   }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HUB COMLURB | Balanço Financeiro Executivo</title>
+<title>HUB COMLURB | Contratos de Receita 2026</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -36,7 +36,7 @@
       <div class="panelHead">
         <div>
           <h2>Situação Financeira</h2>
-          <div class="hint">Contratos ativos no período &mdash; faturado, recebido e pendente</div>
+          <div class="hint">Execução financeira dos contratos de receita em 2026</div>
         </div>
       </div>
       <div class="body">
@@ -50,7 +50,7 @@
       <div class="panelHead">
         <div>
           <h2>Tendência do Débito</h2>
-          <div class="hint">Média móvel trimestral &mdash; últimos 3 meses fechados vs. trimestre anterior</div>
+          <div class="hint">Variação recente dos débitos líquidos em 2026</div>
         </div>
       </div>
       <div class="body" id="tendenciaBody"></div>
@@ -91,7 +91,7 @@
       <div class="panelHead">
         <div>
           <h2>Carteira Completa</h2>
-          <div class="hint" id="carteiraHint">Todos os contratos ativos no período</div>
+          <div class="hint" id="carteiraHint">Contratos de 2026</div>
         </div>
       </div>
       <div class="body">
@@ -110,7 +110,7 @@
 <script>
 const CFG = {
   csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaBL309w_BniO_LWq9_jWQXNsg22jdfZzIgnPJkgtKJRVYe1BEvZ06yI6BJ4s6yPMJmXacbPDka9hv/pub?gid=988341440&single=true&output=csv",
-  anosAtivos: ["2025","2026"],
+  anosAtivos: ["2026"],
   limiarAtencao: 5,   // % débito sobre faturado
   limiarCritico: 8    // % débito sobre faturado
 };
@@ -128,9 +128,9 @@ function mesNum(raw){
 
 HUB.header.render("header", {
   systemLabel: "HUB COMLURB",
-  title: "Balanço Financeiro Executivo",
-  subtitle: "Contratos de receita ativos &mdash; leitura por valor efetivamente recebido, não por volume faturado.",
-  status: { label: "Período", value: "2025–2026" }
+  title: "Contratos de Receita 2026",
+  subtitle: "Leitura executiva de receita bruta faturada, receita líquida recebida e débito líquido em 2026.",
+  status: { label: "Período", value: "2026" }
 });
 
 HUB.footer.render("footer");
@@ -196,7 +196,7 @@ async function main(){
       value: totFat,
       format: "custom",
       customFormatter: v => "R$ " + HUB.format.int(Math.round(v)),
-      note: "Total do período ativo",
+      note: "Acumulado 2026",
       feature: true
     },
     {
@@ -208,7 +208,7 @@ async function main(){
       color: "green"
     },
     {
-      label: "Débito Pendente",
+      label: "Débito Líquido",
       value: totDeb,
       format: "custom",
       customFormatter: v => "R$ " + HUB.format.int(Math.round(v)),
@@ -371,7 +371,7 @@ async function main(){
 
   // ---- Carteira completa ----
   document.getElementById("carteira").innerHTML = contratos.map(cardContrato).join("");
-  document.getElementById("carteiraHint").textContent = `${contratos.length} contratos ativos no período 2025–2026`;
+  document.getElementById("carteiraHint").textContent = `${contratos.length} contratos com movimento em 2026`;
 
   // ---- Timeline mensal (Chart.js) ----
   if (mensalGeral.length){

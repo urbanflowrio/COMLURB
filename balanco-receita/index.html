@@ -1,421 +1,154 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HUB COMLURB | Contratos de Receita 2026</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance dos Contratos de Receita | HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* Extensões locais mínimas, só o que o hub-premium.css não cobre */
-.statusLine{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12.5px;color:#dcecff}
-.statusLine .tag{font-size:10px;padding:3px 8px}
-.contractGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.contractGrid.compact{grid-template-columns:repeat(4,1fr)}
-.contractCard{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:0}
-.contractCard .ctop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
-.contractCard .cname{font-size:13px;font-weight:800;line-height:1.3}
-.contractCard .csub{font-size:11px;color:#9fb5cc;margin-top:3px}
-.contractCard .cmetrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.contractCard .cmini small{display:block;color:#8fa9c5;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
-.contractCard .cmini b{display:block;font-size:15px;margin-top:2px}
-.insightLine{font-size:11.5px;color:#9fb5cc;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.07)}
-.insightLine.warn{color:#ffc285}
-.insightLine.crit{color:#ff9a90}
-@media(max-width:1100px){.contractGrid,.contractGrid.compact{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.contractGrid,.contractGrid.compact{grid-template-columns:1fr}}
+:root { --bg:#06111f; --painel:#0d1f36; --painel2:#0a1b31; --linha:#294866; --texto:#f7f9ff; --silenciado:#b8c9de; --azul:#4b86bd; --azul2:#5b9bd5; --laranja:#e87535; --verde:#78aaa3; --vermelho:#ef6a5d; --amarelo:#ffa02b; --roxo:#a78bfa; }
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 14% 5%,rgba(75,134,189,.20),transparent 28%),radial-gradient(circle at 88% 8%,rgba(167,139,250,.12),transparent 25%),var(--bg);color:var(--texto);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5} .app{max-width:1800px;margin:0 auto;padding:28px}
+.header{display:flex;align-items:center;gap:28px;padding:26px;border:1px solid var(--linha);border-radius:22px;background:linear-gradient(135deg,rgba(10,27,49,.98),rgba(13,31,54,.94));margin-bottom:18px;box-shadow:0 18px 50px rgba(0,0,0,.22)}
+.logoImg{width:310px;max-height:82px;object-fit:contain;padding-right:26px;border-right:1px solid rgba(255,255,255,.28)} .headerContent{flex:1;min-width:0} .systemLabel{font-size:12px;font-weight:900;letter-spacing:.25em;color:#b8d4f2;text-transform:uppercase} .mainTitle{margin:6px 0;font-size:38px;line-height:1.1;color:#fff;font-weight:950} .subtitle{color:#c7d8ee;font-size:15px;line-height:1.4;max-width:980px}
+.commandbar{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:14px;margin-bottom:14px} .command{background:rgba(13,31,54,.86);border:1px solid var(--linha);border-radius:20px;padding:18px 20px;min-height:108px;position:relative;overflow:hidden} .command:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--azul2),transparent)} .command .ey{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:#b8d4f2;font-weight:900;margin-bottom:8px} .command .tx{font-size:18px;font-weight:850;line-height:1.25} .command .small{font-size:12px;color:#c7d8ee;margin-top:8px;line-height:1.45}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:14px} .kpi{background:linear-gradient(180deg,rgba(13,31,54,.98),rgba(9,24,43,.98));border:1px solid var(--linha);border-radius:20px;padding:18px;min-height:138px;position:relative;overflow:hidden} .kpi:after{content:"";position:absolute;right:-40px;top:-40px;width:120px;height:120px;background:rgba(91,155,213,.08);border-radius:50%} .kpi.feature{background:linear-gradient(135deg,#12365c,#0d1f36);border-color:#5b9bd5} .label{font-size:10px;letter-spacing:.14em;color:#b8d4f2;font-weight:900;text-transform:uppercase;line-height:1.35} .value{font-size:clamp(26px,2.4vw,36px);font-weight:950;line-height:1;margin:12px 0 6px;white-space:nowrap} .note{color:#c7d8ee;font-size:12px;line-height:1.4} .txt-blue{color:#7bb9f0} .txt-green{color:#8bd0ba} .txt-red{color:#ff8a80} .txt-orange{color:#ffb35f} .txt-purple{color:#b9a7ff}
+.exec-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px} .panel{background:rgba(13,31,54,.94);border:1px solid var(--linha);border-radius:20px;overflow:hidden;min-height:320px} .panelHead{padding:18px 20px;border-bottom:1px solid var(--linha);display:flex;align-items:flex-start;justify-content:space-between;gap:14px} .panelHead h2{margin:0;font-size:18px;font-weight:900} .hint{color:#c7d8ee;font-size:12px;margin-top:4px} .body{padding:18px 20px} .chart-wrap{height:290px;position:relative}
+.health{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center} .ring{width:210px;height:210px;border-radius:50%;background:conic-gradient(var(--azul2) calc(var(--p)*1%),rgba(41,72,102,.52) 0);display:grid;place-items:center;box-shadow:inset 0 0 40px rgba(0,0,0,.35),0 0 40px rgba(91,155,213,.10)} .ring-inner{width:150px;height:150px;border-radius:50%;background:#071524;display:grid;place-items:center;text-align:center;border:1px solid rgba(255,255,255,.08)} .ring-v{font-size:42px;font-weight:950;line-height:1} .ring-l{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:#b8d4f2;margin-top:5px} .status-list{display:grid;gap:10px} .status-line{display:grid;grid-template-columns:120px 1fr 64px;gap:12px;align-items:center;padding:10px 12px;border:1px solid rgba(41,72,102,.75);border-radius:14px;background:rgba(10,27,49,.55)} .track{height:10px;background:#132840;border-radius:99px;overflow:hidden} .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#2f67a5,#5b9bd5)} .fill.red{background:linear-gradient(90deg,#a83e36,#ef6a5d)} .fill.green{background:linear-gradient(90deg,#3b827c,#78aaa3)} .fill.orange{background:linear-gradient(90deg,#b86b2f,#e87535)} .sl-l{font-size:11px;color:#b8d4f2;font-weight:900;text-transform:uppercase;letter-spacing:.09em} .sl-v{text-align:right;font-weight:950;font-size:13px}
+.contract-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px} .contract-card{background:linear-gradient(180deg,rgba(13,31,54,.95),rgba(8,22,39,.95));border:1px solid var(--linha);border-radius:20px;padding:17px;min-height:210px;position:relative;overflow:hidden} .contract-card.top{border-color:rgba(91,155,213,.62)} .contract-card.warn{border-color:rgba(255,160,43,.52)} .contract-card.crit{border-color:rgba(239,106,93,.55)} .contract-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px} .contract-id{font-size:19px;font-weight:950;line-height:1.1} .tag{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:950;border:1px solid var(--linha);padding:5px 8px;border-radius:999px;color:#dcecff;white-space:nowrap} .tag.crit{border-color:rgba(239,106,93,.58);color:#ffaaa2;background:rgba(239,106,93,.08)} .tag.warn{border-color:rgba(255,160,43,.55);color:#ffd09a;background:rgba(255,160,43,.08)} .tag.ok{border-color:rgba(120,170,163,.55);color:#aee1d8;background:rgba(120,170,163,.08)} .servico{color:#c7d8ee;font-size:12px;min-height:34px;line-height:1.35} .contract-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px} .mini{padding:10px;background:rgba(10,27,49,.70);border:1px solid rgba(41,72,102,.75);border-radius:14px} .mini-l{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#b8d4f2;font-weight:900} .mini-v{font-size:18px;font-weight:950;margin-top:3px} .exec-bar{margin-top:14px} .exec-meta{display:flex;justify-content:space-between;font-size:11px;color:#c7d8ee;font-weight:800;margin-bottom:6px}
+.structure{display:grid;grid-template-columns:.95fr 1.05fr;gap:14px;margin-bottom:14px} .tile-wrap{display:flex;height:290px;border-radius:16px;overflow:hidden;border:1px solid rgba(41,72,102,.7);background:#081a2e} .tile{display:flex;flex-direction:column;justify-content:flex-end;padding:16px;border-right:1px solid rgba(255,255,255,.08);min-width:52px} .tile:last-child{border-right:0} .tile .big{font-size:28px;font-weight:950;line-height:1} .tile .nm{font-size:11px;color:#dcecff;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-top:6px} .tile .sub{font-size:11px;color:#b8c9de;margin-top:4px} .radar{display:grid;gap:10px} .radar-item{display:grid;grid-template-columns:8px 1fr;gap:12px;align-items:start;padding:12px 13px;background:rgba(10,27,49,.62);border:1px solid rgba(41,72,102,.75);border-radius:14px} .dot{width:8px;height:8px;border-radius:50%;background:var(--azul2);margin-top:7px;box-shadow:0 0 18px rgba(91,155,213,.85)} .radar-item b{color:#fff} .radar-item span{font-size:13px;color:#c7d8ee;line-height:1.45}
+.detail{display:none;margin-bottom:14px} .detail.open{display:block} table{width:100%;border-collapse:collapse;font-size:12px} th{text-align:left;color:#b8d4f2;text-transform:uppercase;letter-spacing:.12em;font-size:10px;padding:0 10px 10px} td{padding:11px 10px;border-top:1px solid rgba(41,72,102,.7);color:#dcecff} td.num, th.num{text-align:right} .toggle{border:1px solid var(--linha);background:#0a1b31;color:#dcecff;border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer} .toggle:hover{border-color:var(--azul)} .footer{margin-top:28px;padding:18px 0;border-top:1px solid rgba(255,255,255,.08);color:#8fa6bf;font-size:12px;opacity:.78} .footer strong{color:#dcecff}
+@media(max-width:1280px){.kpis{grid-template-columns:repeat(2,1fr)}.commandbar,.exec-grid,.structure{grid-template-columns:1fr}.contract-grid{grid-template-columns:repeat(2,1fr)}.health{grid-template-columns:1fr}} @media(max-width:760px){.app{padding:16px}.header{flex-direction:column;align-items:flex-start}.logoImg{width:260px;border-right:0;padding-right:0}.mainTitle{font-size:28px}.kpis,.contract-grid{grid-template-columns:1fr}.commandbar{grid-template-columns:1fr}.value{font-size:30px}.tile-wrap{height:auto;flex-direction:column}.tile{min-height:90px;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}}
 </style>
 </head>
 <body>
 <div class="app">
-  <div id="header"></div>
+  <header class="header">
+    <div class="logoWrap"><img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio + COMLURB" onerror="this.style.display='none'"></div>
+    <div class="headerContent">
+      <div class="systemLabel">HUB COMLURB</div>
+      <div class="mainTitle">Performance dos Contratos de Receita</div>
+      <div class="subtitle">Centro de Inteligência Operacional · leitura executiva da receita faturada, recebimento líquido, débito líquido e concentração dos contratos estratégicos em 2026.</div>
+    </div>
+  </header>
 
-  <section class="grid" style="grid-template-columns:1fr;margin-bottom:14px">
-    <div class="panel">
-      <div class="panelHead">
-        <div>
-          <h2>Situação Financeira</h2>
-          <div class="hint">Execução financeira dos contratos de receita em 2026</div>
-        </div>
-      </div>
-      <div class="body">
-        <div id="kpis" class="kpis"></div>
-      </div>
+  <section class="commandbar">
+    <div class="command">
+      <div class="ey">Situação geral</div>
+      <div class="tx" id="situacaoTexto">—</div>
+      <div class="small">Base 2026 com meses de movimentação financeira identificados no arquivo: janeiro a março.</div>
+    </div>
+    <div class="command">
+      <div class="ey">Pergunta de presidência</div>
+      <div class="tx">Onde a receita está concentrada?</div>
+      <div class="small" id="depTexto">—</div>
+    </div>
+    <div class="command">
+      <div class="ey">Foco de gestão</div>
+      <div class="tx">Contratos com maior débito líquido</div>
+      <div class="small">A tela prioriza decisão. A base analítica fica recolhida no final.</div>
     </div>
   </section>
 
-  <section class="grid" style="grid-template-columns:1fr;margin-bottom:14px">
+  <section class="kpis" id="kpis"></section>
+
+  <section class="exec-grid">
     <div class="panel">
-      <div class="panelHead">
-        <div>
-          <h2>Tendência do Débito</h2>
-          <div class="hint">Variação recente dos débitos líquidos em 2026</div>
-        </div>
+      <div class="panelHead"><div><h2>Saúde financeira do portfólio</h2><div class="hint">Execução financeira e exposição por débito líquido.</div></div></div>
+      <div class="body health">
+        <div class="ring" id="ring"><div class="ring-inner"><div><div class="ring-v" id="ringVal">—</div><div class="ring-l">execução</div></div></div></div>
+        <div class="status-list" id="statusList"></div>
       </div>
-      <div class="body" id="tendenciaBody"></div>
+    </div>
+    <div class="panel">
+      <div class="panelHead"><div><h2>Radar executivo</h2><div class="hint">Leitura pronta para reunião, sem ruído contábil.</div></div></div>
+      <div class="body"><div class="radar" id="radar"></div></div>
     </div>
   </section>
 
-  <section class="grid" style="grid-template-columns:1fr;margin-bottom:14px">
+  <section class="contract-grid" id="contractCards"></section>
+
+  <section class="structure">
     <div class="panel">
-      <div class="panelHead">
-        <div>
-          <h2>Contratos Prioritários</h2>
-          <div class="hint">Maior faturamento, maior débito e maior variação no trimestre</div>
-        </div>
-      </div>
-      <div class="body">
-        <div id="prioritarios" class="contractGrid"></div>
-      </div>
+      <div class="panelHead"><div><h2>Estrutura da receita</h2><div class="hint">Peso relativo por secretaria no faturamento de 2026.</div></div></div>
+      <div class="body"><div class="tile-wrap" id="tiles"></div></div>
+    </div>
+    <div class="panel">
+      <div class="panelHead"><div><h2>Fluxo financeiro 2026</h2><div class="hint">Faturado, receita líquida recebida e débito líquido por competência.</div></div></div>
+      <div class="body"><div class="chart-wrap"><canvas id="fluxoChart"></canvas></div></div>
     </div>
   </section>
 
-  <section class="grid2" style="margin-bottom:14px">
-    <div class="panel">
-      <div class="panelHead">
-        <div><h2>Evolução Mensal</h2><div class="hint">Faturado, recebido e débito por competência</div></div>
-      </div>
-      <div class="body"><div style="height:300px;position:relative"><canvas id="timelineChart"></canvas></div></div>
-    </div>
-    <div class="panel">
-      <div class="panelHead">
-        <div><h2>Por Secretaria</h2><div class="hint">Faturamento e débito proporcional</div></div>
-      </div>
-      <div class="body" id="secBars"></div>
-    </div>
+  <section class="panel" style="min-height:auto;margin-bottom:14px">
+    <div class="panelHead"><div><h2>Base analítica compacta</h2><div class="hint">Detalhe apenas para conferência, sem protagonismo na tela executiva.</div></div><button class="toggle" onclick="toggleDetail()">Mostrar / ocultar</button></div>
+    <div class="body detail" id="detail"><table><thead><tr><th>Contrato</th><th>Secretaria</th><th>Serviço</th><th class="num">Faturado</th><th class="num">Recebido</th><th class="num">Débito</th><th class="num">Execução</th></tr></thead><tbody id="tbody"></tbody></table></div>
   </section>
 
-  <section class="grid" style="grid-template-columns:1fr;margin-bottom:14px">
-    <div class="panel">
-      <div class="panelHead">
-        <div>
-          <h2>Carteira Completa</h2>
-          <div class="hint" id="carteiraHint">Contratos de 2026</div>
-        </div>
-      </div>
-      <div class="body">
-        <div id="carteira" class="contractGrid compact"></div>
-      </div>
-    </div>
-  </section>
-
-  <div id="footer"></div>
+  <footer class="footer"><div><strong>Gabinete da Presidência</strong><br>HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional</div><div id="stamp"></div></footer>
 </div>
-
-<script src="../assets/components/hub-utils.js"></script>
-<script src="../assets/components/hub-layout.js"></script>
-<script src="../assets/components/hub-cards.js"></script>
-<script src="../assets/components/hub-charts.js"></script>
 <script>
-const CFG = {
-  csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSaBL309w_BniO_LWq9_jWQXNsg22jdfZzIgnPJkgtKJRVYe1BEvZ06yI6BJ4s6yPMJmXacbPDka9hv/pub?gid=988341440&single=true&output=csv",
-  anosAtivos: ["2026"],
-  limiarAtencao: 5,   // % débito sobre faturado
-  limiarCritico: 8    // % débito sobre faturado
-};
+const DATA = {"totais": {"faturado": 55422878.17, "recebido": 29010650.85, "debito": 18915011.570000004, "execucao": 52.34417953000364, "pct_debito": 34.12852633163783}, "top3": 90.69981356040428, "smeShare": 77.94619750257549, "months": [{"label": "Jan", "faturado": 16891616.67, "recebido": 14447806.39, "debito": 179672.06}, {"label": "Fev", "faturado": 18771534.04, "recebido": 14562844.46, "debito": 1657586.03}, {"label": "Mar", "faturado": 19759727.46, "recebido": 0.0, "debito": 17077753.48}], "contracts": [{"contrato": "134/2021", "secretaria": "SME", "servico": "LIMPEZA E HIGIENIZAÇÃO", "faturado": 34616058.910000004, "recebido": 19418209.31, "debito": 10490065.98, "unidades": 16, "execucao": 56.0959563897391, "pct_debito": 30.304044741989948}, {"contrato": "CONTRATO N° 2402909", "secretaria": "SMS", "servico": "LIMPEZA HOSPITALAR", "faturado": 12114779.219999999, "recebido": 6053849.9, "debito": 4613213.32, "unidades": 3, "execucao": 49.970781886027645, "pct_debito": 38.0792190780015}, {"contrato": "133/2021", "secretaria": "SME", "servico": "CONTROLE DE VETORES E PRAGAS URBANAS", "faturado": 3537609.04, "recebido": 1464373.01, "debito": 1514294.18, "unidades": 19, "execucao": 41.3944275198935, "pct_debito": 42.80558317433517}, {"contrato": "132/2021", "secretaria": "SME", "servico": "GESTÃO DE RESÍDUOS ESCOLARES", "faturado": 3527041.5300000003, "recebido": 1327442.6300000001, "debito": 1637738.48, "unidades": 18, "execucao": 37.636149693990134, "pct_debito": 46.433773633507506}, {"contrato": "69/2023", "secretaria": "SME", "servico": "MANEJO ARBÓREO", "faturado": 1519316.6, "recebido": 660576.72, "debito": 652112.84, "unidades": 1, "execucao": 43.47854291857273, "pct_debito": 42.92145823984283}, {"contrato": "133/2021", "secretaria": "SMS", "servico": "CONTROLE DE VETORES E PRAGAS URBANAS", "faturado": 82721.36, "recebido": 69651.4, "debito": 0.0, "unidades": 1, "execucao": 84.20001798809884, "pct_debito": 0.0}, {"contrato": "03/2022", "secretaria": "SMPDA", "servico": "GESTÃO DE RESÍDUOS - ANIMAIS", "faturado": 25351.510000000002, "recebido": 16547.88, "debito": 7586.77, "unidades": 1, "execucao": 65.27374503530558, "pct_debito": 29.926304192531333}], "secretarias": [{"secretaria": "SME", "faturado": 43200026.08, "recebido": 22870601.67, "debito": 14294211.48}, {"secretaria": "SMS", "faturado": 12197500.58, "recebido": 6123501.300000001, "debito": 4613213.32}, {"secretaria": "SMPDA", "faturado": 25351.510000000002, "recebido": 16547.88, "debito": 7586.77}]};
+const brl = v => 'R$ ' + (v>=1e6 ? (v/1e6).toFixed(1).replace('.',',')+' mi' : v>=1e3 ? (v/1e3).toFixed(0).replace('.',',')+' mil' : Math.round(v).toLocaleString('pt-BR'));
+const brlFull = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct = v => v.toFixed(1).replace('.',',') + '%';
+const cls = c => c.pct_debito > 35 ? 'crit' : c.pct_debito > 15 ? 'warn' : 'ok';
+const status = c => c.pct_debito > 35 ? 'Crítico' : c.pct_debito > 15 ? 'Atenção' : 'Saudável';
+const corTag = c => cls(c);
+const T = DATA.totais;
 
-const MESES = {
-  JANEIRO:1,FEVEREIRO:2,"MARÇO":3,ABRIL:4,MAIO:5,JUNHO:6,
-  JULHO:7,AGOSTO:8,SETEMBRO:9,OUTUBRO:10,NOVEMBRO:11,DEZEMBRO:12
-};
+document.getElementById('kpis').innerHTML = `
+  <div class="kpi feature"><div class="label">Receita Bruta Faturada</div><div class="value txt-blue">${brl(T.faturado)}</div><div class="note">Total faturado nos contratos de receita em 2026.</div></div>
+  <div class="kpi"><div class="label">Receita Líquida Recebida</div><div class="value txt-green">${brl(T.recebido)}</div><div class="note">Valor efetivamente recebido pela Companhia.</div></div>
+  <div class="kpi red"><div class="label">Débito Líquido</div><div class="value txt-red">${brl(T.debito)}</div><div class="note">Valor líquido ainda pendente de recebimento.</div></div>
+  <div class="kpi orange"><div class="label">Execução Financeira</div><div class="value txt-orange">${pct(T.execucao)}</div><div class="note">Recebido sobre receita bruta faturada.</div></div>
+  <div class="kpi purple"><div class="label">Dependência Financeira</div><div class="value txt-purple">${pct(DATA.top3)}</div><div class="note">Da receita concentrada nos 3 maiores contratos.</div></div>`;
 
-function mesNum(raw){
-  const s = HUB.format.norm(raw);
-  for (const k in MESES) if (s.startsWith(k)) return MESES[k];
-  return null; // datas irregulares (ex: "Dezembro/24 a maio/25") ficam fora da timeline mensal
-}
+document.getElementById('situacaoTexto').textContent = `Execução de ${pct(T.execucao)} com débito líquido equivalente a ${pct(T.pct_debito)} da receita faturada.`;
+document.getElementById('depTexto').textContent = `Os três maiores contratos concentram ${pct(DATA.top3)} da receita faturada em 2026.`;
+document.getElementById('ring').style.setProperty('--p', T.execucao);
+document.getElementById('ringVal').textContent = pct(T.execucao);
 
-HUB.header.render("header", {
-  systemLabel: "HUB COMLURB",
-  title: "Contratos de Receita 2026",
-  subtitle: "Leitura executiva de receita bruta faturada, receita líquida recebida e débito líquido em 2026.",
-  status: { label: "Período", value: "2026" }
+document.getElementById('statusList').innerHTML = [
+  ['Receita recebida', T.recebido/T.faturado*100, 'green'],
+  ['Débito líquido', T.debito/T.faturado*100, 'red'],
+  ['Top 3 contratos', DATA.top3, 'orange'],
+  ['Peso SME', DATA.smeShare, '']
+].map(r=>`<div class="status-line"><div class="sl-l">${r[0]}</div><div class="track"><div class="fill ${r[2]}" style="width:${Math.min(100,r[1])}%"></div></div><div class="sl-v">${pct(r[1])}</div></div>`).join('');
+
+const topDebt = [...DATA.contracts].sort((a,b)=>b.debito-a.debito).slice(0,3);
+const topRevenue = DATA.contracts[0];
+document.getElementById('radar').innerHTML = [
+  `<b>Concentração elevada:</b> ${pct(DATA.top3)} da receita está nos três maiores contratos, o que torna o acompanhamento desses contratos central para a gestão.`,
+  `<b>Maior contrato:</b> ${topRevenue.contrato} responde sozinho por ${pct(topRevenue.faturado/T.faturado*100)} da receita bruta faturada de 2026.`,
+  `<b>Débito concentrado:</b> os três maiores débitos somam ${brl(topDebt.reduce((s,c)=>s+c.debito,0))}.`,
+  `<b>Leitura do ciclo:</b> março concentra o maior saldo em aberto na base disponível, indicando ponto de atenção no fluxo de recebimento.`
+].map(t=>`<div class="radar-item"><div class="dot"></div><span>${t}</span></div>`).join('');
+
+const cards = DATA.contracts.slice(0,6);
+document.getElementById('contractCards').innerHTML = cards.map((c,i)=>`<article class="contract-card ${i==0?'top ':''}${cls(c)}">
+  <div class="contract-head"><div><div class="contract-id">${c.contrato}</div><div class="servico">${c.servico}</div></div><div class="tag ${corTag(c)}">${status(c)}</div></div>
+  <div class="exec-bar"><div class="exec-meta"><span>Execução financeira</span><span>${pct(c.execucao)}</span></div><div class="track"><div class="fill ${cls(c)==='crit'?'red':cls(c)==='warn'?'orange':'green'}" style="width:${Math.min(100,c.execucao)}%"></div></div></div>
+  <div class="contract-metrics"><div class="mini"><div class="mini-l">Faturado</div><div class="mini-v txt-blue">${brl(c.faturado)}</div></div><div class="mini"><div class="mini-l">Recebido</div><div class="mini-v txt-green">${brl(c.recebido)}</div></div><div class="mini"><div class="mini-l">Débito</div><div class="mini-v txt-red">${brl(c.debito)}</div></div><div class="mini"><div class="mini-l">Peso receita</div><div class="mini-v txt-purple">${pct(c.faturado/T.faturado*100)}</div></div></div>
+</article>`).join('');
+
+const palette=['#1f5d91','#2f76ad','#5b9bd5','#78aaa3'];
+document.getElementById('tiles').innerHTML = DATA.secretarias.map((s,i)=>{ const p=s.faturado/T.faturado*100; return `<div class="tile" style="flex:${Math.max(4,p)};background:linear-gradient(180deg,${palette[i%palette.length]},rgba(8,22,39,.92))"><div class="big">${pct(p)}</div><div class="nm">${s.secretaria}</div><div class="sub">${brl(s.faturado)} faturados</div></div>`; }).join('');
+
+document.getElementById('tbody').innerHTML = DATA.contracts.map(c=>`<tr><td><b>${c.contrato}</b></td><td>${c.secretaria}</td><td>${c.servico}</td><td class="num">${brlFull(c.faturado)}</td><td class="num">${brlFull(c.recebido)}</td><td class="num">${brlFull(c.debito)}</td><td class="num">${pct(c.execucao)}</td></tr>`).join('');
+
+function toggleDetail(){ document.getElementById('detail').classList.toggle('open'); }
+
+new Chart(document.getElementById('fluxoChart'),{
+ type:'line',
+ data:{ labels: DATA.months.map(m=>m.label), datasets:[
+   {label:'Receita Bruta Faturada',data:DATA.months.map(m=>m.faturado),borderColor:'rgba(91,155,213,1)',backgroundColor:'rgba(91,155,213,.14)',tension:.35,fill:true,pointRadius:4},
+   {label:'Receita Líquida Recebida',data:DATA.months.map(m=>m.recebido),borderColor:'rgba(120,170,163,1)',backgroundColor:'rgba(120,170,163,.10)',tension:.35,fill:true,pointRadius:4},
+   {label:'Débito Líquido',data:DATA.months.map(m=>m.debito),borderColor:'rgba(239,106,93,1)',backgroundColor:'rgba(239,106,93,.10)',tension:.35,fill:true,pointRadius:4}
+ ]},
+ options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#b8c9de',font:{size:11,weight:'700'},boxWidth:10}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+brlFull(ctx.raw)}}},scales:{x:{ticks:{color:'#b8c9de'},grid:{color:'rgba(41,72,102,.45)'}},y:{ticks:{color:'#b8c9de',callback:v=>brl(v)},grid:{color:'rgba(41,72,102,.45)'}}}}
 });
 
-HUB.footer.render("footer");
-
-async function main(){
-  HUB.loading.showMultiple(["kpis","tendenciaBody","prioritarios","secBars","carteira"]);
-
-  const rows = await HUB.data.loadCSV(CFG.csvUrl, { name: "Financeiro Geral", required: true });
-
-  // Normaliza e filtra: só linhas com faturado > 0 e ano em CFG.anosAtivos
-  const parsed = rows.map(r => {
-    const ano = HUB.format.clean(HUB.pick(r,["ANO COMPETÊNCIA"]));
-    return {
-      secretaria: HUB.format.clean(HUB.pick(r,["SECRETARIA"])),
-      servico: HUB.format.clean(HUB.pick(r,["SERVIÇO"])),
-      contrato: HUB.format.clean(HUB.pick(r,["Contrato"])),
-      ano,
-      mes: mesNum(HUB.pick(r,["MÊS COMPETÊNCIA"])),
-      fat: HUB.format.toNumber(HUB.pick(r,["Valor Fatura"])),
-      pago: HUB.format.toNumber(HUB.pick(r,["Valor Líquido Pago"])),
-      deb: HUB.format.toNumber(HUB.pick(r,["Débito Liquido"]))
-    };
-  }).filter(r => r.fat > 0 && CFG.anosAtivos.includes(r.ano));
-
-  if (!parsed.length){
-    document.getElementById("kpis").innerHTML = `<div class="kpi"><div class="label">Sem dados</div><div class="value">—</div><div class="note">Verifique a publicação do Sheets</div></div>`;
-    return;
-  }
-
-  // ---- Agregação por contrato ----
-  const porContrato = new Map();
-  parsed.forEach(r => {
-    const k = r.contrato;
-    if (!porContrato.has(k)) porContrato.set(k, {
-      contrato: r.contrato, secretaria: r.secretaria, servico: r.servico,
-      fat:0, pago:0, deb:0, mensal: new Map()
-    });
-    const c = porContrato.get(k);
-    c.fat += r.fat; c.pago += r.pago; c.deb += r.deb;
-    if (r.mes){
-      const mk = `${r.ano}-${String(r.mes).padStart(2,"0")}`;
-      if (!c.mensal.has(mk)) c.mensal.set(mk, {fat:0,pago:0,deb:0});
-      const m = c.mensal.get(mk);
-      m.fat += r.fat; m.pago += r.pago; m.deb += r.deb;
-    }
-  });
-  const contratos = [...porContrato.values()].map(c => ({
-    ...c,
-    pctDebito: HUB.format.calcPct(c.deb, c.fat)
-  })).sort((a,b)=>b.fat-a.fat);
-
-  // ---- Totais gerais ----
-  const totFat = HUB.array.sum(parsed,"fat");
-  const totPago = HUB.array.sum(parsed,"pago");
-  const totDeb = HUB.array.sum(parsed,"deb");
-  const pctRecebido = HUB.format.calcPct(totPago, totFat);
-  const pctDebTotal = HUB.format.calcPct(totDeb, totFat);
-
-  // ---- KPIs ----
-  HUB.cards.render("kpis", [
-    {
-      label: "Receita Bruta Faturada",
-      value: totFat,
-      format: "custom",
-      customFormatter: v => "R$ " + HUB.format.int(Math.round(v)),
-      note: "Acumulado 2026",
-      feature: true
-    },
-    {
-      label: "Receita Líquida Recebida",
-      value: totPago,
-      format: "custom",
-      customFormatter: v => "R$ " + HUB.format.int(Math.round(v)),
-      note: `${HUB.format.pct(pctRecebido)} do faturado`,
-      color: "green"
-    },
-    {
-      label: "Débito Líquido",
-      value: totDeb,
-      format: "custom",
-      customFormatter: v => "R$ " + HUB.format.int(Math.round(v)),
-      note: `${HUB.format.pct(pctDebTotal)} do faturado`,
-      color: pctDebTotal >= CFG.limiarCritico ? "red" : pctDebTotal >= CFG.limiarAtencao ? "orange" : "green"
-    },
-    {
-      label: "Contratos em Atenção/Crítico",
-      value: contratos.filter(c=>c.pctDebito >= CFG.limiarAtencao).length,
-      note: `de ${contratos.length} contratos ativos`,
-      color: "purple"
-    }
-  ]);
-
-  // ---- Tendência: média móvel trimestral do débito ----
-  // Junta todas as chaves ano-mês existentes nos contratos, ordena
-  const todasChaves = new Set();
-  contratos.forEach(c => c.mensal.forEach((v,k)=>todasChaves.add(k)));
-  const chavesOrdenadas = [...todasChaves].sort();
-
-  // Soma por mês (todos contratos)
-  const mensalGeral = chavesOrdenadas.map(k => {
-    let fat=0,pago=0,deb=0;
-    contratos.forEach(c => { const m=c.mensal.get(k); if(m){fat+=m.fat;pago+=m.pago;deb+=m.deb;} });
-    return {key:k, fat, pago, deb};
-  });
-
-  // Último trimestre fechado: ignora o mês mais recente se pago=0 e deb>0 (sinal de fechamento em curso)
-  let serieFechada = mensalGeral.slice();
-  if (serieFechada.length){
-    const ultimo = serieFechada[serieFechada.length-1];
-    if (ultimo.pago === 0 && ultimo.deb > 0) serieFechada = serieFechada.slice(0,-1);
-  }
-
-  let tendenciaHTML = `<div class="hint">Dados insuficientes para média móvel trimestral (mínimo 6 meses fechados).</div>`;
-  if (serieFechada.length >= 6){
-    const ultimoTri = serieFechada.slice(-3);
-    const triAnterior = serieFechada.slice(-6,-3);
-    const mediaUltimo = ultimoTri.reduce((a,m)=>a+m.deb,0)/3;
-    const mediaAnterior = triAnterior.reduce((a,m)=>a+m.deb,0)/3;
-    const variacao = mediaAnterior > 0 ? ((mediaUltimo-mediaAnterior)/mediaAnterior*100) : (mediaUltimo>0?100:0);
-    const direcao = Math.abs(variacao) < 5 ? "estavel" : (variacao > 0 ? "subindo" : "caindo");
-    const label = direcao==="estavel" ? "Estável" : direcao==="subindo" ? "Em alta" : "Em queda";
-    const tagClass = direcao==="subindo" ? "crit" : direcao==="estavel" ? "att" : "ok";
-    const corFill = direcao==="subindo" ? "red" : direcao==="estavel" ? "orange" : "green";
-
-    tendenciaHTML = `
-      <div class="kpis" style="grid-template-columns:repeat(3,1fr) !important">
-        <div class="kpi ${corFill==='red'?'red':corFill==='orange'?'orange':'green'}">
-          <div class="label">Débito médio &mdash; último trimestre</div>
-          <div class="value">R$ ${HUB.format.int(Math.round(mediaUltimo))}</div>
-          <div class="note">Média mensal dos últimos 3 meses fechados</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Débito médio &mdash; trimestre anterior</div>
-          <div class="value">R$ ${HUB.format.int(Math.round(mediaAnterior))}</div>
-          <div class="note">Base de comparação</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Tendência</div>
-          <div class="value"><span class="tag ${tagClass}">${label}</span></div>
-          <div class="note">${variacao>=0?"+":""}${variacao.toFixed(1).replace(".",",")}% frente ao trimestre anterior</div>
-        </div>
-      </div>
-      <div class="hint" style="margin-top:12px">
-        Trimestre mais recente considerado: ${monthLabel(ultimoTri[0].key)} a ${monthLabel(ultimoTri[2].key)}.
-        ${mensalGeral.length > serieFechada.length ? `O mês de ${monthLabel(mensalGeral[mensalGeral.length-1].key)} foi excluído da tendência por estar em fechamento (sem pagamento registrado ainda).` : ""}
-      </div>
-    `;
-  }
-  document.getElementById("tendenciaBody").innerHTML = tendenciaHTML;
-
-  function monthLabel(key){
-    const nomes=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-    const [y,m] = key.split("-");
-    return nomes[+m-1]+"/"+y.slice(2);
-  }
-
-  // ---- Insight condicional por contrato (regra binária, sem texto livre) ----
-  function insightContrato(c){
-    const chaves = [...c.mensal.keys()].sort();
-    let fechadas = chaves;
-    if (fechadas.length){
-      const uk = fechadas[fechadas.length-1];
-      const um = c.mensal.get(uk);
-      if (um.pago === 0 && um.deb > 0) fechadas = fechadas.slice(0,-1);
-    }
-    if (fechadas.length < 2) return null;
-
-    const atual = c.mensal.get(fechadas[fechadas.length-1]);
-    const anterior = c.mensal.get(fechadas[fechadas.length-2]);
-    const pctAtual = HUB.format.calcPct(atual.deb, atual.fat);
-    const pctAnterior = HUB.format.calcPct(anterior.deb, anterior.fat);
-
-    if (pctAtual >= CFG.limiarAtencao && pctAtual > pctAnterior){
-      const nivel = pctAtual >= CFG.limiarCritico ? "crit" : "warn";
-      return {
-        nivel,
-        texto: `Débito em ${HUB.format.pct(pctAtual)} no último mês fechado, acima de ${HUB.format.pct(pctAnterior)} no mês anterior.`
-      };
-    }
-    if (c.pctDebito >= CFG.limiarCritico){
-      return { nivel:"crit", texto: `Débito acumulado em ${HUB.format.pct(c.pctDebito)} do faturado no período, acima do limiar crítico (${CFG.limiarCritico}%).` };
-    }
-    return null;
-  }
-
-  function statusTag(pct){
-    if (pct >= CFG.limiarCritico) return {cls:"crit", label:"Crítico"};
-    if (pct >= CFG.limiarAtencao) return {cls:"att", label:"Atenção"};
-    return {cls:"ok", label:"Dentro da Meta"};
-  }
-
-  function cardContrato(c){
-    const st = statusTag(c.pctDebito);
-    const insight = insightContrato(c);
-    return `
-      <article class="contractCard">
-        <div class="ctop">
-          <div>
-            <div class="cname">${HUB.format.esc(c.servico)}</div>
-            <div class="csub">${HUB.format.esc(c.contrato)} &middot; ${HUB.format.esc(c.secretaria)}</div>
-          </div>
-          <span class="tag ${st.cls}">${st.label}</span>
-        </div>
-        <div class="cmetrics">
-          <div class="cmini"><small>Faturado</small><b>R$ ${HUB.format.int(Math.round(c.fat))}</b></div>
-          <div class="cmini"><small>Recebido</small><b>R$ ${HUB.format.int(Math.round(c.pago))}</b></div>
-          <div class="cmini"><small>Débito</small><b style="color:${c.deb>0?'#ff9a90':'#a5d3c8'}">R$ ${HUB.format.int(Math.round(c.deb))}</b></div>
-          <div class="cmini"><small>% Débito</small><b>${HUB.format.pct(c.pctDebito)}</b></div>
-        </div>
-        ${insight ? `<div class="insightLine ${insight.nivel}">${insight.texto}</div>` : ""}
-      </article>
-    `;
-  }
-
-  // ---- Contratos prioritários: maior faturamento, maior débito, maior variação ----
-  const maiorFat = contratos[0];
-  const maiorDeb = [...contratos].sort((a,b)=>b.deb-a.deb)[0];
-  const comVariacao = contratos.map(c => {
-    const chaves = [...c.mensal.keys()].sort();
-    let fechadas = chaves;
-    if (fechadas.length){
-      const uk = fechadas[fechadas.length-1];
-      const um = c.mensal.get(uk);
-      if (um.pago === 0 && um.deb > 0) fechadas = fechadas.slice(0,-1);
-    }
-    if (fechadas.length < 2) return {...c, variacao:-Infinity};
-    const atual = c.mensal.get(fechadas[fechadas.length-1]);
-    const anterior = c.mensal.get(fechadas[fechadas.length-2]);
-    const pctAtual = HUB.format.calcPct(atual.deb, atual.fat);
-    const pctAnterior = HUB.format.calcPct(anterior.deb, anterior.fat);
-    return {...c, variacao: pctAtual - pctAnterior};
-  });
-  const maiorVariacao = [...comVariacao].sort((a,b)=>b.variacao-a.variacao)[0];
-
-  const prioritariosSet = new Map();
-  [maiorFat, maiorDeb, maiorVariacao].forEach(c => { if (c) prioritariosSet.set(c.contrato, c); });
-  document.getElementById("prioritarios").innerHTML = [...prioritariosSet.values()].map(cardContrato).join("");
-
-  // ---- Carteira completa ----
-  document.getElementById("carteira").innerHTML = contratos.map(cardContrato).join("");
-  document.getElementById("carteiraHint").textContent = `${contratos.length} contratos com movimento em 2026`;
-
-  // ---- Timeline mensal (Chart.js) ----
-  if (mensalGeral.length){
-    new Chart(document.getElementById("timelineChart").getContext("2d"), {
-      type: "line",
-      data: {
-        labels: mensalGeral.map(m=>monthLabel(m.key)),
-        datasets: [
-          { label:"Faturado", data:mensalGeral.map(m=>m.fat), borderColor:HUB.charts.colors.blue, backgroundColor:HUB.charts.colors.blue+"22", tension:.35, fill:true, pointRadius:3 },
-          { label:"Recebido", data:mensalGeral.map(m=>m.pago), borderColor:HUB.charts.colors.green, backgroundColor:HUB.charts.colors.green+"15", tension:.35, fill:false, pointRadius:3 },
-          { label:"Débito", data:mensalGeral.map(m=>m.deb), borderColor:HUB.charts.colors.red, backgroundColor:HUB.charts.colors.red+"15", tension:.35, fill:false, pointRadius:3 }
-        ]
-      },
-      options: {
-        ...HUB.charts.baseConfig,
-        plugins: {
-          ...HUB.charts.baseConfig.plugins,
-          tooltip: { ...HUB.charts.baseConfig.plugins.tooltip, callbacks:{ label: i => " "+i.dataset.label+": R$ "+HUB.format.int(Math.round(i.raw)) } }
-        },
-        scales: {
-          ...HUB.charts.baseConfig.scales,
-          y: { ...HUB.charts.baseConfig.scales.y, ticks:{ ...HUB.charts.baseConfig.scales.y.ticks, callback:v=>"R$ "+HUB.format.int(v) } }
-        }
-      }
-    });
-  }
-
-  // ---- Por secretaria ----
-  const porSec = new Map();
-  parsed.forEach(r => {
-    if (!porSec.has(r.secretaria)) porSec.set(r.secretaria, {fat:0,deb:0});
-    const s = porSec.get(r.secretaria);
-    s.fat += r.fat; s.deb += r.deb;
-  });
-  const secArr = [...porSec.entries()].sort((a,b)=>b[1].fat-a[1].fat).map(([k,v])=>[k, Math.round(v.fat)]);
-  HUB.simpleBar.render("secBars", secArr, { total: totFat });
-
-  HUB.footer.updateTimestamp();
-}
-
-main().catch(err => {
-  console.error(err);
-  document.getElementById("kpis").innerHTML = `<div class="kpi red"><div class="label">Erro ao carregar dados</div><div class="value">—</div><div class="note">${HUB.format.esc(err.message)}</div></div>`;
-});
+document.getElementById('stamp').textContent = 'Atualizado em ' + new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 </script>
 </body>
 </html>

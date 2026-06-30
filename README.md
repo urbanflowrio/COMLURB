@@ -1,100 +1,76 @@
-# HUB COMLURB
+# Balanço Financeiro Executivo — HUB COMLURB
 
-Central de inteligência operacional do Gabinete da Presidência.  
-Desenvolvido por Greicy Moreira — Núcleo de Inteligência e Gestão Estratégica Operacional.
+Módulo de visão executiva dos contratos de receita da COMLURB, focado em leitura por **valor efetivamente recebido**, não por volume faturado.
 
----
+## Arquivo
 
-## Estrutura do repositório
+- `index.html` — painel único, integrado ao design system do HUB.
+
+## Fonte de dados
+
+Carrega ao vivo, no navegador, via PapaParse, a partir da aba "geral" da planilha publicada:
 
 ```
-COMLURB/
-├── assets/
-│   ├── css/
-│   │   └── hub-premium.css       ← CSS único de todos os painéis
-│   ├── components/
-│   │   ├── hub-utils.js          ← formatação, loadCSV, array helpers
-│   │   ├── hub-cards.js          ← KPI cards
-│   │   ├── hub-charts.js         ← Chart.js pré-configurado
-│   │   ├── hub-filters.js        ← filtros com localStorage
-│   │   ├── hub-layout.js         ← header, footer, drill banner, loading
-│   │   ├── hub-all.js            ← bundle de todos (alternativa)
-│   │   ├── _TEMPLATE.html        ← scaffold de novo painel (HTML)
-│   │   ├── _TEMPLATE_app.js      ← scaffold de novo painel (lógica)
-│   │   └── _TEMPLATE_data.js     ← scaffold de novo painel (dados)
-│   ├── logos/                    ← logos institucionais
-│   └── geojson/                  ← GeoJSONs (não versionados — ver abaixo)
-│
-├── dte/          Diretoria Técnica e de Engenharia
-├── pessoas/      Gestão de Pessoas
-├── sms/          Saúde e Segurança do Trabalho
-├── ipl/          Índice de Padrão de Limpeza
-├── contratos/    Gestão Contratual [em refatoração]
-├── sme/          Limpeza Escolar [em refatoração]
-├── territorial/  Mapa Operacional
-├── radar-pre/    Radar da Presidência [em desenvolvimento]
-├── materiais/    Balanço de Materiais [em desenvolvimento]
-│
-├── index.html    ← Portal de entrada
-├── .nojekyll
-└── _config.yml
+FINANCEIRO_CONTRATOS_RECEITA → aba geral (gid=988341440)
 ```
 
----
+URL configurada em `CFG.csvUrl` no início do `<script>` do `index.html`. Para trocar a fonte, edite apenas essa constante.
 
-## Regras obrigatórias para novos painéis
+Colunas esperadas (não alterar nomes na planilha sem atualizar o código): `SECRETARIA`, `SERVIÇO`, `UNIDADES`, `Contrato`, `MÊS COMPETÊNCIA`, `ANO COMPETÊNCIA`, `Valor Fatura`, `INSS`, `ISS`, `IRPJ`, `Valor Líquido Pago`, `Débito Liquido`.
 
-1. **Pasta própria** com nome em minúsculas, sem espaços ou acentos
-2. **Quatro arquivos**: `index.html`, `app.js`, `data.js`, `README.md`
-3. **Zero CSS inline** — apenas `<link rel="stylesheet" href="../assets/css/hub-premium.css">`
-4. **Zero emojis** — semáforos usam classes CSS `.status-ok`, `.status-atencao`, `.status-critico`
-5. **Dados sempre externos** — Google Sheets CSV via `HUB.data.loadCSV()`. Nunca JSON embutido no HTML
-6. **CONFIG object** no topo do `app.js` com `systemLabel`, `title`, `subtitle`, `author`, `version`
+## Filtro de período ativo
 
----
+`CFG.anosAtivos = ["2025","2026"]`. Só linhas com `Valor Fatura > 0` e ano dentro dessa lista entram no cálculo. Linhas de competências futuras pré-cadastradas (sem valor) são descartadas automaticamente.
 
-## GeoJSONs
+## Estrutura do painel (4 camadas)
 
-Os arquivos GeoJSON (bairros RJ, gerências DSU) não estão versionados por serem > 9MB.  
-Ficam em `assets/geojson/` localmente e devem ser fornecidos separadamente.
+1. **Situação Financeira** — 4 KPIs: faturado, recebido, débito pendente, contratos em atenção/crítico.
+2. **Tendência do Débito** — média móvel trimestral (últimos 3 meses fechados vs. trimestre anterior). O mês mais recente é excluído automaticamente da tendência quando está "em fechamento" (pago = 0 e débito > 0), evitando falso alarme por defasagem de ciclo de pagamento.
+3. **Contratos Prioritários** — 3 cards: maior faturamento, maior débito absoluto, maior variação de % débito no último mês fechado.
+4. **Carteira Completa** — todos os contratos ativos, em cards (sem tabela dominante).
 
-Arquivos necessários:
-- `assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson` (9,3 MB)
-- `assets/geojson/GERENCIAS_DSU.geojson` (1,9 MB)
+## Regras de status
 
----
-
-## Como criar um novo painel
-
-```bash
-# 1. Criar pasta
-mkdir nome-do-painel
-
-# 2. Copiar templates
-cp assets/components/_TEMPLATE.html    nome-do-painel/index.html
-cp assets/components/_TEMPLATE_app.js  nome-do-painel/app.js
-cp assets/components/_TEMPLATE_data.js nome-do-painel/data.js
-
-# 3. Criar README
-echo "# [Nome] — HUB COMLURB" > nome-do-painel/README.md
-
-# 4. Editar data.js com a URL do Google Sheets
-# 5. Editar app.js com CONFIG e lógica específica
-# 6. Adicionar card no index.html principal
+```
+% Débito / Faturado >= 8%  → Crítico
+% Débito / Faturado >= 5%  → Atenção
+% Débito / Faturado <  5%  → Dentro da Meta
 ```
 
----
+Limiares configuráveis em `CFG.limiarAtencao` e `CFG.limiarCritico`.
 
-## GitHub Pages
+## Insights condicionais
 
-Publicado em: `https://urbanflowrio.github.io/COMLURB/`
+Nenhuma frase de leitura aparece nos cards sem que uma condição lógica explícita seja satisfeita:
 
-Requisitos de rede:
-- IT deve liberar `185.199.108.153` a `185.199.111.153` na porta 443
+```
+SE (% débito do último mês fechado >= limiar de atenção)
+   E (% débito do último mês fechado > % débito do mês anterior)
+ENTÃO exibir frase com os dois percentuais
+SENÃO SE (% débito acumulado no período >= limiar crítico)
+ENTÃO exibir frase de acumulado crítico
+SENÃO não exibir nada
+```
 
----
+Não há texto gerado livremente — todo insight nasce de uma regra verificável nos próprios números exibidos no card.
 
-## Parte do UrbanFlow Hub Framework
+## Dependências
 
-Este repositório é a instância COMLURB do framework UrbanFlow.  
-O framework público (sem dados de cliente) está em: `https://github.com/urbanflowrio/urbanflow-hub`
+- `../assets/css/hub-premium.css`
+- `../assets/components/hub-utils.js`
+- `../assets/components/hub-layout.js`
+- `../assets/components/hub-cards.js`
+- `../assets/components/hub-charts.js`
+- PapaParse 5.4.1 (CDN)
+- Chart.js 4.4.0 (CDN)
+
+Esses caminhos assumem que `index.html` fica em `balanco-receita/` na raiz do repo, ao lado das demais pastas de módulo (`ar/`, `contratos/`, `dte/` etc.), para que os imports relativos `../assets/...` resolvam corretamente.
+
+## Pendências conhecidas
+
+- Tendência trimestral exige no mínimo 6 meses de dados fechados na carteira agregada. Com menos histórico, o painel exibe aviso em vez de calcular.
+- Datas de competência irregulares (ex: "Dezembro/24 a maio/25") não entram na timeline mensal, mas continuam contabilizadas nos totais e cards de contrato.
+
+## Autoria
+
+Desenvolvido por Greicy Moreira — Gabinete da Presidência / Núcleo de Inteligência e Gestão Estratégica Operacional — COMLURB.

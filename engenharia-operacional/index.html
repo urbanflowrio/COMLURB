@@ -116,7 +116,14 @@
       <div>
         <b>Índice de captura EGP-RIO — mai/26 fora do padrão histórico</b>
         <p>Série 2026 confirmada na planilha oficial: Jan 11,4% · Fev 10,3% · Mar 11,2% · Abr 10,5% · Mai 22,9%. O salto de mai/26 não é erro de leitura do painel — é o valor publicado — mas destoa da série e ainda não foi confirmada a origem. Até validação, este indicador não deve ser usado como KPI de decisão.</p>
+        <p id="bannerComposicao" style="margin-top:8px;"></p>
       </div>
+    </div>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panelHead">
+        <div><h2>Composição da coleta seletiva</h2><div class="hint">Frota Comlurb vs. cooperativas/não cadastrados — origem do salto de mai/26</div></div>
+      </div>
+      <div class="body"><div class="chartWrap"><canvas id="chartComposicao"></canvas></div></div>
     </div>
     <div class="grid">
       <div class="panel">
@@ -165,13 +172,13 @@
     <div class="rankGrid" style="margin-top:14px;">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Gerências — utilização mais baixa</h2><div class="hint">Coleta domiciliar · peso/capacidade médio</div></div>
+          <div><h2>Gerências — utilização mais baixa</h2><div class="hint">Domiciliar, seletiva e lixo público · peso/capacidade médio</div></div>
         </div>
         <div class="body" id="rankBaixa"></div>
       </div>
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Gerências — utilização mais alta</h2><div class="hint">Coleta domiciliar · peso/capacidade médio</div></div>
+          <div><h2>Gerências — utilização mais alta</h2><div class="hint">Domiciliar, seletiva e lixo público · peso/capacidade médio</div></div>
         </div>
         <div class="body" id="rankAlta"></div>
       </div>
@@ -554,8 +561,44 @@ function renderReciclagem() {
     values: serieIdx
   }, { color: HUB.charts.colors.green });
 
-  // Regional — ano corrente
   const fonte = usar2026 ? RAW.ind2026 : RAW.ind2025;
+
+  // Composição: Frota Comlurb vs. Não Cadastrados por mês — mostra a origem do salto
+  const frotaComlurbMeses = ind1493Serie(fonte, "COLETA SELETIVA - FROTA COMLURB").meses;
+  const naoCadastradosMeses = ind1493Serie(fonte, "NAO CADASTRADOS").meses;
+  const mesesComDado = frotaComlurbMeses.map((v, idx) => (v > 0 || naoCadastradosMeses[idx] > 0) ? idx : -1).filter(i => i >= 0);
+  const ultimoIdx = mesesComDado.length ? Math.max(...mesesComDado) + 1 : 0;
+  chartOuVazio("chartComposicao", frotaComlurbMeses.slice(0, ultimoIdx), () => {
+    const canvas = document.getElementById("chartComposicao");
+    if (!canvas) return;
+    new Chart(canvas.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: mesesLabel.slice(0, ultimoIdx).map(m => m + "/" + anoUsado.slice(2)),
+        datasets: [
+          { label: "Frota Comlurb", data: frotaComlurbMeses.slice(0, ultimoIdx), backgroundColor: HUB.charts.colors.blue },
+          { label: "Cooperativas / não cadastrados", data: naoCadastradosMeses.slice(0, ultimoIdx), backgroundColor: HUB.charts.colors.orange }
+        ]
+      },
+      options: { ...HUB.charts.baseConfig, scales: { ...HUB.charts.baseConfig.scales, x: { ...HUB.charts.baseConfig.scales.x, stacked: true }, y: { ...HUB.charts.baseConfig.scales.y, stacked: true } } }
+    });
+  });
+
+  // Frase dinâmica do banner: origem do salto (frota Comlurb vs. não cadastrados)
+  const bannerEl = document.getElementById("bannerComposicao");
+  if (bannerEl) {
+    const iUlt = lastValidIndex(naoCadastradosMeses);
+    const iAnteriores = mesesComDado.filter(idx => idx < iUlt);
+    const baseNaoCad = iAnteriores.length ? iAnteriores.reduce((a, i) => a + naoCadastradosMeses[i], 0) / iAnteriores.length : 0;
+    const baseFrota = iAnteriores.length ? iAnteriores.reduce((a, i) => a + frotaComlurbMeses[i], 0) / iAnteriores.length : 0;
+    if (iUlt >= 0 && baseNaoCad > 0) {
+      const multNaoCad = naoCadastradosMeses[iUlt] / baseNaoCad;
+      const varFrota = baseFrota > 0 ? (frotaComlurbMeses[iUlt] - baseFrota) / baseFrota * 100 : 0;
+      bannerEl.innerHTML = `<b>Origem provável:</b> em ${mesesLabel[iUlt]}/${anoUsado.slice(2)}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoCadastradosMeses[iUlt]))} t — ${multNaoCad.toFixed(1).replace(".", ",")}x a média dos meses anteriores (${HUB.format.int(Math.round(baseNaoCad))} t). No mesmo mês, a frota Comlurb variou ${varFrota >= 0 ? "+" : ""}${varFrota.toFixed(1).replace(".", ",")}% frente à própria média — o salto do índice está nas cooperativas, não na operação própria.`;
+    }
+  }
+
+  // Regional — ano corrente
   const regionais = ["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
   const valoresRegional = regionais.map(r => ind1493Serie(fonte, r).total);
   HUB.charts.bar("chartRegional", {
@@ -606,20 +649,27 @@ function renderFrota() {
     });
   });
 
-  // Rankings de utilização por gerência — Coleta Domiciliar
-  const rows = RAW.coletaDom || [];
+  // Rankings de utilização por gerência — Domiciliar + Seletiva + Lixo Público
+  const fontesFrota = [
+    { rows: RAW.coletaDom || [], tipo: "Domiciliar" },
+    { rows: RAW.coletaSel || [], tipo: "Seletiva" },
+    { rows: RAW.lixoPub || [], tipo: "Lixo Público" }
+  ];
   const map = new Map();
-  rows.forEach(r => {
-    const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
-    const pct = HUB.format.toNumber(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"]));
-    if (!ger || !pct) return;
-    if (!map.has(ger)) map.set(ger, []);
-    map.get(ger).push(pct);
+  fontesFrota.forEach(({ rows, tipo }) => {
+    rows.forEach(r => {
+      const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
+      const pct = HUB.format.toNumber(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"]));
+      if (!ger || !pct) return;
+      const key = ger + "|" + tipo;
+      if (!map.has(key)) map.set(key, { ger, tipo, vals: [] });
+      map.get(key).vals.push(pct);
+    });
   });
-  const ranked = [...map.entries()]
-    .map(([ger, vals]) => [ger, vals.reduce((a,b)=>a+b,0) / vals.length])
-    .filter(([, avg]) => avg > 0)
-    .sort((a, b) => a[1] - b[1]);
+  const ranked = [...map.values()]
+    .map(({ ger, tipo, vals }) => ({ ger, tipo, avg: vals.reduce((a, b) => a + b, 0) / vals.length }))
+    .filter(r => r.avg > 0)
+    .sort((a, b) => a.avg - b.avg);
 
   const baixa = ranked.slice(0, 5);
   const alta = ranked.slice(-5).reverse();
@@ -627,13 +677,13 @@ function renderFrota() {
   function renderRankList(containerId, list, colorVar) {
     const el = document.getElementById(containerId);
     if (!list.length) { el.innerHTML = '<div class="loading">Sem dados suficientes</div>'; return; }
-    el.innerHTML = list.map(([ger, avg]) => `
+    el.innerHTML = list.map(r => `
       <div class="barRow">
-        <div class="barName">${HUB.format.esc(ger)}</div>
+        <div class="barName">${HUB.format.esc(r.ger)} <span style="color:var(--silenciado); font-size:11px;">· ${r.tipo}</span></div>
         <div style="background:var(--linha);border-radius:6px;height:8px;overflow:hidden;">
-          <div style="width:${Math.min(avg,150)}%;height:100%;background:${colorVar};"></div>
+          <div style="width:${Math.min(r.avg,150)}%;height:100%;background:${colorVar};"></div>
         </div>
-        <div style="text-align:right;font-weight:800;">${avg.toFixed(0)}%</div>
+        <div style="text-align:right;font-weight:800;">${r.avg.toFixed(0)}%</div>
       </div>
     `).join("");
   }

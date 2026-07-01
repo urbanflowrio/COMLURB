@@ -3,666 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DTE - Diretoria Técnica e de Engenharia | HUB COMLURB</title>
+<title>Engenharia Operacional DTE | HUB COMLURB</title>
 
-<!-- CSS do HUB -->
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 
 <style>
-/* Complementos deste painel — reaproveita variáveis do hub-premium.css, sem :root paralelo */
 .chartWrap{height:230px;position:relative;}
 .chartWrap.small{height:190px;}
+.readingPanel{margin-bottom:16px;border:1px solid var(--linha);border-radius:22px;background:linear-gradient(135deg,rgba(19,43,70,.92),rgba(8,21,38,.96));box-shadow:0 18px 50px rgba(0,0,0,.22);overflow:hidden;}
+.readingHead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:20px 22px 12px;border-bottom:1px solid rgba(255,255,255,.08);}
+.readingKicker{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--verde);text-transform:uppercase;margin-bottom:7px;}
+.readingTitle{font-size:21px;font-weight:900;letter-spacing:-.03em;margin:0;color:var(--texto);}
+.readingSub{font-size:12.5px;color:var(--silenciado);line-height:1.55;margin-top:6px;max-width:860px;}
+.readingStamp{font-size:11px;color:var(--silenciado);border:1px solid var(--linha);border-radius:999px;padding:7px 10px;white-space:nowrap;background:rgba(255,255,255,.03);}
+.readingBody{display:grid;grid-template-columns:1.25fr .75fr;gap:0;}
+.readingNarrative{padding:18px 22px;}
+.readingNarrative p{font-size:14px;line-height:1.65;color:var(--texto);margin:0;}
+.readingNarrative strong{color:#fff;}
+.readingBullets{padding:18px 22px;border-left:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.12);display:flex;flex-direction:column;gap:10px;}
+.readingItem{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:start;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07);}
+.readingItem:last-child{border-bottom:none;padding-bottom:0;}
+.readingLabel{font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--silenciado);text-transform:uppercase;}
+.readingText{font-size:12.7px;color:var(--texto);line-height:1.45;}
+.readingText b{color:#fff;}
+.alertStrip{display:flex;gap:12px;align-items:flex-start;margin:0 22px 20px;padding:14px 16px;border-radius:16px;border:1px solid rgba(239,106,93,.45);background:rgba(239,106,93,.10);}
+.alertTag{font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--vermelho);text-transform:uppercase;white-space:nowrap;}
+.alertStrip p{margin:0;color:#f1c6c1;font-size:12.7px;line-height:1.55;}
 .insightList{list-style:none;margin:14px 0 0;padding-top:12px;border-top:1px solid var(--linha);display:flex;flex-direction:column;gap:7px;}
 .insightList li{font-size:12.5px;color:var(--silenciado);line-height:1.5;padding-left:15px;position:relative;}
 .insightList li::before{content:"→";position:absolute;left:0;color:var(--verde);font-size:11px;}
-.insightList li.flag{color:#e8b3ac;}
-.insightList li.flag::before{content:"!";color:var(--vermelho);font-weight:900;}
 .noteBanner{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:16px;border:1px solid var(--linha);background:var(--painel2);margin-bottom:14px;}
 .noteBanner.crit{border-color:rgba(239,106,93,.5);}
 .noteTag{font-size:10px;font-weight:900;letter-spacing:.12em;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:2px;white-space:nowrap;background:rgba(239,106,93,.18);color:var(--vermelho);border:1px solid rgba(239,106,93,.5);}
 .noteBanner b{display:block;font-size:14px;margin-bottom:3px;}
 .noteBanner p{color:var(--silenciado);font-size:12.5px;line-height:1.55;margin:0;}
 .rankGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media (max-width:900px){ .rankGrid{grid-template-columns:1fr;} }
+@media (max-width:1000px){.readingBody{grid-template-columns:1fr}.readingBullets{border-left:0;border-top:1px solid rgba(255,255,255,.08)}.readingHead{flex-direction:column}.rankGrid{grid-template-columns:1fr;}}
 </style>
 </head>
 
 <body>
 <div class="app">
-
   <div id="header"></div>
-
   <div id="drillNote"></div>
 
-  <!-- ===================== VISÃO GERAL ===================== -->
   <section class="screen active" id="screenVisao">
-    <div class="panel" style="margin-bottom:16px;">
-      <div class="panelHead">
-        <div><h2>Leitura do mês</h2><div class="hint">Gerada a partir dos dados carregados — sem texto fixo</div></div>
-      </div>
-      <div class="body">
-        <ul class="insightList" id="leituraMes" style="border-top:none; padding-top:0;"></ul>
-      </div>
-    </div>
+    <div id="leituraMes"></div>
     <div class="kpis" id="kpisVisao"></div>
     <div class="grid">
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Fluxo entre ETRs</h2><div class="hint">Recebimento por estação — mês mais recente</div></div>
-        </div>
+        <div class="panelHead"><div><h2>Fluxo entre ETRs</h2><div class="hint">Recebimento por estação no mês mais recente</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartEtrUnidade"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Coleta seletiva — série anual</h2><div class="hint">2022–2026 (t/ano)</div></div>
-        </div>
+        <div class="panelHead"><div><h2>Coleta seletiva</h2><div class="hint">Série anual 2022–2026</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartSeletivaAnual"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Frota própria em operação</h2><div class="hint">Últimos meses disponíveis</div></div>
-        </div>
+        <div class="panelHead"><div><h2>Frota própria em operação</h2><div class="hint">Últimos meses disponíveis</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartFrotaOperacao"></canvas></div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== DESTINAÇÃO & BIOGÁS ===================== -->
   <section class="screen" id="screenDestinacao">
     <div class="grid">
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>ETR Total</h2><div class="hint">Recebimento mensal (t)</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartEtrTotal"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Biogás — CTR Seropédica</h2><div class="hint">Geração mensal (Nm³)</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartBiogas"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Chorume acumulado</h2><div class="hint">Volume mensal (m³)</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartChorume"></canvas></div></div>
-      </div>
+      <div class="panel"><div class="panelHead"><div><h2>ETR Total</h2><div class="hint">Recebimento mensal em toneladas</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartEtrTotal"></canvas></div></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Biogás — CTR Seropédica</h2><div class="hint">Geração mensal em Nm³</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartBiogas"></canvas></div></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Chorume acumulado</h2><div class="hint">Volume mensal em m³</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartChorume"></canvas></div></div></div>
     </div>
     <div id="chorumeAlertSlot" style="margin-top:14px;"></div>
   </section>
 
-  <!-- ===================== COLETA SELETIVA & RECICLAGEM ===================== -->
   <section class="screen" id="screenReciclagem">
     <div class="grid">
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Coleta seletiva por regional</h2><div class="hint">UDS-S / UDS-N / UDS-O — ano corrente (t)</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartRegional"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Origem do peso coletado</h2><div class="hint">Frota Comlurb vs. cooperativas/não cadastrados</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartOrigem"></canvas></div></div>
-      </div>
+      <div class="panel"><div class="panelHead"><div><h2>Índice de captura EGP-RIO</h2><div class="hint">Percentual mensal do ano corrente</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal"></canvas></div></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Coleta seletiva por regional</h2><div class="hint">UDS-S, UDS-N, UDS-O AP-4 e AP-5</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartRegional"></canvas></div></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Origem do peso coletado</h2><div class="hint">Frota COMLURB, alternativa e não cadastrados</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartOrigem"></canvas></div></div></div>
     </div>
   </section>
 
-  <!-- ===================== FROTA & EFICIÊNCIA ===================== -->
   <section class="screen" id="screenFrota">
     <div class="grid">
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Horas extras</h2><div class="hint">Valor mensal (R$) e % do faturado</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartSobrecarga"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Frota total vs. em operação</h2><div class="hint">Veículos por mês</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartFrotaComparativo"></canvas></div></div>
-      </div>
+      <div class="panel"><div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal e pressão operacional</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Sobrecarga acima de 10% PBT</h2><div class="hint">Percentual de pesagens acima do limite</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartSobrecarga"></canvas></div></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Frota total vs. em operação</h2><div class="hint">Veículos por mês</div></div></div><div class="body"><div class="chartWrap"><canvas id="chartFrotaComparativo"></canvas></div></div></div>
     </div>
     <div class="rankGrid" style="margin-top:14px;">
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Gerências — utilização mais baixa</h2><div class="hint">Coleta domiciliar · peso/capacidade médio</div></div>
-        </div>
-        <div class="body" id="rankBaixa"></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Gerências — utilização mais alta</h2><div class="hint">Coleta domiciliar · peso/capacidade médio</div></div>
-        </div>
-        <div class="body" id="rankAlta"></div>
-      </div>
+      <div class="panel"><div class="panelHead"><div><h2>Utilização mais baixa</h2><div class="hint">Coleta domiciliar · peso/capacidade médio</div></div></div><div class="body" id="rankBaixa"></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Utilização mais alta</h2><div class="hint">Coleta domiciliar · peso/capacidade médio</div></div></div><div class="body" id="rankAlta"></div></div>
     </div>
   </section>
 
   <div id="footer"></div>
-
 </div>
 
-<!-- DEPENDÊNCIAS -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-<!-- COMPONENTES HUB -->
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-cards.js"></script>
 <script src="../assets/components/hub-charts.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 
 <script>
-// ============================================
-// CONFIGURAÇÃO
-// ============================================
 const CONFIG = {
   urls: {
-    // Tabela 1493 - Indicadores Comlurb Prefeitura, abas por ano (formato largo)
     ind2025: "https://docs.google.com/spreadsheets/d/e/2PACX-1vROyY6mxXqzf0YnRLgXXYtA7pUZ2NlW1VZOWjfEMYLckuJuwoeMSNXyUMnDMuUbxtmKApX1f4D6i4cV/pub?gid=616621942&single=true&output=csv",
     ind2026: "https://docs.google.com/spreadsheets/d/e/2PACX-1vROyY6mxXqzf0YnRLgXXYtA7pUZ2NlW1VZOWjfEMYLckuJuwoeMSNXyUMnDMuUbxtmKApX1f4D6i4cV/pub?gid=677183986&single=true&output=csv",
-    // Relatório mensal DTE (formato largo, janela rolante de 13 meses)
     relatorio: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRW3qUjO5-0OHC_La0rNi-JhPGw-5hF0TKSA9cl1OVUqYUCUsHbPTdu9YFQHr6RFlnNH3nVlenSLPWM/pub?gid=0&single=true&output=csv",
-    // Utilização da Frota (formato tabular)
     coletaDomiciliar: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1898137343&single=true&output=csv",
     coletaSeletiva: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1599396593&single=true&output=csv",
     lixoPublico: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1210816191&single=true&output=csv"
   },
-  panelName: "Inteligência Operacional DTE",
+  panelName: "Engenharia Operacional",
   systemLabel: "DIRETORIA TÉCNICA E DE ENGENHARIA",
-  subtitle: "Destinação, biogás, coleta seletiva e eficiência de frota — dados ao vivo"
+  subtitle: "Destinação, controle ambiental, coleta seletiva e eficiência logística"
 };
 
-// Anos fechados (2022–2024): não mudam mais, fonte Tabela 1493 histórica.
 const HIST = {
   coletaSeletivaAnual: { "2022": 59091, "2023": 61907, "2024": 69277 },
-  indiceCapturaAnual:  { "2022": 9.4,   "2023": 9.8,   "2024": 11.3  }
+  indiceCapturaAnual:  { "2022": 9.4, "2023": 9.8, "2024": 11.3 }
 };
-
 let RAW = { relatorio: [], ind2025: [], ind2026: [], coletaDom: [], coletaSel: [], lixoPub: [] };
 
-// ============================================
-// PARSERS
-// ============================================
-function norm(v) {
-  return String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+function norm(v){return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().trim();}
+function esc(v){return String(v??"").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function parseNumBR(v){if(v===undefined||v===null)return 0;let s=String(v).trim();if(!s||s==="-"||s==="—")return 0;s=s.replace("R$","").replace("%","").trim().replace(/\./g,"").replace(",",".");const n=parseFloat(s);return Number.isFinite(n)?n:0;}
+function fmtInt(v){return (Math.round(v)||0).toLocaleString("pt-BR");}
+function fmtPct(v,dec=1){if(!Number.isFinite(v))return "0,0%";return v.toFixed(dec).replace(".",",")+"%";}
+function fmtSignedPct(v){if(!Number.isFinite(v))return "0,0%";return (v>0?"+":"") + fmtPct(v);}
+function fmtSignedInt(v){return (v>0?"+":"") + fmtInt(v);}
+function mom(arr,i){if(i<=0||!arr[i-1])return null;return ((arr[i]-arr[i-1])/arr[i-1])*100;}
+function avg(arr){const vals=arr.filter(v=>Number.isFinite(v)&&v>0);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;}
+function parseDateLabel(s){let str=String(s??"").trim();let m=str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);let mm,yy;if(m){mm=parseInt(m[2],10)-1;yy=m[3].slice(2);}else{m=str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m){mm=parseInt(m[2],10)-1;yy=m[1].slice(2);}}if(mm===undefined)return str;return ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"][mm]+"/"+yy;}
+function isDateCell(s){const str=String(s??"").trim();return /^\d{1,2}\/\d{1,2}\/\d{4}/.test(str)||/^\d{4}-\d{1,2}-\d{1,2}/.test(str);}
+function firstNonEmptyIdx(row){return row.findIndex(c=>c!==undefined&&c!==null&&String(c).trim()!=="");}
+function findRow(rows,label){const target=norm(label);for(const row of rows){for(let c=0;c<3;c++){if(row[c]&&norm(row[c]).includes(target))return row;}}return null;}
+function findDateHeaderRow(rows){for(const row of rows){if(row.filter(isDateCell).length>=6)return row;}return null;}
+function relatorioMeses(rows){const row=findDateHeaderRow(rows);return row?row.filter(isDateCell).map(parseDateLabel):[];}
+function relatorioSerie(rows,label,n){const row=findRow(rows,label);if(!row)return Array(n).fill(0);const idx=firstNonEmptyIdx(row);return row.slice(idx+1,idx+1+n).map(parseNumBR);}
+function ind1493Serie(rows,label){const row=findRow(rows,label);if(!row)return{total:0,meses:Array(12).fill(0)};const idx=firstNonEmptyIdx(row);return{total:parseNumBR(row[idx+1]),meses:row.slice(idx+2,idx+14).map(parseNumBR)};}
+function lastValidIndex(arr){for(let i=arr.length-1;i>=0;i--)if(arr[i]>0)return i;return -1;}
+
+async function loadRawCSV(url,name){const attempts=[url, HUB.data.googleCsvUrl(url)].filter(Boolean);for(const u of attempts){try{const res=await fetch(u,{cache:"no-store"});if(!res.ok)throw new Error("HTTP "+res.status);const text=await res.text();if(text.includes("<html")||text.includes("<!DOCTYPE"))throw new Error("resposta não é CSV");return Papa.parse(text,{header:false,skipEmptyLines:true}).data||[];}catch(e){console.warn("Falhou "+name,e);}}return[];}
+
+function pickInsightText(label,value,variation,unit){
+  const dir = variation === null ? "sem comparação disponível" : `${fmtSignedPct(variation)} frente ao mês anterior`;
+  return `<b>${esc(value)}</b> ${esc(unit)} · ${dir}`;
 }
 
-function parseNumBR(v) {
-  if (v === undefined || v === null) return 0;
-  let s = String(v).trim();
-  if (s === "" || s === "-" || s === "—") return 0;
-  s = s.replace("R$", "").trim().replace("%", "").trim();
-  s = s.replace(/\./g, "").replace(",", ".");
-  const n = parseFloat(s);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function parseDateLabel(s) {
-  let str = String(s ?? "").trim();
-  let m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  let mm, yy;
-  if (m) { mm = parseInt(m[2], 10) - 1; yy = m[3].slice(2); }
-  else {
-    m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (m) { mm = parseInt(m[2], 10) - 1; yy = m[1].slice(2); }
-  }
-  if (mm === undefined) return str;
-  const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
-  return (meses[mm] || "?") + "/" + yy;
-}
-
-function isDateCell(s) {
-  const str = String(s ?? "").trim();
-  return /^\d{1,2}\/\d{1,2}\/\d{4}/.test(str) || /^\d{4}-\d{1,2}-\d{1,2}/.test(str);
-}
-
-async function loadRawCSV(url, name) {
-  const attempts = [url, HUB.data.googleCsvUrl(url)].filter(Boolean);
-  for (const u of attempts) {
-    try {
-      const res = await fetch(u, { cache: "no-store" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const text = await res.text();
-      if (text.includes("<html") || text.includes("<!DOCTYPE")) throw new Error("resposta não é CSV");
-      const parsed = Papa.parse(text, { header: false, skipEmptyLines: true });
-      console.log("OK " + name + ": " + parsed.data.length + " linhas");
-      return parsed.data || [];
-    } catch (e) {
-      console.warn("Falhou " + name + " (" + u + "):", e);
-    }
-  }
-  console.warn(name + ": não carregou");
-  return [];
-}
-
-function findRow(rows, label) {
-  const target = norm(label);
-  for (const row of rows) {
-    for (let c = 0; c < 3; c++) {
-      if (row[c] && norm(row[c]).includes(target)) return row;
-    }
-  }
-  return null;
-}
-
-function findDateHeaderRow(rows) {
-  for (const row of rows) {
-    const hits = row.filter(isDateCell).length;
-    if (hits >= 6) return row;
-  }
-  return null;
-}
-
-function firstNonEmptyIdx(row) {
-  return row.findIndex(c => c !== undefined && c !== null && String(c).trim() !== "");
-}
-
-// --- Relatório mensal DTE (janela rolante) ---
-function relatorioMeses(rows) {
-  const row = findDateHeaderRow(rows);
-  if (!row) return [];
-  return row.filter(isDateCell).map(parseDateLabel);
-}
-
-function relatorioSerie(rows, label, n) {
-  const row = findRow(rows, label);
-  if (!row) return Array(n).fill(0);
-  const idx = firstNonEmptyIdx(row);
-  return row.slice(idx + 1, idx + 1 + n).map(parseNumBR);
-}
-
-// --- Tabela 1493 (formato largo: Label | Total | Jan..Dez) ---
-function ind1493Serie(rows, label) {
-  const row = findRow(rows, label);
-  if (!row) return { total: 0, meses: Array(12).fill(0) };
-  const idx = firstNonEmptyIdx(row);
-  const total = parseNumBR(row[idx + 1]);
-  const meses = row.slice(idx + 2, idx + 14).map(parseNumBR);
-  return { total, meses };
-}
-
-function lastValidIndex(arr) {
-  for (let i = arr.length - 1; i >= 0; i--) if (arr[i] > 0) return i;
-  return -1;
-}
-
-// ============================================
-// INICIALIZAÇÃO
-// ============================================
-async function init() {
-  HUB.header.render("header", {
-    systemLabel: CONFIG.systemLabel,
-    title: CONFIG.panelName,
-    subtitle: CONFIG.subtitle,
-    navigation: [
-      { id: "screenVisao", label: "Visão Geral" },
-      { id: "screenDestinacao", label: "Destinação e Biogás" },
-      { id: "screenReciclagem", label: "Coleta Seletiva e Reciclagem" },
-      { id: "screenFrota", label: "Frota e Eficiência" }
-    ]
-  });
-
-  HUB.loading.showMultiple(["kpisVisao","chartEtrUnidade","chartSeletivaAnual","chartFrotaOperacao"]);
-
-  const [relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub] = await Promise.all([
-    loadRawCSV(CONFIG.urls.relatorio, "relatorio"),
-    loadRawCSV(CONFIG.urls.ind2025, "ind2025"),
-    loadRawCSV(CONFIG.urls.ind2026, "ind2026"),
-    HUB.data.loadCSV(CONFIG.urls.coletaDomiciliar, { name: "coletaDomiciliar" }),
-    HUB.data.loadCSV(CONFIG.urls.coletaSeletiva, { name: "coletaSeletiva" }),
-    HUB.data.loadCSV(CONFIG.urls.lixoPublico, { name: "lixoPublico" })
-  ]);
-  RAW = { relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub };
-
-  renderVisaoGeral();
-  renderLeituraMes();
-  renderDestinacao();
-  renderReciclagem();
-  renderFrota();
-
-  HUB.footer.render("footer", {
-    author: "Greicy Moreira",
-    contact: "greicymoreira@comlurb.rio",
-    version: "2.0",
-    customText: "Fonte: Relatório mensal DTE · Utilização da Frota · Tabela 1493 (Indicadores Comlurb/Prefeitura) — Google Sheets, atualização automática. Desenvolvido por <strong>Greicy Moreira</strong>"
-  });
-}
-
-// ============================================
-// TELA 1 — VISÃO GERAL
-// ============================================
-function renderVisaoGeral() {
-  const meses = relatorioMeses(RAW.relatorio);
-  const n = meses.length || 13;
-
-  const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
-  const frotaOp = relatorioSerie(RAW.relatorio, "TOTAL EM OPERACAO", n);
-  const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
-
-  const iAtual = lastValidIndex(etrTotal);
-  const iFrota = lastValidIndex(frotaOp);
-  const iChorume = lastValidIndex(chorume);
-
-  // Índice de captura EGP-RIO — usa 2026 se houver dado no mês, senão 2025
-  const idx2026 = ind1493Serie(RAW.ind2026, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const iIdx26 = lastValidIndex(idx2026.meses);
-  const indiceAtual = iIdx26 >= 0 ? idx2026.meses[iIdx26] : (lastValidIndex(idx2025.meses) >= 0 ? idx2025.meses[lastValidIndex(idx2025.meses)] : 0);
-
-  HUB.cards.render("kpisVisao", [
-    {
-      label: "Índice de captura EGP-RIO",
-      value: indiceAtual,
-      format: "custom",
-      customFormatter: v => v.toFixed(1).replace(".", ",") + "%",
-      note: "Fórmula oficial · mês mais recente disponível",
-      feature: true
-    },
-    {
-      label: "ETR Total",
-      value: iAtual >= 0 ? etrTotal[iAtual] : 0,
-      format: "custom",
-      customFormatter: v => HUB.format.int(Math.round(v)) + " t",
-      note: iAtual >= 0 ? meses[iAtual] || "mês mais recente" : "sem dado",
-      color: "blue"
-    },
-    {
-      label: "Frota em operação",
-      value: iFrota >= 0 ? frotaOp[iFrota] : 0,
-      format: "custom",
-      customFormatter: v => HUB.format.int(v) + " veículos",
-      note: iFrota >= 0 ? meses[iFrota] || "" : "sem dado",
-      color: (iFrota > 0 && frotaOp[0] > 0 && frotaOp[iFrota] < frotaOp[0] * 0.7) ? "red" : "green"
-    },
-    {
-      label: "Chorume acumulado",
-      value: iChorume >= 0 ? chorume[iChorume] : 0,
-      format: "custom",
-      customFormatter: v => HUB.format.int(Math.round(v)) + " m³",
-      note: iChorume >= 0 ? meses[iChorume] || "" : "sem dado",
-      color: (iChorume > 3 && chorume[iChorume] > (HUB.array.avg(chorume.slice(0, 4).map(v => ({ v })), "v") * 2)) ? "red" : "orange"
-    }
-  ]);
-
-  // Fluxo por unidade ETR (último mês disponível)
-  const unidades = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
-  const valoresUnidades = unidades.map(u => {
-    const s = relatorioSerie(RAW.relatorio, u, n);
-    const i = lastValidIndex(s);
-    return i >= 0 ? s[i] : 0;
-  });
-  HUB.charts.bar("chartEtrUnidade", {
-    labels: unidades.map(u => u.replace("ETR ", "")),
-    values: valoresUnidades
-  }, { color: HUB.charts.colors.blueGradient });
-
-  // Coleta seletiva anual — histórico + live
-  const anos = ["2022","2023","2024","2025","2026"];
-  const seletiva2025 = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
-  const seletiva2026 = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
-  const valoresSeletiva = [
-    HIST.coletaSeletivaAnual["2022"],
-    HIST.coletaSeletivaAnual["2023"],
-    HIST.coletaSeletivaAnual["2024"],
-    seletiva2025.total || HIST.coletaSeletivaAnual["2024"],
-    seletiva2026.meses.reduce((a,b)=>a+b,0)
-  ];
-  HUB.charts.bar("chartSeletivaAnual", {
-    labels: anos,
-    values: valoresSeletiva
-  }, { color: HUB.charts.colors.greenGradient });
-
-  // Frota em operação — série temporal
-  HUB.charts.line("chartFrotaOperacao", {
-    labels: meses,
-    values: frotaOp
-  }, { color: HUB.charts.colors.orange });
-}
-
-// ============================================
-// TELA 2 — DESTINAÇÃO & BIOGÁS
-// ============================================
-function renderDestinacao() {
-  const meses = relatorioMeses(RAW.relatorio);
-  const n = meses.length || 13;
-
-  const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
-  const biogas = relatorioSerie(RAW.relatorio, "CTR SERIOPEDICA", n);
-  const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
-
-  HUB.charts.line("chartEtrTotal", { labels: meses, values: etrTotal }, { color: HUB.charts.colors.blue2 || HUB.charts.colors.blue });
-  HUB.charts.line("chartBiogas", { labels: meses, values: biogas }, { color: HUB.charts.colors.purple });
-  HUB.charts.line("chartChorume", { labels: meses, values: chorume }, { color: HUB.charts.colors.red });
-
-  // Alerta dinâmico de chorume: pico vs média dos primeiros meses da janela
-  const base = chorume.slice(0, Math.max(1, n - 5));
-  const baseAvg = base.length ? base.reduce((a,b)=>a+b,0) / base.length : 0;
-  const iMax = chorume.indexOf(Math.max(...chorume));
-  const pico = chorume[iMax] || 0;
-  const slot = document.getElementById("chorumeAlertSlot");
-  if (baseAvg > 0 && pico > baseAvg * 2) {
-    slot.innerHTML = `
-      <div class="noteBanner crit">
-        <div class="noteTag">CRÍTICO</div>
+function renderLeituraMes(ctx){
+  const el=document.getElementById("leituraMes");
+  const {mesAtual, etrAtual, etrVar, chorumeAtual, chorumeMedia, chorumeGap, indiceAtual, frotaAtual, frotaDelta, unidadeLider, unidadePct, unidadeQueda, alerta}=ctx;
+  const statusChorume = chorumeGap >= 50 ? "acima do padrão da janela" : chorumeGap <= -20 ? "abaixo da média da janela" : "próximo da média da janela";
+  const narrativa = `No mês de <strong>${esc(mesAtual)}</strong>, a DTE registrou <strong>${fmtInt(etrAtual)} t</strong> no ETR Total, com variação de <strong>${fmtSignedPct(etrVar||0)}</strong> frente ao mês anterior. O chorume acumulado chegou a <strong>${fmtInt(chorumeAtual)} m³</strong>, ficando <strong>${fmtSignedPct(chorumeGap||0)}</strong> em relação à média da janela analisada. O índice de captura EGP-RIO está em <strong>${fmtPct(indiceAtual||0)}</strong>, enquanto a frota própria em operação ficou em <strong>${fmtInt(frotaAtual)} veículos</strong> (${fmtSignedInt(frotaDelta||0)} no mês).`;
+  el.innerHTML = `
+    <div class="readingPanel">
+      <div class="readingHead">
         <div>
-          <b>Acúmulo de chorume acima do padrão histórico</b>
-          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${meses[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). Vale checar com a TCD se é sazonalidade ou risco operacional.</p>
+          <div class="readingKicker">Leitura automática do mês</div>
+          <h1 class="readingTitle">O que mudou na operação técnica</h1>
+          <div class="readingSub">Bloco calculado a partir das bases carregadas. Sem texto fixo: a leitura muda quando o CSV é atualizado.</div>
         </div>
-      </div>`;
-  } else {
-    slot.innerHTML = "";
-  }
-}
-
-// ============================================
-// TELA 3 — COLETA SELETIVA & RECICLAGEM
-// ============================================
-function renderReciclagem() {
-  const idx2026 = ind1493Serie(RAW.ind2026, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const mesesLabel = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-  const usar2026 = lastValidIndex(idx2026.meses) >= 0;
-  const serieIdx = usar2026 ? idx2026.meses : idx2025.meses;
-  const anoUsado = usar2026 ? "2026" : "2025";
-
-  HUB.charts.line("chartIndiceMensal", {
-    labels: mesesLabel.map(m => m + "/" + anoUsado.slice(2)),
-    values: serieIdx
-  }, { color: HUB.charts.colors.green });
-
-  // Regional — ano corrente
-  const fonte = usar2026 ? RAW.ind2026 : RAW.ind2025;
-  const regionais = ["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
-  const valoresRegional = regionais.map(r => ind1493Serie(fonte, r).total);
-  HUB.charts.bar("chartRegional", {
-    labels: regionais,
-    values: valoresRegional
-  }, { color: HUB.charts.colors.greenGradient });
-
-  // Origem do peso: frota Comlurb vs. cooperativas/não cadastrados
-  const frotaComlurb = ind1493Serie(fonte, "COLETA SELETIVA - FROTA COMLURB").total;
-  const alternativa = ind1493Serie(fonte, "FROTA ALTERNATIVA").total;
-  const naoCadastrados = ind1493Serie(fonte, "NAO CADASTRADOS").total;
-  HUB.charts.donut("chartOrigem", {
-    labels: ["Frota Comlurb", "Frota alternativa cadastrada", "Não cadastrados / cooperativas"],
-    values: [frotaComlurb, alternativa, naoCadastrados]
-  }, { colors: [HUB.charts.colors.blue, HUB.charts.colors.purple, HUB.charts.colors.orange] });
-}
-
-// ============================================
-// TELA 4 — FROTA & EFICIÊNCIA
-// ============================================
-function renderFrota() {
-  const meses = relatorioMeses(RAW.relatorio);
-  const n = meses.length || 13;
-
-  const horasExtras = relatorioSerie(RAW.relatorio, "VALOR TOTAL DE HORAS EXTRAS", n);
-  const sobrecarga = relatorioSerie(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL", n).map(v => v > 1 ? v : v * 100);
-  const frotaTotal = relatorioSerie(RAW.relatorio, "FROTA TOTAL", n);
-  const frotaOp = relatorioSerie(RAW.relatorio, "TOTAL EM OPERACAO", n);
-
-  HUB.charts.bar("chartHorasExtras", { labels: meses, values: horasExtras }, { color: HUB.charts.colors.orangeGradient });
-  HUB.charts.line("chartSobrecarga", { labels: meses, values: sobrecarga }, { color: HUB.charts.colors.red });
-
-  HUB.charts.bar("chartFrotaComparativo", {
-    labels: meses,
-    values: frotaTotal
-  }, { color: HUB.charts.colors.blueGradient, label: "Frota total" });
-
-  // Rankings de utilização por gerência — Coleta Domiciliar
-  const rows = RAW.coletaDom || [];
-  const map = new Map();
-  rows.forEach(r => {
-    const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
-    const pct = HUB.format.toNumber(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"]));
-    if (!ger || !pct) return;
-    if (!map.has(ger)) map.set(ger, []);
-    map.get(ger).push(pct);
-  });
-  const ranked = [...map.entries()]
-    .map(([ger, vals]) => [ger, vals.reduce((a,b)=>a+b,0) / vals.length])
-    .filter(([, avg]) => avg > 0)
-    .sort((a, b) => a[1] - b[1]);
-
-  const baixa = ranked.slice(0, 5);
-  const alta = ranked.slice(-5).reverse();
-
-  function renderRankList(containerId, list, colorVar) {
-    const el = document.getElementById(containerId);
-    if (!list.length) { el.innerHTML = '<div class="loading">Sem dados suficientes</div>'; return; }
-    el.innerHTML = list.map(([ger, avg]) => `
-      <div class="barRow">
-        <div class="barName">${HUB.format.esc(ger)}</div>
-        <div style="background:var(--linha);border-radius:6px;height:8px;overflow:hidden;">
-          <div style="width:${Math.min(avg,150)}%;height:100%;background:${colorVar};"></div>
-        </div>
-        <div style="text-align:right;font-weight:800;">${avg.toFixed(0)}%</div>
+        <div class="readingStamp">Referência: ${esc(mesAtual)}</div>
       </div>
-    `).join("");
-  }
-  renderRankList("rankBaixa", baixa, HUB.charts.colors.red);
-  renderRankList("rankAlta", alta, HUB.charts.colors.green);
+      <div class="readingBody">
+        <div class="readingNarrative"><p>${narrativa}</p></div>
+        <div class="readingBullets">
+          <div class="readingItem"><div class="readingLabel">ETR</div><div class="readingText">${pickInsightText("ETR", fmtInt(etrAtual), etrVar, "t recebidas")}</div></div>
+          <div class="readingItem"><div class="readingLabel">Chorume</div><div class="readingText"><b>${fmtInt(chorumeAtual)} m³</b> · ${fmtSignedPct(chorumeGap||0)} vs. média. Status: ${esc(statusChorume)}.</div></div>
+          <div class="readingItem"><div class="readingLabel">Concentração</div><div class="readingText"><b>${esc(unidadeLider)}</b> respondeu por ${fmtPct(unidadePct||0)} do fluxo entre ETRs.</div></div>
+          <div class="readingItem"><div class="readingLabel">Frota</div><div class="readingText"><b>${fmtInt(frotaAtual)} veículos</b> em operação · ${fmtSignedInt(frotaDelta||0)} frente ao mês anterior.</div></div>
+        </div>
+      </div>
+      ${alerta ? `<div class="alertStrip"><div class="alertTag">Atenção</div><p>${alerta}</p></div>` : ""}
+    </div>`;
 }
 
-// ============================================
-// LEITURA DO MÊS — calculada, não fixa
-// ============================================
-function renderLeituraMes() {
-  const el = document.getElementById("leituraMes");
-  if (!el) return;
-
-  const meses = relatorioMeses(RAW.relatorio);
-  const n = meses.length || 13;
-  const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
-  const frotaOp = relatorioSerie(RAW.relatorio, "TOTAL EM OPERACAO", n);
-  const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
-
-  const unidadesRaw = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
-  const seriesUnidades = unidadesRaw.map(u => relatorioSerie(RAW.relatorio, u, n));
-
-  const items = [];
-  const pct = v => Math.abs(v).toFixed(1).replace(".", ",");
-
-  // --- ETR Total: valor + variação MoM ---
-  const i = lastValidIndex(etrTotal);
-  if (i >= 0) {
-    const mesLabel = meses[i] || "mês mais recente";
-    if (i - 1 >= 0 && etrTotal[i - 1] > 0) {
-      const varPct = (etrTotal[i] - etrTotal[i - 1]) / etrTotal[i - 1] * 100;
-      items.push({
-        text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t, ${varPct >= 0 ? "alta" : "queda"} de ${pct(varPct)}% frente ao mês anterior.`
-      });
-    } else {
-      items.push({ text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t.` });
-    }
-
-    // --- Concentração e maior queda por unidade no mês ---
-    const atual = unidadesRaw.map((u, idx) => ({
-      u: u.replace("ETR ", ""),
-      v: seriesUnidades[idx][i] || 0,
-      prev: i - 1 >= 0 ? (seriesUnidades[idx][i - 1] || 0) : 0
-    }));
-    const total = atual.reduce((a, b) => a + b.v, 0);
-    if (total > 0) {
-      const maiorConc = [...atual].sort((a, b) => b.v - a.v)[0];
-      const share = maiorConc.v / total * 100;
-      items.push({ text: `${maiorConc.u} concentrou ${share.toFixed(0)}% do fluxo recebido em ${mesLabel} (${HUB.format.int(Math.round(maiorConc.v))} t).` });
-    }
-    const comVariacao = atual.filter(a => a.prev > 0).map(a => ({ ...a, varPct: (a.v - a.prev) / a.prev * 100 }));
-    if (comVariacao.length) {
-      const maiorQueda = [...comVariacao].sort((a, b) => a.varPct - b.varPct)[0];
-      if (maiorQueda.varPct < -5) {
-        items.push({ text: `Maior queda do mês: ${maiorQueda.u}, ${pct(maiorQueda.varPct)}% abaixo do mês anterior.`, flag: true });
-      }
-    }
-  }
-
-  // --- Chorume: valor + desvio vs. média da janela ---
-  const iCh = lastValidIndex(chorume);
-  if (iCh >= 0) {
-    const base = chorume.slice(0, Math.max(1, n - 5));
-    const baseAvg = base.length ? base.reduce((a, b) => a + b, 0) / base.length : 0;
-    if (baseAvg > 0) {
-      const diffPct = (chorume[iCh] - baseAvg) / baseAvg * 100;
-      items.push({
-        text: `Chorume acumulado em ${meses[iCh]}: ${HUB.format.int(Math.round(chorume[iCh]))} m³, ${pct(diffPct)}% ${diffPct >= 0 ? "acima" : "abaixo"} da média dos meses iniciais da janela.`,
-        flag: diffPct > 50
-      });
-    }
-  }
-
-  // --- Índice de captura EGP-RIO ---
-  const idx2026 = ind1493Serie(RAW.ind2026, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const usar2026 = lastValidIndex(idx2026.meses) >= 0;
-  const serieIdx = usar2026 ? idx2026.meses : idx2025.meses;
-  const iIdx = lastValidIndex(serieIdx);
-  if (iIdx >= 0) {
-    const mesesLabel = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-    items.push({ text: `Índice de captura EGP-RIO em ${mesesLabel[iIdx]}/${usar2026 ? "26" : "25"}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%.` });
-  }
-
-  // --- Frota em operação: valor + variação MoM ---
-  const iF = lastValidIndex(frotaOp);
-  if (iF >= 0) {
-    const mesLabel = meses[iF] || "mês mais recente";
-    if (iF - 1 >= 0 && frotaOp[iF - 1] > 0) {
-      const delta = frotaOp[iF] - frotaOp[iF - 1];
-      items.push({
-        text: `Frota em operação em ${mesLabel}: ${HUB.format.int(frotaOp[iF])} veículos, ${delta >= 0 ? "+" : ""}${delta} frente ao mês anterior.`,
-        flag: delta < 0 && frotaOp[iF - 1] > 0 && Math.abs(delta / frotaOp[iF - 1]) > 0.15
-      });
-    } else {
-      items.push({ text: `Frota em operação em ${mesLabel}: ${HUB.format.int(frotaOp[iF])} veículos.` });
-    }
-  }
-
-  if (!items.length) {
-    el.innerHTML = '<li>Sem dados suficientes carregados para gerar a leitura do mês.</li>';
-    return;
-  }
-  el.innerHTML = items.map(it => `<li class="${it.flag ? "flag" : ""}">${it.text}</li>`).join("");
+async function init(){
+  HUB.header.render("header",{systemLabel:CONFIG.systemLabel,title:CONFIG.panelName,subtitle:CONFIG.subtitle,navigation:[
+    {id:"screenVisao",label:"Panorama"},{id:"screenDestinacao",label:"Destinação e Controle Ambiental"},{id:"screenReciclagem",label:"Circularidade"},{id:"screenFrota",label:"Frota e Eficiência"}
+  ]});
+  HUB.loading.showMultiple(["leituraMes","kpisVisao","chartEtrUnidade","chartSeletivaAnual","chartFrotaOperacao"]);
+  const [relatorio,ind2025,ind2026,coletaDom,coletaSel,lixoPub]=await Promise.all([
+    loadRawCSV(CONFIG.urls.relatorio,"relatorio"),loadRawCSV(CONFIG.urls.ind2025,"ind2025"),loadRawCSV(CONFIG.urls.ind2026,"ind2026"),
+    HUB.data.loadCSV(CONFIG.urls.coletaDomiciliar,{name:"coletaDomiciliar"}),HUB.data.loadCSV(CONFIG.urls.coletaSeletiva,{name:"coletaSeletiva"}),HUB.data.loadCSV(CONFIG.urls.lixoPublico,{name:"lixoPublico"})
+  ]);
+  RAW={relatorio,ind2025,ind2026,coletaDom,coletaSel,lixoPub};
+  renderVisaoGeral();renderDestinacao();renderReciclagem();renderFrota();
+  HUB.footer.render("footer",{author:"Greicy Moreira",contact:"greicymoreira@comlurb.rio",version:"3.0",customText:"Fonte: Relatório mensal DTE · Utilização da Frota · Tabela 1493 — Google Sheets, atualização automática. Desenvolvido por <strong>Greicy Moreira</strong>"});
 }
 
-document.addEventListener("DOMContentLoaded", init);
+function getBaseContext(){
+  const meses=relatorioMeses(RAW.relatorio); const n=meses.length||13;
+  const etrTotal=relatorioSerie(RAW.relatorio,"ETR TOTAL",n);
+  const frotaOp=relatorioSerie(RAW.relatorio,"TOTAL EM OPERACAO",n);
+  const chorume=relatorioSerie(RAW.relatorio,"CHORUME ACUMULADO",n);
+  const iAtual=lastValidIndex(etrTotal), iFrota=lastValidIndex(frotaOp), iChorume=lastValidIndex(chorume);
+  const idx2026=ind1493Serie(RAW.ind2026,"INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
+  const idx2025=ind1493Serie(RAW.ind2025,"INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
+  const iIdx26=lastValidIndex(idx2026.meses);
+  const indiceAtual=iIdx26>=0?idx2026.meses[iIdx26]:(lastValidIndex(idx2025.meses)>=0?idx2025.meses[lastValidIndex(idx2025.meses)]:0);
+  return {meses,n,etrTotal,frotaOp,chorume,iAtual,iFrota,iChorume,indiceAtual};
+}
+
+function renderVisaoGeral(){
+  const c=getBaseContext();
+  const unidades=["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
+  const valoresUnidades=unidades.map(u=>{const s=relatorioSerie(RAW.relatorio,u,c.n);const i=lastValidIndex(s);return i>=0?s[i]:0;});
+  const totalUnidades=valoresUnidades.reduce((a,b)=>a+b,0);
+  const maxIdx=valoresUnidades.indexOf(Math.max(...valoresUnidades));
+  const unidadeLider=unidades[maxIdx].replace("ETR ","");
+  const unidadePct=totalUnidades?valoresUnidades[maxIdx]/totalUnidades*100:0;
+  const chorumeMedia=avg(c.chorume.slice(0,Math.max(1,c.iChorume)));
+  const chorumeGap=chorumeMedia?((c.chorume[c.iChorume]-chorumeMedia)/chorumeMedia)*100:0;
+  const frotaDelta=c.iFrota>0?c.frotaOp[c.iFrota]-c.frotaOp[c.iFrota-1]:0;
+  const etrVar=mom(c.etrTotal,c.iAtual);
+  let alerta="";
+  if(chorumeGap>50) alerta=`Chorume ${fmtSignedPct(chorumeGap)} acima da média da janela. Vale confirmar se houve mudança operacional, sazonalidade ou acúmulo fora do padrão.`;
+  else if(unidadePct>35) alerta=`O fluxo entre ETRs ficou concentrado em ${esc(unidadeLider)}, com ${fmtPct(unidadePct)} do total das estações monitoradas.`;
+  else if(etrVar!==null && Math.abs(etrVar)>15) alerta=`ETR Total teve variação relevante no mês (${fmtSignedPct(etrVar)}). Recomenda-se verificar se a alteração veio de volume real ou ajuste de registro.`;
+  renderLeituraMes({mesAtual:c.meses[c.iAtual]||"mês recente",etrAtual:c.etrTotal[c.iAtual]||0,etrVar:etrVar||0,chorumeAtual:c.chorume[c.iChorume]||0,chorumeMedia,chorumeGap,indiceAtual:c.indiceAtual,frotaAtual:c.frotaOp[c.iFrota]||0,frotaDelta,unidadeLider,unidadePct,alerta});
+  HUB.cards.render("kpisVisao",[
+    {label:"Índice de captura EGP-RIO",value:c.indiceAtual,format:"custom",customFormatter:v=>fmtPct(v),note:"Fórmula oficial · mês mais recente",feature:true},
+    {label:"ETR Total",value:c.etrTotal[c.iAtual]||0,format:"custom",customFormatter:v=>fmtInt(v)+" t",note:c.iAtual>=0?c.meses[c.iAtual]:"sem dado",color:"blue"},
+    {label:"Frota em operação",value:c.frotaOp[c.iFrota]||0,format:"custom",customFormatter:v=>fmtInt(v)+" veículos",note:(frotaDelta?fmtSignedInt(frotaDelta):"0")+" vs. mês anterior",color:frotaDelta<0?"orange":"green"},
+    {label:"Chorume acumulado",value:c.chorume[c.iChorume]||0,format:"custom",customFormatter:v=>fmtInt(v)+" m³",note:fmtSignedPct(chorumeGap)+" vs. média",color:chorumeGap>50?"red":"orange"}
+  ]);
+  HUB.charts.bar("chartEtrUnidade",{labels:unidades.map(u=>u.replace("ETR ","")),values:valoresUnidades},{color:HUB.charts.colors.blueGradient});
+  const anos=["2022","2023","2024","2025","2026"];
+  const seletiva2025=ind1493Serie(RAW.ind2025,"TOTAL - COLETA SELETIVA");
+  const seletiva2026=ind1493Serie(RAW.ind2026,"COLETA SELETIVA");
+  HUB.charts.bar("chartSeletivaAnual",{labels:anos,values:[HIST.coletaSeletivaAnual["2022"],HIST.coletaSeletivaAnual["2023"],HIST.coletaSeletivaAnual["2024"],seletiva2025.total||0,seletiva2026.meses.reduce((a,b)=>a+b,0)]},{color:HUB.charts.colors.greenGradient});
+  HUB.charts.line("chartFrotaOperacao",{labels:c.meses,values:c.frotaOp},{color:HUB.charts.colors.orange});
+}
+
+function renderDestinacao(){const c=getBaseContext();const biogas=relatorioSerie(RAW.relatorio,"CTR SERIOPEDICA",c.n);HUB.charts.line("chartEtrTotal",{labels:c.meses,values:c.etrTotal},{color:HUB.charts.colors.blue2||HUB.charts.colors.blue});HUB.charts.line("chartBiogas",{labels:c.meses,values:biogas},{color:HUB.charts.colors.purple});HUB.charts.line("chartChorume",{labels:c.meses,values:c.chorume},{color:HUB.charts.colors.red});const baseAvg=avg(c.chorume.slice(0,Math.max(1,c.n-5)));const pico=Math.max(...c.chorume);const iMax=c.chorume.indexOf(pico);const slot=document.getElementById("chorumeAlertSlot");slot.innerHTML=(baseAvg>0&&pico>baseAvg*2)?`<div class="noteBanner crit"><div class="noteTag">CRÍTICO</div><div><b>Acúmulo de chorume acima do padrão histórico</b><p>Pico de ${fmtInt(pico)} m³ em ${esc(c.meses[iMax]||"mês do pico")}, ${(pico/baseAvg).toFixed(1).replace(".",",")}x acima da média inicial da janela (${fmtInt(baseAvg)} m³).</p></div></div>`:"";}
+function renderReciclagem(){const idx2026=ind1493Serie(RAW.ind2026,"INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");const idx2025=ind1493Serie(RAW.ind2025,"INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");const mesesLabel=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];const usar2026=lastValidIndex(idx2026.meses)>=0;const serieIdx=usar2026?idx2026.meses:idx2025.meses;const anoUsado=usar2026?"2026":"2025";HUB.charts.line("chartIndiceMensal",{labels:mesesLabel.map(m=>m+"/"+anoUsado.slice(2)),values:serieIdx},{color:HUB.charts.colors.green});const fonte=usar2026?RAW.ind2026:RAW.ind2025;const regionais=["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];HUB.charts.bar("chartRegional",{labels:regionais,values:regionais.map(r=>ind1493Serie(fonte,r).total)},{color:HUB.charts.colors.greenGradient});const frotaComlurb=ind1493Serie(fonte,"COLETA SELETIVA - FROTA COMLURB").total;const alternativa=ind1493Serie(fonte,"FROTA ALTERNATIVA").total;const naoCadastrados=ind1493Serie(fonte,"NAO CADASTRADOS").total;HUB.charts.donut("chartOrigem",{labels:["Frota COMLURB","Frota alternativa cadastrada","Não cadastrados / cooperativas"],values:[frotaComlurb,alternativa,naoCadastrados]},{colors:[HUB.charts.colors.blue,HUB.charts.colors.purple,HUB.charts.colors.orange]});}
+function renderFrota(){const c=getBaseContext();const horasExtras=relatorioSerie(RAW.relatorio,"VALOR TOTAL DE HORAS EXTRAS",c.n);const sobrecarga=relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",c.n).map(v=>v>1?v:v*100);const frotaTotal=relatorioSerie(RAW.relatorio,"FROTA TOTAL",c.n);HUB.charts.bar("chartHorasExtras",{labels:c.meses,values:horasExtras},{color:HUB.charts.colors.orangeGradient});HUB.charts.line("chartSobrecarga",{labels:c.meses,values:sobrecarga},{color:HUB.charts.colors.red});HUB.charts.bar("chartFrotaComparativo",{labels:c.meses,values:frotaTotal},{color:HUB.charts.colors.blueGradient,label:"Frota total"});const rows=RAW.coletaDom||[];const map=new Map();rows.forEach(r=>{const ger=HUB.pick(r,["Gerência","Gerencia"]);const pct=HUB.format.toNumber(HUB.pick(r,["Capacidade Total 2 Viagens (%)"]));if(!ger||!pct)return;if(!map.has(ger))map.set(ger,[]);map.get(ger).push(pct);});const ranked=[...map.entries()].map(([ger,vals])=>[ger,vals.reduce((a,b)=>a+b,0)/vals.length]).filter(([,v])=>v>0).sort((a,b)=>a[1]-b[1]);function list(id,items,color){const el=document.getElementById(id);el.innerHTML=items.length?items.map(([ger,avg])=>`<div class="barRow"><div class="barName">${esc(ger)}</div><div style="background:var(--linha);border-radius:6px;height:8px;overflow:hidden;"><div style="width:${Math.min(avg,150)}%;height:100%;background:${color};"></div></div><div style="text-align:right;font-weight:800;">${avg.toFixed(0)}%</div></div>`).join(""):'<div class="loading">Sem dados suficientes</div>';}
+list("rankBaixa",ranked.slice(0,5),HUB.charts.colors.red);list("rankAlta",ranked.slice(-5).reverse(),HUB.charts.colors.green);}
+
+document.addEventListener("DOMContentLoaded",init);
 </script>
-
 </body>
 </html>

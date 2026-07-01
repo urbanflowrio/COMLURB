@@ -29,16 +29,31 @@
 .noteBanner.warn{border-color:rgba(255,160,43,.5);}
 .noteTag{font-size:10px;font-weight:900;letter-spacing:.12em;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:2px;white-space:nowrap;background:rgba(239,106,93,.18);color:var(--vermelho);border:1px solid rgba(239,106,93,.5);}
 .noteBanner.warn .noteTag{background:rgba(255,160,43,.18);color:var(--amarelo);border:1px solid rgba(255,160,43,.5);}
+.noteBanner.compact{padding:12px 16px;margin-bottom:14px;}
+.noteBanner.compact b{font-size:13px;}
+.noteBanner.compact p{font-size:12px;}
 .noteBanner b{display:block;font-size:14px;margin-bottom:3px;}
 .noteBanner p{color:var(--silenciado);font-size:12.5px;line-height:1.55;margin:0;}
 .rankGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media (max-width:900px){ .rankGrid{grid-template-columns:1fr;} }
-.flowRow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;}
-.flowNode{flex:1;min-width:150px;background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:16px 12px;text-align:center;}
+.flowRow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;position:relative;}
+.flowNode{flex:1;min-width:150px;background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:16px 12px;text-align:center;position:relative;}
 .flowLabel{font-size:10.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;line-height:1.3;}
 .flowValue{font-size:19px;font-weight:800;color:var(--texto);}
-.flowArrow{display:flex;align-items:center;justify-content:center;color:var(--silenciado);font-size:16px;padding:0 2px;}
+.flowArrow{display:flex;align-items:center;justify-content:center;color:var(--silenciado);font-size:16px;padding:0 2px;position:relative;}
+.flowArrow::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg, var(--linha), var(--azul2, var(--azul)), var(--linha));z-index:0;}
+.flowArrow span{position:relative;background:var(--bg);z-index:1;padding:0 4px;border-radius:50%;}
+.flowBadge{margin-top:7px;font-size:10px;padding:2px 9px;border-radius:20px;display:inline-block;background:var(--linha);color:var(--silenciado);}
+.flowBadge.recorde{background:rgba(239,106,93,.18);color:var(--vermelho);}
+.flowBadge.alta{background:rgba(255,160,43,.18);color:var(--amarelo);}
+.flowBadge.baixa{background:rgba(38,217,174,.15);color:var(--verde);}
 @media (max-width:900px){ .flowRow{flex-direction:column;} .flowArrow{transform:rotate(90deg);padding:2px 0;} }
+.derivGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.derivCard{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:14px 14px;}
+.derivLabel{font-size:10.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;line-height:1.3;min-height:26px;}
+.derivValue{font-size:20px;font-weight:800;color:var(--texto);}
+.derivFormula{font-size:10.5px;color:var(--silenciado);margin-top:4px;font-family:"Courier New",monospace;}
+@media (max-width:900px){ .derivGrid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 #kpisVisao{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
 </style>
 </head>
@@ -67,6 +82,12 @@
         <div><h2>Fluxo Operacional</h2><div class="hint">Coleta → ETRs → CTR (biogás) → chorume → coleta seletiva — mês mais recente</div></div>
       </div>
       <div class="body"><div class="flowRow" id="fluxoOperacional"></div></div>
+    </div>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panelHead">
+        <div><h2>Indicadores Derivados HUB</h2><div class="hint">Calculados a partir dos dados brutos — não são indicadores oficiais publicados</div></div>
+      </div>
+      <div class="body"><div class="derivGrid" id="indicadoresDerivados"></div></div>
     </div>
     <div class="grid2">
       <div class="panel">
@@ -112,11 +133,11 @@
   <!-- ===================== COLETA SELETIVA & RECICLAGEM ===================== -->
   <section class="screen" id="screenReciclagem">
     <div class="noteBanner warn">
-      <div class="noteTag">EM VALIDAÇÃO</div>
+    <div class="noteBanner warn compact" id="bannerIndice">
+      <div class="noteTag" id="bannerTag">EM VALIDAÇÃO</div>
       <div>
-        <b>Índice de captura EGP-RIO — mai/26 fora do padrão histórico</b>
-        <p>Série 2026 confirmada na planilha oficial: Jan 11,4% · Fev 10,3% · Mar 11,2% · Abr 10,5% · Mai 22,9%. O salto de mai/26 não é erro de leitura do painel — é o valor publicado — mas destoa da série e ainda não foi confirmada a origem. Até validação, este indicador não deve ser usado como KPI de decisão.</p>
-        <p id="bannerComposicao" style="margin-top:8px;"></p>
+        <b id="bannerTitle">Índice de captura EGP-RIO — em validação</b>
+        <p id="bannerComposicao" style="margin-top:4px;"></p>
       </div>
     </div>
     <div class="panel" style="margin-bottom:16px;">
@@ -172,15 +193,43 @@
     <div class="rankGrid" style="margin-top:14px;">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Gerências — utilização mais baixa</h2><div class="hint">Domiciliar, seletiva e lixo público · peso/capacidade médio</div></div>
+          <div><h2>Domiciliar — utilização mais baixa</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
         </div>
-        <div class="body" id="rankBaixa"></div>
+        <div class="body" id="rankBaixaDomiciliar"></div>
       </div>
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Gerências — utilização mais alta</h2><div class="hint">Domiciliar, seletiva e lixo público · peso/capacidade médio</div></div>
+          <div><h2>Domiciliar — utilização mais alta</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
         </div>
-        <div class="body" id="rankAlta"></div>
+        <div class="body" id="rankAltaDomiciliar"></div>
+      </div>
+    </div>
+    <div class="rankGrid" style="margin-top:14px;">
+      <div class="panel">
+        <div class="panelHead">
+          <div><h2>Seletiva — utilização mais baixa</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
+        </div>
+        <div class="body" id="rankBaixaSeletiva"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead">
+          <div><h2>Seletiva — utilização mais alta</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
+        </div>
+        <div class="body" id="rankAltaSeletiva"></div>
+      </div>
+    </div>
+    <div class="rankGrid" style="margin-top:14px;">
+      <div class="panel">
+        <div class="panelHead">
+          <div><h2>Lixo Público — utilização mais baixa</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
+        </div>
+        <div class="body" id="rankBaixaLixoPublico"></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead">
+          <div><h2>Lixo Público — utilização mais alta</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
+        </div>
+        <div class="body" id="rankAltaLixoPublico"></div>
       </div>
     </div>
   </section>
@@ -459,24 +508,68 @@ function renderVisaoGeral() {
   ]);
 
   // --- Fluxo Operacional: coleta -> ETRs -> CTR/biogás -> chorume -> coleta seletiva ---
-  const usar2026 = true; // reciclagem sempre lê o ano corrente com dado
   const idx2026Sel = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
   const idx2025Sel = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
   const iSel26 = lastValidIndex(idx2026Sel.meses);
-  const seletivaMes = iSel26 >= 0 ? idx2026Sel.meses[iSel26] : (lastValidIndex(idx2025Sel.meses) >= 0 ? idx2025Sel.meses[lastValidIndex(idx2025Sel.meses)] : 0);
+  const seletivaSerie = iSel26 >= 0 ? idx2026Sel.meses : idx2025Sel.meses;
+  const iSel = lastValidIndex(seletivaSerie);
+  const seletivaMes = iSel >= 0 ? seletivaSerie[iSel] : 0;
+
+  function refBadge(serie, idx, alertaSeAlto) {
+    const validos = serie.filter(v => v > 0);
+    if (idx < 0 || validos.length < 3) return "";
+    const max = Math.max(...validos);
+    const media = validos.reduce((a, b) => a + b, 0) / validos.length;
+    const atual = serie[idx];
+    if (atual >= max) return `<div class="flowBadge ${alertaSeAlto ? "recorde" : ""}">recorde da série</div>`;
+    if (atual > media * 1.1) return `<div class="flowBadge ${alertaSeAlto ? "alta" : ""}">acima da média</div>`;
+    if (atual < media * 0.9) return '<div class="flowBadge baixa">abaixo da média</div>';
+    return '<div class="flowBadge">na média</div>';
+  }
 
   const iBio = lastValidIndex(biogas);
   const flowEl = document.getElementById("fluxoOperacional");
   if (flowEl) {
     const nodes = [
-      { label: "Recebimento nas ETRs", value: iAtual >= 0 ? HUB.format.int(Math.round(etrTotal[iAtual])) + " t" : "sem dado" },
-      { label: "CTR Seropédica · Biogás", value: iBio >= 0 ? (biogas[iBio] / 1e6).toFixed(1).replace(".", ",") + "M Nm³" : "sem dado" },
-      { label: "Chorume acumulado", value: iChorume >= 0 ? HUB.format.int(Math.round(chorume[iChorume])) + " m³" : "sem dado" },
-      { label: "Coleta seletiva (mês)", value: seletivaMes > 0 ? HUB.format.int(Math.round(seletivaMes)) + " t" : "sem dado" }
+      { label: "Recebimento nas ETRs", value: iAtual >= 0 ? HUB.format.int(Math.round(etrTotal[iAtual])) + " t" : "sem dado", badge: refBadge(etrTotal, iAtual, false) },
+      { label: "CTR Seropédica · Biogás", value: iBio >= 0 ? (biogas[iBio] / 1e6).toFixed(1).replace(".", ",") + "M Nm³" : "sem dado", badge: refBadge(biogas, iBio, false) },
+      { label: "Chorume acumulado", value: iChorume >= 0 ? HUB.format.int(Math.round(chorume[iChorume])) + " m³" : "sem dado", badge: refBadge(chorume, iChorume, true) },
+      { label: "Coleta seletiva (mês)", value: seletivaMes > 0 ? HUB.format.int(Math.round(seletivaMes)) + " t" : "sem dado", badge: refBadge(seletivaSerie, iSel, false) }
     ];
     flowEl.innerHTML = nodes.map((nd, i) => `
-      <div class="flowNode"><div class="flowLabel">${nd.label}</div><div class="flowValue">${nd.value}</div></div>
-      ${i < nodes.length - 1 ? '<div class="flowArrow">→</div>' : ""}
+      <div class="flowNode"><div class="flowLabel">${nd.label}</div><div class="flowValue">${nd.value}</div>${nd.badge}</div>
+      ${i < nodes.length - 1 ? '<div class="flowArrow"><span>→</span></div>' : ""}
+    `).join("");
+  }
+
+  // --- Indicadores Derivados HUB: métricas calculadas, não publicadas oficialmente ---
+  const derivEl = document.getElementById("indicadoresDerivados");
+  if (derivEl) {
+    const secFrota = findSecao(RAW.secoes, "MANUTENCAO FROTA PROPRIA");
+    const frotaOpSerie = secFrota ? relatorioSerie(secFrota.rows, "TOTAL EM OPERACAO", n) : [];
+    const iOp = lastValidIndex(frotaOpSerie);
+
+    const circularidade = (iAtual >= 0 && seletivaMes > 0 && (etrTotal[iAtual] + seletivaMes) > 0)
+      ? seletivaMes / (etrTotal[iAtual] + seletivaMes) * 100 : null;
+    const intensidadeChorume = (iChorume >= 0 && iAtual >= 0 && etrTotal[iAtual] > 0)
+      ? chorume[iChorume] / (etrTotal[iAtual] / 1000) : null;
+    const eficienciaLogistica = (iAtual >= 0 && iOp >= 0 && frotaOpSerie[iOp] > 0)
+      ? etrTotal[iAtual] / frotaOpSerie[iOp] : null;
+    const aproveitamentoEnergetico = (iBio >= 0 && iAtual >= 0 && etrTotal[iAtual] > 0)
+      ? biogas[iBio] / etrTotal[iAtual] : null;
+
+    const cards = [
+      { label: "Índice de Circularidade Operacional", value: circularidade, fmt: v => v.toFixed(1).replace(".", ",") + "%", formula: "coleta seletiva ÷ (ETR + coleta seletiva)" },
+      { label: "Intensidade de Geração de Chorume", value: intensidadeChorume, fmt: v => HUB.format.int(Math.round(v)) + " m³/mil t", formula: "chorume ÷ (ETR total ÷ 1000)" },
+      { label: "Eficiência Logística", value: eficienciaLogistica, fmt: v => HUB.format.int(Math.round(v)) + " t/veículo", formula: "ETR total ÷ frota em operação" },
+      { label: "Aproveitamento Energético", value: aproveitamentoEnergetico, fmt: v => v.toFixed(0) + " Nm³/t", formula: "biogás ÷ ETR total" }
+    ];
+    derivEl.innerHTML = cards.map(c => `
+      <div class="derivCard">
+        <div class="derivLabel">${c.label}</div>
+        <div class="derivValue">${c.value !== null ? c.fmt(c.value) : "sem dado"}</div>
+        <div class="derivFormula">${c.formula}</div>
+      </div>
     `).join("");
   }
 
@@ -560,6 +653,26 @@ function renderReciclagem() {
     labels: mesesLabel.map(m => m + "/" + anoUsado.slice(2)),
     values: serieIdx
   }, { color: HUB.charts.colors.green });
+
+  // Título dinâmico do banner de validação — não fixa o mês/valor no código
+  const bannerTitleEl = document.getElementById("bannerTitle");
+  const bannerEl2 = document.getElementById("bannerIndice");
+  const bannerTagEl = document.getElementById("bannerTag");
+  if (bannerTitleEl) {
+    const iIdx = lastValidIndex(serieIdx);
+    const anteriores = serieIdx.slice(0, iIdx).filter(v => v > 0);
+    const mediaAnterior = anteriores.length ? anteriores.reduce((a, b) => a + b, 0) / anteriores.length : 0;
+    const destoante = iIdx >= 0 && mediaAnterior > 0 && Math.abs(serieIdx[iIdx] - mediaAnterior) / mediaAnterior > 0.3;
+    if (destoante) {
+      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${mesesLabel[iIdx]}/${anoUsado.slice(2)} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% vs. média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
+      if (bannerEl2) bannerEl2.className = "noteBanner warn compact";
+      if (bannerTagEl) bannerTagEl.textContent = "EM VALIDAÇÃO";
+    } else if (iIdx >= 0) {
+      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${mesesLabel[iIdx]}/${anoUsado.slice(2)}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%, dentro do padrão da série`;
+      if (bannerEl2) bannerEl2.className = "noteBanner compact";
+      if (bannerTagEl) bannerTagEl.textContent = "MONITORADO";
+    }
+  }
 
   const fonte = usar2026 ? RAW.ind2026 : RAW.ind2025;
 
@@ -649,37 +762,20 @@ function renderFrota() {
     });
   });
 
-  // Rankings de utilização por gerência — Domiciliar + Seletiva + Lixo Público
+  // Rankings de utilização por gerência — um ranking por segmento (não misturado)
   const fontesFrota = [
-    { rows: RAW.coletaDom || [], tipo: "Domiciliar" },
-    { rows: RAW.coletaSel || [], tipo: "Seletiva" },
-    { rows: RAW.lixoPub || [], tipo: "Lixo Público" }
+    { rows: RAW.coletaDom || [], tipo: "Domiciliar", sufixo: "Domiciliar" },
+    { rows: RAW.coletaSel || [], tipo: "Seletiva", sufixo: "Seletiva" },
+    { rows: RAW.lixoPub || [], tipo: "Lixo Público", sufixo: "LixoPublico" }
   ];
-  const map = new Map();
-  fontesFrota.forEach(({ rows, tipo }) => {
-    rows.forEach(r => {
-      const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
-      const pct = HUB.format.toNumber(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"]));
-      if (!ger || !pct) return;
-      const key = ger + "|" + tipo;
-      if (!map.has(key)) map.set(key, { ger, tipo, vals: [] });
-      map.get(key).vals.push(pct);
-    });
-  });
-  const ranked = [...map.values()]
-    .map(({ ger, tipo, vals }) => ({ ger, tipo, avg: vals.reduce((a, b) => a + b, 0) / vals.length }))
-    .filter(r => r.avg > 0)
-    .sort((a, b) => a.avg - b.avg);
-
-  const baixa = ranked.slice(0, 5);
-  const alta = ranked.slice(-5).reverse();
 
   function renderRankList(containerId, list, colorVar) {
     const el = document.getElementById(containerId);
+    if (!el) return;
     if (!list.length) { el.innerHTML = '<div class="loading">Sem dados suficientes</div>'; return; }
     el.innerHTML = list.map(r => `
       <div class="barRow">
-        <div class="barName">${HUB.format.esc(r.ger)} <span style="color:var(--silenciado); font-size:11px;">· ${r.tipo}</span></div>
+        <div class="barName">${HUB.format.esc(r.ger)}</div>
         <div style="background:var(--linha);border-radius:6px;height:8px;overflow:hidden;">
           <div style="width:${Math.min(r.avg,150)}%;height:100%;background:${colorVar};"></div>
         </div>
@@ -687,8 +783,24 @@ function renderFrota() {
       </div>
     `).join("");
   }
-  renderRankList("rankBaixa", baixa, HUB.charts.colors.red);
-  renderRankList("rankAlta", alta, HUB.charts.colors.green);
+
+  fontesFrota.forEach(({ rows, sufixo }) => {
+    const map = new Map();
+    rows.forEach(r => {
+      const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
+      const pct = HUB.format.toNumber(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"]));
+      if (!ger || !pct) return;
+      if (!map.has(ger)) map.set(ger, []);
+      map.get(ger).push(pct);
+    });
+    const ranked = [...map.entries()]
+      .map(([ger, vals]) => ({ ger, avg: vals.reduce((a, b) => a + b, 0) / vals.length }))
+      .filter(r => r.avg > 0)
+      .sort((a, b) => a.avg - b.avg);
+
+    renderRankList("rankBaixa" + sufixo, ranked.slice(0, 5), HUB.charts.colors.red);
+    renderRankList("rankAlta" + sufixo, ranked.slice(-5).reverse(), HUB.charts.colors.green);
+  });
 }
 
 // ============================================

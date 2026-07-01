@@ -26,11 +26,20 @@
 .leituraChip span{font-size:13px;color:var(--texto);line-height:1.55;}
 .noteBanner{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:16px;border:1px solid var(--linha);background:var(--painel2);margin-bottom:14px;}
 .noteBanner.crit{border-color:rgba(239,106,93,.5);}
+.noteBanner.warn{border-color:rgba(255,160,43,.5);}
 .noteTag{font-size:10px;font-weight:900;letter-spacing:.12em;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:2px;white-space:nowrap;background:rgba(239,106,93,.18);color:var(--vermelho);border:1px solid rgba(239,106,93,.5);}
+.noteBanner.warn .noteTag{background:rgba(255,160,43,.18);color:var(--amarelo);border:1px solid rgba(255,160,43,.5);}
 .noteBanner b{display:block;font-size:14px;margin-bottom:3px;}
 .noteBanner p{color:var(--silenciado);font-size:12.5px;line-height:1.55;margin:0;}
 .rankGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media (max-width:900px){ .rankGrid{grid-template-columns:1fr;} }
+.flowRow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;}
+.flowNode{flex:1;min-width:150px;background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:16px 12px;text-align:center;}
+.flowLabel{font-size:10.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;line-height:1.3;}
+.flowValue{font-size:19px;font-weight:800;color:var(--texto);}
+.flowArrow{display:flex;align-items:center;justify-content:center;color:var(--silenciado);font-size:16px;padding:0 2px;}
+@media (max-width:900px){ .flowRow{flex-direction:column;} .flowArrow{transform:rotate(90deg);padding:2px 0;} }
+#kpisVisao{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
 </style>
 </head>
 
@@ -53,7 +62,13 @@
       </div>
     </div>
     <div class="kpis" id="kpisVisao"></div>
-    <div class="grid">
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panelHead">
+        <div><h2>Fluxo Operacional</h2><div class="hint">Coleta → ETRs → CTR (biogás) → chorume → coleta seletiva — mês mais recente</div></div>
+      </div>
+      <div class="body"><div class="flowRow" id="fluxoOperacional"></div></div>
+    </div>
+    <div class="grid2">
       <div class="panel">
         <div class="panelHead">
           <div><h2>Fluxo entre ETRs</h2><div class="hint">Recebimento por estação — mês mais recente</div></div>
@@ -65,12 +80,6 @@
           <div><h2>Coleta seletiva — série anual</h2><div class="hint">2022–2026 (t/ano)</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartSeletivaAnual"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Frota própria em operação</h2><div class="hint">Últimos meses disponíveis</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartFrotaOperacao"></canvas></div></div>
       </div>
     </div>
   </section>
@@ -102,10 +111,17 @@
 
   <!-- ===================== COLETA SELETIVA & RECICLAGEM ===================== -->
   <section class="screen" id="screenReciclagem">
+    <div class="noteBanner warn">
+      <div class="noteTag">EM VALIDAÇÃO</div>
+      <div>
+        <b>Índice de captura EGP-RIO — mai/26 fora do padrão histórico</b>
+        <p>Série 2026 confirmada na planilha oficial: Jan 11,4% · Fev 10,3% · Mar 11,2% · Abr 10,5% · Mai 22,9%. O salto de mai/26 não é erro de leitura do painel — é o valor publicado — mas destoa da série e ainda não foi confirmada a origem. Até validação, este indicador não deve ser usado como KPI de decisão.</p>
+      </div>
+    </div>
     <div class="grid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente</div></div>
+          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente · em validação (ver nota acima)</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal"></canvas></div></div>
       </div>
@@ -222,23 +238,29 @@ function parseNumBR(v) {
   return Number.isFinite(n) ? n : 0;
 }
 
+const MESES_ABREV = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
 function parseDateLabel(s) {
-  let str = String(s ?? "").trim();
-  let m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  let mm, yy;
-  if (m) { mm = parseInt(m[2], 10) - 1; yy = m[3].slice(2); }
-  else {
-    m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (m) { mm = parseInt(m[2], 10) - 1; yy = m[1].slice(2); }
-  }
-  if (mm === undefined) return str;
-  const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
-  return (meses[mm] || "?") + "/" + yy;
+  const str = String(s ?? "").trim();
+  const low = str.toLowerCase();
+  // formato real da planilha: "mai.-25", "jun.-25"...
+  let m = low.match(/^([a-z]{3})\.-(\d{2})$/);
+  if (m && MESES_ABREV.includes(m[1])) return m[1] + "/" + m[2];
+  // formato dd/mm/aaaa
+  m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return (MESES_ABREV[parseInt(m[2], 10) - 1] || "?") + "/" + m[3].slice(2);
+  // formato ISO aaaa-mm-dd
+  m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return (MESES_ABREV[parseInt(m[2], 10) - 1] || "?") + "/" + m[1].slice(2);
+  return str;
 }
 
 function isDateCell(s) {
-  const str = String(s ?? "").trim();
-  return /^\d{1,2}\/\d{1,2}\/\d{4}/.test(str) || /^\d{4}-\d{1,2}-\d{1,2}/.test(str);
+  const str = String(s ?? "").trim().toLowerCase();
+  if (/^[a-z]{3}\.-\d{2}$/.test(str) && MESES_ABREV.includes(str.slice(0, 3))) return true;
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(str)) return true;
+  if (/^\d{4}-\d{1,2}-\d{1,2}/.test(str)) return true;
+  return false;
 }
 
 async function loadRawCSV(url, name) {
@@ -270,6 +292,32 @@ function findRow(rows, label) {
   return null;
 }
 
+// --- Parser por seção: resolve rótulos repetidos (ex.: "CTR Seriopédica"
+// aparece em Biogás, Purificação e Chorume — o significado depende da seção) ---
+function parseSecoes(rows) {
+  const romanRe = /^[IVXLCDM]{1,5}\s+-\s+/;
+  const letterRe = /^[A-Z]\s+-\s+/;
+  const secoes = [];
+  let atual = null;
+  for (const row of rows) {
+    const first = String(row[0] ?? "").trim();
+    if (romanRe.test(first) || letterRe.test(first)) {
+      atual = { titulo: first, rows: [] };
+      secoes.push(atual);
+    } else if (atual) {
+      atual.rows.push(row);
+    }
+  }
+  return secoes;
+}
+
+function findSecao(secoes, tituloSubstr) {
+  const t = norm(tituloSubstr);
+  const s = secoes.find(s => norm(s.titulo).includes(t));
+  if (!s) console.warn("Seção não encontrada:", tituloSubstr);
+  return s;
+}
+
 function findDateHeaderRow(rows) {
   for (const row of rows) {
     const hits = row.filter(isDateCell).length;
@@ -291,7 +339,7 @@ function relatorioMeses(rows) {
 
 function relatorioSerie(rows, label, n) {
   const row = findRow(rows, label);
-  if (!row) return Array(n).fill(0);
+  if (!row) { console.warn("relatorioSerie: rótulo não encontrado ->", label); return Array(n).fill(0); }
   const idx = firstNonEmptyIdx(row);
   return row.slice(idx + 1, idx + 1 + n).map(parseNumBR);
 }
@@ -299,7 +347,7 @@ function relatorioSerie(rows, label, n) {
 // --- Tabela 1493 (formato largo: Label | Total | Jan..Dez) ---
 function ind1493Serie(rows, label) {
   const row = findRow(rows, label);
-  if (!row) return { total: 0, meses: Array(12).fill(0) };
+  if (!row) { console.warn("ind1493Serie: rótulo não encontrado ->", label); return { total: 0, meses: Array(12).fill(0) }; }
   const idx = firstNonEmptyIdx(row);
   const total = parseNumBR(row[idx + 1]);
   const meses = row.slice(idx + 2, idx + 14).map(parseNumBR);
@@ -309,6 +357,20 @@ function ind1493Serie(rows, label) {
 function lastValidIndex(arr) {
   for (let i = arr.length - 1; i >= 0; i--) if (arr[i] > 0) return i;
   return -1;
+}
+
+// --- Renderiza gráfico ou mostra estado "sem dado" em vez de zero mudo ---
+function chartOuVazio(canvasId, values, drawFn) {
+  const temDado = values.some(v => v && v !== 0);
+  const canvas = document.getElementById(canvasId);
+  if (!temDado) {
+    console.warn(canvasId + ": série sem dado carregado.");
+    if (canvas && canvas.parentElement) {
+      canvas.parentElement.innerHTML = '<div class="loading">Sem dado carregado — ver console (F12)</div>';
+    }
+    return;
+  }
+  drawFn();
 }
 
 // ============================================
@@ -327,7 +389,7 @@ async function init() {
     ]
   });
 
-  HUB.loading.showMultiple(["kpisVisao","chartEtrUnidade","chartSeletivaAnual","chartFrotaOperacao"]);
+  HUB.loading.showMultiple(["kpisVisao","chartEtrUnidade","chartSeletivaAnual"]);
 
   const [relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub] = await Promise.all([
     loadRawCSV(CONFIG.urls.relatorio, "relatorio"),
@@ -338,6 +400,7 @@ async function init() {
     HUB.data.loadCSV(CONFIG.urls.lixoPublico, { name: "lixoPublico" })
   ]);
   RAW = { relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub };
+  RAW.secoes = parseSecoes(relatorio);
 
   renderVisaoGeral();
   renderLeituraMes();
@@ -361,28 +424,15 @@ function renderVisaoGeral() {
   const n = meses.length || 13;
 
   const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
-  const frotaOp = relatorioSerie(RAW.relatorio, "TOTAL EM OPERACAO", n);
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
 
+  const secBiogas = findSecao(RAW.secoes, "GERACAO BIOGAS");
+  const biogas = secBiogas ? relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", n) : Array(n).fill(0);
+
   const iAtual = lastValidIndex(etrTotal);
-  const iFrota = lastValidIndex(frotaOp);
   const iChorume = lastValidIndex(chorume);
 
-  // Índice de captura EGP-RIO — usa 2026 se houver dado no mês, senão 2025
-  const idx2026 = ind1493Serie(RAW.ind2026, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const iIdx26 = lastValidIndex(idx2026.meses);
-  const indiceAtual = iIdx26 >= 0 ? idx2026.meses[iIdx26] : (lastValidIndex(idx2025.meses) >= 0 ? idx2025.meses[lastValidIndex(idx2025.meses)] : 0);
-
   HUB.cards.render("kpisVisao", [
-    {
-      label: "Índice de captura EGP-RIO",
-      value: indiceAtual,
-      format: "custom",
-      customFormatter: v => v.toFixed(1).replace(".", ",") + "%",
-      note: "Fórmula oficial · mês mais recente disponível",
-      feature: true
-    },
     {
       label: "ETR Total",
       value: iAtual >= 0 ? etrTotal[iAtual] : 0,
@@ -390,14 +440,6 @@ function renderVisaoGeral() {
       customFormatter: v => HUB.format.int(Math.round(v)) + " t",
       note: iAtual >= 0 ? meses[iAtual] || "mês mais recente" : "sem dado",
       color: "blue"
-    },
-    {
-      label: "Frota em operação",
-      value: iFrota >= 0 ? frotaOp[iFrota] : 0,
-      format: "custom",
-      customFormatter: v => HUB.format.int(v) + " veículos",
-      note: iFrota >= 0 ? meses[iFrota] || "" : "sem dado",
-      color: (iFrota > 0 && frotaOp[0] > 0 && frotaOp[iFrota] < frotaOp[0] * 0.7) ? "red" : "green"
     },
     {
       label: "Chorume acumulado",
@@ -409,6 +451,28 @@ function renderVisaoGeral() {
     }
   ]);
 
+  // --- Fluxo Operacional: coleta -> ETRs -> CTR/biogás -> chorume -> coleta seletiva ---
+  const usar2026 = true; // reciclagem sempre lê o ano corrente com dado
+  const idx2026Sel = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
+  const idx2025Sel = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
+  const iSel26 = lastValidIndex(idx2026Sel.meses);
+  const seletivaMes = iSel26 >= 0 ? idx2026Sel.meses[iSel26] : (lastValidIndex(idx2025Sel.meses) >= 0 ? idx2025Sel.meses[lastValidIndex(idx2025Sel.meses)] : 0);
+
+  const iBio = lastValidIndex(biogas);
+  const flowEl = document.getElementById("fluxoOperacional");
+  if (flowEl) {
+    const nodes = [
+      { label: "Recebimento nas ETRs", value: iAtual >= 0 ? HUB.format.int(Math.round(etrTotal[iAtual])) + " t" : "sem dado" },
+      { label: "CTR Seropédica · Biogás", value: iBio >= 0 ? (biogas[iBio] / 1e6).toFixed(1).replace(".", ",") + "M Nm³" : "sem dado" },
+      { label: "Chorume acumulado", value: iChorume >= 0 ? HUB.format.int(Math.round(chorume[iChorume])) + " m³" : "sem dado" },
+      { label: "Coleta seletiva (mês)", value: seletivaMes > 0 ? HUB.format.int(Math.round(seletivaMes)) + " t" : "sem dado" }
+    ];
+    flowEl.innerHTML = nodes.map((nd, i) => `
+      <div class="flowNode"><div class="flowLabel">${nd.label}</div><div class="flowValue">${nd.value}</div></div>
+      ${i < nodes.length - 1 ? '<div class="flowArrow">→</div>' : ""}
+    `).join("");
+  }
+
   // Fluxo por unidade ETR (último mês disponível)
   const unidades = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
   const valoresUnidades = unidades.map(u => {
@@ -416,10 +480,10 @@ function renderVisaoGeral() {
     const i = lastValidIndex(s);
     return i >= 0 ? s[i] : 0;
   });
-  HUB.charts.bar("chartEtrUnidade", {
+  chartOuVazio("chartEtrUnidade", valoresUnidades, () => HUB.charts.bar("chartEtrUnidade", {
     labels: unidades.map(u => u.replace("ETR ", "")),
     values: valoresUnidades
-  }, { color: HUB.charts.colors.blueGradient });
+  }, { color: HUB.charts.colors.blueGradient }));
 
   // Coleta seletiva anual — histórico + live
   const anos = ["2022","2023","2024","2025","2026"];
@@ -432,16 +496,10 @@ function renderVisaoGeral() {
     seletiva2025.total || HIST.coletaSeletivaAnual["2024"],
     seletiva2026.meses.reduce((a,b)=>a+b,0)
   ];
-  HUB.charts.bar("chartSeletivaAnual", {
+  chartOuVazio("chartSeletivaAnual", valoresSeletiva, () => HUB.charts.bar("chartSeletivaAnual", {
     labels: anos,
     values: valoresSeletiva
-  }, { color: HUB.charts.colors.greenGradient });
-
-  // Frota em operação — série temporal
-  HUB.charts.line("chartFrotaOperacao", {
-    labels: meses,
-    values: frotaOp
-  }, { color: HUB.charts.colors.orange });
+  }, { color: HUB.charts.colors.greenGradient }));
 }
 
 // ============================================
@@ -452,12 +510,13 @@ function renderDestinacao() {
   const n = meses.length || 13;
 
   const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
-  const biogas = relatorioSerie(RAW.relatorio, "CTR SERIOPEDICA", n);
+  const secBiogas = findSecao(RAW.secoes, "GERACAO BIOGAS");
+  const biogas = secBiogas ? relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", n) : Array(n).fill(0);
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
 
-  HUB.charts.line("chartEtrTotal", { labels: meses, values: etrTotal }, { color: HUB.charts.colors.blue2 || HUB.charts.colors.blue });
-  HUB.charts.line("chartBiogas", { labels: meses, values: biogas }, { color: HUB.charts.colors.purple });
-  HUB.charts.line("chartChorume", { labels: meses, values: chorume }, { color: HUB.charts.colors.red });
+  chartOuVazio("chartEtrTotal", etrTotal, () => HUB.charts.line("chartEtrTotal", { labels: meses, values: etrTotal }, { color: HUB.charts.colors.blue }));
+  chartOuVazio("chartBiogas", biogas, () => HUB.charts.line("chartBiogas", { labels: meses, values: biogas }, { color: HUB.charts.colors.purple }));
+  chartOuVazio("chartChorume", chorume, () => HUB.charts.line("chartChorume", { labels: meses, values: chorume }, { color: HUB.charts.colors.red }));
 
   // Alerta dinâmico de chorume: pico vs média dos primeiros meses da janela
   const base = chorume.slice(0, Math.max(1, n - 5));
@@ -523,16 +582,29 @@ function renderFrota() {
 
   const horasExtras = relatorioSerie(RAW.relatorio, "VALOR TOTAL DE HORAS EXTRAS", n);
   const sobrecarga = relatorioSerie(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL", n).map(v => v > 1 ? v : v * 100);
-  const frotaTotal = relatorioSerie(RAW.relatorio, "FROTA TOTAL", n);
-  const frotaOp = relatorioSerie(RAW.relatorio, "TOTAL EM OPERACAO", n);
 
-  HUB.charts.bar("chartHorasExtras", { labels: meses, values: horasExtras }, { color: HUB.charts.colors.orangeGradient });
-  HUB.charts.line("chartSobrecarga", { labels: meses, values: sobrecarga }, { color: HUB.charts.colors.red });
+  const secFrota = findSecao(RAW.secoes, "MANUTENCAO FROTA PROPRIA");
+  const frotaTotal = secFrota ? relatorioSerie(secFrota.rows, "FROTA TOTAL", n) : Array(n).fill(0);
+  const frotaOp = secFrota ? relatorioSerie(secFrota.rows, "TOTAL EM OPERACAO", n) : Array(n).fill(0);
 
-  HUB.charts.bar("chartFrotaComparativo", {
-    labels: meses,
-    values: frotaTotal
-  }, { color: HUB.charts.colors.blueGradient, label: "Frota total" });
+  chartOuVazio("chartHorasExtras", horasExtras, () => HUB.charts.bar("chartHorasExtras", { labels: meses, values: horasExtras }, { color: HUB.charts.colors.orangeGradient }));
+  chartOuVazio("chartSobrecarga", sobrecarga, () => HUB.charts.line("chartSobrecarga", { labels: meses, values: sobrecarga }, { color: HUB.charts.colors.red }));
+
+  chartOuVazio("chartFrotaComparativo", frotaTotal, () => {
+    const canvas = document.getElementById("chartFrotaComparativo");
+    if (!canvas) return;
+    new Chart(canvas.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: meses,
+        datasets: [
+          { label: "Frota total", data: frotaTotal, borderColor: HUB.charts.colors.blue, backgroundColor: "transparent", tension: 0.3 },
+          { label: "Em operação", data: frotaOp, borderColor: HUB.charts.colors.orange, backgroundColor: "transparent", tension: 0.3 }
+        ]
+      },
+      options: HUB.charts.baseConfig
+    });
+  });
 
   // Rankings de utilização por gerência — Coleta Domiciliar
   const rows = RAW.coletaDom || [];
@@ -579,7 +651,6 @@ function renderLeituraMes() {
   const meses = relatorioMeses(RAW.relatorio);
   const n = meses.length || 13;
   const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
-  const frotaOp = relatorioSerie(RAW.relatorio, "TOTAL EM OPERACAO", n);
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
 
   const unidadesRaw = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
@@ -595,10 +666,12 @@ function renderLeituraMes() {
     if (i - 1 >= 0 && etrTotal[i - 1] > 0) {
       const varPct = (etrTotal[i] - etrTotal[i - 1]) / etrTotal[i - 1] * 100;
       items.push({
-        text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t, ${varPct >= 0 ? "alta" : "queda"} de ${pct(varPct)}% frente ao mês anterior.`
+        text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t, ${varPct >= 0 ? "alta" : "queda"} de ${pct(varPct)}% frente ao mês anterior.`,
+        severity: Math.abs(varPct),
+        flag: Math.abs(varPct) > 8
       });
     } else {
-      items.push({ text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t.` });
+      items.push({ text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t.`, severity: 0 });
     }
 
     // --- Concentração e maior queda por unidade no mês ---
@@ -611,13 +684,20 @@ function renderLeituraMes() {
     if (total > 0) {
       const maiorConc = [...atual].sort((a, b) => b.v - a.v)[0];
       const share = maiorConc.v / total * 100;
-      items.push({ text: `${maiorConc.u} concentrou ${share.toFixed(0)}% do fluxo recebido em ${mesLabel} (${HUB.format.int(Math.round(maiorConc.v))} t).` });
+      items.push({
+        text: `${maiorConc.u} concentrou ${share.toFixed(0)}% do fluxo recebido em ${mesLabel} (${HUB.format.int(Math.round(maiorConc.v))} t).`,
+        severity: share
+      });
     }
     const comVariacao = atual.filter(a => a.prev > 0).map(a => ({ ...a, varPct: (a.v - a.prev) / a.prev * 100 }));
     if (comVariacao.length) {
       const maiorQueda = [...comVariacao].sort((a, b) => a.varPct - b.varPct)[0];
       if (maiorQueda.varPct < -5) {
-        items.push({ text: `Maior queda do mês: ${maiorQueda.u}, ${pct(maiorQueda.varPct)}% abaixo do mês anterior.`, flag: true });
+        items.push({
+          text: `Maior queda do mês: ${maiorQueda.u}, ${pct(maiorQueda.varPct)}% abaixo do mês anterior.`,
+          severity: Math.abs(maiorQueda.varPct),
+          flag: true
+        });
       }
     }
   }
@@ -631,34 +711,9 @@ function renderLeituraMes() {
       const diffPct = (chorume[iCh] - baseAvg) / baseAvg * 100;
       items.push({
         text: `Chorume acumulado em ${meses[iCh]}: ${HUB.format.int(Math.round(chorume[iCh]))} m³, ${pct(diffPct)}% ${diffPct >= 0 ? "acima" : "abaixo"} da média dos meses iniciais da janela.`,
+        severity: Math.abs(diffPct),
         flag: diffPct > 50
       });
-    }
-  }
-
-  // --- Índice de captura EGP-RIO ---
-  const idx2026 = ind1493Serie(RAW.ind2026, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const usar2026 = lastValidIndex(idx2026.meses) >= 0;
-  const serieIdx = usar2026 ? idx2026.meses : idx2025.meses;
-  const iIdx = lastValidIndex(serieIdx);
-  if (iIdx >= 0) {
-    const mesesLabel = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-    items.push({ text: `Índice de captura EGP-RIO em ${mesesLabel[iIdx]}/${usar2026 ? "26" : "25"}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%.` });
-  }
-
-  // --- Frota em operação: valor + variação MoM ---
-  const iF = lastValidIndex(frotaOp);
-  if (iF >= 0) {
-    const mesLabel = meses[iF] || "mês mais recente";
-    if (iF - 1 >= 0 && frotaOp[iF - 1] > 0) {
-      const delta = frotaOp[iF] - frotaOp[iF - 1];
-      items.push({
-        text: `Frota em operação em ${mesLabel}: ${HUB.format.int(frotaOp[iF])} veículos, ${delta >= 0 ? "+" : ""}${delta} frente ao mês anterior.`,
-        flag: delta < 0 && frotaOp[iF - 1] > 0 && Math.abs(delta / frotaOp[iF - 1]) > 0.15
-      });
-    } else {
-      items.push({ text: `Frota em operação em ${mesLabel}: ${HUB.format.int(frotaOp[iF])} veículos.` });
     }
   }
 
@@ -666,6 +721,10 @@ function renderLeituraMes() {
     el.innerHTML = '<div class="leituraChip"><span>Sem dados suficientes carregados para gerar o radar do mês.</span></div>';
     return;
   }
+
+  // Radar por exceção: itens com alerta primeiro, depois por magnitude do desvio
+  items.sort((a, b) => (b.flag ? 1 : 0) - (a.flag ? 1 : 0) || (b.severity || 0) - (a.severity || 0));
+
   el.innerHTML = items.map(it => `<div class="leituraChip ${it.flag ? "flag" : ""}"><div class="dot"></div><span>${it.text}</span></div>`).join("");
 }
 

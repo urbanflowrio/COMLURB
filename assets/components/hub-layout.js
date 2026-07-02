@@ -198,15 +198,7 @@ HUB.footer = {
     const container = HUB.dom.$(containerId);
     if (!container) return;
 
-    container.innerHTML = `
-      <footer class="footer">
-        <div class="footerContent">
-          <strong>Gabinete da Presidência</strong><br>
-          HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional
-          ${showTimestamp ? `<div class="footerTimestamp" id="footerTs"></div>` : ""}
-        </div>
-      </footer>
-    `;
+  strong>Gabinete da Presidência</strong><br>
   },
 
   /**

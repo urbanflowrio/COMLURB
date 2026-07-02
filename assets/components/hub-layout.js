@@ -186,28 +186,24 @@ HUB.header = {
 HUB.footer = {
   /**
    * Renderiza o rodapé institucional padrão do HUB COMLURB.
-   * showTimestamp: true → exibe data/hora do carregamento dos dados.
-   * Chame HUB.footer.updateTimestamp("footer") após o carregamento do CSV
-   * para registrar o momento real da atualização dos dados.
    */
-  render(containerId, config = {}) {
-    const {
-      showTimestamp = true
-    } = config;
-
+  render(containerId) {
     const container = HUB.dom.$(containerId);
     if (!container) return;
 
-  strong>Gabinete da Presidência</strong><br>
+    container.innerHTML = `
+      <footer class="footer">
+        <div class="footerContent">
+          <div class="footerTitle">HUB COMLURB</div>
+          <div class="footerSubtitle">Núcleo de Inteligência e Gestão Estratégica Operacional</div>
+        </div>
+      </footer>
+    `;
   },
 
-  /**
-   * Atualiza o timestamp do footer com a data/hora atual.
-   * Deve ser chamado após o carregamento e processamento dos dados CSV.
-   */
   updateTimestamp() {
-  // Mantido apenas para compatibilidade.
-}
+    // Mantido apenas para compatibilidade.
+  }
 };
 
 /* ============================================

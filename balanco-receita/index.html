@@ -42,10 +42,10 @@ body{background:var(--bg,#06111f);color:var(--texto,#f7f9ff);font-family:"Segoe 
 .radar{display:grid;gap:12px}.radarItem{display:grid;grid-template-columns:10px 1fr;gap:12px;align-items:start;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:13px 14px;color:#dbe9fb;font-size:13px;line-height:1.48}.radarDot{width:10px;height:10px;border-radius:50%;background:var(--azul2,#5b9bd5);margin-top:5px;box-shadow:0 0 14px rgba(91,155,213,.55)}
 .contractGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
 .contractCard{background:#0d1f36;border:1px solid var(--linha,#294866);border-radius:18px;padding:16px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between}
-.contractCard.critico{border-color:rgba(239,106,93,.48)}.contractCard.atencao{border-color:rgba(255,160,43,.42)}.contractCard.saudavel{border-color:rgba(120,170,163,.45)}
+.contractCard.critico{border-color:rgba(239,106,93,.48)}.contractCard.atencao{border-color:rgba(255,160,43,.42)}.contractCard.dentro{border-color:rgba(120,170,163,.45)}
 .contractTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.contractId{font-size:15px;font-weight:950;color:#fff;line-height:1.2}.contractSrv{font-size:11px;color:#b8c9de;line-height:1.35;margin-top:5px;min-height:34px}
 .secPill,.statusPill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
-.secPill{background:rgba(91,155,213,.13);border:1px solid rgba(91,155,213,.32);color:#b8d4f2}.statusPill.critico{background:rgba(239,106,93,.14);border:1px solid rgba(239,106,93,.42);color:#ffaaa3}.statusPill.atencao{background:rgba(255,160,43,.13);border:1px solid rgba(255,160,43,.38);color:#ffd08a}.statusPill.saudavel{background:rgba(120,170,163,.13);border:1px solid rgba(120,170,163,.38);color:#b8eee9}
+.secPill{background:rgba(91,155,213,.13);border:1px solid rgba(91,155,213,.32);color:#b8d4f2}.statusPill.critico{background:rgba(239,106,93,.14);border:1px solid rgba(239,106,93,.42);color:#ffaaa3}.statusPill.atencao{background:rgba(255,160,43,.13);border:1px solid rgba(255,160,43,.38);color:#ffd08a}.statusPill.dentro{background:rgba(120,170,163,.13);border:1px solid rgba(120,170,163,.38);color:#b8eee9}
 .contractNum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.mini{border-top:1px solid rgba(255,255,255,.08);padding-top:10px}.mini b{display:block;font-size:17px;font-weight:950;color:#fff;white-space:nowrap}.mini span{font-size:10px;color:#95abc5;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
 .progress{height:9px;background:#132941;border-radius:999px;overflow:hidden;margin-top:12px}.progress div{height:100%;background:linear-gradient(90deg,#2f67a5,#5b9bd5);border-radius:999px}
 .chartBox{height:310px}
@@ -130,7 +130,7 @@ const BRL = v => 'R$ ' + (Number(v)>=1e6 ? (Number(v)/1e6).toFixed(1).replace('.
 const BRLF = v => 'R$ ' + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const PCT = v => (Number(v)||0).toFixed(1).replace('.',',') + '%';
 function status(c){
-  if(c.exec >= 80 && c.deb_pct <= 12) return ['saudavel','Saudável'];
+  if(c.exec >= 80 && c.deb_pct <= 12) return ['dentro','Dentro da Meta'];
   if(c.exec >= 55 || c.deb_pct <= 30) return ['atencao','Atenção'];
   return ['critico','Crítico'];
 }

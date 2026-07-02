@@ -206,11 +206,8 @@ HUB.footer = {
    * Deve ser chamado após o carregamento e processamento dos dados CSV.
    */
   updateTimestamp() {
-    const el = document.getElementById("footerTs");
-    if (el) {
-      el.textContent = "Atualizado em " + new Date().toLocaleString("pt-BR");
-    }
-  }
+  // Mantido apenas para compatibilidade.
+}
 };
 
 /* ============================================

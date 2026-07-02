@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUB COMLURB · Testes da Biblioteca</title>
+<style>
+  :root{--bg:#0d1f36;--panel:#0b1a2e;--line:#294866;--text:#f7f9ff;--muted:#b8c9de;
+        --green:#78aaa3;--red:#ef6a5d;--orange:#e87535}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;padding:32px;max-width:900px;margin:0 auto}
+  h1{font-size:1.3rem;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:24px}
+  .resumo{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-weight:650}
+  .resumo.ok{border-color:var(--green)} .resumo.falha{border-color:var(--red)}
+  .grupo{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:14px 18px;margin-bottom:12px}
+  .grupo h2{font-size:.95rem;margin-bottom:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .caso{display:flex;gap:10px;padding:5px 0;font-size:.87rem;border-bottom:1px solid rgba(41,72,102,.35)}
+  .caso:last-child{border-bottom:none}
+  .caso .mark{min-width:64px;font-weight:700}
+  .caso.pass .mark{color:var(--green)} .caso.fail .mark{color:var(--red)}
+  .caso .det{color:var(--muted)}
+  .footer{color:var(--muted);font-size:.75rem;margin-top:24px}
+</style>
+</head>
+<body>
+  <h1>HUB COMLURB · Testes da Biblioteca Oficial</h1>
+  <div class="sub">Regra operacional: commit em assets/components/ exige esta página 100% verde.</div>
+  <div id="resumo" class="resumo">Executando…</div>
+  <div id="grupos"></div>
+  <div class="footer">Gabinete da Presidência / HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional</div>
+
+  <script src="../assets/components/hub-core.js"></script>
+  <script src="../assets/components/hub-rules.js"></script>
+  <script src="hub-selftest.js"></script>
+</body>
+</html>
 

@@ -186,8 +186,15 @@ HUB.header = {
 HUB.footer = {
   /**
    * Renderiza o rodapé institucional padrão do HUB COMLURB.
+   *
+   * Padrão oficial:
+   * HUB COMLURB
+   * Núcleo de Inteligência e Gestão Estratégica Operacional
+   *
+   * Observação: informações técnicas como versão, build, commit,
+   * ambiente ou timestamp não devem aparecer na interface institucional.
    */
-  render(containerId) {
+  render(containerId, config = {}) {
     const container = HUB.dom.$(containerId);
     if (!container) return;
 
@@ -195,14 +202,20 @@ HUB.footer = {
       <footer class="footer">
         <div class="footerContent">
           <div class="footerTitle">HUB COMLURB</div>
-          <div class="footerSubtitle">Núcleo de Inteligência e Gestão Estratégica Operacional</div>
+          <div class="footerSubtitle">
+            Núcleo de Inteligência e Gestão Estratégica Operacional
+          </div>
         </div>
       </footer>
     `;
   },
 
+  /**
+   * Mantido apenas para compatibilidade com painéis antigos que ainda chamam
+   * HUB.footer.updateTimestamp(). O footer oficial não exibe timestamp.
+   */
   updateTimestamp() {
-    // Mantido apenas para compatibilidade.
+    // Footer institucional não exibe timestamp.
   }
 };
 

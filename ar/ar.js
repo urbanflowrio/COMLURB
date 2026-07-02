@@ -300,7 +300,7 @@ function statusCanonico(atual,meta,sentido){
   if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
   const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
   if(ating>=1)return "Dentro da Meta";
-  if(ating>=.85)return "Atenção";
+  if(ating>=.9)return "Atenção";
   return "Crítico";
 }
 function tagClass(status){

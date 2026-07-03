@@ -1,480 +1,687 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HUB COMLURB · Centro de Inteligência Operacional</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HUB COMLURB · Centro de Inteligência e Gestão Estratégica Operacional</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --bg:#04101e;
-  --bg2:#071a2d;
-  --panel:#081b30;
-  --panel2:#0b223b;
-  --line:rgba(99,155,207,.28);
-  --line2:rgba(255,255,255,.08);
-  --text:#f5f8ff;
-  --muted:#a4b7cf;
-  --soft:#cbd8e8;
-  --blue:#6db6ff;
-  --blue2:#367fbd;
-  --orange:#ff8a24;
-  --shadow:0 28px 95px rgba(0,0,0,.46);
+  --bg:#030d19;
+  --panel:#071a2c;
+  --line:#203a55;
+  --line2:#315a7c;
+  --text:#f7f9ff;
+  --soft:#c8d8eb;
+  --muted:#8ba4bf;
+  --blue:#5b9bd5;
+  --blue2:#8ec5f3;
+  --green:#78aaa3;
+  --orange:#e87535;
+  --red:#ef6a5d;
 }
+
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
+
+html,body{
   margin:0;
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-  color:var(--text);
+  min-height:100%;
   background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+}
+
+body{
   overflow-x:hidden;
 }
-body:before{
+
+body::before{
   content:"";
   position:fixed;
   inset:0;
   z-index:-3;
-  pointer-events:none;
   background:
-    radial-gradient(circle at 84% 12%,rgba(70,143,205,.20),transparent 30%),
-    radial-gradient(circle at 12% 8%,rgba(255,138,36,.08),transparent 24%),
-    linear-gradient(180deg,#04101e 0%,#071a2d 44%,#04101e 100%);
+    radial-gradient(circle at 78% 12%, rgba(91,155,213,.17), transparent 31%),
+    radial-gradient(circle at 12% 88%, rgba(120,170,163,.08), transparent 31%),
+    linear-gradient(180deg,#04101d 0%,#061524 48%,#030a14 100%);
 }
-body:after{
+
+body::after{
   content:"";
   position:fixed;
-  top:-220px;
-  right:-220px;
-  width:720px;
-  height:720px;
-  border-radius:50%;
-  opacity:.22;
-  pointer-events:none;
-  background:
-    repeating-radial-gradient(circle,transparent 0 48px,rgba(109,182,255,.18) 49px 50px);
+  inset:0;
   z-index:-2;
+  opacity:.45;
+  background-image:
+    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size:88px 88px;
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.18));
 }
-a{text-decoration:none;color:inherit}
-.wrap{width:min(1480px,94vw);margin:auto;padding:34px 0 28px}
-.hero{
-  display:grid;
-  grid-template-columns:500px 1fr;
-  gap:34px;
-  align-items:center;
-  margin-bottom:28px;
+
+a{
+  color:inherit;
+  text-decoration:none;
 }
-.logoOfficial{
-  width:min(485px,100%);
-  height:auto;
-  display:block;
-  filter:drop-shadow(0 18px 38px rgba(0,0,0,.32));
-}
-.heroText{
-  border-left:1px solid rgba(255,255,255,.72);
-  padding-left:34px;
-  min-height:132px;
+
+.shell{
+  width:min(1480px,94vw);
+  min-height:100vh;
+  margin:0 auto;
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  padding:30px 0 28px;
 }
-.heroText h1{
+
+/* HEADER */
+.header{
+  height:104px;
+  display:grid;
+  grid-template-columns:340px 1fr;
+  align-items:center;
+  gap:32px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.logoBlock{
+  height:72px;
+  display:flex;
+  align-items:center;
+  padding-right:30px;
+  border-right:1px solid rgba(255,255,255,.23);
+}
+
+.logoBlock img{
+  width:310px;
+  max-width:100%;
+  display:block;
+}
+
+.brand h1{
   margin:0;
-  font-size:54px;
-  line-height:.95;
-  letter-spacing:1px;
+  font-size:34px;
+  line-height:1;
+  letter-spacing:-.7px;
   font-weight:900;
 }
-.heroText h2{
+
+.brand p{
   margin:8px 0 0;
   color:var(--blue);
-  font-size:22px;
-  line-height:1.15;
-  letter-spacing:.7px;
-  text-transform:uppercase;
+  font-size:15px;
   font-weight:600;
+  letter-spacing:.18px;
 }
-.heroText p{
-  margin:22px 0 0;
-  max-width:720px;
-  color:#d6e0ee;
-  font-size:17px;
-  line-height:1.55;
-}
-.metrics{
+
+/* HERO */
+.hero{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-  margin-bottom:18px;
+  grid-template-columns:.95fr 1.05fr;
+  gap:64px;
+  align-items:stretch;
+  padding:66px 0 48px;
+  border-bottom:1px solid rgba(255,255,255,.09);
 }
-.metric{
-  min-height:144px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:linear-gradient(180deg,rgba(11,34,59,.76),rgba(5,17,31,.72));
-  box-shadow:inset 0 0 34px rgba(109,182,255,.045);
+
+.heroMark{
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:3.4px;
+  text-transform:uppercase;
+  margin-bottom:28px;
+}
+
+.heroTitle{
+  margin:0;
+  max-width:760px;
+  font-size:clamp(58px,7.4vw,106px);
+  line-height:.89;
+  letter-spacing:-6.1px;
+  font-weight:900;
+}
+
+.heroSub{
+  margin:30px 0 0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.heroSub span{
+  border:1px solid rgba(91,155,213,.34);
+  background:rgba(7,26,44,.42);
+  color:#e9f3ff;
+  border-radius:999px;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:800;
+}
+
+/* SÍNTESE EXECUTIVA */
+.sintesePanel{
+  border:1px solid rgba(49,90,124,.68);
+  border-radius:24px;
+  background:linear-gradient(180deg,rgba(7,26,44,.72),rgba(5,18,31,.48));
+  padding:26px;
   display:flex;
   flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  overflow:hidden;
 }
-.metric:after{
-  content:"";
-  position:absolute;
-  left:8%;
-  right:8%;
-  bottom:16px;
-  height:2px;
-  background:linear-gradient(90deg,transparent,var(--blue),transparent);
-  opacity:.9;
-}
-.metric b{
-  display:block;
-  font-size:62px;
-  line-height:.9;
-  color:#7ab9ff;
-  letter-spacing:-3px;
-  text-shadow:0 0 24px rgba(109,182,255,.22);
-  font-weight:850;
-}
-.metric span{
-  display:block;
-  margin-top:14px;
-  color:#eef5ff;
-  font-size:15px;
-  text-transform:uppercase;
-  letter-spacing:1.3px;
-  font-weight:500;
-}
-.grid2{
-  display:grid;
-  grid-template-columns:.68fr 1fr;
-  gap:16px;
-  margin-bottom:12px;
-}
-.panel{
-  border:1px solid var(--line);
-  border-radius:9px;
-  background:linear-gradient(180deg,rgba(8,27,48,.86),rgba(4,16,30,.80));
-  box-shadow:var(--shadow);
-  padding:20px;
-}
-.panelTitle{
+
+.sinteseTop{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:20px;
-  padding-bottom:13px;
-  border-bottom:1px solid var(--line2);
-  margin-bottom:12px;
-}
-.panelTitle h3{
-  margin:0;
-  color:#e7eef8;
-  font-size:18px;
-  letter-spacing:1.6px;
-  text-transform:uppercase;
-  font-weight:700;
-}
-.panelTitle span{
-  color:var(--muted);
-  font-size:12px;
-}
-.radarRow{
-  display:grid;
-  grid-template-columns:1fr 94px 70px;
   gap:18px;
-  align-items:center;
-  padding:13px 0;
-  border-bottom:1px solid rgba(255,255,255,.07);
-}
-.radarRow:last-child{border-bottom:0}
-.radarRow strong{
-  display:block;
-  font-size:16px;
-  letter-spacing:.3px;
-  text-transform:uppercase;
-  font-weight:700;
-}
-.radarRow small{
-  display:block;
-  margin-top:5px;
-  color:#95aac3;
-  font-size:12px;
-  line-height:1.35;
-}
-.status{
-  color:var(--blue);
-  text-transform:uppercase;
-  font-weight:650;
-  letter-spacing:.8px;
-  font-size:14px;
-}
-.status.warn{color:var(--orange)}
-.status.na{color:var(--muted)}
-.lineMark.na{background:var(--muted);opacity:.45}
-.lineMark{
-  height:2px;
-  background:var(--blue);
-  opacity:.95;
-  box-shadow:0 0 12px rgba(109,182,255,.35);
-}
-.lineMark.warn{background:var(--orange);box-shadow:0 0 12px rgba(255,138,36,.35)}
-.note{
-  margin-top:12px;
-  color:#7890ad;
-  font-size:12px;
-}
-.feature{
-  border:1px solid rgba(109,182,255,.58);
-  background:linear-gradient(180deg,rgba(6,21,39,.86),rgba(5,18,33,.76));
-  border-radius:9px;
-  padding:20px 24px;
-  margin-bottom:10px;
-}
-.feature strong{
-  display:block;
-  font-size:27px;
-  line-height:1.15;
-  letter-spacing:-1px;
-  font-weight:850;
-}
-.feature p{
-  margin:10px 0 0;
-  color:#d2dde9;
-  font-size:16px;
-  line-height:1.55;
-}
-.highItem{
-  display:grid;
-  grid-template-columns:12px 1fr;
-  gap:14px;
-  align-items:start;
-  border:1px solid rgba(255,255,255,.07);
-  background:rgba(255,255,255,.025);
-  border-radius:8px;
-  padding:12px 14px;
-  margin-top:8px;
-  color:#d7e2ef;
-  font-size:14px;
-  line-height:1.42;
-}
-.highItem:before{
-  content:"";
-  width:2px;
-  height:24px;
-  background:var(--blue);
-  box-shadow:0 0 12px rgba(109,182,255,.6);
-  margin-top:1px;
-}
-.highItem.warn:before{background:var(--orange);box-shadow:0 0 12px rgba(255,138,36,.55)}
-.modules{
-  border:1px solid var(--line);
-  border-radius:9px;
-  background:linear-gradient(180deg,rgba(8,27,48,.84),rgba(4,16,30,.78));
-  padding:17px 20px 13px;
-  margin-bottom:12px;
-}
-.modules > h3{
-  margin:0 0 10px;
-  font-size:18px;
-  letter-spacing:1.4px;
-  text-transform:uppercase;
-  font-weight:700;
-}
-.moduleGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-}
-.domain{
-  border:1px solid rgba(99,155,207,.20);
-  background:rgba(5,18,33,.48);
-  border-radius:9px;
-  padding:14px 18px 12px;
-  min-height:162px;
-}
-.domain h4{
-  margin:0 0 10px;
-  color:var(--blue);
-  font-size:15px;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  font-weight:650;
-  padding-bottom:9px;
+  align-items:flex-start;
+  padding-bottom:20px;
   border-bottom:1px solid rgba(255,255,255,.08);
 }
-.domain.financeiro h4{color:var(--orange)}
-.mod{
+
+.sinteseTop small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.sinteseTop strong{
+  display:block;
+  margin-top:8px;
+  font-size:34px;
+  line-height:1;
+  letter-spacing:-1.2px;
+  font-weight:900;
+}
+
+.sinteseTop .atualizado{
+  display:block;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:600;
+}
+
+.sinteseTag{
+  color:#06111f;
+  background:var(--blue2);
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.insightList{
   display:grid;
-  grid-template-columns:4px 1fr auto;
-  gap:12px;
-  align-items:center;
-  min-height:34px;
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  transition:.18s ease;
+  gap:14px;
+  margin-top:20px;
 }
-.mod:last-child{border-bottom:0}
-.mod:hover{transform:translateX(3px);color:#fff}
-.mod:before{
-  content:"";
-  width:2px;
-  height:18px;
+
+.insight{
+  display:grid;
+  grid-template-columns:6px 1fr;
+  gap:16px;
+  align-items:start;
+}
+
+.bar{
+  width:6px;
+  height:100%;
+  min-height:62px;
+  border-radius:99px;
   background:var(--blue);
-  box-shadow:0 0 10px rgba(109,182,255,.45);
 }
-.financeiro .mod:before{background:var(--orange);box-shadow:0 0 10px rgba(255,138,36,.45)}
-.mod span{font-size:15px;color:#f1f6ff;line-height:1.25}
-.mod em{font-style:normal;color:#fff;font-size:20px;font-weight:300;line-height:1;opacity:.9}
-.footer{
-  border:1px solid rgba(99,155,207,.25);
-  border-radius:8px;
-  background:rgba(8,27,48,.56);
-  padding:13px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+
+.insight.warn .bar{background:var(--orange)}
+.insight.good .bar{background:var(--green)}
+
+.insight h3{
+  margin:0;
+  color:var(--soft);
+  font-size:16px;
+  line-height:1.25;
+  letter-spacing:-.25px;
+  font-weight:850;
+}
+
+.insight p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.42;
+}
+
+.mockNote{
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px dashed rgba(255,255,255,.12);
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.4px;
+}
+
+/* FAIXA DE LEITURA RÁPIDA */
+.quickRead{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.quick{
+  padding:30px 28px 28px 0;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+
+.quick:last-child{border-right:0}
+
+.quick b{
+  display:block;
+  font-size:40px;
+  line-height:.9;
+  letter-spacing:-2px;
+  font-weight:900;
+  color:var(--muted);
+}
+
+.quick span{
+  display:block;
+  margin-top:11px;
+  color:var(--soft);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.1px;
+  text-transform:uppercase;
+}
+
+.quickNote{
+  padding:14px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.3px;
+}
+
+/* GRADE DE MÓDULOS */
+.command{
+  flex:1;
+  padding:46px 0 42px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.sectionLabel{
+  margin:0 0 24px;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:3.2px;
+  text-transform:uppercase;
+}
+
+.commandGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+}
+
+.column{
+  border:1px solid rgba(49,90,124,.58);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(7,26,44,.62),rgba(5,18,31,.40));
+  overflow:hidden;
+}
+
+.columnHead{
+  padding:25px 25px 22px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.columnHead small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2.2px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+.columnHead h3{
+  margin:0;
+  font-size:24px;
+  line-height:1.05;
+  letter-spacing:-.9px;
+  font-weight:900;
+}
+
+.links{
+  padding:8px 25px 20px;
+}
+
+.module{
+  display:grid;
+  grid-template-columns:1fr 30px;
   gap:18px;
-  color:#aabbd0;
+  align-items:center;
+  min-height:88px;
+  padding:17px 0;
+  border-bottom:1px solid rgba(255,255,255,.075);
+  transition:.16s ease;
+}
+
+.module:hover{
+  transform:translateX(5px);
+}
+
+.module:last-child{
+  border-bottom:0;
+}
+
+.module strong{
+  display:block;
+  font-size:18px;
+  line-height:1.08;
+  letter-spacing:-.35px;
+  font-weight:850;
+}
+
+.module span{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:10px;
+}
+
+.module em{
+  font-style:normal;
+  color:#b8d9d5;
+  border:1px solid rgba(120,170,163,.22);
+  background:rgba(120,170,163,.06);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  line-height:1;
+  font-weight:700;
+}
+
+.arrow{
+  color:var(--blue);
+  font-size:29px;
+  font-weight:300;
+  text-align:right;
+}
+
+/* FOOTER */
+.footer{
+  padding:22px 0 0;
+  color:var(--muted);
   font-size:13px;
+  line-height:1.55;
 }
-.footer strong{color:var(--blue);font-weight:650}
+
+.footer strong{
+  display:block;
+  color:var(--soft);
+  font-weight:800;
+  margin-bottom:2px;
+}
+
 @media(max-width:1180px){
-  .hero{grid-template-columns:1fr;gap:22px}
-  .heroText{border-left:0;border-top:1px solid rgba(255,255,255,.45);padding-left:0;padding-top:24px}
-  .grid2{grid-template-columns:1fr}
-  .moduleGrid{grid-template-columns:repeat(2,1fr)}
+  .header{
+    height:auto;
+    grid-template-columns:1fr;
+    gap:18px;
+    padding-bottom:26px;
+  }
+
+  .logoBlock{
+    height:auto;
+    padding-right:0;
+    border-right:0;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    gap:34px;
+  }
+
+  .quickRead{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .quick{
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  .commandGrid{
+    grid-template-columns:1fr;
+  }
 }
-@media(max-width:760px){
-  .wrap{width:94vw;padding-top:24px}
-  .metrics{grid-template-columns:1fr}
-  .moduleGrid{grid-template-columns:1fr}
-  .heroText h1{font-size:40px}
-  .heroText h2{font-size:17px}
-  .heroText p{font-size:15px}
-  .radarRow{grid-template-columns:1fr;gap:7px}
-  .metric b{font-size:54px}
-  .footer{flex-direction:column;align-items:flex-start}
+
+@media(max-width:720px){
+  .shell{
+    width:92vw;
+    padding-top:22px;
+  }
+
+  .logoBlock img{
+    width:282px;
+  }
+
+  .hero{
+    padding:52px 0 40px;
+  }
+
+  .heroTitle{
+    font-size:56px;
+    letter-spacing:-3.2px;
+  }
+
+  .sinteseTop{
+    flex-direction:column;
+  }
+
+  .quickRead{
+    grid-template-columns:1fr;
+  }
+
+  .quick{
+    border-right:0;
+  }
 }
 </style>
 </head>
+
 <body>
-<main class="wrap">
-  <section class="hero" aria-label="Identidade institucional">
-    <div>
-      <img class="logoOfficial" src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | Comlurb">
+<main class="shell">
+
+  <header class="header">
+    <div class="logoBlock">
+      <img src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | COMLURB">
     </div>
-    <div class="heroText">
+
+    <div class="brand">
       <h1>HUB COMLURB</h1>
-      <h2>Centro de Inteligência Operacional</h2>
-      <p>Monitoramento integrado dos indicadores corporativos, operacionais, funcionais, contratuais e ambientais para suporte à decisão estratégica.</p>
+      <p>Centro de Inteligência e Gestão Estratégica Operacional</p>
     </div>
+  </header>
+
+  <section class="hero" aria-label="Panorama Corporativo">
+    <div>
+      <div class="heroMark">Panorama Corporativo</div>
+      <h2 class="heroTitle">Gestão Estratégica.<br>Governança.<br>Operação.</h2>
+
+      <div class="heroSub">
+        <span>Presidência</span>
+        <span>Diretorias</span>
+        <span>Território</span>
+      </div>
+    </div>
+
+    <aside class="sintesePanel" aria-label="Síntese Executiva">
+      <div class="sinteseTop">
+        <div>
+          <small>Síntese Executiva</small>
+          <strong>JUN/2026</strong>
+          <span class="atualizado">Atualizado em 03 jul 2026</span>
+        </div>
+        <div class="sinteseTag">Fechamento mensal</div>
+      </div>
+
+      <div class="insightList">
+        <article class="insight warn">
+          <div class="bar"></div>
+          <div>
+            <h3>Dois módulos exigem decisão da Presidência no ciclo.</h3>
+            <p>Acompanhamento concentrado em metas pactuadas e eficiência operacional.</p>
+          </div>
+        </article>
+
+        <article class="insight good">
+          <div class="bar"></div>
+          <div>
+            <h3>Nenhum módulo classificado como Crítico no fechamento de JUN/2026.</h3>
+            <p>Não há indicador que exija ação imediata da Presidência neste ciclo.</p>
+          </div>
+        </article>
+
+        <article class="insight">
+          <div class="bar"></div>
+          <div>
+            <h3>Prioridade de leitura: Acordo de Resultados e Contratos de Receita.</h3>
+            <p>Os módulos abaixo organizam o acesso direto para análise detalhada.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="mockNote">Conteúdo ilustrativo para validação de layout. Em produção, a Síntese Executiva é gerada por templates condicionais a partir de HUB.state.</div>
+    </aside>
   </section>
 
-  <section class="metrics" aria-label="Indicadores corporativos">
-    <article class="metric">
-      <b>6</b>
-      <span>Módulos oficiais</span>
-    </article>
-    <article class="metric">
-      <b>13</b>
-      <span>Indicadores do Acordo de Resultados</span>
-    </article>
-    <article class="metric">
-      <b>63</b>
-      <span>Indicadores catalogados</span>
-    </article>
-  </section>
-
-  <section class="grid2" id="centro-situacao">
-    <article class="panel">
-      <div class="panelTitle">
-        <h3>Radar Executivo</h3>
-      </div>
-      <div class="radarRow">
-        <div><strong>Indicadores Gerais</strong><small>Leitura executiva consolidada da Companhia</small></div>
-        <span class="status na">Sem dado</span>
-        <span class="lineMark na"></span>
-      </div>
-      <div class="radarRow">
-        <div><strong>Acordo de Resultados</strong><small>Metas pactuadas e projeção de resultado</small></div>
-        <span class="status na">Sem dado</span>
-        <span class="lineMark na"></span>
-      </div>
-      <div class="radarRow">
-        <div><strong>IPL</strong><small>Índice Padrão de Limpeza por território</small></div>
-        <span class="status na">Sem dado</span>
-        <span class="lineMark na"></span>
-      </div>
-      <div class="radarRow">
-        <div><strong>Engenharia Operacional</strong><small>Destinação, frota, energia e eficiência</small></div>
-        <span class="status na">Sem dado</span>
-        <span class="lineMark na"></span>
-      </div>
-      <div class="radarRow">
-        <div><strong>Pessoas</strong><small>Quadro, disponibilidade e ocorrências funcionais</small></div>
-        <span class="status na">Sem dado</span>
-        <span class="lineMark na"></span>
-      </div>
-      <div class="radarRow">
-        <div><strong>Contratos de Receita</strong><small>Faturamento, execução e glosas</small></div>
-        <span class="status na">Sem dado</span>
-        <span class="lineMark na"></span>
-      </div>
-      <div class="note">Os status deste bloco serão exibidos quando conectados às fontes oficiais.</div>
+  <section class="quickRead" aria-label="Leitura Rápida">
+    <article class="quick">
+      <b>—</b>
+      <span>Módulos Ativos</span>
     </article>
 
-    <article class="panel">
-      <div class="panelTitle">
-        <h3>Destaques Operacionais</h3>
-      </div>
-      <div class="feature">
-        <strong>Centro de Inteligência Operacional da COMLURB.</strong>
-        <p>Acompanhamento executivo consolidado para apoiar decisões da Presidência, Diretorias e áreas técnicas, com dados de fontes oficiais.</p>
-      </div>
-      <div class="highItem">Seis módulos organizados por decisão executiva.</div>
-      <div class="highItem">Taxonomia única de status: Dentro da Meta, Atenção, Crítico e Sem dado.</div>
-      <div class="highItem">Insights determinísticos, sempre com número e fonte verificável.</div>
-      <div class="highItem">Território como camada transversal presente nos módulos.</div>
+    <article class="quick">
+      <b>—</b>
+      <span>Módulos em Estruturação</span>
+    </article>
+
+    <article class="quick">
+      <b>—</b>
+      <span>Bases Integradas</span>
+    </article>
+
+    <article class="quick">
+      <b>—</b>
+      <span>Atualização Mensal</span>
     </article>
   </section>
+  <p class="quickNote">Estrutura preparada para consumo de HUB.state. Valores serão exibidos após integração com a biblioteca (Fase 0).</p>
 
-  <section class="modules" id="modulos">
-    <h3>Módulos Disponíveis</h3>
-    <div class="moduleGrid">
-      <article class="domain">
-        <h4>Estratégico</h4>
-        <a class="mod" href="indicadores-gerais/"><span>Indicadores Gerais</span><em>›</em></a>
-        <a class="mod" href="ar/"><span>Acordo de Resultados</span><em>›</em></a>
+  <!--
+    Rotas dos módulos abaixo são placeholders.
+    As pastas correspondentes ainda não existem no repositório
+    (exceção feita a módulos já publicados, se houver).
+    Ajustar os hrefs quando cada módulo for efetivamente criado.
+  -->
+  <section class="command" aria-label="Módulos">
+    <h3 class="sectionLabel">Módulos</h3>
+
+    <div class="commandGrid">
+
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 01</small>
+          <h3>Estratégia e Resultados</h3>
+        </div>
+
+        <div class="links">
+          <a class="module" href="indicadores-gerais/">
+            <div>
+              <strong>Indicadores Gerais</strong>
+              <span><em>metas</em><em>séries</em><em>desempenho</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="ar/">
+            <div>
+              <strong>Acordo de Resultados</strong>
+              <span><em>pactuação</em><em>metas</em><em>resultado</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
       </article>
 
-      <article class="domain">
-        <h4>Operacional</h4>
-        <a class="mod" href="ipl/"><span>IPL</span><em>›</em></a>
-        <a class="mod" href="engenharia-operacional/"><span>Engenharia Operacional</span><em>›</em></a>
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 02</small>
+          <h3>Operação Urbana</h3>
+        </div>
+
+        <div class="links">
+          <a class="module" href="ipl/">
+            <div>
+              <strong>Padrão de Limpeza Urbana</strong>
+              <span><em>IPL</em><em>trechos</em><em>avaliação</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="engenharia-operacional/">
+            <div>
+              <strong>Engenharia Operacional</strong>
+              <span><em>coleta</em><em>território</em><em>produtividade</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
       </article>
 
-      <article class="domain">
-        <h4>Governança</h4>
-        <a class="mod" href="pessoas/"><span>Pessoas</span><em>›</em></a>
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 03</small>
+          <h3>Gestão Corporativa</h3>
+        </div>
+
+        <div class="links">
+          <a class="module" href="pessoas/">
+            <div>
+              <strong>Pessoas</strong>
+              <span><em>efetivo</em><em>afastamentos</em><em>distribuição</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="contratos/">
+            <div>
+              <strong>Contratos de Receita</strong>
+              <span><em>faturamento</em><em>receita</em><em>execução</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
       </article>
 
-      <article class="domain financeiro">
-        <h4>Financeiro</h4>
-        <a class="mod" href="contratos/"><span>Contratos de Receita</span><em>›</em></a>
-      </article>
     </div>
   </section>
 
   <footer class="footer">
-    <div><strong>HUB COMLURB</strong> &nbsp;•&nbsp; Centro de Inteligência Operacional<br>Plataforma corporativa de monitoramento, análise e suporte à decisão.</div>
-    <div>Versão 1.0 &nbsp;•&nbsp; 2026</div>
+    <strong>HUB COMLURB</strong>
+    Núcleo de Inteligência e Gestão Estratégica Operacional
   </footer>
+
 </main>
 </body>
 </html>

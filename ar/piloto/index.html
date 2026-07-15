@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>HUB COMLURB · Relatório técnico · Piloto AR (Fase 4)</title>
+<meta name="robots" content="noindex,nofollow">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<!-- hub-core.js e hub-rules.js já existem em main e não são reenviados
+     nesta entrega incremental (conferidos por diff, idênticos). -->
+<script src="../../assets/components/hub-core.js"></script>
+<script src="../../assets/components/hub-rules.js"></script>
+<!-- Arquivos novos desta entrega (Fase 4 · Piloto A/AR). Nenhum depende
+     de hub-utils.js — ver nota de compatibilidade em cada arquivo. -->
+<script src="../../assets/components/hub-sources.js"></script>
+<script src="../../assets/components/hub-ingest-model.js"></script>
+<script src="../../assets/components/hub-ingest-reader.js"></script>
+<script src="../../assets/components/hub-ingest-decoder.js"></script>
+<script src="../../assets/components/hub-ingest-adapter-ar.js"></script>
+<script src="../../assets/components/hub-rules-ar.js"></script>
+<script src="../../assets/components/hub-state-ar.js"></script>
+<script src="legado-referencia.js"></script>
+<script src="harness.js"></script>
+<style>
+  body{background:#06111f;color:#f7f9ff;font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;padding:24px;max-width:1000px}
+  h1{font-size:18px;margin:0 0 4px}
+  .aviso{background:#3a2a12;border:1px solid #e87535;color:#ffd9b0;padding:10px 14px;border-radius:8px;margin:14px 0;font-size:13px}
+  h2{font-size:14px;color:#5b9bd5;border-bottom:1px solid #294866;padding-bottom:6px;margin-top:28px}
+  .ok{color:#78aaa3}.crit{color:#ef6a5d}.att{color:#e87535}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  td,th{border:1px solid #294866;padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#0a1b31;color:#b8c9de}
+  pre{white-space:pre-wrap;background:#0a1b31;border:1px solid #294866;border-radius:6px;padding:10px;font-size:11px}
+  #resumo{font-size:16px;font-weight:700;margin:10px 0}
+  code{color:#a78bfa}
+</style>
+</head>
+<body>
+<h1>HUB COMLURB · Piloto A (AR) · Relatório técnico legado × novo</h1>
+<div class="aviso">
+  Esta página NÃO é um painel institucional e não é linkada do portal. Existe apenas para validar,
+  em ambiente de navegador real, a cadeia Locator → Reader → Decoder → Adapter AR → Validator →
+  Modelo canônico → hub-rules + hub-rules-ar → State contra o legado (<code>ar/index.html</code>),
+  que continua em produção sem nenhuma alteração. Ver MIGRATION_STRATEGY.md §5/§6.
+  <br><br>
+  <strong>Três fontes operacionais</strong> participam desta comparação: <code>AR_GERAL</code>,
+  <code>AR_2026</code>, <code>AR_MAPEAMENTO</code> — as mesmas três que o legado (<code>ar/index.html</code>)
+  já lê hoje. Uma quarta fonte, <code>AR_GOVERNANCA</code>, está registrada no Locator
+  (<code>hub-sources.js</code>) por completude do contrato de <code>ar-config.js</code>, mas não é buscada
+  nem lida por este piloto nem pelo legado.
+</div>
+<div id="resumo">Carregando dados reais das três fontes operacionais do AR (AR_GERAL, AR_2026, AR_MAPEAMENTO)…</div>
+<div id="conteudo"></div>
+
+<script>
+function csvLegado(url) {
+  return new Promise(function (resolve, reject) {
+    Papa.parse(url, { download: true, header: true, skipEmptyLines: true,
+      complete: function (r) { resolve((r.data || []).filter(function (row) { return Object.values(row).some(function (v) { return String(v ?? "").trim() !== ""; }); })); },
+      error: reject });
+  });
+}
+
+function fonte(id) { return HUB.sources.fonte(id).url; }
+
+async function rodar() {
+  var resumoEl = document.getElementById("resumo");
+  var out = document.getElementById("conteudo");
+
+  var RAW = { geral: [], ar: [], map: [] };
+  var falhaLegado = null;
+  try {
+    RAW.geral = await csvLegado(fonte("AR_GERAL"));
+    RAW.ar = await csvLegado(fonte("AR_2026"));
+    RAW.map = await csvLegado(fonte("AR_MAPEAMENTO"));
+  } catch (e) {
+    falhaLegado = e;
+  }
+
+  var pipelineNovo = await HUB.ingest.adapterAR.carregarAR({});
+
+  if (falhaLegado || !pipelineNovo.envelope.payload) {
+    resumoEl.className = "crit";
+    resumoEl.textContent = "Falha ao carregar dados reais — comparação não pôde rodar. Ver detalhes abaixo.";
+    out.innerHTML = "<h2>Diagnóstico de falha</h2><pre>" +
+      "Legado: " + (falhaLegado ? String(falhaLegado.message || falhaLegado) : "OK") + "\n" +
+      "Novo (diagnosticoFontes): " + JSON.stringify(pipelineNovo.diagnosticoFontes, null, 2) + "\n" +
+      "Novo (envelope.quality): " + JSON.stringify(pipelineNovo.envelope.quality, null, 2) +
+      "</pre>";
+    return;
+  }
+
+  var dataLegado = AR_LEGADO.processar(RAW);
+  var bonusLegado = AR_LEGADO.calcularBonificacao(dataLegado);
+
+  var mesAtual = new Date().getMonth() + 1;
+  var dataNovo = HUB.stateAR.montarDataAR(pipelineNovo.itens, mesAtual);
+  var bonusNovo = HUB.stateAR.montarBonificacaoAR(dataNovo);
+
+  var relatorio = HARNESS_AR.comparar(dataLegado, dataNovo, bonusLegado, bonusNovo);
+
+  var statusTexto;
+  if (relatorio.aprovado && relatorio.pendenciaE03) {
+    statusTexto = "COMPARAÇÃO LEGADO × NOVA ARQUITETURA APROVADA — PENDÊNCIA INSTITUCIONAL E03 REGISTRADA.";
+  } else if (relatorio.aprovado) {
+    statusTexto = "APROVADO (Seção 5 da estratégia de migração)";
+  } else {
+    statusTexto = "PENDENTE DE REVISÃO";
+  }
+
+  resumoEl.className = relatorio.aprovado ? "ok" : "att";
+  resumoEl.textContent = "Legado: " + relatorio.resumo.qtdLegado + " indicadores · Novo: " + relatorio.resumo.qtdNovo +
+    " · Divergências de campo: " + relatorio.resumo.divergenciasCampo +
+    " · Divergências de bônus: " + relatorio.resumo.divergenciasBonus +
+    " · " + statusTexto;
+
+  var html = "";
+
+  html += "<h2>Divergências de campo, indicador a indicador</h2>";
+  if (!relatorio.divergencias.length) {
+    html += "<p class='ok'>Nenhuma divergência de campo encontrada.</p>";
+  } else {
+    html += "<table><tr><th>Indicador</th><th>Campo</th><th>Legado</th><th>Novo</th><th>Causa</th><th>Evidência</th><th>Decisão</th></tr>";
+    relatorio.divergencias.forEach(function (d) {
+      html += "<tr><td>" + d.indicador + "</td><td>" + d.campo + "</td><td>" + JSON.stringify(d.valorLegado) +
+        "</td><td>" + JSON.stringify(d.valorNovo) + "</td><td>" + (d.causa || "") + "</td><td>" + (d.evidencia || "") +
+        "</td><td>" + d.decisao + "</td></tr>";
+    });
+    html += "</table>";
+  }
+
+  html += "<h2>Divergências de bonificação</h2>";
+  if (!relatorio.divergenciasBonus.length) {
+    html += "<p class='ok'>Nenhuma divergência de bônus encontrada.</p>";
+  } else {
+    html += "<table><tr><th>Campo</th><th>Legado</th><th>Novo</th><th>Causa</th><th>Decisão</th></tr>";
+    relatorio.divergenciasBonus.forEach(function (d) {
+      html += "<tr><td>" + d.campo + "</td><td>" + JSON.stringify(d.valorLegado) + "</td><td>" + JSON.stringify(d.valorNovo) +
+        "</td><td>" + (d.causa || "") + "</td><td>" + d.decisao + "</td></tr>";
+    });
+    html += "</table>";
+  }
+
+  if (relatorio.pendenciaE03) {
+    html += "<h2>Pendência institucional registrada (não é divergência legado×novo)</h2><pre>" + JSON.stringify(relatorio.pendenciaE03, null, 2) + "</pre>";
+  }
+
+  html += "<h2>Diagnóstico de fontes (três fontes operacionais consumidas pelo novo pipeline)</h2><pre>" + JSON.stringify(pipelineNovo.diagnosticoFontes, null, 2) + "</pre>";
+
+  out.innerHTML = html;
+}
+
+rodar().catch(function (e) {
+  document.getElementById("resumo").className = "crit";
+  document.getElementById("resumo").textContent = "Erro inesperado ao rodar o relatório: " + (e && e.message ? e.message : String(e));
+  console.error(e);
+});
+</script>
+</body>
+</html>

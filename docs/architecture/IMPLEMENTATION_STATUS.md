@@ -3,18 +3,21 @@
 ## Fase atual: Fase 4 — Piloto AR
 
 **Implementação: concluída.**
-**Auditoria/publicação: pendente** (aguarda validação com dados reais em
-navegador — ver "Não executado nesta fase" abaixo — e aprovação humana
-explícita da proprietária do produto).
-**Próxima ação autorizada: validar e aprovar o piloto** — abrir
-`ar/piloto/index.html` publicado, ler o relatório, decidir se a
-comparação está aprovada. Nenhuma ação além dessa está autorizada agora.
+**Publicação: já ocorreu** em `https://urbanflowrio.github.io/COMLURB/ar/piloto/`.
+**Auditoria/aprovação: ainda pendente.** A primeira execução com dados
+reais encontrou 2 divergências de campo (E08, P01 — campo `atingimento`)
+e resultou em status PENDENTE DE REVISÃO. Este documento registra o
+diagnóstico, a causa-raiz e a correção mínima aplicada (ver "Correção
+pós-publicação" abaixo). A aprovação formal continua exigindo uma nova
+execução com dados reais em navegador, com decisão humana explícita da
+proprietária do produto — não é dada como certa por esta correção.
+**Próxima ação autorizada: publicar esta correção e validar novamente o
+piloto com dados reais.** Nenhuma ação além dessa está autorizada agora.
 **Fase 5: NÃO autorizada.** Nada deste documento ou desta entrega inicia,
 prepara ou antecipa a Fase 5.
 
-Este documento não existia em `main` antes desta entrega (conferido por
-verificação direta do repositório, não presumido). É tratado aqui como
-**arquivo novo** — ver "Classificação dos arquivos" abaixo.
+Este documento não existia em `main` antes da primeira entrega desta
+fase (conferido por verificação direta do repositório, não presumido).
 
 ---
 
@@ -109,7 +112,85 @@ O harness classifica essa divergência com `decisao: "ACEITA"`, nunca
 
 ---
 
-## Classificação dos arquivos desta entrega
+## Correção pós-publicação — divergência de atingimento (E08/P01)
+
+**Contexto**: após publicação real (`https://urbanflowrio.github.io/COMLURB/ar/piloto/`),
+o piloto rodou contra dados reais e reportou: Legado 13 indicadores, Novo
+13 indicadores, 2 divergências de campo (E08 e P01, campo `atingimento`:
+legado `0`, novo `null`), 1 divergência de bônus (a esperada, `bonusTotal`
+— governança E+C+P, inalterada), status PENDENTE DE REVISÃO.
+
+**Rastreamento**: nem E08 nem P01 tiveram divergência reportada em
+`realizado(atual)`, `meta`, `unidade` ou `sentido` — só em `atingimento`.
+Pela própria mecânica do harness (que compara esses campos
+separadamente), isso prova que Reader → Decoder → Adapter produziram o
+mesmo `atual` e `meta` nos dois pipelines. O ponto de divergência estava
+isolado no cálculo do campo `atingimento` em `hub-rules-ar.js`.
+
+**Causa-raiz**: `aplicarRegrasIndicador()` (v1.1.0) exigia `atual !== 0`
+para calcular o campo `atingimento`. Essa guarda nunca existiu no legado
+para esse campo especificamente — `ar/index.html · processar()` só exige
+`atual≠null`, `meta≠null`, `meta≠0` para calcular `d.atingimento`, e
+calcula normalmente `0/meta = 0` quando `atual=0` e `meta>0`. O legado
+trata "status" (guarda ampla: `atual===0` → "Sem dado") e "atingimento"
+(guarda estrita: só `meta≠0`) como duas contas separadas, com regras
+diferentes. A guarda extra em `atingimento` foi um erro de implementação
+desta entrega, copiada por engano da guarda de `status`.
+
+**Decisão**: `0` é o resultado correto, não `null`. Os dados permitem
+calcular validamente o atingimento (`meta≠0`, `atual` é um número real e
+válido — `calcValue()`/`num()` nunca produzem `0` a partir de célula
+vazia ou inválida, só de um "0" literal na planilha). Preservar `null`
+teria violado a regra de não esconder um cálculo válido atrás de um
+estado de ausência. `status` não muda — continua "Sem dado" quando
+`atual=0`, que é o comportamento real e correto do legado.
+
+**Arquivo alterado**: `assets/components/hub-rules-ar.js` (v1.1.0 →
+v1.2.0), função `aplicarRegrasIndicador` — só o cálculo do campo
+`atingimento`. `status`, `tendência`, bonificação, e todas as regras de
+outros indicadores permanecem exatamente como estavam. Nenhum outro
+arquivo desta entrega foi tocado.
+
+**Risco de regressão**: baixo e localizado. Afeta só indicadores com
+`atual===0` e `meta≠0` (deixam de ser `null` e passam a mostrar o valor
+numérico real: `0` para maior_melhor, ou `Infinity` para menor_melhor —
+mesma fórmula não guardada que o legado sempre teve). Não afeta
+indicadores com `meta===0` (continuam `null`) nem `atual===null`
+(continuam `null`). Não afeta `status`, `bônus`, `tendência`, nem regras
+de E03, C01/C02, ou qualquer outro indicador.
+
+**Testes adicionais**: grupo novo "Correção E08/P01 — atingimento com
+atual=0", 9 casos: maior_melhor com atual=0 (resultado 0, status "Sem
+dado"), menor_melhor com atual=0 (resultado Infinity — mesma fórmula não
+guardada do legado), caso proporcional (SOMA/Mensal) com atual=0
+(resultado 0, guarda `metaProporcional > 0` preservada), meta=0 (continua
+`null`, única guarda real do campo), e uma comparação direta contra
+`AR_LEGADO.processar()` confirmando zero divergências de campo para todos
+esses casos.
+
+**Resultado dos testes após a correção** (mesmo comando, mesma suíte):
+```
+node testes/testar-fase4.js .
+```
+- **GRUPOS TESTADOS: 7** (6 anteriores + 1 novo)
+- **TOTAL: 42 casos**
+- **APROVADOS: 42**
+- **REPROVADOS: 0**
+
+## Classificação dos arquivos — publicação base da Fase 4 (rodada anterior, já publicada) corretiva
+
+**1 arquivo alterado** (já existente nas entregas anteriores desta fase):
+- `assets/components/hub-rules-ar.js` — correção do campo `atingimento`.
+
+**2 arquivos atualizados** (conteúdo, mesmo caminho das entregas
+anteriores):
+- `testes/testar-fase4.js` — grupo de teste novo (E08/P01).
+- `docs/architecture/IMPLEMENTATION_STATUS.md` — esta seção.
+
+**Nenhum arquivo novo. Nenhum componente novo.** Nenhum outro arquivo
+desta fase foi tocado por esta correção.
+
+
 
 `docs/architecture/IMPLEMENTATION_STATUS.md` não existe em `main`
 (verificado por consulta direta ao repositório, não presumido) —

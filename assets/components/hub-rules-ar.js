@@ -1,6 +1,6 @@
 /* ============================================================
    HUB COMLURB · BIBLIOTECA OFICIAL · hub-rules-ar.js
-   Camada 2 (Regras específicas) · v1.1.0
+   Camada 2 (Regras específicas) · v1.2.0
    Dependências: hub-core, hub-rules.
    PROIBIDO nesta camada: DOM, fetch, conhecimento de layout de fonte
    (isso é Adapter AR), regra de outro módulo (IPL, Engenharia, etc.).
@@ -25,14 +25,33 @@
        do produto menciona uma regra que o código não comprova, isso
        está registrado explicitamente como PENDÊNCIA, não implementado.
 
+   v1.2.0 — CORREÇÃO (achado de auditoria com dados reais, E08/P01):
+   o campo numérico "atingimento" tinha uma guarda extra (atual!==0) que
+   o legado NUNCA teve para esse campo especificamente. ar/index.html
+   trata "status" (Dentro da Meta/Atenção/Crítico/Sem dado) e
+   "atingimento" (o número bruto) como DUAS contas separadas, com
+   guardas DIFERENTES:
+     - status (statusCanonico): atual===0 OU meta===0 → "Sem dado"
+       (guarda ampla, intencional — não presumir "zero" como medição
+       real para fins de classificação executiva).
+     - atingimento (dentro de processar()): só exige atual≠null,
+       meta≠null, meta≠0. NÃO exige atual≠0 — atual=0 com meta>0 é uma
+       divisão válida (0/meta=0), calculada e exibida normalmente.
+   Este arquivo agora replica as duas contas separadamente, com guardas
+   diferentes cada uma (ver aplicarRegrasIndicador): status continua via
+   statusCanonicoAR/statusComPrecedencia (guarda ampla, correta);
+   atingimento é calculado inline com a guarda estrita do legado (só
+   meta≠0), nunca chamando atingimentoAR() para este campo — essa
+   função continua existindo e correta, mas só serve à conta de status.
+
    DIVERGÊNCIAS COMPROVADAS ENTRE ESTE ARQUIVO E O LEGADO (documentadas
    deliberadamente, ver IMPLEMENTATION_STATUS.md → Fase 4):
-     1. Zero/nulo em atingimento: ar/index.html trata atual===0 OU
-        meta===0 (em qualquer sentido) como "Sem dado" incondicionalmente.
-        HUB.rules.atingimento (genérico) tem comportamento diferente para
-        menor_melhor com atual=0 (Infinity) ou meta=0 (0/atual). Por isso
-        este arquivo usa sua PRÓPRIA guarda de zero/nulo (igual ao
-        legado), em vez de delegar cegamente a HUB.rules.status.
+     1. (RESOLVIDA em v1.2.0 — ver nota acima.) HUB.rules.atingimento
+        (genérico, hub-rules.js) continua tendo comportamento diferente
+        do AR para menor_melhor com atual=0/meta=0 — por isso o AR
+        continua usando suas próprias funções (atingimentoAR para status,
+        cálculo inline para o campo atingimento), nunca delegando a
+        HUB.rules.atingimento.
      2. Tendência: ar/index.html usa limiar de estabilidade por diferença
         ABSOLUTA (<0.00001) entre médias de 3 meses. HUB.rules.
         tendenciaTrimestral usa limiar RELATIVO de 2% (LIMIAR_ESTAVEL).
@@ -301,9 +320,28 @@
     var prop = calcularMetaProporcional(metaBruta, item.metadados.tipoAcumulado, item.metadados.periodicidade, mesAtual);
     var metaRef = prop.aplica ? prop.metaProporcional : metaBruta;
 
-    var atingimento = (atual !== null && metaBruta !== null && metaBruta !== 0 && atual !== 0)
-      ? atingimentoAR(atual, metaRef, sentido)
-      : null;
+    // CORREÇÃO (achado de auditoria com dados reais, E08/P01): o campo
+    // numérico "atingimento" replica a fórmula EXATA do legado
+    // (ar/index.html · processar()), que só exige atual≠null, meta≠null,
+    // meta≠0 — NUNCA exigiu atual≠0. atual=0 com meta>0 é um resultado
+    // matemático válido (0/meta = 0), não um dado ausente; por isso não
+    // usa atingimentoAR() aqui (aquela função tem a guarda atual===0,
+    // correta para STATUS via statusCanonicoAR/statusComPrecedencia
+    // abaixo — que continuam corretamente mostrando "Sem dado" quando
+    // atual=0 — mas errada para este campo numérico específico).
+    var atingimento;
+    if (atual === null || metaBruta === null || metaBruta === 0) {
+      atingimento = null;
+    } else if (prop.aplica) {
+      // Réplica exata do ramo isSomaAnual do legado: só calcula se a
+      // meta proporcional for estritamente positiva (mesmo guarda "> 0"
+      // do legado, não apenas "!== 0").
+      atingimento = prop.metaProporcional > 0
+        ? (maiorMelhorAR(sentido) ? atual / prop.metaProporcional : prop.metaProporcional / atual)
+        : null;
+    } else {
+      atingimento = maiorMelhorAR(sentido) ? atual / metaBruta : metaBruta / atual;
+    }
 
     var precedencia = statusComPrecedencia(item.metadados.statusPublicadoRaw, atual, metaRef, sentido);
 

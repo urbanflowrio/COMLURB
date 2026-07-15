@@ -136,6 +136,41 @@ async function rodar() {
   caso("diagnosticoFontes tem exatamente 3 chaves", Object.keys(resFetch.diagnosticoFontes).length, 3);
   caso("diagnosticoFontes NÃO inclui AR_GOVERNANCA", resFetch.diagnosticoFontes.hasOwnProperty("AR_GOVERNANCA"), false);
 
+  /* ---------- Correção E08/P01: atual=0 com meta válida ---------- */
+  grupo("Fase 4 · Correção E08/P01 — atingimento com atual=0 (achado de auditoria, dados reais)");
+
+  // Caso 1: maior_melhor, atual=0, meta>0 (perfil real de E08/P01) —
+  // legado calcula 0/meta = 0. Deve ser 0, não null.
+  var FIX_ZERO_MM = "Código,Grupo,Ordem,Indicador Executivo,Unidade,Sentido,Meta_2026,Atual,Tipo_Acumulado,Periodicidade,Status\n" +
+    "Z01,Estratégica,1,Zero maior_melhor,percentual,maior_melhor,90,0,MEDIA,Mensal,\n" +
+    "Z02,Estratégica,2,Zero menor_melhor,pontos,menor_melhor,5,0,MEDIA,Mensal,\n" +
+    "Z03,Estratégica,3,Zero proporcional,toneladas,maior_melhor,1200,0,SOMA,Mensal,\n" +
+    "Z04,Estratégica,4,Meta zero (deve continuar null),percentual,maior_melhor,0,50,MEDIA,Mensal,\n";
+  var resZero = await HUB.ingest.adapterAR.carregarAR({ fixtures: { AR_2026: FIX_ZERO_MM, AR_MAPEAMENTO: "Código_AR,Indicador_Geral\n", AR_GERAL: "Ano,Indicador\n" } });
+  var DATAZero = HUB.stateAR.montarDataAR(resZero.itens, 7);
+  var dZ01 = DATAZero.filter(function (d) { return d.codigo === "Z01"; })[0];
+  var dZ02 = DATAZero.filter(function (d) { return d.codigo === "Z02"; })[0];
+  var dZ03 = DATAZero.filter(function (d) { return d.codigo === "Z03"; })[0];
+  var dZ04 = DATAZero.filter(function (d) { return d.codigo === "Z04"; })[0];
+
+  caso("Z01 (maior_melhor, atual=0, meta=90%): atingimento = 0 (não null) — igual ao legado", dZ01.atingimento, 0);
+  caso("Z01: status continua 'Sem dado' (atual=0 — guarda de status inalterada)", dZ01.status, "Sem dado");
+  caso("Z02 (menor_melhor, atual=0, meta=5): atingimento = Infinity — mesma fórmula não guardada do legado (meta/atual)", dZ02.atingimento, Infinity);
+  caso("Z02: status continua 'Sem dado'", dZ02.status, "Sem dado");
+  caso("Z03 (proporcional, SOMA/Mensal, atual=0, meta=1200): atingimento = 0 (meta proporcional > 0, cálculo válido)", dZ03.atingimento, 0);
+  caso("Z03: atingimentoProporcional = true", dZ03.atingimentoProporcional, true);
+  caso("Z04 (meta=0): atingimento continua null (única guarda real: meta≠0)", dZ04.atingimento, null);
+  caso("Z04: status continua 'Sem dado' (meta=0)", dZ04.status, "Sem dado");
+
+  // Confirma contra a réplica fiel do legado (legado-referencia.js) que
+  // o novo pipeline agora bate exatamente, inclusive para atual=0.
+  var RAWZeroLegado = { ar: Papa.parse(FIX_ZERO_MM, { header: true, skipEmptyLines: true }).data, map: [], geral: [] };
+  var dataZeroLegado = AR_LEGADO.processar(RAWZeroLegado);
+  var bonusZeroLegado = AR_LEGADO.calcularBonificacao(dataZeroLegado);
+  var bonusZeroNovo = HUB.stateAR.montarBonificacaoAR(DATAZero);
+  var relatorioZero = HARNESS_AR.comparar(dataZeroLegado, DATAZero, bonusZeroLegado, bonusZeroNovo);
+  caso("Harness: zero divergências de campo entre legado e novo para os casos atual=0 (Z01-Z04)", relatorioZero.resumo.divergenciasCampo, 0);
+
   /* ---------- Adapter AR + Validator + envelope (fixtures) ---------- */
   grupo("Fase 4 · Adapter AR + Validator + Modelo canônico");
   var FIX_AR2026 = "Código,Grupo,Ordem,Indicador Executivo,Unidade,Sentido,Meta_2026,Atual,Tipo_Acumulado,Periodicidade,Status\n" +

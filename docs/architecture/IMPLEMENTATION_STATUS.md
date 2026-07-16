@@ -646,3 +646,28 @@ nesta rodada (regra de execução 6).
 - Qualquer alteração em Engenharia/DTE (Piloto B).
 - Snapshot automático, GitHub Actions, backend, ou qualquer componente
   não explicitamente listado nesta entrega.
+
+
+## Correção de validação ao vivo — percentuais publicados pelo Google Sheets
+
+A validação em navegador após a correção de integração `index.html × harness.js` executou sem falha de interface, mas registrou **312 divergências numéricas reais**. O padrão foi determinístico: 24 séries percentuais/razões do Bloco B × 13 períodos, sempre com `canonico: null` e valor numérico na base vertical.
+
+Causa-raiz: a fonte pública viva passou a entregar células percentuais no formato exibido pelo Google Sheets, com símbolo `%` (por exemplo, `71,9%`), enquanto a fixture congelada usada nos testes continha a fração decimal equivalente (`0,719`). A função `numDTE` não removia `%`, portanto convertia essas células em `null`.
+
+Correção aplicada somente em `assets/components/hub-ingest-adapter-dte.js`:
+
+- percentual pt-BR com `%` é convertido para fração decimal (`71,9% → 0.719`);
+- `0%` permanece zero legítimo;
+- negativos são preservados (`-12,5% → -0.125`);
+- vazio e inválido continuam `null`;
+- moedas e números já suportados permanecem inalterados.
+
+Testes específicos adicionados em `testes/testar-fase5.js`. A Fase 5 permanece **pendente de nova validação no navegador** após a publicação deste corretivo. Fase 6 continua não autorizada.
+
+
+### Verificação local do corretivo percentual
+
+- Suíte da Fase 5 executada em ambiente local controlado com as fixtures da entrega: **96/96 aprovados, 0 reprovados**.
+- A contagem aumentou em 4 casos específicos de percentual publicado pelo Google Sheets.
+- A suíte da Fase 4 não foi reexecutada contra a `main` real neste ambiente; nenhum arquivo funcional da Fase 4 foi alterado por este corretivo. A validação de regressão permanece a ser executada na raiz completa do repositório, se desejado.
+- Próxima ação: publicar os três arquivos corretivos e validar novamente o piloto no navegador.

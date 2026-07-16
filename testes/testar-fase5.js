@@ -103,6 +103,10 @@ async function rodar() {
   caso("\"1.234\" (milhar pt-BR) -> 1234", numDTE("1.234"), 1234);
   caso("\"16.257.432\" (milhões, mais de um separador de milhar — achado real de biogás) -> 16257432", numDTE("16.257.432"), 16257432);
   caso("\"0,479\" (decimal pt-BR) -> 0.479", numDTE("0,479"), 0.479);
+  caso("\"71,9%\" (percentual pt-BR publicado pelo Sheets) -> 0.719", numDTE("71,9%"), 0.719);
+  caso("\"20,3%\" -> 0.203", numDTE("20,3%"), 0.203);
+  caso("\"0%\" -> 0 legítimo", numDTE("0%"), 0);
+  caso("\"-12,5%\" -> -0.125", numDTE("-12,5%"), -0.125);
   caso("\"R$ 442.403\" -> 442403", numDTE("R$ 442.403"), 442403);
   caso("\"abc\" (não numérico) -> null (nunca 0)", numDTE("abc"), null);
 

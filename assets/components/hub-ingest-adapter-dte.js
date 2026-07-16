@@ -96,6 +96,15 @@
    Nenhuma linha de valor associada volta a ser processada como
    indicador comum.
 
+   CORREÇÃO DE VALIDAÇÃO AO VIVO (v1.2.0) — PERCENTUAIS PUBLICADOS:
+   a execução no navegador mostrou exatamente 312 divergências (24
+   séries percentuais/razões × 13 períodos), todas com valor canônico
+   null e valor na base vertical. A causa foi comprovada pelo padrão:
+   a fonte viva passou a publicar células formatadas com "%" (ex.:
+   "71,9%"), enquanto a fixture congelada continha "0,719". `numDTE`
+   agora aceita percentual pt-BR e converte para fração decimal
+   ("71,9%" → 0.719; "0%" → 0), preservando o contrato canônico.
+
    CORREÇÃO PÓS-AUDITORIA (v1.1.0) — MECANISMO B (critério não
    modelado): achado real — dentro do Bloco A, subgrupo "VII - Geração
    Chorume (m³)", o mesmo indicador ("Tratamento Interno", "Tratamento
@@ -239,6 +248,16 @@
     var negativo = false;
     if (s.charAt(0) === "-") { negativo = true; s = s.slice(1); }
     s = s.replace(/^R\$/i, "");
+
+    // CORREÇÃO DE VALIDAÇÃO AO VIVO (07/2026): o Google Sheets pode
+    // publicar células formatadas como percentual com o símbolo "%"
+    // (ex.: "71,9%"), mesmo quando a fixture histórica trazia o valor
+    // decimal equivalente ("0,719"). O modelo canônico usa fração
+    // decimal, portanto remove o símbolo e divide por 100. Não confundir
+    // com o caractere "%" presente em rótulos de indicadores — esta
+    // função recebe somente células de valor.
+    var percentual = /%$/.test(s);
+    if (percentual) s = s.slice(0, -1);
     if (s === "") return null;
 
     var temVirgula = s.indexOf(",") !== -1;
@@ -261,6 +280,7 @@
 
     var n = Number(norm);
     if (!isFinite(n)) return null;
+    if (percentual) n = Number((n / 100).toFixed(12));
     if (negativo) n = -n;
     return n;
   }

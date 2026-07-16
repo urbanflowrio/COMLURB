@@ -140,17 +140,20 @@ seção).
   Fase 4).
 - `docs/architecture/IMPLEMENTATION_STATUS.md` — este documento.
 
-**Nota de proveniência desta rodada específica (correção do harness)**:
-dos 10 arquivos novos listados acima, esta rodada revisou o conteúdo de
-`engenharia-operacional/piloto/harness.js` (correção da colisão de
-chave), `testes/testar-fase5.js` (11 novos casos), e regenerou
-`engenharia-operacional/piloto/saida-canonica-exemplo.json`,
-`engenharia-operacional/piloto/relatorio-comparacao.json`,
-`engenharia-operacional/piloto/base-vertical-amostra.json` e
-`testes/fixtures/base-vertical-export-hub.json` (campo `atualizacao`
-adicionado, necessário para o cálculo de defasagem temporal).
-`assets/components/hub-ingest-adapter-dte.js` **não foi tocado** nesta
-rodada, conforme instruído.
+**Nota de proveniência desta rodada específica (correção dos
+Mecanismos A, B e C)**: dos 10 arquivos novos listados acima, esta
+rodada revisou o conteúdo de `assets/components/hub-ingest-adapter-dte.js`
+(Mecanismo A: consumo de múltiplas linhas associadas à Gerência
+Ofensora; Mecanismo B: dimensão critério), `engenharia-operacional/
+piloto/harness.js` (Mecanismo C: categorização não-comparável; correção
+de rotulagem), `testes/testar-fase5.js` (20 novos casos), e regenerou
+`engenharia-operacional/piloto/saida-canonica-exemplo.json` e
+`engenharia-operacional/piloto/relatorio-comparacao.json`. **Esta é a
+primeira rodada em que `hub-ingest-adapter-dte.js` é alterado desde a
+entrega original da Fase 5** — as duas rodadas anteriores de correção
+pós-auditoria não tocaram nele; esta rodada corrige a causa raiz real
+das 312 divergências observadas ao vivo, que estava no Adapter, não
+apenas no harness.
 
 **Nenhum painel de produção foi alterado.** O componente compartilhado
 `hub-sources.js` foi alterado apenas de forma aditiva para registrar
@@ -219,37 +222,112 @@ piloto/harness.js`: colisão de chave de comparação.**
     é só contexto para quem interpreta o relatório. Uma divergência de
     valor pode ser causada por atualização normal da fonte no período,
     não necessariamente por um erro do Adapter ou do harness.
-- **Adapter DTE**: não foi alterado nesta rodada. Não há evidência de
-  perda de dados nele — o pequeno delta de contagem observado ao vivo
-  (1118→1113 indicadores) é consistente com atualização normal da fonte
-  entre a captura da fixture e a execução ao vivo, não com um bug de
-  extração.
+- **Adapter DTE**: não foi alterado nesta rodada específica (correção
+  2). **Foi alterado na rodada seguinte** — ver "Correção pós-auditoria
+  (3)" abaixo, que revisa esta conclusão: o pequeno delta de contagem
+  observado ao vivo NÃO era só descompasso temporal — havia também um
+  bug real de duplicação no Adapter (Mecanismo A).
 
-**Testes — três rodadas registradas nesta fase, a mais recente é a
+**Correção pós-auditoria (3) desta rodada — Mecanismos A, B e C
+(diagnóstico completo solicitado pela auditoria, aceito e corrigido).**
+
+- **Mecanismo A — bug de duplicação no Adapter DTE (confirmado e
+  corrigido)**: cada bloco "Gerência Ofensora N" pode ter **mais de
+  uma** linha de valor associada (ex.: "% Sobrecarga" e "Horas Extras
+  (Valor e %)" têm 2 linhas por ofensora — valor absoluto e razão). A
+  versão anterior do Adapter só consumia a primeira linha seguinte; a
+  segunda linha (quando existia) era reprocessada pelo laço principal
+  como indicador comum, criando registros duplicados sob a mesma chave
+  (bloco+subgrupo+indicador+período) com valores diferentes — a causa
+  raiz real das 312 divergências observadas ao vivo, não a colisão de
+  chave do harness (que também era real, mas não a causa dominante).
+  **Corrigido em `hub-ingest-adapter-dte.js`**: o Adapter agora consome
+  todas as linhas seguintes enquanto não forem estruturais (nunca uma
+  contagem fixa), cada uma virando um registro de `gerenciasOfensoras`
+  com `indicadorAssociado` preservando qual rótulo aquele valor
+  representa. Nenhuma linha de valor associada volta a ser processada
+  como indicador comum. Lineage das duas (ou mais) linhas de origem
+  preservado.
+- **Mecanismo B — critério não modelado (confirmado e corrigido)**: no
+  Bloco A, subgrupo "VII - Geração Chorume (m³)", o mesmo indicador
+  ("Tratamento Interno", "Tratamento Externo", "Recirculado") se repete
+  sob critérios diferentes ("CTR Seriopédica", "Aterro Gramacho (ETC +
+  MANEJO)", "Aterro Bangu (REC. + TRAT. EXT)"). **Adicionado ao modelo
+  canônico**: `criterio`, `criterioNormalizado`, `linhaOrigemCriterio`
+  — preenchidos só quando um cabeçalho de critério estruturalmente
+  reconhecido é encontrado (lista nomeada, `CRITERIOS_CONHECIDOS`,
+  isolada no Adapter, mesma disciplina de subgrupo — nunca palavra-chave
+  livre). Indicador repetido no mesmo bloco/subgrupo/ocorrência SEM que
+  um critério catalogado explique a repetição gera bloqueio estrutural
+  (`indicador_duplicado_sem_criterio`) — nunca duplicado nem
+  sobrescrito silenciosamente. A chave canônica agora distingue bloco +
+  subgrupo + subgrupoOcorrência + critério + indicador + período.
+- **Mecanismo C — limitação estrutural da base vertical (não
+  "corrigida", reconhecida)**: a base vertical não registra
+  subgrupoOcorrência nem critério — não há como desambiguar quando o
+  modelo canônico distingue corretamente duas séries que a base
+  vertical não consegue distinguir (ex.: "P16A - Trator de Praia -
+  h/mês" aparece em 2 ocorrências físicas diferentes de "Horas
+  Utilizadas / Horas Estimadas (h)" no Bloco B). **Nenhuma tentativa de
+  adivinhar a ocorrência foi feita, e `subgrupoOcorrencia` não foi
+  removido do canônico.** O harness agora classifica esses casos como
+  `NAO_COMPARAVEL_POR_PERDA_DE_CONTEXTO`, nunca como divergência real —
+  mesmo quando um dos candidatos canônicos bate por coincidência
+  numérica com o valor da base vertical.
+- **Rotulagem do relatório corrigida**: `engenharia-operacional/piloto/
+  harness.js` agora expõe bloco, subgrupo e indicador em campos
+  separados e corretos em toda saída (semCorrespondencia,
+  divergenciasNumericasReais, naoComparaveisPorPerdaDeContexto,
+  divergenciasEsperadasNullZero) — nunca mais expõe o subgrupo da base
+  vertical (coluna "Indicador") como se fosse o indicador real (que
+  está em "Unidade_Operacional").
+- **Categorias finais do relatório de comparação** (`resumo`):
+  `comparadosComSeguranca`, `divergenciasNumericasReais`,
+  `naoComparaveisPorPerdaDeContexto`, `semCorrespondencia`,
+  `divergenciasEsperadasNullZero`, mais os metadados
+  `defasagemDiasEntreCanonicoEBaseVertical` e `possivelDefasagemTemporal`
+  (nunca reclassificam nem escondem uma divergência).
+
+**Resultado da comparação com a base vertical após as três correções
+(mesma fixture usada nos testes)**: 730 comparados com segurança, **0
+divergências numéricas reais**, 208 não comparáveis por perda de
+contexto (explicados: subgrupoOcorrência/critério que a base vertical
+não registra), 156 sem correspondência (limitação já documentada —
+rótulo do indicador-pai reaproveitado nas linhas de valor de gerência
+ofensora, de forma inconsistente entre linhas com rótulo próprio e
+linhas sem rótulo — ver `harness.js` para o achado completo), 0
+divergências esperadas null×zero (nenhuma ocorreu nesta amostra),
+defasagem de 4 dias detectada e relatada (não escondida).
+
+**Testes — quatro rodadas registradas nesta fase, a mais recente é a
 oficial:**
-- Fase 5, resultado inicial (antes da correção do Validator): 50/50
-  aprovados, 0 reprovados — substituído pela rodada seguinte.
-- Fase 5, após a correção do Validator (carga parcial nunca publicada):
-  55/55 aprovados, 0 reprovados — substituído pela rodada seguinte.
-- **Fase 5, após a correção do harness (colisão de chave) — resultado
-  atual e oficial: 66/66 aprovados, 0 reprovados.** Inclui os 55 casos
-  anteriores mais 11 novos: mesmo indicador em subgrupos diferentes do
-  Bloco B não colide (3 casos), mesmo indicador em subgrupos diferentes
-  do Bloco D não colide (1 caso), Bloco C continua sem subgrupo na
-  chave — exceção deliberada (2 casos), comparação com valores
-  distintos localiza o registro correto pelo subgrupo (2 casos), e
-  defasagem temporal é detectada, relatada e não esconde divergência
-  real (3 casos).
+- Fase 5, resultado inicial (antes da correção do Validator): 50/50 —
+  substituído.
+- Fase 5, após a correção do Validator: 55/55 — substituído.
+- Fase 5, após a primeira correção do harness (colisão de chave,
+  causa-raiz ainda incompleta): 66/66 — substituído.
+- **Fase 5, após a correção dos Mecanismos A, B e C — resultado atual e
+  oficial: 86/86 aprovados, 0 reprovados.** Inclui os 66 casos
+  anteriores mais 20 novos: consumo de múltiplas linhas associadas à
+  Gerência Ofensora sem duplicar indicador (6 casos), critério
+  catalogado preservado e sem colisão (5 casos), critério desconhecido
+  gera bloqueio (2 casos), não comparável por perda de contexto — duas
+  ocorrências do mesmo subgrupo (4 casos), rotulagem correta do
+  relatório — indicador ≠ subgrupo (2 casos), null×zero classificado
+  como esperada (1 caso).
 - **Fase 4 (`testes/testar-fase4.js`), reexecutada nesta rodada: 42/42
   aprovados, 0 reprovados** — sem regressão; nenhum arquivo da Fase 4
   foi tocado.
 
 **Fase 5 ainda pendente de validação em navegador após a publicação
-desta correção.** A auditoria já rodou o piloto ao vivo uma vez (contra
-o harness com o bug de colisão) e encontrou 312 divergências reais —
-esta rodada corrige a causa-raiz confirmada e adiciona testes
-específicos para ela, mas a confirmação definitiva só vem de uma nova
-execução em `https://urbanflowrio.github.io/COMLURB/engenharia-operacional/piloto/`
+desta correção.** A auditoria já rodou o piloto ao vivo duas vezes
+(antes de qualquer correção: 312 divergências reais; após a primeira
+correção do harness, sem tocar o Adapter: as mesmas 312 — prova de que
+a causa raiz estava no Adapter, não só no harness). Esta rodada corrige
+o Adapter (Mecanismo A), adiciona a dimensão critério (Mecanismo B) e
+corrige a classificação do harness (Mecanismo C) — mas a confirmação
+definitiva só vem de uma nova execução em
+`https://urbanflowrio.github.io/COMLURB/engenharia-operacional/piloto/`
 após esta entrega ser publicada. Até essa nova validação ao vivo, a
 Fase 5 permanece **não aprovada**.
 

@@ -175,6 +175,60 @@ async function rodar() {
   caso("Linha seguinte é início de novo bloco: nenhum valor inventado", resOfensoraMal.gerenciasOfensoras.length, 0);
   caso("Gera bloqueio ofensora_par_malformado", resOfensoraMal.bloqueios.some(function (b) { return b.tipo === "ofensora_par_malformado"; }), true);
 
+  /* ---------- Correção pós-auditoria — Mecanismo A: consumo de MÚLTIPLAS linhas de valor associadas ---------- */
+  grupo("Fase 5 · Correção pós-auditoria (Mecanismo A) — linha de valor de Gerência Ofensora consumida uma única vez, sem indicador duplicado");
+  var FIX_OFENSORA_DUAS_LINHAS =
+    "B - MONITORAMENTO FROTA CONTRATADA,,,,,,,,,,,,,,,,\r\n" +
+    "% Sobrecarga,mai.-25,jun.-25,jul.-25,ago.-25,set.-25,out.-25,nov.-25,dez.-25,jan.-26,fev.-26,mar.-26,abr.-26,mai.-26\r\n" +
+    "Qtde Pesagens > 10% PBT,8047,7749,8282,7843,9208,9843,10797,12664,12348,11281,10502,8779,8516\r\n" +
+    "Qtde Pesagens > 10% PBT / Qtde Pesagens Total,\"0,203\",\"0,214\",\"0,215\",\"0,21\",\"0,227\",\"0,243\",\"0,273\",\"0,294\",\"0,288\",\"0,297\",\"0,276\",\"0,211\",\"0,206\"\r\n" +
+    "Gerência Ofensora 1,OG19C,OG18G,OG18G,OG18G,OG18G,OG18G,OG18G,OG18G,OG18G,OG19C,OG19C,OG19C,OG19C\r\n" +
+    "Qtde Pesagens > 10% PBT,739,742,789,777,867,888,891,1085,953,697,588,494,554\r\n" +
+    "Qtde Pesagens > 10% PBT / Qtde Pesagens Total,\"0,337\",\"0,454\",\"0,434\",\"0,461\",\"0,542\",\"0,541\",\"0,527\",\"0,581\",\"0,537\",\"0,389\",\"0,359\",\"0,281\",\"0,315\"\r\n" +
+    "Análise de Horas Extras x Faturamento,,,,,,,,,,,,,,,,\r\n";
+  var resDuasLinhas = await HUB.ingest.adapterDTE.carregarDTE({ fixtureTexto: FIX_OFENSORA_DUAS_LINHAS });
+  caso("Nenhum bloqueio (as duas linhas associadas são consumidas corretamente)", resDuasLinhas.bloqueios.length, 0);
+  caso("26 registros de gerência ofensora (1 posição × 13 períodos × 2 linhas associadas: valor absoluto + razão)", resDuasLinhas.gerenciasOfensoras.length, 26);
+  caso("Cada registro preserva qual rótulo o valor representa (indicadorAssociado)",
+    resDuasLinhas.gerenciasOfensoras.map(function (g) { return g.indicadorAssociado; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(),
+    ["Qtde Pesagens > 10% PBT", "Qtde Pesagens > 10% PBT / Qtde Pesagens Total"]);
+  caso("Apenas 2 indicadores comuns extraídos (os dois agregados) — NENHUM duplicado pelas linhas associadas à ofensora",
+    resDuasLinhas.indicadores.length, 26);
+  var chavesIndicador = resDuasLinhas.indicadores.map(function (r) { return r.indicadorNormalizado + "|" + r.periodo; });
+  caso("Nenhuma chave (indicador+período) repetida entre os indicadores comuns", new Set(chavesIndicador).size, chavesIndicador.length);
+  caso("Lineage preservado nas duas linhas de origem (categórica e de valor) de cada registro de ofensora",
+    resDuasLinhas.gerenciasOfensoras.every(function (g) { return typeof g.lineage.linhaOrigemCategorica === "number" && typeof g.lineage.linhaOrigemValor === "number"; }), true);
+
+  /* ---------- Correção pós-auditoria — Mecanismo B: critério ---------- */
+  grupo("Fase 5 · Correção pós-auditoria (Mecanismo B) — critério catalogado, preservado no modelo canônico");
+  var FIX_CRITERIO =
+    "A - ATIVIDADES OPERACIONAIS - COORDENADORIA DE DESTINAÇÃO DE RESÍDUOS - TCD,,,,,,,,,,,,,,,,\r\n" +
+    "VII - Geração Chorume (m³),mai.-25,jun.-25,jul.-25,ago.-25,set.-25,out.-25,nov.-25,dez.-25,jan.-26,fev.-26,mar.-26,abr.-26,mai.-26\r\n" +
+    "CTR Seriopédica,45851,38411,36736,38038,36415,41704,37941,42221,62140,104819,90414,55907,53466\r\n" +
+    "Tratamento Interno,22448,31445,43499,26823,33410,37858,26146,28384,34936,35135,42498,25467,25149\r\n" +
+    "Aterro Gramacho (ETC + MANEJO),36282,33680,35025,34186,35160,36103,35145,36840,33882,33015,35569,34360,35915\r\n" +
+    "Tratamento Interno,33042,30785,32085,31336,31815,32233,31590,32940,30372,29250,32219,31860,32400\r\n";
+  var resCriterio = await HUB.ingest.adapterDTE.carregarDTE({ fixtureTexto: FIX_CRITERIO });
+  caso("Nenhum bloqueio (mesmo indicador repetido, mas sob critérios diferentes catalogados)", resCriterio.bloqueios.length, 0);
+  var tratamentoInterno = resCriterio.indicadores.filter(function (r) { return r.indicadorNormalizado === "tratamento interno" && r.periodo === "2025-05"; });
+  caso("\"Tratamento Interno\" aparece 2 vezes (uma por critério), não colide", tratamentoInterno.length, 2);
+  caso("Critério preservado corretamente nos dois registros", tratamentoInterno.map(function (r) { return r.criterio; }).sort(),
+    ["Aterro Gramacho (ETC + MANEJO)", "CTR Seriopédica"]);
+  caso("criterioNormalizado também preservado", tratamentoInterno.every(function (r) { return typeof r.criterioNormalizado === "string" && r.criterioNormalizado !== ""; }), true);
+  caso("linhaOrigemCriterio preservado (rastreável)", tratamentoInterno.every(function (r) { return typeof r.linhaOrigemCriterio === "number"; }), true);
+  var linhaCriterioProprio = resCriterio.indicadores.filter(function (r) { return r.indicadorNormalizado === "ctr seriopedica" && r.periodo === "2025-05"; })[0];
+  caso("A própria linha de critério (\"CTR Seriopédica\") tem criterio=null (define contexto, não pertence a nenhum)", linhaCriterioProprio.criterio, null);
+
+  var FIX_CRITERIO_DESCONHECIDO =
+    "A - ATIVIDADES OPERACIONAIS - COORDENADORIA DE DESTINAÇÃO DE RESÍDUOS - TCD,,,,,,,,,,,,,,,,\r\n" +
+    "VII - Geração Chorume (m³),mai.-25,jun.-25,jul.-25,ago.-25,set.-25,out.-25,nov.-25,dez.-25,jan.-26,fev.-26,mar.-26,abr.-26,mai.-26\r\n" +
+    "Critério Nunca Catalogado,10,10,10,10,10,10,10,10,10,10,10,10,10\r\n" +
+    "Tratamento Interno,20,20,20,20,20,20,20,20,20,20,20,20,20\r\n" +
+    "Tratamento Interno,30,30,30,30,30,30,30,30,30,30,30,30,30\r\n";
+  var resCriterioDesc = await HUB.ingest.adapterDTE.carregarDTE({ fixtureTexto: FIX_CRITERIO_DESCONHECIDO });
+  caso("Critério desconhecido: \"Tratamento Interno\" repete sob contexto não distinguível — gera bloqueio", resCriterioDesc.bloqueios.some(function (b) { return b.tipo === "indicador_duplicado_sem_criterio"; }), true);
+  caso("Envelope inválido (bloqueio estrutural, nunca payload parcial)", resCriterioDesc.envelope.payload, null);
+
   grupo("Fase 5 · Correção pós-auditoria — bloqueio estrutural invalida o envelope inteiro (nunca carga parcial)");
   var FIX_CARGA_PARCIAL =
     "C - MANUTENÇÃO FROTA PRÓPRIA,,,,,,,,,,,,,,,,\r\n" +
@@ -208,7 +262,7 @@ async function rodar() {
 
   /* ---------- Harness (engenharia-operacional/piloto/harness.js) — correção pós-auditoria ---------- */
   if (typeof HARNESS_DTE !== "undefined") {
-    grupo("Fase 5 · Harness — correção da chave de comparação (subgrupo incluído em A/B/D, exceção só em C)");
+    grupo("Fase 5 · Harness — chave inclui subgrupo em A/B/D (exceção só em C)");
 
     function canonicoFake(registros, capturedAt) {
       return { indicadores: registros, envelope: { capturedAt: capturedAt || new Date().toISOString() } };
@@ -217,55 +271,75 @@ async function rodar() {
       return { ano: 2025, mes: 5, periodo: "2025-05", grupo: grupoLabel, indicador: subgrupoLabel, unidadeOperacional: indicadorLabel, unidadeMedida: "un", valor: valor, atualizacao: atualizacao || "2026-07-13T00:00:00" };
     }
 
-    // 1. Mesmo indicador em dois subgrupos diferentes do Bloco B não pode colidir.
+    // Mesmo indicador em dois subgrupos diferentes do Bloco B não pode colidir.
     var canonicoB = canonicoFake([
-      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Um", indicadorBruto: "Indicador Repetido", periodo: "2025-05", valor: 10 },
-      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Dois", indicadorBruto: "Indicador Repetido", periodo: "2025-05", valor: 20 }
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Um", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Indicador Repetido", periodo: "2025-05", valor: 10 },
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Dois", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Indicador Repetido", periodo: "2025-05", valor: 20 }
     ]);
-    var relB1 = HARNESS_DTE.comparar(canonicoB, [linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Um", "Indicador Repetido", 10)]);
-    caso("Bloco B: rótulo repetido em 2 subgrupos — casamento pelo subgrupo correto (Subgrupo Um, valor 10), zero divergência", relB1.resumo.divergenciasReais, 0);
-    caso("Bloco B: comparação bem-sucedida (não cai em sem-correspondência)", relB1.resumo.comparadas, 1);
-
-    var relB2 = HARNESS_DTE.comparar(canonicoB, [linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Dois", "Indicador Repetido", 20)]);
-    caso("Bloco B: mesmo rótulo, outro subgrupo (Subgrupo Dois, valor 20) — também casa corretamente, zero divergência", relB2.resumo.divergenciasReais, 0);
-
-    // 4. Comparação com valores distintos deve localizar o registro correto pelo subgrupo (caso que a versão
-    // anterior do harness colidia e podia gerar divergência real ou "sem correspondência" espúria).
     var relB3 = HARNESS_DTE.comparar(canonicoB, [
       linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Um", "Indicador Repetido", 10),
       linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Dois", "Indicador Repetido", 20)
     ]);
-    caso("Bloco B: as duas linhas (valores distintos, mesmo rótulo, subgrupos diferentes) casam corretamente — zero divergência real", relB3.resumo.divergenciasReais, 0);
-    caso("Bloco B: as duas linhas comparadas, nenhuma sem correspondência", { comparadas: relB3.resumo.comparadas, semCorrespondencia: relB3.resumo.semCorrespondenciaCanonica }, { comparadas: 2, semCorrespondencia: 0 });
+    caso("Bloco B: mesmo indicador em 2 subgrupos, valores distintos — as duas linhas casam corretamente pelo subgrupo, zero divergência real", relB3.resumo.divergenciasNumericasReais, 0);
+    caso("Bloco B: as duas linhas comparadas com segurança, nenhuma sem correspondência, nenhuma não comparável",
+      { comparadosComSeguranca: relB3.resumo.comparadosComSeguranca, semCorrespondencia: relB3.resumo.semCorrespondencia, naoComparaveis: relB3.resumo.naoComparaveisPorPerdaDeContexto },
+      { comparadosComSeguranca: 2, semCorrespondencia: 0, naoComparaveis: 0 });
 
-    // 2. Mesmo indicador em dois subgrupos diferentes do Bloco D não pode colidir.
+    // Mesmo indicador em dois subgrupos diferentes do Bloco D não pode colidir.
     var canonicoD = canonicoFake([
-      { bloco: "D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", subgrupo: "Quantidades", indicadorBruto: "Item Repetido", periodo: "2025-05", valor: 7 },
-      { bloco: "D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", subgrupo: "Outro Subgrupo Hipotético", indicadorBruto: "Item Repetido", periodo: "2025-05", valor: 99 }
+      { bloco: "D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", subgrupo: "Quantidades", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Item Repetido", periodo: "2025-05", valor: 7 },
+      { bloco: "D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", subgrupo: "Outro Subgrupo Hipotético", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Item Repetido", periodo: "2025-05", valor: 99 }
     ]);
     var relD = HARNESS_DTE.comparar(canonicoD, [
       linhaBaseVertical("D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", "Quantidades", "Item Repetido", 7),
       linhaBaseVertical("D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", "Outro Subgrupo Hipotético", "Item Repetido", 99)
     ]);
-    caso("Bloco D: rótulo repetido em 2 subgrupos hipotéticos — as duas linhas casam corretamente, zero divergência real", relD.resumo.divergenciasReais, 0);
+    caso("Bloco D: mesmo indicador em 2 subgrupos hipotéticos — as duas linhas casam corretamente, zero divergência real", relD.resumo.divergenciasNumericasReais, 0);
+    caso("Bloco D: as duas comparadas com segurança", relD.resumo.comparadosComSeguranca, 2);
 
-    // 3. Bloco C continua usando a chave SEM subgrupo (exceção deliberada e documentada).
+    // Bloco C continua usando a chave SEM subgrupo (exceção deliberada e documentada).
     var canonicoC = canonicoFake([
-      { bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", indicadorBruto: "Item Único C", periodo: "2025-05", valor: 15 }
+      { bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Item Único C", periodo: "2025-05", valor: 15 }
     ]);
     var relC = HARNESS_DTE.comparar(canonicoC, [linhaBaseVertical("C - MANUTENÇÃO FROTA PRÓPRIA", "Qualquer Rótulo De Subgrupo Que A Base Vertical Tenha Registrado (não confiável)", "Item Único C", 15)]);
-    caso("Bloco C: casa mesmo com rótulo de subgrupo divergente na base vertical (exceção deliberada — subgrupo de C não é confiável)", relC.resumo.divergenciasReais, 0);
-    caso("Bloco C: comparação bem-sucedida apesar do subgrupo divergente", relC.resumo.comparadas, 1);
+    caso("Bloco C: casa mesmo com rótulo de subgrupo divergente na base vertical (exceção deliberada)", relC.resumo.divergenciasNumericasReais, 0);
+    caso("Bloco C: comparado com segurança apesar do subgrupo divergente", relC.resumo.comparadosComSeguranca, 1);
 
-    // 5. Caso temporalmente defasado: classificado como limitação de comparação, não erro do Adapter.
+    grupo("Fase 5 · Harness — não comparável por perda de contexto (subgrupoOcorrência/critério que a base vertical não distingue)");
+    // Mesmo indicador em DUAS OCORRÊNCIAS do mesmo subgrupo (base vertical não tem campo de ocorrência) — não pode virar divergência real.
+    var canonicoOcorrencias = canonicoFake([
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Horas Utilizadas / Horas Estimadas (h)", subgrupoOcorrencia: 2, criterio: null, indicadorBruto: "P16A - Trator de Praia - h/mês", periodo: "2025-05", valor: 0.563 },
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Horas Utilizadas / Horas Estimadas (h)", subgrupoOcorrencia: 3, criterio: null, indicadorBruto: "P16A - Trator de Praia - h/mês", periodo: "2025-05", valor: 0.467 }
+    ]);
+    var relOcorrencias = HARNESS_DTE.comparar(canonicoOcorrencias, [linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Horas Utilizadas / Horas Estimadas (h)", "P16A - Trator de Praia - h/mês", 0.563)]);
+    caso("Duas ocorrências do mesmo subgrupo, mesmo indicador, valores diferentes: classificado como NÃO COMPARÁVEL (nunca divergência real)", relOcorrencias.resumo.naoComparaveisPorPerdaDeContexto, 1);
+    caso("Zero divergências reais mesmo quando um dos candidatos bate por coincidência com o valor da base vertical", relOcorrencias.resumo.divergenciasNumericasReais, 0);
+    caso("Motivo registrado explica a limitação estrutural da base vertical", relOcorrencias.naoComparaveisPorPerdaDeContexto[0].motivo.indexOf("subgrupoOcorrência") !== -1, true);
+    caso("Candidatos canônicos preservados no relatório para rastreabilidade", relOcorrencias.naoComparaveisPorPerdaDeContexto[0].candidatosCanonicos.length, 2);
+
+    grupo("Fase 5 · Harness — rotulagem correta (indicador ≠ subgrupo) e demais categorias");
+    var relRotulagem = HARNESS_DTE.comparar(canonicoB, [linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Um", "Indicador Repetido", 999)]);
+    caso("Relatório expõe bloco, subgrupo e indicador em campos SEPARADOS (nunca subgrupo como se fosse indicador)",
+      { bloco: relRotulagem.divergenciasNumericasReais[0].bloco, subgrupo: relRotulagem.divergenciasNumericasReais[0].subgrupo, indicador: relRotulagem.divergenciasNumericasReais[0].indicador },
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Um", indicador: "Indicador Repetido" });
+    caso("Divergência numérica real ainda é detectada quando o casamento é único e o valor realmente diverge", relRotulagem.resumo.divergenciasNumericasReais, 1);
+
+    // Null (canônico) vs zero (base vertical) continua classificado como esperada, nunca como divergência real.
+    var canonicoNullZero = canonicoFake([
+      { bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Item Ausente", periodo: "2025-05", valor: null }
+    ]);
+    var relNullZero = HARNESS_DTE.comparar(canonicoNullZero, [linhaBaseVertical("C - MANUTENÇÃO FROTA PRÓPRIA", "", "Item Ausente", 0)]);
+    caso("null (canônico) × 0 (base vertical): divergência ESPERADA, nunca divergência real", { esperada: relNullZero.resumo.divergenciasEsperadasNullZero, real: relNullZero.resumo.divergenciasNumericasReais }, { esperada: 1, real: 0 });
+
+    // Defasagem temporal não apaga divergência real.
     var canonicoDefasado = canonicoFake(
-      [{ bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", indicadorBruto: "Item Defasado", periodo: "2025-05", valor: 42 }],
+      [{ bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", subgrupoOcorrencia: 1, criterio: null, indicadorBruto: "Item Defasado", periodo: "2025-05", valor: 42 }],
       "2026-08-01T00:00:00.000Z"
     );
     var relDefasado = HARNESS_DTE.comparar(canonicoDefasado, [linhaBaseVertical("C - MANUTENÇÃO FROTA PRÓPRIA", "", "Item Defasado", 50, "2026-07-13T00:00:00")]);
     caso("Defasagem temporal detectada e reportada (não escondida)", relDefasado.resumo.possivelDefasagemTemporal, true);
     caso("Defasagem temporal: dias de diferença calculados corretamente (2026-08-01 - 2026-07-13 = 19 dias)", relDefasado.resumo.defasagemDiasEntreCanonicoEBaseVertical, 19);
-    caso("Defasagem temporal NÃO esconde a divergência real (valor 42 vs 50 continua contado)", relDefasado.resumo.divergenciasReais, 1);
+    caso("Defasagem temporal NÃO esconde a divergência real (valor 42 vs 50 continua contado)", relDefasado.resumo.divergenciasNumericasReais, 1);
   } else {
     grupo("Fase 5 · Harness — ausente");
     caso("engenharia-operacional/piloto/harness.js carregado", false, true);
@@ -277,9 +351,9 @@ async function rodar() {
     var resReal = await HUB.ingest.adapterDTE.carregarDTE({ fixtureTexto: FIXTURE_REAL });
     caso("Zero bloqueios contra os dados reais completos", resReal.bloqueios.length, 0);
     caso("Zero erros de validação", resReal.envelope.quality.erros.length, 0);
-    caso("1118 registros de indicador extraídos", resReal.indicadores.length, 1118);
-    caso("546 registros de gerência ofensora extraídos (união de par)", resReal.gerenciasOfensoras.length, 546);
-    caso("35 linhas de anotação identificadas e ignoradas (não viram indicador nem subgrupo)", resReal.notas.length, 35);
+    caso("962 registros de indicador extraídos (queda de 1118→962 esperada: linhas associadas a Gerência Ofensora não são mais duplicadas como indicador comum)", resReal.indicadores.length, 962);
+    caso("624 registros de gerência ofensora extraídos (alta de 546→624: consumo correto de todas as linhas associadas, não só a primeira)", resReal.gerenciasOfensoras.length, 624);
+    caso("35 linhas de anotação identificadas e ignoradas", resReal.notas.length, 35);
     caso("13 períodos detectados (mai/25 a mai/26)", resReal.envelope.payload.periodos.length, 13);
     caso("Payload preserva bloco/subgrupo em cada indicador (nunca perde contexto, ao contrário da base vertical)",
       resReal.indicadores.every(function (r) { return typeof r.bloco === "string" && r.bloco !== ""; }), true);
@@ -289,6 +363,14 @@ async function rodar() {
     caso("RCC Gericinó (Recebimento - t) sem operação em mai/jun-25: registro EXISTE (período preservado)", recebimentoMaiJun.length, 2);
     caso("RCC Gericinó (Recebimento - t) sem operação em mai/jun-25: valor é null, NUNCA 0 (célula vazia na fonte)",
       recebimentoMaiJun.every(function (r) { return r.valor === null; }), true);
+
+    var chavesCompletas = {};
+    resReal.indicadores.forEach(function (r) {
+      var chave = r.bloco + "||" + r.subgrupo + "||" + r.subgrupoOcorrencia + "||" + r.criterioNormalizado + "||" + r.indicadorNormalizado + "||" + r.periodo;
+      chavesCompletas[chave] = (chavesCompletas[chave] || 0) + 1;
+    });
+    var chavesDuplicadas = Object.keys(chavesCompletas).filter(function (k) { return chavesCompletas[k] > 1; });
+    caso("Nenhuma chave completa (bloco+subgrupo+ocorrência+critério+indicador+período) duplicada contra os dados reais", chavesDuplicadas.length, 0);
 
     fs.writeFileSync(path.join(__dirname, "..", "engenharia-operacional", "piloto", "saida-canonica-exemplo.json"),
       JSON.stringify(resReal.envelope, null, 2));

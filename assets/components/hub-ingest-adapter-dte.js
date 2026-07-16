@@ -72,12 +72,49 @@
      subgrupo nem como indicador.
 
    DECISÃO DE GOVERNANÇA — Gerência Ofensora: par (linha categórica +
-   linha de valor associada) vira UM registro canônico. Aceita
-   qualquer N válido (não limita a 3). A união só ocorre quando a
-   linha seguinte está estruturalmente associada (sem rótulo próprio,
-   mesma contagem de células, não é ela mesma início de bloco/
-   subgrupo/período). Caso contrário, bloqueio explícito — nunca
-   inventa valor.
+   linha(s) de valor associada(s)) vira registros canônicos. Aceita
+   qualquer N válido (não limita a 3). A união só ocorre com linhas
+   estruturalmente associadas (não são elas mesmas início de bloco/
+   subgrupo/período/nova ofensora). Caso a primeira linha seguinte já
+   seja estrutural, bloqueio explícito — nunca inventa valor.
+
+   CORREÇÃO PÓS-AUDITORIA (v1.1.0) — MECANISMO A (bug de duplicação):
+   achado real — cada bloco "Gerência Ofensora N" pode ter MAIS DE UMA
+   linha de valor associada (ex.: "% Sobrecarga" e "Horas Extras
+   (Valor e %)" têm 2 linhas por ofensora: valor absoluto + razão). A
+   versão anterior só consumia a primeira linha seguinte; a(s)
+   linha(s) além dela eram reprocessadas pelo laço principal como
+   indicador comum, criando registros duplicados sob a mesma chave
+   (bloco+subgrupo+indicador+período) com valores diferentes. Corrigido:
+   após parear a linha categórica com a primeira linha de valor, o
+   Adapter continua consumindo as linhas seguintes ENQUANTO elas não
+   forem estruturais (não são bloco/subgrupo/período/nova ofensora) —
+   parando exatamente no primeiro marcador estrutural. Cada linha
+   consumida vira um registro de `gerenciasOfensoras` próprio, com
+   `indicadorAssociado` preservando qual rótulo aquele valor representa
+   (ou `null` quando a linha vem sem rótulo, padrão já documentado).
+   Nenhuma linha de valor associada volta a ser processada como
+   indicador comum.
+
+   CORREÇÃO PÓS-AUDITORIA (v1.1.0) — MECANISMO B (critério não
+   modelado): achado real — dentro do Bloco A, subgrupo "VII - Geração
+   Chorume (m³)", o mesmo indicador ("Tratamento Interno", "Tratamento
+   Externo", "Recirculado") se repete sob critérios diferentes ("CTR
+   Seriopédica", "Aterro Gramacho (ETC + MANEJO)", "Aterro Bangu (REC.
+   + TRAT. EXT)") — cada "critério" é ele mesmo uma linha com valor
+   próprio que também define o contexto das linhas seguintes até o
+   próximo critério ou o fim do subgrupo. Modelado com a MESMA
+   disciplina de subgrupo: lista nomeada de critérios confirmados na
+   fonte real (CRITERIOS_CONHECIDOS, abaixo), isolada neste Adapter,
+   nunca heurística por palavra-chave. Cada registro de indicador ganha
+   `criterio`, `criterioNormalizado` e `linhaOrigemCriterio` (null
+   quando o subgrupo não tem critérios catalogados, ou quando o próprio
+   registro É o critério). A chave canônica passa a distinguir bloco +
+   subgrupo + subgrupoOcorrencia + critério + indicador + período. Um
+   indicador repetido dentro do mesmo subgrupo/ocorrência SEM que um
+   critério catalogado explique a repetição gera bloqueio estrutural
+   ("indicador_duplicado_sem_criterio") — nunca é silenciosamente
+   sobrescrito nem duplicado sem explicação.
    ============================================================ */
 
 (function () {
@@ -144,6 +181,44 @@
     return String(v == null ? "" : v)
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .toLowerCase().replace(/\s+/g, " ").trim();
+  }
+
+  /* ================================================================
+     CRITÉRIOS CONHECIDOS — particularidade do DTE (correção pós-
+     auditoria, Mecanismo B). Chave: "letraBloco|subgrupoNormalizado".
+     Ausência de chave = subgrupo sem conceito de critério (não ativa
+     checagem de duplicidade por critério — comportamento idêntico ao
+     anterior para todos os demais subgrupos). Extraído diretamente dos
+     dados reais enviados nesta fase.
+     ================================================================ */
+
+  var CRITERIOS_CONHECIDOS = {};
+  CRITERIOS_CONHECIDOS["a|" + normEstrutural("VII - Geração Chorume (m³)")] = [
+    "CTR Seriopédica",
+    "Aterro Gramacho (ETC + MANEJO)",
+    "Aterro Bangu (REC. + TRAT. EXT)"
+  ].map(normEstrutural);
+
+  function criteriosDoSubgrupo(letraBloco, subgrupoNormalizado) {
+    var chave = String(letraBloco || "").toLowerCase() + "|" + subgrupoNormalizado;
+    return CRITERIOS_CONHECIDOS.hasOwnProperty(chave) ? CRITERIOS_CONHECIDOS[chave] : [];
+  }
+
+  /* ================================================================
+     LINHA ESTRUTURAL — usado para decidir onde parar de consumir
+     linhas associadas a "Gerência Ofensora N" (Mecanismo A). Uma linha
+     é estrutural se poderia começar um novo bloco, subgrupo (romano ou
+     catalogado), período isolado, ou uma nova "Gerência Ofensora" —
+     nunca decidido por contagem fixa de linhas.
+     ================================================================ */
+
+  function linhaEhEstrutural(rotulo, vals, blocoAtual) {
+    if (BLOCO_RE.test(rotulo)) return true;
+    if (ROMANO_RE.test(rotulo)) return true;
+    if (OFENSORA_RE.test(rotulo)) return true;
+    if (linhaEhPeriodo(vals)) return true;
+    if (blocoAtual && blocoAtual.config.tipoSubgrupo === "lista" && blocoAtual.config.cabecalhosSubgrupo.indexOf(normEstrutural(rotulo)) !== -1) return true;
+    return false;
   }
 
   /* ================================================================
@@ -235,6 +310,14 @@
     var blocoAtual = null;       // { letra, rotuloBruto, rotuloNormalizado, config }
     var subgrupoAtual = null;    // { rotuloBruto, rotuloNormalizado, ocorrencia, periodos[13] }
     var contadorOcorrencia = {}; // chave "letraBloco|rotuloNormalizadoSubgrupo" -> contagem
+    var criterioAtual = null;    // { rotuloBruto, rotuloNormalizado, linhaOrigem } — Mecanismo B
+    var indicadoresVistosNoSubgrupo = {}; // rotuloNormalizado -> criterioNormalizado (ou null) na 1ª vez visto — Mecanismos A e B
+
+    function novoSubgrupo(dados) {
+      subgrupoAtual = dados;
+      criterioAtual = null;
+      indicadoresVistosNoSubgrupo = {};
+    }
 
     function celulas13(linha) { return (linha || []).slice(1, 14).map(function (c) { return c === undefined ? "" : c; }); }
 
@@ -261,6 +344,8 @@
         if (config && config.tituloNormalizado === tituloResto) {
           blocoAtual = { letra: letra, rotuloBruto: rotuloBruto, rotuloNormalizado: tituloResto, config: config };
           subgrupoAtual = null;
+          criterioAtual = null;
+          indicadoresVistosNoSubgrupo = {};
           continue;
         }
         // Letra não catalogada, ou título não bate com o catalogado:
@@ -291,11 +376,11 @@
           });
           continue;
         }
-        subgrupoAtual = {
+        novoSubgrupo({
           rotuloBruto: rotuloBruto, rotuloNormalizado: normEstrutural(rotuloBruto),
           ocorrencia: novaOcorrencia(blocoAtual.letra, normEstrutural(rotuloBruto)),
           periodos: ehLinhaPeriodoComRotulo ? parsearPeriodos(vals) : null
-        };
+        });
         continue;
       }
 
@@ -304,11 +389,11 @@
       if (blocoAtual && blocoAtual.config.tipoSubgrupo === "lista" && blocoAtual.config.cabecalhosSubgrupo.length &&
           rotuloBruto && blocoAtual.config.cabecalhosSubgrupo.indexOf(normEstrutural(rotuloBruto)) !== -1) {
         var rotNorm3 = normEstrutural(rotuloBruto);
-        subgrupoAtual = {
+        novoSubgrupo({
           rotuloBruto: rotuloBruto, rotuloNormalizado: rotNorm3,
           ocorrencia: novaOcorrencia(blocoAtual.letra, rotNorm3),
           periodos: ehLinhaPeriodoComRotulo ? parsearPeriodos(vals) : null
-        };
+        });
         continue;
       }
 
@@ -336,7 +421,7 @@
         if (!subgrupoAtual) {
           // Bloco C (sem subgrupo confirmado): cria subgrupo implícito.
           if (blocoAtual.config.cabecalhosSubgrupo && blocoAtual.config.cabecalhosSubgrupo.length === 0) {
-            subgrupoAtual = { rotuloBruto: "", rotuloNormalizado: "", ocorrencia: novaOcorrencia(blocoAtual.letra, ""), periodos: parsearPeriodos(vals) };
+            novoSubgrupo({ rotuloBruto: "", rotuloNormalizado: "", ocorrencia: novaOcorrencia(blocoAtual.letra, ""), periodos: parsearPeriodos(vals) });
             continue;
           }
           bloqueios.push({ linha: i, tipo: "periodo_sem_subgrupo", mensagem: "Linha " + i + ": linha de período sem subgrupo ativo no Bloco " + blocoAtual.letra + "." });
@@ -349,7 +434,11 @@
       /* ---- 5. Linha vazia (sem rótulo, sem dado, não é período) — ruído estrutural, ignorada silenciosamente ---- */
       if (!rotuloBruto && numPreenchidas === 0) continue;
 
-      /* ---- 6. Gerência Ofensora N (categórica) + linha de valor associada ---- */
+      /* ---- 6. Gerência Ofensora N (categórica) + linha(s) de valor associada(s) ----
+         CORREÇÃO PÓS-AUDITORIA (Mecanismo A): consome TODAS as linhas
+         seguintes enquanto não forem estruturais (nunca uma contagem
+         fixa) — cada uma vira um registro de gerenciaOfensora próprio,
+         e NENHUMA delas é reprocessada como indicador comum abaixo. */
       var mOfensora = OFENSORA_RE.exec(rotuloBruto);
       if (mOfensora) {
         if (!blocoAtual || !subgrupoAtual || !subgrupoAtual.periodos) {
@@ -357,24 +446,11 @@
           continue;
         }
         var posicao = parseInt(mOfensora[1], 10);
-        var linhaValor = matriz[i + 1] || [];
-        var rotuloLinhaValor = String(linhaValor[0] === undefined || linhaValor[0] === null ? "" : linhaValor[0]).trim();
-        var valsValor = celulas13(linhaValor);
-        // Achado real (dados enviados nesta fase): a linha de valor
-        // associada NEM SEMPRE vem sem rótulo — em vários casos repete o
-        // rótulo do indicador-pai (ex.: "Valor de Horas Extras -
-        // Gerência", "Qtde Pesagens > 10% PBT"), representando o valor
-        // daquela gerência ofensora para o mesmo indicador. Rótulo
-        // próprio NÃO desqualifica a associação por si só — só desqualifica
-        // se a linha seguinte for estruturalmente outra coisa (novo
-        // bloco, novo subgrupo romano/catalogado, nova linha de período,
-        // ou outra "Gerência Ofensora"). O rótulo da linha de valor,
-        // quando presente, é preservado em rotulosBrutos.linhaValor.
-        var linhaValorEhEstrutural = BLOCO_RE.test(rotuloLinhaValor) || ROMANO_RE.test(rotuloLinhaValor) ||
-          OFENSORA_RE.test(rotuloLinhaValor) || linhaEhPeriodo(valsValor) ||
-          (blocoAtual && blocoAtual.config.tipoSubgrupo === "lista" && blocoAtual.config.cabecalhosSubgrupo.indexOf(normEstrutural(rotuloLinhaValor)) !== -1);
 
-        if (linhaValorEhEstrutural) {
+        var primeiraLinhaValor = matriz[i + 1] || [];
+        var primeiroRotuloValor = String(primeiraLinhaValor[0] === undefined || primeiraLinhaValor[0] === null ? "" : primeiraLinhaValor[0]).trim();
+        var primeirosVals = celulas13(primeiraLinhaValor);
+        if (linhaEhEstrutural(primeiroRotuloValor, primeirosVals, blocoAtual)) {
           bloqueios.push({
             linha: i, tipo: "ofensora_par_malformado",
             mensagem: "Linha " + i + " (" + rotuloBruto + "): linha seguinte é estruturalmente outra coisa (novo bloco/subgrupo/período/gerência ofensora). Nenhum valor foi inventado."
@@ -383,36 +459,90 @@
         }
 
         var algumValorOuCodigo = false;
-        for (var p = 0; p < 13; p++) {
-          var codigo = String(vals[p] === undefined || vals[p] === null ? "" : vals[p]).trim();
-          var periodo = subgrupoAtual.periodos[p];
-          if (!codigo || !periodo) continue;
-          algumValorOuCodigo = true;
-          gerenciasOfensoras.push({
-            bloco: blocoAtual.rotuloBruto, blocoNormalizado: blocoAtual.rotuloNormalizado,
-            subgrupo: subgrupoAtual.rotuloBruto, subgrupoNormalizado: subgrupoAtual.rotuloNormalizado,
-            subgrupoOcorrencia: subgrupoAtual.ocorrencia,
-            periodo: periodo,
-            posicaoOfensora: posicao,
-            codigoGerencia: codigo,
-            valor: numDTE(valsValor[p]),
-            unidadeMedida: null, // não declarada na fonte para estas linhas — não inferida heuristicamente (ver decisão de governança)
-            rotulosBrutos: { linhaCategorica: rotuloBruto, linhaValor: rotuloLinhaValor },
-            lineage: { linhaOrigemCategorica: i, linhaOrigemValor: i + 1, colunaOrigem: p + 1 }
-          });
+        var j = i + 1;
+        while (j < matriz.length) {
+          var linhaAssoc = matriz[j] || [];
+          var rotuloAssoc = String(linhaAssoc[0] === undefined || linhaAssoc[0] === null ? "" : linhaAssoc[0]).trim();
+          var valsAssoc = celulas13(linhaAssoc);
+          if (linhaEhEstrutural(rotuloAssoc, valsAssoc, blocoAtual)) break;
+          var numPreenchidasAssoc = valsAssoc.filter(function (v) { return String(v).trim() !== ""; }).length;
+          if (numPreenchidasAssoc === 0) break; // linha sem nenhum dado próprio (ex.: anotação) — não é uma linha de valor associada, para de consumir.
+
+          var algumNestaLinha = false;
+          for (var p = 0; p < 13; p++) {
+            var codigo = String(vals[p] === undefined || vals[p] === null ? "" : vals[p]).trim();
+            var periodo = subgrupoAtual.periodos[p];
+            if (!codigo || !periodo) continue;
+            algumNestaLinha = true;
+            algumValorOuCodigo = true;
+            gerenciasOfensoras.push({
+              bloco: blocoAtual.rotuloBruto, blocoNormalizado: blocoAtual.rotuloNormalizado,
+              subgrupo: subgrupoAtual.rotuloBruto, subgrupoNormalizado: subgrupoAtual.rotuloNormalizado,
+              subgrupoOcorrencia: subgrupoAtual.ocorrencia,
+              criterio: criterioAtual ? criterioAtual.rotuloBruto : null,
+              criterioNormalizado: criterioAtual ? criterioAtual.rotuloNormalizado : null,
+              periodo: periodo,
+              posicaoOfensora: posicao,
+              codigoGerencia: codigo,
+              valor: numDTE(valsAssoc[p]),
+              indicadorAssociado: rotuloAssoc || null,
+              indicadorAssociadoNormalizado: rotuloAssoc ? normEstrutural(rotuloAssoc) : null,
+              unidadeMedida: null, // não declarada na fonte para estas linhas — não inferida heuristicamente (ver decisão de governança)
+              rotulosBrutos: { linhaCategorica: rotuloBruto, linhaValor: rotuloAssoc },
+              lineage: { linhaOrigemCategorica: i, linhaOrigemValor: j, colunaOrigem: p + 1 }
+            });
+          }
+          if (!algumNestaLinha) break; // linha não-estrutural mas sem nenhum dado válido: para de consumir, não força.
+          j++;
         }
         if (!algumValorOuCodigo) {
           bloqueios.push({ linha: i, tipo: "ofensora_sem_dado_valido", mensagem: "Linha " + i + " (" + rotuloBruto + "): nenhum par código+período válido encontrado." });
         }
+        i = j - 1; // pula todas as linhas consumidas — elas NUNCA são reprocessadas como indicador comum.
         continue;
       }
 
-      /* ---- 7. Indicador (rótulo + ao menos 1 célula preenchida, contexto de subgrupo ativo) ---- */
+      /* ---- 7. Indicador (rótulo + ao menos 1 célula preenchida, contexto de subgrupo ativo) ----
+         CORREÇÃO PÓS-AUDITORIA (Mecanismo B): se o rótulo bate com um
+         critério catalogado para este bloco+subgrupo, esta linha é o
+         PRÓPRIO critério (define o contexto das linhas seguintes) —
+         ainda vira um registro de indicador (ela também tem valor),
+         mas com criterio=null (não pertence a nenhum critério, ela
+         DEFINE um). Caso contrário, é um indicador comum sob o
+         critério ativo (se houver). Repetição do mesmo rótulo dentro
+         do mesmo bloco+subgrupo+ocorrência SEM que um critério
+         catalogado e DIFERENTE do anterior explique a repetição é
+         bloqueio estrutural — nunca duplicado nem sobrescrito
+         silenciosamente. */
       if (rotuloBruto && numPreenchidas > 0) {
         if (!blocoAtual || !subgrupoAtual || !subgrupoAtual.periodos) {
           bloqueios.push({ linha: i, tipo: "indicador_sem_contexto", mensagem: "Linha " + i + " (" + rotuloBruto + "): indicador sem bloco/subgrupo/período ativo." });
           continue;
         }
+
+        var rotIndNorm = normEstrutural(rotuloBruto);
+        var criteriosAtivos = criteriosDoSubgrupo(blocoAtual.letra, subgrupoAtual.rotuloNormalizado);
+        var ehLinhaDeCriterio = criteriosAtivos.length > 0 && criteriosAtivos.indexOf(rotIndNorm) !== -1;
+
+        if (ehLinhaDeCriterio) {
+          criterioAtual = { rotuloBruto: rotuloBruto, rotuloNormalizado: rotIndNorm, linhaOrigem: i };
+        } else if (criteriosAtivos.length > 0) {
+          // Critério catalogado ativo para este subgrupo: checa duplicidade explicada por critério.
+          var criterioNoPrimeiroVisto = indicadoresVistosNoSubgrupo.hasOwnProperty(rotIndNorm) ? indicadoresVistosNoSubgrupo[rotIndNorm] : undefined;
+          var criterioAgoraNorm = criterioAtual ? criterioAtual.rotuloNormalizado : null;
+          if (criterioNoPrimeiroVisto !== undefined && criterioNoPrimeiroVisto === criterioAgoraNorm) {
+            bloqueios.push({
+              linha: i, tipo: "indicador_duplicado_sem_criterio",
+              mensagem: "Linha " + i + " (" + rotuloBruto + "): repetido no mesmo bloco/subgrupo/ocorrência sob o mesmo critério (" +
+                (criterioAgoraNorm || "nenhum") + ") — nenhum critério catalogado novo explica a repetição."
+            });
+            continue;
+          }
+          if (criterioNoPrimeiroVisto === undefined) indicadoresVistosNoSubgrupo[rotIndNorm] = criterioAgoraNorm;
+        } else {
+          indicadoresVistosNoSubgrupo[rotIndNorm] = null;
+        }
+
         for (var q = 0; q < 13; q++) {
           var per = subgrupoAtual.periodos[q];
           if (!per) continue;
@@ -420,7 +550,10 @@
             bloco: blocoAtual.rotuloBruto, blocoNormalizado: blocoAtual.rotuloNormalizado,
             subgrupo: subgrupoAtual.rotuloBruto, subgrupoNormalizado: subgrupoAtual.rotuloNormalizado,
             subgrupoOcorrencia: subgrupoAtual.ocorrencia,
-            indicadorBruto: rotuloBruto, indicadorNormalizado: normEstrutural(rotuloBruto),
+            criterio: ehLinhaDeCriterio ? null : (criterioAtual ? criterioAtual.rotuloBruto : null),
+            criterioNormalizado: ehLinhaDeCriterio ? null : (criterioAtual ? criterioAtual.rotuloNormalizado : null),
+            linhaOrigemCriterio: ehLinhaDeCriterio ? null : (criterioAtual ? criterioAtual.linhaOrigem : null),
+            indicadorBruto: rotuloBruto, indicadorNormalizado: rotIndNorm,
             periodo: per,
             valor: numDTE(vals[q]),
             lineage: { linhaOrigem: i, colunaOrigem: q + 1 }
@@ -592,6 +725,9 @@
     _numDTE: numDTE,
     _normEstrutural: normEstrutural,
     _celulaEhPeriodo: celulaEhPeriodo,
+    _linhaEhEstrutural: linhaEhEstrutural,
+    _criteriosDoSubgrupo: criteriosDoSubgrupo,
+    CRITERIOS_CONHECIDOS: CRITERIOS_CONHECIDOS,
     BLOCOS_CONHECIDOS: BLOCOS_CONHECIDOS
   };
 

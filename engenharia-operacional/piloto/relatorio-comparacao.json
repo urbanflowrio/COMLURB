@@ -6,7 +6,9 @@
     "comparadas": 938,
     "semCorrespondenciaCanonica": 156,
     "divergenciasEsperadas": 0,
-    "divergenciasReais": 0
+    "divergenciasReais": 0,
+    "defasagemDiasEntreCanonicoEBaseVertical": 4,
+    "possivelDefasagemTemporal": true
   },
   "divergenciasEsperadas": [],
   "divergenciasReais": [],

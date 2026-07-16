@@ -53,22 +53,31 @@
    *   ({ano, mes, periodo, grupo, indicador, unidadeOperacional, unidadeMedida, valor})
    */
   function comparar(canonico, baseVerticalRows) {
-    // Achado real: o mesmo rótulo de indicador se repete em mais de um
-    // subgrupo dentro do Bloco A (ex.: "CTR Seriopédica" aparece nos
-    // subgrupos V, VI e VII com valores diferentes — o próprio motivo
-    // histórico que forçou o parser seccionado do legado). Para o Bloco
-    // A a base vertical preserva o subgrupo de forma confiável na coluna
-    // "Indicador" (é justamente o texto do cabeçalho romano) — por isso
-    // a chave inclui o subgrupo SÓ para o Bloco A, onde é confiável.
-    // Para B/C/D o subgrupo registrado na base vertical é comprovadamente
-    // não confiável (ver achado de Bloco C, "Horas Utilizadas..." usado
-    // como subgrupo de indicadores que não têm subgrupo real) — nesses
-    // blocos a chave usa só bloco+rótulo+período, aceitando colisão
-    // residual rara como limitação já documentada.
+    // CORREÇÃO PÓS-AUDITORIA (achado real, confirmado empiricamente):
+    // o mesmo rótulo de indicador se repete em mais de um subgrupo
+    // dentro do MESMO bloco — não só no Bloco A ("CTR Seriopédica" em
+    // V/VI/VII), mas também no Bloco B (ex.: "Peso Coletado /
+    // Capacidade Estimada (t)" aparece em 7 subgrupos diferentes;
+    // "P16A - Trator de Praia - h/mês" aparece em 2 ocorrências
+    // distintas de "Horas Utilizadas / Horas Estimadas (h)"). A versão
+    // anterior deste harness só incluía o subgrupo na chave para o
+    // Bloco A, generalizando por engano a exceção do Bloco C (onde o
+    // subgrupo registrado pela base vertical É comprovadamente não
+    // confiável — "Horas Utilizadas..." usado como subgrupo de
+    // indicadores que não têm subgrupo real) para B e D também, que NÃO
+    // têm esse problema. Isso causava colisão real de chave sempre que
+    // o mesmo rótulo se repetia em subgrupos diferentes dentro de B/D —
+    // mascarada contra fixtures congeladas (canônico e base vertical do
+    // mesmo instante) porque, por coincidência numérica, algum dos
+    // candidatos colididos batia com o valor comparado; visível contra
+    // a fonte ao vivo, cujos valores já não coincidem por acaso.
+    //
+    // Regra corrigida: subgrupo entra na chave para A, B e D. Bloco C
+    // continua como ÚNICA exceção deliberada e documentada.
     var indiceCanonico = {};
     canonico.indicadores.forEach(function (r) {
       var letra = normEstrutural(String(r.bloco || "").trim().charAt(0));
-      var incluiSubgrupo = letra === "a";
+      var incluiSubgrupo = letra !== "c";
       var chave = letra + "|" + (incluiSubgrupo ? removerSufixoUnidade(r.subgrupo) + "|" : "") + removerSufixoUnidade(r.indicadorBruto) + "|" + r.periodo;
       (indiceCanonico[chave] = indiceCanonico[chave] || []).push(r);
     });
@@ -80,8 +89,29 @@
       comparadas: 0,
       semCorrespondenciaCanonica: 0,
       divergenciasEsperadas: 0,
-      divergenciasReais: 0
+      divergenciasReais: 0,
+      defasagemDiasEntreCanonicoEBaseVertical: null,
+      possivelDefasagemTemporal: false
     };
+    // DECISÃO DE GOVERNANÇA (correção pós-auditoria): a base vertical é
+    // um instantâneo estático (gerado pelo Apps Script em um momento
+    // fixo, registrado por linha em "Atualização"); o canônico pode ser
+    // capturado AO VIVO, em outro momento — a fonte real
+    // (DTE_RELATORIO_GERAL) é atualizada mês a mês. Diferença de datas
+    // aqui é uma LIMITAÇÃO DE COMPARAÇÃO (dois retratos de momentos
+    // diferentes da mesma fonte), não um erro do Adapter nem do
+    // harness. Este relatório NUNCA reclassifica ou esconde uma
+    // divergência por causa disso — só adiciona contexto explícito para
+    // quem for interpretar `divergenciasReais`.
+    var dataCanonico = canonico && canonico.envelope && canonico.envelope.capturedAt ? new Date(canonico.envelope.capturedAt) : null;
+    var dataBaseVertical = null;
+    for (var iBV = 0; iBV < baseVerticalRows.length; iBV++) {
+      if (baseVerticalRows[iBV] && baseVerticalRows[iBV].atualizacao) { dataBaseVertical = new Date(baseVerticalRows[iBV].atualizacao); break; }
+    }
+    if (dataCanonico && dataBaseVertical && !isNaN(dataCanonico) && !isNaN(dataBaseVertical)) {
+      resumo.defasagemDiasEntreCanonicoEBaseVertical = Math.round(Math.abs(dataCanonico - dataBaseVertical) / 86400000);
+      resumo.possivelDefasagemTemporal = resumo.defasagemDiasEntreCanonicoEBaseVertical > 0;
+    }
     var divergenciasEsperadas = [];
     var divergenciasReais = [];
     var semCorrespondencia = [];
@@ -109,7 +139,8 @@
       // amostra de valores.
       var letraGrupo = normEstrutural(String(row.grupo || "").trim().charAt(0));
       var periodo = periodoParaAnoMes(row.ano, row.mes);
-      var chave = letraGrupo + "|" + (letraGrupo === "a" ? removerSufixoUnidade(row.indicador) + "|" : "") + removerSufixoUnidade(row.unidadeOperacional) + "|" + periodo;
+      var incluiSubgrupoLinha = letraGrupo !== "c";
+      var chave = letraGrupo + "|" + (incluiSubgrupoLinha ? removerSufixoUnidade(row.indicador) + "|" : "") + removerSufixoUnidade(row.unidadeOperacional) + "|" + periodo;
       var candidatos = indiceCanonico[chave];
 
       if (!candidatos || !candidatos.length) {

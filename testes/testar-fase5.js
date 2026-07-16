@@ -66,6 +66,7 @@ carregar(path.join(COMP, "hub-sources.js"), false); // alterado nesta entrega (f
 carregar(path.join(COMP, "hub-ingest-model.js"), true);
 carregar(path.join(COMP, "hub-ingest-reader.js"), true);
 carregar(path.join(COMP, "hub-ingest-adapter-dte.js"), false); // novo nesta entrega
+carregar(path.join(raiz, "engenharia-operacional/piloto/harness.js"), false); // corrigido nesta entrega (correção pós-auditoria)
 
 var HUB = global.HUB;
 
@@ -205,7 +206,72 @@ async function rodar() {
   caso("Texto vazio: envelope sem payload", resVazio.envelope.payload, null);
   caso("Texto vazio: erro registrado, não silencioso", resVazio.envelope.quality.erros.length > 0, true);
 
-  /* ---------- Execução completa contra os dados reais enviados nesta fase ---------- */
+  /* ---------- Harness (engenharia-operacional/piloto/harness.js) — correção pós-auditoria ---------- */
+  if (typeof HARNESS_DTE !== "undefined") {
+    grupo("Fase 5 · Harness — correção da chave de comparação (subgrupo incluído em A/B/D, exceção só em C)");
+
+    function canonicoFake(registros, capturedAt) {
+      return { indicadores: registros, envelope: { capturedAt: capturedAt || new Date().toISOString() } };
+    }
+    function linhaBaseVertical(grupoLabel, subgrupoLabel, indicadorLabel, valor, atualizacao) {
+      return { ano: 2025, mes: 5, periodo: "2025-05", grupo: grupoLabel, indicador: subgrupoLabel, unidadeOperacional: indicadorLabel, unidadeMedida: "un", valor: valor, atualizacao: atualizacao || "2026-07-13T00:00:00" };
+    }
+
+    // 1. Mesmo indicador em dois subgrupos diferentes do Bloco B não pode colidir.
+    var canonicoB = canonicoFake([
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Um", indicadorBruto: "Indicador Repetido", periodo: "2025-05", valor: 10 },
+      { bloco: "B - MONITORAMENTO FROTA CONTRATADA", subgrupo: "Subgrupo Dois", indicadorBruto: "Indicador Repetido", periodo: "2025-05", valor: 20 }
+    ]);
+    var relB1 = HARNESS_DTE.comparar(canonicoB, [linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Um", "Indicador Repetido", 10)]);
+    caso("Bloco B: rótulo repetido em 2 subgrupos — casamento pelo subgrupo correto (Subgrupo Um, valor 10), zero divergência", relB1.resumo.divergenciasReais, 0);
+    caso("Bloco B: comparação bem-sucedida (não cai em sem-correspondência)", relB1.resumo.comparadas, 1);
+
+    var relB2 = HARNESS_DTE.comparar(canonicoB, [linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Dois", "Indicador Repetido", 20)]);
+    caso("Bloco B: mesmo rótulo, outro subgrupo (Subgrupo Dois, valor 20) — também casa corretamente, zero divergência", relB2.resumo.divergenciasReais, 0);
+
+    // 4. Comparação com valores distintos deve localizar o registro correto pelo subgrupo (caso que a versão
+    // anterior do harness colidia e podia gerar divergência real ou "sem correspondência" espúria).
+    var relB3 = HARNESS_DTE.comparar(canonicoB, [
+      linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Um", "Indicador Repetido", 10),
+      linhaBaseVertical("B - MONITORAMENTO FROTA CONTRATADA", "Subgrupo Dois", "Indicador Repetido", 20)
+    ]);
+    caso("Bloco B: as duas linhas (valores distintos, mesmo rótulo, subgrupos diferentes) casam corretamente — zero divergência real", relB3.resumo.divergenciasReais, 0);
+    caso("Bloco B: as duas linhas comparadas, nenhuma sem correspondência", { comparadas: relB3.resumo.comparadas, semCorrespondencia: relB3.resumo.semCorrespondenciaCanonica }, { comparadas: 2, semCorrespondencia: 0 });
+
+    // 2. Mesmo indicador em dois subgrupos diferentes do Bloco D não pode colidir.
+    var canonicoD = canonicoFake([
+      { bloco: "D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", subgrupo: "Quantidades", indicadorBruto: "Item Repetido", periodo: "2025-05", valor: 7 },
+      { bloco: "D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", subgrupo: "Outro Subgrupo Hipotético", indicadorBruto: "Item Repetido", periodo: "2025-05", valor: 99 }
+    ]);
+    var relD = HARNESS_DTE.comparar(canonicoD, [
+      linhaBaseVertical("D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", "Quantidades", "Item Repetido", 7),
+      linhaBaseVertical("D - MANUTENÇÃO PREDIAL - GERÊNCIA DE OBRAS - TGO", "Outro Subgrupo Hipotético", "Item Repetido", 99)
+    ]);
+    caso("Bloco D: rótulo repetido em 2 subgrupos hipotéticos — as duas linhas casam corretamente, zero divergência real", relD.resumo.divergenciasReais, 0);
+
+    // 3. Bloco C continua usando a chave SEM subgrupo (exceção deliberada e documentada).
+    var canonicoC = canonicoFake([
+      { bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", indicadorBruto: "Item Único C", periodo: "2025-05", valor: 15 }
+    ]);
+    var relC = HARNESS_DTE.comparar(canonicoC, [linhaBaseVertical("C - MANUTENÇÃO FROTA PRÓPRIA", "Qualquer Rótulo De Subgrupo Que A Base Vertical Tenha Registrado (não confiável)", "Item Único C", 15)]);
+    caso("Bloco C: casa mesmo com rótulo de subgrupo divergente na base vertical (exceção deliberada — subgrupo de C não é confiável)", relC.resumo.divergenciasReais, 0);
+    caso("Bloco C: comparação bem-sucedida apesar do subgrupo divergente", relC.resumo.comparadas, 1);
+
+    // 5. Caso temporalmente defasado: classificado como limitação de comparação, não erro do Adapter.
+    var canonicoDefasado = canonicoFake(
+      [{ bloco: "C - MANUTENÇÃO FROTA PRÓPRIA", subgrupo: "", indicadorBruto: "Item Defasado", periodo: "2025-05", valor: 42 }],
+      "2026-08-01T00:00:00.000Z"
+    );
+    var relDefasado = HARNESS_DTE.comparar(canonicoDefasado, [linhaBaseVertical("C - MANUTENÇÃO FROTA PRÓPRIA", "", "Item Defasado", 50, "2026-07-13T00:00:00")]);
+    caso("Defasagem temporal detectada e reportada (não escondida)", relDefasado.resumo.possivelDefasagemTemporal, true);
+    caso("Defasagem temporal: dias de diferença calculados corretamente (2026-08-01 - 2026-07-13 = 19 dias)", relDefasado.resumo.defasagemDiasEntreCanonicoEBaseVertical, 19);
+    caso("Defasagem temporal NÃO esconde a divergência real (valor 42 vs 50 continua contado)", relDefasado.resumo.divergenciasReais, 1);
+  } else {
+    grupo("Fase 5 · Harness — ausente");
+    caso("engenharia-operacional/piloto/harness.js carregado", false, true);
+  }
+
+
   if (FIXTURE_REAL) {
     grupo("Fase 5 · Execução completa — dados reais da aba geral (xlsx enviado nesta fase)");
     var resReal = await HUB.ingest.adapterDTE.carregarDTE({ fixtureTexto: FIXTURE_REAL });

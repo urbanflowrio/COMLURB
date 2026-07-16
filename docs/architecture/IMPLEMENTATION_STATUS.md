@@ -107,6 +107,20 @@ conhecidas da base vertical (perda de subgrupo nas linhas de gerência
 ofensora, unidade de medida inconsistente, ausência convertida em
 zero) documentadas em `harness.js` e não reproduzidas no Adapter.
 
+**Nota importante sobre estes números**: eles são idênticos antes e
+depois da correção da colisão de chave do harness (ver seção
+"Correção pós-auditoria (2)" abaixo) porque, contra esta fixture
+**congelada** (canônico e base vertical do mesmo instante), a colisão
+ficava mascarada por coincidência numérica — algum candidato colidido
+batia por acaso com o valor comparado. A colisão só se tornou visível
+quando o piloto rodou contra a **fonte ao vivo** publicada em
+`https://urbanflowrio.github.io/COMLURB/engenharia-operacional/piloto/`,
+que retornou 312 divergências reais. Isso não significa que a fixture
+estática deixou de ser útil — significa que ela sozinha não bastava
+para expor esse bug específico, e por isso a Fase 5 ainda depende de
+nova validação em navegador (ver "Fase 5 pendente" ao final desta
+seção).
+
 **Arquivos novos desta entrega (10):**
 - `assets/components/hub-ingest-adapter-dte.js`
 - `engenharia-operacional/piloto/index.html`
@@ -125,6 +139,18 @@ zero) documentadas em `harness.js` e não reproduzidas no Adapter.
   do arquivo também corrigido para não afirmar mais exclusividade da
   Fase 4).
 - `docs/architecture/IMPLEMENTATION_STATUS.md` — este documento.
+
+**Nota de proveniência desta rodada específica (correção do harness)**:
+dos 10 arquivos novos listados acima, esta rodada revisou o conteúdo de
+`engenharia-operacional/piloto/harness.js` (correção da colisão de
+chave), `testes/testar-fase5.js` (11 novos casos), e regenerou
+`engenharia-operacional/piloto/saida-canonica-exemplo.json`,
+`engenharia-operacional/piloto/relatorio-comparacao.json`,
+`engenharia-operacional/piloto/base-vertical-amostra.json` e
+`testes/fixtures/base-vertical-export-hub.json` (campo `atualizacao`
+adicionado, necessário para o cálculo de defasagem temporal).
+`assets/components/hub-ingest-adapter-dte.js` **não foi tocado** nesta
+rodada, conforme instruído.
 
 **Nenhum painel de produção foi alterado.** O componente compartilhado
 `hub-sources.js` foi alterado apenas de forma aditiva para registrar
@@ -149,12 +175,83 @@ diagnóstico. Anotações confirmadas da fonte (`notas`) continuam aviso,
 não erro — são reconhecidas corretamente como não-dado, não uma
 estrutura desconhecida.
 
-**Testes — duas contagens separadas, reexecutadas após a correção:**
-- **Fase 5 (`testes/testar-fase5.js`): 55/55 aprovados, 0 reprovados**
-  (49 anteriores + 1 corrigido + 5 novos casos de carga parcial/
-  correção do Validator).
-- **Fase 4 (`testes/testar-fase4.js`), reexecutada: 42/42 aprovados, 0
-  reprovados** — sem regressão.
+**Correção pós-auditoria (2) desta rodada — `engenharia-operacional/
+piloto/harness.js`: colisão de chave de comparação.**
+
+- **Causa-raiz confirmada**: a chave de comparação do harness só
+  incluía o subgrupo/critério para o Bloco A. Isso generalizou por
+  engano, para os Blocos B e D, uma exceção que só era válida para o
+  Bloco C (onde o subgrupo registrado pela base vertical é
+  comprovadamente não confiável — achado já documentado). Sem o
+  subgrupo na chave, qualquer rótulo de indicador repetido em mais de
+  um subgrupo dentro do mesmo bloco colidia em um único balde de
+  candidatos. Confirmado empiricamente, contra a própria fixture desta
+  fase: 6 grupos de rótulo colidindo só no Bloco B (ex.: "Peso Coletado
+  / Capacidade Estimada (t)" em 7 subgrupos diferentes), totalizando
+  ≈23% dos registros canônicos do Bloco B.
+- **Por que não apareceu antes**: contra a fixture congelada (canônico
+  e base vertical gerados no mesmo instante), a colisão ficava mascarada
+  — por coincidência numérica, algum dos candidatos colididos batia por
+  acaso com o valor comparado, então nenhuma divergência era reportada.
+  Contra a fonte ao vivo (valores já diferentes desde a captura da
+  fixture), a coincidência deixou de ocorrer e a ambiguidade virou
+  divergência visível, inclusive casos de "canonico: [null, null, ...]"
+  quando nenhum candidato colidido batia com o valor da base vertical
+  naquele período.
+- **Correção aplicada**: a chave agora inclui subgrupo para os Blocos
+  A, B e D. **O Bloco C continua como única exceção deliberada e
+  documentada** (subgrupo excluído da chave só para ele, porque seu
+  rastreamento de subgrupo na base vertical é comprovadamente não
+  confiável — não porque o Adapter tenha essa limitação).
+- **Distinção importante — bug de chave × descompasso temporal**: são
+  duas causas diferentes e independentes, ambas relevantes para
+  interpretar divergências desta fase:
+  - **Bug de chave** (corrigido nesta rodada): colisão estrutural no
+    harness, presente mesmo comparando dois retratos do mesmo instante.
+    Já corrigido e testado.
+  - **Descompasso temporal** (limitação de comparação, não erro de
+    código): a base vertical é um instantâneo estático gerado pelo
+    Apps Script em um momento fixo; o canônico pode ser capturado ao
+    vivo, em outro momento, da mesma fonte que é atualizada mês a mês.
+    O harness agora calcula e relata `defasagemDiasEntreCanonicoEBaseVertical`
+    e `possivelDefasagemTemporal` explicitamente — **sem nunca
+    reclassificar ou esconder uma divergência real por causa disso**;
+    é só contexto para quem interpreta o relatório. Uma divergência de
+    valor pode ser causada por atualização normal da fonte no período,
+    não necessariamente por um erro do Adapter ou do harness.
+- **Adapter DTE**: não foi alterado nesta rodada. Não há evidência de
+  perda de dados nele — o pequeno delta de contagem observado ao vivo
+  (1118→1113 indicadores) é consistente com atualização normal da fonte
+  entre a captura da fixture e a execução ao vivo, não com um bug de
+  extração.
+
+**Testes — três rodadas registradas nesta fase, a mais recente é a
+oficial:**
+- Fase 5, resultado inicial (antes da correção do Validator): 50/50
+  aprovados, 0 reprovados — substituído pela rodada seguinte.
+- Fase 5, após a correção do Validator (carga parcial nunca publicada):
+  55/55 aprovados, 0 reprovados — substituído pela rodada seguinte.
+- **Fase 5, após a correção do harness (colisão de chave) — resultado
+  atual e oficial: 66/66 aprovados, 0 reprovados.** Inclui os 55 casos
+  anteriores mais 11 novos: mesmo indicador em subgrupos diferentes do
+  Bloco B não colide (3 casos), mesmo indicador em subgrupos diferentes
+  do Bloco D não colide (1 caso), Bloco C continua sem subgrupo na
+  chave — exceção deliberada (2 casos), comparação com valores
+  distintos localiza o registro correto pelo subgrupo (2 casos), e
+  defasagem temporal é detectada, relatada e não esconde divergência
+  real (3 casos).
+- **Fase 4 (`testes/testar-fase4.js`), reexecutada nesta rodada: 42/42
+  aprovados, 0 reprovados** — sem regressão; nenhum arquivo da Fase 4
+  foi tocado.
+
+**Fase 5 ainda pendente de validação em navegador após a publicação
+desta correção.** A auditoria já rodou o piloto ao vivo uma vez (contra
+o harness com o bug de colisão) e encontrou 312 divergências reais —
+esta rodada corrige a causa-raiz confirmada e adiciona testes
+específicos para ela, mas a confirmação definitiva só vem de uma nova
+execução em `https://urbanflowrio.github.io/COMLURB/engenharia-operacional/piloto/`
+após esta entrega ser publicada. Até essa nova validação ao vivo, a
+Fase 5 permanece **não aprovada**.
 
 **Limitação de ambiente, já registrada na Fase 4**: este ambiente de
 build não acessa `docs.google.com` — a suíte e o harness rodam contra

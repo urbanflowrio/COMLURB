@@ -379,6 +379,22 @@ async function rodar() {
     caso("Fixture real presente em testes/fixtures/dte-geral-real.csv", false, true);
   }
 
+  grupo("Fase 5 · Integração piloto — contrato index × harness");
+  var indexPilotoPath = path.join(raiz, "engenharia-operacional/piloto/index.html");
+  var indexPilotoTexto = fs.readFileSync(indexPilotoPath, "utf8");
+  caso("index.html não referencia mais o campo removido relatorio.divergenciasReais",
+    indexPilotoTexto.indexOf("relatorio.divergenciasReais") === -1, true);
+  caso("index.html usa divergenciasNumericasReais do contrato vigente",
+    indexPilotoTexto.indexOf("relatorio.divergenciasNumericasReais") !== -1, true);
+  caso("index.html exibe não comparáveis por perda de contexto",
+    indexPilotoTexto.indexOf("relatorio.naoComparaveisPorPerdaDeContexto") !== -1, true);
+  caso("index.html exibe sem correspondência",
+    indexPilotoTexto.indexOf("relatorio.semCorrespondencia") !== -1, true);
+  caso("index.html exibe divergências esperadas null × zero",
+    indexPilotoTexto.indexOf("relatorio.divergenciasEsperadasNullZero") !== -1, true);
+  caso("index.html usa critério de aprovação baseado em divergências numéricas reais",
+    indexPilotoTexto.indexOf("relatorio.resumo.divergenciasNumericasReais === 0") !== -1, true);
+
   /* ---------- RELATÓRIO ---------- */
   console.log("Raiz usada: " + raiz);
   console.log("Arquivos carregados nesta execução:");

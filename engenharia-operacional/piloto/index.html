@@ -99,11 +99,43 @@ async function rodar() {
   if (relatorio) {
     html += "<h2>Comparação com a base vertical (amostra de controle, não fonte oficial)</h2><pre>" +
       JSON.stringify(relatorio.resumo, null, 2) + "</pre>";
-    html += "<h3 class='" + (relatorio.resumo.divergenciasReais === 0 ? "ok" : "crit") + "'>Divergências reais: " +
-      relatorio.resumo.divergenciasReais + "</h3>";
-    if (relatorio.divergenciasReais.length) {
-      html += "<pre>" + JSON.stringify(relatorio.divergenciasReais, null, 2) + "</pre>";
+    html += "<h3 class='ok'>Comparados com segurança: " + relatorio.resumo.comparadosComSeguranca + "</h3>";
+
+    html += "<h3 class='" + (relatorio.resumo.divergenciasNumericasReais === 0 ? "ok" : "crit") +
+      "'>Divergências numéricas reais: " + relatorio.resumo.divergenciasNumericasReais + "</h3>";
+    if (relatorio.divergenciasNumericasReais.length) {
+      html += "<pre>" + JSON.stringify(relatorio.divergenciasNumericasReais, null, 2) + "</pre>";
     }
+
+    html += "<h3 class='att'>Não comparáveis por perda de contexto: " +
+      relatorio.resumo.naoComparaveisPorPerdaDeContexto + "</h3>";
+    if (relatorio.naoComparaveisPorPerdaDeContexto.length) {
+      html += "<pre>" + JSON.stringify(relatorio.naoComparaveisPorPerdaDeContexto, null, 2) + "</pre>";
+    }
+
+    html += "<h3 class='att'>Sem correspondência canônica: " + relatorio.resumo.semCorrespondencia + "</h3>";
+    if (relatorio.semCorrespondencia.length) {
+      html += "<pre>" + JSON.stringify(relatorio.semCorrespondencia, null, 2) + "</pre>";
+    }
+
+    html += "<h3 class='att'>Divergências esperadas (null × zero): " +
+      relatorio.resumo.divergenciasEsperadasNullZero + "</h3>";
+    if (relatorio.divergenciasEsperadasNullZero.length) {
+      html += "<pre>" + JSON.stringify(relatorio.divergenciasEsperadasNullZero, null, 2) + "</pre>";
+    }
+
+    html += "<h3>Defasagem temporal</h3><pre>" + JSON.stringify({
+      defasagemDiasEntreCanonicoEBaseVertical: relatorio.resumo.defasagemDiasEntreCanonicoEBaseVertical,
+      possivelDefasagemTemporal: relatorio.resumo.possivelDefasagemTemporal
+    }, null, 2) + "</pre>";
+
+    var aprovado = relatorio.resumo.divergenciasNumericasReais === 0 &&
+      pipeline.envelope.payload && pipeline.bloqueios.length === 0 &&
+      pipeline.envelope.quality.erros.length === 0;
+    html += "<h3 class='" + (aprovado ? "ok" : "crit") + "'>" +
+      (aprovado ? "COMPARAÇÃO CANÔNICA APROVADA — limitações da base vertical registradas separadamente." :
+        "COMPARAÇÃO PENDENTE — existem divergências numéricas reais ou falhas estruturais.") + "</h3>";
+
     html += "<h3>Limitações conhecidas da base vertical (não corrigidas no Adapter para reproduzi-las)</h3><ul>";
     relatorio.limitacoesConhecidasDaBaseVertical.forEach(function (l) { html += "<li>" + l + "</li>"; });
     html += "</ul>";

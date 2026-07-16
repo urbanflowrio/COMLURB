@@ -2,6 +2,15 @@
 
 ## Fase atual: Fase 5 — Piloto Engenharia (Piloto B)
 
+### Correção de integração pós-publicação — index × harness
+
+Após a publicação da versão com o contrato novo do harness, o piloto falhou no navegador com `Cannot read properties of undefined (reading 'length')`. A causa foi a permanência, em `engenharia-operacional/piloto/index.html`, de referências ao campo removido `relatorio.divergenciasReais`. O harness vigente expõe `divergenciasNumericasReais`, `naoComparaveisPorPerdaDeContexto`, `semCorrespondencia` e `divergenciasEsperadasNullZero`.
+
+Correção aplicada somente na integração da página: o `index.html` passou a consumir o contrato atual, exibir cada categoria separadamente e aprovar tecnicamente apenas quando há payload válido, zero bloqueios, zero erros e zero divergências numéricas reais. Limitações da base vertical permanecem visíveis, mas não são tratadas como falha do Adapter. Foi adicionado teste estático de integração para impedir regressão do nome antigo.
+
+**Suíte após esta correção:** foram adicionados 6 testes de integração, elevando o total esperado da Fase 5 de 86 para 92 casos. Neste ambiente, a reexecução completa não foi possível porque a entrega incremental não contém a `main` completa nem a dependência Node `papaparse`; a sintaxe dos arquivos alterados foi validada. Antes da aprovação final, execute `node testes/testar-fase5.js .` e `node testes/testar-fase4.js .` sobre a `main` atual. A Fase 5 continua pendente de reexecução e nova validação ao vivo após publicação deste corretivo.
+
+
 **Fase 4 — Piloto AR: concluída e aprovada.**
 
 **Validação em navegador com dados reais: concluída**, contra a

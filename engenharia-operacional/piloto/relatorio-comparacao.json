@@ -1,0 +1,956 @@
+{
+  "resumo": {
+    "totalLinhasBaseVertical": 1562,
+    "linhasOfensoraNaBaseVertical": 468,
+    "linhasIndicadorNaBaseVertical": 1094,
+    "comparadas": 938,
+    "semCorrespondenciaCanonica": 156,
+    "divergenciasEsperadas": 0,
+    "divergenciasReais": 0
+  },
+  "divergenciasEsperadas": [],
+  "divergenciasReais": [],
+  "semCorrespondencia": [
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 719
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 525
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 739
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.389
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.205
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.337
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.032
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.036
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.036
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 29613
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 43827
+    },
+    {
+      "periodo": "2025-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 28212
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 742
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 570
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 737
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.454
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.429
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.383
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.028
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.041
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.036
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 26906
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 50250
+    },
+    {
+      "periodo": "2025-06",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 30286
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 789
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 590
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 788
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.434
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.484
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.39
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.032
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.037
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.042
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 31815
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 46986
+    },
+    {
+      "periodo": "2025-07",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 34529
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 777
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 546
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 742
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.461
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.454
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.368
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.033
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.036
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.041
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 33025
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 45129
+    },
+    {
+      "periodo": "2025-08",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 33510
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 867
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 600
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 790
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.542
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.502
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.401
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.041
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.037
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.04
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 39817
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 44732
+    },
+    {
+      "periodo": "2025-09",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 34948
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 888
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 608
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 827
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.541
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.481
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.438
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.038
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.037
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.025
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 34803
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 41554
+    },
+    {
+      "periodo": "2025-10",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 20767
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 636
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 891
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 866
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.278
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.527
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.454
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.028
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.052
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.038
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 36454
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 47164
+    },
+    {
+      "periodo": "2025-11",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 44791
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 747
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 1085
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 1062
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.297
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.581
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.518
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.082
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.075
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.053
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 74104
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 85124
+    },
+    {
+      "periodo": "2025-12",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 43374
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 953
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 666
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 928
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.537
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.516
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.456
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.063
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.039
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.029
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 54708
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 47915
+    },
+    {
+      "periodo": "2026-01",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 24247
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 592
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 633
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 697
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.268
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.487
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.389
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.076
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.056
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.054
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 66185
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 68283
+    },
+    {
+      "periodo": "2026-02",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 80853
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 566
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 546
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 588
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.379
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.479
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.359
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.095
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.051
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.056
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 81318
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 59952
+    },
+    {
+      "periodo": "2026-03",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 76840
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 490
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 422
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 494
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.296
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.36
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.281
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.088
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.039
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.041
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 70393
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 44998
+    },
+    {
+      "periodo": "2026-04",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 50620
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 389
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 375
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT",
+      "valorBaseVertical": 554
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.228
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.166
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Qtde Pesagens > 10% PBT / Qtde Pesagens Total",
+      "valorBaseVertical": 0.315
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.08
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.042
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor HE / Valor Faturado - Gerência",
+      "valorBaseVertical": 0.026
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 70068
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 33042
+    },
+    {
+      "periodo": "2026-05",
+      "grupo": "B - MONITORAMENTO FROTA CONTRATADA",
+      "indicador": "Valor de Horas Extras - Gerência",
+      "valorBaseVertical": 33596
+    }
+  ],
+  "limitacoesConhecidasDaBaseVertical": [
+    "Perda de vínculo com subgrupo/critério nas linhas 'Gerência Ofensora N' — a coluna Grupo só registra o bloco (A-D). O modelo canônico preserva bloco+subgrupo+ocorrência para cada registro de gerência ofensora; a base vertical não permite reconstruir isso de forma confiável.",
+    "Unidade de medida (Unidade_Medida) inferida heuristicamente por palavra-chave e comprovadamente inconsistente para o mesmo tipo de dado (ex.: 'un' vs '%' para valores que parecem a mesma métrica). O modelo canônico não infere unidade para as linhas de gerência ofensora (unidadeMedida: null) em vez de arriscar uma inferência não confiável.",
+    "Ausência de dado na fonte é convertida em 0 pela transformação Apps Script (mesmo comportamento do legado engenharia-operacional/index.html). O modelo canônico preserva null."
+  ]
+}

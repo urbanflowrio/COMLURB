@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>HUB COMLURB · Relatório técnico · Piloto Engenharia/DTE (Fase 5)</title>
+<meta name="robots" content="noindex,nofollow">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<!-- hub-core.js já existe em main e não é reenviado nesta entrega incremental. -->
+<script src="../../assets/components/hub-core.js"></script>
+<!-- Arquivos alterados/novos desta entrega (Fase 5 · Piloto B/Engenharia-DTE). -->
+<script src="../../assets/components/hub-sources.js"></script>
+<script src="../../assets/components/hub-ingest-model.js"></script>
+<script src="../../assets/components/hub-ingest-reader.js"></script>
+<script src="../../assets/components/hub-ingest-adapter-dte.js"></script>
+<script src="harness.js"></script>
+<style>
+  body{background:#06111f;color:#f7f9ff;font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;padding:24px;max-width:1000px}
+  h1{font-size:18px;margin:0 0 4px}
+  .aviso{background:#3a2a12;border:1px solid #e87535;color:#ffd9b0;padding:10px 14px;border-radius:8px;margin:14px 0;font-size:13px}
+  h2{font-size:14px;color:#5b9bd5;border-bottom:1px solid #294866;padding-bottom:6px;margin-top:28px}
+  .ok{color:#78aaa3}.crit{color:#ef6a5d}.att{color:#e87535}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  td,th{border:1px solid #294866;padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#0a1b31;color:#b8c9de}
+  pre{white-space:pre-wrap;background:#0a1b31;border:1px solid #294866;border-radius:6px;padding:10px;font-size:11px}
+  #resumo{font-size:16px;font-weight:700;margin:10px 0}
+  code{color:#a78bfa}
+</style>
+</head>
+<body>
+<h1>HUB COMLURB · Piloto B (Engenharia/DTE) · Relatório técnico</h1>
+<div class="aviso">
+  Esta página NÃO é um painel institucional e não é linkada do portal. Existe apenas para validar, em
+  ambiente de navegador real, a cadeia Locator → Reader → Adapter DTE → Validator → Modelo canônico
+  (domínio <code>series_operacionais</code>) contra a fonte única autorizada nesta fase: a aba geral da
+  planilha "Relatório Mensal DTE" (<code>DTE_RELATORIO_GERAL</code>). O painel de produção
+  (<code>engenharia-operacional/index.html</code>) continua em produção sem nenhuma alteração.
+  <br><br>
+  Esta fase NÃO recria as quatro telas do painel, NÃO migra as outras cinco fontes hoje consumidas por ele,
+  NÃO recria os 11 blocos do antigo DTE e NÃO classifica nada por limiar/status. O objetivo é validar
+  leitura, estrutura, períodos, blocos, subgrupos, indicadores, unidades e valores da fonte, e comparar o
+  resultado contra a base vertical (aba <code>EXPORT_HUB_ENGENHARIA</code>, gerada por Apps Script) — que é
+  amostra de comparação e controle, nunca fonte oficial.
+</div>
+<div id="resumo">Carregando a aba geral da planilha Relatório Mensal DTE…</div>
+<div id="conteudo"></div>
+
+<script>
+async function rodar() {
+  var resumoEl = document.getElementById("resumo");
+  var out = document.getElementById("conteudo");
+
+  var pipeline = await HUB.ingest.adapterDTE.carregarDTE({});
+
+  if (!pipeline.envelope.payload) {
+    resumoEl.className = "crit";
+    resumoEl.textContent = "Falha ao carregar a fonte — nenhum registro produzido. Ver diagnóstico abaixo.";
+    out.innerHTML = "<h2>Diagnóstico de falha</h2><pre>" +
+      "diagnosticoFonte: " + JSON.stringify(pipeline.diagnosticoFonte, null, 2) + "\n" +
+      "quality: " + JSON.stringify(pipeline.envelope.quality, null, 2) +
+      "</pre>";
+    return;
+  }
+
+  var baseVertical = [];
+  var falhaBaseVertical = null;
+  try {
+    var resp = await fetch("base-vertical-amostra.json");
+    baseVertical = await resp.json();
+  } catch (e) {
+    falhaBaseVertical = e;
+  }
+
+  var relatorio = falhaBaseVertical ? null : HARNESS_DTE.comparar(pipeline, baseVertical);
+
+  resumoEl.className = "ok";
+  resumoEl.textContent = pipeline.indicadores.length + " indicadores + " + pipeline.gerenciasOfensoras.length +
+    " gerências ofensoras extraídos, " + pipeline.bloqueios.length + " bloqueio(s), " +
+    pipeline.notas.length + " nota(s) ignorada(s) — " + pipeline.envelope.payload.periodos.length + " período(s).";
+
+  var html = "";
+
+  html += "<h2>Fonte</h2><pre>" + JSON.stringify(HUB.sources.fonte("DTE_RELATORIO_GERAL"), null, 2) + "</pre>";
+
+  html += "<h2>Envelope (modelo canônico)</h2><pre>" + JSON.stringify({
+    schemaVersion: pipeline.envelope.schemaVersion, domain: pipeline.envelope.domain,
+    referencePeriod: pipeline.envelope.referencePeriod, quality: pipeline.envelope.quality
+  }, null, 2) + "</pre>";
+
+  if (pipeline.bloqueios.length) {
+    html += "<h2 class='att'>Bloqueios de linha (falha segura — linha ignorada, nunca inventada)</h2><table><tr><th>Linha</th><th>Tipo</th><th>Mensagem</th></tr>";
+    pipeline.bloqueios.forEach(function (b) { html += "<tr><td>" + b.linha + "</td><td>" + b.tipo + "</td><td>" + b.mensagem + "</td></tr>"; });
+    html += "</table>";
+  }
+
+  html += "<h2>Amostra de indicadores (10 primeiros)</h2><pre>" + JSON.stringify(pipeline.indicadores.slice(0, 10), null, 2) + "</pre>";
+  html += "<h2>Amostra de gerências ofensoras (5 primeiras)</h2><pre>" + JSON.stringify(pipeline.gerenciasOfensoras.slice(0, 5), null, 2) + "</pre>";
+
+  if (relatorio) {
+    html += "<h2>Comparação com a base vertical (amostra de controle, não fonte oficial)</h2><pre>" +
+      JSON.stringify(relatorio.resumo, null, 2) + "</pre>";
+    html += "<h3 class='" + (relatorio.resumo.divergenciasReais === 0 ? "ok" : "crit") + "'>Divergências reais: " +
+      relatorio.resumo.divergenciasReais + "</h3>";
+    if (relatorio.divergenciasReais.length) {
+      html += "<pre>" + JSON.stringify(relatorio.divergenciasReais, null, 2) + "</pre>";
+    }
+    html += "<h3>Limitações conhecidas da base vertical (não corrigidas no Adapter para reproduzi-las)</h3><ul>";
+    relatorio.limitacoesConhecidasDaBaseVertical.forEach(function (l) { html += "<li>" + l + "</li>"; });
+    html += "</ul>";
+  } else {
+    html += "<h2 class='att'>Comparação com a base vertical não pôde rodar</h2><pre>" + String(falhaBaseVertical) + "</pre>";
+  }
+
+  out.innerHTML = html;
+}
+
+rodar().catch(function (e) {
+  document.getElementById("resumo").className = "crit";
+  document.getElementById("resumo").textContent = "Falha inesperada: " + (e && e.message ? e.message : String(e));
+});
+</script>
+</body>
+</html>

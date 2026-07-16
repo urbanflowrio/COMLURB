@@ -1,23 +1,176 @@
 # HUB COMLURB · UrbanFlow Core v1 — Status de Implementação
 
-## Fase atual: Fase 4 — Piloto AR
+## Fase atual: Fase 5 — Piloto Engenharia (Piloto B)
 
-**Implementação: concluída.**
-**Publicação: já ocorreu** em `https://urbanflowrio.github.io/COMLURB/ar/piloto/`.
-**Auditoria/aprovação: ainda pendente.** A primeira execução com dados
-reais encontrou 2 divergências de campo (E08, P01 — campo `atingimento`)
-e resultou em status PENDENTE DE REVISÃO. Este documento registra o
-diagnóstico, a causa-raiz e a correção mínima aplicada (ver "Correção
-pós-publicação" abaixo). A aprovação formal continua exigindo uma nova
-execução com dados reais em navegador, com decisão humana explícita da
-proprietária do produto — não é dada como certa por esta correção.
-**Próxima ação autorizada: publicar esta correção e validar novamente o
-piloto com dados reais.** Nenhuma ação além dessa está autorizada agora.
-**Fase 5: NÃO autorizada.** Nada deste documento ou desta entrega inicia,
-prepara ou antecipa a Fase 5.
+**Fase 4 — Piloto AR: concluída e aprovada.**
 
-Este documento não existia em `main` antes da primeira entrega desta
-fase (conferido por verificação direta do repositório, não presumido).
+**Validação em navegador com dados reais: concluída**, contra a
+publicação em `https://urbanflowrio.github.io/COMLURB/ar/piloto/`.
+Resultado: Legado 13 indicadores, Nova arquitetura 13 indicadores, 0
+divergências de campo, 1 divergência de bônus (aceita e formalmente
+explicada pela governança — `combinacaoECPLiberada = false`), pendência
+institucional E03 registrada, três fontes operacionais carregadas
+corretamente. Suíte final: 42/42 casos aprovados, 0 reprovados.
+
+**Aprovação humana explícita: registrada.** A proprietária do produto
+aprovou formalmente a comparação Legado × Nova Arquitetura do Piloto A
+(AR) nesta data, com o resultado acima.
+
+**Fase 5 — Piloto Engenharia/DTE: implementada nesta rodada.**
+
+**Escopo confirmado pela proprietária do produto:** a única fonte
+oficial do Piloto B é a aba geral da planilha "Relatório Mensal DTE"
+(`DTE_RELATORIO_GERAL`). As outras cinco fontes do painel atual e os 11
+blocos analíticos do antigo DTE ficam fora do escopo. Não se recriou o
+painel, não se alterou sua estética, o Adapter não foi conectado à
+produção. `hub-rules-engenharia.js` não foi criado (nenhuma
+classificação por limiar/status/score nesta fase).
+
+**Decisões de governança aplicadas nesta rodada (aprovadas pela
+proprietária do produto):**
+1. Vazio/"-"/"—"/inválido → `null` sempre; zero literal → `0`. O
+   Adapter DTE nunca converte ausência em zero. Divergências causadas
+   por essa regra no legado/base vertical são esperadas e registradas
+   pelo harness, não reproduzidas.
+2. Locator: `DTE_RELATORIO_GERAL` (nome aprovado).
+3. Detecção de bloco e subgrupo é estrutural e explícita — nunca
+   heurística por palavra-chave. Bloco A: algarismo romano. Blocos B/C/D:
+   lista nomeada de cabeçalhos confirmados nos dados reais, isolada
+   dentro do Adapter DTE. Cabeçalho não reconhecido gera bloqueio
+   explícito de linha, nunca é tratado como indicador.
+   - **Extensão de governança, justificada por achado real**: a
+     detecção de BLOCO em si também usa whitelist (A/B/C/D), não só
+     regex genérico de letra maiúscula — porque as letras C e D também
+     são algarismos romanos válidos (100 e 500), criando ambiguidade
+     estrutural real entre "bloco" e "subgrupo romano" que um regex
+     puramente estrutural não resolveria de forma segura. Ver
+     comentário de cabeçalho de `hub-ingest-adapter-dte.js`.
+4. Par "Gerência Ofensora N" (categórica) + linha de valor associada
+   vira um único registro canônico, preservando bloco, subgrupo,
+   ocorrência, período, posição, código, valor, unidade (quando
+   conhecida), rótulos brutos e lineage. Aceita qualquer N válido (não
+   limita a 3 — confirmado N=7 nos dados reais). Falha explícita
+   (bloqueio de linha) se a linha seguinte não estiver estruturalmente
+   associada — nunca inventa valor.
+   - **Achado real durante a implementação**: a linha de valor
+     associada NEM SEMPRE vem sem rótulo, como descrito originalmente —
+     em vários casos repete o rótulo do indicador-pai (ex.: "Valor de
+     Horas Extras - Gerência"). Isso NÃO desqualifica a associação; o
+     critério real de desqualificação é a linha seguinte ser
+     estruturalmente outra coisa (novo bloco, novo subgrupo, nova linha
+     de período, ou outra "Gerência Ofensora"). O rótulo da linha de
+     valor, quando presente, é preservado em `rotulosBrutos.linhaValor`.
+
+**Achados estruturais adicionais, descobertos só com os dados reais
+completos (não previstos no diagnóstico da rodada anterior):**
+- O período pode vir na MESMA linha do rótulo do subgrupo (romano ou
+  catalogado) ou em linha separada logo abaixo — de forma inconsistente
+  mesmo dentro do próprio Bloco A (ex.: "I -" tem período na mesma
+  linha; "II -" tem período em linha separada). O Adapter trata os dois
+  casos.
+- Bloco C não tem nenhum subgrupo confirmado nos dados reais — os
+  indicadores ficam direto sob um subgrupo implícito vazio.
+- Conversão numérica: valores na casa dos milhões (ex. biogás em Nm³,
+  "16.257.432") têm MAIS de um separador de milhar pt-BR. A primeira
+  versão do conversor autocontido (`numDTE`, mesma lógica de
+  `numAR` do Piloto A) só reconhecia um separador — corrigido para
+  aceitar qualquer quantidade de agrupamentos de 3 dígitos. Encontrado
+  e corrigido durante a comparação com a base vertical (ver relatório
+  de comparação).
+
+**Testes — resultado inicial, anterior à correção pós-auditoria do
+Validator (ver seção "Correção pós-auditoria" abaixo, que substitui
+esta contagem):**
+- Fase 5 (`testes/testar-fase5.js`): 50/50 aprovados, 0 reprovados.
+  Inclui: Locator, conversão numérica, detecção de período, bloco/
+  subgrupo não reconhecido (falha explícita), Gerência Ofensora (N
+  arbitrário, união de par, rótulo próprio na linha de valor, par
+  malformado), Bloco C sem subgrupo, falha segura para fonte vazia, e
+  execução completa contra os dados reais enviados nesta fase (1118
+  indicadores, 546 gerências ofensoras, 35 anotações ignoradas, 13
+  períodos, zero bloqueios, zero erros).
+- Fase 4 (`testes/testar-fase4.js`), reexecutada para confirmar
+  ausência de regressão: 42/42 aprovados, 0 reprovados — nenhum
+  arquivo da Fase 4 foi alterado por esta entrega (só `hub-sources.js`
+  recebeu uma fonte nova, aditiva).
+
+**Comparação com a base vertical (`engenharia-operacional/piloto/
+relatorio-comparacao.json`, gerado contra os dados reais enviados
+nesta fase):** 938 valores comparados diretamente, **0 divergências
+reais**, 156 linhas da base vertical sem correspondência direta — todas
+explicadas pela mesma limitação conhecida (a base vertical reaproveita
+o rótulo do indicador-pai como rótulo da linha de valor de gerência
+ofensora, produzindo múltiplas linhas com o mesmo rótulo por período;
+o modelo canônico correta e deliberadamente não duplica essas linhas
+como indicador — elas já estão em `gerenciasOfensoras`). Limitações
+conhecidas da base vertical (perda de subgrupo nas linhas de gerência
+ofensora, unidade de medida inconsistente, ausência convertida em
+zero) documentadas em `harness.js` e não reproduzidas no Adapter.
+
+**Arquivos novos desta entrega (10):**
+- `assets/components/hub-ingest-adapter-dte.js`
+- `engenharia-operacional/piloto/index.html`
+- `engenharia-operacional/piloto/harness.js`
+- `engenharia-operacional/piloto/README.md`
+- `engenharia-operacional/piloto/base-vertical-amostra.json`
+- `engenharia-operacional/piloto/saida-canonica-exemplo.json`
+- `engenharia-operacional/piloto/relatorio-comparacao.json`
+- `testes/testar-fase5.js`
+- `testes/fixtures/dte-geral-real.csv`
+- `testes/fixtures/base-vertical-export-hub.json`
+
+**Arquivos alterados desta entrega (2):**
+- `assets/components/hub-sources.js` — fonte `DTE_RELATORIO_GERAL`
+  adicionada (aditivo, nenhuma fonte existente foi tocada; cabeçalho
+  do arquivo também corrigido para não afirmar mais exclusividade da
+  Fase 4).
+- `docs/architecture/IMPLEMENTATION_STATUS.md` — este documento.
+
+**Nenhum painel de produção foi alterado.** O componente compartilhado
+`hub-sources.js` foi alterado apenas de forma aditiva para registrar
+`DTE_RELATORIO_GERAL`, sem tocar nenhuma fonte existente. O pipeline do
+DTE é: **Locator → Reader → Decoder local DTE (autocontido dentro de
+`hub-ingest-adapter-dte.js`, via Papa.parse direto sobre o texto bruto)
+→ Adapter → Validator → modelo canônico** — não usa o Decoder genérico
+(`hub-ingest-decoder.js`), cujo contrato de cabeçalho único não serve
+ao formato largo seccionado da fonte (ver nota de cabeçalho do
+Adapter). Nenhum EXPORT_HUB foi criado. Nenhuma estética foi alterada.
+
+**Correção pós-auditoria desta rodada — Validator (decisão de
+governança aplicada retroativamente):** qualquer bloqueio estrutural
+(bloco/subgrupo/romano não reconhecido, período sem bloco/subgrupo,
+indicador ou gerência ofensora sem contexto válido, par de gerência
+ofensora malformado ou com associação ambígua) agora entra em
+`quality.erros` e invalida `envelope.payload` (torna-se `null`) — nunca
+mais um aviso que permitisse publicar carga parcial quando a planilha
+ganha uma estrutura nova não reconhecida. `indicadores` e
+`gerenciasOfensoras` continuam retornados fora do envelope, só para
+diagnóstico. Anotações confirmadas da fonte (`notas`) continuam aviso,
+não erro — são reconhecidas corretamente como não-dado, não uma
+estrutura desconhecida.
+
+**Testes — duas contagens separadas, reexecutadas após a correção:**
+- **Fase 5 (`testes/testar-fase5.js`): 55/55 aprovados, 0 reprovados**
+  (49 anteriores + 1 corrigido + 5 novos casos de carga parcial/
+  correção do Validator).
+- **Fase 4 (`testes/testar-fase4.js`), reexecutada: 42/42 aprovados, 0
+  reprovados** — sem regressão.
+
+**Limitação de ambiente, já registrada na Fase 4**: este ambiente de
+build não acessa `docs.google.com` — a suíte e o harness rodam contra
+os dados reais enviados nesta fase (xlsx + Apps Script), convertidos
+para o mesmo formato de CSV publicado pelo Google Sheets, não contra a
+URL ao vivo. A validação em navegador real (como a página
+`engenharia-operacional/piloto/index.html` faz, quando publicada)
+ainda depende da proprietária do produto rodá-la a partir do GitHub
+Pages, do mesmo jeito que a Fase 4 foi validada.
+
+**Fase 6: NÃO autorizada.** Nada deste documento ou desta entrega
+inicia, prepara ou antecipa a Fase 6.
+
+Este documento não existia em `main` antes da primeira entrega da Fase 4
+(conferido por verificação direta do repositório, não presumido). Esta
+entrega é uma atualização pontual do mesmo arquivo.
 
 ---
 

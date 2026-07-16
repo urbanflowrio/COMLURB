@@ -1,14 +1,59 @@
 # HUB COMLURB · UrbanFlow Core v1 — Status de Implementação
 
-## Fase atual: Fase 5 — Piloto Engenharia (Piloto B)
+## Fase atual: Fase 5 concluída e validada
 
+**Fase 5 — Piloto Engenharia/DTE: concluída e aprovada em navegador com dados reais.**
+
+**Validação final publicada:** `https://urbanflowrio.github.io/COMLURB/engenharia-operacional/piloto/`
+
+**Resultado oficial vigente:**
+- 957 indicadores extraídos;
+- 624 registros de gerências ofensoras;
+- 13 períodos reconhecidos;
+- 0 bloqueios estruturais;
+- 0 erros de validação;
+- 725 comparações realizadas com segurança;
+- 0 divergências numéricas reais;
+- 208 registros não comparáveis por perda de contexto da base vertical;
+- 161 registros sem correspondência direta na base vertical;
+- 0 divergências esperadas entre `null` e zero;
+- defasagem temporal de 4 dias registrada e tratada como limitação da comparação;
+- suíte final da Fase 5: 96/96 aprovados, 0 reprovados;
+- suíte da Fase 4 preservada: 42/42 aprovados, 0 reprovados;
+- aprovação humana explícita registrada pela proprietária do produto.
+
+Os 208 registros não comparáveis e os 161 sem correspondência não são falhas do Adapter DTE. Decorrem das limitações estruturais da antiga base `EXPORT_HUB_ENGENHARIA`, que não preserva dimensões como `criterio` e `subgrupoOcorrencia`. O modelo canônico preserva essas dimensões e não foi degradado para reproduzir a perda de contexto da base vertical.
+
+## Concluído
+- [x] Fase 1
+- [x] Fase 2
+- [x] Fase 3
+- [x] Fase 4 — Piloto AR validado em produção
+- [x] Fase 5 — Piloto Engenharia/DTE validado em produção
+
+## Próxima ação autorizada
+Iniciar a Fase 6 — Snapshot automático e validação antecipada, somente para AR e Engenharia/DTE.
+
+## Ações não autorizadas
+- Iniciar novos módulos;
+- incluir Pessoas;
+- incluir fontes restritas;
+- alterar a home;
+- recriar o painel Engenharia;
+- criar backend;
+- criar banco de dados;
+- alterar os pilotos aprovados sem nova evidência.
+
+---
+
+## Histórico detalhado da implementação da Fase 5
 ### Correção de integração pós-publicação — index × harness
 
 Após a publicação da versão com o contrato novo do harness, o piloto falhou no navegador com `Cannot read properties of undefined (reading 'length')`. A causa foi a permanência, em `engenharia-operacional/piloto/index.html`, de referências ao campo removido `relatorio.divergenciasReais`. O harness vigente expõe `divergenciasNumericasReais`, `naoComparaveisPorPerdaDeContexto`, `semCorrespondencia` e `divergenciasEsperadasNullZero`.
 
 Correção aplicada somente na integração da página: o `index.html` passou a consumir o contrato atual, exibir cada categoria separadamente e aprovar tecnicamente apenas quando há payload válido, zero bloqueios, zero erros e zero divergências numéricas reais. Limitações da base vertical permanecem visíveis, mas não são tratadas como falha do Adapter. Foi adicionado teste estático de integração para impedir regressão do nome antigo.
 
-**Suíte após esta correção:** foram adicionados 6 testes de integração, elevando o total esperado da Fase 5 de 86 para 92 casos. Neste ambiente, a reexecução completa não foi possível porque a entrega incremental não contém a `main` completa nem a dependência Node `papaparse`; a sintaxe dos arquivos alterados foi validada. Antes da aprovação final, execute `node testes/testar-fase5.js .` e `node testes/testar-fase4.js .` sobre a `main` atual. A Fase 5 continua pendente de reexecução e nova validação ao vivo após publicação deste corretivo.
+**Suíte após esta correção:** foram adicionados 6 testes de integração, elevando o total esperado da Fase 5 de 86 para 92 casos. Neste ambiente, a reexecução completa não foi possível porque a entrega incremental não contém a `main` completa nem a dependência Node `papaparse`; a sintaxe dos arquivos alterados foi validada. Antes da aprovação final, execute `node testes/testar-fase5.js .` e `node testes/testar-fase4.js .` sobre a `main` atual. Registro histórico: naquele momento, a Fase 5 ainda permanecia pendente de reexecução e nova validação ao vivo.
 
 
 **Fase 4 — Piloto AR: concluída e aprovada.**
@@ -349,8 +394,7 @@ URL ao vivo. A validação em navegador real (como a página
 ainda depende da proprietária do produto rodá-la a partir do GitHub
 Pages, do mesmo jeito que a Fase 4 foi validada.
 
-**Fase 6: NÃO autorizada.** Nada deste documento ou desta entrega
-inicia, prepara ou antecipa a Fase 6.
+**Registro histórico da rodada:** naquele momento, a Fase 6 ainda não estava autorizada.
 
 Este documento não existia em `main` antes da primeira entrega da Fase 4
 (conferido por verificação direta do repositório, não presumido). Esta
@@ -662,7 +706,7 @@ Correção aplicada somente em `assets/components/hub-ingest-adapter-dte.js`:
 - vazio e inválido continuam `null`;
 - moedas e números já suportados permanecem inalterados.
 
-Testes específicos adicionados em `testes/testar-fase5.js`. A Fase 5 permanece **pendente de nova validação no navegador** após a publicação deste corretivo. Fase 6 continua não autorizada.
+Testes específicos adicionados em `testes/testar-fase5.js`. Registro histórico: após essa correção, a Fase 5 ainda aguardava a validação final no navegador.
 
 
 ### Verificação local do corretivo percentual

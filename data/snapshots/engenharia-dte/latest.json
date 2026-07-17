@@ -1,0 +1,11 @@
+{
+  "snapshotVersion": "1.0.0",
+  "moduloId": "engenharia-dte",
+  "path": "snapshots/engenharia-dte/periodos/2025-05..2026-05/2026-07-17T14-39-04-360Z__364e5d6ea506.json",
+  "hash": "sha256:364e5d6ea506cd23f924ec1754b6f7497da99eaddcebf393b8b5fad441f51e64",
+  "referencePeriod": "2025-05..2026-05",
+  "capturedAt": "2026-07-17T14:39:04.360Z",
+  "updatedAt": "2026-07-17T14:39:04.384Z",
+  "schemaVersion": "series_operacionais.dte.v1",
+  "domain": "series_operacionais"
+}

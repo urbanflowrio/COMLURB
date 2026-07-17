@@ -1,6 +1,22 @@
 # HUB COMLURB · UrbanFlow Core v1 — Status de Implementação
 
-## Fase atual: Fase 5 concluída e validada
+## Fase atual: Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE)
+
+**Fases 1 a 5: concluídas.** Fase 5 reconfirmada em navegador com a
+fonte real, após a correção dos percentuais publicados pelo Google
+Sheets — resultado oficial vigente abaixo (inalterado desde a
+confirmação da proprietária do produto). A observação de "validação
+pendente" que aparecia no histórico detalhado desta mesma seção,
+abaixo, é um registro de um estado intermediário anterior a essa
+reconfirmação — não representa o status atual.
+
+**Fase 6: implementada nesta entrega**, escopo travado em AR e
+Engenharia/DTE, conforme autorizado. Ver seção "Fase 6" ao final deste
+documento e `snapshot/README.md` para o relatório completo
+(arquitetura, formato do snapshot, hash, retenção, rollback, custo,
+riscos).
+
+## Fase 5 concluída e validada (mantido para referência)
 
 **Fase 5 — Piloto Engenharia/DTE: concluída e aprovada em navegador com dados reais.**
 
@@ -29,20 +45,23 @@ Os 208 registros não comparáveis e os 161 sem correspondência não são falha
 - [x] Fase 2
 - [x] Fase 3
 - [x] Fase 4 — Piloto AR validado em produção
-- [x] Fase 5 — Piloto Engenharia/DTE validado em produção
+- [x] Fase 5 — Piloto Engenharia/DTE validado em produção (reconfirmado em navegador pós-correção de percentuais)
+- [x] Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE), implementada e testada nesta entrega — publicação e primeira execução real ainda pendentes (ver "Não executado nesta fase" na seção Fase 6)
 
 ## Próxima ação autorizada
-Iniciar a Fase 6 — Snapshot automático e validação antecipada, somente para AR e Engenharia/DTE.
+Publicar os arquivos da Fase 6, revisar, e rodar a primeira execução manual do workflow pela aba Actions (ver `snapshot/README.md` · "Primeira execução real — passo a passo"). **A Fase 7 não está autorizada.**
 
 ## Ações não autorizadas
-- Iniciar novos módulos;
+- Iniciar a Fase 7;
+- iniciar novos módulos;
 - incluir Pessoas;
 - incluir fontes restritas;
 - alterar a home;
 - recriar o painel Engenharia;
 - criar backend;
 - criar banco de dados;
-- alterar os pilotos aprovados sem nova evidência.
+- alterar os pilotos aprovados sem nova evidência;
+- alterar Adapters, Readers, Model, Rules, State ou painéis de produção (a Fase 6 não tocou em nenhum deles).
 
 ---
 
@@ -715,3 +734,86 @@ Testes específicos adicionados em `testes/testar-fase5.js`. Registro histórico
 - A contagem aumentou em 4 casos específicos de percentual publicado pelo Google Sheets.
 - A suíte da Fase 4 não foi reexecutada contra a `main` real neste ambiente; nenhum arquivo funcional da Fase 4 foi alterado por este corretivo. A validação de regressão permanece a ser executada na raiz completa do repositório, se desejado.
 - Próxima ação: publicar os três arquivos corretivos e validar novamente o piloto no navegador.
+
+
+## Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE)
+
+**Status: implementada e testada nesta entrega.** Publicação em `main`
+e primeira execução real ainda pendentes — ver "Não executado nesta
+fase" abaixo. Escopo travado em AR e Engenharia/DTE, conforme
+autorizado. Documentação operacional completa em `snapshot/README.md`
+(arquitetura, formato do snapshot, política de hash, retenção,
+rollback, custo estimado, riscos conhecidos).
+
+### Decisão de orquestração
+
+Um único job de workflow processa os dois módulos (AR e
+Engenharia/DTE) dentro do mesmo processo Node, de forma independente
+entre si — não dois jobs paralelos fazendo commit (decisão explícita
+da proprietária do produto, para evitar corrida entre commits). Uma
+falha em um módulo não impede o processamento nem a publicação válida
+do outro. Um único commit é feito ao final do ciclo, contendo somente
+snapshots válidos, ponteiros `latest` válidos e relatórios — nunca um
+snapshot inválido.
+
+### Arquivos novos
+- `snapshot/lib/bootstrap-hub.js`
+- `snapshot/lib/canonical.js`
+- `snapshot/lib/snapshot-core.js`
+- `snapshot/lib/snapshot-ar.js`
+- `snapshot/lib/snapshot-dte.js`
+- `snapshot/lib/verificar-caminhos.js`
+- `snapshot/run.js`
+- `snapshot/README.md`
+- `testes/executar-hub-selftest-node.js` (harness Node mínimo para hub-selftest, sem alterar esse arquivo)
+- `snapshot/exemplos/` (marcados como exemplo, gerados de fixtures — nunca dados reais)
+- `.github/workflows/snapshot.yml`
+- `testes/testar-fase6.js`
+- `data/snapshots/{ar,engenharia-dte}/periodos/`, `data/reports/{ar,engenharia-dte}/`, `data/rejected/{ar,engenharia-dte}/` (estrutura vazia, só `.gitkeep`)
+- `package.json` (não existia nenhum na raiz; criado mínimo, só `papaparse` e scripts de teste/execução)
+
+### Arquivo alterado
+- `docs/architecture/IMPLEMENTATION_STATUS.md` (este arquivo)
+
+### Não alterado (confirmação explícita)
+Nenhum Adapter, Reader, Model, Rule, State, piloto ou painel de
+produção. Especificamente intocados: `ar/index.html`,
+`ar/ar-config.js`, `ar/ar.js`, `engenharia-operacional/index.html`,
+os pilotos aprovados, `hub-core.js`, `hub-rules.js`,
+`hub-rules-ar.js`, `hub-state-ar.js`, `hub-utils.js`, a home
+(`index.html` da raiz) e todos os demais módulos do HUB.
+
+### Testes
+- `testes/testar-fase6.js`: **22 grupos, 85 casos, 85 aprovados, 0 reprovados.**
+- `testes/executar-hub-selftest-node.js` (novo nesta correção): harness
+  Node mínimo, versionado, que executa `testes/hub-selftest.js`
+  (Fases 2/3) sem navegador e sem alterar uma linha desse arquivo —
+  **40/40 aprovados**, exit code 0. Reproduz localmente com
+  `node testes/executar-hub-selftest-node.js .`.
+- Regressão confirmada nesta mesma entrega, no mesmo ambiente:
+  - `testes/testar-fase4.js`: 42/42 aprovados.
+  - `testes/testar-fase5.js`: 96/96 aprovados.
+- **Total geral desta rodada: 263 casos executados, 263 aprovados, 0 reprovados — as quatro suítes (hub-selftest, Fase 4, Fase 5, Fase 6) são executadas integralmente pelo próprio workflow (`.github/workflows/snapshot.yml`), nesta ordem, antes de qualquer módulo de snapshot ser processado. Nenhum resultado depende de ferramenta externa não versionada.**
+
+### Bloqueios
+Nenhum bloqueio técnico nesta entrega. Duas lacunas documentais
+pré-existentes (não desta fase) foram identificadas e registradas,
+sem bloquear a implementação, conforme decisão explícita da
+proprietária do produto:
+- `MIGRATION_STRATEGY.md` citado em comentários de código de fases
+  anteriores, mas nunca materializado como arquivo;
+- ADR-001, ADR-004 e ADR-005 citados em comentários de código de
+  fases anteriores, mas nunca materializados como arquivos.
+
+Detalhamento completo em `snapshot/README.md` · "Riscos e limitações conhecidas".
+
+### Não executado nesta fase
+- Publicação dos arquivos em `main` (commit humano, fora do escopo desta entrega).
+- Primeira execução real do workflow (só deve ocorrer após publicação, revisão e disparo manual pela aba Actions — ver `snapshot/README.md`).
+- Qualquer captura real de dado do Google Sheets — `data/` chega vazia (só `.gitkeep`) neste ZIP, por decisão explícita ("não registre snapshots reais na implementação local").
+- Fase 7, sob qualquer forma.
+
+### Próxima ação autorizada
+Publicar os arquivos desta entrega em `main`, revisar, e executar o
+workflow manualmente pela aba Actions para validar a primeira captura
+real. **A Fase 7 não está autorizada.**

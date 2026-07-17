@@ -1,6 +1,6 @@
 # HUB COMLURB · UrbanFlow Core v1 — Status de Implementação
 
-## Fase atual: Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE)
+## Fase atual: Fase 7A — Infraestrutura de leitura de snapshots (sem conexão a painéis)
 
 **Fases 1 a 5: concluídas.** Fase 5 reconfirmada em navegador com a
 fonte real, após a correção dos percentuais publicados pelo Google
@@ -10,11 +10,27 @@ pendente" que aparecia no histórico detalhado desta mesma seção,
 abaixo, é um registro de um estado intermediário anterior a essa
 reconfirmação — não representa o status atual.
 
-**Fase 6: implementada nesta entrega**, escopo travado em AR e
-Engenharia/DTE, conforme autorizado. Ver seção "Fase 6" ao final deste
-documento e `snapshot/README.md` para o relatório completo
-(arquitetura, formato do snapshot, hash, retenção, rollback, custo,
-riscos).
+**Fase 6: concluída e fechada.** Publicação em `main` realizada,
+primeira execução manual real do workflow concluída com sucesso
+(`workflow_dispatch`, conclusão `success`), artifact do relatório de
+execução publicado, primeiro snapshot real de AR criado, primeiro
+snapshot real de Engenharia/DTE criado, `latest.json` dos dois módulos
+criado e apontando para os respectivos snapshots, commit automático do
+bot restrito a `data/` (verificado por `verify-paths` antes do
+commit), workflow semanal ativo (`cron: '0 11 * * 1'`), tag e release
+`fase-6-concluida` publicadas. Suíte completa desta rodada: 263/263
+aprovados, 0 reprovados (`hub-selftest` 40/40, Fase 4 42/42, Fase 5
+96/96, Fase 6 85/85). Ver seção "Fase 6" ao final deste documento e
+`snapshot/README.md` para o relatório completo (arquitetura, formato
+do snapshot, hash, retenção, rollback, custo, riscos) — nenhum desses
+dois arquivos foi alterado por esta entrega.
+
+**Fase 7A: implementada nesta entrega**, escopo travado em
+infraestrutura genérica de leitura/validação/comparação de snapshots
+(`hub-snapshot-reader.js`, `hub-data-source.js`), sem qualquer conexão
+a painel de produção. Modo vigente em produção continua sendo
+exclusivamente a leitura de CSV ao vivo — inalterada. Ver seção "Fase
+7A" ao final deste documento.
 
 ## Fase 5 concluída e validada (mantido para referência)
 
@@ -46,13 +62,19 @@ Os 208 registros não comparáveis e os 161 sem correspondência não são falha
 - [x] Fase 3
 - [x] Fase 4 — Piloto AR validado em produção
 - [x] Fase 5 — Piloto Engenharia/DTE validado em produção (reconfirmado em navegador pós-correção de percentuais)
-- [x] Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE), implementada e testada nesta entrega — publicação e primeira execução real ainda pendentes (ver "Não executado nesta fase" na seção Fase 6)
+- [x] Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE): publicada, primeira execução real concluída com sucesso, tag/release `fase-6-concluida` publicadas, snapshots reais dos dois módulos em `data/`. Fechada.
+- [x] Fase 7A — Infraestrutura genérica de leitura/validação/comparação de snapshots (`hub-snapshot-reader.js`, `hub-data-source.js`), implementada e testada nesta entrega, sem conexão a painel de produção (ver seção "Fase 7A").
 
 ## Próxima ação autorizada
-Publicar os arquivos da Fase 6, revisar, e rodar a primeira execução manual do workflow pela aba Actions (ver `snapshot/README.md` · "Primeira execução real — passo a passo"). **A Fase 7 não está autorizada.**
+Publicar os arquivos da Fase 7A, revisar, e validar via `node testes/testar-fase7a.js .` (ver seção "Fase 7A" · "Testes"). **A Fase 7B não está autorizada.**
 
 ## Ações não autorizadas
-- Iniciar a Fase 7;
+- Iniciar a Fase 7B ou 7C;
+- ativar o modo `snapshot` em qualquer painel de produção;
+- conectar `hub-snapshot-reader.js`/`hub-data-source.js` a `ar/index.html`, `engenharia-operacional/index.html` ou qualquer outro painel;
+- remover ou alterar qualquer fetch de CSV ao vivo existente;
+- alterar qualquer URL de fonte (Google Sheets);
+- recalcular qualquer regra de negócio;
 - iniciar novos módulos;
 - incluir Pessoas;
 - incluir fontes restritas;
@@ -61,7 +83,8 @@ Publicar os arquivos da Fase 6, revisar, e rodar a primeira execução manual do
 - criar backend;
 - criar banco de dados;
 - alterar os pilotos aprovados sem nova evidência;
-- alterar Adapters, Readers, Model, Rules, State ou painéis de produção (a Fase 6 não tocou em nenhum deles).
+- alterar Adapters, Readers, Model, Rules, State ou painéis de produção;
+- alterar qualquer arquivo de `snapshot/lib/`, `snapshot/run.js` ou `.github/workflows/snapshot.yml` (Fase 6, intocada por esta entrega).
 
 ---
 
@@ -817,3 +840,233 @@ Detalhamento completo em `snapshot/README.md` · "Riscos e limitações conhecid
 Publicar os arquivos desta entrega em `main`, revisar, e executar o
 workflow manualmente pela aba Actions para validar a primeira captura
 real. **A Fase 7 não está autorizada.**
+
+### Fechamento factual (acréscimo posterior a esta seção, não uma reescrita)
+
+A ação acima foi cumprida. Registro factual do que se confirmou depois
+da entrega original desta fase, sem alterar nenhum parágrafo anterior:
+
+- Arquivos publicados em `main`.
+- Primeira execução manual real do workflow "HUB COMLURB — Snapshot AR
+  e Engenharia/DTE (Fase 6)" concluída com sucesso (`workflow_dispatch`,
+  `conclusion: success`).
+- Artifact do relatório da execução (`relatorio-snapshot-<id>`)
+  publicado.
+- Primeiro snapshot real do módulo AR criado em
+  `data/snapshots/ar/periodos/2026/` (13 indicadores válidos, 11
+  avisos, 0 erros).
+- Primeiro snapshot real do módulo Engenharia/DTE criado em
+  `data/snapshots/engenharia-dte/periodos/2025-05..2026-05/` (957
+  indicadores, 624 registros de gerência ofensora, 1 aviso, 0 erros).
+- `data/snapshots/ar/latest.json` e
+  `data/snapshots/engenharia-dte/latest.json` criados, cada um
+  apontando para um arquivo existente em `periodos/`.
+- Commit automático do bot (`hub-comlurb-snapshot-bot`) restrito a
+  `data/`, confirmado pelo step `verify-paths` do workflow antes do
+  commit.
+- Workflow semanal ativo (`cron: '0 11 * * 1'`, além de
+  `workflow_dispatch` manual).
+- Tag e release `fase-6-concluida` publicadas.
+- Suíte completa desta rodada: **263/263 aprovados, 0 reprovados**
+  (`hub-selftest` 40/40, Fase 4 42/42, Fase 5 96/96, Fase 6 85/85).
+
+Nenhum Adapter, Reader, Model, Rule, State, piloto ou painel de
+produção foi alterado por esta confirmação — é só o registro factual
+de que a "Próxima ação autorizada" acima foi executada e validada.
+
+---
+
+## Fase 7A — Infraestrutura de leitura de snapshots (sem conexão a painéis)
+
+**Status: implementada e testada nesta entrega.** Escopo travado em
+infraestrutura genérica — nenhum painel de produção foi alterado,
+nenhuma URL de fonte foi alterada, nenhum Adapter/Rule/State foi
+tocado, nenhum arquivo da Fase 6 (`snapshot/lib/`, `snapshot/run.js`,
+`.github/workflows/snapshot.yml`) foi tocado.
+
+### Objetivo desta etapa
+
+Preparar a conexão futura dos painéis de AR e Engenharia/DTE aos
+snapshots validados da Fase 6, sem realizar essa conexão agora. A
+Fase 7 foi dividida em 7A (esta entrega, só infraestrutura) → 7B
+(piloto controlado AR) → 7C (piloto controlado Engenharia/DTE) → 7D
+(eventual promoção do snapshot a fonte principal, só após validação
+humana explícita). Nenhuma etapa além de 7A foi iniciada.
+
+### Arquivos novos
+
+- `assets/components/hub-snapshot-reader.js` — leitura, validação e
+  resolução segura de `latest.json` + snapshot apontado. Camada
+  isolada: não conhece AR, DTE, CSV, Google Sheets, GitHub ou GitHub
+  Pages. Não escreve em disco. Nunca executa conteúdo do snapshot.
+  Nunca usa `eval`.
+- `assets/components/hub-data-source.js` — estratégia de fonte
+  (`live`/`snapshot`/`compare`) via providers injetados
+  (`liveProvider`/`snapshotProvider`/`compareProvider` opcional). Não
+  conhece `HUB.data.loadCSV`, PapaParse ou Google Sheets. Modo padrão:
+  `live`.
+- `testes/testar-fase7a.js` — suíte reproduzível (15 grupos, 102
+  casos).
+- `testes/fixtures/fase7a/` — fixtures de arquivo representativas
+  (par latest+snapshot válido, JSON malformado, hash divergente); as
+  demais variações paramétricas (path traversal, versões, moduloId
+  divergente etc.) são construídas em memória dentro da própria
+  suíte, documentado no cabeçalho do arquivo de teste.
+
+### Arquivo alterado
+
+- `docs/architecture/IMPLEMENTATION_STATUS.md` (este arquivo).
+
+### Não alterado (confirmação explícita, idêntica à exigida)
+
+`ar/index.html`, `ar/ar.js`, `ar/ar-config.js`,
+`engenharia-operacional/index.html`, qualquer painel de produção,
+qualquer URL de fonte, qualquer Adapter, Rule, State,
+`snapshot/run.js`, `snapshot/lib/*`,
+`.github/workflows/snapshot.yml`, `package.json` (nenhuma dependência
+nova foi necessária).
+
+### Padrão de módulo (desvio deliberado, restrito a estes dois arquivos)
+
+Todo o restante da biblioteca HUB usa IIFE de navegador
+(`window.HUB`, ver `hub-core.js`), testável em Node só via o harness
+de bootstrap com `eval` da Fase 6 (`snapshot/lib/bootstrap-hub.js`,
+não reutilizado nem alterado aqui). `hub-snapshot-reader.js` e
+`hub-data-source.js` usam em vez disso um padrão dual: anexam-se a
+`window.HUB` quando `window` existe, e exportam via `module.exports`
+quando `module` existe — carregáveis em Node por `require()` direto
+nos testes, sem `eval`. Nenhum componente antigo foi alterado para
+uniformizar este padrão; a divergência é intencional, documentada no
+cabeçalho de ambos os arquivos, e restrita a estes dois arquivos
+novos. Não caracteriza início de migração geral da biblioteca para
+CommonJS.
+
+### Contratos públicos
+
+**`HUB.snapshotReader.lerAsync(moduloId, opts)`** — `opts.baseUrl`
+obrigatório (raiz onde vive `snapshots/`, sem valor padrão — nunca
+acoplado a GitHub/GitHub Pages/COMLURB); `opts.fetchImpl` injetável
+(obrigatório em Node — ausência nunca aciona rede real; em navegador,
+se omitido, usa `globalThis.fetch` automaticamente);
+`opts.maxAgeHoras` opcional (ausente = sem avaliação de idade; número
+finito ≥ 0 = avaliação ativa; inválido/negativo = `parametro_invalido`);
+`opts.expectedSnapshotVersion`/`opts.expectedSchemaVersion` opcionais
+(ausentes não bloqueiam; divergentes bloqueiam com estado específico);
+`opts.now` opcional (injeção de relógio para testes determinísticos de
+`stale`, padrão `Date.now`). Nunca lança exceção para falha
+operacional esperada; nunca escreve; nunca faz fallback; nunca
+executa conteúdo do snapshot.
+
+Enumeração fechada de estados: `snapshot_valido`, `snapshot_ausente`,
+`latest_invalido`, `snapshot_apontado_ausente`, `hash_divergente`,
+`modulo_divergente`, `versao_incompativel`, `schema_incompativel`,
+`contrato_invalido`, `erro_leitura`, `stale`, `parametro_invalido`.
+
+**Limitação documentada sobre hash** (correção conceitual
+incorporada nesta entrega): a checagem `latest.hash === snapshot.hash`
+valida apenas a coerência DECLARADA entre o ponteiro e o arquivo
+apontado — não é uma validação criptográfica do conteúdo. Este
+arquivo não recomputa o hash canônico da Fase 6
+(`snapshot/lib/canonical.js`/`snapshot-core.js`, intocados). Eventual
+recomputação de hash no navegador é evolução arquitetural posterior,
+condicionada a decisão explícita sobre reuso de canonicalização entre
+Node e browser.
+
+**`HUB.dataSource.resolver(moduloId, modo, opts)`** — `modo` padrão
+`"live"`; `"snapshot"` e `"compare"` explícitos; modo desconhecido
+rejeitado (`modo: "modo_desconhecido"`), nunca aceito silenciosamente.
+`opts.liveProvider`/`opts.snapshotProvider`/`opts.compareProvider`
+(opcional) — funções injetadas, nunca dependências fixas a
+`HUB.data.loadCSV`/CSV/Google Sheets. Em `compare`, as duas fontes são
+chamadas de forma independente (falha de uma não impede a captura do
+resultado da outra); o valor principal retornado continua sendo o do
+`live`; o relatório de comparação fica em campo separado
+(`comparacao`) e nunca altera o resultado exibido.
+
+**`HUB.dataSource.comparar(liveValor, snapshotValor, erros)`** —
+função pura e determinística, sem `JSON.stringify` como estratégia
+geral (walk estrutural recursivo); objetos comparados por propriedade
+independente da ordem de declaração; arrays comparados preservando
+ordem original (nunca reordenados silenciosamente), com detecção
+específica de reordenação pura via `ordem_array_divergente`; nunca
+modifica os objetos recebidos. Tipos de diferença:
+`campo_ausente_live`, `campo_ausente_snapshot`, `valor_divergente`,
+`tipo_divergente`, `ordem_array_divergente`; classificações de topo:
+`igualdade`, `divergente`, `erro_live`, `erro_snapshot`, `erro_ambos`.
+
+### Testes
+
+- `testes/testar-fase7a.js`: **15 grupos, 102 casos, 102 aprovados, 0
+  reprovados.**
+- Regressão confirmada nesta mesma entrega, no mesmo ambiente:
+  `hub-selftest` 40/40, Fase 4 42/42, Fase 5 96/96, Fase 6 85/85.
+- **Total geral desta rodada: 40 + 42 + 96 + 85 + 102 = 365 casos
+  executados, 365 aprovados, 0 reprovados.**
+- Nenhum teste desta suíte escreve em `data/` nem acessa rede real —
+  todo `fetch` é mockado via `fetchImpl` injetado, apontando para
+  URLs fictícias (`mock://...`).
+
+### Correção de coerência incorporada após auditoria (mesma entrega)
+
+Uma auditoria prévia identificou três lacunas de coerência entre
+`latest.json` e o snapshot apontado, corrigidas antes da liberação
+para upload:
+
+1. **`snapshotVersion`**: além de comparar `expectedSnapshotVersion`
+   contra `latest.snapshotVersion`, agora `latest.snapshotVersion` e
+   `snapshot.snapshotVersion` são sempre comparados entre si — mesmo
+   sem `expectedSnapshotVersion` informado. Quando informado, os três
+   valores devem ser compatíveis. Divergência => `versao_incompativel`.
+2. **`schemaVersion`**: `latest.schemaVersion` e
+   `snapshot.envelope.schemaVersion` agora são sempre comparados entre
+   si — mesmo sem `expectedSchemaVersion` informado. Quando informado,
+   os três valores devem ser compatíveis. Divergência =>
+   `schema_incompativel`.
+3. **`capturedAt`**: `latest.capturedAt` e `snapshot.envelope.capturedAt`
+   agora são comparados por igualdade estrita (sem tolerância
+   temporal). Divergência => `contrato_invalido`, com detalhe
+   explícito de que ponteiro e envelope descrevem capturas diferentes.
+
+As três checagens ocorrem sempre depois da validação de `hash` e
+`referencePeriod`, e sempre antes do cálculo de `stale` — uma
+divergência de coerência nunca é mascarada por `maxAgeHoras`
+(verificado por teste dedicado).
+
+### Riscos e limitações conhecidas
+
+1. **Verificação de hash é de coerência declarada, não criptográfica**
+   (ver seção "Contratos públicos" acima) — documentado, não
+   resolvido nesta fase por decisão explícita (não duplicar/alterar a
+   canonicalização da Fase 6).
+2. **Validação de path é estrutural, não uma biblioteca completa de
+   parsing de URL** — cobre absoluto, protocolo, protocolo-relativo,
+   barra invertida (direta e `%5c`), travessia direta e
+   percent-encoded (decodificação iterativa até 3 níveis) e restrição
+   de prefixo ao módulo solicitado; não é uma garantia formal contra
+   toda técnica de evasão de path conhecida.
+3. **Heurística de `ordem_array_divergente`** aplica-se a arrays cujos
+   elementos são todos primitivos e de mesmo tamanho; arrays de
+   objetos com reordenação pura são reportados como
+   `valor_divergente`/`tipo_divergente` por índice, não como
+   `ordem_array_divergente` — limitação aceitável para esta fase,
+   documentada no código.
+4. **Padrão de módulo dual (browser+Node) é uma primeira exceção** ao
+   IIFE-only vigente no restante de `assets/components/` — decisão
+   deliberada e restrita, não uma migração geral (ver seção acima).
+
+### Não executado nesta fase
+
+- Conexão de `hub-snapshot-reader.js`/`hub-data-source.js` a qualquer
+  painel de produção.
+- Qualquer piloto visual com dado real (Fase 7B/7C).
+- Qualquer decisão de produto sobre política de `maxAge` em produção.
+- Qualquer alteração em `snapshot/lib/`, `snapshot/run.js` ou
+  `.github/workflows/snapshot.yml`.
+- Fase 7B e Fase 7C, sob qualquer forma.
+
+### Próxima ação autorizada
+
+Aguardar autorização explícita para Fase 7B (piloto controlado de
+consumo de snapshot no AR, modo `compare` em harness isolado, sem
+alterar a interface pública do painel). **A Fase 7B não está
+autorizada.**

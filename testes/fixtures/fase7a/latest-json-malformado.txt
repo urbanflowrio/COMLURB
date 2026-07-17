@@ -1,0 +1,1 @@
+{ "moduloId": "modulo-teste", "path": "snapshots/modulo-teste/periodos/2026/x.json",

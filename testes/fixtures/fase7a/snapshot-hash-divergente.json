@@ -1,0 +1,17 @@
+{
+  "snapshotVersion": "1.0.0",
+  "moduloId": "modulo-teste",
+  "hash": "sha256:hash-diferente-do-latest",
+  "hashInputVersion": "1.0.0",
+  "geradoEm": "2026-07-17T10:00:00.050Z",
+  "envelope": {
+    "schemaVersion": "teste.v1",
+    "sourceId": "FONTE_TESTE",
+    "capturedAt": "2026-07-17T10:00:00.000Z",
+    "referencePeriod": "2026",
+    "domain": "dominio_teste",
+    "payload": { "linhas": [] },
+    "quality": { "erros": [], "avisos": [] },
+    "lineage": { "timestamp": "2026-07-17T10:00:00.000Z" }
+  }
+}

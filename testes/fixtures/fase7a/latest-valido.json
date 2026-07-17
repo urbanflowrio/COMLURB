@@ -1,1 +1,11 @@
-
+{
+  "snapshotVersion": "1.0.0",
+  "moduloId": "modulo-teste",
+  "path": "snapshots/modulo-teste/periodos/2026/2026-07-17T10-00-00-000Z__abc123.json",
+  "hash": "sha256:fixture-hash-valido-abc123",
+  "referencePeriod": "2026",
+  "capturedAt": "2026-07-17T10:00:00.000Z",
+  "updatedAt": "2026-07-17T10:00:00.100Z",
+  "schemaVersion": "teste.v1",
+  "domain": "dominio_teste"
+}

@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Piloto técnico — comparação Live × Snapshot AR</title>
+<style>
+  /* CSS interno, deliberadamente técnico/neutro — não reutiliza
+     hub-premium.css nem a paleta Navy+Glow dos painéis oficiais, para
+     não sugerir que esta página é um painel executivo. */
+  :root {
+    --bg: #fafafa;
+    --texto: #1c1c1c;
+    --muted: #5a5a5a;
+    --borda: #d8d8d8;
+    --ok: #2f7a4f;
+    --att: #a5680b;
+    --crit: #b3261e;
+    --stale: #6b4fa0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--texto);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 18px; margin: 0 0 4px 0; }
+  h2 { font-size: 15px; margin: 24px 0 8px 0; }
+  h3 { font-size: 13px; margin: 16px 0 6px 0; color: var(--muted); }
+  code, .mono { font-family: "Consolas", "SFMono-Regular", Menlo, monospace; }
+
+  .avisoPermanente {
+    background: #fff3cd;
+    border: 1px solid #e0c264;
+    color: #5c4405;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin: 10px 0 20px 0;
+  }
+  .subtitulo { color: var(--muted); margin-bottom: 4px; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .03em;
+    color: #fff;
+    margin-right: 8px;
+  }
+  .badge.ok { background: var(--ok); }
+  .badge.att { background: var(--att); }
+  .badge.crit { background: var(--crit); }
+  .badge.stale { background: var(--stale); }
+  .badge.nd { background: #777; }
+
+  .linhaStatus { margin: 12px 0; display: flex; align-items: center; gap: 8px; }
+  .ladoFalho { color: var(--crit); font-weight: 600; }
+  .avisoDefasagem { color: var(--muted); font-style: italic; }
+
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px 0; }
+  th, td { border: 1px solid var(--borda); padding: 6px 10px; text-align: left; vertical-align: top; }
+  .metaTable th { width: 220px; background: #f0f0f0; }
+  .resumoTable td:first-child, .diffTable td:nth-child(1), .diffTable td:nth-child(2) { font-family: monospace; }
+  .diffTable td:nth-child(3), .diffTable td:nth-child(4) { font-family: monospace; font-size: 12px; word-break: break-word; max-width: 320px; }
+  .diffTable thead th { background: #eee; }
+
+  .filtros { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin: 12px 0; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+  .filtros label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  .filtros input[type="text"], .filtros select { padding: 4px 6px; border: 1px solid var(--borda); border-radius: 3px; }
+
+  .rodape { margin-top: 32px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--borda); padding-top: 10px; }
+  pre { white-space: pre-wrap; background: #f5f5f5; padding: 10px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Piloto técnico — comparação Live × Snapshot AR</h1>
+<p class="subtitulo">Fase 7B · comparação estrutural pré-regras (Adapter AR × snapshot capturado). Acesso somente por URL direta — não faz parte do menu do HUB.</p>
+
+<div class="avisoPermanente">
+  Snapshot técnico capturado automaticamente. Não representa, por si só, o fechamento mensal oficial.
+</div>
+
+<div class="filtros">
+  <label>Tipo
+    <select id="filtroTipo">
+      <option value="todos">todos</option>
+      <option value="campo_ausente_live">campo_ausente_live</option>
+      <option value="campo_ausente_snapshot">campo_ausente_snapshot</option>
+      <option value="valor_divergente">valor_divergente</option>
+      <option value="tipo_divergente">tipo_divergente</option>
+      <option value="ordem_array_divergente">ordem_array_divergente</option>
+    </select>
+  </label>
+  <label>Path contém
+    <input type="text" id="filtroPath" placeholder="ex.: linhas[3].meta" />
+  </label>
+  <label>
+    <input type="checkbox" id="filtroSomenteDivergencias" checked />
+    Ocultar tipos sem ocorrência no resumo
+  </label>
+</div>
+
+<div id="relatorio">
+  <p>Carregando fontes live e snapshot…</p>
+</div>
+
+<div class="rodape">
+  HUB COMLURB · Piloto técnico Fase 7B · não conectado ao painel de produção · não substitui o piloto legado×novo da Fase 4 (<code>ar/piloto/</code>).
+</div>
+
+<!-- Dependência funcional (não visual): PapaParse, exigida por hub-ingest-decoder.js para decodificar CSV. -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<!-- Cadeia mínima necessária: core, fontes, ingest model/reader/decoder, Adapter AR, snapshot reader, data source. -->
+<script src="../../assets/components/hub-core.js"></script>
+<script src="../../assets/components/hub-sources.js"></script>
+<script src="../../assets/components/hub-ingest-model.js"></script>
+<script src="../../assets/components/hub-ingest-reader.js"></script>
+<script src="../../assets/components/hub-ingest-decoder.js"></script>
+<script src="../../assets/components/hub-ingest-adapter-ar.js"></script>
+<script src="../../assets/components/hub-snapshot-reader.js"></script>
+<script src="../../assets/components/hub-data-source.js"></script>
+
+<!-- Código do piloto. Nenhum hub-rules-ar.js, hub-state-ar.js, script do painel de produção, harness da Fase 4 ou legado-referencia.js é carregado nesta página. -->
+<script src="piloto-snapshot.js"></script>
+
+</body>
+</html>
 

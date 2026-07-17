@@ -1,1 +1,9 @@
+# HUB COMLURB — raiz do repositório
+# Fase 6: relatórios temporários usados só como GitHub Actions artifact.
+# Nunca devem ser versionados nem considerados por verify-paths — se
+# não estivessem aqui, apareceriam em `git status` como alteração fora
+# de data/snapshots|reports|rejected e bloqueariam o commit sempre.
+snapshot/_artifact/
 
+# Node
+node_modules/

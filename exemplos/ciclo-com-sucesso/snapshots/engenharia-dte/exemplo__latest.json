@@ -1,0 +1,12 @@
+{
+  "AVISO": "EXEMPLO — gerado a partir de fixtures de teste. NÃO é uma captura oficial e nunca deve ser tratado como latest real.",
+  "snapshotVersion": "1.0.0",
+  "moduloId": "engenharia-dte",
+  "path": "snapshots/engenharia-dte/periodos/2025-05..2026-05/2026-07-16T18-20-52-108Z__28cab98d6680.json",
+  "hash": "sha256:28cab98d668004acf77ad9f16f25e3ebc9da3dcca7a4ed6cd7cdd57fd2e85b3a",
+  "referencePeriod": "2025-05..2026-05",
+  "capturedAt": "2026-07-16T18:20:52.108Z",
+  "updatedAt": "2026-07-16T18:20:52.110Z",
+  "schemaVersion": "series_operacionais.dte.v1",
+  "domain": "series_operacionais"
+}

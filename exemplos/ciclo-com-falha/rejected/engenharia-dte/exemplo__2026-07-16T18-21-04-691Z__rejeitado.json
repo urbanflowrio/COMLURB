@@ -1,0 +1,23 @@
+{
+  "AVISO": "EXEMPLO — gerado a partir de fixtures de teste. NÃO é uma captura oficial e nunca deve ser tratado como latest real.",
+  "modulo": "engenharia-dte",
+  "fonte": "DTE_RELATORIO_GERAL",
+  "horario": "2026-07-16T18:21:04.691Z",
+  "etapa": "validator",
+  "motivo": "payload é null — carga não foi validada com sucesso pelo Adapter. | quality.erros não está vazio (1 erro(s)). | referencePeriod ausente.",
+  "diagnostico": {
+    "quality": {
+      "erros": [
+        {
+          "etapa": "decoder_local",
+          "tipo": "falha_decodificacao",
+          "mensagem": "Aba geral do DTE decodificada está vazia."
+        }
+      ],
+      "avisos": [],
+      "status": "erro"
+    }
+  },
+  "resumoEntrada": "0 indicador(es), 0 registro(s) de gerência ofensora",
+  "hashEntradaBruta": null
+}

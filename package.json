@@ -1,0 +1,19 @@
+{
+  "name": "hub-comlurb",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HUB COMLURB — scripts de teste (Node) e snapshot automático (Fase 6). Não é um pacote publicável; os painéis em si continuam HTML/CSS/JS puro, sem build.",
+  "scripts": {
+    "test:selftest": "node testes/executar-hub-selftest-node.js .",
+    "test:fase4": "node testes/testar-fase4.js .",
+    "test:fase5": "node testes/testar-fase5.js .",
+    "test:fase6": "node testes/testar-fase6.js .",
+    "test": "npm run test:selftest && npm run test:fase4 && npm run test:fase5 && npm run test:fase6",
+    "snapshot": "node snapshot/run.js",
+    "snapshot:verify-paths": "node snapshot/run.js verify-paths",
+    "snapshot:retencao-info": "node snapshot/run.js retencao-info"
+  },
+  "dependencies": {
+    "papaparse": "^5.4.1"
+  }
+}

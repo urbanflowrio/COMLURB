@@ -1,6 +1,6 @@
 # HUB COMLURB · UrbanFlow Core v1 — Status de Implementação
 
-## Fase atual: Fase 7A — Infraestrutura de leitura de snapshots (sem conexão a painéis)
+## Fase atual: Fase 7C — concluída e validada; próxima fase ainda não iniciada
 
 **Fases 1 a 5: concluídas.** Fase 5 reconfirmada em navegador com a
 fonte real, após a correção dos percentuais publicados pelo Google
@@ -32,6 +32,14 @@ a painel de produção. Modo vigente em produção continua sendo
 exclusivamente a leitura de CSV ao vivo — inalterada. Ver seção "Fase
 7A" ao final deste documento.
 
+> **Registro histórico preservado acima.** O parágrafo da Fase 7A
+> descreve corretamente o estado do projeto no momento em que foi
+> escrito (Fase 7A recém-implementada, Fase 7B ainda não autorizada).
+> Esse estado foi posteriormente superado pela autorização explícita e
+> execução das **Fase 7B** e **Fase 7C**, ambas concluídas e validadas
+> em navegador com dados reais — ver as seções "Fase 7B" e "Fase 7C"
+> ao final deste documento.
+
 ## Fase 5 concluída e validada (mantido para referência)
 
 **Fase 5 — Piloto Engenharia/DTE: concluída e aprovada em navegador com dados reais.**
@@ -56,6 +64,60 @@ exclusivamente a leitura de CSV ao vivo — inalterada. Ver seção "Fase
 
 Os 208 registros não comparáveis e os 161 sem correspondência não são falhas do Adapter DTE. Decorrem das limitações estruturais da antiga base `EXPORT_HUB_ENGENHARIA`, que não preserva dimensões como `criterio` e `subgrupoOcorrencia`. O modelo canônico preserva essas dimensões e não foi degradado para reproduzir a perda de contexto da base vertical.
 
+## Fase 7B concluída e validada (resumo mínimo e factual — ver seção detalhada ao final)
+
+**Fase 7B — Piloto Live × Snapshot AR (`ar/piloto-snapshot/`): concluída e validada em navegador com dados reais.**
+
+Esta seção reconcilia o documento com uma execução já realizada, mas
+que não havia sido registrada aqui antes da Fase 7C. Registra somente
+o que é factualmente verificável — não há data, commit, tag ou release
+da Fase 7B comprovados neste checkout, por isso nenhum desses dados é
+afirmado.
+
+**Resultado oficial da validação humana (registrado antes do início da Fase 7C):**
+- classificação geral: `EQUIVALENTE`;
+- live: `OK`;
+- snapshot: `snapshot_valido`;
+- 13 linhas live;
+- 13 linhas snapshot;
+- 0 diferenças;
+- metadados `capturedAt`, `referencePeriod`, idade do snapshot e hash exibidos;
+- aviso de que o snapshot não representa fechamento mensal oficial visível;
+- piloto acessível apenas por URL direta;
+- nenhuma conexão com o painel executivo;
+- suíte `testes/testar-fase7b.js`: 146/146 aprovados, 0 reprovados.
+
+O piloto demonstrou a equivalência da saída canônica do Adapter AR
+(`resultado.itens`) com o snapshot automático da Fase 6, no estágio
+pré-regras — sem aplicar `hub-rules-ar.js`/`hub-state-ar.js`. Ver seção
+"Fase 7B" ao final deste documento.
+
+## Fase 7C concluída e validada
+
+**Fase 7C — Piloto Live × Snapshot Engenharia/DTE (`engenharia-operacional/piloto-snapshot/`): concluída e validada em navegador com dados reais.**
+
+**Resultado oficial da validação humana:**
+- classificação geral: `EQUIVALENTE`;
+- leitura da fonte live: `OK`;
+- execução do Adapter DTE: `OK`;
+- snapshot: `snapshot_valido`;
+- 13 períodos live; 13 períodos snapshot;
+- 957 indicadores live; 957 indicadores snapshot;
+- 624 gerências ofensoras live; 624 gerências ofensoras snapshot;
+- 0 diferenças em `periodos`; 0 diferenças em `indicadores`; 0 diferenças em `gerenciasOfensoras`;
+- `capturedAt`, `referencePeriod`, idade do snapshot e hash declarado exibidos;
+- três avisos obrigatórios visíveis (cópia técnica de auditoria; snapshot não é fechamento mensal oficial; piloto isolado, fora do painel executivo);
+- piloto acessível somente por URL direta;
+- nenhuma conexão com a Home ou com o painel executivo;
+- 604/604 testes automatizados aprovados, 0 reprovados, nas sete suítes executadas na mesma rodada de fechamento (`hub-selftest` 40/40, Fase 4 42/42, Fase 5 96/96, Fase 6 85/85, Fase 7A 102/102, Fase 7B 146/146, Fase 7C 93/93).
+
+O piloto demonstrou que o snapshot automático da Engenharia/DTE
+preservou fielmente a saída canônica do Adapter DTE no estágio
+pré-regras, nas três coleções do contrato oficial do payload:
+`periodos`, `indicadores` e `gerenciasOfensoras` — comparadas
+inteiramente por chave derivada de `lineage`, nunca por posição no
+array. Ver seção "Fase 7C" ao final deste documento.
+
 ## Concluído
 - [x] Fase 1
 - [x] Fase 2
@@ -64,12 +126,35 @@ Os 208 registros não comparáveis e os 161 sem correspondência não são falha
 - [x] Fase 5 — Piloto Engenharia/DTE validado em produção (reconfirmado em navegador pós-correção de percentuais)
 - [x] Fase 6 — Snapshot automático e validação antecipada (AR e Engenharia/DTE): publicada, primeira execução real concluída com sucesso, tag/release `fase-6-concluida` publicadas, snapshots reais dos dois módulos em `data/`. Fechada.
 - [x] Fase 7A — Infraestrutura genérica de leitura/validação/comparação de snapshots (`hub-snapshot-reader.js`, `hub-data-source.js`), implementada e testada nesta entrega, sem conexão a painel de produção (ver seção "Fase 7A").
+- [x] Fase 7B — Piloto Live × Snapshot AR (`ar/piloto-snapshot/`), concluído e validado em navegador com dados reais (classificação EQUIVALENTE, 146/146 testes — ver seção "Fase 7B concluída e validada" acima e seção detalhada "Fase 7B" ao final deste documento).
+- [x] Fase 7C — Piloto Live × Snapshot Engenharia/DTE (`engenharia-operacional/piloto-snapshot/`), concluído e validado em navegador com dados reais (classificação EQUIVALENTE, 0 diferenças nas três coleções, 604/604 testes — ver seção "Fase 7C concluída e validada" acima e seção detalhada "Fase 7C" ao final deste documento).
 
 ## Próxima ação autorizada
-Publicar os arquivos da Fase 7A, revisar, e validar via `node testes/testar-fase7a.js .` (ver seção "Fase 7A" · "Testes"). **A Fase 7B não está autorizada.**
+
+> **Registro histórico preservado.** O parágrafo abaixo descrevia
+> corretamente a próxima ação autorizada no momento em que a Fase 7A
+> foi fechada. Foi superado pela autorização explícita e execução
+> subsequente das Fases 7B e 7C, ambas concluídas.
+>
+> Publicar os arquivos da Fase 7A, revisar, e validar via `node testes/testar-fase7a.js .` (ver seção "Fase 7A" · "Testes"). **A Fase 7B não está autorizada.**
+
+**Próxima ação autorizada atual:** nenhuma. A Fase 7C está concluída e
+validada. Nenhuma Fase 7D, Fase 8, ou qualquer outra fase nova foi
+autorizada ou iniciada. Aguardar autorização explícita para a próxima
+etapa do roteiro (conexão dos painéis de produção ao snapshot,
+biblioteca completa — `hub-data`/`hub-insights`/`hub-registry`/
+`hub-app` —, ou outra decisão de escopo).
 
 ## Ações não autorizadas
-- Iniciar a Fase 7B ou 7C;
+
+> **Registro histórico preservado.** O item abaixo ("Iniciar a Fase 7B
+> ou 7C") era válido no momento em que esta lista foi escrita. Foi
+> superado pela autorização explícita, execução e validação humana
+> subsequentes das Fases 7B e 7C — ambas concluídas, não mais vedadas.
+> Os demais itens desta lista permanecem vigentes e não foram
+> afetados.
+
+- ~~Iniciar a Fase 7B ou 7C~~ (superado — ambas concluídas e validadas; ver seções "Fase 7B" e "Fase 7C");
 - ativar o modo `snapshot` em qualquer painel de produção;
 - conectar `hub-snapshot-reader.js`/`hub-data-source.js` a `ar/index.html`, `engenharia-operacional/index.html` ou qualquer outro painel;
 - remover ou alterar qualquer fetch de CSV ao vivo existente;
@@ -1064,9 +1149,168 @@ divergência de coerência nunca é mascarada por `maxAgeHoras`
   `.github/workflows/snapshot.yml`.
 - Fase 7B e Fase 7C, sob qualquer forma.
 
+> **Registro histórico preservado.** Esta lista descreve corretamente
+> o que não havia sido executado até o fechamento da Fase 7A. As
+> Fases 7B e 7C foram posteriormente autorizadas, executadas e
+> validadas em navegador com dados reais — ver seções "Fase 7B" e
+> "Fase 7C" abaixo. As demais afirmações desta lista (conexão a painel
+> de produção, alteração em `snapshot/lib/`, decisão de `maxAge` em
+> produção) continuam corretas: nenhuma delas ocorreu nas Fases 7B/7C.
+
 ### Próxima ação autorizada
 
 Aguardar autorização explícita para Fase 7B (piloto controlado de
 consumo de snapshot no AR, modo `compare` em harness isolado, sem
 alterar a interface pública do painel). **A Fase 7B não está
 autorizada.**
+
+> **Registro histórico preservado.** Esta afirmação era correta no
+> momento do fechamento da Fase 7A. A Fase 7B foi posteriormente
+> autorizada, implementada e validada em navegador com dados reais, e
+> em seguida a Fase 7C também foi autorizada, implementada e validada.
+> Ver seções detalhadas abaixo.
+
+---
+
+## Fase 7B — Piloto Live × Snapshot AR (concluída e validada)
+
+### Objetivo desta etapa
+
+Comparar, no estágio pré-regras, a saída canônica produzida pelo
+Adapter AR (`resultado.itens`) contra a saída canônica armazenada no
+snapshot automático do AR (Fase 6), usando a infraestrutura genérica
+de `hub-snapshot-reader.js`/`hub-data-source.js` (Fase 7A) através de
+um piloto isolado (`ar/piloto-snapshot/`), sem aplicar
+`hub-rules-ar.js`/`hub-state-ar.js` e sem qualquer conexão com
+`ar/index.html`.
+
+### Arquivos
+
+- `ar/piloto-snapshot/piloto-snapshot.js`
+- `ar/piloto-snapshot/index.html`
+- `ar/piloto-snapshot/README.md`
+- `testes/testar-fase7b.js`
+
+### Resultado oficial da validação humana (registrado antes do início da Fase 7C)
+
+- classificação geral: `EQUIVALENTE`;
+- live: `OK`;
+- snapshot: `snapshot_valido`;
+- 13 linhas live;
+- 13 linhas snapshot;
+- 0 diferenças;
+- metadados `capturedAt`, `referencePeriod`, idade do snapshot e hash
+  exibidos corretamente;
+- aviso de que o snapshot não representa fechamento mensal oficial
+  visível;
+- piloto acessível apenas por URL direta;
+- nenhuma conexão com o painel executivo.
+
+### Testes
+
+- `testes/testar-fase7b.js`: **146/146 aprovados, 0 reprovados**
+  (execução mais recente confirmada nesta mesma linha de fechamento da
+  Fase 7C, junto com as demais suítes de regressão).
+
+### Nota de reconciliação documental
+
+Esta seção foi escrita durante o fechamento da Fase 7C para reconciliar
+este documento com uma execução da Fase 7B já realizada e validada,
+mas que não havia sido registrada aqui antes. O conteúdo acima está
+limitado ao que é factualmente verificável neste checkout (arquivos
+presentes, resultado da validação humana conforme relatado e
+confirmado pela proprietária do produto, e execução real da suíte de
+testes). Não há, neste checkout, data específica, número de commit,
+tag ou release da Fase 7B comprovados — por isso nenhum desses dados é
+afirmado aqui.
+
+---
+
+## Fase 7C — Piloto Live × Snapshot Engenharia/DTE (concluída e validada)
+
+### Objetivo desta etapa
+
+Comparar, no estágio pré-regras, a saída canônica produzida pelo
+Adapter DTE (`envelope.payload` — três coleções: `periodos`,
+`indicadores`, `gerenciasOfensoras`) contra a saída canônica armazenada
+no snapshot automático da Engenharia/DTE (Fase 6), através de um
+piloto isolado (`engenharia-operacional/piloto-snapshot/`), reutilizando
+`HUB.dataSource.resolver(..., "compare", {compareProvider})` (Fase 7A,
+não alterado) com um comparador próprio para as três coleções,
+indexado por chave derivada de `lineage` (nunca por posição no array).
+Sem aplicar nenhuma regra de negócio (não existe ainda
+`hub-rules-engenharia.js`/`hub-state-engenharia.js`) e sem qualquer
+conexão com `engenharia-operacional/index.html`.
+
+### Arquivos
+
+- `engenharia-operacional/piloto-snapshot/piloto-snapshot-dte.js`
+- `engenharia-operacional/piloto-snapshot/index.html`
+- `engenharia-operacional/piloto-snapshot/README.md`
+- `testes/testar-fase7c.js`
+
+### Resultado oficial da validação humana
+
+- classificação geral: `EQUIVALENTE`;
+- leitura da fonte live: `OK`;
+- execução do Adapter DTE: `OK`;
+- snapshot: `snapshot_valido`;
+- 13 períodos live; 13 períodos snapshot;
+- 957 indicadores live; 957 indicadores snapshot;
+- 624 gerências ofensoras live; 624 gerências ofensoras snapshot;
+- 0 diferenças em `periodos`;
+- 0 diferenças em `indicadores`;
+- 0 diferenças em `gerenciasOfensoras`;
+- `capturedAt` exibido;
+- `referencePeriod` exibido;
+- idade do snapshot exibida;
+- hash declarado exibido;
+- três avisos obrigatórios visíveis ("Este snapshot é uma cópia
+  técnica para continuidade operacional e auditoria.", "O snapshot não
+  representa fechamento mensal oficial.", "Esta página é um piloto
+  técnico isolado e não integra o painel executivo.");
+- piloto acessível somente por URL direta;
+- nenhuma conexão com a Home ou com o painel executivo.
+
+O piloto demonstrou que o snapshot preservou exatamente a saída
+canônica do Adapter DTE no estágio pré-regras, nas três coleções do
+contrato oficial do payload — `periodos`, `indicadores` e
+`gerenciasOfensoras` — sem nenhuma diferença material e sem nenhuma
+chave ausente, incompleta ou duplicada.
+
+### Testes
+
+Sete suítes executadas na mesma rodada de fechamento (regressão
+integral, nenhum resultado reaproveitado de rodada anterior):
+
+| Suíte | Aprovados | Reprovados |
+|---|---|---|
+| `executar-hub-selftest-node.js` | 40 | 0 |
+| `testar-fase4.js` | 42 | 0 |
+| `testar-fase5.js` | 96 | 0 |
+| `testar-fase6.js` | 85 | 0 |
+| `testar-fase7a.js` | 102 | 0 |
+| `testar-fase7b.js` | 146 | 0 |
+| `testar-fase7c.js` | 93 | 0 |
+
+**Total: 604/604 aprovados, 0 reprovados.**
+
+### Não executado nesta fase
+
+- Conexão do painel executivo de Engenharia/DTE ao snapshot pipeline.
+- Qualquer alteração no Adapter DTE, em `hub-data-source.js` ou em
+  `hub-snapshot-reader.js`.
+- Criação de `hub-rules-engenharia.js`/`hub-state-engenharia.js`.
+- Criação de tag ou release (limitação técnica do ambiente de
+  execução — checkout sem `.git`, sem remote configurado e sem
+  credenciais do GitHub; textos prontos entregues à parte para
+  criação manual).
+
+### Próxima ação autorizada
+
+Nenhuma. A Fase 7C está concluída e validada. Aguardar autorização
+explícita para a próxima etapa do roteiro (conexão dos painéis de
+produção ao snapshot, biblioteca completa —
+`hub-data`/`hub-insights`/`hub-registry`/`hub-app` —, ou outra decisão
+de escopo). Nenhuma Fase 7D, Fase 8 ou qualquer outra fase nova foi
+iniciada.

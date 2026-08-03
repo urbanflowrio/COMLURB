@@ -39,6 +39,57 @@
     return out;
   }
 
+
+  function valorPreenchido(v) { return v !== undefined && v !== null && clean(v) !== ''; }
+
+  function chaveBase(row) {
+    return [norm(row && row.Indicador), norm(row && row.Ano), norm(row && row.Diretoria)].join('¦');
+  }
+
+  function chaveCompleta(row) {
+    return [chaveBase(row), norm(row && row['Superint.']), norm(row && row['Gerência'])].join('¦');
+  }
+
+  function mesclarBases(resultados, complemento) {
+    const baseResultados = (resultados || []).map(normalizarRow).filter(r => clean(r.Indicador));
+    const baseComplemento = (complemento || []).map(normalizarRow).filter(r => clean(r.Indicador));
+    const usados = new Set();
+
+    function localizarComplemento(row) {
+      let idx = baseComplemento.findIndex((c, i) => !usados.has(i) && chaveCompleta(c) === chaveCompleta(row));
+      if (idx >= 0) return idx;
+      idx = baseComplemento.findIndex((c, i) => !usados.has(i) && chaveBase(c) === chaveBase(row) && ehConsolidado(c) === ehConsolidado(row));
+      if (idx >= 0) return idx;
+      idx = baseComplemento.findIndex((c, i) => !usados.has(i) && norm(c.Indicador) === norm(row.Indicador) && norm(c.Ano) === norm(row.Ano));
+      return idx;
+    }
+
+    const mesclada = baseResultados.map(row => {
+      const idx = localizarComplemento(row);
+      if (idx < 0) return row;
+      usados.add(idx);
+      const apoio = baseComplemento[idx];
+      const merged = Object.assign({}, apoio);
+      Object.keys(row).forEach(k => { if (valorPreenchido(row[k])) merged[k] = row[k]; });
+      return merged;
+    });
+
+    baseComplemento.forEach((row, idx) => { if (!usados.has(idx)) mesclada.push(row); });
+    return mesclada;
+  }
+
+  function atingimentoExplicito(row) {
+    if (!row) return null;
+    const aliases = ['ATINGIMENTO', '% ATINGIMENTO', 'PERCENTUAL DE ATINGIMENTO', 'ATINGIMENTO DA META', '% DA META', 'PERCENTUAL META'];
+    const key = Object.keys(row).find(k => aliases.includes(norm(k)) || norm(k).includes('ATINGIMENTO'));
+    if (!key || !valorPreenchido(row[key])) return null;
+    const bruto = clean(row[key]);
+    let valor = HUB.indicadores.parseNumeroBR(bruto);
+    if (valor === null || !Number.isFinite(valor)) return null;
+    if (!bruto.includes('%') && Math.abs(valor) <= 1) valor *= 100;
+    return { valor, texto: `${valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% de atingimento`, origem: 'base complementar' };
+  }
+
   function ehConsolidado(row) {
     const sup = clean(row && row['Superint.']);
     const ger = clean(row && row['Gerência']);
@@ -151,7 +202,10 @@
 
 
   function percentualAtingimento(k) {
-    if (!k || k.acumulado === null || k.acumulado === undefined || k.meta === null || k.meta === undefined) return null;
+    if (!k) return null;
+    const informado = atingimentoExplicito(k.row);
+    if (informado) return informado;
+    if (k.acumulado === null || k.acumulado === undefined || k.meta === null || k.meta === undefined) return null;
     const atual = Number(k.acumulado);
     const meta = Number(k.meta);
     if (!Number.isFinite(atual) || !Number.isFinite(meta)) return null;
@@ -332,17 +386,20 @@
     HUB.loading.show('loading', 'Carregando indicadores corporativos...');
     initEventos();
     try {
-      const rows = await HUB.data.loadCSV(CONFIG.csvUrl, { required: true, name: 'Indicadores corporativos' });
-      DATA = rows.map(normalizarRow).filter(r => clean(r.Indicador));
+      const [resultados, complemento] = await Promise.all([
+        HUB.data.loadCSV(CONFIG.csvResultadosUrl, { required: true, name: 'Resultados dos indicadores' }),
+        HUB.data.loadCSV(CONFIG.csvComplementoUrl, { required: true, name: 'Metas e atingimento' })
+      ]);
+      DATA = mesclarBases(resultados, complemento);
       popularFiltros(); render();
       document.getElementById('conteudo').hidden = false;
-      document.getElementById('dataStatus').textContent = `Base carregada · ${DATA.length.toLocaleString('pt-BR')} linhas · COMLURB`;
+      document.getElementById('dataStatus').textContent = `Duas bases carregadas · ${resultados.length.toLocaleString('pt-BR')} resultados · ${complemento.length.toLocaleString('pt-BR')} complementos · ${DATA.length.toLocaleString('pt-BR')} linhas consolidadas`;
     } catch (error) {
       const el = document.getElementById('errorState'); el.hidden = false; el.textContent = `Não foi possível carregar a base publicada: ${error.message}`;
       document.getElementById('dataStatus').textContent = 'Falha no carregamento';
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, ehConsolidado, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, resumoStatus, classeEixo };
+  window.GOVERNANCA_TEST_API = { normalizarRow, ehConsolidado, mesclarBases, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, resumoStatus, classeEixo };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

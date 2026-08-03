@@ -53,3 +53,13 @@ Planilha, CSV, metas, sentidos, registro de indicadores e componentes do Core n�
 ## Ajuste V4 — percentual de atingimento
 
 Indicadores com meta exibem percentual de atingimento no card e na ficha. Para indicadores de maior valor desejável, o cálculo é resultado/meta. Para indicadores de menor valor desejável, o cálculo é meta/resultado. Casos de meta ou resultado zero recebem tratamento explícito para evitar divisão por zero. A métrica não é agregada em média corporativa, pois os indicadores possuem naturezas e unidades diferentes.
+
+
+## Ajuste V5 — integração das duas abas publicadas
+
+O painel carrega simultaneamente duas fontes da mesma planilha publicada:
+
+1. `pub?output=csv`: fonte principal dos resultados, valores acumulados e séries mensais;
+2. `gid=2044729258`: fonte complementar de meta, sentido, unidade e percentual de atingimento, quando informado.
+
+As bases são mescladas por indicador, ano, diretoria e nível organizacional. Campos preenchidos na aba de resultados permanecem prioritários. A aba complementar preenche campos ausentes e pode acrescentar indicadores ainda não presentes na primeira fonte. Quando existe uma coluna explícita de atingimento, o painel usa o valor informado; na ausência dela, mantém o cálculo derivado de resultado, meta e sentido.

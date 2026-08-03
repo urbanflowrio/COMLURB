@@ -46,3 +46,25 @@ const duplicated=[{...base,Diretoria:'DSU','Superint.':'-','Gerência':'-',Acumu
 if(api.resolverLinha(indicator,'DSU','2026',duplicated).Acumulado!=='90') throw new Error('Preferência da diretoria falhou');
 passed++;
 console.log(`Paridade: ${passed}/${passed} cenários passaram`);
+
+const resultados = [{
+  Indicador: indicator, Ano: '2026', Diretoria: 'COMLURB', 'Superint.': '-', 'Gerência': '-',
+  Acumulado: '83,7', Jan: '80', Fev: '83,7', Meta: '', Unidade: '%', Sentido: ''
+}];
+const complemento = [{
+  Indicador: indicator, Ano: '2026', Diretoria: 'Comlurb', 'Superint.': '', 'Gerência': '',
+  Acumulado: '999', Meta: '85', Unidade: '%', Sentido: '↑', 'Percentual de Atingimento': '98,5%'
+}, {
+  Indicador: 'Indicador só no complemento', Ano: '2026', Diretoria: 'COMLURB', 'Superint.': '-', 'Gerência': '-', Meta: '10'
+}];
+const integrada = api.mesclarBases(resultados, complemento);
+if (integrada.length !== 2) throw new Error(`Mesclagem: esperadas 2 linhas, obtidas ${integrada.length}`);
+const linhaIntegrada = integrada.find(r => context.HUB.format.norm(r.Indicador) === context.HUB.format.norm(indicator));
+if (!linhaIntegrada) throw new Error('Mesclagem: indicador principal ausente');
+if (linhaIntegrada.Acumulado !== '83,7') throw new Error('Mesclagem: resultado principal foi sobrescrito pelo complemento');
+if (linhaIntegrada.Meta !== '85' || linhaIntegrada.Sentido !== '↑') throw new Error('Mesclagem: campos complementares não foram incorporados');
+const informado = api.atingimentoExplicito(linhaIntegrada);
+if (!informado || Math.abs(informado.valor - 98.5) > 1e-9) throw new Error('Atingimento explícito não foi lido corretamente');
+const decimal = api.atingimentoExplicito({'Atingimento':'0,985'});
+if (!decimal || Math.abs(decimal.valor - 98.5) > 1e-9) throw new Error('Atingimento decimal não foi convertido corretamente');
+console.log('Integração de fontes: 6/6 verificações passaram');

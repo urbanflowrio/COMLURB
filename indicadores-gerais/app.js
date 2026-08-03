@@ -18,6 +18,7 @@
   let DATA = [];
   let KPIDATA = [];
   let anoSelecionado = '';
+  let anosDisponiveis = [];
   let diretoriaSelecionada = CONFIG.diretoriaDefault;
   let buscaAtual = '';
   let statusAtual = 'todos';
@@ -65,16 +66,30 @@
     return HUB.indicadores.avaliarIndicador([adaptada], indicador, diretoria, ano, CONFIG.limiteAtencao);
   }
 
+  function unidadeVisual(unidade) {
+    const u = norm(unidade);
+    if (!u || ['NUM', 'NUM.', 'NUMERO', 'NÚMERO', 'QTD', 'QTD.', 'QUANTIDADE'].includes(u)) return '';
+    return clean(unidade);
+  }
+
   function formatValor(v, unidade) {
     if (v === null || v === undefined || Number.isNaN(v)) return '—';
     const opts = Math.abs(v) >= 1000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 1 };
-    return Number(v).toLocaleString('pt-BR', opts) + (unidade || '');
+    const numero = Number(v).toLocaleString('pt-BR', opts);
+    const u = unidadeVisual(unidade);
+    if (!u) return numero;
+    if (u === '%') return numero + '%';
+    if (/^R\$/i.test(u)) return 'R$ ' + numero;
+    return numero + ' ' + u;
   }
 
   function formatDiferenca(v, unidade) {
     if (v === null || v === undefined || Number.isNaN(v)) return '—';
     const num = Math.abs(v).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-    return num + (clean(unidade) === '%' ? ' p.p.' : (unidade ? ' ' + unidade : ''));
+    const u = unidadeVisual(unidade);
+    if (u === '%') return num + ' p.p.';
+    if (!u) return num + (Math.abs(v) === 1 ? ' unidade' : ' unidades');
+    return num + ' ' + u;
   }
 
   function distanciaMeta(k) {
@@ -98,11 +113,46 @@
     return { texto: `${favoravel ? 'Melhora' : 'Piora'} de ${formatDiferenca(delta, unidade)} em relação a ${anterior.mes}`, delta, favoravel, mesAnterior: anterior.mes, mesAtual: atual.mes };
   }
 
+  function anoPrincipal() {
+    if (anoSelecionado !== 'comparar') return anoSelecionado;
+    return anosDisponiveis[anosDisponiveis.length - 1] || '';
+  }
+
+  function anoComparacao() {
+    if (anoSelecionado !== 'comparar' || anosDisponiveis.length < 2) return null;
+    return anosDisponiveis[anosDisponiveis.length - 2];
+  }
+
+  function ultimoValorDisponivel(row) {
+    if (!row) return null;
+    const pares = HUB.indicadores.MESES.map(m => ({ mes: m, valor: HUB.indicadores.parseNumeroBR(row[m]) })).filter(p => p.valor !== null);
+    return pares.length ? pares[pares.length - 1] : null;
+  }
+
+  function comparacaoAnual(indicador, sentido, unidade) {
+    const anteriorAno = anoComparacao();
+    if (!anteriorAno) return null;
+    const atualAno = anoPrincipal();
+    const atualRow = resolverLinha(indicador, diretoriaSelecionada, atualAno);
+    const anteriorRow = resolverLinha(indicador, diretoriaSelecionada, anteriorAno);
+    const atual = ultimoValorDisponivel(atualRow);
+    if (!atual || !anteriorRow) return null;
+    const anteriorValor = HUB.indicadores.parseNumeroBR(anteriorRow[atual.mes]);
+    if (anteriorValor === null) return null;
+    const delta = atual.valor - anteriorValor;
+    if (Math.abs(delta) < 1e-9) return { texto: `Estável em ${atual.mes}: ${atualAno} igual a ${anteriorAno}`, delta: 0, favoravel: null, mes: atual.mes, anoAtual: atualAno, anoAnterior: anteriorAno };
+    const menorMelhor = clean(sentido) === '↓';
+    const favoravel = menorMelhor ? delta < 0 : delta > 0;
+    return { texto: `${favoravel ? 'Melhora' : 'Piora'} de ${formatDiferenca(delta, unidade)} em ${atual.mes}, comparando ${atualAno} com ${anteriorAno}`, delta, favoravel, mes: atual.mes, anoAtual: atualAno, anoAnterior: anteriorAno };
+  }
+
   function montarKpi(entry) {
-    const aval = avaliarComParidade(entry.indicador, diretoriaSelecionada, anoSelecionado);
-    const k = Object.assign({ eixo: entry.eixo, eixoLabel: EIXO_LABEL[entry.eixo] || entry.eixo }, aval);
+    const anoBase = anoPrincipal();
+    const aval = avaliarComParidade(entry.indicador, diretoriaSelecionada, anoBase);
+    const k = Object.assign({ eixo: entry.eixo, eixoLabel: EIXO_LABEL[entry.eixo] || entry.eixo, ano: anoBase }, aval);
     k.distanciaTexto = distanciaMeta(k);
-    k.variacao = variacaoTemporal(k.row, k.sentido, k.unidade);
+    k.variacao = anoSelecionado === 'comparar' ? comparacaoAnual(entry.indicador, k.sentido, k.unidade) : variacaoTemporal(k.row, k.sentido, k.unidade);
+    k.rowComparacao = anoComparacao() ? resolverLinha(entry.indicador, diretoriaSelecionada, anoComparacao()) : null;
     return k;
   }
 
@@ -169,8 +219,8 @@
 
   function cardHTML(k) {
     const tag = statusTag(k);
-    const movimento = k.variacao ? k.variacao.texto : k.distanciaTexto;
-    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValor(k.acumulado, k.unidade))}</div><div class="indNote">${esc(k.distanciaTexto)}</div>${k.variacao ? `<div class="indNote">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
+    const movimento = k.variacao ? k.variacao.texto : '';
+    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValor(k.acumulado, k.unidade))}</div><div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend ${k.variacao.favoravel === true ? 'positive' : k.variacao.favoravel === false ? 'negative' : 'neutral'}">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
   function filtrar(kpis) {
@@ -193,35 +243,56 @@
     });
   }
 
+  function classeSemantica(k, tipo) {
+    if (tipo === 'movimento') {
+      if (!k.variacao || k.variacao.favoravel === null || k.variacao.favoravel === undefined) return 'semantic-neutral';
+      return k.variacao.favoravel ? 'semantic-positive' : 'semantic-negative';
+    }
+    if (!k.status.cor) return 'semantic-neutral';
+    if (k.status.cor === 'green') return 'semantic-positive';
+    if (k.status.cor === 'red') return 'semantic-negative';
+    return 'semantic-warning';
+  }
+
+  function ciclosHTML(k) {
+    const anos = anoSelecionado === 'comparar' ? [anoComparacao(), anoPrincipal()].filter(Boolean) : [anoPrincipal()];
+    return anos.map(ano => {
+      const row = ano === anoPrincipal() ? k.row : resolverLinha(k.indicador, diretoriaSelecionada, ano);
+      const cells = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(formatValor(row ? HUB.indicadores.parseNumeroBR(row[m]) : null, k.unidade))}</b></div>`).join('');
+      return `<section class="yearCycles"><div class="yearCyclesTitle">${esc(ano)}</div><div class="months">${cells}</div></section>`;
+    }).join('');
+  }
+
   function abrirDrawer(k) {
-    document.getElementById('drawerEixo').textContent = k.eixoLabel;
+    document.getElementById('drawerEixo').textContent = `${k.eixoLabel} · ${anoSelecionado === 'comparar' ? 'Comparativo ' + anoComparacao() + ' × ' + anoPrincipal() : anoPrincipal()}`;
     document.getElementById('drawerTitulo').textContent = k.indicador;
     const tag = statusTag(k);
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox"><small>Movimento recente</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes')}</b></div><div class="detailBox"><small>Sentido</small><b>${esc(k.sentido || '—')}</b></div>`;
-    document.getElementById('drawerMonths').innerHTML = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(formatValor(k.row ? HUB.indicadores.parseNumeroBR(k.row[m]) : null, k.unidade))}</b></div>`).join('');
+    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox ${classeSemantica(k, 'status')}"><small>Resultado ${esc(anoPrincipal())}</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox detailBoxWide ${classeSemantica(k, 'movimento')}"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b></div>`;
+    document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
   }
 
   function fecharDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'true'); }
 
-  function salvarFiltros() { try { localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify({ ano: anoSelecionado, diretoria: diretoriaSelecionada })); } catch (_) {} }
+  function salvarFiltros() { try { localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify({ ano: anoSelecionado })); } catch (_) {} }
   function restaurarFiltros() { try { return JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '{}'); } catch (_) { return {}; } }
 
   function popularFiltros() {
     const saved = restaurarFiltros();
-    const anos = Array.from(new Set(DATA.map(r => clean(r.Ano)).filter(Boolean))).sort((a, b) => Number(a) - Number(b));
-    const diretorias = Array.from(new Set(DATA.filter(ehConsolidado).map(r => clean(r.Diretoria)).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-    anoSelecionado = anos.includes(saved.ano) ? saved.ano : anos.includes(CONFIG.anoPreferencial) ? CONFIG.anoPreferencial : (anos[anos.length - 1] || '');
-    diretoriaSelecionada = diretorias.find(d => norm(d) === norm(saved.diretoria)) || diretorias.find(d => norm(d) === norm(CONFIG.diretoriaDefault)) || diretorias[0] || '';
-    const ano = document.getElementById('filtroAno'); ano.innerHTML = anos.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join(''); ano.value = anoSelecionado;
-    const dir = document.getElementById('filtroDiretoria'); dir.innerHTML = diretorias.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join(''); dir.value = diretoriaSelecionada;
+    anosDisponiveis = Array.from(new Set(DATA.map(r => clean(r.Ano)).filter(Boolean))).sort((a, b) => Number(a) - Number(b));
+    diretoriaSelecionada = CONFIG.diretoriaDefault;
+    const podeComparar = anosDisponiveis.length >= 2;
+    anoSelecionado = saved.ano === 'comparar' && podeComparar ? 'comparar' : anosDisponiveis.includes(saved.ano) ? saved.ano : anosDisponiveis.includes(CONFIG.anoPreferencial) ? CONFIG.anoPreferencial : (anosDisponiveis[anosDisponiveis.length - 1] || '');
+    const ano = document.getElementById('filtroAno');
+    const opcoes = anosDisponiveis.map(v => `<option value="${esc(v)}">${esc(v)}</option>`);
+    if (podeComparar) opcoes.push(`<option value="comparar">Comparar ${esc(anosDisponiveis[anosDisponiveis.length - 2])} e ${esc(anosDisponiveis[anosDisponiveis.length - 1])}</option>`);
+    ano.innerHTML = opcoes.join(''); ano.value = anoSelecionado;
   }
 
   function render() { KPIDATA = HUB.indicadores.todosOsCards().map(montarKpi); renderResumo(KPIDATA); renderCentro(KPIDATA); renderRadar(KPIDATA); renderIndicadores(KPIDATA); salvarFiltros(); }
 
   function initEventos() {
     document.getElementById('filtroAno').addEventListener('change', e => { anoSelecionado = e.target.value; render(); });
-    document.getElementById('filtroDiretoria').addEventListener('change', e => { diretoriaSelecionada = e.target.value; render(); });
     document.getElementById('buscaIndicador').addEventListener('input', e => { buscaAtual = e.target.value; renderIndicadores(KPIDATA); });
     document.getElementById('filtroStatus').addEventListener('change', e => { statusAtual = e.target.value; renderIndicadores(KPIDATA); });
     document.getElementById('drawerClose').addEventListener('click', fecharDrawer); document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDrawer(); });
@@ -237,7 +308,7 @@
       DATA = rows.map(normalizarRow).filter(r => clean(r.Indicador));
       popularFiltros(); render();
       document.getElementById('conteudo').hidden = false;
-      document.getElementById('dataStatus').textContent = `Base carregada · ${DATA.length.toLocaleString('pt-BR')} linhas`;
+      document.getElementById('dataStatus').textContent = `Base carregada · ${DATA.length.toLocaleString('pt-BR')} linhas · COMLURB`;
     } catch (error) {
       const el = document.getElementById('errorState'); el.hidden = false; el.textContent = `Não foi possível carregar a base publicada: ${error.message}`;
       document.getElementById('dataStatus').textContent = 'Falha no carregamento';

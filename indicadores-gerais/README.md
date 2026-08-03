@@ -38,3 +38,12 @@ A linha encontrada é adaptada localmente para o contrato estrito de `avaliarInd
 ## Limites
 
 Planilha, CSV, metas, sentidos, registro de indicadores e componentes do Core não foram alterados.
+
+## Ajuste de apresentação — 03/08/2026
+
+- Removido o filtro de Diretoria da interface; o painel permanece no consolidado COMLURB.
+- O filtro de período permite selecionar cada ano disponível ou comparar os dois anos mais recentes.
+- No modo comparativo, o ano mais recente permanece como posição atual e a comparação usa o mesmo último mês disponível do ano anterior.
+- Unidades de contagem (`Num.`, `Número`, `Qtd.` e equivalentes) não são mais concatenadas ao valor principal.
+- A ficha lateral aplica cores semânticas a resultado, status, distância da meta e movimento recente.
+- O campo técnico `Sentido` foi retirado da camada principal da ficha.

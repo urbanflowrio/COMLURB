@@ -45,5 +45,11 @@ Planilha, CSV, metas, sentidos, registro de indicadores e componentes do Core n�
 - O filtro de período permite selecionar cada ano disponível ou comparar os dois anos mais recentes.
 - No modo comparativo, o ano mais recente permanece como posição atual e a comparação usa o mesmo último mês disponível do ano anterior.
 - Unidades de contagem (`Num.`, `Número`, `Qtd.` e equivalentes) não são mais concatenadas ao valor principal.
-- A ficha lateral aplica cores semânticas a resultado, status, distância da meta e movimento recente.
+- A ficha lateral concentra cor semântica apenas no resultado do ano principal e no status; distância da meta e movimento permanecem neutros para evitar excesso visual.
 - O campo técnico `Sentido` foi retirado da camada principal da ficha.
+
+- Unidades de massa como `Ton` são exibidas como `t` no resultado e por extenso nas frases de diferença.
+
+## Ajuste V4 — percentual de atingimento
+
+Indicadores com meta exibem percentual de atingimento no card e na ficha. Para indicadores de maior valor desejável, o cálculo é resultado/meta. Para indicadores de menor valor desejável, o cálculo é meta/resultado. Casos de meta ou resultado zero recebem tratamento explícito para evitar divisão por zero. A métrica não é agregada em média corporativa, pois os indicadores possuem naturezas e unidades diferentes.

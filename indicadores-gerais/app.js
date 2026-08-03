@@ -69,6 +69,7 @@
   function unidadeVisual(unidade) {
     const u = norm(unidade);
     if (!u || ['NUM', 'NUM.', 'NUMERO', 'NÚMERO', 'QTD', 'QTD.', 'QUANTIDADE'].includes(u)) return '';
+    if (['TON', 'TON.', 'TONELADA', 'TONELADAS'].includes(u)) return 't';
     return clean(unidade);
   }
 
@@ -85,10 +86,12 @@
 
   function formatDiferenca(v, unidade) {
     if (v === null || v === undefined || Number.isNaN(v)) return '—';
-    const num = Math.abs(v).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+    const abs = Math.abs(v);
+    const num = abs.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
     const u = unidadeVisual(unidade);
     if (u === '%') return num + ' p.p.';
-    if (!u) return num + (Math.abs(v) === 1 ? ' unidade' : ' unidades');
+    if (u === 't') return num + (abs === 1 ? ' tonelada' : ' toneladas');
+    if (!u) return num + (abs === 1 ? ' unidade' : ' unidades');
     return num + ' ' + u;
   }
 
@@ -146,11 +149,36 @@
     return { texto: `${favoravel ? 'Melhora' : 'Piora'} de ${formatDiferenca(delta, unidade)} em ${atual.mes}, comparando ${atualAno} com ${anteriorAno}`, delta, favoravel, mes: atual.mes, anoAtual: atualAno, anoAnterior: anteriorAno };
   }
 
+
+  function percentualAtingimento(k) {
+    if (!k || k.acumulado === null || k.acumulado === undefined || k.meta === null || k.meta === undefined) return null;
+    const atual = Number(k.acumulado);
+    const meta = Number(k.meta);
+    if (!Number.isFinite(atual) || !Number.isFinite(meta)) return null;
+    const menorMelhor = clean(k.sentido) === '↓';
+
+    if (menorMelhor) {
+      if (meta === 0 && atual === 0) return { valor: 100, texto: '100% de atingimento' };
+      if (meta === 0 && atual > 0) return { valor: 0, texto: '0% de atingimento' };
+      if (atual === 0 && meta > 0) return { valor: null, texto: 'Acima de 100% de atingimento', superado: true };
+      const valor = (meta / atual) * 100;
+      return { valor, texto: `${valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% de atingimento` };
+    }
+
+    if (meta === 0) {
+      const valor = atual >= 0 ? 100 : 0;
+      return { valor, texto: `${valor}% de atingimento` };
+    }
+    const valor = (atual / meta) * 100;
+    return { valor, texto: `${valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% de atingimento` };
+  }
+
   function montarKpi(entry) {
     const anoBase = anoPrincipal();
     const aval = avaliarComParidade(entry.indicador, diretoriaSelecionada, anoBase);
     const k = Object.assign({ eixo: entry.eixo, eixoLabel: EIXO_LABEL[entry.eixo] || entry.eixo, ano: anoBase }, aval);
     k.distanciaTexto = distanciaMeta(k);
+    k.atingimento = percentualAtingimento(k);
     k.variacao = anoSelecionado === 'comparar' ? comparacaoAnual(entry.indicador, k.sentido, k.unidade) : variacaoTemporal(k.row, k.sentido, k.unidade);
     k.rowComparacao = anoComparacao() ? resolverLinha(entry.indicador, diretoriaSelecionada, anoComparacao()) : null;
     return k;
@@ -220,7 +248,7 @@
   function cardHTML(k) {
     const tag = statusTag(k);
     const movimento = k.variacao ? k.variacao.texto : '';
-    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValor(k.acumulado, k.unidade))}</div><div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend ${k.variacao.favoravel === true ? 'positive' : k.variacao.favoravel === false ? 'negative' : 'neutral'}">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
+    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValor(k.acumulado, k.unidade))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
   function filtrar(kpis) {
@@ -267,7 +295,7 @@
     document.getElementById('drawerEixo').textContent = `${k.eixoLabel} · ${anoSelecionado === 'comparar' ? 'Comparativo ' + anoComparacao() + ' × ' + anoPrincipal() : anoPrincipal()}`;
     document.getElementById('drawerTitulo').textContent = k.indicador;
     const tag = statusTag(k);
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox ${classeSemantica(k, 'status')}"><small>Resultado ${esc(anoPrincipal())}</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox detailBoxWide ${classeSemantica(k, 'movimento')}"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b></div>`;
+    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox ${classeSemantica(k, 'status')}"><small>Resultado ${esc(anoPrincipal())}</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b></div>`;
     document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
   }
@@ -315,6 +343,6 @@
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, ehConsolidado, resolverLinha, avaliarComParidade, distanciaMeta, variacaoTemporal, resumoStatus, classeEixo };
+  window.GOVERNANCA_TEST_API = { normalizarRow, ehConsolidado, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, resumoStatus, classeEixo };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

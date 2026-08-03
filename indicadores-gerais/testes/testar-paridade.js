@@ -68,3 +68,38 @@ if (!informado || Math.abs(informado.valor - 98.5) > 1e-9) throw new Error('Atin
 const decimal = api.atingimentoExplicito({'Atingimento':'0,985'});
 if (!decimal || Math.abs(decimal.valor - 98.5) > 1e-9) throw new Error('Atingimento decimal não foi convertido corretamente');
 console.log('Integração de fontes: 6/6 verificações passaram');
+
+const fonteHoraExtraPrincipal = [
+  { Mes:'2026-01-01', Colaborador:'A', Total_Horas_Extras:'10,5', HE_Domingos_Feriados:'2' },
+  { Mes:'2026-01-01', Colaborador:'B', Total_Horas_Extras:'4.5', HE_Domingos_Feriados:'1,5' },
+  { Mes:'2026-02-01', Colaborador:'A', Total_Horas_Extras:'8', HE_Domingos_Feriados:'3' }
+];
+const fonteHoraExtraDuplicada = [
+  { Mes:'2026-01-01', Total_Horas_Extras:'999', HE_Domingos_Feriados:'999' }
+];
+const horaConsolidada = api.consolidarHoraExtra([fonteHoraExtraPrincipal, fonteHoraExtraDuplicada]);
+const horaTotal = horaConsolidada.find(r => r.Indicador === 'Hora Extra Realizada');
+const horaDomFeriado = horaConsolidada.find(r => r.Indicador === 'Horas Domingos e Feriados Realizadas');
+if (!horaTotal || horaTotal.Jan !== '15' || horaTotal.Fev !== '8' || horaTotal.Acumulado !== '23') throw new Error('Hora extra: total mensal/acumulado incorreto');
+if (!horaDomFeriado || horaDomFeriado.Jan !== '3.5' || horaDomFeriado.Fev !== '3' || horaDomFeriado.Acumulado !== '6.5') throw new Error('Hora extra: domingos e feriados incorreto');
+const baseGovernanca = [{ Indicador:'Hora Extra Realizada', Ano:'2026', Diretoria:'COMLURB', 'Superint.':'-', 'Gerência':'-', Meta:'20', Sentido:'↓', Unidade:'h', Jan:'1', Acumulado:'1' }];
+const comHora = api.aplicarHoraExtra(baseGovernanca, [fonteHoraExtraPrincipal]);
+if (comHora.length !== 2) throw new Error('Hora extra: deveria preservar e incluir os dois indicadores');
+const horaMesclada = comHora.find(r => r.Indicador === 'Hora Extra Realizada');
+if (horaMesclada.Meta !== '20' || horaMesclada.Sentido !== '↓' || horaMesclada.Jan !== '15') throw new Error('Hora extra: metadados ou resultados não preservados');
+if (api.numeroFlexivel('1.234,5') !== 1234.5 || api.numeroFlexivel('1234.5') !== 1234.5) throw new Error('Hora extra: parser numérico flexível falhou');
+console.log('Hora extra dinâmica: 8/8 verificações passaram');
+
+
+const catalogo = api.catalogoIndicadores([
+  {Indicador:'Indicador cadastrado fora do registro', Ano:'2026', Diretoria:'COMLURB', Eixo:'Financeiro e Receita'},
+  {Indicador:'Índice de Conformidade - PGR', Ano:'2026', Diretoria:'COMLURB', Eixo:'Segurança'},
+  {Indicador:'Hora Extra Realizada', Ano:'2026', Diretoria:'COMLURB'},
+  {Indicador:'Meta exclusiva do AR', Ano:'2026', Diretoria:'COMLURB', Eixo:'Governança e Atendimento'}
+]);
+if (catalogo.length !== 4) throw new Error(`Catálogo integral: esperados 4 indicadores, obtidos ${catalogo.length}`);
+if (!catalogo.some(x => x.indicador === 'Índice de Conformidade - PGR')) throw new Error('Catálogo integral: PGR foi excluído indevidamente');
+if (catalogo.find(x => x.indicador === 'Indicador cadastrado fora do registro').eixo !== 'Receita') throw new Error('Catálogo integral: eixo explícito não foi normalizado');
+if (catalogo.find(x => x.indicador === 'Hora Extra Realizada').eixo !== 'Pessoas') throw new Error('Catálogo integral: hora extra não foi classificada');
+if (catalogo.find(x => x.indicador === 'Meta exclusiva do AR').eixo !== 'Atendimento') throw new Error('Catálogo integral: meta exclusiva do AR não foi incluída/classificada');
+console.log('Catálogo integral: 5/5 verificações passaram');

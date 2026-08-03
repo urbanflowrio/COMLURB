@@ -9,9 +9,10 @@
   const EIXO_DESC = {
     Pessoas: 'Quadro, disponibilidade e ocorrências funcionais', Segurança: 'Acidentes, conformidade e prevenção',
     Operação: 'Execução operacional e padrão de limpeza', Atendimento: '1746, Ouvidoria, prazos e resposta ao cidadão',
-    Sustentabilidade: 'Reciclagem, desvio de aterro e indicadores ambientais', Receita: 'Arrecadação e eficiência financeira'
+    Sustentabilidade: 'Reciclagem, desvio de aterro e indicadores ambientais', Receita: 'Arrecadação e eficiência financeira',
+    Outros: 'Indicadores gerais sem eixo cadastrado'
   };
-  const EIXO_ORDEM = HUB.indicadores.EIXOS.slice();
+  const EIXO_ORDEM = HUB.indicadores.EIXOS.concat(['Outros']);
   const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
   const FILTER_STORAGE_KEY = 'governanca-corporativa-filtros';
 
@@ -37,6 +38,54 @@
     const out = {};
     Object.keys(row || {}).forEach(k => { out[normalizarHeader(k)] = clean(row[k]); });
     return out;
+  }
+
+  function eixoDaLinha(row) {
+    if (!row) return '';
+    const aliases = ['EIXO', 'EIXO ESTRATEGICO', 'EIXO ESTRATÉGICO', 'CATEGORIA', 'DIMENSAO', 'DIMENSÃO'];
+    const key = Object.keys(row).find(k => aliases.includes(norm(k))) || Object.keys(row).find(k => norm(k).includes('EIXO'));
+    return key ? clean(row[key]) : '';
+  }
+
+  function normalizarEixo(valor) {
+    const n = norm(valor);
+    if (!n) return '';
+    if (n.includes('PESSO')) return 'Pessoas';
+    if (n.includes('SEGUR')) return 'Segurança';
+    if (n.includes('OPER')) return 'Operação';
+    if (n.includes('ATEND') || n.includes('GOVERN') || n.includes('CIDADA')) return 'Atendimento';
+    if (n.includes('SUSTENT') || n.includes('AMBIENT') || n.includes('RECICL')) return 'Sustentabilidade';
+    if (n.includes('RECEITA') || n.includes('FINANC')) return 'Receita';
+    return '';
+  }
+
+  function eixoPorPalavras(indicador) {
+    const n = norm(indicador);
+    if (/ACIDENT|PGR|SEGURAN|AFASTAMENTO|ABSENTEIS/.test(n)) return 'Segurança';
+    if (/HORA EXTRA|PESSOAL|SERVIDOR|EMPREGAD|COLABORADOR|FALTA/.test(n)) return 'Pessoas';
+    if (/1746|OUVIDORIA|ATENDIMENTO|CIDADAO|PRAZO/.test(n)) return 'Atendimento';
+    if (/RECICL|ATERRO|RESIDU|CO2|CARBON|SUSTENT/.test(n)) return 'Sustentabilidade';
+    if (/RECEITA|ARRECAD|FATUR|CUSTO|FINANC/.test(n)) return 'Receita';
+    if (/IPL|LIMPEZA|COLETA|VARRICAO|VARRIÇÃO|OPERAC|CTR/.test(n)) return 'Operação';
+    return 'Outros';
+  }
+
+  function catalogoIndicadores(data = DATA) {
+    const registro = new Map(HUB.indicadores.todosOsCards().map(item => [norm(item.indicador), item]));
+    const catalogo = new Map();
+    (data || []).forEach(row => {
+      const indicador = clean(row && row.Indicador);
+      if (!indicador) return;
+      const chave = norm(indicador);
+      const cadastrado = registro.get(chave);
+      const eixo = normalizarEixo(eixoDaLinha(row)) || (cadastrado && cadastrado.eixo) || eixoPorPalavras(indicador);
+      if (!catalogo.has(chave)) catalogo.set(chave, { indicador, eixo });
+      else if (catalogo.get(chave).eixo === 'Outros' && eixo !== 'Outros') catalogo.get(chave).eixo = eixo;
+    });
+    return Array.from(catalogo.values()).sort((a, b) => {
+      const ea = EIXO_ORDEM.indexOf(a.eixo), eb = EIXO_ORDEM.indexOf(b.eixo);
+      return (ea - eb) || a.indicador.localeCompare(b.indicador, 'pt-BR');
+    });
   }
 
 
@@ -76,6 +125,141 @@
 
     baseComplemento.forEach((row, idx) => { if (!usados.has(idx)) mesclada.push(row); });
     return mesclada;
+  }
+
+
+  const MESES_NUMERO = { 1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Abr', 5: 'Mai', 6: 'Jun', 7: 'Jul', 8: 'Ago', 9: 'Set', 10: 'Out', 11: 'Nov', 12: 'Dez' };
+  const ALIASES_HORA_EXTRA = {
+    'Hora Extra Realizada': [
+      'TOTAL_HORAS_EXTRAS', 'TOTAL HORAS EXTRAS', 'TOTAL DE HORAS EXTRAS',
+      'HORAS EXTRAS REALIZADAS', 'HORA EXTRA REALIZADA', 'TOTAL_HE', 'TOTAL HE'
+    ],
+    'Horas Domingos e Feriados Realizadas': [
+      'HE_DOMINGOS_FERIADOS', 'HE DOMINGOS FERIADOS', 'HORAS DOMINGOS FERIADOS',
+      'HORAS DOMINGOS E FERIADOS', 'DOMINGOS_FERIADOS', 'DOMINGOS E FERIADOS'
+    ]
+  };
+
+  function numeroFlexivel(v) {
+    if (v === undefined || v === null) return null;
+    let texto = clean(v).replace(/R\$/gi, '').replace(/%/g, '').replace(/\s+/g, '');
+    if (!texto || texto === '-') return null;
+    const temVirgula = texto.includes(',');
+    const temPonto = texto.includes('.');
+    if (temVirgula && temPonto) {
+      if (texto.lastIndexOf(',') > texto.lastIndexOf('.')) texto = texto.replace(/\./g, '').replace(',', '.');
+      else texto = texto.replace(/,/g, '');
+    } else if (temVirgula) texto = texto.replace(',', '.');
+    const valor = Number(texto);
+    return Number.isFinite(valor) ? valor : null;
+  }
+
+  function campoPorAliases(row, aliases) {
+    if (!row) return null;
+    const keys = Object.keys(row);
+    const normalizados = aliases.map(norm);
+    let key = keys.find(k => normalizados.includes(norm(k)));
+    if (!key) key = keys.find(k => normalizados.some(alias => norm(k).includes(alias)));
+    return key || null;
+  }
+
+  function competenciaDaLinha(row) {
+    const keys = Object.keys(row || {});
+    const key = keys.find(k => ['MES', 'MÊS', 'COMPETENCIA', 'COMPETÊNCIA', 'DATA', 'ANO MES', 'ANO_MES'].includes(norm(k))) ||
+      keys.find(k => norm(k).includes('COMPET') || norm(k) === 'MES' || norm(k).includes('ANO MES'));
+    if (!key) return null;
+    const bruto = clean(row[key]);
+    if (!bruto) return null;
+    let ano, mes;
+    let m = bruto.match(/^(\d{4})[-\/]([01]?\d)/);
+    if (m) { ano = Number(m[1]); mes = Number(m[2]); }
+    if (!m) {
+      m = bruto.match(/^([0-3]?\d)[-\/]([01]?\d)[-\/](\d{4})$/);
+      if (m) { ano = Number(m[3]); mes = Number(m[2]); }
+    }
+    if (!m) {
+      m = bruto.match(/^([01]?\d)[-\/](\d{4})$/);
+      if (m) { ano = Number(m[2]); mes = Number(m[1]); }
+    }
+    if (!ano || !mes || mes < 1 || mes > 12) return null;
+    return { ano: String(ano), mes, mesLabel: MESES_NUMERO[mes] };
+  }
+
+  function agregarFonteHoraExtra(rows) {
+    const agregado = {};
+    (rows || []).forEach(raw => {
+      const row = normalizarRow(raw);
+      const competencia = competenciaDaLinha(row);
+      if (!competencia) return;
+      Object.keys(ALIASES_HORA_EXTRA).forEach(indicador => {
+        const key = campoPorAliases(row, ALIASES_HORA_EXTRA[indicador]);
+        if (!key) return;
+        const valor = numeroFlexivel(row[key]);
+        if (valor === null) return;
+        const chave = `${indicador}¦${competencia.ano}¦${competencia.mes}`;
+        agregado[chave] = (agregado[chave] || 0) + valor;
+      });
+    });
+    return agregado;
+  }
+
+  function consolidarHoraExtra(fontes) {
+    const porFonte = (fontes || []).map(agregarFonteHoraExtra);
+    const escolhido = {};
+    // As fontes são complementares, mas podem repetir a mesma competência.
+    // A primeira fonte com um valor válido para indicador/mês prevalece, evitando dupla contagem.
+    porFonte.forEach(fonte => {
+      Object.keys(fonte).forEach(chave => {
+        if (escolhido[chave] === undefined) escolhido[chave] = fonte[chave];
+      });
+    });
+
+    const porAno = {};
+    Object.keys(escolhido).forEach(chave => {
+      const [indicador, ano, mesNumero] = chave.split('¦');
+      const id = `${indicador}¦${ano}`;
+      if (!porAno[id]) porAno[id] = { indicador, ano, meses: {} };
+      porAno[id].meses[Number(mesNumero)] = escolhido[chave];
+    });
+
+    return Object.values(porAno).map(item => {
+      const row = {
+        Indicador: item.indicador,
+        Diretoria: CONFIG.diretoriaDefault,
+        'Superint.': '-',
+        'Gerência': '-',
+        Ano: item.ano,
+        Unidade: 'h',
+        Sentido: '↓'
+      };
+      let acumulado = 0;
+      Object.keys(item.meses).forEach(mesNumero => {
+        const valor = item.meses[mesNumero];
+        row[MESES_NUMERO[Number(mesNumero)]] = String(valor);
+        acumulado += valor;
+      });
+      row.Acumulado = String(acumulado);
+      return row;
+    });
+  }
+
+  function aplicarHoraExtra(data, fontes) {
+    const sinteticas = consolidarHoraExtra(fontes);
+    if (!sinteticas.length) return data;
+    const resultado = data.slice();
+    sinteticas.forEach(nova => {
+      const idx = resultado.findIndex(r => norm(r.Indicador) === norm(nova.Indicador) && norm(r.Ano) === norm(nova.Ano) && norm(r.Diretoria) === norm(CONFIG.diretoriaDefault) && ehConsolidado(r));
+      if (idx >= 0) {
+        const existente = resultado[idx];
+        // Preserva meta, sentido e demais metadados da governança; substitui apenas resultado mensal/acumulado.
+        resultado[idx] = Object.assign({}, existente, nova, {
+          Meta: existente.Meta,
+          Sentido: valorPreenchido(existente.Sentido) ? existente.Sentido : nova.Sentido,
+          Unidade: valorPreenchido(existente.Unidade) ? existente.Unidade : nova.Unidade
+        });
+      } else resultado.push(nova);
+    });
+    return resultado;
   }
 
   function atingimentoExplicito(row) {
@@ -371,7 +555,7 @@
     ano.innerHTML = opcoes.join(''); ano.value = anoSelecionado;
   }
 
-  function render() { KPIDATA = HUB.indicadores.todosOsCards().map(montarKpi); renderResumo(KPIDATA); renderCentro(KPIDATA); renderRadar(KPIDATA); renderIndicadores(KPIDATA); salvarFiltros(); }
+  function render() { KPIDATA = catalogoIndicadores(DATA).map(montarKpi); renderResumo(KPIDATA); renderCentro(KPIDATA); renderRadar(KPIDATA); renderIndicadores(KPIDATA); salvarFiltros(); }
 
   function initEventos() {
     document.getElementById('filtroAno').addEventListener('change', e => { anoSelecionado = e.target.value; render(); });
@@ -386,20 +570,26 @@
     HUB.loading.show('loading', 'Carregando indicadores corporativos...');
     initEventos();
     try {
-      const [resultados, complemento] = await Promise.all([
+      const carregamentosHoraExtra = (CONFIG.horaExtraSources || []).map((source, index) =>
+        HUB.data.loadCSV(source.url, { required: false, name: source.name || `Hora extra ${index + 1}` })
+      );
+      const [resultados, complemento, ...fontesHoraExtra] = await Promise.all([
         HUB.data.loadCSV(CONFIG.csvResultadosUrl, { required: true, name: 'Resultados dos indicadores' }),
-        HUB.data.loadCSV(CONFIG.csvComplementoUrl, { required: true, name: 'Metas e atingimento' })
+        HUB.data.loadCSV(CONFIG.csvComplementoUrl, { required: true, name: 'Metas e atingimento' }),
+        ...carregamentosHoraExtra
       ]);
-      DATA = mesclarBases(resultados, complemento);
+      DATA = aplicarHoraExtra(mesclarBases(resultados, complemento), fontesHoraExtra);
       popularFiltros(); render();
       document.getElementById('conteudo').hidden = false;
-      document.getElementById('dataStatus').textContent = `Duas bases carregadas · ${resultados.length.toLocaleString('pt-BR')} resultados · ${complemento.length.toLocaleString('pt-BR')} complementos · ${DATA.length.toLocaleString('pt-BR')} linhas consolidadas`;
+      const linhasHoraExtra = fontesHoraExtra.reduce((total, rows) => total + rows.length, 0);
+      const fontesAtivas = fontesHoraExtra.filter(rows => rows.length > 0).length;
+      document.getElementById('dataStatus').textContent = `Indicadores atualizados · ${resultados.length.toLocaleString('pt-BR')} resultados · ${complemento.length.toLocaleString('pt-BR')} complementos · hora extra: ${fontesAtivas}/${fontesHoraExtra.length} fontes, ${linhasHoraExtra.toLocaleString('pt-BR')} linhas`;
     } catch (error) {
       const el = document.getElementById('errorState'); el.hidden = false; el.textContent = `Não foi possível carregar a base publicada: ${error.message}`;
       document.getElementById('dataStatus').textContent = 'Falha no carregamento';
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, ehConsolidado, mesclarBases, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, resumoStatus, classeEixo };
+  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, resumoStatus, classeEixo };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

@@ -63,3 +63,34 @@ O painel carrega simultaneamente duas fontes da mesma planilha publicada:
 2. `gid=2044729258`: fonte complementar de meta, sentido, unidade e percentual de atingimento, quando informado.
 
 As bases são mescladas por indicador, ano, diretoria e nível organizacional. Campos preenchidos na aba de resultados permanecem prioritários. A aba complementar preenche campos ausentes e pode acrescentar indicadores ainda não presentes na primeira fonte. Quando existe uma coluna explícita de atingimento, o painel usa o valor informado; na ausência dela, mantém o cálculo derivado de resultado, meta e sentido.
+
+## Fontes dinâmicas de hora extra
+
+O módulo carrega mensalmente três CSVs publicados no Google Sheets, configurados em `data.js` em `horaExtraSources`.
+
+As bases são agregadas por competência para alimentar os indicadores:
+
+- `Hora Extra Realizada`, a partir de campos equivalentes a `Total_Horas_Extras`;
+- `Horas Domingos e Feriados Realizadas`, a partir de campos equivalentes a `HE_Domingos_Feriados`.
+
+A primeira fonte que disponibiliza um valor válido para o mesmo indicador e competência prevalece, evitando dupla contagem entre abas que possam repetir registros. Os resultados mensais e o acumulado vêm dessas bases; meta, sentido e unidade continuam sendo preservados da base oficial de governança quando já existirem.
+
+As três fontes são opcionais no carregamento: uma indisponibilidade temporária não derruba o painel, mas o status de carregamento informa quantas fontes responderam.
+
+## Indicador retirado da apresentação
+
+`Índice de Conformidade - PGR` foi retirado exclusivamente da exibição deste módulo. O registro compartilhado do HUB não foi alterado.
+
+## Ajuste V7 — catálogo integral de indicadores
+
+O catálogo do painel deixou de depender exclusivamente de `HUB.indicadores.todosOsCards()` e passou a ser construído dinamicamente a partir da união das fontes carregadas:
+
+1. aba Geral (`gid=1044100274`), considerada a fonte principal e integral dos indicadores;
+2. aba de metas do Acordo de Resultados (`gid=2044729258`), usada para complementar metas, sentido, unidade e atingimento e também para incluir metas do AR que ainda não estejam na Geral;
+3. três fontes mensais de hora extra, incorporadas mesmo quando não possuem meta.
+
+Todo indicador presente nessas fontes é exibido. Indicadores sem eixo explícito usam primeiro o cadastro compartilhado; quando não há cadastro, recebem classificação por palavras-chave e, como último recurso, o eixo `Outros`.
+
+O indicador `Índice de Conformidade - PGR` volta a ser exibido, pois a regra vigente desta versão é considerar todos os indicadores da aba Geral.
+
+O índice de atingimento aparece em todo indicador que possui meta. Quando a base informa o percentual explicitamente, esse valor tem prioridade; caso contrário, o painel calcula o atingimento considerando o sentido do indicador.

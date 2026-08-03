@@ -94,3 +94,11 @@ Todo indicador presente nessas fontes é exibido. Indicadores sem eixo explícit
 O indicador `Índice de Conformidade - PGR` volta a ser exibido, pois a regra vigente desta versão é considerar todos os indicadores da aba Geral.
 
 O índice de atingimento aparece em todo indicador que possui meta. Quando a base informa o percentual explicitamente, esse valor tem prioridade; caso contrário, o painel calcula o atingimento considerando o sentido do indicador.
+
+
+## Separação do Acordo de Resultados
+Os indicadores presentes na aba do AR são identificados dinamicamente e excluídos da Governança Corporativa. O detalhamento dessas metas permanece exclusivamente no módulo `ar/`. A fonte do AR é consultada apenas para manter a separação atualizada, sem importar metas ou resultados para este painel.
+
+## Integração com o módulo AR
+
+Os indicadores pertencentes ao Acordo de Resultados são excluídos dinamicamente da Governança Corporativa, evitando duplicidade. A página mantém apenas um acesso contextual para `../ar/`, sem reproduzir metas, resultados ou métricas do módulo especializado.

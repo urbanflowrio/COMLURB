@@ -23,6 +23,7 @@
   let diretoriaSelecionada = CONFIG.diretoriaDefault;
   let buscaAtual = '';
   let statusAtual = 'todos';
+  let INDICADORES_AR = new Set();
 
   function clean(v) { return HUB.format.clean(v); }
   function norm(v) { return HUB.format.norm(v); }
@@ -77,6 +78,7 @@
       const indicador = clean(row && row.Indicador);
       if (!indicador) return;
       const chave = norm(indicador);
+      if (INDICADORES_AR.has(chave)) return;
       const cadastrado = registro.get(chave);
       const eixo = normalizarEixo(eixoDaLinha(row)) || (cadastrado && cadastrado.eixo) || eixoPorPalavras(indicador);
       if (!catalogo.has(chave)) catalogo.set(chave, { indicador, eixo });
@@ -348,7 +350,7 @@
     if (Math.abs(delta) < 1e-9) return { texto: `Estável em relação a ${anterior.mes}`, delta: 0, mesAnterior: anterior.mes, mesAtual: atual.mes };
     const menorMelhor = clean(sentido) === '↓';
     const favoravel = menorMelhor ? delta < 0 : delta > 0;
-    return { texto: `${favoravel ? 'Melhora' : 'Piora'} de ${formatDiferenca(delta, unidade)} em relação a ${anterior.mes}`, delta, favoravel, mesAnterior: anterior.mes, mesAtual: atual.mes };
+    return { texto: `${favoravel ? 'Melhora' : 'Piora'} em relação a ${anterior.mes}`, detalhe: formatDiferenca(delta, unidade), delta, favoravel, mesAnterior: anterior.mes, mesAtual: atual.mes };
   }
 
   function anoPrincipal() {
@@ -381,7 +383,7 @@
     if (Math.abs(delta) < 1e-9) return { texto: `Estável em ${atual.mes}: ${atualAno} igual a ${anteriorAno}`, delta: 0, favoravel: null, mes: atual.mes, anoAtual: atualAno, anoAnterior: anteriorAno };
     const menorMelhor = clean(sentido) === '↓';
     const favoravel = menorMelhor ? delta < 0 : delta > 0;
-    return { texto: `${favoravel ? 'Melhora' : 'Piora'} de ${formatDiferenca(delta, unidade)} em ${atual.mes}, comparando ${atualAno} com ${anteriorAno}`, delta, favoravel, mes: atual.mes, anoAtual: atualAno, anoAnterior: anteriorAno };
+    return { texto: `${favoravel ? 'Melhora' : 'Piora'} em ${atual.mes}, comparando ${atualAno} com ${anteriorAno}`, detalhe: formatDiferenca(delta, unidade), delta, favoravel, mes: atual.mes, anoAtual: atualAno, anoAnterior: anteriorAno };
   }
 
 
@@ -529,11 +531,18 @@
     }).join('');
   }
 
+  function sentidoAmigavel(sentido) {
+    const s = clean(sentido);
+    if (s === '↓' || norm(s) === 'MENOR' || norm(s) === 'DECRESCENTE' || norm(s) === 'ABAIXO') return 'Menor resultado é melhor';
+    if (s === '↑' || norm(s) === 'MAIOR' || norm(s) === 'CRESCENTE' || norm(s) === 'ACIMA') return 'Maior resultado é melhor';
+    return 'Regra de sentido não informada';
+  }
+
   function abrirDrawer(k) {
     document.getElementById('drawerEixo').textContent = `${k.eixoLabel} · ${anoSelecionado === 'comparar' ? 'Comparativo ' + anoComparacao() + ' × ' + anoPrincipal() : anoPrincipal()}`;
     document.getElementById('drawerTitulo').textContent = k.indicador;
     const tag = statusTag(k);
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox ${classeSemantica(k, 'status')}"><small>Resultado ${esc(anoPrincipal())}</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b></div>`;
+    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox ${classeSemantica(k, 'status')}"><small>Resultado ${esc(anoPrincipal())}</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox"><small>Sentido do indicador</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
     document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
   }
@@ -573,23 +582,24 @@
       const carregamentosHoraExtra = (CONFIG.horaExtraSources || []).map((source, index) =>
         HUB.data.loadCSV(source.url, { required: false, name: source.name || `Hora extra ${index + 1}` })
       );
-      const [resultados, complemento, ...fontesHoraExtra] = await Promise.all([
-        HUB.data.loadCSV(CONFIG.csvResultadosUrl, { required: true, name: 'Resultados dos indicadores' }),
-        HUB.data.loadCSV(CONFIG.csvComplementoUrl, { required: true, name: 'Metas e atingimento' }),
+      const [resultados, metasAR, ...fontesHoraExtra] = await Promise.all([
+        HUB.data.loadCSV(CONFIG.csvResultadosUrl, { required: true, name: 'Indicadores gerais' }),
+        HUB.data.loadCSV(CONFIG.csvARUrl, { required: true, name: 'Catálogo do Acordo de Resultados' }),
         ...carregamentosHoraExtra
       ]);
-      DATA = aplicarHoraExtra(mesclarBases(resultados, complemento), fontesHoraExtra);
+      INDICADORES_AR = new Set((metasAR || []).map(normalizarRow).map(r => norm(r.Indicador)).filter(Boolean));
+      DATA = aplicarHoraExtra((resultados || []).map(normalizarRow).filter(r => clean(r.Indicador) && !INDICADORES_AR.has(norm(r.Indicador))), fontesHoraExtra);
       popularFiltros(); render();
       document.getElementById('conteudo').hidden = false;
       const linhasHoraExtra = fontesHoraExtra.reduce((total, rows) => total + rows.length, 0);
       const fontesAtivas = fontesHoraExtra.filter(rows => rows.length > 0).length;
-      document.getElementById('dataStatus').textContent = `Indicadores atualizados · ${resultados.length.toLocaleString('pt-BR')} resultados · ${complemento.length.toLocaleString('pt-BR')} complementos · hora extra: ${fontesAtivas}/${fontesHoraExtra.length} fontes, ${linhasHoraExtra.toLocaleString('pt-BR')} linhas`;
+      document.getElementById('dataStatus').textContent = `Indicadores gerais atualizados · ${DATA.length.toLocaleString('pt-BR')} registros exibidos · ${INDICADORES_AR.size.toLocaleString('pt-BR')} indicadores do AR direcionados ao módulo próprio · hora extra: ${fontesAtivas}/${fontesHoraExtra.length} fontes`;
     } catch (error) {
       const el = document.getElementById('errorState'); el.hidden = false; el.textContent = `Não foi possível carregar a base publicada: ${error.message}`;
       document.getElementById('dataStatus').textContent = 'Falha no carregamento';
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, resumoStatus, classeEixo };
+  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, classeEixo };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

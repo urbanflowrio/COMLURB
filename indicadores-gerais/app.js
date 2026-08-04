@@ -488,18 +488,33 @@
   }
 
   function renderCentro(kpis) {
-    const geral = resumoStatus(kpis);
-    const eixos = EIXO_ORDEM.map(eixo => {
-      const arr = kpis.filter(k => k.eixo === eixo);
-      const r = resumoStatus(arr);
-      return { eixo, r, cls: classeEixo(r), propCriticos: r.comStatus ? r.red / r.comStatus : 0 };
-    }).filter(x => x.r.total);
-    const risco = eixos.slice().sort((a, b) => b.r.red - a.r.red || b.propCriticos - a.propCriticos || (a.r.percentualMeta || 0) - (b.r.percentualMeta || 0))[0];
-    const insuf = eixos.filter(x => x.cls === 'insuf');
-    const partes = [`${geral.percentualMeta === null ? 'Sem aderência calculável' : geral.percentualMeta + '% de aderência às metas'}, com ${geral.percentualCobertura || 0}% de cobertura da leitura.`];
-    if (risco && risco.r.red > 0) partes.push(`${EIXO_LABEL[risco.eixo] || risco.eixo} concentra ${risco.r.red} indicador${risco.r.red === 1 ? '' : 'es'} crítico${risco.r.red === 1 ? '' : 's'}.`);
-    if (insuf.length) partes.push(`${insuf.map(x => EIXO_LABEL[x.eixo] || x.eixo).join(' e ')} ${insuf.length === 1 ? 'apresenta' : 'apresentam'} leitura insuficiente.`);
-    document.getElementById('govNote').textContent = partes.join(' ');
+    const r = resumoStatus(kpis);
+    const criticos = kpis
+      .filter(k => k.status.cor === 'red')
+      .sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
+    const atencao = kpis
+      .filter(k => k.status.cor === 'orange')
+      .sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
+
+    const frases = [];
+    frases.push(`${r.comStatus} de ${r.total} indicadores possuem leitura válida no período.`);
+
+    if (criticos.length || atencao.length) {
+      frases.push(`O recorte reúne ${criticos.length} indicador${criticos.length === 1 ? '' : 'es'} crítico${criticos.length === 1 ? '' : 's'} e ${atencao.length} em atenção.`);
+    } else if (r.comStatus) {
+      frases.push('Não há indicadores críticos ou em atenção no recorte selecionado.');
+    }
+
+    const principais = criticos.concat(atencao).slice(0, 3);
+    if (principais.length) {
+      frases.push(`Principais pontos de acompanhamento: ${principais.map(k => k.indicador).join('; ')}.`);
+    }
+
+    if (r.sem) {
+      frases.push(`${r.sem} indicador${r.sem === 1 ? '' : 'es'} ainda ${r.sem === 1 ? 'não possui' : 'não possuem'} meta ou resultado suficiente para classificação.`);
+    }
+
+    document.getElementById('govNote').textContent = frases.join(' ');
   }
 
   function resumoExecutivoEixo(arr, r, cls) {
@@ -638,7 +653,6 @@
     KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
     renderResumo(KPIDATA);
     renderCentro(KPIDATA);
-    renderRadar(KPIDATA);
     renderPrioritarios(KPIDATA);
     renderIndicadores(KPIDATA);
     salvarFiltros();

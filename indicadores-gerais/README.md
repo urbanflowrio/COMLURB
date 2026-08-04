@@ -107,3 +107,9 @@ Os indicadores pertencentes ao Acordo de Resultados são excluídos dinamicament
 ## V9 — visão executiva e camada analítica
 
 A página inicial passou a exibir apenas indicadores críticos e em atenção, limitada aos oito primeiros por prioridade. A relação completa permanece disponível sob demanda pelo controle **Ver todos os indicadores**, onde ficam busca e filtro de status. Essa mudança reduz densidade visual sem remover nenhum indicador ou funcionalidade.
+
+
+## Ajuste V11
+- Removida a seção Situação por eixo da camada executiva.
+- Centro de Situação substituído por Leitura executiva objetiva.
+- Grade prioritária usa 4 cards por linha no desktop e centraliza a última linha.

@@ -41,3 +41,32 @@
 .detailBox b.result-positive{color:var(--verde)}
 .detailBox b.result-warning{color:var(--amarelo)}
 @media(max-width:600px){.axisExecutiveHead{flex-direction:column}.axisExecutiveMeta{gap:8px 14px}}
+
+
+/* V11 — leitura executiva enxuta e grade prioritária equilibrada */
+.priorityGrid{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+}
+.priorityGrid .indCard{
+  flex:0 1 calc((100% - 36px)/4);
+  min-width:0;
+}
+.govNote{
+  padding:16px 18px;
+  border-color:rgba(91,155,213,.30);
+  background:rgba(91,155,213,.06);
+  font-size:14px;
+  line-height:1.65;
+}
+@media(max-width:1100px){
+  .priorityGrid .indCard{flex-basis:calc((100% - 24px)/3)}
+}
+@media(max-width:900px){
+  .priorityGrid .indCard{flex-basis:calc((100% - 12px)/2)}
+}
+@media(max-width:600px){
+  .priorityGrid .indCard{flex-basis:100%}
+}

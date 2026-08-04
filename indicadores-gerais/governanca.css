@@ -5,3 +5,22 @@
 .indAchievement{margin-top:2px;margin-bottom:6px;color:var(--silenciado);font-size:12px;font-weight:700;line-height:1.35}.indAchievement::before{content:'Meta · ';color:#8fa8c4;font-weight:600}
 
 .detailSupport{display:block;margin-top:8px;color:var(--silenciado);font-size:12px;font-weight:500}
+
+/* V9 — hierarquia executiva: detalhes sob demanda */
+.governancaFilters{grid-template-columns:190px;max-width:190px}
+.prioritySection{margin-top:18px}
+.sectionCount{color:var(--silenciado);font-size:12px;font-weight:800;white-space:nowrap}
+.priorityGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.priorityMore{margin-top:10px;color:var(--silenciado);font-size:12px;text-align:right}
+.priorityEmpty{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(120,170,163,.34);background:rgba(120,170,163,.06);border-radius:16px;padding:16px 18px}
+.priorityEmpty strong{font-size:14px}.priorityEmpty span{color:var(--silenciado);font-size:12px;text-align:right}
+.allIndicatorsAccess{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:18px 0 10px;padding:18px;border:1px solid var(--linha);border-radius:18px;background:var(--painel)}
+.allIndicatorsLabel{margin-bottom:4px;color:#9fc7ea;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.allIndicatorsAccess h2{margin:0;font-size:18px}.allIndicatorsAccess p{margin:5px 0 0;color:var(--silenciado);font-size:12px;line-height:1.45}
+.allIndicatorsBtn{flex:0 0 auto;min-width:205px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.allIndicatorsSection{scroll-margin-top:16px;margin-top:12px}
+.detailsToolbar{display:grid;grid-template-columns:minmax(280px,1fr) 210px;gap:12px;margin-bottom:14px;padding:14px;border:1px solid var(--linha);border-radius:16px;background:rgba(13,31,54,.7)}
+.allIndicatorsSection[hidden]{display:none!important}
+@media(max-width:1100px){.priorityGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.priorityGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.detailsToolbar{grid-template-columns:1fr 190px}}
+@media(max-width:600px){.governancaFilters{max-width:none}.sectionHeader{align-items:flex-start;gap:8px}.priorityGrid,.detailsToolbar{grid-template-columns:1fr}.priorityEmpty,.allIndicatorsAccess{align-items:flex-start;flex-direction:column}.priorityEmpty span{text-align:left}.allIndicatorsBtn{width:100%}}

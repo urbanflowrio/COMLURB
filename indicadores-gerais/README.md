@@ -102,3 +102,8 @@ Os indicadores presentes na aba do AR são identificados dinamicamente e excluí
 ## Integração com o módulo AR
 
 Os indicadores pertencentes ao Acordo de Resultados são excluídos dinamicamente da Governança Corporativa, evitando duplicidade. A página mantém apenas um acesso contextual para `../ar/`, sem reproduzir metas, resultados ou métricas do módulo especializado.
+
+
+## V9 — visão executiva e camada analítica
+
+A página inicial passou a exibir apenas indicadores críticos e em atenção, limitada aos oito primeiros por prioridade. A relação completa permanece disponível sob demanda pelo controle **Ver todos os indicadores**, onde ficam busca e filtro de status. Essa mudança reduz densidade visual sem remover nenhum indicador ou funcionalidade.

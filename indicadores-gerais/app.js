@@ -496,6 +496,31 @@
     return kpis.filter(k => (!termo || norm(k.indicador).includes(termo) || norm(k.eixoLabel).includes(termo)) && (statusAtual === 'todos' || (statusAtual === 'sem' ? !k.status.cor : k.status.cor === statusAtual)));
   }
 
+  function vincularCards(container) {
+    container.querySelectorAll('.indCard').forEach(card => {
+      const open = () => { const k = KPIDATA.find(x => x.indicador === card.dataset.indicador); if (k) abrirDrawer(k); };
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+  }
+
+  function renderPrioritarios(kpis) {
+    const prioritarios = kpis
+      .filter(k => k.status.cor === 'red' || k.status.cor === 'orange')
+      .sort((a, b) => PRIORIDADE_STATUS[a.status.cor] - PRIORIDADE_STATUS[b.status.cor] || a.indicador.localeCompare(b.indicador, 'pt-BR'));
+    const limite = 8;
+    const exibidos = prioritarios.slice(0, limite);
+    const container = document.getElementById('prioritariosContainer');
+    const count = document.getElementById('priorityCount');
+    count.textContent = prioritarios.length ? `${prioritarios.length} no total` : 'Nenhum alerta';
+    if (!prioritarios.length) {
+      container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador crítico ou em atenção.</strong><span>Os demais resultados permanecem disponíveis na camada analítica.</span></div>';
+      return;
+    }
+    container.innerHTML = `<div class="indicatorGrid priorityGrid">${exibidos.map(cardHTML).join('')}</div>${prioritarios.length > limite ? `<div class="priorityMore">Mais ${prioritarios.length - limite} indicador${prioritarios.length - limite === 1 ? '' : 'es'} prioritário${prioritarios.length - limite === 1 ? '' : 's'} na relação completa.</div>` : ''}`;
+    vincularCards(container);
+  }
+
   function renderIndicadores(kpis) {
     const filtrados = filtrar(kpis);
     const html = EIXO_ORDEM.map(eixo => {
@@ -505,10 +530,7 @@
     }).join('');
     const container = document.getElementById('indicadoresContainer');
     container.innerHTML = html || '<div class="governancaError">Nenhum indicador encontrado para os filtros aplicados.</div>';
-    container.querySelectorAll('.indCard').forEach(card => {
-      const open = () => { const k = KPIDATA.find(x => x.indicador === card.dataset.indicador); if (k) abrirDrawer(k); };
-      card.addEventListener('click', open); card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-    });
+    vincularCards(container);
   }
 
   function classeSemantica(k, tipo) {
@@ -564,12 +586,28 @@
     ano.innerHTML = opcoes.join(''); ano.value = anoSelecionado;
   }
 
-  function render() { KPIDATA = catalogoIndicadores(DATA).map(montarKpi); renderResumo(KPIDATA); renderCentro(KPIDATA); renderRadar(KPIDATA); renderIndicadores(KPIDATA); salvarFiltros(); }
+  function render() {
+    KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
+    renderResumo(KPIDATA);
+    renderCentro(KPIDATA);
+    renderRadar(KPIDATA);
+    renderPrioritarios(KPIDATA);
+    renderIndicadores(KPIDATA);
+    salvarFiltros();
+  }
 
   function initEventos() {
     document.getElementById('filtroAno').addEventListener('change', e => { anoSelecionado = e.target.value; render(); });
     document.getElementById('buscaIndicador').addEventListener('input', e => { buscaAtual = e.target.value; renderIndicadores(KPIDATA); });
     document.getElementById('filtroStatus').addEventListener('change', e => { statusAtual = e.target.value; renderIndicadores(KPIDATA); });
+    document.getElementById('toggleIndicadores').addEventListener('click', e => {
+      const section = document.getElementById('todosIndicadores');
+      const aberto = !section.hidden;
+      section.hidden = aberto;
+      e.currentTarget.setAttribute('aria-expanded', String(!aberto));
+      e.currentTarget.innerHTML = aberto ? 'Ver todos os indicadores <span aria-hidden="true">↓</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
+      if (!aberto) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     document.getElementById('drawerClose').addEventListener('click', fecharDrawer); document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDrawer(); });
   }
 

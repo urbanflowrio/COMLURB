@@ -21,8 +21,6 @@
     <section class="governancaToolbar" aria-label="Filtros e navegação">
       <div class="filters governancaFilters">
         <div class="field"><label for="filtroAno">Período</label><select id="filtroAno"></select></div>
-        <div class="field searchField"><label for="buscaIndicador">Buscar indicador</label><input id="buscaIndicador" type="search" placeholder="Nome ou eixo"></div>
-        <div class="field"><label for="filtroStatus">Status</label><select id="filtroStatus"><option value="todos">Todos</option><option value="green">Dentro da meta</option><option value="orange">Em atenção</option><option value="red">Críticos</option><option value="sem">Sem leitura</option></select></div>
       </div>
       <div class="toolbarActions"><a class="actionBtn homeLink" href="../index.html">Voltar para a Home</a><span id="dataStatus" class="dataStatus">Carregando dados</span></div>
     </section>
@@ -55,8 +53,25 @@
         <div class="body" id="radarRows"></div>
       </section>
 
-      <section class="indicadoresSection">
-        <div class="sectionHeader"><div><h2>Indicadores</h2><p>Selecione um card para consultar meta, desempenho e série mensal.</p></div></div>
+      <section class="indicadoresSection prioritySection">
+        <div class="sectionHeader"><div><h2>Indicadores prioritários</h2><p>Somente indicadores críticos e em atenção no recorte selecionado.</p></div><span id="priorityCount" class="sectionCount"></span></div>
+        <div id="prioritariosContainer"></div>
+      </section>
+
+      <section class="allIndicatorsAccess" aria-label="Acesso à relação completa de indicadores">
+        <div>
+          <div class="allIndicatorsLabel">Camada analítica</div>
+          <h2>Todos os indicadores</h2>
+          <p>Consulte a relação completa por eixo, pesquise por nome e filtre por situação.</p>
+        </div>
+        <button id="toggleIndicadores" class="actionBtn allIndicatorsBtn" type="button" aria-expanded="false" aria-controls="todosIndicadores">Ver todos os indicadores <span aria-hidden="true">↓</span></button>
+      </section>
+
+      <section id="todosIndicadores" class="indicadoresSection allIndicatorsSection" hidden>
+        <div class="detailsToolbar">
+          <div class="field searchField"><label for="buscaIndicador">Buscar indicador</label><input id="buscaIndicador" type="search" placeholder="Nome ou eixo"></div>
+          <div class="field"><label for="filtroStatus">Status</label><select id="filtroStatus"><option value="todos">Todos</option><option value="green">Dentro da meta</option><option value="orange">Em atenção</option><option value="red">Críticos</option><option value="sem">Sem leitura</option></select></div>
+        </div>
         <div id="indicadoresContainer"></div>
       </section>
     </main>

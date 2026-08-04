@@ -8,10 +8,7 @@
 
 /* V9 — hierarquia executiva: detalhes sob demanda */
 .governancaFilters{grid-template-columns:190px;max-width:190px}
-.prioritySection{margin-top:18px}
-.sectionCount{color:var(--silenciado);font-size:12px;font-weight:800;white-space:nowrap}
-.priorityGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
-.priorityMore{margin-top:10px;color:var(--silenciado);font-size:12px;text-align:right}
+.sectionHeader{display:flex;align-items:flex-end;justify-content:space-between;margin:22px 0 12px}
 .priorityEmpty{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(120,170,163,.34);background:rgba(120,170,163,.06);border-radius:16px;padding:16px 18px}
 .priorityEmpty strong{font-size:14px}.priorityEmpty span{color:var(--silenciado);font-size:12px;text-align:right}
 .allIndicatorsAccess{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:18px 0 10px;padding:18px;border:1px solid var(--linha);border-radius:18px;background:var(--painel)}
@@ -21,39 +18,9 @@
 .allIndicatorsSection{scroll-margin-top:16px;margin-top:12px}
 .detailsToolbar{display:grid;grid-template-columns:minmax(280px,1fr) 210px;gap:12px;margin-bottom:14px;padding:14px;border:1px solid var(--linha);border-radius:16px;background:rgba(13,31,54,.7)}
 .allIndicatorsSection[hidden]{display:none!important}
-@media(max-width:1100px){.priorityGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:900px){.priorityGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.detailsToolbar{grid-template-columns:1fr 190px}}
-@media(max-width:600px){.governancaFilters{max-width:none}.sectionHeader{align-items:flex-start;gap:8px}.priorityGrid,.detailsToolbar{grid-template-columns:1fr}.priorityEmpty,.allIndicatorsAccess{align-items:flex-start;flex-direction:column}.priorityEmpty span{text-align:left}.allIndicatorsBtn{width:100%}}
+@media(max-width:900px){.detailsToolbar{grid-template-columns:1fr 190px}}
+@media(max-width:600px){.governancaFilters{max-width:none}.sectionHeader{align-items:flex-start;gap:8px}.detailsToolbar{grid-template-columns:1fr}.priorityEmpty,.allIndicatorsAccess{align-items:flex-start;flex-direction:column}.priorityEmpty span{text-align:left}.allIndicatorsBtn{width:100%}}
 
-
-/* V10 — síntese executiva e semântica visual mais sóbria */
-.axisExecutive{padding:16px 4px;border-bottom:1px solid rgba(255,255,255,.07)}
-.axisExecutive:last-child{border-bottom:0}
-.axisExecutiveHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.axisExecutiveHead h3{margin:0;font-size:16px}
-.axisExecutiveHead p{margin:6px 0 0;color:var(--silenciado);font-size:13px;line-height:1.5;max-width:840px}
-.axisExecutiveMeta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:12px 0 9px;color:var(--silenciado);font-size:12px}
-.axisExecutiveMeta strong{color:var(--texto)}
-.axisExecutiveTrack{height:7px}
-.detailBox.semantic-positive,.detailBox.semantic-negative,.detailBox.semantic-warning{border-color:var(--linha);background:var(--painel)}
-.detailBox.semantic-positive>small,.detailBox.semantic-positive>b,.detailBox.semantic-negative>small,.detailBox.semantic-negative>b,.detailBox.semantic-warning>small,.detailBox.semantic-warning>b{color:inherit}
-.detailBox b.result-critical{color:var(--vermelho)}
-.detailBox b.result-positive{color:var(--verde)}
-.detailBox b.result-warning{color:var(--amarelo)}
-@media(max-width:600px){.axisExecutiveHead{flex-direction:column}.axisExecutiveMeta{gap:8px 14px}}
-
-
-/* V11 — leitura executiva enxuta e grade prioritária equilibrada */
-.priorityGrid{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:12px;
-}
-.priorityGrid .indCard{
-  flex:0 1 calc((100% - 36px)/4);
-  min-width:0;
-}
 .govNote{
   padding:16px 18px;
   border-color:rgba(91,155,213,.30);
@@ -61,202 +28,82 @@
   font-size:14px;
   line-height:1.65;
 }
-@media(max-width:1100px){
-  .priorityGrid .indCard{flex-basis:calc((100% - 24px)/3)}
-}
-@media(max-width:900px){
-  .priorityGrid .indCard{flex-basis:calc((100% - 12px)/2)}
-}
-@media(max-width:600px){
-  .priorityGrid .indCard{flex-basis:100%}
-}
+.detailBox.semantic-positive,.detailBox.semantic-negative,.detailBox.semantic-warning{border-color:var(--linha);background:var(--painel)}
+.detailBox.semantic-positive>small,.detailBox.semantic-positive>b,.detailBox.semantic-negative>small,.detailBox.semantic-negative>b,.detailBox.semantic-warning>small,.detailBox.semantic-warning>b{color:inherit}
+.detailBox b.result-critical{color:var(--vermelho)}
+.detailBox b.result-positive{color:var(--verde)}
+.detailBox b.result-warning{color:var(--amarelo)}
 
-/* V12 — grade executiva compacta para indicadores prioritários */
-.priorityGrid{
-  display:grid;
-  grid-template-columns:repeat(8,minmax(0,1fr));
-  gap:12px;
-  align-items:stretch;
-}
-.priorityCard{
-  grid-column:span 2;
-  min-width:0;
-  min-height:196px;
-  display:flex;
-  flex-direction:column;
-  padding:16px 16px 13px;
-  border:1px solid var(--linha);
-  border-radius:18px;
-  background:linear-gradient(180deg,rgba(18,42,70,.97),rgba(13,31,54,.97));
-  cursor:pointer;
-  transition:transform .16s ease,border-color .16s ease,background .16s ease;
-}
-.priorityCard:hover,.priorityCard:focus-visible{
-  transform:translateY(-2px);
-  border-color:rgba(91,155,213,.75);
-  background:linear-gradient(180deg,rgba(22,50,82,.98),rgba(13,31,54,.98));
-  outline:none;
-}
-.priorityCardHead{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
-  min-height:43px;
-}
-.priorityCardHead h3{
-  min-width:0;
-  margin:0;
-  color:var(--texto);
-  font-size:13px;
-  line-height:1.35;
-  font-weight:800;
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  overflow:hidden;
-}
-.priorityCardHead .tag{
-  flex:0 0 auto;
-  padding:5px 8px;
-  font-size:10px;
-}
-.priorityMetric{
-  margin:13px 0 8px;
-  color:var(--texto);
-  font-size:clamp(27px,2vw,34px);
-  font-weight:950;
-  line-height:1;
-  letter-spacing:-.035em;
-}
-.priorityMetric.red{color:var(--vermelho)}
-.priorityMetric.green{color:var(--verde)}
-.priorityMetric.orange{color:var(--amarelo)}
-.priorityMeta{
-  display:flex;
-  flex-wrap:wrap;
-  gap:3px 8px;
-  min-height:35px;
-  color:#b8cae0;
-  font-size:11px;
-  line-height:1.4;
-}
-.priorityMeta span+span:before{content:'·';margin-right:8px;color:#6f88a5}
-.priorityMeta strong{color:#dbe9f8}
-.priorityTrend{
-  margin-top:auto;
-  padding-top:9px;
-  color:#c7d8ee;
-  font-size:11px;
-  line-height:1.35;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.priorityTrend.muted{color:#738aa5}
-.priorityOpen{
+/* V14 — situação geral, zona de alertas e painel estratégico por grupos */
+.situacaoGeralPanel{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top:10px;
-  padding-top:9px;
-  border-top:1px solid rgba(255,255,255,.07);
-  color:#9fc7ea;
-  font-size:10px;
-  font-weight:850;
-  letter-spacing:.05em;
-  text-transform:uppercase;
-}
-.priorityOpen span{font-size:14px}
-/* Com 11 cards, centraliza os três últimos na terceira linha. */
-.priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:2/span 2}
-@media(max-width:900px){
-  .priorityGrid{grid-template-columns:repeat(6,minmax(0,1fr))}
-  .priorityCard{grid-column:span 2}
-  .priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:span 2}
-  .priorityGrid>.priorityCard:nth-last-child(2):nth-child(3n+1){grid-column:2/span 2}
-}
-@media(max-width:680px){
-  .priorityGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .priorityCard,.priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1),.priorityGrid>.priorityCard:nth-last-child(2):nth-child(3n+1){grid-column:span 1}
-}
-@media(max-width:480px){
-  .priorityGrid{grid-template-columns:1fr}
-  .priorityCard{min-height:178px}
-}
-
-/* V13 — mudança visual efetiva: 6 + 5 cards compactos no desktop */
-.priorityGrid{
-  display:grid;
-  grid-template-columns:repeat(12,minmax(0,1fr));
-  gap:10px;
-  align-items:stretch;
-}
-.priorityCard{
-  grid-column:span 2;
-  min-height:148px;
-  padding:13px 14px 12px;
-  border-radius:15px;
+  flex-wrap:wrap;
+  gap:14px 24px;
+  margin-bottom:14px;
+  padding:18px 20px;
+  border:1px solid var(--linha);
+  border-radius:18px;
   background:var(--painel);
 }
-.priorityCard:hover,.priorityCard:focus-visible{
-  transform:translateY(-1px);
-  background:var(--painel2);
+.situacaoBadge{
+  font-size:clamp(18px,2vw,24px);
+  font-weight:950;
+  line-height:1.2;
 }
-.priorityCardHead{
-  min-height:37px;
-  gap:7px;
+.situacaoBadge.red{color:var(--vermelho)}
+.situacaoBadge.orange{color:var(--amarelo)}
+.situacaoBadge.green{color:var(--verde)}
+.situacaoMeta{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+  color:var(--silenciado);
+  font-size:13px;
 }
-.priorityCardHead h3{
-  font-size:12px;
-  line-height:1.3;
-  -webkit-line-clamp:2;
-}
-.priorityCardHead .tag{
-  padding:4px 7px;
-  font-size:9px;
-}
-.priorityMetric{
-  margin:10px 0 6px;
-  font-size:clamp(24px,1.55vw,30px);
-}
-.priorityMeta{
-  min-height:0;
-  display:block;
-  color:#b8cae0;
-  font-size:10px;
-  line-height:1.35;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.priorityMeta span{display:inline}
-.priorityMeta span+span:before{content:' · ';margin:0;color:#6f88a5}
-.priorityTrend{
-  margin-top:auto;
-  padding-top:7px;
-  font-size:10px;
-}
-.priorityOpen{display:none}
-/* Com 11 cards: primeira linha com 6; segunda com 5 centralizados. */
-.priorityGrid>.priorityCard:nth-last-child(5):nth-child(6n+1){grid-column:2/span 2}
+.situacaoMeta strong{color:var(--texto)}
 
-@media(max-width:1400px){
-  .priorityGrid{grid-template-columns:repeat(8,minmax(0,1fr))}
-  .priorityCard{grid-column:span 2}
-  .priorityGrid>.priorityCard:nth-last-child(5):nth-child(6n+1){grid-column:span 2}
-  .priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:2/span 2}
+.alertList{display:flex;flex-direction:column;gap:8px}
+.alertRow{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:14px;
+  padding:12px 16px;
+  border:1px solid var(--linha);
+  border-radius:14px;
+  background:var(--painel);
+  cursor:pointer;
+  transition:.16s;
 }
+.alertRow:hover,.alertRow:focus-visible{border-color:var(--azul);outline:none}
+.alertRowName{min-width:0;font-size:13px;font-weight:800;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alertRowValue{font-size:15px;font-weight:950}
+.alertRowValue.red{color:var(--vermelho)}
+.alertRowValue.orange{color:var(--amarelo)}
+.alertRowTrend{color:var(--silenciado);font-size:12px;white-space:nowrap}
+.verTodosAlertasBtn{margin-top:12px}
+
+.themeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.themeGroupCard{border:1px solid var(--linha);border-radius:16px;background:var(--painel);padding:16px}
+.themeGroupHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.themeGroupHead h3{margin:0;font-size:15px}
+.themeGroupTotal{color:var(--silenciado);font-size:12px;white-space:nowrap}
+.themeGroupAlert{margin-top:10px;font-size:13px;font-weight:800}
+.themeGroupAlert.crit{color:var(--vermelho)}
+.themeGroupAlert.att{color:var(--amarelo)}
+.themeGroupOk{margin-top:10px;color:var(--silenciado);font-size:13px}
+.themeGroupMuted{margin-top:6px;color:var(--silenciado);font-size:11px}
+
 @media(max-width:900px){
-  .priorityGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .priorityCard,
-  .priorityGrid>.priorityCard:nth-last-child(5):nth-child(6n+1),
-  .priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:span 2}
+  .themeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .alertRow{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:none}
+  .alertRowTrend{grid-column:1/-1}
 }
-@media(max-width:560px){
-  .priorityGrid{grid-template-columns:1fr}
-  .priorityCard,
-  .priorityGrid>.priorityCard:nth-last-child(5):nth-child(6n+1),
-  .priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:span 1}
-  .priorityCard{min-height:138px}
+@media(max-width:600px){
+  .situacaoGeralPanel{flex-direction:column;align-items:flex-start}
+  .themeGrid{grid-template-columns:1fr}
+  .alertRow{grid-template-columns:1fr}
 }

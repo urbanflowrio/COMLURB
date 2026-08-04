@@ -29,7 +29,10 @@
     <div id="errorState" class="governancaError" hidden></div>
 
     <main id="conteudo" hidden>
-      <section id="kpisResumo" class="kpis" aria-label="Resumo corporativo"></section>
+      <section class="panel situacaoGeralPanel" aria-label="Situação geral">
+        <div id="situacaoBadge" class="situacaoBadge"></div>
+        <div id="situacaoMeta" class="situacaoMeta"></div>
+      </section>
 
       <section class="arAccess" aria-label="Acesso ao módulo Acordo de Resultados">
         <div class="arAccessContent">
@@ -48,9 +51,15 @@
         <div class="body"><div id="govNote" class="govNote"></div></div>
       </section>
 
-      <section class="indicadoresSection prioritySection">
-        <div class="sectionHeader"><div><h2>Indicadores prioritários</h2><p>Indicadores estratégicos definidos para acompanhamento, além dos resultados críticos e em atenção.</p></div><span id="priorityCount" class="sectionCount"></span></div>
-        <div id="prioritariosContainer"></div>
+      <section class="indicadoresSection alertSection">
+        <div class="sectionHeader"><div><h2>Zona de alertas</h2><p>Indicadores críticos e em atenção no recorte selecionado.</p></div></div>
+        <div id="zonaAlertasContainer" class="alertList"></div>
+        <button id="verTodosAlertas" class="actionBtn verTodosAlertasBtn" type="button" hidden>Ver todos os alertas</button>
+      </section>
+
+      <section class="indicadoresSection themeSection">
+        <div class="sectionHeader"><div><h2>Painel estratégico</h2><p>Situação por grupo temático.</p></div></div>
+        <div id="painelEstrategicoContainer" class="themeGrid"></div>
       </section>
 
       <section class="allIndicatorsAccess" aria-label="Acesso à relação completa de indicadores">
@@ -65,7 +74,7 @@
       <section id="todosIndicadores" class="indicadoresSection allIndicatorsSection" hidden>
         <div class="detailsToolbar">
           <div class="field searchField"><label for="buscaIndicador">Buscar indicador</label><input id="buscaIndicador" type="search" placeholder="Nome ou eixo"></div>
-          <div class="field"><label for="filtroStatus">Status</label><select id="filtroStatus"><option value="todos">Todos</option><option value="green">Dentro da meta</option><option value="orange">Em atenção</option><option value="red">Críticos</option><option value="sem">Sem leitura</option></select></div>
+          <div class="field"><label for="filtroStatus">Status</label><select id="filtroStatus"><option value="todos">Todos</option><option value="alertas">Críticos e atenção</option><option value="green">Dentro da meta</option><option value="orange">Em atenção</option><option value="red">Críticos</option><option value="sem">Sem leitura</option></select></div>
         </div>
         <div id="indicadoresContainer"></div>
       </section>

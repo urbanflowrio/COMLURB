@@ -15,15 +15,28 @@
   const EIXO_ORDEM = HUB.indicadores.EIXOS.concat(['Outros']);
   const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
   const FILTER_STORAGE_KEY = 'governanca-corporativa-filtros';
-  const PRIORITARIOS_FIXOS = [
-    /ABSENTEISMO GERENCIAVEL/,
-    /ACIDENTE.*TIPIC/,
-    /EMPREGAD.*AFASTAD/,
-    /UTILIZACAO.*FROTA/,
-    /PERFORMANCE/,
-    /(CHAMAD.*1746|1746.*CHAMAD)/,
-    /(OUVIDORIA.*1746|1746.*OUVIDORIA)/
-  ];
+
+  // Grupos executivos derivados diretamente dos eixos já existentes (EIXO_LABEL acima).
+  // Nenhuma classificação por palavra-chave nova: Operação permanece único (frota, capacidade
+  // operacional e performance dos serviços não são separados artificialmente).
+  const GRUPO_EIXO = {
+    Pessoas: 'pessoas_seguranca',
+    Segurança: 'pessoas_seguranca',
+    Operação: 'operacao',
+    Atendimento: 'atendimento',
+    Sustentabilidade: 'sustentabilidade',
+    Receita: 'financeiro_receita',
+    Outros: 'outros'
+  };
+  const GRUPO_LABEL = {
+    pessoas_seguranca: 'Pessoas e Segurança',
+    operacao: 'Operação',
+    atendimento: 'Atendimento ao Cidadão',
+    sustentabilidade: 'Sustentabilidade',
+    financeiro_receita: 'Financeiro e Receita',
+    outros: 'Outros'
+  };
+  const GRUPO_ORDEM = ['pessoas_seguranca', 'operacao', 'atendimento', 'sustentabilidade', 'financeiro_receita', 'outros'];
 
   let DATA = [];
   let KPIDATA = [];
@@ -346,11 +359,6 @@
     return formatValor(valor, indicadorCTR(k) ? '' : k.unidade);
   }
 
-  function ehPrioritarioFixo(k) {
-    const n = norm(k && k.indicador);
-    return PRIORITARIOS_FIXOS.some(rx => rx.test(n));
-  }
-
   function formatDiferenca(v, unidade) {
     if (v === null || v === undefined || Number.isNaN(v)) return '—';
     const abs = Math.abs(v);
@@ -368,6 +376,11 @@
     const menorMelhor = clean(k.sentido) === '↓';
     if (menorMelhor) return k.acumulado <= k.meta ? `${formatDiferenca(k.meta - k.acumulado, k.unidade)} abaixo do limite` : `Excesso de ${formatDiferenca(k.acumulado - k.meta, k.unidade)}`;
     return k.acumulado >= k.meta ? `${formatDiferenca(k.acumulado - k.meta, k.unidade)} acima da meta` : `Déficit de ${formatDiferenca(k.meta - k.acumulado, k.unidade)}`;
+  }
+
+  function distanciaMetaValor(k) {
+    if (k.acumulado === null || k.meta === null || !k.meta) return null;
+    return Math.abs(k.acumulado - k.meta) / Math.abs(k.meta);
   }
 
   function variacaoTemporal(row, sentido, unidade) {
@@ -463,83 +476,70 @@
     return r;
   }
 
-  function classeEixo(r) {
-    const cobertura = r.percentualCobertura || 0;
-    const aderencia = r.percentualMeta || 0;
-    const propCriticos = r.comStatus ? r.red / r.comStatus : 0;
-    if (cobertura < 50) return 'insuf';
-    if (aderencia < 60 || propCriticos > 0.25) return 'crit';
-    if (cobertura < 75 || aderencia < 80 || r.orange > 0 || r.red > 0) return 'att';
-    return 'ok';
+  function tituloSituacao(r) {
+    const total = r.red + r.orange;
+    if (!total) return 'Nenhum indicador exige intervenção imediata';
+    const plural = total === 1 ? 'indicador exige' : 'indicadores exigem';
+    const verbo = r.red > 0 ? 'ação prioritária' : 'acompanhamento';
+    return `${total} ${plural} ${verbo}`;
   }
 
-  function labelEixo(cls) { return cls === 'ok' ? 'Adequado' : cls === 'att' ? 'Atenção' : cls === 'crit' ? 'Crítico' : 'Leitura insuficiente'; }
-  function fillClass(cls) { return cls === 'ok' ? 'green' : cls === 'att' ? 'orange' : cls === 'crit' ? 'red' : 'purple'; }
-
-  function renderResumo(kpis) {
+  function renderSituacaoGeral(kpis) {
     const r = resumoStatus(kpis);
-    HUB.cards.render('kpisResumo', [
-      { label: 'Aderência às metas', value: r.percentualMeta || 0, format: 'custom', customFormatter: () => r.percentualMeta === null ? '—' : `${r.percentualMeta}%`, note: `${r.green} de ${r.comStatus} indicadores avaliáveis`, feature: true },
-      { label: 'Cobertura da leitura', value: r.percentualCobertura || 0, format: 'custom', customFormatter: () => r.percentualCobertura === null ? '—' : `${r.percentualCobertura}%`, note: `${r.comStatus} de ${r.total} monitorados`, color: 'blue' },
-      { label: 'Em atenção', value: r.orange, note: `${r.orange} de ${r.comStatus} avaliáveis`, color: 'orange' },
-      { label: 'Críticos', value: r.red, note: `${r.red} de ${r.comStatus} avaliáveis`, color: 'red' },
-      { label: 'Sem leitura', value: r.sem, note: `${r.sem} de ${r.total} monitorados`, color: 'purple' }
-    ]);
+    const cor = r.red > 0 ? 'red' : r.orange > 0 ? 'orange' : 'green';
+    const badge = document.getElementById('situacaoBadge');
+    badge.className = `situacaoBadge ${cor}`;
+    badge.textContent = tituloSituacao(r);
+    document.getElementById('situacaoMeta').innerHTML =
+      `<span>Aderência <strong>${r.percentualMeta === null ? '—' : r.percentualMeta + '%'}</strong></span>` +
+      `<span>Cobertura <strong>${r.percentualCobertura === null ? '—' : r.percentualCobertura + '%'}</strong></span>` +
+      `<span>${r.red} crítico${r.red === 1 ? '' : 's'} · ${r.orange} em atenção · ${r.sem} sem meta</span>`;
   }
 
-  function renderCentro(kpis) {
-    const r = resumoStatus(kpis);
-    const criticos = kpis
-      .filter(k => k.status.cor === 'red')
-      .sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
-    const atencao = kpis
-      .filter(k => k.status.cor === 'orange')
-      .sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
+  function agruparPorTema(kpis) {
+    const grupos = new Map();
+    GRUPO_ORDEM.forEach(g => grupos.set(g, { total: 0, red: 0, orange: 0, sem: 0 }));
+    kpis.forEach(k => {
+      const g = GRUPO_EIXO[k.eixo] || 'outros';
+      const acc = grupos.get(g);
+      acc.total++;
+      if (k.status.cor === 'red') acc.red++;
+      else if (k.status.cor === 'orange') acc.orange++;
+      else if (!k.status.cor) acc.sem++;
+    });
+    return grupos;
+  }
+
+  function principalMovimento(kpis, favoravel) {
+    const candidatos = kpis.filter(k => k.variacao && k.variacao.favoravel === favoravel);
+    if (!candidatos.length) return null;
+    return candidatos.sort((a, b) =>
+      (PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || '']) ||
+      a.indicador.localeCompare(b.indicador, 'pt-BR')
+    )[0];
+  }
+
+  function renderLeituraExecutiva(kpis) {
+    const grupos = agruparPorTema(kpis);
+    let piorGrupo = null;
+    grupos.forEach((g, nome) => { if (g.red > 0 && (!piorGrupo || g.red > piorGrupo.g.red)) piorGrupo = { nome, g }; });
 
     const frases = [];
-    frases.push(`${r.comStatus} de ${r.total} indicadores possuem leitura válida no período.`);
+    frases.push(piorGrupo
+      ? `${piorGrupo.g.red} indicador${piorGrupo.g.red === 1 ? '' : 'es'} crítico${piorGrupo.g.red === 1 ? '' : 's'} concentrado${piorGrupo.g.red === 1 ? '' : 's'} em ${GRUPO_LABEL[piorGrupo.nome]}.`
+      : 'Nenhum indicador crítico no recorte selecionado.');
 
-    if (criticos.length || atencao.length) {
-      frases.push(`O recorte reúne ${criticos.length} indicador${criticos.length === 1 ? '' : 'es'} crítico${criticos.length === 1 ? '' : 's'} e ${atencao.length} em atenção.`);
-    } else if (r.comStatus) {
-      frases.push('Não há indicadores críticos ou em atenção no recorte selecionado.');
-    }
+    const melhora = principalMovimento(kpis, true);
+    const piora = principalMovimento(kpis, false);
+    const movimentos = [];
+    if (melhora) movimentos.push(`melhora em ${melhora.indicador}`);
+    if (piora) movimentos.push(`piora em ${piora.indicador}`);
+    if (movimentos.length) frases.push(`Destaque: ${movimentos.join('; ')}.`);
 
-    const principais = criticos.concat(atencao).slice(0, 3);
-    if (principais.length) {
-      frases.push(`Principais pontos de acompanhamento: ${principais.map(k => k.indicador).join('; ')}.`);
-    }
+    const r = resumoStatus(kpis);
+    if (r.sem) frases.push(`${r.sem} indicador${r.sem === 1 ? '' : 'es'} ${r.sem === 1 ? 'não possui' : 'não possuem'} meta definida, sem indicar problema de desempenho.`);
 
-    if (r.sem) {
-      frases.push(`${r.sem} indicador${r.sem === 1 ? '' : 'es'} ainda ${r.sem === 1 ? 'não possui' : 'não possuem'} meta ou resultado suficiente para classificação.`);
-    }
-
-    document.getElementById('govNote').textContent = frases.join(' ');
-  }
-
-  function resumoExecutivoEixo(arr, r, cls) {
-    const criticos = arr.filter(k => k.status.cor === 'red').sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
-    const atencao = arr.filter(k => k.status.cor === 'orange').sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
-    if (cls === 'insuf') {
-      const alerta = criticos[0] || atencao[0];
-      return `${r.sem} de ${r.total} indicadores sem leitura${alerta ? `. Há alerta em ${alerta.indicador}.` : '.'}`;
-    }
-    if (criticos.length) return `${criticos.length} crítico${criticos.length === 1 ? '' : 's'} e ${atencao.length} em atenção. Principal alerta: ${criticos[0].indicador}.`;
-    if (atencao.length) return `${atencao.length} indicador${atencao.length === 1 ? '' : 'es'} em atenção. Principal ponto: ${atencao[0].indicador}.`;
-    if (r.comStatus && r.green === r.comStatus) return `Todos os ${r.comStatus} indicadores avaliáveis estão dentro da meta.`;
-    return `${r.green} dentro da meta e ${r.sem} sem leitura no recorte.`;
-  }
-
-  function renderRadar(kpis) {
-    const html = EIXO_ORDEM.map(eixo => {
-      const arr = kpis.filter(k => k.eixo === eixo); if (!arr.length) return '';
-      const r = resumoStatus(arr); const cls = classeEixo(r); const pct = r.percentualMeta;
-      const largura = pct === null ? 0 : Math.max(4, pct);
-      const resumo = resumoExecutivoEixo(arr, r, cls);
-      return `<article class="axisExecutive"><div class="axisExecutiveHead"><div><h3>${esc(EIXO_LABEL[eixo] || eixo)}</h3><p>${esc(resumo)}</p></div><span class="tag ${cls}">${labelEixo(cls)}</span></div><div class="axisExecutiveMeta"><span>Aderência <strong>${pct === null ? '—' : pct + '%'}</strong></span><span>Cobertura <strong>${r.percentualCobertura || 0}%</strong></span><span>${r.green} dentro · ${r.orange} atenção · ${r.red} críticos · ${r.sem} sem leitura</span></div><div class="track axisExecutiveTrack"><div class="fill ${fillClass(cls)}" style="width:${largura}%"></div></div></article>`;
-    }).join('');
-    document.getElementById('radarRows').innerHTML = html;
-    document.getElementById('radarHint').textContent = `${kpis.length} indicadores monitorados`;
+    document.getElementById('govNote').textContent = frases.slice(0, 3).join(' ');
   }
 
   function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Dentro da meta'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
@@ -550,53 +550,82 @@
     return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
-  function priorityCardHTML(k) {
+  function alertRowHTML(k) {
     const tag = statusTag(k);
-    const movimento = k.variacao ? k.variacao.texto : '';
-    const metaLinha = k.atingimento
-      ? `<span><strong>${esc(k.atingimento.texto.replace(' de atingimento', ''))}</strong> da meta</span>`
-      : '';
-    const distanciaLinha = k.meta !== null && k.meta !== undefined && k.distanciaTexto
-      ? `<span>${esc(k.distanciaTexto)}</span>`
-      : '';
-    return `<article class="priorityCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-label="Abrir ficha de ${esc(k.indicador)}">
-      <div class="priorityCardHead"><h3 title="${esc(k.indicador)}">${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>
-      <div class="priorityMetric ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>
-      ${(metaLinha || distanciaLinha) ? `<div class="priorityMeta">${metaLinha}${distanciaLinha}</div>` : ''}
-      ${movimento ? `<div class="priorityTrend">${esc(movimento)}</div>` : '<div class="priorityTrend muted">Sem comparação mensal disponível</div>'}
+    const movimento = k.variacao ? k.variacao.texto : 'Sem comparação mensal disponível';
+    return `<article class="alertRow" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-label="Abrir ficha de ${esc(k.indicador)}">
+      <span class="tag ${tag[0]}">${esc(tag[1])}</span>
+      <span class="alertRowName" title="${esc(k.indicador)}">${esc(k.indicador)}</span>
+      <span class="alertRowValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</span>
+      <span class="alertRowTrend">${esc(movimento)}</span>
+    </article>`;
+  }
+
+  function grupoCardHTML(nome, g) {
+    const partes = [];
+    if (g.red) partes.push(`${g.red} crítico${g.red === 1 ? '' : 's'}`);
+    if (g.orange) partes.push(`${g.orange} em atenção`);
+    const alertaCls = g.red ? 'crit' : g.orange ? 'att' : '';
+    return `<article class="themeGroupCard">
+      <div class="themeGroupHead"><h3>${esc(nome)}</h3><span class="themeGroupTotal">${g.total} indicador${g.total === 1 ? '' : 'es'}</span></div>
+      ${partes.length ? `<div class="themeGroupAlert ${alertaCls}">${esc(partes.join(' · '))}</div>` : '<div class="themeGroupOk">Sem alertas no recorte</div>'}
+      ${g.sem ? `<div class="themeGroupMuted">${g.sem} sem meta</div>` : ''}
     </article>`;
   }
 
   function filtrar(kpis) {
     const termo = norm(buscaAtual);
-    return kpis.filter(k => (!termo || norm(k.indicador).includes(termo) || norm(k.eixoLabel).includes(termo)) && (statusAtual === 'todos' || (statusAtual === 'sem' ? !k.status.cor : k.status.cor === statusAtual)));
+    return kpis.filter(k => (!termo || norm(k.indicador).includes(termo) || norm(k.eixoLabel).includes(termo)) && (
+      statusAtual === 'todos' ? true :
+      statusAtual === 'alertas' ? (k.status.cor === 'red' || k.status.cor === 'orange') :
+      statusAtual === 'sem' ? !k.status.cor :
+      k.status.cor === statusAtual
+    ));
   }
 
   function vincularCards(container) {
-    container.querySelectorAll('.indCard, .priorityCard').forEach(card => {
+    container.querySelectorAll('.indCard, .alertRow').forEach(card => {
       const open = () => { const k = KPIDATA.find(x => x.indicador === card.dataset.indicador); if (k) abrirDrawer(k); };
       card.addEventListener('click', open);
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
     });
   }
 
-  function renderPrioritarios(kpis) {
-    const prioritarios = kpis
-      .filter(k => ehPrioritarioFixo(k) || k.status.cor === 'red' || k.status.cor === 'orange')
+  function alertasOrdenados(kpis) {
+    return kpis
+      .filter(k => k.status.cor === 'red' || k.status.cor === 'orange')
       .sort((a, b) => {
-        const fixo = Number(ehPrioritarioFixo(b)) - Number(ehPrioritarioFixo(a));
-        if (fixo) return fixo;
-        return PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || ''] || a.indicador.localeCompare(b.indicador, 'pt-BR');
+        const statusDiff = PRIORIDADE_STATUS[a.status.cor] - PRIORIDADE_STATUS[b.status.cor];
+        if (statusDiff) return statusDiff;
+        const da = distanciaMetaValor(a), db = distanciaMetaValor(b);
+        const distDiff = (db === null ? -1 : db) - (da === null ? -1 : da);
+        if (distDiff) return distDiff;
+        const pioraA = a.variacao && a.variacao.favoravel === false ? 0 : 1;
+        const pioraB = b.variacao && b.variacao.favoravel === false ? 0 : 1;
+        return pioraA - pioraB;
       });
-    const container = document.getElementById('prioritariosContainer');
-    const count = document.getElementById('priorityCount');
-    count.textContent = `${prioritarios.length} indicadores`;
-    if (!prioritarios.length) {
-      container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador prioritário disponível.</strong><span>Consulte a camada analítica para a relação completa.</span></div>';
+  }
+
+  function renderZonaAlertas(kpis) {
+    const alertas = alertasOrdenados(kpis);
+    const container = document.getElementById('zonaAlertasContainer');
+    const botao = document.getElementById('verTodosAlertas');
+    if (!alertas.length) {
+      container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador crítico ou em atenção no recorte.</strong><span>A situação geral está sob controle.</span></div>';
+      botao.hidden = true;
       return;
     }
-    container.innerHTML = `<div class="priorityGrid">${prioritarios.map(priorityCardHTML).join('')}</div>`;
+    container.innerHTML = alertas.slice(0, 6).map(alertRowHTML).join('');
     vincularCards(container);
+    botao.hidden = alertas.length <= 6;
+  }
+
+  function renderPainelEstrategico(kpis) {
+    const grupos = agruparPorTema(kpis);
+    const html = GRUPO_ORDEM
+      .map(g => { const dados = grupos.get(g); return dados.total ? grupoCardHTML(GRUPO_LABEL[g], dados) : ''; })
+      .join('');
+    document.getElementById('painelEstrategicoContainer').innerHTML = html;
   }
 
   function renderIndicadores(kpis) {
@@ -668,9 +697,10 @@
 
   function render() {
     KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
-    renderResumo(KPIDATA);
-    renderCentro(KPIDATA);
-    renderPrioritarios(KPIDATA);
+    renderSituacaoGeral(KPIDATA);
+    renderLeituraExecutiva(KPIDATA);
+    renderZonaAlertas(KPIDATA);
+    renderPainelEstrategico(KPIDATA);
     renderIndicadores(KPIDATA);
     salvarFiltros();
   }
@@ -686,6 +716,16 @@
       e.currentTarget.setAttribute('aria-expanded', String(!aberto));
       e.currentTarget.innerHTML = aberto ? 'Ver todos os indicadores <span aria-hidden="true">↓</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
       if (!aberto) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    document.getElementById('verTodosAlertas').addEventListener('click', () => {
+      statusAtual = 'alertas';
+      document.getElementById('filtroStatus').value = 'alertas';
+      const section = document.getElementById('todosIndicadores');
+      section.hidden = false;
+      document.getElementById('toggleIndicadores').setAttribute('aria-expanded', 'true');
+      document.getElementById('toggleIndicadores').innerHTML = 'Recolher indicadores <span aria-hidden="true">↑</span>';
+      renderIndicadores(KPIDATA);
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     document.getElementById('drawerClose').addEventListener('click', fecharDrawer); document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDrawer(); });
   }
@@ -717,6 +757,6 @@
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, classeEixo, ehPrioritarioFixo, indicadorCTR, resumoExecutivoEixo };
+  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, indicadorCTR, agruparPorTema, tituloSituacao };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

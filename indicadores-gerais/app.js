@@ -550,13 +550,31 @@
     return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
+  function priorityCardHTML(k) {
+    const tag = statusTag(k);
+    const movimento = k.variacao ? k.variacao.texto : '';
+    const metaLinha = k.atingimento
+      ? `<span><strong>${esc(k.atingimento.texto.replace(' de atingimento', ''))}</strong> da meta</span>`
+      : '';
+    const distanciaLinha = k.meta !== null && k.meta !== undefined && k.distanciaTexto
+      ? `<span>${esc(k.distanciaTexto)}</span>`
+      : '';
+    return `<article class="priorityCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-label="Abrir ficha de ${esc(k.indicador)}">
+      <div class="priorityCardHead"><h3 title="${esc(k.indicador)}">${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>
+      <div class="priorityMetric ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>
+      ${(metaLinha || distanciaLinha) ? `<div class="priorityMeta">${metaLinha}${distanciaLinha}</div>` : ''}
+      ${movimento ? `<div class="priorityTrend">${esc(movimento)}</div>` : '<div class="priorityTrend muted">Sem comparação mensal disponível</div>'}
+      <div class="priorityOpen">Ver detalhes <span>→</span></div>
+    </article>`;
+  }
+
   function filtrar(kpis) {
     const termo = norm(buscaAtual);
     return kpis.filter(k => (!termo || norm(k.indicador).includes(termo) || norm(k.eixoLabel).includes(termo)) && (statusAtual === 'todos' || (statusAtual === 'sem' ? !k.status.cor : k.status.cor === statusAtual)));
   }
 
   function vincularCards(container) {
-    container.querySelectorAll('.indCard').forEach(card => {
+    container.querySelectorAll('.indCard, .priorityCard').forEach(card => {
       const open = () => { const k = KPIDATA.find(x => x.indicador === card.dataset.indicador); if (k) abrirDrawer(k); };
       card.addEventListener('click', open);
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
@@ -578,7 +596,7 @@
       container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador prioritário disponível.</strong><span>Consulte a camada analítica para a relação completa.</span></div>';
       return;
     }
-    container.innerHTML = `<div class="indicatorGrid priorityGrid">${prioritarios.map(cardHTML).join('')}</div>`;
+    container.innerHTML = `<div class="priorityGrid">${prioritarios.map(priorityCardHTML).join('')}</div>`;
     vincularCards(container);
   }
 

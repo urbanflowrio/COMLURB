@@ -70,3 +70,117 @@
 @media(max-width:600px){
   .priorityGrid .indCard{flex-basis:100%}
 }
+
+/* V12 — grade executiva compacta para indicadores prioritários */
+.priorityGrid{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:12px;
+  align-items:stretch;
+}
+.priorityCard{
+  grid-column:span 2;
+  min-width:0;
+  min-height:196px;
+  display:flex;
+  flex-direction:column;
+  padding:16px 16px 13px;
+  border:1px solid var(--linha);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(18,42,70,.97),rgba(13,31,54,.97));
+  cursor:pointer;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+.priorityCard:hover,.priorityCard:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(91,155,213,.75);
+  background:linear-gradient(180deg,rgba(22,50,82,.98),rgba(13,31,54,.98));
+  outline:none;
+}
+.priorityCardHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  min-height:43px;
+}
+.priorityCardHead h3{
+  min-width:0;
+  margin:0;
+  color:var(--texto);
+  font-size:13px;
+  line-height:1.35;
+  font-weight:800;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.priorityCardHead .tag{
+  flex:0 0 auto;
+  padding:5px 8px;
+  font-size:10px;
+}
+.priorityMetric{
+  margin:13px 0 8px;
+  color:var(--texto);
+  font-size:clamp(27px,2vw,34px);
+  font-weight:950;
+  line-height:1;
+  letter-spacing:-.035em;
+}
+.priorityMetric.red{color:var(--vermelho)}
+.priorityMetric.green{color:var(--verde)}
+.priorityMetric.orange{color:var(--amarelo)}
+.priorityMeta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px 8px;
+  min-height:35px;
+  color:#b8cae0;
+  font-size:11px;
+  line-height:1.4;
+}
+.priorityMeta span+span:before{content:'·';margin-right:8px;color:#6f88a5}
+.priorityMeta strong{color:#dbe9f8}
+.priorityTrend{
+  margin-top:auto;
+  padding-top:9px;
+  color:#c7d8ee;
+  font-size:11px;
+  line-height:1.35;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.priorityTrend.muted{color:#738aa5}
+.priorityOpen{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid rgba(255,255,255,.07);
+  color:#9fc7ea;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.priorityOpen span{font-size:14px}
+/* Com 11 cards, centraliza os três últimos na terceira linha. */
+.priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:2/span 2}
+@media(max-width:900px){
+  .priorityGrid{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .priorityCard{grid-column:span 2}
+  .priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1){grid-column:span 2}
+  .priorityGrid>.priorityCard:nth-last-child(2):nth-child(3n+1){grid-column:2/span 2}
+}
+@media(max-width:680px){
+  .priorityGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .priorityCard,.priorityGrid>.priorityCard:nth-last-child(3):nth-child(4n+1),.priorityGrid>.priorityCard:nth-last-child(2):nth-child(3n+1){grid-column:span 1}
+}
+@media(max-width:480px){
+  .priorityGrid{grid-template-columns:1fr}
+  .priorityCard{min-height:178px}
+}

@@ -24,3 +24,20 @@
 @media(max-width:1100px){.priorityGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:900px){.priorityGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.detailsToolbar{grid-template-columns:1fr 190px}}
 @media(max-width:600px){.governancaFilters{max-width:none}.sectionHeader{align-items:flex-start;gap:8px}.priorityGrid,.detailsToolbar{grid-template-columns:1fr}.priorityEmpty,.allIndicatorsAccess{align-items:flex-start;flex-direction:column}.priorityEmpty span{text-align:left}.allIndicatorsBtn{width:100%}}
+
+
+/* V10 — síntese executiva e semântica visual mais sóbria */
+.axisExecutive{padding:16px 4px;border-bottom:1px solid rgba(255,255,255,.07)}
+.axisExecutive:last-child{border-bottom:0}
+.axisExecutiveHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.axisExecutiveHead h3{margin:0;font-size:16px}
+.axisExecutiveHead p{margin:6px 0 0;color:var(--silenciado);font-size:13px;line-height:1.5;max-width:840px}
+.axisExecutiveMeta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:12px 0 9px;color:var(--silenciado);font-size:12px}
+.axisExecutiveMeta strong{color:var(--texto)}
+.axisExecutiveTrack{height:7px}
+.detailBox.semantic-positive,.detailBox.semantic-negative,.detailBox.semantic-warning{border-color:var(--linha);background:var(--painel)}
+.detailBox.semantic-positive>small,.detailBox.semantic-positive>b,.detailBox.semantic-negative>small,.detailBox.semantic-negative>b,.detailBox.semantic-warning>small,.detailBox.semantic-warning>b{color:inherit}
+.detailBox b.result-critical{color:var(--vermelho)}
+.detailBox b.result-positive{color:var(--verde)}
+.detailBox b.result-warning{color:var(--amarelo)}
+@media(max-width:600px){.axisExecutiveHead{flex-direction:column}.axisExecutiveMeta{gap:8px 14px}}

@@ -15,6 +15,15 @@
   const EIXO_ORDEM = HUB.indicadores.EIXOS.concat(['Outros']);
   const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
   const FILTER_STORAGE_KEY = 'governanca-corporativa-filtros';
+  const PRIORITARIOS_FIXOS = [
+    /ABSENTEISMO GERENCIAVEL/,
+    /ACIDENTE.*TIPIC/,
+    /EMPREGAD.*AFASTAD/,
+    /UTILIZACAO.*FROTA/,
+    /PERFORMANCE/,
+    /(CHAMAD.*1746|1746.*CHAMAD)/,
+    /(OUVIDORIA.*1746|1746.*OUVIDORIA)/
+  ];
 
   let DATA = [];
   let KPIDATA = [];
@@ -321,6 +330,27 @@
     return numero + ' ' + u;
   }
 
+  function indicadorCTR(k) {
+    return /RESIDUOS RECEBIDOS NO CTR|CTR GERICINO/.test(norm(k && k.indicador));
+  }
+
+  function unidadeDescritiva(unidade) {
+    const u = unidadeVisual(unidade);
+    if (u === 't') return 'Toneladas';
+    if (u === '%') return 'Percentual';
+    if (u === 'h') return 'Horas';
+    return u || 'Unidades';
+  }
+
+  function formatValorIndicador(k, valor) {
+    return formatValor(valor, indicadorCTR(k) ? '' : k.unidade);
+  }
+
+  function ehPrioritarioFixo(k) {
+    const n = norm(k && k.indicador);
+    return PRIORITARIOS_FIXOS.some(rx => rx.test(n));
+  }
+
   function formatDiferenca(v, unidade) {
     if (v === null || v === undefined || Number.isNaN(v)) return '—';
     const abs = Math.abs(v);
@@ -472,12 +502,26 @@
     document.getElementById('govNote').textContent = partes.join(' ');
   }
 
+  function resumoExecutivoEixo(arr, r, cls) {
+    const criticos = arr.filter(k => k.status.cor === 'red').sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
+    const atencao = arr.filter(k => k.status.cor === 'orange').sort((a, b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
+    if (cls === 'insuf') {
+      const alerta = criticos[0] || atencao[0];
+      return `${r.sem} de ${r.total} indicadores sem leitura${alerta ? `. Há alerta em ${alerta.indicador}.` : '.'}`;
+    }
+    if (criticos.length) return `${criticos.length} crítico${criticos.length === 1 ? '' : 's'} e ${atencao.length} em atenção. Principal alerta: ${criticos[0].indicador}.`;
+    if (atencao.length) return `${atencao.length} indicador${atencao.length === 1 ? '' : 'es'} em atenção. Principal ponto: ${atencao[0].indicador}.`;
+    if (r.comStatus && r.green === r.comStatus) return `Todos os ${r.comStatus} indicadores avaliáveis estão dentro da meta.`;
+    return `${r.green} dentro da meta e ${r.sem} sem leitura no recorte.`;
+  }
+
   function renderRadar(kpis) {
     const html = EIXO_ORDEM.map(eixo => {
       const arr = kpis.filter(k => k.eixo === eixo); if (!arr.length) return '';
       const r = resumoStatus(arr); const cls = classeEixo(r); const pct = r.percentualMeta;
       const largura = pct === null ? 0 : Math.max(4, pct);
-      return `<div class="radarRow"><div class="radarName"><b>${esc(EIXO_LABEL[eixo] || eixo)}</b><span>${esc(EIXO_DESC[eixo] || '')}</span><span class="radarComposition">${r.green} dentro · ${r.orange} atenção · ${r.red} críticos · ${r.sem} sem leitura · cobertura ${r.percentualCobertura || 0}%</span></div><div class="track radarTrack"><div class="fill ${fillClass(cls)}" style="width:${largura}%"></div></div><div class="radarPct">${pct === null ? '—' : pct + '%'}</div><div class="radarStatus"><span class="tag ${cls}">${labelEixo(cls)}</span></div></div>`;
+      const resumo = resumoExecutivoEixo(arr, r, cls);
+      return `<article class="axisExecutive"><div class="axisExecutiveHead"><div><h3>${esc(EIXO_LABEL[eixo] || eixo)}</h3><p>${esc(resumo)}</p></div><span class="tag ${cls}">${labelEixo(cls)}</span></div><div class="axisExecutiveMeta"><span>Aderência <strong>${pct === null ? '—' : pct + '%'}</strong></span><span>Cobertura <strong>${r.percentualCobertura || 0}%</strong></span><span>${r.green} dentro · ${r.orange} atenção · ${r.red} críticos · ${r.sem} sem leitura</span></div><div class="track axisExecutiveTrack"><div class="fill ${fillClass(cls)}" style="width:${largura}%"></div></div></article>`;
     }).join('');
     document.getElementById('radarRows').innerHTML = html;
     document.getElementById('radarHint').textContent = `${kpis.length} indicadores monitorados`;
@@ -488,7 +532,7 @@
   function cardHTML(k) {
     const tag = statusTag(k);
     const movimento = k.variacao ? k.variacao.texto : '';
-    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValor(k.acumulado, k.unidade))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
+    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
   function filtrar(kpis) {
@@ -506,18 +550,20 @@
 
   function renderPrioritarios(kpis) {
     const prioritarios = kpis
-      .filter(k => k.status.cor === 'red' || k.status.cor === 'orange')
-      .sort((a, b) => PRIORIDADE_STATUS[a.status.cor] - PRIORIDADE_STATUS[b.status.cor] || a.indicador.localeCompare(b.indicador, 'pt-BR'));
-    const limite = 8;
-    const exibidos = prioritarios.slice(0, limite);
+      .filter(k => ehPrioritarioFixo(k) || k.status.cor === 'red' || k.status.cor === 'orange')
+      .sort((a, b) => {
+        const fixo = Number(ehPrioritarioFixo(b)) - Number(ehPrioritarioFixo(a));
+        if (fixo) return fixo;
+        return PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || ''] || a.indicador.localeCompare(b.indicador, 'pt-BR');
+      });
     const container = document.getElementById('prioritariosContainer');
     const count = document.getElementById('priorityCount');
-    count.textContent = prioritarios.length ? `${prioritarios.length} no total` : 'Nenhum alerta';
+    count.textContent = `${prioritarios.length} indicadores`;
     if (!prioritarios.length) {
-      container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador crítico ou em atenção.</strong><span>Os demais resultados permanecem disponíveis na camada analítica.</span></div>';
+      container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador prioritário disponível.</strong><span>Consulte a camada analítica para a relação completa.</span></div>';
       return;
     }
-    container.innerHTML = `<div class="indicatorGrid priorityGrid">${exibidos.map(cardHTML).join('')}</div>${prioritarios.length > limite ? `<div class="priorityMore">Mais ${prioritarios.length - limite} indicador${prioritarios.length - limite === 1 ? '' : 'es'} prioritário${prioritarios.length - limite === 1 ? '' : 's'} na relação completa.</div>` : ''}`;
+    container.innerHTML = `<div class="indicatorGrid priorityGrid">${prioritarios.map(cardHTML).join('')}</div>`;
     vincularCards(container);
   }
 
@@ -548,23 +594,25 @@
     const anos = anoSelecionado === 'comparar' ? [anoComparacao(), anoPrincipal()].filter(Boolean) : [anoPrincipal()];
     return anos.map(ano => {
       const row = ano === anoPrincipal() ? k.row : resolverLinha(k.indicador, diretoriaSelecionada, ano);
-      const cells = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(formatValor(row ? HUB.indicadores.parseNumeroBR(row[m]) : null, k.unidade))}</b></div>`).join('');
+      const cells = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(formatValorIndicador(k, row ? HUB.indicadores.parseNumeroBR(row[m]) : null))}</b></div>`).join('');
       return `<section class="yearCycles"><div class="yearCyclesTitle">${esc(ano)}</div><div class="months">${cells}</div></section>`;
     }).join('');
   }
 
   function sentidoAmigavel(sentido) {
     const s = clean(sentido);
-    if (s === '↓' || norm(s) === 'MENOR' || norm(s) === 'DECRESCENTE' || norm(s) === 'ABAIXO') return 'Menor resultado é melhor';
-    if (s === '↑' || norm(s) === 'MAIOR' || norm(s) === 'CRESCENTE' || norm(s) === 'ACIMA') return 'Maior resultado é melhor';
-    return 'Regra de sentido não informada';
+    if (s === '↓' || norm(s) === 'MENOR' || norm(s) === 'DECRESCENTE' || norm(s) === 'ABAIXO') return 'O desempenho melhora quando o resultado diminui.';
+    if (s === '↑' || norm(s) === 'MAIOR' || norm(s) === 'CRESCENTE' || norm(s) === 'ACIMA') return 'O desempenho melhora quando o resultado aumenta.';
+    return 'A regra de avaliação deste indicador não foi informada.';
   }
 
   function abrirDrawer(k) {
     document.getElementById('drawerEixo').textContent = `${k.eixoLabel} · ${anoSelecionado === 'comparar' ? 'Comparativo ' + anoComparacao() + ' × ' + anoPrincipal() : anoPrincipal()}`;
     document.getElementById('drawerTitulo').textContent = k.indicador;
     const tag = statusTag(k);
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox ${classeSemantica(k, 'status')}"><small>Resultado ${esc(anoPrincipal())}</small><b>${esc(formatValor(k.acumulado, k.unidade))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValor(k.meta, k.unidade))}</b></div><div class="detailBox ${classeSemantica(k, 'status')}"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div><div class="detailBox"><small>Sentido do indicador</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
+    const resultClass = k.status.cor === 'red' ? 'result-critical' : k.status.cor === 'green' ? 'result-positive' : k.status.cor === 'orange' ? 'result-warning' : '';
+    const unidadeBox = indicadorCTR(k) ? `<div class="detailBox"><small>Unidade de medida</small><b>${esc(unidadeDescritiva(k.unidade))}</b></div>` : '';
+    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado ${esc(anoPrincipal())}</small><b class="${resultClass}">${esc(formatValorIndicador(k, k.acumulado))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValorIndicador(k, k.meta))}</b></div><div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div>${unidadeBox}<div class="detailBox detailBoxWide"><small>Como interpretar</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
     document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
   }
@@ -638,6 +686,6 @@
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, classeEixo };
+  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, classeEixo, ehPrioritarioFixo, indicadorCTR, resumoExecutivoEixo };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

@@ -564,7 +564,6 @@
       <div class="priorityMetric ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>
       ${(metaLinha || distanciaLinha) ? `<div class="priorityMeta">${metaLinha}${distanciaLinha}</div>` : ''}
       ${movimento ? `<div class="priorityTrend">${esc(movimento)}</div>` : '<div class="priorityTrend muted">Sem comparação mensal disponível</div>'}
-      <div class="priorityOpen">Ver detalhes <span>→</span></div>
     </article>`;
   }
 

@@ -29,33 +29,25 @@
     <div id="errorState" class="governancaError" hidden></div>
 
     <main id="conteudo" hidden>
-      <section class="hero" aria-label="Situação da Companhia">
-        <div class="heroEyebrow" id="heroEyebrow">Situação da Companhia</div>
-        <h1 id="heroHeadline" class="heroHeadline"></h1>
-        <p id="heroLeitura" class="heroLeitura"></p>
-        <div class="heroStats" id="heroStats"></div>
+      <section class="situacaoCorp" aria-label="Situação Corporativa">
+        <div class="situacaoEyebrow" id="situacaoEyebrow">Situação Corporativa</div>
+        <h1 id="situacaoHeadline" class="situacaoHeadline"></h1>
+        <p id="situacaoSubtext" class="situacaoSubtext"></p>
       </section>
 
-      <section class="alertZone" aria-label="Zona de alertas">
-        <div class="alertZoneHead">
-          <h2>Zona de alertas</h2>
-          <p>O que exige decisão agora, ordenado por gravidade.</p>
-        </div>
-        <div id="zonaAlertasContainer" class="alertStack"></div>
-        <button id="verTodosAlertas" class="quietLink verTodosAlertasBtn" type="button" hidden>Ver todos os alertas →</button>
+      <section class="sinteseExec" aria-label="Síntese executiva">
+        <h2>Síntese executiva</h2>
+        <ul id="sinteseList" class="sinteseList"></ul>
       </section>
 
-      <section class="strategicView" aria-label="Visão estratégica">
-        <div class="strategicHead">
-          <h2>Visão estratégica</h2>
-          <p>Concentração de críticos e atenção por área.</p>
-        </div>
-        <div id="painelEstrategicoContainer" class="strategicRows"></div>
+      <section class="visaoEstrategica" aria-label="Visão estratégica">
+        <h2>Visão estratégica</h2>
+        <div id="visaoEstrategicaLista" class="grupoBlocks"></div>
       </section>
 
-      <nav class="accessNav" aria-label="Acessos">
+      <nav class="accessNav" aria-label="Aprofundamento">
         <a class="accessLink" href="../ar/">Acordo de Resultados <span aria-hidden="true">→</span></a>
-        <button id="toggleIndicadores" class="accessLink accessLinkBtn" type="button" aria-expanded="false" aria-controls="todosIndicadores">Todos os indicadores <span aria-hidden="true">↓</span></button>
+        <button id="toggleIndicadores" class="accessLink accessLinkBtn" type="button" aria-expanded="false" aria-controls="todosIndicadores">Todos os indicadores <span aria-hidden="true">→</span></button>
       </nav>
 
       <section id="todosIndicadores" class="indicadoresSection allIndicatorsSection" hidden>

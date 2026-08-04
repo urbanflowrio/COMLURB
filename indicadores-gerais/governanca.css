@@ -1,7 +1,9 @@
 /* ============================================================
    Governança Corporativa — HUB COMLURB
-   Composição executiva V15: hero unificado, zona de alertas em
-   hierarquia editorial, visão estratégica comparativa.
+   Composição executiva V16: Situação Corporativa (mensagem única),
+   Síntese Executiva (até 3 leituras) e Visão Estratégica (lista
+   editorial em ordem institucional fixa, sem barras). Zona de
+   alertas, KPIs e tabela por eixo foram removidos da visão inicial.
    Usa somente os tokens de hub-premium.css (Tema Navy).
    Sem glow, sem ícones decorativos, mínimo de caixas/bordas.
    ============================================================ */
@@ -16,152 +18,70 @@
 .dataStatus{font-size:12px;color:var(--silenciado);white-space:nowrap}
 .governancaError{border:1px solid rgba(239,106,93,.5);background:rgba(239,106,93,.08);color:#ffd3cf;border-radius:16px;padding:16px;margin:14px 0}
 
-/* ---------- Hero: situação + leitura executiva, um único bloco ---------- */
-.hero{
-  padding:8px 0 28px;
-  margin-bottom:8px;
+/* ---------- Situação Corporativa: mensagem única, sem bateria de números ---------- */
+.situacaoCorp{
+  padding:12px 0 30px;
+  margin-bottom:6px;
   border-bottom:1px solid var(--linha);
 }
-.heroEyebrow{
+.situacaoEyebrow{
   font-size:11px;
   font-weight:800;
   letter-spacing:.12em;
   text-transform:uppercase;
   color:var(--silenciado);
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
-.heroHeadline{
+.situacaoHeadline{
   margin:0;
-  font-size:clamp(28px,3.6vw,46px);
+  font-size:clamp(26px,3.2vw,40px);
   font-weight:900;
-  line-height:1.12;
+  line-height:1.16;
   letter-spacing:-.01em;
-  max-width:16ch;
+  max-width:20ch;
 }
-.heroHeadline.red{color:var(--vermelho)}
-.heroHeadline.orange{color:var(--amarelo)}
-.heroHeadline.green{color:var(--verde)}
-.heroLeitura{
+.situacaoSubtext{
   max-width:62ch;
   margin:16px 0 0;
-  padding-left:16px;
-  border-left:2px solid var(--linha);
-  color:var(--texto);
+  color:var(--silenciado);
   font-size:15px;
   line-height:1.65;
 }
-.heroStats{
-  display:flex;
-  flex-wrap:wrap;
-  gap:22px;
-  margin-top:20px;
-  color:var(--silenciado);
-  font-size:13px;
-}
-.heroStats strong{color:var(--texto);font-weight:900;font-size:14px}
 
-/* ---------- Zona de alertas: linhas executivas, não tabela ---------- */
-.alertZone{padding:26px 0;border-bottom:1px solid var(--linha)}
-.alertZoneHead{margin-bottom:16px}
-.alertZoneHead h2{font-size:20px}
-.alertZoneHead p{margin:4px 0 0;color:var(--silenciado);font-size:13px}
-
-.alertStack{display:flex;flex-direction:column}
-.alertItem{
-  display:flex;
-  align-items:flex-start;
-  gap:16px;
-  padding:16px 4px;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  cursor:pointer;
-  background:transparent;
-  transition:.14s;
-}
-.alertStack .alertItem:last-child{border-bottom:0}
-.alertItem:hover,.alertItem:focus-visible{background:rgba(255,255,255,.02);outline:none}
-.alertItem .tag{flex:0 0 auto;margin-top:2px}
-.alertItemBody{min-width:0;flex:1}
-.alertItemName{
-  font-size:15px;
-  font-weight:800;
+/* ---------- Síntese executiva: até três leituras curtas, sem cards ---------- */
+.sinteseExec{padding:26px 0;border-bottom:1px solid var(--linha)}
+.sinteseExec h2{font-size:16px;margin:0 0 14px;font-weight:800}
+.sinteseList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.sinteseList li{
+  padding-left:16px;
+  border-left:2px solid var(--linha);
   color:var(--texto);
-  line-height:1.35;
+  font-size:14px;
+  line-height:1.55;
 }
-.alertItemGroup{
-  margin-left:10px;
-  color:var(--silenciado);
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-}
-.alertItemMeta{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:baseline;
-  gap:12px;
-  margin-top:6px;
-  font-size:13px;
-}
-.alertItemValue{font-weight:950;font-size:15px}
-.alertItemValue.red{color:var(--vermelho)}
-.alertItemValue.orange{color:var(--amarelo)}
-.alertItemRef,.alertItemTrend{color:var(--silenciado)}
+.sinteseEmpty{color:var(--silenciado);font-size:13px;padding-left:16px}
 
-/* Primeiro item (mais grave): destaque tipográfico, sem caixa nova */
-.alertItemLead{padding-top:18px;padding-bottom:22px}
-.alertItemLead .alertItemName{font-size:20px}
-.alertItemLead .alertItemValue{font-size:22px}
-.alertItemLead .tag{margin-top:5px}
-
-.alertEmpty{padding:16px 4px;color:var(--silenciado);font-size:14px}
-.alertEmpty strong{display:block;color:var(--texto);font-size:15px;margin-bottom:4px}
-
-.verTodosAlertasBtn{margin-top:14px}
-.quietLink{
-  background:none;
-  border:0;
-  padding:0;
-  color:var(--azul2);
-  font-size:13px;
-  font-weight:800;
-  cursor:pointer;
-}
-.quietLink:hover{text-decoration:underline}
-
-/* ---------- Visão estratégica: comparação por área, barras proporcionais ---------- */
-.strategicView{padding:26px 0;border-bottom:1px solid var(--linha)}
-.strategicHead{margin-bottom:16px}
-.strategicHead h2{font-size:20px}
-.strategicHead p{margin:4px 0 0;color:var(--silenciado);font-size:13px}
-
-.strategicRows{display:flex;flex-direction:column}
-.strategicRow{
+/* ---------- Visão estratégica: lista editorial comparativa, ordem institucional ---------- */
+.visaoEstrategica{padding:26px 0;border-bottom:1px solid var(--linha)}
+.visaoEstrategica h2{font-size:16px;margin:0 0 16px;font-weight:800}
+.grupoBlocks{display:flex;flex-direction:column}
+.grupoBloco{
+  padding:14px 4px;
+  border-bottom:1px solid rgba(255,255,255,.06);
   display:grid;
-  grid-template-columns:180px minmax(80px,1fr) 190px auto;
-  align-items:center;
-  gap:16px;
-  padding:12px 4px;
-  border-bottom:1px solid rgba(255,255,255,.05);
+  grid-template-columns:190px 1fr 96px;
+  column-gap:16px;
+  row-gap:6px;
+  align-items:baseline;
 }
-.strategicRows .strategicRow:last-child{border-bottom:0}
-.strategicRowLabel{font-size:13px;font-weight:800;color:var(--texto)}
-.strategicRowBar{display:flex;align-items:center}
-.strategicRowTrack{
-  height:8px;
-  border-radius:4px;
-  background:rgba(255,255,255,.06);
-  overflow:hidden;
-  display:flex;
-}
-.strategicRowSeg{height:100%;display:block}
-.strategicRowSeg.crit{background:var(--vermelho)}
-.strategicRowSeg.att{background:var(--amarelo)}
-.strategicRowStatus{font-size:12px;white-space:nowrap}
-.strategicRowFlagCrit{color:var(--vermelho);font-weight:800}
-.strategicRowFlagAtt{color:var(--amarelo);font-weight:800}
-.strategicRowOk{color:var(--silenciado)}
-.strategicRowTotal{color:var(--silenciado);font-size:12px;text-align:right;white-space:nowrap}
+.grupoBlocks .grupoBloco:last-child{border-bottom:0}
+.grupoBlocoNome{font-size:13.5px;font-weight:800;color:var(--texto)}
+.grupoBlocoQtd{font-size:13px;color:var(--texto)}
+.grupoBlocoTendencia{font-size:12px;font-weight:800;text-align:right;text-transform:uppercase;letter-spacing:.04em}
+.grupoBlocoTendencia.melhora{color:var(--verde)}
+.grupoBlocoTendencia.estavel{color:var(--silenciado)}
+.grupoBlocoTendencia.piora{color:var(--texto)}
+.grupoBlocoComplemento{grid-column:1/-1;font-size:12px;color:var(--silenciado);line-height:1.55}
 
 /* ---------- Acessos: navegação secundária, sem ícones nem caixas ---------- */
 .accessNav{
@@ -237,12 +157,13 @@
 @media(max-width:1100px){
   .governancaToolbar{align-items:stretch;flex-direction:column}
   .indicatorGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .strategicRow{grid-template-columns:140px minmax(60px,1fr) 170px auto}
+  .grupoBloco{grid-template-columns:150px 1fr 90px}
 }
 @media(max-width:900px){
   .indicatorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .strategicRow{grid-template-columns:1fr;gap:6px;padding:14px 4px}
-  .strategicRowStatus,.strategicRowTotal{text-align:left}
+  .grupoBloco{grid-template-columns:1fr auto;gap:4px 12px;padding:14px 4px}
+  .grupoBlocoNome{grid-column:1/-1}
+  .grupoBlocoTendencia{text-align:left}
   .detailsToolbar{grid-template-columns:1fr 190px}
 }
 @media(max-width:600px){
@@ -251,7 +172,5 @@
   .months{grid-template-columns:repeat(3,1fr)}
   .sectionHeader{align-items:flex-start;gap:8px}
   .detailsToolbar{grid-template-columns:1fr}
-  .heroLeitura{padding-left:12px}
   .accessNav{gap:20px;flex-wrap:wrap}
-  .alertItemMeta{gap:8px 12px}
 }

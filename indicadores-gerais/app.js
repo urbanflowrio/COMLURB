@@ -34,7 +34,7 @@
     atendimento: 'Atendimento ao Cidadão',
     sustentabilidade: 'Sustentabilidade',
     financeiro_receita: 'Financeiro e Receita',
-    outros: 'Outros'
+    outros: 'Outros indicadores'
   };
   const GRUPO_ORDEM = ['pessoas_seguranca', 'operacao', 'atendimento', 'sustentabilidade', 'financeiro_receita', 'outros'];
 
@@ -476,83 +476,168 @@
     return r;
   }
 
-  function tituloSituacao(r) {
-    const total = r.red + r.orange;
-    if (!total) return 'Nenhum indicador exige intervenção imediata';
-    const plural = total === 1 ? 'indicador exige' : 'indicadores exigem';
-    const verbo = r.red > 0 ? 'ação prioritária' : 'acompanhamento';
-    return `${total} ${plural} ${verbo}`;
-  }
+  // ------------------------------------------------------------------
+  // V16 — Situação Corporativa / Síntese Executiva / Visão Estratégica
+  //
+  // Substitui renderHero + renderZonaAlertas + renderVisaoEstrategica (barras).
+  // agruparPorTema (contagem simples) foi substituída por contarPorGrupo,
+  // que separa acompanhamento (críticos + atenção) de sem meta e calcula
+  // a tendência predominante do grupo. resumoStatus e statusTag continuam
+  // usados pela camada "Todos os indicadores".
+  // ------------------------------------------------------------------
 
-  // Hero: situação geral e leitura executiva como um único bloco narrativo,
-  // não duas caixas empilhadas. renderHero substitui renderSituacaoGeral +
-  // renderLeituraExecutiva da V14; a lógica de cálculo (resumoStatus,
-  // agruparPorTema, principalMovimento) não muda, só a apresentação conjunta.
-  function renderHero(kpis) {
-    const r = resumoStatus(kpis);
-    const cor = r.red > 0 ? 'red' : r.orange > 0 ? 'orange' : 'green';
-    const headline = document.getElementById('heroHeadline');
-    headline.className = `heroHeadline ${cor}`;
-    headline.textContent = tituloSituacao(r);
+  function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Dentro da meta'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
 
-    document.getElementById('heroEyebrow').textContent =
-      `Situação da Companhia · ${anoSelecionado === 'comparar' ? `Comparativo ${anoComparacao()} × ${anoPrincipal()}` : anoPrincipal()}`;
-
-    document.getElementById('heroLeitura').textContent = leituraExecutivaTexto(kpis, r);
-
-    document.getElementById('heroStats').innerHTML =
-      `<span><strong>${r.percentualMeta === null ? '—' : r.percentualMeta + '%'}</strong> aderência</span>` +
-      `<span><strong>${r.percentualCobertura === null ? '—' : r.percentualCobertura + '%'}</strong> cobertura</span>` +
-      `<span>${r.red} crítico${r.red === 1 ? '' : 's'} · ${r.orange} em atenção · ${r.sem} sem meta</span>`;
-  }
-
-  function agruparPorTema(kpis) {
+  // Contagem por grupo institucional. acompanhamento = críticos + atenção
+  // (regra obrigatória: sem meta NUNCA entra nessa contagem). tendencia é o
+  // sinal predominante entre os indicadores do grupo que têm variação
+  // calculada (favoravel true = melhora, false = piora); empate ou ausência
+  // de dados resulta em 'estavel'.
+  function contarPorGrupo(kpis) {
     const grupos = new Map();
-    GRUPO_ORDEM.forEach(g => grupos.set(g, { total: 0, red: 0, orange: 0, sem: 0 }));
+    GRUPO_ORDEM.forEach(g => grupos.set(g, {
+      grupo: g, label: GRUPO_LABEL[g],
+      total: 0, criticos: 0, atencao: 0, dentroMeta: 0, semMeta: 0,
+      melhoraCount: 0, pioraCount: 0
+    }));
     kpis.forEach(k => {
       const g = GRUPO_EIXO[k.eixo] || 'outros';
       const acc = grupos.get(g);
       acc.total++;
-      if (k.status.cor === 'red') acc.red++;
-      else if (k.status.cor === 'orange') acc.orange++;
-      else if (!k.status.cor) acc.sem++;
+      if (k.status.cor === 'red') acc.criticos++;
+      else if (k.status.cor === 'orange') acc.atencao++;
+      else if (k.status.cor === 'green') acc.dentroMeta++;
+      else acc.semMeta++;
+      if (k.variacao && k.variacao.favoravel === true) acc.melhoraCount++;
+      else if (k.variacao && k.variacao.favoravel === false) acc.pioraCount++;
+    });
+    grupos.forEach(acc => {
+      acc.acompanhamento = acc.criticos + acc.atencao;
+      acc.tendencia = acc.pioraCount > acc.melhoraCount ? 'piora' : acc.melhoraCount > acc.pioraCount ? 'melhora' : 'estavel';
     });
     return grupos;
   }
 
-  function principalMovimento(kpis, favoravel) {
-    const candidatos = kpis.filter(k => k.variacao && k.variacao.favoravel === favoravel);
-    if (!candidatos.length) return null;
-    return candidatos.sort((a, b) =>
-      (PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || '']) ||
-      a.indicador.localeCompare(b.indicador, 'pt-BR')
-    )[0];
+  // Blocos exibidos na Visão Estratégica: ordem institucional fixa
+  // (GRUPO_ORDEM, sem reordenar por gravidade). Grupos com total 0 não
+  // aparecem; 'outros' só aparece se houver indicador de fato classificado
+  // como Outros — garante que nenhum indicador fique invisível.
+  function blocosVisaoEstrategica(kpis) {
+    const grupos = contarPorGrupo(kpis);
+    return GRUPO_ORDEM.map(g => grupos.get(g)).filter(g => g.total > 0);
   }
 
-  function leituraExecutivaTexto(kpis, resumo) {
-    const grupos = agruparPorTema(kpis);
-    let piorGrupo = null;
-    grupos.forEach((g, nome) => { if (g.red > 0 && (!piorGrupo || g.red > piorGrupo.g.red)) piorGrupo = { nome, g }; });
+  // Ajuste 1 (aprovado): quando acompanhamento é 0, a leitura qualitativa
+  // não pode dizer genericamente "sem desvios relevantes" — precisa
+  // diferenciar se os indicadores foram avaliados dentro da meta, se estão
+  // sem meta formal, ou se é uma mistura das duas coisas. Quando
+  // acompanhamento > 0, a leitura de acompanhamento existente é mantida.
+  //
+  // quantitativo e semMetaTexto vêm separados (não mais concatenados em
+  // uma única frase) para a Visão Estratégica em 3 colunas: quantitativo
+  // é a 2ª coluna, semMetaTexto vira a linha complementar abaixo da linha.
+  function resumoGrupo(g) {
+    let situacao;
+    if (g.acompanhamento > 0) {
+      situacao = g.tendencia === 'piora' ? 'Situação em atenção, com piora recente em parte dos indicadores.'
+        : g.tendencia === 'melhora' ? 'Situação em acompanhamento, com melhora recente em parte dos indicadores.'
+        : 'Situação em acompanhamento, sem alteração relevante no período.';
+    } else if (g.semMeta === 0) {
+      situacao = 'Indicadores avaliados dentro da meta no período.';
+    } else if (g.dentroMeta === 0) {
+      situacao = 'Indicadores sem meta formal para classificação no período.';
+    } else {
+      situacao = 'Sem desvios classificados, com parte dos indicadores ainda sem meta.';
+    }
 
-    const frases = [];
-    frases.push(piorGrupo
-      ? `${piorGrupo.g.red} indicador${piorGrupo.g.red === 1 ? '' : 'es'} crítico${piorGrupo.g.red === 1 ? '' : 's'} concentrado${piorGrupo.g.red === 1 ? '' : 's'} em ${GRUPO_LABEL[piorGrupo.nome]}.`
-      : 'Nenhum indicador crítico no recorte selecionado.');
+    const quantitativo = `${g.acompanhamento} de ${g.total} indicador${g.total === 1 ? '' : 'es'} demanda${g.acompanhamento === 1 ? '' : 'm'} acompanhamento.`;
+    const semMetaTexto = g.semMeta > 0
+      ? `${g.semMeta} indicador${g.semMeta === 1 ? '' : 'es'} permanece${g.semMeta === 1 ? '' : 'm'} sem meta definida.`
+      : '';
 
-    const melhora = principalMovimento(kpis, true);
-    const piora = principalMovimento(kpis, false);
-    const movimentos = [];
-    if (melhora) movimentos.push(`melhora em ${melhora.indicador}`);
-    if (piora) movimentos.push(`piora em ${piora.indicador}`);
-    if (movimentos.length) frases.push(`Destaque: ${movimentos.join('; ')}.`);
-
-    const r = resumo || resumoStatus(kpis);
-    if (r.sem) frases.push(`${r.sem} indicador${r.sem === 1 ? '' : 'es'} ${r.sem === 1 ? 'não possui' : 'não possuem'} meta definida, sem indicar problema de desempenho.`);
-
-    return frases.slice(0, 3).join(' ');
+    return { situacao, quantitativo, semMetaTexto };
   }
 
-  function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Dentro da meta'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
+  // Concentração principal para a Situação Corporativa: grupo(s) com maior
+  // acompanhamento (críticos + atenção). Mais de dois grupos empatados no
+  // topo vira leitura genérica ("vários eixos de atuação") para não inflar
+  // a frase com uma lista longa.
+  function concentracaoPrincipal(kpis) {
+    const grupos = Array.from(contarPorGrupo(kpis).values()).filter(g => g.acompanhamento > 0);
+    if (!grupos.length) return { grupos: [], multiplos: false, piora: false };
+    const max = Math.max(...grupos.map(g => g.acompanhamento));
+    const topo = grupos.filter(g => g.acompanhamento === max);
+    if (topo.length > 2) return { grupos: [], multiplos: true, piora: topo.some(g => g.tendencia === 'piora') };
+    return { grupos: topo.map(g => g.label), multiplos: false, piora: topo.some(g => g.tendencia === 'piora') };
+  }
+
+  // Ajuste 3 (aprovado): o vocabulário do subtexto depende da composição
+  // real do desvio — "desvios críticos" quando há pelo menos um crítico,
+  // "pontos de acompanhamento" quando há só atenção. Quando não há nem
+  // crítico nem atenção, a frase não pode soar como "está tudo bem" se
+  // ainda existem indicadores sem meta — nesse caso o texto permanece
+  // neutro e menciona a pendência de classificação em vez de elogiar o
+  // desempenho.
+  function gerarSituacaoCorporativa(kpis) {
+    const totalCriticos = kpis.filter(k => k.status.cor === 'red').length;
+    const totalAtencao = kpis.filter(k => k.status.cor === 'orange').length;
+    const totalSemMeta = kpis.filter(k => !k.status.cor).length;
+    const qtd = totalCriticos + totalAtencao;
+    const concentracao = concentracaoPrincipal(kpis);
+    const headline = qtd === 0
+      ? 'Nenhum indicador em situação de desvio no período'
+      : `${qtd} indicador${qtd === 1 ? '' : 'es'} demanda${qtd === 1 ? '' : 'm'} acompanhamento prioritário`;
+    const termoDesvio = totalCriticos > 0 ? 'desvios críticos' : 'pontos de acompanhamento';
+
+    let subtext;
+    if (qtd === 0) {
+      subtext = totalSemMeta === 0
+        ? 'Os indicadores acompanhados estão dentro da meta no período.'
+        : `Nenhum indicador crítico ou em atenção no período. ${totalSemMeta} indicador${totalSemMeta === 1 ? '' : 'es'} permanece${totalSemMeta === 1 ? '' : 'm'} sem meta definida, sem avaliação de desempenho.`;
+    } else if (concentracao.multiplos) {
+      subtext = `Os principais ${termoDesvio} estão distribuídos entre vários eixos de atuação${concentracao.piora ? ', com piora recente em parte dos indicadores acompanhados.' : '.'}`;
+    } else if (!concentracao.grupos.length) {
+      subtext = `Os indicadores acompanhados não apresentam concentração relevante de ${termoDesvio} no período.`;
+    } else {
+      subtext = `Os principais ${termoDesvio} estão concentrados em ${concentracao.grupos.join(' e ')}${concentracao.piora ? ', com piora recente em parte dos indicadores acompanhados.' : '.'}`;
+    }
+    return { qtd, headline, subtext, concentracao };
+  }
+
+  // Síntese executiva: até 3 fatos, cada um de um tipo diferente da
+  // abertura (melhora / piora / acompanhamento contínuo). A linha de piora
+  // é omitida quando o mesmo grupo e o mesmo fato (piora) já foram citados
+  // na Situação Corporativa — regra obrigatória contra repetição.
+  function gerarSinteseExecutiva(kpis, situacao) {
+    const grupos = Array.from(contarPorGrupo(kpis).values()).filter(g => g.total > 0);
+    const porOrdem = (a, b) => GRUPO_ORDEM.indexOf(a.grupo) - GRUPO_ORDEM.indexOf(b.grupo);
+    const linhas = [];
+    const usados = new Set();
+
+    const candidatosMelhora = grupos.filter(g => g.melhoraCount > 0).sort((a, b) => (b.melhoraCount - a.melhoraCount) || porOrdem(a, b));
+    if (candidatosMelhora.length) {
+      const g = candidatosMelhora[0];
+      linhas.push(`${g.label} apresentou evolução positiva no período.`);
+      usados.add(g.grupo);
+    }
+
+    const concentracaoRepeteGrupo = g => situacao && situacao.concentracao && situacao.concentracao.piora &&
+      situacao.concentracao.grupos.includes(g.label);
+    const candidatosPiora = grupos.filter(g => g.pioraCount > 0 && !concentracaoRepeteGrupo(g)).sort((a, b) => (b.pioraCount - a.pioraCount) || porOrdem(a, b));
+    if (candidatosPiora.length) {
+      const g = candidatosPiora[0];
+      linhas.push(`${g.label} apresentou piora no período, concentrando parte dos desvios recentes.`);
+      usados.add(g.grupo);
+    }
+
+    const candidatosContinuo = grupos.filter(g => g.acompanhamento > 0 && g.tendencia === 'estavel' && !usados.has(g.grupo)).sort(porOrdem);
+    if (candidatosContinuo.length) {
+      const g = candidatosContinuo[0];
+      linhas.push(`${g.label} segue em acompanhamento, sem alteração relevante no período.`);
+    }
+
+    return linhas.slice(0, 3);
+  }
 
   function cardHTML(k) {
     const tag = statusTag(k);
@@ -560,50 +645,23 @@
     return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
-  function referenciaResumida(k) {
-    if (k.meta === null || k.meta === undefined) return 'sem meta cadastrada';
-    return `meta ${formatValorIndicador(k, k.meta)}`;
-  }
+  const TENDENCIA_LABEL = { piora: 'Piora', melhora: 'Melhora', estavel: 'Estável' };
 
-  // Linha executiva de alerta: hierarquia tipográfica (nome > valor > referência/tendência),
-  // não colunas de tabela. O primeiro item da lista (mais grave) recebe destaque visual maior.
-  function alertRowHTML(k, lead) {
-    const tag = statusTag(k);
-    const movimento = k.variacao ? k.variacao.texto : 'Sem comparação mensal disponível';
-    const grupo = GRUPO_LABEL[GRUPO_EIXO[k.eixo] || 'outros'];
-    return `<article class="alertItem${lead ? ' alertItemLead' : ''}" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-label="Abrir ficha de ${esc(k.indicador)}">
-      <span class="tag ${tag[0]}">${esc(tag[1])}</span>
-      <div class="alertItemBody">
-        <div class="alertItemName">${esc(k.indicador)}<span class="alertItemGroup">${esc(grupo)}</span></div>
-        <div class="alertItemMeta">
-          <span class="alertItemValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</span>
-          <span class="alertItemRef">${esc(referenciaResumida(k))}</span>
-          <span class="alertItemTrend">${esc(movimento)}</span>
-        </div>
-      </div>
-    </article>`;
-  }
-
-  // Visão estratégica: linha com barra proporcional (total de indicadores do grupo),
-  // ordenada por gravidade — não cinco cards de peso igual.
-  function estrategicoRowHTML(nome, g, maxTotal) {
-    const larguraTotal = maxTotal ? Math.max(6, Math.round((g.total / maxTotal) * 100)) : 0;
-    const larguraRed = g.total ? (g.red / g.total) * 100 : 0;
-    const larguraOrange = g.total ? (g.orange / g.total) * 100 : 0;
-    const partes = [];
-    if (g.red) partes.push(`<span class="strategicRowFlagCrit">${g.red} crítico${g.red === 1 ? '' : 's'}</span>`);
-    if (g.orange) partes.push(`<span class="strategicRowFlagAtt">${g.orange} em atenção</span>`);
-    const status = partes.length ? partes.join(' · ') : '<span class="strategicRowOk">Sem alertas</span>';
-    return `<div class="strategicRow">
-      <div class="strategicRowLabel">${esc(nome)}</div>
-      <div class="strategicRowBar" style="--w:${larguraTotal}%">
-        <div class="strategicRowTrack" style="width:${larguraTotal}%">
-          <span class="strategicRowSeg crit" style="width:${larguraRed}%"></span>
-          <span class="strategicRowSeg att" style="width:${larguraOrange}%"></span>
-        </div>
-      </div>
-      <div class="strategicRowStatus">${status}</div>
-      <div class="strategicRowTotal">${g.total} indicador${g.total === 1 ? '' : 'es'}${g.sem ? ` · ${g.sem} sem meta` : ''}</div>
+  // Ajuste 2 (aprovado): linha em 3 colunas (nome / quantitativo de
+  // acompanhamento / tendência predominante), sem tabela administrativa e
+  // sem card. A leitura qualitativa (Ajuste 1) e a frase de sem meta ficam
+  // abaixo, como texto complementar menor e neutro.
+  function grupoBlocoHTML(g) {
+    const resumo = resumoGrupo(g);
+    // Quando o grupo é 100% sem meta, a leitura qualitativa já cobre isso
+    // por completo — não repetir a contagem de sem meta na mesma linha.
+    const semMetaJaCoberto = g.acompanhamento === 0 && g.dentroMeta === 0;
+    const complemento = [resumo.situacao, semMetaJaCoberto ? '' : resumo.semMetaTexto].filter(Boolean).join(' ');
+    return `<div class="grupoBloco">
+      <div class="grupoBlocoNome">${esc(g.label)}</div>
+      <div class="grupoBlocoQtd">${esc(resumo.quantitativo)}</div>
+      <div class="grupoBlocoTendencia ${esc(g.tendencia)}">${esc(TENDENCIA_LABEL[g.tendencia])}</div>
+      <div class="grupoBlocoComplemento">${esc(complemento)}</div>
     </div>`;
   }
 
@@ -618,58 +676,33 @@
   }
 
   function vincularCards(container) {
-    container.querySelectorAll('.indCard, .alertItem').forEach(card => {
+    container.querySelectorAll('.indCard').forEach(card => {
       const open = () => { const k = KPIDATA.find(x => x.indicador === card.dataset.indicador); if (k) abrirDrawer(k); };
       card.addEventListener('click', open);
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
     });
   }
 
-  function alertasOrdenados(kpis) {
-    return kpis
-      .filter(k => k.status.cor === 'red' || k.status.cor === 'orange')
-      .sort((a, b) => {
-        const statusDiff = PRIORIDADE_STATUS[a.status.cor] - PRIORIDADE_STATUS[b.status.cor];
-        if (statusDiff) return statusDiff;
-        const da = distanciaMetaValor(a), db = distanciaMetaValor(b);
-        const distDiff = (db === null ? -1 : db) - (da === null ? -1 : da);
-        if (distDiff) return distDiff;
-        const pioraA = a.variacao && a.variacao.favoravel === false ? 0 : 1;
-        const pioraB = b.variacao && b.variacao.favoravel === false ? 0 : 1;
-        return pioraA - pioraB;
-      });
+  function renderSituacaoCorporativa(kpis) {
+    const situacao = gerarSituacaoCorporativa(kpis);
+    document.getElementById('situacaoEyebrow').textContent =
+      `Situação Corporativa · ${anoSelecionado === 'comparar' ? `Comparativo ${anoComparacao()} × ${anoPrincipal()}` : anoPrincipal()}`;
+    document.getElementById('situacaoHeadline').textContent = situacao.headline;
+    document.getElementById('situacaoSubtext').textContent = situacao.subtext;
+    return situacao;
   }
 
-  function renderZonaAlertas(kpis) {
-    const alertas = alertasOrdenados(kpis);
-    const container = document.getElementById('zonaAlertasContainer');
-    const botao = document.getElementById('verTodosAlertas');
-    if (!alertas.length) {
-      container.innerHTML = '<div class="alertEmpty"><strong>Nenhum indicador crítico ou em atenção no recorte.</strong><span>A situação geral está sob controle.</span></div>';
-      botao.hidden = true;
-      return;
-    }
-    container.innerHTML = alertas.slice(0, 6).map((k, i) => alertRowHTML(k, i === 0)).join('');
-    vincularCards(container);
-    botao.hidden = alertas.length <= 6;
+  function renderSinteseExecutiva(kpis, situacao) {
+    const linhas = gerarSinteseExecutiva(kpis, situacao);
+    const container = document.getElementById('sinteseList');
+    container.innerHTML = linhas.length
+      ? linhas.map(texto => `<li>${esc(texto)}</li>`).join('')
+      : '<li class="sinteseEmpty">Sem leituras adicionais no período selecionado.</li>';
   }
 
-  // Visão estratégica: substitui o "painel estratégico" (grade de cards) da V14.
-  // Grupos ordenados por gravidade (críticos, depois atenção, depois total), barra
-  // proporcional ao total de indicadores do grupo — leitura comparativa, não cards iguais.
   function renderVisaoEstrategica(kpis) {
-    const grupos = agruparPorTema(kpis);
-    const linhas = GRUPO_ORDEM
-      .map(g => ({ nome: GRUPO_LABEL[g], dados: grupos.get(g) }))
-      .filter(item => item.dados.total)
-      .sort((a, b) =>
-        (b.dados.red - a.dados.red) ||
-        (b.dados.orange - a.dados.orange) ||
-        (b.dados.total - a.dados.total)
-      );
-    const maxTotal = linhas.reduce((max, item) => Math.max(max, item.dados.total), 0);
-    document.getElementById('painelEstrategicoContainer').innerHTML =
-      linhas.map(item => estrategicoRowHTML(item.nome, item.dados, maxTotal)).join('');
+    const blocos = blocosVisaoEstrategica(kpis);
+    document.getElementById('visaoEstrategicaLista').innerHTML = blocos.map(grupoBlocoHTML).join('');
   }
 
   function renderIndicadores(kpis) {
@@ -741,8 +774,8 @@
 
   function render() {
     KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
-    renderHero(KPIDATA);
-    renderZonaAlertas(KPIDATA);
+    const situacao = renderSituacaoCorporativa(KPIDATA);
+    renderSinteseExecutiva(KPIDATA, situacao);
     renderVisaoEstrategica(KPIDATA);
     renderIndicadores(KPIDATA);
     salvarFiltros();
@@ -757,18 +790,8 @@
       const aberto = !section.hidden;
       section.hidden = aberto;
       e.currentTarget.setAttribute('aria-expanded', String(!aberto));
-      e.currentTarget.innerHTML = aberto ? 'Ver todos os indicadores <span aria-hidden="true">↓</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
+      e.currentTarget.innerHTML = aberto ? 'Todos os indicadores <span aria-hidden="true">→</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
       if (!aberto) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    document.getElementById('verTodosAlertas').addEventListener('click', () => {
-      statusAtual = 'alertas';
-      document.getElementById('filtroStatus').value = 'alertas';
-      const section = document.getElementById('todosIndicadores');
-      section.hidden = false;
-      document.getElementById('toggleIndicadores').setAttribute('aria-expanded', 'true');
-      document.getElementById('toggleIndicadores').innerHTML = 'Recolher indicadores <span aria-hidden="true">↑</span>';
-      renderIndicadores(KPIDATA);
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     document.getElementById('drawerClose').addEventListener('click', fecharDrawer); document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDrawer(); });
   }
@@ -800,6 +823,13 @@
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, indicadorCTR, agruparPorTema, tituloSituacao, leituraExecutivaTexto, referenciaResumida, alertasOrdenados };
+  window.GOVERNANCA_TEST_API = {
+    normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases,
+    numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra,
+    atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento,
+    variacaoTemporal, sentidoAmigavel, resumoStatus, indicadorCTR,
+    contarPorGrupo, blocosVisaoEstrategica, resumoGrupo, concentracaoPrincipal, gerarSituacaoCorporativa, gerarSinteseExecutiva,
+    GRUPO_ORDEM, GRUPO_LABEL
+  };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

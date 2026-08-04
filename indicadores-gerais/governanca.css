@@ -1,109 +1,257 @@
-.governancaApp{padding-bottom:24px}.arAccess{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 14px;padding:16px 18px;border:1px solid var(--linha);border-radius:18px;background:linear-gradient(135deg,rgba(75,134,189,.10),rgba(13,31,54,.92))}.arAccessContent{display:flex;align-items:center;gap:14px;min-width:0}.arAccessIcon{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border:1px solid rgba(91,155,213,.48);border-radius:13px;background:rgba(91,155,213,.10);color:#c9e3fb;font-size:13px;font-weight:950;letter-spacing:.08em}.arAccessLabel{margin-bottom:3px;color:#9fc7ea;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.arAccess h2{margin:0;font-size:18px;line-height:1.2}.arAccess p{margin:5px 0 0;color:var(--silenciado);font-size:12px;line-height:1.45}.arAccessLink{flex:0 0 auto;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 14px;text-decoration:none;white-space:nowrap}.arAccessLink span{font-size:16px;line-height:1}.governancaToolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:10px 0 16px}.governancaFilters{flex:1;grid-template-columns:190px minmax(260px,1.35fr) 190px;margin:0}.toolbarActions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.homeLink{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 14px}.dataStatus{font-size:12px;color:var(--silenciado);white-space:nowrap}.governancaError{border:1px solid rgba(239,106,93,.5);background:rgba(239,106,93,.08);color:#ffd3cf;border-radius:16px;padding:16px;margin:14px 0}.situacaoPanel,.radarPanel{min-height:0;margin-bottom:14px}.govNote{border:1px solid rgba(167,139,250,.35);background:rgba(167,139,250,.08);border-radius:14px;padding:14px 16px;color:var(--texto);font-size:14px;line-height:1.55}.radarRow{display:grid;grid-template-columns:minmax(190px,1.2fr) minmax(220px,2fr) 72px 132px;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.06)}.radarRow:last-child{border-bottom:0}.radarName b{display:block;font-size:14px}.radarName span,.radarComposition{display:block;color:var(--silenciado);font-size:12px;line-height:1.4;margin-top:4px}.radarPct{text-align:right;font-weight:900}.tag.insuf{border-color:#6d5ba0;color:#c2b2ff}.sectionHeader{display:flex;align-items:flex-end;justify-content:space-between;margin:22px 0 12px}.sectionHeader h2{font-size:22px}.sectionHeader p{margin:5px 0 0;color:var(--silenciado);font-size:13px}.eixoPanel{margin-bottom:14px;min-height:0}.indicatorGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.indCard{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:165px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:.18s}.indCard:hover{transform:translateY(-2px);border-color:var(--azul)}.indCardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.indCard h3{font-size:14px;line-height:1.35;margin:0}.indValue{font-size:clamp(28px,2.3vw,38px);font-weight:950;line-height:1;margin:18px 0 8px}.indValue.green{color:var(--verde)}.indValue.orange{color:var(--amarelo)}.indValue.red{color:var(--vermelho)}.indNote{font-size:12px;line-height:1.45;color:#c7d8ee}.indAction{border-top:1px solid rgba(255,255,255,.07);padding-top:10px;margin-top:14px;color:var(--silenciado);font-size:11px;text-transform:uppercase;font-weight:800;letter-spacing:.05em}.drawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.48);opacity:0;pointer-events:none;transition:.18s;z-index:90}.drawerOverlay.open{opacity:1;pointer-events:auto}.drawer{position:fixed;top:0;right:0;width:min(560px,94vw);height:100vh;background:var(--bg);border-left:1px solid var(--linha);box-shadow:-18px 0 50px rgba(0,0,0,.42);transform:translateX(102%);transition:.22s;z-index:100;padding:24px;overflow:auto}.drawer.open{transform:translateX(0)}.drawerClose{float:right;width:40px;height:40px;border:1px solid var(--linha);background:var(--painel);color:var(--texto);border-radius:10px;cursor:pointer}.drawerKicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#b8d4f2;font-weight:900;margin-bottom:10px}.drawer h2{font-size:26px;line-height:1.15;margin:0 52px 18px 0}.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detailBox{border:1px solid var(--linha);background:var(--painel);border-radius:14px;padding:13px}.detailBox small{display:block;color:var(--silenciado);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:900;margin-bottom:7px}.detailBox b{font-size:17px;line-height:1.35}.drawerCyclesTitle{margin-top:24px}.months{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.monthCell{border:1px solid var(--linha);background:var(--painel);border-radius:10px;padding:10px;text-align:center}.monthCell small{display:block;color:var(--silenciado);font-size:10px;margin-bottom:4px}.monthCell b{font-size:12px}@media(max-width:1100px){.governancaToolbar{align-items:stretch;flex-direction:column}.governancaFilters{grid-template-columns:repeat(2,minmax(0,1fr))}.indicatorGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:900px){.radarRow{grid-template-columns:1fr 1.5fr 70px}.radarStatus{grid-column:1/-1}.indicatorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.arAccess{align-items:flex-start;flex-direction:column}.arAccessLink{width:100%}.governancaFilters,.indicatorGrid,.detailGrid{grid-template-columns:1fr}.radarRow{grid-template-columns:1fr 72px}.radarTrack{grid-column:1/-1}.radarStatus{grid-column:1/-1}.months{grid-template-columns:repeat(3,1fr)}}
+/* ============================================================
+   Governança Corporativa — HUB COMLURB
+   Composição executiva V15: hero unificado, zona de alertas em
+   hierarquia editorial, visão estratégica comparativa.
+   Usa somente os tokens de hub-premium.css (Tema Navy).
+   Sem glow, sem ícones decorativos, mínimo de caixas/bordas.
+   ============================================================ */
 
-.indTrend{margin-top:8px;font-size:12px;font-weight:600;line-height:1.4;color:var(--silenciado)}.detailBox.semantic-positive{border-color:rgba(120,170,163,.52);background:rgba(120,170,163,.06)}.detailBox.semantic-positive>small,.detailBox.semantic-positive>b{color:var(--verde)}.detailBox.semantic-negative{border-color:rgba(239,106,93,.52);background:rgba(239,106,93,.06)}.detailBox.semantic-negative>small,.detailBox.semantic-negative>b{color:var(--vermelho)}.detailBox.semantic-warning{border-color:rgba(255,160,43,.55);background:rgba(255,160,43,.08)}.detailBox.semantic-warning>small,.detailBox.semantic-warning>b{color:var(--amarelo)}.detailBox.semantic-neutral{border-color:var(--linha)}.detailBoxWide{grid-column:1/-1}.yearCycles{margin-top:16px}.yearCycles:first-child{margin-top:0}.yearCyclesTitle{font-size:13px;font-weight:900;color:var(--texto);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--linha)}
+.governancaApp{padding-bottom:24px}
 
-.indAchievement{margin-top:2px;margin-bottom:6px;color:var(--silenciado);font-size:12px;font-weight:700;line-height:1.35}.indAchievement::before{content:'Meta · ';color:#8fa8c4;font-weight:600}
+/* ---------- Cabeçalho / toolbar ---------- */
+.governancaToolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:10px 0 20px}
+.governancaFilters{grid-template-columns:190px;max-width:190px;margin:0}
+.toolbarActions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.homeLink{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 14px}
+.dataStatus{font-size:12px;color:var(--silenciado);white-space:nowrap}
+.governancaError{border:1px solid rgba(239,106,93,.5);background:rgba(239,106,93,.08);color:#ffd3cf;border-radius:16px;padding:16px;margin:14px 0}
 
-.detailSupport{display:block;margin-top:8px;color:var(--silenciado);font-size:12px;font-weight:500}
-
-/* V9 — hierarquia executiva: detalhes sob demanda */
-.governancaFilters{grid-template-columns:190px;max-width:190px}
-.sectionHeader{display:flex;align-items:flex-end;justify-content:space-between;margin:22px 0 12px}
-.priorityEmpty{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(120,170,163,.34);background:rgba(120,170,163,.06);border-radius:16px;padding:16px 18px}
-.priorityEmpty strong{font-size:14px}.priorityEmpty span{color:var(--silenciado);font-size:12px;text-align:right}
-.allIndicatorsAccess{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:18px 0 10px;padding:18px;border:1px solid var(--linha);border-radius:18px;background:var(--painel)}
-.allIndicatorsLabel{margin-bottom:4px;color:#9fc7ea;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
-.allIndicatorsAccess h2{margin:0;font-size:18px}.allIndicatorsAccess p{margin:5px 0 0;color:var(--silenciado);font-size:12px;line-height:1.45}
-.allIndicatorsBtn{flex:0 0 auto;min-width:205px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.allIndicatorsSection{scroll-margin-top:16px;margin-top:12px}
-.detailsToolbar{display:grid;grid-template-columns:minmax(280px,1fr) 210px;gap:12px;margin-bottom:14px;padding:14px;border:1px solid var(--linha);border-radius:16px;background:rgba(13,31,54,.7)}
-.allIndicatorsSection[hidden]{display:none!important}
-@media(max-width:900px){.detailsToolbar{grid-template-columns:1fr 190px}}
-@media(max-width:600px){.governancaFilters{max-width:none}.sectionHeader{align-items:flex-start;gap:8px}.detailsToolbar{grid-template-columns:1fr}.priorityEmpty,.allIndicatorsAccess{align-items:flex-start;flex-direction:column}.priorityEmpty span{text-align:left}.allIndicatorsBtn{width:100%}}
-
-.govNote{
-  padding:16px 18px;
-  border-color:rgba(91,155,213,.30);
-  background:rgba(91,155,213,.06);
-  font-size:14px;
+/* ---------- Hero: situação + leitura executiva, um único bloco ---------- */
+.hero{
+  padding:8px 0 28px;
+  margin-bottom:8px;
+  border-bottom:1px solid var(--linha);
+}
+.heroEyebrow{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--silenciado);
+  margin-bottom:10px;
+}
+.heroHeadline{
+  margin:0;
+  font-size:clamp(28px,3.6vw,46px);
+  font-weight:900;
+  line-height:1.12;
+  letter-spacing:-.01em;
+  max-width:16ch;
+}
+.heroHeadline.red{color:var(--vermelho)}
+.heroHeadline.orange{color:var(--amarelo)}
+.heroHeadline.green{color:var(--verde)}
+.heroLeitura{
+  max-width:62ch;
+  margin:16px 0 0;
+  padding-left:16px;
+  border-left:2px solid var(--linha);
+  color:var(--texto);
+  font-size:15px;
   line-height:1.65;
 }
-.detailBox.semantic-positive,.detailBox.semantic-negative,.detailBox.semantic-warning{border-color:var(--linha);background:var(--painel)}
-.detailBox.semantic-positive>small,.detailBox.semantic-positive>b,.detailBox.semantic-negative>small,.detailBox.semantic-negative>b,.detailBox.semantic-warning>small,.detailBox.semantic-warning>b{color:inherit}
-.detailBox b.result-critical{color:var(--vermelho)}
-.detailBox b.result-positive{color:var(--verde)}
-.detailBox b.result-warning{color:var(--amarelo)}
-
-/* V14 — situação geral, zona de alertas e painel estratégico por grupos */
-.situacaoGeralPanel{
+.heroStats{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
   flex-wrap:wrap;
-  gap:14px 24px;
-  margin-bottom:14px;
-  padding:18px 20px;
-  border:1px solid var(--linha);
-  border-radius:18px;
-  background:var(--painel);
-}
-.situacaoBadge{
-  font-size:clamp(18px,2vw,24px);
-  font-weight:950;
-  line-height:1.2;
-}
-.situacaoBadge.red{color:var(--vermelho)}
-.situacaoBadge.orange{color:var(--amarelo)}
-.situacaoBadge.green{color:var(--verde)}
-.situacaoMeta{
-  display:flex;
-  align-items:center;
-  gap:18px;
-  flex-wrap:wrap;
+  gap:22px;
+  margin-top:20px;
   color:var(--silenciado);
   font-size:13px;
 }
-.situacaoMeta strong{color:var(--texto)}
+.heroStats strong{color:var(--texto);font-weight:900;font-size:14px}
 
-.alertList{display:flex;flex-direction:column;gap:8px}
-.alertRow{
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr) auto auto;
-  align-items:center;
-  gap:14px;
-  padding:12px 16px;
-  border:1px solid var(--linha);
-  border-radius:14px;
-  background:var(--painel);
+/* ---------- Zona de alertas: linhas executivas, não tabela ---------- */
+.alertZone{padding:26px 0;border-bottom:1px solid var(--linha)}
+.alertZoneHead{margin-bottom:16px}
+.alertZoneHead h2{font-size:20px}
+.alertZoneHead p{margin:4px 0 0;color:var(--silenciado);font-size:13px}
+
+.alertStack{display:flex;flex-direction:column}
+.alertItem{
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  padding:16px 4px;
+  border-bottom:1px solid rgba(255,255,255,.06);
   cursor:pointer;
-  transition:.16s;
+  background:transparent;
+  transition:.14s;
 }
-.alertRow:hover,.alertRow:focus-visible{border-color:var(--azul);outline:none}
-.alertRowName{min-width:0;font-size:13px;font-weight:800;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.alertRowValue{font-size:15px;font-weight:950}
-.alertRowValue.red{color:var(--vermelho)}
-.alertRowValue.orange{color:var(--amarelo)}
-.alertRowTrend{color:var(--silenciado);font-size:12px;white-space:nowrap}
-.verTodosAlertasBtn{margin-top:12px}
+.alertStack .alertItem:last-child{border-bottom:0}
+.alertItem:hover,.alertItem:focus-visible{background:rgba(255,255,255,.02);outline:none}
+.alertItem .tag{flex:0 0 auto;margin-top:2px}
+.alertItemBody{min-width:0;flex:1}
+.alertItemName{
+  font-size:15px;
+  font-weight:800;
+  color:var(--texto);
+  line-height:1.35;
+}
+.alertItemGroup{
+  margin-left:10px;
+  color:var(--silenciado);
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.alertItemMeta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:12px;
+  margin-top:6px;
+  font-size:13px;
+}
+.alertItemValue{font-weight:950;font-size:15px}
+.alertItemValue.red{color:var(--vermelho)}
+.alertItemValue.orange{color:var(--amarelo)}
+.alertItemRef,.alertItemTrend{color:var(--silenciado)}
 
-.themeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.themeGroupCard{border:1px solid var(--linha);border-radius:16px;background:var(--painel);padding:16px}
-.themeGroupHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.themeGroupHead h3{margin:0;font-size:15px}
-.themeGroupTotal{color:var(--silenciado);font-size:12px;white-space:nowrap}
-.themeGroupAlert{margin-top:10px;font-size:13px;font-weight:800}
-.themeGroupAlert.crit{color:var(--vermelho)}
-.themeGroupAlert.att{color:var(--amarelo)}
-.themeGroupOk{margin-top:10px;color:var(--silenciado);font-size:13px}
-.themeGroupMuted{margin-top:6px;color:var(--silenciado);font-size:11px}
+/* Primeiro item (mais grave): destaque tipográfico, sem caixa nova */
+.alertItemLead{padding-top:18px;padding-bottom:22px}
+.alertItemLead .alertItemName{font-size:20px}
+.alertItemLead .alertItemValue{font-size:22px}
+.alertItemLead .tag{margin-top:5px}
 
+.alertEmpty{padding:16px 4px;color:var(--silenciado);font-size:14px}
+.alertEmpty strong{display:block;color:var(--texto);font-size:15px;margin-bottom:4px}
+
+.verTodosAlertasBtn{margin-top:14px}
+.quietLink{
+  background:none;
+  border:0;
+  padding:0;
+  color:var(--azul2);
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+.quietLink:hover{text-decoration:underline}
+
+/* ---------- Visão estratégica: comparação por área, barras proporcionais ---------- */
+.strategicView{padding:26px 0;border-bottom:1px solid var(--linha)}
+.strategicHead{margin-bottom:16px}
+.strategicHead h2{font-size:20px}
+.strategicHead p{margin:4px 0 0;color:var(--silenciado);font-size:13px}
+
+.strategicRows{display:flex;flex-direction:column}
+.strategicRow{
+  display:grid;
+  grid-template-columns:180px minmax(80px,1fr) 190px auto;
+  align-items:center;
+  gap:16px;
+  padding:12px 4px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.strategicRows .strategicRow:last-child{border-bottom:0}
+.strategicRowLabel{font-size:13px;font-weight:800;color:var(--texto)}
+.strategicRowBar{display:flex;align-items:center}
+.strategicRowTrack{
+  height:8px;
+  border-radius:4px;
+  background:rgba(255,255,255,.06);
+  overflow:hidden;
+  display:flex;
+}
+.strategicRowSeg{height:100%;display:block}
+.strategicRowSeg.crit{background:var(--vermelho)}
+.strategicRowSeg.att{background:var(--amarelo)}
+.strategicRowStatus{font-size:12px;white-space:nowrap}
+.strategicRowFlagCrit{color:var(--vermelho);font-weight:800}
+.strategicRowFlagAtt{color:var(--amarelo);font-weight:800}
+.strategicRowOk{color:var(--silenciado)}
+.strategicRowTotal{color:var(--silenciado);font-size:12px;text-align:right;white-space:nowrap}
+
+/* ---------- Acessos: navegação secundária, sem ícones nem caixas ---------- */
+.accessNav{
+  display:flex;
+  gap:28px;
+  padding:20px 0 4px;
+  margin-bottom:8px;
+}
+.accessLink{
+  background:none;
+  border:0;
+  padding:0;
+  text-decoration:none;
+  color:var(--silenciado);
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.14s;
+}
+.accessLink:hover{color:var(--texto)}
+.accessLink span{margin-left:4px}
+
+/* ---------- Camada analítica (todos os indicadores) ---------- */
+.sectionHeader{display:flex;align-items:flex-end;justify-content:space-between;margin:22px 0 12px}
+.sectionHeader h2{font-size:22px}
+.sectionHeader p{margin:5px 0 0;color:var(--silenciado);font-size:13px}
+.allIndicatorsSection{scroll-margin-top:16px;margin-top:8px}
+.allIndicatorsSection[hidden]{display:none!important}
+.detailsToolbar{display:grid;grid-template-columns:minmax(280px,1fr) 210px;gap:12px;margin-bottom:14px;padding:14px;border:1px solid var(--linha);border-radius:16px;background:rgba(13,31,54,.7)}
+.eixoPanel{margin-bottom:14px;min-height:0}
+.indicatorGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.indCard{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px;min-height:165px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:.18s}
+.indCard:hover{transform:translateY(-2px);border-color:var(--azul)}
+.indCardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.indCard h3{font-size:14px;line-height:1.35;margin:0}
+.indValue{font-size:clamp(28px,2.3vw,38px);font-weight:950;line-height:1;margin:18px 0 8px}
+.indValue.green{color:var(--verde)}
+.indValue.orange{color:var(--amarelo)}
+.indValue.red{color:var(--vermelho)}
+.indNote{font-size:12px;line-height:1.45;color:#c7d8ee}
+.indTrend{margin-top:8px;font-size:12px;font-weight:600;line-height:1.4;color:var(--silenciado)}
+.indAchievement{margin-top:2px;margin-bottom:6px;color:var(--silenciado);font-size:12px;font-weight:700;line-height:1.35}
+.indAchievement::before{content:'Meta · ';color:#8fa8c4;font-weight:600}
+.indAction{border-top:1px solid rgba(255,255,255,.07);padding-top:10px;margin-top:14px;color:var(--silenciado);font-size:11px;text-transform:uppercase;font-weight:800;letter-spacing:.05em}
+
+/* ---------- Ficha lateral (drawer) ---------- */
+.drawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.48);opacity:0;pointer-events:none;transition:.18s;z-index:90}
+.drawerOverlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;width:min(560px,94vw);height:100vh;background:var(--bg);border-left:1px solid var(--linha);box-shadow:-18px 0 50px rgba(0,0,0,.42);transform:translateX(102%);transition:.22s;z-index:100;padding:24px;overflow:auto}
+.drawer.open{transform:translateX(0)}
+.drawerClose{float:right;width:40px;height:40px;border:1px solid var(--linha);background:var(--painel);color:var(--texto);border-radius:10px;cursor:pointer}
+.drawerKicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#b8d4f2;font-weight:900;margin-bottom:10px}
+.drawer h2{font-size:26px;line-height:1.15;margin:0 52px 18px 0}
+.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detailBox{border:1px solid var(--linha);background:var(--painel);border-radius:14px;padding:13px}
+.detailBox small{display:block;color:var(--silenciado);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:900;margin-bottom:7px}
+.detailBox b{font-size:17px;line-height:1.35}
+.detailBox b.result-critical{color:var(--vermelho)}
+.detailBox b.result-positive{color:var(--verde)}
+.detailBox b.result-warning{color:var(--amarelo)}
+.detailBoxWide{grid-column:1/-1}
+.detailSupport{display:block;margin-top:8px;color:var(--silenciado);font-size:12px;font-weight:500}
+.drawerCyclesTitle{margin-top:24px}
+.yearCycles{margin-top:16px}
+.yearCycles:first-child{margin-top:0}
+.yearCyclesTitle{font-size:13px;font-weight:900;color:var(--texto);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--linha)}
+.months{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.monthCell{border:1px solid var(--linha);background:var(--painel);border-radius:10px;padding:10px;text-align:center}
+.monthCell small{display:block;color:var(--silenciado);font-size:10px;margin-bottom:4px}
+.monthCell b{font-size:12px}
+
+/* ---------- Responsivo ---------- */
+@media(max-width:1100px){
+  .governancaToolbar{align-items:stretch;flex-direction:column}
+  .indicatorGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .strategicRow{grid-template-columns:140px minmax(60px,1fr) 170px auto}
+}
 @media(max-width:900px){
-  .themeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .alertRow{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:none}
-  .alertRowTrend{grid-column:1/-1}
+  .indicatorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .strategicRow{grid-template-columns:1fr;gap:6px;padding:14px 4px}
+  .strategicRowStatus,.strategicRowTotal{text-align:left}
+  .detailsToolbar{grid-template-columns:1fr 190px}
 }
 @media(max-width:600px){
-  .situacaoGeralPanel{flex-direction:column;align-items:flex-start}
-  .themeGrid{grid-template-columns:1fr}
-  .alertRow{grid-template-columns:1fr}
+  .governancaFilters{max-width:none}
+  .indicatorGrid,.detailGrid{grid-template-columns:1fr}
+  .months{grid-template-columns:repeat(3,1fr)}
+  .sectionHeader{align-items:flex-start;gap:8px}
+  .detailsToolbar{grid-template-columns:1fr}
+  .heroLeitura{padding-left:12px}
+  .accessNav{gap:20px;flex-wrap:wrap}
+  .alertItemMeta{gap:8px 12px}
 }

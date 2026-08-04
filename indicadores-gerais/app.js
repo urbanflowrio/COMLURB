@@ -484,15 +484,25 @@
     return `${total} ${plural} ${verbo}`;
   }
 
-  function renderSituacaoGeral(kpis) {
+  // Hero: situação geral e leitura executiva como um único bloco narrativo,
+  // não duas caixas empilhadas. renderHero substitui renderSituacaoGeral +
+  // renderLeituraExecutiva da V14; a lógica de cálculo (resumoStatus,
+  // agruparPorTema, principalMovimento) não muda, só a apresentação conjunta.
+  function renderHero(kpis) {
     const r = resumoStatus(kpis);
     const cor = r.red > 0 ? 'red' : r.orange > 0 ? 'orange' : 'green';
-    const badge = document.getElementById('situacaoBadge');
-    badge.className = `situacaoBadge ${cor}`;
-    badge.textContent = tituloSituacao(r);
-    document.getElementById('situacaoMeta').innerHTML =
-      `<span>Aderência <strong>${r.percentualMeta === null ? '—' : r.percentualMeta + '%'}</strong></span>` +
-      `<span>Cobertura <strong>${r.percentualCobertura === null ? '—' : r.percentualCobertura + '%'}</strong></span>` +
+    const headline = document.getElementById('heroHeadline');
+    headline.className = `heroHeadline ${cor}`;
+    headline.textContent = tituloSituacao(r);
+
+    document.getElementById('heroEyebrow').textContent =
+      `Situação da Companhia · ${anoSelecionado === 'comparar' ? `Comparativo ${anoComparacao()} × ${anoPrincipal()}` : anoPrincipal()}`;
+
+    document.getElementById('heroLeitura').textContent = leituraExecutivaTexto(kpis, r);
+
+    document.getElementById('heroStats').innerHTML =
+      `<span><strong>${r.percentualMeta === null ? '—' : r.percentualMeta + '%'}</strong> aderência</span>` +
+      `<span><strong>${r.percentualCobertura === null ? '—' : r.percentualCobertura + '%'}</strong> cobertura</span>` +
       `<span>${r.red} crítico${r.red === 1 ? '' : 's'} · ${r.orange} em atenção · ${r.sem} sem meta</span>`;
   }
 
@@ -519,7 +529,7 @@
     )[0];
   }
 
-  function renderLeituraExecutiva(kpis) {
+  function leituraExecutivaTexto(kpis, resumo) {
     const grupos = agruparPorTema(kpis);
     let piorGrupo = null;
     grupos.forEach((g, nome) => { if (g.red > 0 && (!piorGrupo || g.red > piorGrupo.g.red)) piorGrupo = { nome, g }; });
@@ -536,10 +546,10 @@
     if (piora) movimentos.push(`piora em ${piora.indicador}`);
     if (movimentos.length) frases.push(`Destaque: ${movimentos.join('; ')}.`);
 
-    const r = resumoStatus(kpis);
+    const r = resumo || resumoStatus(kpis);
     if (r.sem) frases.push(`${r.sem} indicador${r.sem === 1 ? '' : 'es'} ${r.sem === 1 ? 'não possui' : 'não possuem'} meta definida, sem indicar problema de desempenho.`);
 
-    document.getElementById('govNote').textContent = frases.slice(0, 3).join(' ');
+    return frases.slice(0, 3).join(' ');
   }
 
   function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Dentro da meta'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
@@ -550,27 +560,51 @@
     return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
-  function alertRowHTML(k) {
+  function referenciaResumida(k) {
+    if (k.meta === null || k.meta === undefined) return 'sem meta cadastrada';
+    return `meta ${formatValorIndicador(k, k.meta)}`;
+  }
+
+  // Linha executiva de alerta: hierarquia tipográfica (nome > valor > referência/tendência),
+  // não colunas de tabela. O primeiro item da lista (mais grave) recebe destaque visual maior.
+  function alertRowHTML(k, lead) {
     const tag = statusTag(k);
     const movimento = k.variacao ? k.variacao.texto : 'Sem comparação mensal disponível';
-    return `<article class="alertRow" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-label="Abrir ficha de ${esc(k.indicador)}">
+    const grupo = GRUPO_LABEL[GRUPO_EIXO[k.eixo] || 'outros'];
+    return `<article class="alertItem${lead ? ' alertItemLead' : ''}" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-label="Abrir ficha de ${esc(k.indicador)}">
       <span class="tag ${tag[0]}">${esc(tag[1])}</span>
-      <span class="alertRowName" title="${esc(k.indicador)}">${esc(k.indicador)}</span>
-      <span class="alertRowValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</span>
-      <span class="alertRowTrend">${esc(movimento)}</span>
+      <div class="alertItemBody">
+        <div class="alertItemName">${esc(k.indicador)}<span class="alertItemGroup">${esc(grupo)}</span></div>
+        <div class="alertItemMeta">
+          <span class="alertItemValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</span>
+          <span class="alertItemRef">${esc(referenciaResumida(k))}</span>
+          <span class="alertItemTrend">${esc(movimento)}</span>
+        </div>
+      </div>
     </article>`;
   }
 
-  function grupoCardHTML(nome, g) {
+  // Visão estratégica: linha com barra proporcional (total de indicadores do grupo),
+  // ordenada por gravidade — não cinco cards de peso igual.
+  function estrategicoRowHTML(nome, g, maxTotal) {
+    const larguraTotal = maxTotal ? Math.max(6, Math.round((g.total / maxTotal) * 100)) : 0;
+    const larguraRed = g.total ? (g.red / g.total) * 100 : 0;
+    const larguraOrange = g.total ? (g.orange / g.total) * 100 : 0;
     const partes = [];
-    if (g.red) partes.push(`${g.red} crítico${g.red === 1 ? '' : 's'}`);
-    if (g.orange) partes.push(`${g.orange} em atenção`);
-    const alertaCls = g.red ? 'crit' : g.orange ? 'att' : '';
-    return `<article class="themeGroupCard">
-      <div class="themeGroupHead"><h3>${esc(nome)}</h3><span class="themeGroupTotal">${g.total} indicador${g.total === 1 ? '' : 'es'}</span></div>
-      ${partes.length ? `<div class="themeGroupAlert ${alertaCls}">${esc(partes.join(' · '))}</div>` : '<div class="themeGroupOk">Sem alertas no recorte</div>'}
-      ${g.sem ? `<div class="themeGroupMuted">${g.sem} sem meta</div>` : ''}
-    </article>`;
+    if (g.red) partes.push(`<span class="strategicRowFlagCrit">${g.red} crítico${g.red === 1 ? '' : 's'}</span>`);
+    if (g.orange) partes.push(`<span class="strategicRowFlagAtt">${g.orange} em atenção</span>`);
+    const status = partes.length ? partes.join(' · ') : '<span class="strategicRowOk">Sem alertas</span>';
+    return `<div class="strategicRow">
+      <div class="strategicRowLabel">${esc(nome)}</div>
+      <div class="strategicRowBar" style="--w:${larguraTotal}%">
+        <div class="strategicRowTrack" style="width:${larguraTotal}%">
+          <span class="strategicRowSeg crit" style="width:${larguraRed}%"></span>
+          <span class="strategicRowSeg att" style="width:${larguraOrange}%"></span>
+        </div>
+      </div>
+      <div class="strategicRowStatus">${status}</div>
+      <div class="strategicRowTotal">${g.total} indicador${g.total === 1 ? '' : 'es'}${g.sem ? ` · ${g.sem} sem meta` : ''}</div>
+    </div>`;
   }
 
   function filtrar(kpis) {
@@ -584,7 +618,7 @@
   }
 
   function vincularCards(container) {
-    container.querySelectorAll('.indCard, .alertRow').forEach(card => {
+    container.querySelectorAll('.indCard, .alertItem').forEach(card => {
       const open = () => { const k = KPIDATA.find(x => x.indicador === card.dataset.indicador); if (k) abrirDrawer(k); };
       card.addEventListener('click', open);
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
@@ -611,21 +645,31 @@
     const container = document.getElementById('zonaAlertasContainer');
     const botao = document.getElementById('verTodosAlertas');
     if (!alertas.length) {
-      container.innerHTML = '<div class="priorityEmpty"><strong>Nenhum indicador crítico ou em atenção no recorte.</strong><span>A situação geral está sob controle.</span></div>';
+      container.innerHTML = '<div class="alertEmpty"><strong>Nenhum indicador crítico ou em atenção no recorte.</strong><span>A situação geral está sob controle.</span></div>';
       botao.hidden = true;
       return;
     }
-    container.innerHTML = alertas.slice(0, 6).map(alertRowHTML).join('');
+    container.innerHTML = alertas.slice(0, 6).map((k, i) => alertRowHTML(k, i === 0)).join('');
     vincularCards(container);
     botao.hidden = alertas.length <= 6;
   }
 
-  function renderPainelEstrategico(kpis) {
+  // Visão estratégica: substitui o "painel estratégico" (grade de cards) da V14.
+  // Grupos ordenados por gravidade (críticos, depois atenção, depois total), barra
+  // proporcional ao total de indicadores do grupo — leitura comparativa, não cards iguais.
+  function renderVisaoEstrategica(kpis) {
     const grupos = agruparPorTema(kpis);
-    const html = GRUPO_ORDEM
-      .map(g => { const dados = grupos.get(g); return dados.total ? grupoCardHTML(GRUPO_LABEL[g], dados) : ''; })
-      .join('');
-    document.getElementById('painelEstrategicoContainer').innerHTML = html;
+    const linhas = GRUPO_ORDEM
+      .map(g => ({ nome: GRUPO_LABEL[g], dados: grupos.get(g) }))
+      .filter(item => item.dados.total)
+      .sort((a, b) =>
+        (b.dados.red - a.dados.red) ||
+        (b.dados.orange - a.dados.orange) ||
+        (b.dados.total - a.dados.total)
+      );
+    const maxTotal = linhas.reduce((max, item) => Math.max(max, item.dados.total), 0);
+    document.getElementById('painelEstrategicoContainer').innerHTML =
+      linhas.map(item => estrategicoRowHTML(item.nome, item.dados, maxTotal)).join('');
   }
 
   function renderIndicadores(kpis) {
@@ -697,10 +741,9 @@
 
   function render() {
     KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
-    renderSituacaoGeral(KPIDATA);
-    renderLeituraExecutiva(KPIDATA);
+    renderHero(KPIDATA);
     renderZonaAlertas(KPIDATA);
-    renderPainelEstrategico(KPIDATA);
+    renderVisaoEstrategica(KPIDATA);
     renderIndicadores(KPIDATA);
     salvarFiltros();
   }
@@ -757,6 +800,6 @@
     } finally { HUB.loading.hide('loading'); }
   }
 
-  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, indicadorCTR, agruparPorTema, tituloSituacao };
+  window.GOVERNANCA_TEST_API = { normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases, numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra, atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento, variacaoTemporal, sentidoAmigavel, resumoStatus, indicadorCTR, agruparPorTema, tituloSituacao, leituraExecutivaTexto, referenciaResumida, alertasOrdenados };
   if (!window.GOVERNANCA_DISABLE_AUTO_INIT) init();
 })();

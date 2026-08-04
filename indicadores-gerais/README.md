@@ -113,3 +113,21 @@ A página inicial passou a exibir apenas indicadores críticos e em atenção, l
 - Removida a seção Situação por eixo da camada executiva.
 - Centro de Situação substituído por Leitura executiva objetiva.
 - Grade prioritária usa 4 cards por linha no desktop e centraliza a última linha.
+
+## Ajuste V15 — recomposição visual executiva
+
+Reescrita integral do HTML e CSS da visão inicial (index.html, governanca.css). Nenhuma função de cálculo, avaliação, carregamento de dados ou exclusão do AR foi alterada; a mudança é de apresentação.
+
+**Estrutura nova:**
+1. Cabeçalho.
+2. Hero — situação corporativa e leitura executiva unificadas num único bloco (headline + parágrafo + linha de estatísticas discretas), sem caixa separada para a leitura executiva.
+3. Zona de alertas — lista de linhas executivas com hierarquia tipográfica (o alerta mais grave recebe destaque maior), não grade nem tabela. Inclui referência resumida (meta) e período de comparação por item. Nenhum indicador é excluído por pertencer à agenda estrutural — todo crítico/atenção pode aparecer.
+4. Visão estratégica — comparação por grupo com barra proporcional ao total de indicadores e segmento colorido para a fração crítica/atenção, ordenada por gravidade (não cinco cards de peso igual). Mostra apenas contagens agregadas por grupo; nomes individuais ficam só na Zona de Alertas.
+5. Acessos — navegação secundária em texto simples (Acordo de Resultados, Todos os indicadores), sem ícones nem caixas.
+6. Ficha lateral, inalterada.
+
+**Regra de cor:** vermelho só no valor e na palavra "Crítico"; amarelo só em "Atenção"; verde só em melhora; "Sem meta" sempre neutro. Sem glow, sem gradientes decorativos, sem ícones.
+
+**Funções novas:** `renderHero`, `leituraExecutivaTexto` (substitui `renderSituacaoGeral`/`renderLeituraExecutiva`), `referenciaResumida`, `estrategicoRowHTML`, `renderVisaoEstrategica` (substitui `renderPainelEstrategico`/`grupoCardHTML`). `alertRowHTML` ganhou o parâmetro `lead` e passou a incluir referência de meta.
+
+**Preservado:** toda a lógica de negócio listada nas versões anteriores, incluindo `alertasOrdenados` sem exclusão por agenda estrutural — decisão confirmada nesta rodada.

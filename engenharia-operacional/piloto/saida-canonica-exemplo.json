@@ -1,7 +1,7 @@
 {
   "schemaVersion": "series_operacionais.dte.v1",
   "sourceId": "DTE_RELATORIO_GERAL",
-  "capturedAt": "2026-07-16T13:59:57.046Z",
+  "capturedAt": "2026-08-12T12:59:15.356Z",
   "referencePeriod": "2025-05..2026-05",
   "domain": "series_operacionais",
   "payload": {
@@ -32956,6 +32956,6 @@
     "origem": "DTE_RELATORIO_GERAL",
     "etapa": "validator",
     "versaoPipeline": "1.0.0",
-    "timestamp": "2026-07-16T13:59:57.044Z"
+    "timestamp": "2026-08-12T12:59:15.356Z"
   }
 }

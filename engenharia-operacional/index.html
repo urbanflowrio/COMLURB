@@ -243,6 +243,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <!-- COMPONENTES HUB -->
+<script src="../assets/components/hub-core.js"></script>
+<script src="../assets/components/hub-sources.js"></script>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-cards.js"></script>
 <script src="../assets/components/hub-charts.js"></script>
@@ -258,7 +260,7 @@ const CONFIG = {
     ind2025: "https://docs.google.com/spreadsheets/d/e/2PACX-1vROyY6mxXqzf0YnRLgXXYtA7pUZ2NlW1VZOWjfEMYLckuJuwoeMSNXyUMnDMuUbxtmKApX1f4D6i4cV/pub?gid=616621942&single=true&output=csv",
     ind2026: "https://docs.google.com/spreadsheets/d/e/2PACX-1vROyY6mxXqzf0YnRLgXXYtA7pUZ2NlW1VZOWjfEMYLckuJuwoeMSNXyUMnDMuUbxtmKApX1f4D6i4cV/pub?gid=677183986&single=true&output=csv",
     // Relatório mensal DTE (formato largo, janela rolante de 13 meses)
-    relatorio: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRW3qUjO5-0OHC_La0rNi-JhPGw-5hF0TKSA9cl1OVUqYUCUsHbPTdu9YFQHr6RFlnNH3nVlenSLPWM/pub?gid=0&single=true&output=csv",
+    relatorio: HUB.sources.fonte("DTE_RELATORIO_GERAL").url,
     // Utilização da Frota (formato tabular)
     coletaDomiciliar: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1898137343&single=true&output=csv",
     coletaSeletiva: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1599396593&single=true&output=csv",

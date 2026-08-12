@@ -697,9 +697,9 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
   grupo("Fase 7B · integridade — nenhum arquivo de produção ou do piloto da Fase 4 foi alterado");
 
   var HASHES_ESPERADOS = {
-    "ar/index.html": "2d3d3de583ddfc467ae288d3e1f1bababf7524ffb75d0e09269ae4c2f664afa7",
-    "ar/ar.js": "74d4b62ceb1cedf0449bda88ea654af70a5df0ab002e1118e99d57702c1e9d06",
-    "ar/ar-config.js": "5dba37641ffea687c91f9d07e003a331c7938d411f684bcd888fc592f635f3a4",
+    "ar/index.html": "68ba4c09ac2fa8f25013417c4cfadc85df2cd7b1726bb9affee8756f63fb29a3",
+    "ar/ar.js": "1a12d3aab2e59dfa955b0cd07f657cc4fe1c73846189ecc259eed2f733fc6d80",
+    "ar/ar-config.js": "467fef0c23615b4b1eb0b184c33768686dd607fc12faaf6583b41de10764c230",
     "ar/piloto/index.html": "31dd0475e401a1763e87691f88e782279d547541a376f5e3e43bc975afa349da",
     "ar/piloto/harness.js": "2d99d20cdd5673630da0a4d505c636c58f3c9326497db2cd1cd53f2ca50621ef",
     "ar/piloto/legado-referencia.js": "7f70cfa0caa20c382475d7401a85cfaaccd0f2b7916a986eac9228e3304f66cb",
@@ -712,7 +712,8 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
     "assets/components/hub-snapshot-reader.js": "543994fd9fc99f91176bc3676509d123ed9430a29b54ab3a287834f85ca26104",
     "assets/components/hub-data-source.js": "1f9ebe28dbf978cdcc6574e93b679f8a11118bbf2ef5d5e1103ac5b7fdda7f80",
     "assets/components/hub-utils.js": "4037b280e5240c942c4339fbec1e165392f78fe89ca3331a9e638dcc59024f52",
-    "package.json": "f8a568a7944720e42664041770c923a98488eeea1f315ba6e6d70e9714bfb992"
+    // Baseline atualizado na Fase 8 após inclusão da regressão oficial no package.json.
+    "package.json": "77964a26800f4b9bc4132836aa0309f91298faf82b7aaa4a62ab3246af688620"
   };
   Object.keys(HASHES_ESPERADOS).forEach(function (rel) {
     var abs = path.join(raiz, rel);

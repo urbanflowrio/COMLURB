@@ -147,7 +147,11 @@ async function rodar() {
     "Z03,Estratégica,3,Zero proporcional,toneladas,maior_melhor,1200,0,SOMA,Mensal,\n" +
     "Z04,Estratégica,4,Meta zero (deve continuar null),percentual,maior_melhor,0,50,MEDIA,Mensal,\n";
   var resZero = await HUB.ingest.adapterAR.carregarAR({ fixtures: { AR_2026: FIX_ZERO_MM, AR_MAPEAMENTO: "Código_AR,Indicador_Geral\n", AR_GERAL: "Ano,Indicador\n" } });
-  var DATAZero = HUB.stateAR.montarDataAR(resZero.itens, 7);
+  // O legado usa o mês corrente ao calcular metas proporcionais. O teste
+  // precisa fornecer o mesmo mês ao pipeline novo para continuar válido
+  // durante todo o ano, em vez de ficar congelado no mês em que foi criado.
+  var mesAtualZero = new Date().getMonth() + 1;
+  var DATAZero = HUB.stateAR.montarDataAR(resZero.itens, mesAtualZero);
   var dZ01 = DATAZero.filter(function (d) { return d.codigo === "Z01"; })[0];
   var dZ02 = DATAZero.filter(function (d) { return d.codigo === "Z02"; })[0];
   var dZ03 = DATAZero.filter(function (d) { return d.codigo === "Z03"; })[0];

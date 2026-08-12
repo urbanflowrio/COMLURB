@@ -50,16 +50,8 @@ jobs:
       # que fornece só o DOM stub necessário, sem alterar uma linha de
       # hub-selftest.js e sem depender de Playwright/Puppeteer. Ver
       # snapshot/README.md · "Testes" para o comando local equivalente.
-      - name: Executar suítes obrigatórias (hub-selftest, Fase 4, Fase 5, Fase 6)
-        run: |
-          echo "== hub-selftest (Fases 2/3, via harness Node) =="
-          node testes/executar-hub-selftest-node.js .
-          echo "== Fase 4 =="
-          node testes/testar-fase4.js .
-          echo "== Fase 5 =="
-          node testes/testar-fase5.js .
-          echo "== Fase 6 =="
-          node testes/testar-fase6.js .
+      - name: Executar regressão integral do UrbanFlow Core
+        run: npm test
 
       # testes/testar-fase5.js (Fase 5, já aprovada, não alterada por
       # esta fase) regenera engenharia-operacional/piloto/saida-

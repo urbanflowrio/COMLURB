@@ -7,13 +7,10 @@ window.AR_CONFIG = {
   anoDefault: 2026,
 
   urls: {
-    geral: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",
-
-    ar2026: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",
-
-    mapeamento: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv",
-
-    governanca: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2035928171&single=true&output=csv"
+    geral: window.HUB.sources.fonte("AR_GERAL").url,
+    ar2026: window.HUB.sources.fonte("AR_2026").url,
+    mapeamento: window.HUB.sources.fonte("AR_MAPEAMENTO").url,
+    governanca: window.HUB.sources.fonte("AR_GOVERNANCA").url
   },
 
   status: {

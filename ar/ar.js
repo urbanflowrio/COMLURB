@@ -236,9 +236,9 @@ const BONUS_PERFORMANCE = {ponto: 1, pct: 20};
    FONTES DE DADOS
    ═══════════════════════════════════════════════════════════ */
 const URLS = {
-  geral: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1044100274&single=true&output=csv",
-  ar:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2044729258&single=true&output=csv",
-  map:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv"
+  geral: HUB.sources.fonte("AR_GERAL").url,
+  ar:    HUB.sources.fonte("AR_2026").url,
+  map:   HUB.sources.fonte("AR_MAPEAMENTO").url
 };
 
 const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];

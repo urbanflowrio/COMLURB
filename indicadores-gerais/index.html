@@ -19,46 +19,114 @@
     <div id="hubHeader"></div>
 
     <section class="governancaToolbar" aria-label="Filtros e navegação">
-      <div class="filters governancaFilters">
-        <div class="field"><label for="filtroAno">Período</label><select id="filtroAno"></select></div>
+      <div class="toolbarContext">
+        <span class="contextLabel">Painel corporativo</span>
+        <span class="contextText">Leitura consolidada dos indicadores gerais da Companhia</span>
       </div>
-      <div class="toolbarActions"><a class="actionBtn homeLink" href="../index.html">Voltar para a Home</a><span id="dataStatus" class="dataStatus">Carregando dados</span></div>
+      <div class="toolbarRight">
+        <div class="field periodField"><label for="filtroAno">Período</label><select id="filtroAno"></select></div>
+        <a class="actionBtn homeLink" href="../index.html">Voltar para a Home</a>
+      </div>
     </section>
 
     <div id="loading"></div>
     <div id="errorState" class="governancaError" hidden></div>
 
     <main id="conteudo" hidden>
-      <section class="situacaoCorp" aria-label="Situação Corporativa">
-        <div class="situacaoEyebrow" id="situacaoEyebrow">Situação Corporativa</div>
-        <h1 id="situacaoHeadline" class="situacaoHeadline"></h1>
-        <p id="situacaoSubtext" class="situacaoSubtext"></p>
-      </section>
-
-      <section class="sinteseExec" aria-label="Síntese executiva">
-        <h2>Síntese executiva</h2>
-        <ul id="sinteseList" class="sinteseList"></ul>
-      </section>
-
-      <section class="visaoEstrategica" aria-label="Visão estratégica">
-        <h2>Visão estratégica</h2>
-        <div id="visaoEstrategicaLista" class="grupoBlocks"></div>
-      </section>
-
-      <nav class="accessNav" aria-label="Aprofundamento">
-        <a class="accessLink" href="../ar/">Acordo de Resultados <span aria-hidden="true">→</span></a>
-        <button id="toggleIndicadores" class="accessLink accessLinkBtn" type="button" aria-expanded="false" aria-controls="todosIndicadores">Todos os indicadores <span aria-hidden="true">→</span></button>
-      </nav>
-
-      <section id="todosIndicadores" class="indicadoresSection allIndicatorsSection" hidden>
-        <div class="detailsToolbar">
-          <div class="field searchField"><label for="buscaIndicador">Buscar indicador</label><input id="buscaIndicador" type="search" placeholder="Nome ou eixo"></div>
-          <div class="field"><label for="filtroStatus">Status</label><select id="filtroStatus"><option value="todos">Todos</option><option value="alertas">Críticos e atenção</option><option value="green">Dentro da meta</option><option value="orange">Em atenção</option><option value="red">Críticos</option><option value="sem">Sem leitura</option></select></div>
+      <section class="executiveHero" aria-label="Situação corporativa">
+        <div class="heroTopline">
+          <div>
+            <div class="sectionEyebrow">Situação corporativa</div>
+            <h1 id="heroTitle">Visão consolidada do desempenho institucional</h1>
+          </div>
+          <div class="heroPeriod" id="heroPeriod"></div>
         </div>
-        <div id="indicadoresContainer"></div>
+
+        <div class="corporateScoreboard" id="corporateScoreboard"></div>
+
+        <div class="executiveReadout">
+          <span class="readoutMarker" aria-hidden="true"></span>
+          <div>
+            <div class="readoutLabel">Leitura executiva</div>
+            <h2 id="executiveHeadline"></h2>
+            <p id="executiveSubtext"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="managementSection" aria-label="Desempenho por eixo">
+        <div class="sectionTitleRow">
+          <div>
+            <div class="sectionEyebrow">Leitura transversal</div>
+            <h2>Desempenho por eixo</h2>
+            <p>Situação dos indicadores por dimensão de gestão, sem criação de score sintético.</p>
+          </div>
+        </div>
+        <div id="axisPerformance" class="axisPerformance"></div>
+      </section>
+
+      <section class="decisionGrid" aria-label="Prioridades e movimentos">
+        <article class="decisionPanel priorityPanel">
+          <div class="panelHeading">
+            <div>
+              <div class="sectionEyebrow">Ação gerencial</div>
+              <h2>Prioridades de gestão</h2>
+            </div>
+            <span id="priorityCount" class="panelMeta"></span>
+          </div>
+          <div id="priorityList" class="priorityList"></div>
+        </article>
+
+        <article class="decisionPanel movementPanel">
+          <div class="panelHeading">
+            <div>
+              <div class="sectionEyebrow">Dinâmica recente</div>
+              <h2>Movimentos do período</h2>
+            </div>
+          </div>
+          <div class="movementColumns">
+            <div>
+              <div class="movementTitle positiveTitle">Melhoras</div>
+              <div id="improvementList" class="movementList"></div>
+            </div>
+            <div>
+              <div class="movementTitle negativeTitle">Pontos de atenção</div>
+              <div id="worseningList" class="movementList"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="arGateway" aria-label="Acordo de Resultados">
+        <div>
+          <div class="sectionEyebrow">Módulo relacionado</div>
+          <h2>Acordo de Resultados 2026</h2>
+          <p>Indicadores e metas pactuados no AR são acompanhados em painel próprio.</p>
+        </div>
+        <a class="gatewayLink" href="../ar/">Abrir painel <span aria-hidden="true">→</span></a>
+      </section>
+
+      <section class="allIndicatorsShell" aria-label="Todos os indicadores">
+        <div class="sectionTitleRow indicatorsTitleRow">
+          <div>
+            <div class="sectionEyebrow">Camada analítica</div>
+            <h2>Todos os indicadores</h2>
+            <p>Consulta completa por eixo, status, resultado, meta e histórico.</p>
+          </div>
+          <button id="toggleIndicadores" class="secondaryAction" type="button" aria-expanded="false" aria-controls="todosIndicadores">Explorar indicadores <span aria-hidden="true">↓</span></button>
+        </div>
+
+        <section id="todosIndicadores" class="indicadoresSection allIndicatorsSection" hidden>
+          <div class="detailsToolbar">
+            <div class="field searchField"><label for="buscaIndicador">Buscar indicador</label><input id="buscaIndicador" type="search" placeholder="Nome ou eixo"></div>
+            <div class="field"><label for="filtroStatus">Status</label><select id="filtroStatus"><option value="todos">Todos</option><option value="alertas">Críticos e atenção</option><option value="green">Dentro da meta</option><option value="orange">Em atenção</option><option value="red">Críticos</option><option value="sem">Sem leitura</option></select></div>
+          </div>
+          <div id="indicadoresContainer"></div>
+        </section>
       </section>
     </main>
 
+    <div class="governancaFootnote"><span id="dataStatus" class="dataStatus">Carregando dados</span></div>
     <div id="hubFooter"></div>
   </div>
 

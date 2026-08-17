@@ -705,6 +705,89 @@
     document.getElementById('visaoEstrategicaLista').innerHTML = blocos.map(grupoBlocoHTML).join('');
   }
 
+  function renderExecutiveCockpit(kpis) {
+    const resumo = resumoStatus(kpis);
+    const situacao = gerarSituacaoCorporativa(kpis);
+    const periodo = anoSelecionado === 'comparar' ? `Comparativo ${anoComparacao()} × ${anoPrincipal()}` : anoPrincipal();
+    document.getElementById('heroPeriod').textContent = periodo;
+
+    const pct = valor => resumo.comStatus ? `${Math.round(valor / resumo.comStatus * 100)}% dos avaliados` : 'Sem base classificável';
+    const scorecards = [
+      { cls: '', valor: resumo.total, label: 'Monitorados', support: `${resumo.comStatus} com leitura de meta` },
+      { cls: 'is-green', valor: resumo.green, label: 'Dentro da meta', support: pct(resumo.green) },
+      { cls: 'is-orange', valor: resumo.orange, label: 'Atenção', support: pct(resumo.orange) },
+      { cls: 'is-red', valor: resumo.red, label: 'Críticos', support: pct(resumo.red) },
+      { cls: 'is-muted', valor: resumo.sem, label: 'Sem meta / leitura', support: resumo.sem ? 'Fora da classificação de desempenho' : 'Cobertura completa' }
+    ];
+    document.getElementById('corporateScoreboard').innerHTML = scorecards.map(item => `<div class="scoreItem ${item.cls}"><div class="scoreValue">${esc(item.valor)}</div><div class="scoreLabel">${esc(item.label)}</div><div class="scoreSupport">${esc(item.support)}</div></div>`).join('');
+
+    document.getElementById('executiveHeadline').textContent = situacao.headline;
+    const sintese = gerarSinteseExecutiva(kpis, situacao);
+    document.getElementById('executiveSubtext').textContent = [situacao.subtext, sintese[0] || ''].filter(Boolean).join(' ');
+    return situacao;
+  }
+
+  function statusPill(qtd, label, dotClass) {
+    if (!qtd) return '';
+    return `<span class="statusPill"><span class="statusDot ${dotClass}"></span>${esc(qtd)} ${esc(label)}</span>`;
+  }
+
+  function renderAxisPerformance(kpis) {
+    const grupos = blocosVisaoEstrategica(kpis);
+    document.getElementById('axisPerformance').innerHTML = grupos.map(g => {
+      const pills = [
+        statusPill(g.dentroMeta, 'dentro', 'dotGreen'),
+        statusPill(g.atencao, 'atenção', 'dotOrange'),
+        statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed'),
+        statusPill(g.semMeta, 'sem meta', 'dotMuted')
+      ].filter(Boolean).join('');
+      return `<div class="axisRow"><div><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} monitorado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills || '<span class="statusPill"><span class="statusDot dotMuted"></span>Sem indicadores</span>'}</div><div class="axisTrend ${esc(g.tendencia)}">${esc(TENDENCIA_LABEL[g.tendencia])}</div></div>`;
+    }).join('');
+  }
+
+  function prioridadeOrdenada(kpis) {
+    return kpis.filter(k => k.status.cor === 'red' || k.status.cor === 'orange').sort((a, b) => {
+      const status = PRIORIDADE_STATUS[a.status.cor] - PRIORIDADE_STATUS[b.status.cor];
+      if (status) return status;
+      const da = distanciaMetaValor(a), db = distanciaMetaValor(b);
+      if (da !== null && db !== null && db !== da) return db - da;
+      if (da !== null && db === null) return -1;
+      if (da === null && db !== null) return 1;
+      return a.indicador.localeCompare(b.indicador, 'pt-BR');
+    });
+  }
+
+  function renderPriorities(kpis) {
+    const prioridades = prioridadeOrdenada(kpis);
+    document.getElementById('priorityCount').textContent = prioridades.length ? `${prioridades.length} em acompanhamento` : 'Sem desvios classificados';
+    const container = document.getElementById('priorityList');
+    if (!prioridades.length) {
+      container.innerHTML = '<div class="emptyState">Nenhum indicador crítico ou em atenção no período selecionado.</div>';
+      return;
+    }
+    container.innerHTML = prioridades.slice(0, 5).map(k => {
+      const tag = statusTag(k);
+      return `<div class="priorityRow" data-priority-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="priorityName">${esc(k.indicador)}</div><div class="priorityAxis">${esc(k.eixoLabel)}</div></div><div class="priorityMetric"><b>${esc(formatValorIndicador(k, k.acumulado))}</b><small>Meta ${esc(formatValorIndicador(k, k.meta))}</small></div><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
+    }).join('');
+    container.querySelectorAll('[data-priority-indicador]').forEach(row => {
+      const open = () => { const k = KPIDATA.find(x => x.indicador === row.dataset.priorityIndicador); if (k) abrirDrawer(k); };
+      row.addEventListener('click', open);
+      row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+  }
+
+  function renderMovements(kpis) {
+    const movimentos = kpis.filter(k => k.variacao && k.variacao.favoravel !== null && k.variacao.favoravel !== undefined);
+    const melhoras = movimentos.filter(k => k.variacao.favoravel === true).sort((a, b) => Math.abs(b.variacao.delta || 0) - Math.abs(a.variacao.delta || 0)).slice(0, 3);
+    const pioras = movimentos.filter(k => k.variacao.favoravel === false).sort((a, b) => {
+      const status = PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || ''];
+      return status || Math.abs(b.variacao.delta || 0) - Math.abs(a.variacao.delta || 0);
+    }).slice(0, 3);
+    const html = arr => arr.length ? arr.map(k => `<div class="movementItem"><b>${esc(k.indicador)}</b><span>${esc(k.variacao.texto)}${k.variacao.detalhe ? ` · ${esc(k.variacao.detalhe)}` : ''}</span></div>`).join('') : '<div class="emptyState">Sem movimento relevante calculável.</div>';
+    document.getElementById('improvementList').innerHTML = html(melhoras);
+    document.getElementById('worseningList').innerHTML = html(pioras);
+  }
+
   function renderIndicadores(kpis) {
     const filtrados = filtrar(kpis);
     const html = EIXO_ORDEM.map(eixo => {
@@ -774,9 +857,10 @@
 
   function render() {
     KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
-    const situacao = renderSituacaoCorporativa(KPIDATA);
-    renderSinteseExecutiva(KPIDATA, situacao);
-    renderVisaoEstrategica(KPIDATA);
+    renderExecutiveCockpit(KPIDATA);
+    renderAxisPerformance(KPIDATA);
+    renderPriorities(KPIDATA);
+    renderMovements(KPIDATA);
     renderIndicadores(KPIDATA);
     salvarFiltros();
   }
@@ -790,7 +874,7 @@
       const aberto = !section.hidden;
       section.hidden = aberto;
       e.currentTarget.setAttribute('aria-expanded', String(!aberto));
-      e.currentTarget.innerHTML = aberto ? 'Todos os indicadores <span aria-hidden="true">→</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
+      e.currentTarget.innerHTML = aberto ? 'Explorar indicadores <span aria-hidden="true">↓</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
       if (!aberto) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     document.getElementById('drawerClose').addEventListener('click', fecharDrawer); document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDrawer(); });

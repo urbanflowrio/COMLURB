@@ -1,0 +1,234 @@
+
+.receitaApp{max-width:1800px}
+
+.receitaToolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:stretch;
+  gap:16px;
+  margin:16px 0 20px;
+}
+.toolbarContext{
+  flex:1;
+  min-width:280px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:12px 16px;
+  border:1px solid var(--linha);
+  border-radius:16px;
+  background:var(--painel);
+}
+.contextLabel,.sectionEyebrow,.readoutLabel{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#8fb3d6;
+}
+.contextText{margin-top:3px;color:#dcecff;font-size:13px;font-weight:700}
+
+.toolbarFilters{display:flex;gap:10px;align-items:stretch}
+.compactField{min-width:160px}
+.serviceField{min-width:260px}
+.receitaToolbar .field{margin:0}
+
+.financialHero{
+  background:var(--painel2);
+  border:1px solid var(--linha);
+  border-radius:22px;
+  padding:22px;
+  margin-bottom:16px;
+}
+.sectionTop,.sectionTitleRow,.panelHeading{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+}
+.sectionTop h1,.sectionTitleRow h2,.panelHeading h2{
+  margin:4px 0 0;
+  color:#fff;
+  font-weight:900;
+}
+.sectionTop h1{font-size:24px}
+.sectionTitleRow h2,.panelHeading h2{font-size:20px}
+.sectionTitleRow p,.panelHeading p{
+  margin:5px 0 0;
+  color:var(--silenciado);
+  font-size:12px;
+}
+.periodTag{
+  border:1px solid var(--linha);
+  border-radius:999px;
+  padding:7px 11px;
+  color:#b8d4f2;
+  font-size:11px;
+  font-weight:900;
+}
+
+.financialKpis{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin:18px 0 14px;
+}
+.financialKpis .kpi{min-height:132px}
+
+.executiveReadout{
+  display:grid;
+  grid-template-columns:5px 1fr;
+  gap:14px;
+  align-items:stretch;
+  padding:16px 18px;
+  border:1px solid rgba(130,183,231,.18);
+  border-radius:16px;
+  background:#0a1b31;
+}
+.readoutMarker{
+  width:5px;
+  border-radius:99px;
+  background:linear-gradient(180deg,var(--azul2),#2f67a5);
+}
+.executiveReadout h2{
+  margin:4px 0 3px;
+  font-size:17px;
+  line-height:1.35;
+}
+.executiveReadout p{
+  margin:0;
+  color:var(--silenciado);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.financialGrid{
+  display:grid;
+  grid-template-columns:1.45fr .55fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+.mainChartPanel,.concentrationPanel{min-height:380px}
+.chartBody{height:315px}
+.chartBody canvas{width:100%!important;height:100%!important}
+
+.secretaryBars{display:grid;gap:18px}
+.secretaryRow{display:grid;gap:7px}
+.secretaryTop{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:baseline;
+}
+.secretaryName{font-size:13px;font-weight:900;color:#fff}
+.secretaryShare{font-size:18px;font-weight:950;color:#fff}
+.secretaryValue{font-size:10px;color:var(--silenciado)}
+.secretaryTrack{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:#132840;
+  border:1px solid rgba(130,183,231,.1);
+}
+.secretaryFill{
+  height:100%;
+  background:linear-gradient(90deg,#2f67a5,#5b9bd5);
+  border-radius:999px;
+}
+
+.priorityPanel,.portfolioShell{
+  background:var(--painel);
+  border:1px solid var(--linha);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:16px;
+}
+.panelMeta{
+  color:#9db8d4;
+  font-size:11px;
+  font-weight:800;
+}
+.priorityList{display:grid;gap:10px;margin-top:16px}
+.priorityItem{
+  display:grid;
+  grid-template-columns:minmax(240px,1.4fr) 120px 120px;
+  gap:16px;
+  align-items:center;
+  padding:15px 16px;
+  border:1px solid rgba(130,183,231,.14);
+  border-radius:14px;
+  background:#0a1b31;
+}
+.priorityMain{min-width:0}
+.priorityContract{font-size:12px;font-weight:950;color:#fff}
+.priorityService{
+  margin-top:3px;
+  font-size:11px;
+  color:var(--silenciado);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.priorityPill{
+  display:inline-block;
+  margin-left:7px;
+  padding:3px 7px;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:900;
+  color:#9bc7ef;
+  background:rgba(91,155,213,.12);
+  border:1px solid rgba(91,155,213,.22);
+}
+.metricLabel{
+  display:block;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#8ca8c2;
+}
+.metricValue{
+  display:block;
+  margin-top:3px;
+  font-size:14px;
+  font-weight:950;
+  color:#fff;
+}
+.metricValue.debt{color:#ff9a8f}
+
+.secondaryAction{
+  border:1px solid var(--linha);
+  background:#0a1b31;
+  color:#dcecff;
+  border-radius:14px;
+  padding:10px 13px;
+  font-weight:900;
+  cursor:pointer;
+}
+.portfolioList{display:grid;gap:8px;margin-top:16px}
+.portfolioRow{
+  display:grid;
+  grid-template-columns:minmax(240px,1.4fr) 110px 110px 110px;
+  gap:12px;
+  align-items:center;
+  padding:12px 14px;
+  border-top:1px solid rgba(130,183,231,.12);
+}
+.portfolioRow:first-child{border-top:0}
+.portfolioRow .priorityService{white-space:normal}
+
+@media(max-width:1100px){
+  .receitaToolbar{flex-direction:column}
+  .toolbarFilters{display:grid;grid-template-columns:1fr 1fr auto auto}
+  .financialGrid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .toolbarFilters{grid-template-columns:1fr}
+  .financialKpis{grid-template-columns:1fr}
+  .priorityItem{grid-template-columns:1fr 1fr}
+  .priorityMain{grid-column:1/-1}
+  .portfolioRow{grid-template-columns:1fr 1fr}
+  .portfolioRow>div:first-child{grid-column:1/-1}
+  .sectionTop,.sectionTitleRow,.panelHeading{flex-direction:column}
+}

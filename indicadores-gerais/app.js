@@ -166,17 +166,7 @@
   };
 
   function numeroFlexivel(v) {
-    if (v === undefined || v === null) return null;
-    let texto = clean(v).replace(/R\$/gi, '').replace(/%/g, '').replace(/\s+/g, '');
-    if (!texto || texto === '-') return null;
-    const temVirgula = texto.includes(',');
-    const temPonto = texto.includes('.');
-    if (temVirgula && temPonto) {
-      if (texto.lastIndexOf(',') > texto.lastIndexOf('.')) texto = texto.replace(/\./g, '').replace(',', '.');
-      else texto = texto.replace(/,/g, '');
-    } else if (temVirgula) texto = texto.replace(',', '.');
-    const valor = Number(texto);
-    return Number.isFinite(valor) ? valor : null;
+    return HUB.indicadores.parseNumeroBR(v);
   }
 
   function campoPorAliases(row, aliases) {

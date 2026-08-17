@@ -123,10 +123,32 @@ HUB.indicadores = (function () {
 
   function parseNumeroBR(v) {
     if (v === undefined || v === null) return null;
-    const s = String(v).trim();
+    let s = String(v).trim();
     if (s === '' || s === '-') return null;
-    const n = parseFloat(s.replace(',', '.'));
-    return isNaN(n) ? null : n;
+
+    // Formatação brasileira: ponto como milhar e vírgula como decimal.
+    // Também preserva valores vindos do CSV com ponto decimal (ex.: 2.7).
+    s = s.replace(/R\$/gi, '').replace(/%/g, '').replace(/\s+/g, '');
+    const temVirgula = s.includes(',');
+    const pontos = (s.match(/\./g) || []).length;
+
+    if (temVirgula) {
+      // 1.234,56 -> 1234.56 | 12,5 -> 12.5
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else if (pontos > 1) {
+      // 1.234.567 -> 1234567
+      s = s.replace(/\./g, '');
+    } else if (pontos === 1) {
+      const partes = s.split('.');
+      const inteiros = partes[0].replace(/^[-+]/, '');
+      const decimais = partes[1] || '';
+      // Em bases brasileiras, 2.700 / 66.000 representam milhares.
+      // Já 2.7 / 12.45 continuam sendo decimais válidos.
+      if (/^\d+$/.test(inteiros) && /^\d{3}$/.test(decimais)) s = s.replace('.', '');
+    }
+
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
   }
 
   // pega a linha consolidada de um indicador pra uma diretoria (ou COMLURB) num ano,

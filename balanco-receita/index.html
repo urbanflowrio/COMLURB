@@ -2,60 +2,298 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Contratos de Receita | HUB COMLURB</title>
-<link rel="stylesheet" href="../assets/css/hub-premium.css">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<title>Débitos | Contratos de Receita | HUB COMLURB</title>
+<link rel="stylesheet" href="../../assets/css/hub-premium.css">
 <style>
-.kpiGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.kpi{position:relative;overflow:hidden;min-height:150px;padding:18px;background:var(--painel);border:1px solid var(--linha);border-radius:18px}.kpi:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--azul2)}.kpi.good:before{background:var(--verde)}.kpi.warn:before{background:var(--laranja)}.kpi.risk:before{background:var(--vermelho)}.kpiLabel{font-size:10px;color:#b8d4f2;text-transform:uppercase;letter-spacing:.13em;font-weight:900;line-height:1.4}.kpiValue{margin:14px 0 9px;font-size:clamp(24px,2vw,34px);font-weight:950;letter-spacing:-.045em;line-height:1;white-space:nowrap}.kpiMeta{color:var(--silenciado);font-size:11.5px;line-height:1.45}.delta{font-weight:900}.delta.up{color:#8dd2c9}.delta.down{color:#ffaaa2}
-.executiveGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.panel{background:var(--painel);border:1px solid var(--linha);border-radius:18px;overflow:hidden;min-width:0}.panel.wide{grid-column:1/-1}.panelHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--linha)}.panelHead h2{margin:0;font-size:16px}.panelHead p{margin:4px 0 0;color:var(--silenciado);font-size:11.5px}.panelBody{padding:18px}.chart{height:340px}.chart.tall{height:410px}
-.decision{margin-bottom:14px;padding:20px 22px;border:1px solid #315979;border-radius:18px;background:linear-gradient(135deg,#0b1c31,#102a45);display:grid;grid-template-columns:minmax(0,1.8fr) repeat(3,minmax(130px,.55fr));gap:16px;align-items:center}.decisionLabel{color:#82b7e7;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.decisionText{margin-top:7px;font-size:17px;font-weight:750;line-height:1.45;color:#eef6ff}.decisionFact{padding-left:15px;border-left:1px solid rgba(130,183,231,.25)}.decisionFact span{display:block;color:#91a9c2;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.decisionFact b{display:block;margin-top:6px;font-size:18px;color:#fff}
-.filters.revenueFilters{grid-template-columns:repeat(4,minmax(0,1fr)) auto}.tableWrap{overflow:auto;max-height:600px}.dataTable{width:100%;border-collapse:collapse;min-width:1180px;font-size:11.5px}.dataTable th{position:sticky;top:0;z-index:2;padding:11px 12px;background:#0c2036;border-bottom:1px solid var(--linha);color:#afc7de;text-align:right;font-size:9px;letter-spacing:.08em;text-transform:uppercase}.dataTable th:nth-child(-n+3),.dataTable td:nth-child(-n+3){text-align:left}.dataTable td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-align:right;white-space:nowrap}.dataTable tr:hover td{background:rgba(91,155,213,.045)}.badge{display:inline-flex;padding:3px 7px;border:1px solid rgba(91,155,213,.32);border-radius:999px;background:rgba(91,155,213,.1);color:#c9e5ff;font-size:9px;font-weight:900}.badge.old{border-color:rgba(232,117,53,.4);background:rgba(232,117,53,.1);color:#ffc49e}.empty{padding:32px;text-align:center;color:var(--silenciado)}
-.analyticSummary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.mini{padding:13px 14px;border:1px solid var(--linha);border-radius:14px;background:var(--painel)}.mini span{display:block;color:#9fb4cc;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}.mini b{display:block;margin-top:6px;font-size:18px}
-@media(max-width:1100px){.kpiGrid{grid-template-columns:repeat(2,1fr)}.executiveGrid{grid-template-columns:1fr}.decision{grid-template-columns:1fr 1fr}.decisionText{grid-column:1/-1}.filters.revenueFilters{grid-template-columns:repeat(2,1fr)}.analyticSummary{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.app{padding:14px}.kpiGrid,.analyticSummary,.filters.revenueFilters,.decision{grid-template-columns:1fr}.kpiValue{white-space:normal}.decisionText{grid-column:auto}.decisionFact{padding:10px 0 0;border-left:0;border-top:1px solid rgba(130,183,231,.25)}}
-</style></head>
+.headline{margin-bottom:16px;padding:26px 28px;border:1px solid var(--linha);border-radius:20px;background:linear-gradient(135deg,#0b1c31,#102a45);display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center}
+.headline.crit{border-color:rgba(239,106,93,.45)}.headline.warn{border-color:rgba(255,160,43,.4)}.headline.ok{border-color:rgba(120,170,163,.4)}
+.headlineValue{font-size:clamp(46px,6vw,72px);font-weight:950;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.headlineValue.crit{color:var(--vermelho)}.headlineValue.warn{color:var(--amarelo)}.headlineValue.ok{color:var(--verde)}
+.headlineLabel{font-size:11px;color:#b8d4f2;text-transform:uppercase;letter-spacing:.14em;font-weight:900;margin-bottom:8px}
+.headlineText{font-size:15.5px;line-height:1.5;color:var(--texto)}
+.headlineStatus{display:inline-flex;margin-top:10px;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.headlineStatus.crit{background:rgba(239,106,93,.16);color:#ffb3aa}.headlineStatus.warn{background:rgba(255,160,43,.16);color:#ffcf8f}.headlineStatus.ok{background:rgba(120,170,163,.18);color:#a9d6cd}
+.kpiGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{position:relative;overflow:hidden;padding:18px;background:var(--painel);border:1px solid var(--linha);border-radius:18px}
+.kpi:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--azul2)}
+.kpi.risk:before{background:var(--vermelho)}.kpi.warn:before{background:var(--laranja)}
+.kpiLabel{font-size:10px;color:#b8d4f2;text-transform:uppercase;letter-spacing:.12em;font-weight:900}
+.kpiValue{margin:12px 0 6px;font-size:clamp(20px,2vw,28px);font-weight:950;letter-spacing:-.03em;white-space:nowrap}
+.kpiMeta{color:var(--silenciado);font-size:11.5px;line-height:1.4}
+.panel{background:var(--painel);border:1px solid var(--linha);border-radius:18px;overflow:hidden;margin-bottom:16px}
+.panelHead{padding:16px 18px;border-bottom:1px solid var(--linha)}
+.panelHead h2{margin:0;font-size:16px}.panelHead p{margin:4px 0 0;color:var(--silenciado);font-size:11.5px}
+.panelBody{padding:20px}
+.splitBar{display:flex;height:34px;border-radius:10px;overflow:hidden;border:1px solid var(--linha)}
+.splitBar div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden}
+.splitOld{background:linear-gradient(90deg,#b95023,#e87535);color:#fff}
+.splitCur{background:linear-gradient(90deg,#2f67a5,#5b9bd5);color:#fff}
+.splitLegend{display:flex;gap:22px;margin-top:12px;font-size:12px;color:var(--silenciado)}
+.splitLegend span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:9px;height:9px;border-radius:3px}
+.rankRow{display:grid;grid-template-columns:190px 1fr 64px 80px;gap:12px;align-items:center;margin-bottom:11px}
+.rankName{font-weight:800;font-size:13px;line-height:1.3}
+.rankTrack{height:20px;background:#132941;border-radius:5px;overflow:hidden}
+.rankFill{height:100%}
+.rankFill.crit{background:linear-gradient(90deg,#a83e36,#ef6a5d)}
+.rankFill.warn{background:linear-gradient(90deg,#b95023,#e87535)}
+.rankFill.ok{background:linear-gradient(90deg,#437b76,#78aaa3)}
+.rankPct{text-align:right;font-weight:900;font-size:13px}
+.rankStatus{text-align:right;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.rankStatus.crit{color:#ffb3aa}.rankStatus.warn{color:#ffcf8f}.rankStatus.ok{color:#a9d6cd}
+.concGrid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:18px;align-items:center}
+.concMain b{display:block;font-size:22px;font-weight:950;margin-bottom:4px}
+.concMain span{color:var(--silenciado);font-size:12.5px}
+.concFact{padding-left:18px;border-left:1px solid rgba(130,183,231,.25)}
+.concFact span{display:block;color:#91a9c2;font-size:9.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.concFact b{display:block;margin-top:6px;font-size:24px;color:#fff}
+.decision{margin-bottom:16px;padding:20px 22px;border:1px solid #315979;border-radius:18px;background:linear-gradient(135deg,#0b1c31,#102a45)}
+.decisionLabel{color:#82b7e7;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.decisionText{margin-top:8px;font-size:15.5px;font-weight:600;line-height:1.55;color:#eef6ff}
+.loadingMsg,.errorMsg{padding:40px;text-align:center;color:var(--silenciado)}
+.errorMsg{color:var(--vermelho)}
+@media(max-width:900px){.headline{grid-template-columns:1fr}.kpiGrid{grid-template-columns:1fr}.rankRow{grid-template-columns:120px 1fr 50px 70px}.concGrid{grid-template-columns:1fr}.concFact{border-left:0;border-top:1px solid rgba(130,183,231,.25);padding:12px 0 0}}
+</style>
+</head>
 <body><main class="app">
 <div id="header"></div>
-<section class="screen active" id="screenExecutive">
-<div class="kpiGrid">
-<article class="kpi good"><div class="kpiLabel">Faturamento 2026 até julho</div><div class="kpiValue" id="kpiYtd">—</div><div class="kpiMeta" id="kpiYtdMeta">Total Geral da aba anual.</div></article>
-<article class="kpi"><div class="kpiLabel">Variação contra jan–jul/2025</div><div class="kpiValue" id="kpiVariation">—</div><div class="kpiMeta" id="kpiVariationMeta">Comparação no mesmo período.</div></article>
-<article class="kpi risk"><div class="kpiLabel">Saldo líquido pendente</div><div class="kpiValue" id="kpiDebt">—</div><div class="kpiMeta">Posição atual da carteira aberta.</div></article>
-<article class="kpi warn"><div class="kpiLabel">Pendências anteriores a 2026</div><div class="kpiValue" id="kpiOldShare">—</div><div class="kpiMeta" id="kpiOldMeta">Participação no saldo líquido.</div></article>
+
+<section id="content">
+<div id="stateMsg" class="loadingMsg">Carregando posição de débitos…</div>
+
+<div id="painel" style="display:none">
+
+  <div class="headline" id="headlineBox">
+    <div>
+      <div class="headlineLabel">Débito / Faturado — ciclo corrente</div>
+      <div class="headlineValue" id="headlineValue">—</div>
+      <div class="headlineStatus" id="headlineStatus">—</div>
+    </div>
+    <div class="headlineText" id="headlineText">Calculando posição do ciclo corrente.</div>
+  </div>
+
+  <div class="kpiGrid">
+    <article class="kpi"><div class="kpiLabel">Faturado bruto — ciclo corrente</div><div class="kpiValue" id="kpiFaturado">—</div><div class="kpiMeta" id="kpiFaturadoMeta">—</div></article>
+    <article class="kpi warn"><div class="kpiLabel">Débito líquido — ciclo corrente</div><div class="kpiValue" id="kpiDebitoCorrente">—</div><div class="kpiMeta">Parcela do débito formada no próprio ciclo.</div></article>
+    <article class="kpi risk"><div class="kpiLabel">Débito líquido acumulado</div><div class="kpiValue" id="kpiDebitoTotal">—</div><div class="kpiMeta">Carteira aberta, incluindo exercícios anteriores.</div></article>
+  </div>
+
+  <article class="panel">
+    <div class="panelHead"><h2>Composição do débito acumulado</h2><p>quanto é passivo represado (exercícios anteriores) e quanto é do próprio ciclo</p></div>
+    <div class="panelBody">
+      <div class="splitBar" id="splitBar"></div>
+      <div class="splitLegend">
+        <span><i class="dot" style="background:#e87535"></i> Exercícios anteriores</span>
+        <span><i class="dot" style="background:#5b9bd5"></i> Ciclo corrente</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panelHead"><h2>Débito / faturado por serviço — ciclo corrente</h2><p>ordenado do mais crítico para o mais controlado</p></div>
+    <div class="panelBody" id="rankBody"></div>
+  </article>
+
+  <article class="panel">
+    <div class="panelHead"><h2>Maior concentração de débito</h2><p>contrato com maior participação isolada na carteira acumulada</p></div>
+    <div class="panelBody">
+      <div class="concGrid">
+        <div class="concMain"><b id="concContrato">—</b><span id="concServico">—</span></div>
+        <div class="concFact"><span>Participação no débito total</span><b id="concPct">—</b></div>
+        <div class="concFact"><span>Unidades/CREs atingidas</span><b id="concCres">—</b></div>
+      </div>
+    </div>
+  </article>
+
+  <div class="decision">
+    <div class="decisionLabel">Leitura executiva</div>
+    <div class="decisionText" id="decisionText"></div>
+  </div>
+
 </div>
-<div class="decision"><div><div class="decisionLabel">Leitura executiva</div><div class="decisionText" id="decisionText">Consolidando a posição financeira.</div></div><div class="decisionFact"><span>SME na carteira</span><b id="factSme">—</b></div><div class="decisionFact"><span>Maior contrato</span><b id="factTopContract">—</b></div><div class="decisionFact"><span>Top 3 contratos</span><b id="factTop3">—</b></div></div>
-<div class="executiveGrid"><article class="panel wide"><div class="panelHead"><div><h2>O que mudou no faturamento</h2><p>contribuição de cada serviço para a variação de jan–jul/2026 contra jan–jul/2025</p></div></div><div class="panelBody"><div class="chart"><canvas id="waterfallChart"></canvas></div></div></article></div>
-<div class="executiveGrid"><article class="panel"><div class="panelHead"><div><h2>Concentração da carteira</h2><p>saldo dos principais contratos e participação acumulada</p></div></div><div class="panelBody"><div class="chart tall"><canvas id="paretoChart"></canvas></div></div></article><article class="panel"><div class="panelHead"><div><h2>Onde está o passivo antigo</h2><p>saldo anterior a 2026 versus saldo formado em 2026</p></div></div><div class="panelBody"><div class="chart tall"><canvas id="agingChart"></canvas></div></div></article></div>
 </section>
-<section class="screen" id="screenAnalytic">
-<div class="filters revenueFilters"><div class="field"><label>Secretaria</label><select id="secFilter"><option value="">Todas</option></select></div><div class="field"><label>Serviço</label><select id="serviceFilter"><option value="">Todos</option></select></div><div class="field"><label>Contrato</label><select id="contractFilter"><option value="">Todos</option></select></div><div class="field"><label>Recorte</label><select id="ageFilter"><option value="">Todas as pendências</option><option value="old">Pendências anteriores a 2026</option><option value="current">Pendências de 2026</option></select></div><button class="actionBtn" id="clearFilters">Limpar filtros</button></div>
-<div class="analyticSummary"><div class="mini"><span>Saldo líquido filtrado</span><b id="aDebt">—</b></div><div class="mini"><span>Faturamento bruto</span><b id="aGross">—</b></div><div class="mini"><span>Valor líquido pago</span><b id="aPaid">—</b></div><div class="mini"><span>Contratos no recorte</span><b id="aContracts">—</b></div></div>
-<article class="panel"><div class="panelHead"><div><h2>Carteira consolidada por contrato</h2><p>sem exposição de nota fiscal</p></div></div><div class="tableWrap"><table id="dataTable" class="dataTable"></table></div></article>
-</section>
+
 <div id="footer"></div>
 </main>
-<script src="../assets/components/hub-utils.js"></script><script src="../assets/components/hub-layout.js"></script>
+
+<script src="../../assets/components/hub-utils.js"></script>
+<script src="../../assets/components/hub-layout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
-const SOURCES={debt:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=0&single=true&output=csv',billing2025:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=1268018723&single=true&output=csv',billing2026:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=78738371&single=true&output=csv'};
-const MONTHS={jan:1,janeiro:1,fev:2,fevereiro:2,mar:3,marco:3,abr:4,abril:4,mai:5,maio:5,jun:6,junho:6,jul:7,julho:7,ago:8,agosto:8,set:9,setembro:9,out:10,outubro:10,nov:11,novembro:11,dez:12,dezembro:12},MONTH_LABEL=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-let DEBT=[],BILLING=[],BILLING_SERVICES={},ANNUAL_TOTALS={},charts={},TOTAL_DEBT=0;const $=id=>document.getElementById(id);const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-const money=v=>{if(typeof v==='number')return v;let s=String(v??'').trim().replace(/R\$/gi,'').replace(/\s/g,'');if(!s||s==='-'||s==='—')return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else if(s.includes(','))s=s.replace(',','.');return Number(s.replace(/[^0-9.-]/g,''))||0};const brl=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});const compact=v=>{v=Number(v||0);if(Math.abs(v)>=1e9)return 'R$ '+(v/1e9).toFixed(2).replace('.',',')+' bi';if(Math.abs(v)>=1e6)return 'R$ '+(v/1e6).toFixed(2).replace('.',',')+' mi';if(Math.abs(v)>=1e3)return 'R$ '+(v/1e3).toFixed(0).replace('.',',')+' mil';return brl(v)};const pct=v=>Number(v||0).toFixed(1).replace('.',',')+'%';const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const unique=a=>[...new Set(a.filter(v=>v!==''&&v!==null&&v!==undefined))].sort((x,y)=>String(x).localeCompare(String(y),'pt-BR',{numeric:true}));const sum=(rows,key)=>rows.reduce((s,r)=>s+(r[key]||0),0);
+/* Mesma fonte já usada pelo painel Balanço Financeiro — aba geral publicada. */
+const SOURCES={
+  debt:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=0&single=true&output=csv',
+  billing2026:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=78738371&single=true&output=csv'
+};
+const LIMIAR_CRITICO=8, LIMIAR_ATENCAO=5;
+/* A aba Débitos usa nomes curtos de serviço; a aba Faturamento usa nomes longos.
+   Divergência confirmada na fonte (não é erro de leitura) — reconciliada aqui
+   de forma explícita para permitir o cruzamento débito × faturado por serviço. */
+const SERVICE_ALIASES={'APA':'Agente de Preparo de Alimentos (APA)','Capina':'Capina e Roçada'};
+const aliasService=s=>SERVICE_ALIASES[s]||s;
+const MONTHS={jan:1,janeiro:1,fev:2,fevereiro:2,mar:3,marco:3,abr:4,abril:4,mai:5,maio:5,jun:6,junho:6,jul:7,julho:7,ago:8,agosto:8,set:9,setembro:9,out:10,outubro:10,nov:11,novembro:11,dez:12,dezembro:12};
+
+const $=id=>document.getElementById(id);
+const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const money=v=>{if(typeof v==='number')return v;let s=String(v??'').trim().replace(/R\$/gi,'').replace(/\s/g,'');if(!s||s==='-'||s==='—')return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else if(s.includes(','))s=s.replace(',','.');return Number(s.replace(/[^0-9.-]/g,''))||0};
+const brl=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const compact=v=>{v=Number(v||0);if(Math.abs(v)>=1e9)return 'R$ '+(v/1e9).toFixed(2).replace('.',',')+' bi';if(Math.abs(v)>=1e6)return 'R$ '+(v/1e6).toFixed(2).replace('.',',')+' mi';if(Math.abs(v)>=1e3)return 'R$ '+(v/1e3).toFixed(0).replace('.',',')+' mil';return brl(v)};
+const pct=v=>Number(v||0).toFixed(1).replace('.',',')+'%';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const unique=a=>[...new Set(a.filter(v=>v!==''&&v!==null&&v!==undefined))];
+const sum=(rows,key)=>rows.reduce((s,r)=>s+(r[key]||0),0);
+const statusOf=v=>v>=LIMIAR_CRITICO?'crit':v>=LIMIAR_ATENCAO?'warn':'ok';
+const statusLabel=v=>v>=LIMIAR_CRITICO?'Crítico':v>=LIMIAR_ATENCAO?'Atenção':'Dentro da Meta';
+
 function fetchMatrix(url){return new Promise((resolve,reject)=>Papa.parse(url,{download:true,skipEmptyLines:false,complete:r=>resolve(r.data),error:reject}))}
-function matrixObjects(matrix){let best=0,score=-1;matrix.slice(0,20).forEach((r,i)=>{const t=norm(r.join(' ')),s=['contrato','debito liquido','ano exercicio','mes competencia'].filter(k=>t.includes(k)).length;if(s>score){score=s;best=i}});const h=matrix[best].map((x,i)=>String(x||`COL_${i+1}`).trim());return matrix.slice(best+1).filter(r=>r.some(v=>String(v).trim())).map(r=>Object.fromEntries(h.map((x,i)=>[x,r[i]??''])))}
+
+function matrixObjects(matrix){
+  let best=0,score=-1;
+  matrix.slice(0,20).forEach((r,i)=>{const t=norm(r.join(' ')),s=['contrato','debito liquido','ano exercicio','mes competencia'].filter(k=>t.includes(k)).length;if(s>score){score=s;best=i}});
+  const h=matrix[best].map((x,i)=>String(x||`COL_${i+1}`).trim());
+  return matrix.slice(best+1).filter(r=>r.some(v=>String(v).trim())).map(r=>Object.fromEntries(h.map((x,i)=>[x,r[i]??''])));
+}
 function pick(row,names){const keys=Object.keys(row);for(const n of names){const nn=norm(n),k=keys.find(x=>norm(x)===nn);if(k!==undefined&&String(row[k]??'').trim()!=='')return row[k]}return ''}
-function parseDebt(matrix){const rows=matrixObjects(matrix).map(r=>{const year=Number(pick(r,['Ano Exercício','Ano Exercicio']))||0,monthText=String(pick(r,['Mês Competência','Mes Competencia'])).trim();return{secretaria:String(pick(r,['SECRETARIA','Secretaria'])).trim()||'Não informada',service:String(pick(r,['Serviço','Servico'])).trim()||'Não informado',contract:String(pick(r,['Contrato'])).trim()||'Não informado',rawClass:String(pick(r,['CLASSIFICAÇÃO','Classificacao'])).trim(),year,month:MONTHS[norm(monthText)]||0,monthText,gross:money(pick(r,['Fat. Bruto','Fat Bruto'])),paid:money(pick(r,['Valor Líquido Pago','Valor Liquido Pago'])),debt:money(pick(r,['Débito Liquido','Débito Líquido'])),debtGross:money(pick(r,['Débito Bruto *','Débito Bruto']))}}).filter(r=>r.contract!=='Não informado'||r.gross||r.paid||r.debt);const latest=Math.max(...rows.map(r=>r.year).filter(Boolean));rows.forEach(r=>{const n=Number(r.rawClass);r.classification=n>=2000?(n<latest?'Exercício Anterior':'Exercício Atual'):(r.rawClass||((r.year&&r.year<latest)?'Exercício Anterior':'Exercício Atual'))});return rows}
-function parseBilling(matrix,year){const hi=matrix.findIndex(r=>norm(r[0])==='servico'&&r.some(v=>norm(v)==='total'));if(hi<0)throw Error(`Cabeçalho ${year} não encontrado`);const h=matrix[hi].map(norm),rows=matrix.slice(hi+1),total=rows.find(r=>norm(r[0])==='total geral');if(!total)throw Error(`Total Geral ${year} não encontrado`);ANNUAL_TOTALS[year]=money(total[h.indexOf('total')]);BILLING_SERVICES[year]={};rows.filter(r=>/ total$/i.test(String(r[0]||'').trim())&&norm(r[0])!=='total geral').forEach(r=>{const service=String(r[0]).trim().replace(/\s+Total$/i,'');BILLING_SERVICES[year][service]=h.reduce((s,x,i)=>s+(MONTHS[x]&&MONTHS[x]<=7?money(r[i]):0),0)});return h.map((x,i)=>({h:x,v:total[i]})).filter(x=>MONTHS[x.h]).map(x=>({year,month:MONTHS[x.h],value:money(x.v)}))}
-function group(rows,key){const m=new Map();rows.forEach(r=>{const k=key(r);if(!m.has(k))m.set(k,{key:k,debt:0,gross:0,paid:0,rows:0,years:[],secretaria:r.secretaria,service:r.service});const x=m.get(k);x.debt+=r.debt;x.gross+=r.gross;x.paid+=r.paid;x.rows++;if(r.year)x.years.push(r.year)});return[...m.values()]}
-function replaceChart(name,config){if(charts[name])charts[name].destroy();charts[name]=new Chart($(name),config)}function chartDefaults(){Chart.defaults.color='#b8c9de';Chart.defaults.borderColor='rgba(41,72,102,.42)';Chart.defaults.font.family='Segoe UI, Arial, sans-serif'}
-function renderExecutive(){
-const last=Math.max(...BILLING.filter(r=>r.year===2026&&r.value>0).map(r=>r.month)),y26=ANNUAL_TOTALS[2026],y25=BILLING.filter(r=>r.year===2025&&r.month<=last).reduce((s,r)=>s+r.value,0),variation=y25?(y26/y25-1)*100:0,delta=y26-y25;TOTAL_DEBT=sum(DEBT,'debt');const old=sum(DEBT.filter(r=>r.year<2026),'debt'),oldShare=old/TOTAL_DEBT*100,sme=sum(DEBT.filter(r=>r.secretaria==='SME'),'debt');
-const cm=new Map();DEBT.forEach(r=>{if(!cm.has(r.contract))cm.set(r.contract,{contract:r.contract,service:r.service,total:0,old:0,current:0});const x=cm.get(r.contract);x.total+=r.debt;if(r.year<2026)x.old+=r.debt;else if(r.year===2026)x.current+=r.debt});const cr=[...cm.values()].sort((a,b)=>b.total-a.total),top3=cr.slice(0,3).reduce((s,r)=>s+r.total,0);
-$('kpiYtd').textContent=brl(y26);$('kpiYtdMeta').textContent=`Jan–${MONTH_LABEL[last]} de 2026`;$('kpiVariation').innerHTML=`<span class="delta ${variation>=0?'up':'down'}">${variation>=0?'+':''}${pct(variation)}</span>`;$('kpiVariationMeta').textContent=`${delta>=0?'+':''}${brl(delta)} no período`;$('kpiDebt').textContent=brl(TOTAL_DEBT);$('kpiOldShare').textContent=pct(oldShare);$('kpiOldMeta').textContent=brl(old);$('factSme').textContent=pct(sme/TOTAL_DEBT*100);$('factTopContract').textContent=pct(cr[0].total/TOTAL_DEBT*100);$('factTop3').textContent=pct(top3/TOTAL_DEBT*100);$('decisionText').textContent=`O faturamento cresceu ${pct(variation)}, mas a prioridade está na cobrança: ${pct(oldShare)} da carteira é anterior a 2026 e três contratos concentram ${pct(top3/TOTAL_DEBT*100)} do saldo.`;
-const serviceNames=unique([...Object.keys(BILLING_SERVICES[2025]||{}),...Object.keys(BILLING_SERVICES[2026]||{})]),changes=serviceNames.map(name=>({name,value:(BILLING_SERVICES[2026]?.[name]||0)-(BILLING_SERVICES[2025]?.[name]||0)})).sort((a,b)=>Math.abs(b.value)-Math.abs(a.value));let running=y25;const wfLabels=['Jan–jul/2025'],wfData=[[0,y25]],wfColors=['#5b9bd5'];changes.forEach(x=>{const start=running;running+=x.value;wfLabels.push(x.name);wfData.push([start,running]);wfColors.push(x.value>=0?'#78aaa3':'#ef6a5d')});wfLabels.push('Jan–jul/2026');wfData.push([0,y26]);wfColors.push('#5b9bd5');replaceChart('waterfallChart',{type:'bar',data:{labels:wfLabels,datasets:[{data:wfData,backgroundColor:wfColors,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const i=c.dataIndex;if(i===0||i===wfData.length-1)return brl(wfData[i][1]);const v=changes[i-1].value;return`${v>=0?'+':''}${brl(v)}`}}}},scales:{x:{ticks:{maxRotation:35,minRotation:0}},y:{ticks:{callback:v=>compact(v)}}}}});
-const top=cr.slice(0,10);let cumulative=0;const cum=top.map(x=>(cumulative+=x.total)/TOTAL_DEBT*100);replaceChart('paretoChart',{data:{labels:top.map(x=>x.contract),datasets:[{type:'bar',label:'Saldo',data:top.map(x=>x.total),backgroundColor:'#5b9bd5',borderRadius:5,yAxisID:'y'},{type:'line',label:'Acumulado',data:cum,borderColor:'#e87535',backgroundColor:'#e87535',pointRadius:3,tension:.2,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10}},tooltip:{callbacks:{label:c=>c.dataset.yAxisID==='y1'?`${c.dataset.label}: ${pct(c.raw)}`:`${c.dataset.label}: ${brl(c.raw)}`}}},scales:{x:{ticks:{maxRotation:45,minRotation:30}},y:{beginAtZero:true,ticks:{callback:v=>compact(v)}},y1:{beginAtZero:true,max:100,position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%'}}}}});
-const aged=cr.slice(0,8);replaceChart('agingChart',{type:'bar',data:{labels:aged.map(x=>x.contract),datasets:[{label:'Anterior a 2026',data:aged.map(x=>x.old),backgroundColor:'#e87535',borderRadius:4},{label:'2026',data:aged.map(x=>x.current),backgroundColor:'#5b9bd5',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{boxWidth:10}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${brl(c.raw)}`}}},scales:{x:{stacked:true,ticks:{callback:v=>compact(v)}},y:{stacked:true}}}})}
-function fillSelect(id,values,label){const el=$(id),keep=el.value;el.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');if(values.map(String).includes(keep))el.value=keep}function filters(){return{sec:$('secFilter').value,service:$('serviceFilter').value,contract:$('contractFilter').value,age:$('ageFilter').value}}function filterRows(rows,f){return rows.filter(r=>(!f.sec||r.secretaria===f.sec)&&(!f.service||r.service===f.service)&&(!f.contract||r.contract===f.contract)&&(!f.age||(f.age==='old'?r.year<2026:r.year===2026)))}
-function updateFilters(){const f=filters(),base=filterRows(DEBT,{sec:f.sec,service:f.service,contract:f.contract,age:f.age});fillSelect('secFilter',unique(DEBT.map(r=>r.secretaria)),'Todas');fillSelect('serviceFilter',unique(base.map(r=>r.service)),'Todos');fillSelect('contractFilter',unique(base.map(r=>r.contract)),'Todos')}
-function renderAnalytic(){updateFilters();const rows=filterRows(DEBT,filters()),debt=sum(rows,'debt'),gross=sum(rows,'gross'),paid=sum(rows,'paid'),g=group(rows,r=>`${r.contract}|||${r.service}|||${r.secretaria}`).sort((a,b)=>b.debt-a.debt);$('aDebt').textContent=brl(debt);$('aGross').textContent=brl(gross);$('aPaid').textContent=brl(paid);$('aContracts').textContent=unique(rows.map(r=>r.contract)).length;const body=g.map(x=>{const years=unique(x.years),old=years.some(y=>y<2026);return`<tr><td><b>${esc(x.key.split('|||')[0])}</b></td><td>${esc(x.service)}</td><td>${esc(x.secretaria)}</td><td><span class="badge ${old?'old':''}">${old?'Anterior a 2026':'2026'}</span></td><td>${years.join(', ')||'—'}</td><td>${brl(x.gross)}</td><td>${brl(x.paid)}</td><td><b>${brl(x.debt)}</b></td><td>${pct(debt?x.debt/debt*100:0)}</td></tr>`}).join('');$('dataTable').innerHTML=`<thead><tr><th>Contrato</th><th>Serviço</th><th>Secretaria</th><th>Recorte</th><th>Exercícios</th><th>Fat. bruto</th><th>Líquido pago</th><th>Débito líquido</th><th>Participação</th></tr></thead><tbody>${body||'<tr><td colspan="9" class="empty">Nenhum registro no recorte selecionado.</td></tr>'}</tbody>`}
-async function init(){HUB.header.render('header',{systemLabel:'HUB COMLURB',title:'Contratos de Receita',subtitle:'Faturamento e carteira de débitos',navigation:[{id:'screenExecutive',label:'Visão Executiva',onActivate:renderExecutive},{id:'screenAnalytic',label:'Carteira Analítica',onActivate:renderAnalytic}]});HUB.footer.render('footer');chartDefaults();try{const[d,b25,b26]=await Promise.all([fetchMatrix(SOURCES.debt),fetchMatrix(SOURCES.billing2025),fetchMatrix(SOURCES.billing2026)]);DEBT=parseDebt(d);BILLING=[...parseBilling(b25,2025),...parseBilling(b26,2026)];if(!DEBT.length||!BILLING.length)throw Error('Uma ou mais bases não foram reconhecidas');renderExecutive();renderAnalytic();['secFilter','serviceFilter','contractFilter','ageFilter'].forEach(id=>$(id).addEventListener('change',renderAnalytic));$('clearFilters').addEventListener('click',()=>{['secFilter','serviceFilter','contractFilter','ageFilter'].forEach(id=>$(id).value='');renderAnalytic()})}catch(e){console.error(e)}}init();
-</script></body></html>
+
+function parseDebt(matrix){
+  const rows=matrixObjects(matrix).map(r=>({
+    secretaria:String(pick(r,['SECRETARIA'])).trim(),
+    service:aliasService(String(pick(r,['Serviço','Servico'])).trim())||'Não informado',
+    cre:String(pick(r,['CRE'])).trim(),
+    contract:String(pick(r,['Contrato'])).trim()||'Não informado',
+    year:Number(pick(r,['Ano Exercício','Ano Exercicio']))||0,
+    debt:money(pick(r,['Débito Liquido','Débito Líquido']))
+  })).filter(r=>['SME','SMS','SMPDA'].includes(r.secretaria) && (r.debt||r.contract!=='Não informado'));
+  return rows;
+}
+
+function parseBilling(matrix){
+  const hi=matrix.findIndex(r=>norm(r[0])==='servico'&&r.some(v=>norm(v)==='total'));
+  if(hi<0) throw Error('Cabeçalho de faturamento não encontrado');
+  const h=matrix[hi].map(norm), rows=matrix.slice(hi+1);
+  const byService={};
+  rows.filter(r=>/ total$/i.test(String(r[0]||'').trim())&&norm(r[0])!=='total geral').forEach(r=>{
+    const service=String(r[0]).trim().replace(/\s+Total$/i,'');
+    byService[service]=h.reduce((s,x,i)=>s+(MONTHS[x]?money(r[i]):0),0);
+  });
+  return byService;
+}
+
+function renderRank(rows){
+  $('rankBody').innerHTML = rows.map(r=>{
+    const st=statusOf(r.pct);
+    return `<div class="rankRow">
+      <div class="rankName">${esc(r.service)}</div>
+      <div class="rankTrack"><div class="rankFill ${st}" style="width:${Math.min(100,r.pct/r.scaleMax*100).toFixed(1)}%"></div></div>
+      <div class="rankPct">${pct(r.pct)}</div>
+      <div class="rankStatus ${st}">${statusLabel(r.pct)}</div>
+    </div>`;
+  }).join('') || '<div class="loadingMsg">Sem dados suficientes para o ciclo corrente.</div>';
+}
+
+async function init(){
+  try{
+    if(typeof HUB === 'undefined' || !HUB.header || !HUB.footer){
+      throw Error('Componentes do HUB (hub-utils.js / hub-layout.js) não carregaram. Este arquivo precisa estar dentro da estrutura real do repositório, em contratos/debitos/, ao lado da pasta assets/ — não funciona como download avulso fora dessa árvore de pastas.');
+    }
+    HUB.header.render('header',{
+      systemLabel:'HUB COMLURB · Contratos de Receita',
+      title:'Débitos',
+      subtitle:'Leitura estratégica da carteira em aberto'
+    });
+    HUB.footer.render('footer');
+
+    const [debtMatrix, billMatrix] = await Promise.all([fetchMatrix(SOURCES.debt), fetchMatrix(SOURCES.billing2026)]);
+    const DEBT = parseDebt(debtMatrix);
+    const BILLING_BY_SERVICE = parseBilling(billMatrix);
+    if(!DEBT.length) throw Error('Base de débitos vazia ou não reconhecida.');
+
+    const latestYear = Math.max(...DEBT.map(r=>r.year).filter(Boolean));
+    const currentDebt = DEBT.filter(r=>r.year===latestYear);
+    const oldDebt = DEBT.filter(r=>r.year && r.year<latestYear);
+    const TOTAL_DEBT = sum(DEBT,'debt');
+    const CURRENT_DEBT_TOTAL = sum(currentDebt,'debt');
+    const OLD_DEBT_TOTAL = sum(oldDebt,'debt');
+    const CURRENT_BILLING_TOTAL = Object.values(BILLING_BY_SERVICE).reduce((s,v)=>s+v,0);
+
+    // ---- Headline ----
+    const headlineRatio = CURRENT_BILLING_TOTAL ? (CURRENT_DEBT_TOTAL/CURRENT_BILLING_TOTAL*100) : 0;
+    const hSt = statusOf(headlineRatio);
+    $('headlineBox').classList.add(hSt);
+    $('headlineValue').textContent = pct(headlineRatio);
+    $('headlineValue').classList.add(hSt);
+    $('headlineStatus').textContent = statusLabel(headlineRatio);
+    $('headlineStatus').classList.add(hSt);
+    $('headlineText').textContent = `De cada R$ 100 faturados no ciclo de ${latestYear}, R$ ${headlineRatio.toFixed(2).replace('.',',')} seguem sem retorno. Limiar de atenção: ${LIMIAR_ATENCAO}% · limiar crítico: ${LIMIAR_CRITICO}%.`;
+
+    // ---- KPIs ----
+    $('kpiFaturado').textContent = compact(CURRENT_BILLING_TOTAL);
+    $('kpiFaturadoMeta').textContent = `Base do ciclo ${latestYear}, meses fechados.`;
+    $('kpiDebitoCorrente').textContent = compact(CURRENT_DEBT_TOTAL);
+    $('kpiDebitoTotal').textContent = compact(TOTAL_DEBT);
+
+    // ---- Corrente x Legado ----
+    const oldShare = TOTAL_DEBT? OLD_DEBT_TOTAL/TOTAL_DEBT*100 : 0;
+    const curShare = 100-oldShare;
+    $('splitBar').innerHTML = `
+      <div class="splitOld" style="width:${oldShare.toFixed(1)}%">${oldShare>=12?pct(oldShare):''}</div>
+      <div class="splitCur" style="width:${curShare.toFixed(1)}%">${curShare>=12?pct(curShare):''}</div>`;
+
+    // ---- Ranking por serviço ----
+    const debtByService = {};
+    currentDebt.forEach(r=>{debtByService[r.service]=(debtByService[r.service]||0)+r.debt});
+    const services = unique([...Object.keys(BILLING_BY_SERVICE), ...Object.keys(debtByService)]);
+    let rankRows = services.map(service=>{
+      const billing = BILLING_BY_SERVICE[service]||0;
+      const debt = debtByService[service]||0;
+      return {service, pct: billing? debt/billing*100 : 0, billing, debt};
+    }).filter(r=>r.billing>0).sort((a,b)=>b.pct-a.pct);
+    const scaleMax = Math.max(...rankRows.map(r=>r.pct), LIMIAR_CRITICO*1.5);
+    rankRows = rankRows.map(r=>({...r, scaleMax}));
+    renderRank(rankRows);
+
+    // ---- Concentração por contrato ----
+    const cMap = new Map();
+    DEBT.forEach(r=>{
+      if(!cMap.has(r.contract)) cMap.set(r.contract,{contract:r.contract, service:r.service, debt:0, cres:new Set()});
+      const x=cMap.get(r.contract);
+      x.debt+=r.debt;
+      if(r.cre) x.cres.add(r.cre);
+    });
+    const topContract = [...cMap.values()].sort((a,b)=>b.debt-a.debt)[0];
+    $('concContrato').textContent = topContract? topContract.contract : '—';
+    $('concServico').textContent = topContract? topContract.service : '—';
+    $('concPct').textContent = topContract && TOTAL_DEBT? pct(topContract.debt/TOTAL_DEBT*100) : '—';
+    $('concCres').textContent = topContract? (topContract.cres.size||'—') : '—';
+
+    // ---- Leitura executiva condicional ----
+    const topShare = topContract && TOTAL_DEBT ? topContract.debt/TOTAL_DEBT*100 : 0;
+    const criticalCount = rankRows.filter(r=>statusOf(r.pct)==='crit').length;
+    let texto = '';
+    if(headlineRatio>=LIMIAR_CRITICO && criticalCount>=Math.ceil(rankRows.length*0.5)){
+      texto = `O ciclo corrente está em ${statusLabel(headlineRatio).toLowerCase()} (${pct(headlineRatio)}) e não é um caso isolado: ${criticalCount} de ${rankRows.length} serviços já ultrapassam o limiar crítico de ${LIMIAR_CRITICO}%.`;
+    } else if(headlineRatio>=LIMIAR_CRITICO){
+      texto = `O ciclo corrente está em situação crítica (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_CRITICO}%.`;
+    } else if(headlineRatio>=LIMIAR_ATENCAO){
+      texto = `O ciclo corrente está em atenção (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_ATENCAO}%.`;
+    }
+    if(topShare>=30){
+      texto += `${texto?' ':''}O contrato ${topContract.contract} concentra ${pct(topShare)} de todo o débito acumulado, distribuído em ${topContract.cres.size||'—'} CREs.`;
+    }
+    if(oldShare>=50){
+      texto += `${texto?' ':''}Mais da metade do saldo em aberto (${pct(oldShare)}) é passivo de exercícios anteriores, não do ciclo atual.`;
+    }
+    $('decisionText').textContent = texto || 'Nenhum indicador ultrapassou os limiares de atenção definidos para este painel.';
+
+    $('stateMsg').style.display='none';
+    $('painel').style.display='block';
+  }catch(e){
+    console.error(e);
+    $('stateMsg').textContent = 'Não foi possível carregar o painel: ' + (e && e.message ? e.message : 'erro desconhecido.');
+    $('stateMsg').classList.add('errorMsg');
+  }
+}
+init();
+</script>
+</body>
+</html>

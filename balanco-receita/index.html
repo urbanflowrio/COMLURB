@@ -5,54 +5,70 @@
 <title>Débitos | Contratos de Receita | HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <style>
-.headline{margin-bottom:16px;padding:26px 28px;border:1px solid var(--linha);border-radius:20px;background:linear-gradient(135deg,#0b1c31,#102a45);display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center}
-.headline.crit{border-color:rgba(239,106,93,.45)}.headline.warn{border-color:rgba(255,160,43,.4)}.headline.ok{border-color:rgba(120,170,163,.4)}
-.headlineValue{font-size:clamp(46px,6vw,72px);font-weight:950;letter-spacing:-.03em;line-height:1;white-space:nowrap}
-.headlineValue.crit{color:var(--vermelho)}.headlineValue.warn{color:var(--amarelo)}.headlineValue.ok{color:var(--verde)}
-.headlineLabel{font-size:11px;color:#b8d4f2;text-transform:uppercase;letter-spacing:.14em;font-weight:900;margin-bottom:8px}
-.headlineText{font-size:15.5px;line-height:1.5;color:var(--texto)}
-.headlineStatus{display:inline-flex;margin-top:10px;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
-.headlineStatus.crit{background:rgba(239,106,93,.16);color:#ffb3aa}.headlineStatus.warn{background:rgba(255,160,43,.16);color:#ffcf8f}.headlineStatus.ok{background:rgba(120,170,163,.18);color:#a9d6cd}
-.kpiGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.kpi{position:relative;overflow:hidden;padding:18px;background:var(--painel);border:1px solid var(--linha);border-radius:18px}
-.kpi:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--azul2)}
-.kpi.risk:before{background:var(--vermelho)}.kpi.warn:before{background:var(--laranja)}
-.kpiLabel{font-size:10px;color:#b8d4f2;text-transform:uppercase;letter-spacing:.12em;font-weight:900}
-.kpiValue{margin:12px 0 6px;font-size:clamp(20px,2vw,28px);font-weight:950;letter-spacing:-.03em;white-space:nowrap}
-.kpiMeta{color:var(--silenciado);font-size:11.5px;line-height:1.4}
-.panel{background:var(--painel);border:1px solid var(--linha);border-radius:18px;overflow:hidden;margin-bottom:16px}
-.panelHead{padding:16px 18px;border-bottom:1px solid var(--linha)}
-.panelHead h2{margin:0;font-size:16px}.panelHead p{margin:4px 0 0;color:var(--silenciado);font-size:11.5px}
-.panelBody{padding:20px}
-.splitBar{display:flex;height:34px;border-radius:10px;overflow:hidden;border:1px solid var(--linha)}
-.splitBar div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden}
-.splitOld{background:linear-gradient(90deg,#b95023,#e87535);color:#fff}
-.splitCur{background:linear-gradient(90deg,#2f67a5,#5b9bd5);color:#fff}
-.splitLegend{display:flex;gap:22px;margin-top:12px;font-size:12px;color:var(--silenciado)}
-.splitLegend span{display:inline-flex;align-items:center;gap:7px}
-.dot{width:9px;height:9px;border-radius:3px}
-.rankRow{display:grid;grid-template-columns:190px 1fr 64px 80px;gap:12px;align-items:center;margin-bottom:11px}
-.rankName{font-weight:800;font-size:13px;line-height:1.3}
-.rankTrack{height:20px;background:#132941;border-radius:5px;overflow:hidden}
-.rankFill{height:100%}
-.rankFill.crit{background:linear-gradient(90deg,#a83e36,#ef6a5d)}
-.rankFill.warn{background:linear-gradient(90deg,#b95023,#e87535)}
-.rankFill.ok{background:linear-gradient(90deg,#437b76,#78aaa3)}
-.rankPct{text-align:right;font-weight:900;font-size:13px}
-.rankStatus{text-align:right;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
-.rankStatus.crit{color:#ffb3aa}.rankStatus.warn{color:#ffcf8f}.rankStatus.ok{color:#a9d6cd}
-.concGrid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:18px;align-items:center}
-.concMain b{display:block;font-size:22px;font-weight:950;margin-bottom:4px}
-.concMain span{color:var(--silenciado);font-size:12.5px}
-.concFact{padding-left:18px;border-left:1px solid rgba(130,183,231,.25)}
-.concFact span{display:block;color:#91a9c2;font-size:9.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
-.concFact b{display:block;margin-top:6px;font-size:24px;color:#fff}
-.decision{margin-bottom:16px;padding:20px 22px;border:1px solid #315979;border-radius:18px;background:linear-gradient(135deg,#0b1c31,#102a45)}
-.decisionLabel{color:#82b7e7;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
-.decisionText{margin-top:8px;font-size:15.5px;font-weight:600;line-height:1.55;color:#eef6ff}
+.cockpit{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+@media(max-width:980px){.cockpit{grid-template-columns:1fr}}
+
+.hero{position:relative;overflow:hidden;background:radial-gradient(circle at 15% 20%,#123457 0%,#0a1c30 55%,#081527 100%);border:1px solid var(--linha);border-radius:26px;padding:30px;display:flex;align-items:center;gap:26px}
+.hero.crit{box-shadow:inset 0 0 0 1px rgba(239,106,93,.35)}
+.hero.warn{box-shadow:inset 0 0 0 1px rgba(255,160,43,.3)}
+.hero.ok{box-shadow:inset 0 0 0 1px rgba(120,170,163,.3)}
+.gaugeWrap{position:relative;width:190px;height:190px;flex:0 0 auto}
+.gaugeWrap canvas{width:100%!important;height:100%!important}
+.gaugeCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.gaugeCenter .val{font-size:34px;font-weight:950;letter-spacing:-.03em;line-height:1}
+.gaugeCenter .val.crit{color:#ff8a7d}.gaugeCenter .val.warn{color:#ffc369}.gaugeCenter .val.ok{color:#a9d6cd}
+.gaugeCenter .lab{margin-top:4px;font-size:9.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#8fb3d6}
+.heroCopy{flex:1;min-width:0}
+.heroEyebrow{font-size:10.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#7fb0e0;margin-bottom:10px}
+.heroStatusPill{display:inline-flex;padding:5px 14px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px}
+.heroStatusPill.crit{background:rgba(239,106,93,.18);color:#ffb3aa}.heroStatusPill.warn{background:rgba(255,160,43,.18);color:#ffcf8f}.heroStatusPill.ok{background:rgba(120,170,163,.2);color:#a9d6cd}
+.heroText{font-size:16px;line-height:1.55;color:#eef6ff;font-weight:500}
+.heroText b{font-weight:900;color:#fff}
+
+.sideStack{display:flex;flex-direction:column;gap:12px}
+.sideKpi{display:flex;align-items:center;gap:16px;background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px 18px;flex:1}
+.sideKpi .bar{width:5px;align-self:stretch;border-radius:4px;background:var(--azul2)}
+.sideKpi.risk .bar{background:var(--vermelho)}.sideKpi.warn .bar{background:var(--laranja)}.sideKpi.total .bar{background:var(--roxo,#a78bfa)}
+.sideKpi .txt{min-width:0}
+.sideKpiLabel{font-size:10px;color:#9db8d4;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
+.sideKpiValue{margin-top:6px;font-size:22px;font-weight:950;letter-spacing:-.02em;white-space:nowrap}
+.sideKpiMeta{margin-top:3px;font-size:11px;color:var(--silenciado)}
+
+.chartsRow{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:980px){.chartsRow{grid-template-columns:1fr}}
+.panel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden}
+.panelHead{padding:16px 20px;border-bottom:1px solid var(--linha)}
+.panelHead h2{margin:0;font-size:15.5px}.panelHead p{margin:4px 0 0;color:var(--silenciado);font-size:11.5px}
+.panelBody{padding:18px 20px}
+
+.concWrap{display:flex;align-items:center;gap:18px}
+.concDonut{position:relative;width:150px;height:150px;flex:0 0 auto}
+.concCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.concCenter .val{font-size:26px;font-weight:950}
+.concCenter .lab{font-size:9px;color:#8fb3d6;text-transform:uppercase;letter-spacing:.08em;font-weight:900;margin-top:2px}
+.concFacts{flex:1;min-width:0}
+.concFacts h3{margin:0 0 4px;font-size:15px;font-weight:900;color:#fff;line-height:1.3}
+.concFacts .sub{font-size:11.5px;color:var(--silenciado);margin-bottom:12px}
+.concFactRow{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 0;border-top:1px solid rgba(130,183,231,.14)}
+.concFactRow b{color:#fff;font-weight:900}
+
+.divergeWrap{padding:6px 4px 2px}
+.divergeLabels{display:flex;justify-content:space-between;margin-bottom:10px}
+.divergeLabels .side{font-size:12px;color:var(--silenciado)}
+.divergeLabels .side b{display:block;font-size:20px;color:#fff;font-weight:950;margin-top:2px}
+.divergeTrack{display:flex;height:30px;border-radius:9px;overflow:hidden;border:1px solid var(--linha)}
+.divergeTrack .old{background:linear-gradient(90deg,#b95023,#e87535)}
+.divergeTrack .cur{background:linear-gradient(90deg,#2f67a5,#5b9bd5)}
+
+.briefing{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:6px;margin-bottom:16px}
+.briefRow{display:grid;grid-template-columns:38px 1fr;gap:14px;padding:16px 18px;border-radius:14px}
+.briefRow+.briefRow{border-top:1px solid rgba(130,183,231,.1)}
+.briefNum{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:950;font-size:14px;background:rgba(91,155,213,.14);color:#8fc4f2}
+.briefText{font-size:14.5px;line-height:1.55;color:#eef6ff;align-self:center}
+.briefText b{color:#fff;font-weight:900}
+
 .loadingMsg,.errorMsg{padding:40px;text-align:center;color:var(--silenciado)}
 .errorMsg{color:var(--vermelho)}
-@media(max-width:900px){.headline{grid-template-columns:1fr}.kpiGrid{grid-template-columns:1fr}.rankRow{grid-template-columns:120px 1fr 50px 70px}.concGrid{grid-template-columns:1fr}.concFact{border-left:0;border-top:1px solid rgba(130,183,231,.25);padding:12px 0 0}}
 </style>
 </head>
 <body><main class="app">
@@ -63,52 +79,65 @@
 
 <div id="painel" style="display:none">
 
-  <div class="headline" id="headlineBox">
-    <div>
-      <div class="headlineLabel">Débito / Faturado — ciclo corrente</div>
-      <div class="headlineValue" id="headlineValue">—</div>
-      <div class="headlineStatus" id="headlineStatus">—</div>
+  <div class="cockpit">
+    <div class="hero" id="heroBox">
+      <div class="gaugeWrap">
+        <canvas id="gaugeChart"></canvas>
+        <div class="gaugeCenter"><div class="val" id="gaugeVal">—</div><div class="lab">Débito / faturado</div></div>
+      </div>
+      <div class="heroCopy">
+        <div class="heroEyebrow">Ciclo corrente</div>
+        <div class="heroStatusPill" id="heroPill">—</div>
+        <div class="heroText" id="heroText">Calculando posição do ciclo corrente.</div>
+      </div>
     </div>
-    <div class="headlineText" id="headlineText">Calculando posição do ciclo corrente.</div>
+
+    <div class="sideStack">
+      <div class="sideKpi"><div class="bar"></div><div class="txt"><div class="sideKpiLabel">Faturado bruto — ciclo</div><div class="sideKpiValue" id="kpiFaturado">—</div><div class="sideKpiMeta" id="kpiFaturadoMeta">—</div></div></div>
+      <div class="sideKpi warn"><div class="bar"></div><div class="txt"><div class="sideKpiLabel">Débito líquido — ciclo</div><div class="sideKpiValue" id="kpiDebitoCorrente">—</div><div class="sideKpiMeta">Formado no próprio ciclo</div></div></div>
+      <div class="sideKpi risk"><div class="bar"></div><div class="txt"><div class="sideKpiLabel">Débito acumulado</div><div class="sideKpiValue" id="kpiDebitoTotal">—</div><div class="sideKpiMeta">Carteira aberta, todos os exercícios</div></div></div>
+    </div>
   </div>
 
-  <div class="kpiGrid">
-    <article class="kpi"><div class="kpiLabel">Faturado bruto — ciclo corrente</div><div class="kpiValue" id="kpiFaturado">—</div><div class="kpiMeta" id="kpiFaturadoMeta">—</div></article>
-    <article class="kpi warn"><div class="kpiLabel">Débito líquido — ciclo corrente</div><div class="kpiValue" id="kpiDebitoCorrente">—</div><div class="kpiMeta">Parcela do débito formada no próprio ciclo.</div></article>
-    <article class="kpi risk"><div class="kpiLabel">Débito líquido acumulado</div><div class="kpiValue" id="kpiDebitoTotal">—</div><div class="kpiMeta">Carteira aberta, incluindo exercícios anteriores.</div></article>
+  <div class="chartsRow">
+    <article class="panel">
+      <div class="panelHead"><h2>Débito / faturado por serviço — ciclo corrente</h2><p>do mais crítico ao mais controlado</p></div>
+      <div class="panelBody"><canvas id="rankChart"></canvas></div>
+    </article>
+
+    <article class="panel">
+      <div class="panelHead"><h2>Maior concentração</h2><p>participação do contrato mais exposto na carteira acumulada</p></div>
+      <div class="panelBody">
+        <div class="concWrap">
+          <div class="concDonut">
+            <canvas id="concChart"></canvas>
+            <div class="concCenter"><div class="val" id="concVal">—</div><div class="lab">do total</div></div>
+          </div>
+          <div class="concFacts">
+            <h3 id="concContrato">—</h3>
+            <div class="sub" id="concServico">—</div>
+            <div class="concFactRow"><span>Débito do contrato</span><b id="concDebtValue">—</b></div>
+            <div class="concFactRow"><span>Unidades/CREs atingidas</span><b id="concCres">—</b></div>
+          </div>
+        </div>
+      </div>
+    </article>
   </div>
 
-  <article class="panel">
-    <div class="panelHead"><h2>Composição do débito acumulado</h2><p>quanto é passivo represado (exercícios anteriores) e quanto é do próprio ciclo</p></div>
+  <article class="panel" style="margin-bottom:16px">
+    <div class="panelHead"><h2>Composição do débito acumulado</h2><p>passivo represado x formação no ciclo atual</p></div>
     <div class="panelBody">
-      <div class="splitBar" id="splitBar"></div>
-      <div class="splitLegend">
-        <span><i class="dot" style="background:#e87535"></i> Exercícios anteriores</span>
-        <span><i class="dot" style="background:#5b9bd5"></i> Ciclo corrente</span>
+      <div class="divergeWrap">
+        <div class="divergeLabels">
+          <div class="side">Exercícios anteriores<b id="oldValue">—</b></div>
+          <div class="side" style="text-align:right">Ciclo corrente<b id="curValue">—</b></div>
+        </div>
+        <div class="divergeTrack" id="divergeTrack"></div>
       </div>
     </div>
   </article>
 
-  <article class="panel">
-    <div class="panelHead"><h2>Débito / faturado por serviço — ciclo corrente</h2><p>ordenado do mais crítico para o mais controlado</p></div>
-    <div class="panelBody" id="rankBody"></div>
-  </article>
-
-  <article class="panel">
-    <div class="panelHead"><h2>Maior concentração de débito</h2><p>contrato com maior participação isolada na carteira acumulada</p></div>
-    <div class="panelBody">
-      <div class="concGrid">
-        <div class="concMain"><b id="concContrato">—</b><span id="concServico">—</span></div>
-        <div class="concFact"><span>Participação no débito total</span><b id="concPct">—</b></div>
-        <div class="concFact"><span>Unidades/CREs atingidas</span><b id="concCres">—</b></div>
-      </div>
-    </div>
-  </article>
-
-  <div class="decision">
-    <div class="decisionLabel">Leitura executiva</div>
-    <div class="decisionText" id="decisionText"></div>
-  </div>
+  <div class="briefing" id="briefing"></div>
 
 </div>
 </section>
@@ -119,6 +148,7 @@
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 /* Mesma fonte já usada pelo painel Balanço Financeiro — aba geral publicada. */
 const SOURCES={
@@ -144,6 +174,7 @@ const unique=a=>[...new Set(a.filter(v=>v!==''&&v!==null&&v!==undefined))];
 const sum=(rows,key)=>rows.reduce((s,r)=>s+(r[key]||0),0);
 const statusOf=v=>v>=LIMIAR_CRITICO?'crit':v>=LIMIAR_ATENCAO?'warn':'ok';
 const statusLabel=v=>v>=LIMIAR_CRITICO?'Crítico':v>=LIMIAR_ATENCAO?'Atenção':'Dentro da Meta';
+const statusHex=v=>v>=LIMIAR_CRITICO?'#ef6a5d':v>=LIMIAR_ATENCAO?'#e87535':'#78aaa3';
 
 function fetchMatrix(url){return new Promise((resolve,reject)=>Papa.parse(url,{download:true,skipEmptyLines:false,complete:r=>resolve(r.data),error:reject}))}
 
@@ -156,7 +187,7 @@ function matrixObjects(matrix){
 function pick(row,names){const keys=Object.keys(row);for(const n of names){const nn=norm(n),k=keys.find(x=>norm(x)===nn);if(k!==undefined&&String(row[k]??'').trim()!=='')return row[k]}return ''}
 
 function parseDebt(matrix){
-  const rows=matrixObjects(matrix).map(r=>({
+  return matrixObjects(matrix).map(r=>({
     secretaria:String(pick(r,['SECRETARIA'])).trim(),
     service:aliasService(String(pick(r,['Serviço','Servico'])).trim())||'Não informado',
     cre:String(pick(r,['CRE'])).trim(),
@@ -164,7 +195,6 @@ function parseDebt(matrix){
     year:Number(pick(r,['Ano Exercício','Ano Exercicio']))||0,
     debt:money(pick(r,['Débito Liquido','Débito Líquido']))
   })).filter(r=>['SME','SMS','SMPDA'].includes(r.secretaria) && (r.debt||r.contract!=='Não informado'));
-  return rows;
 }
 
 function parseBilling(matrix){
@@ -179,22 +209,70 @@ function parseBilling(matrix){
   return byService;
 }
 
-function renderRank(rows){
-  $('rankBody').innerHTML = rows.map(r=>{
-    const st=statusOf(r.pct);
-    return `<div class="rankRow">
-      <div class="rankName">${esc(r.service)}</div>
-      <div class="rankTrack"><div class="rankFill ${st}" style="width:${Math.min(100,r.pct/r.scaleMax*100).toFixed(1)}%"></div></div>
-      <div class="rankPct">${pct(r.pct)}</div>
-      <div class="rankStatus ${st}">${statusLabel(r.pct)}</div>
-    </div>`;
-  }).join('') || '<div class="loadingMsg">Sem dados suficientes para o ciclo corrente.</div>';
+function buildGauge(ratio){
+  const ctx=$('gaugeChart').getContext('2d');
+  const scaleMax=Math.max(20, ratio*1.15);
+  const color=statusHex(ratio);
+  new Chart(ctx,{
+    type:'doughnut',
+    data:{datasets:[{
+      data:[ratio, Math.max(scaleMax-ratio,0.001)],
+      backgroundColor:[color,'#132941'],
+      borderWidth:0
+    }]},
+    options:{
+      circumference:270, rotation:-135, cutout:'74%',
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      animation:{duration:900}
+    }
+  });
+}
+
+function buildRank(rows){
+  const ctx=$('rankChart').getContext('2d');
+  const sorted=[...rows].sort((a,b)=>a.pct-b.pct); // ascending so highest ends up on top visually with indexAxis y
+  new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:sorted.map(r=>r.service),
+      datasets:[{
+        data:sorted.map(r=>r.pct),
+        backgroundColor:sorted.map(r=>statusHex(r.pct)),
+        borderRadius:6,
+        barThickness:22
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>pct(c.raw)}}},
+      scales:{
+        x:{grid:{color:'rgba(130,183,231,.1)'},ticks:{color:'#9db8d4',callback:v=>v+'%'}},
+        y:{grid:{display:false},ticks:{color:'#eef6ff',font:{weight:700,size:12}}}
+      }
+    }
+  });
+  $('rankChart').parentElement.style.height=(sorted.length*34+40)+'px';
+}
+
+function buildConc(share){
+  const ctx=$('concChart').getContext('2d');
+  new Chart(ctx,{
+    type:'doughnut',
+    data:{datasets:[{
+      data:[share, Math.max(100-share,0.001)],
+      backgroundColor:['#a78bfa','#132941'],
+      borderWidth:0
+    }]},
+    options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:900}}
+  });
 }
 
 async function init(){
   try{
     if(typeof HUB === 'undefined' || !HUB.header || !HUB.footer){
-      throw Error('Componentes do HUB (hub-utils.js / hub-layout.js) não carregaram. Este arquivo precisa estar dentro da estrutura real do repositório, em contratos/debitos/, ao lado da pasta assets/ — não funciona como download avulso fora dessa árvore de pastas.');
+      throw Error('Componentes do HUB (hub-utils.js / hub-layout.js) não carregaram. Confira se este arquivo está na mesma pasta de nível do repositório onde os caminhos ../assets/ resolvem corretamente.');
     }
     HUB.header.render('header',{
       systemLabel:'HUB COMLURB · Contratos de Receita',
@@ -216,28 +294,22 @@ async function init(){
     const OLD_DEBT_TOTAL = sum(oldDebt,'debt');
     const CURRENT_BILLING_TOTAL = Object.values(BILLING_BY_SERVICE).reduce((s,v)=>s+v,0);
 
-    // ---- Headline ----
+    // ---- Hero / gauge ----
     const headlineRatio = CURRENT_BILLING_TOTAL ? (CURRENT_DEBT_TOTAL/CURRENT_BILLING_TOTAL*100) : 0;
     const hSt = statusOf(headlineRatio);
-    $('headlineBox').classList.add(hSt);
-    $('headlineValue').textContent = pct(headlineRatio);
-    $('headlineValue').classList.add(hSt);
-    $('headlineStatus').textContent = statusLabel(headlineRatio);
-    $('headlineStatus').classList.add(hSt);
-    $('headlineText').textContent = `De cada R$ 100 faturados no ciclo de ${latestYear}, R$ ${headlineRatio.toFixed(2).replace('.',',')} seguem sem retorno. Limiar de atenção: ${LIMIAR_ATENCAO}% · limiar crítico: ${LIMIAR_CRITICO}%.`;
+    $('heroBox').classList.add(hSt);
+    $('gaugeVal').textContent = pct(headlineRatio);
+    $('gaugeVal').classList.add(hSt);
+    $('heroPill').textContent = statusLabel(headlineRatio);
+    $('heroPill').classList.add(hSt);
+    $('heroText').innerHTML = `De cada <b>R$ 100</b> faturados no ciclo de ${latestYear}, <b>R$ ${headlineRatio.toFixed(2).replace('.',',')}</b> seguem sem retorno. Limiar de atenção: ${LIMIAR_ATENCAO}% · limiar crítico: ${LIMIAR_CRITICO}%.`;
+    buildGauge(headlineRatio);
 
-    // ---- KPIs ----
+    // ---- KPIs laterais ----
     $('kpiFaturado').textContent = compact(CURRENT_BILLING_TOTAL);
     $('kpiFaturadoMeta').textContent = `Base do ciclo ${latestYear}, meses fechados.`;
     $('kpiDebitoCorrente').textContent = compact(CURRENT_DEBT_TOTAL);
     $('kpiDebitoTotal').textContent = compact(TOTAL_DEBT);
-
-    // ---- Corrente x Legado ----
-    const oldShare = TOTAL_DEBT? OLD_DEBT_TOTAL/TOTAL_DEBT*100 : 0;
-    const curShare = 100-oldShare;
-    $('splitBar').innerHTML = `
-      <div class="splitOld" style="width:${oldShare.toFixed(1)}%">${oldShare>=12?pct(oldShare):''}</div>
-      <div class="splitCur" style="width:${curShare.toFixed(1)}%">${curShare>=12?pct(curShare):''}</div>`;
 
     // ---- Ranking por serviço ----
     const debtByService = {};
@@ -248,9 +320,7 @@ async function init(){
       const debt = debtByService[service]||0;
       return {service, pct: billing? debt/billing*100 : 0, billing, debt};
     }).filter(r=>r.billing>0).sort((a,b)=>b.pct-a.pct);
-    const scaleMax = Math.max(...rankRows.map(r=>r.pct), LIMIAR_CRITICO*1.5);
-    rankRows = rankRows.map(r=>({...r, scaleMax}));
-    renderRank(rankRows);
+    buildRank(rankRows);
 
     // ---- Concentração por contrato ----
     const cMap = new Map();
@@ -261,37 +331,45 @@ async function init(){
       if(r.cre) x.cres.add(r.cre);
     });
     const topContract = [...cMap.values()].sort((a,b)=>b.debt-a.debt)[0];
+    const topShare = topContract && TOTAL_DEBT ? topContract.debt/TOTAL_DEBT*100 : 0;
+    $('concVal').textContent = pct(topShare);
     $('concContrato').textContent = topContract? topContract.contract : '—';
     $('concServico').textContent = topContract? topContract.service : '—';
-    $('concPct').textContent = topContract && TOTAL_DEBT? pct(topContract.debt/TOTAL_DEBT*100) : '—';
+    $('concDebtValue').textContent = topContract? compact(topContract.debt) : '—';
     $('concCres').textContent = topContract? (topContract.cres.size||'—') : '—';
+    buildConc(topShare);
 
-    // ---- Leitura executiva condicional ----
-    const topShare = topContract && TOTAL_DEBT ? topContract.debt/TOTAL_DEBT*100 : 0;
+    // ---- Corrente x Legado ----
+    const oldShare = TOTAL_DEBT? OLD_DEBT_TOTAL/TOTAL_DEBT*100 : 0;
+    const curShare = 100-oldShare;
+    $('oldValue').textContent = `${compact(OLD_DEBT_TOTAL)} · ${pct(oldShare)}`;
+    $('curValue').textContent = `${compact(CURRENT_DEBT_TOTAL)} · ${pct(curShare)}`;
+    $('divergeTrack').innerHTML = `<div class="old" style="width:${oldShare.toFixed(1)}%"></div><div class="cur" style="width:${curShare.toFixed(1)}%"></div>`;
+
+    // ---- Briefing condicional ----
     const criticalRows = rankRows.filter(r=>statusOf(r.pct)==='crit').sort((a,b)=>b.pct-a.pct);
     const criticalCount = criticalRows.length;
-    const paragrafos = [];
+    const itens = [];
 
     if(headlineRatio>=LIMIAR_CRITICO && criticalCount>=Math.ceil(rankRows.length*0.5)){
-      const piores = criticalRows.slice(0,3).map(r=>`${r.service} (${pct(r.pct)})`).join(', ');
-      paragrafos.push(`O ciclo corrente está em ${statusLabel(headlineRatio).toLowerCase()} (${pct(headlineRatio)}) e não é um caso isolado: ${criticalCount} de ${rankRows.length} serviços já ultrapassam o limiar crítico de ${LIMIAR_CRITICO}%, liderados por ${piores}. Juntos, os serviços em situação crítica somam ${compact(criticalRows.reduce((s,r)=>s+r.debt,0))} em débito do próprio ciclo, sobre um faturado de ${compact(criticalRows.reduce((s,r)=>s+r.billing,0))}.`);
+      const piores = criticalRows.slice(0,3).map(r=>`<b>${esc(r.service)}</b> (${pct(r.pct)})`).join(', ');
+      itens.push(`O ciclo corrente está em <b>${statusLabel(headlineRatio).toLowerCase()}</b> (${pct(headlineRatio)}) e não é um caso isolado: <b>${criticalCount} de ${rankRows.length}</b> serviços já ultrapassam o limiar crítico de ${LIMIAR_CRITICO}%, liderados por ${piores}. Juntos, somam <b>${compact(criticalRows.reduce((s,r)=>s+r.debt,0))}</b> em débito do próprio ciclo, sobre um faturado de ${compact(criticalRows.reduce((s,r)=>s+r.billing,0))}.`);
     } else if(headlineRatio>=LIMIAR_CRITICO){
-      paragrafos.push(`O ciclo corrente está em situação crítica (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_CRITICO}%, equivalente a ${compact(CURRENT_DEBT_TOTAL)} sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
+      itens.push(`O ciclo corrente está em situação <b>crítica</b> (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_CRITICO}%, equivalente a <b>${compact(CURRENT_DEBT_TOTAL)}</b> sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
     } else if(headlineRatio>=LIMIAR_ATENCAO){
-      paragrafos.push(`O ciclo corrente está em atenção (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_ATENCAO}%, equivalente a ${compact(CURRENT_DEBT_TOTAL)} sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
+      itens.push(`O ciclo corrente está em <b>atenção</b> (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_ATENCAO}%, equivalente a <b>${compact(CURRENT_DEBT_TOTAL)}</b> sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
     }
 
     if(topShare>=30){
-      paragrafos.push(`O contrato ${topContract.contract} (${topContract.service}) concentra sozinho ${pct(topShare)} de todo o débito acumulado — ${compact(topContract.debt)} de um total de ${compact(TOTAL_DEBT)} — distribuído em ${topContract.cres.size||'—'} unidades/CREs distintas. É o maior ponto único de exposição da carteira.`);
+      itens.push(`O contrato <b>${esc(topContract.contract)}</b> (${esc(topContract.service)}) concentra sozinho <b>${pct(topShare)}</b> de todo o débito acumulado — ${compact(topContract.debt)} de um total de ${compact(TOTAL_DEBT)} — em ${topContract.cres.size||'—'} unidades/CREs distintas. É o maior ponto único de exposição da carteira.`);
     }
 
     if(oldShare>=50){
-      paragrafos.push(`${pct(oldShare)} do saldo em aberto (${compact(OLD_DEBT_TOTAL)}) vem de exercícios anteriores a ${latestYear}, não do ciclo atual — é passivo represado, que pede tratativa de negociação/quitação, distinto do débito corrente (${compact(CURRENT_DEBT_TOTAL)}), que é controle de ciclo de pagamento.`);
+      itens.push(`<b>${pct(oldShare)}</b> do saldo em aberto (${compact(OLD_DEBT_TOTAL)}) vem de exercícios anteriores a ${latestYear} — passivo represado, que pede tratativa de negociação/quitação, distinto do débito corrente (${compact(CURRENT_DEBT_TOTAL)}), que é controle de ciclo de pagamento.`);
     }
 
-    $('decisionText').innerHTML = paragrafos.length
-      ? paragrafos.map(p=>`<p style="margin:0 0 10px">${p}</p>`).join('')
-      : '<p style="margin:0">Nenhum indicador ultrapassou os limiares de atenção definidos para este painel.</p>';
+    $('briefing').innerHTML = (itens.length? itens : ['Nenhum indicador ultrapassou os limiares de atenção definidos para este painel.'])
+      .map((t,i)=>`<div class="briefRow"><div class="briefNum">${String(i+1).padStart(2,'0')}</div><div class="briefText">${t}</div></div>`).join('');
 
     $('stateMsg').style.display='none';
     $('painel').style.display='block';

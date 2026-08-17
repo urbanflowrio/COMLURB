@@ -1,385 +1,926 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Débitos | Contratos de Receita | HUB COMLURB</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance dos Contratos de Receita | HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
-.cockpit{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
-@media(max-width:980px){.cockpit{grid-template-columns:1fr}}
+:root{
+  color-scheme:dark;
+  --bg:#06111f;
+  --bg2:#081728;
+  --panel:#0d1f36;
+  --panel2:#0a1b31;
+  --panel3:#10253f;
+  --line:#294866;
+  --line-soft:rgba(117,160,204,.16);
+  --text:#f7f9ff;
+  --muted:#9db4cb;
+  --muted2:#7890a8;
+  --blue:#5b9bd5;
+  --blue2:#78b5ee;
+  --cyan:#65d1e6;
+  --green:#78aaa3;
+  --orange:#e8a34d;
+  --red:#ef6a5d;
+  --purple:#aa8cff;
+  --shadow:0 18px 60px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 12% -5%,rgba(91,155,213,.16),transparent 28%),
+    radial-gradient(circle at 96% 2%,rgba(101,209,230,.07),transparent 24%),
+    var(--bg);
+  color:var(--text);
+  font-family:"Segoe UI",Inter,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,select{font:inherit}
+.app{max-width:1760px;margin:0 auto;padding:24px 26px 30px}
 
-.hero{position:relative;overflow:hidden;background:radial-gradient(circle at 15% 20%,#123457 0%,#0a1c30 55%,#081527 100%);border:1px solid var(--linha);border-radius:26px;padding:30px;display:flex;align-items:center;gap:26px}
-.hero.crit{box-shadow:inset 0 0 0 1px rgba(239,106,93,.35)}
-.hero.warn{box-shadow:inset 0 0 0 1px rgba(255,160,43,.3)}
-.hero.ok{box-shadow:inset 0 0 0 1px rgba(120,170,163,.3)}
-.gaugeWrap{position:relative;width:190px;height:190px;flex:0 0 auto}
-.gaugeWrap canvas{width:100%!important;height:100%!important}
-.gaugeCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
-.gaugeCenter .val{font-size:34px;font-weight:950;letter-spacing:-.03em;line-height:1}
-.gaugeCenter .val.crit{color:#ff8a7d}.gaugeCenter .val.warn{color:#ffc369}.gaugeCenter .val.ok{color:#a9d6cd}
-.gaugeCenter .lab{margin-top:4px;font-size:9.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#8fb3d6}
-.heroCopy{flex:1;min-width:0}
-.heroEyebrow{font-size:10.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#7fb0e0;margin-bottom:10px}
-.heroStatusPill{display:inline-flex;padding:5px 14px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px}
-.heroStatusPill.crit{background:rgba(239,106,93,.18);color:#ffb3aa}.heroStatusPill.warn{background:rgba(255,160,43,.18);color:#ffcf8f}.heroStatusPill.ok{background:rgba(120,170,163,.2);color:#a9d6cd}
-.heroText{font-size:16px;line-height:1.55;color:#eef6ff;font-weight:500}
-.heroText b{font-weight:900;color:#fff}
+/* HEADER */
+.hub-header{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:26px;
+  min-height:122px;
+  padding:23px 26px;
+  background:linear-gradient(135deg,rgba(10,27,49,.98),rgba(13,31,54,.96));
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.hub-header:after{
+  content:"";
+  position:absolute;
+  width:360px;height:360px;border-radius:50%;
+  right:-160px;top:-210px;
+  background:radial-gradient(circle,rgba(91,155,213,.2),transparent 67%);
+  pointer-events:none;
+}
+.logo-img{
+  width:292px;
+  max-height:78px;
+  object-fit:contain;
+  padding-right:24px;
+  border-right:1px solid rgba(255,255,255,.2);
+  position:relative;z-index:1;
+}
+.header-copy{min-width:0;position:relative;z-index:1}
+.system-label{
+  font-size:11px;font-weight:900;letter-spacing:.24em;
+  color:#bad8f5;text-transform:uppercase;
+}
+.main-title{
+  margin:6px 0 6px;
+  font-size:clamp(29px,2.7vw,42px);
+  line-height:1.02;
+  letter-spacing:-.045em;
+  font-weight:950;
+}
+.subtitle{
+  color:#bfd0e4;
+  font-size:14px;
+  line-height:1.48;
+  max-width:900px;
+}
+.header-meta{
+  text-align:right;
+  color:#93abc3;
+  font-size:11px;
+  line-height:1.55;
+  position:relative;z-index:1;
+}
+.live{display:inline-flex;align-items:center;gap:7px;color:#b9d4ee;font-weight:800}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(120,170,163,.8)}
 
-.sideStack{display:flex;flex-direction:column;gap:12px}
-.sideKpi{display:flex;align-items:center;gap:16px;background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:16px 18px;flex:1}
-.sideKpi .bar{width:5px;align-self:stretch;border-radius:4px;background:var(--azul2)}
-.sideKpi.risk .bar{background:var(--vermelho)}.sideKpi.warn .bar{background:var(--laranja)}.sideKpi.total .bar{background:var(--roxo,#a78bfa)}
-.sideKpi .txt{min-width:0}
-.sideKpiLabel{font-size:10px;color:#9db8d4;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
-.sideKpiValue{margin-top:6px;font-size:22px;font-weight:950;letter-spacing:-.02em;white-space:nowrap}
-.sideKpiMeta{margin-top:3px;font-size:11px;color:var(--silenciado)}
+/* COMMAND STRIP */
+.command-strip{
+  display:grid;
+  grid-template-columns:minmax(0,1.8fr) repeat(3,minmax(150px,.68fr));
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(10,27,49,.84);
+}
+.command-main{
+  min-height:88px;
+  padding:16px 18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-right:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(91,155,213,.08),transparent);
+}
+.command-ey{
+  font-size:9px;font-weight:950;letter-spacing:.17em;text-transform:uppercase;color:#95b7d8;margin-bottom:7px;
+}
+.command-message{font-size:17px;font-weight:850;line-height:1.25;letter-spacing:-.01em}
+.command-stat{
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-right:1px solid var(--line);
+}
+.command-stat:last-child{border-right:0}
+.command-stat span{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#8fa8c0;font-weight:900}
+.command-stat b{font-size:17px;margin-top:5px;letter-spacing:-.02em}
+.command-stat small{font-size:10px;color:#7890a8;margin-top:2px}
 
-.chartsRow{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
-@media(max-width:980px){.chartsRow{grid-template-columns:1fr}}
-.panel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden}
-.panelHead{padding:16px 20px;border-bottom:1px solid var(--linha)}
-.panelHead h2{margin:0;font-size:15.5px}.panelHead p{margin:4px 0 0;color:var(--silenciado);font-size:11.5px}
-.panelBody{padding:18px 20px}
+/* FILTERS */
+.filters{
+  display:grid;
+  grid-template-columns:170px minmax(190px,1fr) minmax(240px,1.35fr) auto;
+  gap:10px;
+  margin:14px 0;
+}
+.filter-card{
+  background:rgba(10,27,49,.9);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:9px 11px;
+}
+.filter-card label{
+  display:block;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:#8da8c1;
+  margin:0 0 5px;
+}
+.filter-card select{
+  width:100%;
+  border:0;
+  outline:none;
+  color:#edf6ff;
+  background:transparent;
+  font-weight:800;
+  font-size:12px;
+}
+.clear-btn{
+  min-width:126px;
+  border:1px solid #365b7c;
+  border-radius:14px;
+  background:#102640;
+  color:#d9eaff;
+  font-weight:900;
+  font-size:11px;
+  cursor:pointer;
+}
+.clear-btn:hover{background:#163251}
 
-.concWrap{display:flex;align-items:center;gap:18px}
-.concDonut{position:relative;width:150px;height:150px;flex:0 0 auto}
-.concCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
-.concCenter .val{font-size:26px;font-weight:950}
-.concCenter .lab{font-size:9px;color:#8fb3d6;text-transform:uppercase;letter-spacing:.08em;font-weight:900;margin-top:2px}
-.concFacts{flex:1;min-width:0}
-.concFacts h3{margin:0 0 4px;font-size:15px;font-weight:900;color:#fff;line-height:1.3}
-.concFacts .sub{font-size:11.5px;color:var(--silenciado);margin-bottom:12px}
-.concFactRow{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 0;border-top:1px solid rgba(130,183,231,.14)}
-.concFactRow b{color:#fff;font-weight:900}
+/* KPI ROW */
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:14px;
+}
+.kpi{
+  min-height:142px;
+  padding:18px 19px 17px;
+  background:linear-gradient(180deg,rgba(13,31,54,.98),rgba(8,23,40,.98));
+  border:1px solid var(--line);
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.kpi:before{
+  content:"";
+  position:absolute;left:0;top:0;right:0;height:3px;background:var(--blue);
+}
+.kpi.green:before{background:var(--green)}
+.kpi.red:before{background:var(--red)}
+.kpi.orange:before{background:var(--orange)}
+.kpi:after{
+  content:"";
+  position:absolute;
+  width:120px;height:120px;border-radius:50%;
+  right:-55px;top:-55px;background:rgba(91,155,213,.055);
+}
+.kpi-label{
+  font-size:9px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#9db7cf;
+}
+.kpi-value{
+  margin:11px 0 5px;
+  font-size:clamp(28px,2.4vw,40px);
+  font-weight:950;
+  line-height:1;
+  letter-spacing:-.05em;
+  white-space:nowrap;
+}
+.kpi-note{font-size:11px;color:#89a3bb;line-height:1.35}
+.kpi-note strong{color:#dce9f7}
 
-.divergeWrap{padding:6px 4px 2px}
-.divergeLabels{display:flex;justify-content:space-between;margin-bottom:10px}
-.divergeLabels .side{font-size:12px;color:var(--silenciado)}
-.divergeLabels .side b{display:block;font-size:20px;color:#fff;font-weight:950;margin-top:2px}
-.divergeTrack{display:flex;height:30px;border-radius:9px;overflow:hidden;border:1px solid var(--linha)}
-.divergeTrack .old{background:linear-gradient(90deg,#b95023,#e87535)}
-.divergeTrack .cur{background:linear-gradient(90deg,#2f67a5,#5b9bd5)}
+/* MAIN EXECUTIVE COCKPIT */
+.cockpit{
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) minmax(350px,.7fr);
+  gap:14px;
+  margin-bottom:14px;
+}
+.panel{
+  background:rgba(13,31,54,.94);
+  border:1px solid var(--line);
+  border-radius:19px;
+  overflow:hidden;
+  min-width:0;
+  box-shadow:0 10px 35px rgba(0,0,0,.13);
+}
+.panel-head{
+  min-height:64px;
+  padding:15px 18px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.panel-title{font-size:16px;font-weight:900;letter-spacing:-.02em;margin:0}
+.panel-hint{font-size:10px;color:#87a0b7;margin-top:3px}
+.panel-body{padding:18px}
 
-.briefing{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:6px;margin-bottom:16px}
-.briefRow{display:grid;grid-template-columns:38px 1fr;gap:14px;padding:16px 18px;border-radius:14px}
-.briefRow+.briefRow{border-top:1px solid rgba(130,183,231,.1)}
-.briefNum{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:950;font-size:14px;background:rgba(91,155,213,.14);color:#8fc4f2}
-.briefText{font-size:14.5px;line-height:1.55;color:#eef6ff;align-self:center}
-.briefText b{color:#fff;font-weight:900}
+.flow-hero{
+  min-height:382px;
+  background:
+    linear-gradient(135deg,rgba(8,24,42,.96),rgba(13,31,54,.96)),
+    var(--panel);
+  position:relative;
+}
+.flow-hero:after{
+  content:"";position:absolute;inset:auto -90px -160px auto;
+  width:360px;height:360px;border-radius:50%;
+  background:radial-gradient(circle,rgba(91,155,213,.12),transparent 68%);
+}
+.chart-wrap{height:285px;position:relative;z-index:1}
+.chart-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:8px;
+  position:relative;z-index:1;
+}
+.chart-summary div{
+  padding:10px 12px;border:1px solid var(--line-soft);
+  border-radius:12px;background:rgba(5,17,30,.35);
+}
+.chart-summary span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.11em;color:#8099b2;font-weight:900}
+.chart-summary b{display:block;font-size:14px;margin-top:4px}
 
-.loadingMsg,.errorMsg{padding:40px;text-align:center;color:var(--silenciado)}
-.errorMsg{color:var(--vermelho)}
+/* DEBT FOCUS */
+.debt-focus{
+  padding:22px;
+  min-height:382px;
+  position:relative;
+  background:
+    linear-gradient(160deg,rgba(15,37,62,.96),rgba(8,23,40,.98));
+}
+.debt-focus:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--red),rgba(239,106,93,0));
+}
+.focus-ey{
+  font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:#e2a29b;font-weight:950;
+}
+.focus-amount{
+  font-size:clamp(38px,4.6vw,67px);
+  line-height:.95;
+  letter-spacing:-.065em;
+  font-weight:950;
+  margin:13px 0 10px;
+}
+.focus-caption{color:#9db4cb;font-size:12px;line-height:1.45;max-width:420px}
+.focus-contract{
+  margin-top:21px;
+  padding:15px;
+  border:1px solid rgba(239,106,93,.24);
+  background:rgba(239,106,93,.055);
+  border-radius:14px;
+}
+.focus-contract span{font-size:8px;text-transform:uppercase;letter-spacing:.13em;color:#d49993;font-weight:900}
+.focus-contract b{display:block;margin-top:6px;font-size:15px}
+.focus-contract small{display:block;color:#93a9c0;font-size:10px;line-height:1.35;margin-top:4px}
+.focus-bars{display:grid;gap:11px;margin-top:19px}
+.focus-line{display:grid;grid-template-columns:115px 1fr 52px;gap:10px;align-items:center}
+.focus-line span{font-size:9px;color:#8fa6bd;text-transform:uppercase;font-weight:900;letter-spacing:.07em}
+.track{height:7px;border-radius:99px;background:#142b44;overflow:hidden}
+.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#3677b8,#78b5ee)}
+.fill.green{background:linear-gradient(90deg,#497d78,#78aaa3)}
+.fill.red{background:linear-gradient(90deg,#a54841,#ef6a5d)}
+.focus-line b{text-align:right;font-size:10px}
+
+/* DISTRIBUTION */
+.secondary-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  gap:14px;
+  margin-bottom:14px;
+}
+.secretary-list{display:grid;gap:10px}
+.sec-row{
+  display:grid;
+  grid-template-columns:minmax(80px,.42fr) minmax(150px,1fr) 110px;
+  gap:13px;
+  align-items:center;
+  padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.sec-row:last-child{border-bottom:0}
+.sec-name b{display:block;font-size:13px}
+.sec-name small{display:block;color:#7e98b0;font-size:9px;margin-top:2px}
+.sec-value{text-align:right}
+.sec-value b{display:block;font-size:12px}
+.sec-value small{font-size:9px;color:#7f98af}
+
+.exec-insights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.insight{
+  min-height:112px;
+  padding:14px 15px;
+  border:1px solid var(--line-soft);
+  border-radius:14px;
+  background:rgba(7,21,37,.42);
+}
+.insight-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.insight-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 11px rgba(91,155,213,.72)}
+.insight.red .insight-dot{background:var(--red);box-shadow:0 0 11px rgba(239,106,93,.55)}
+.insight.green .insight-dot{background:var(--green)}
+.insight-label{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#8ba5bd;font-weight:900}
+.insight strong{display:block;font-size:15px;line-height:1.25;letter-spacing:-.015em}
+.insight p{margin:5px 0 0;color:#8ea7be;font-size:10px;line-height:1.38}
+
+/* CONTRACT PORTFOLIO */
+.portfolio-head-right{font-size:10px;color:#819ab2}
+.portfolio{display:grid;gap:9px}
+.contract{
+  display:grid;
+  grid-template-columns:minmax(250px,1.4fr) 110px 110px 110px 104px 26px;
+  gap:12px;
+  align-items:center;
+  min-height:72px;
+  padding:11px 13px;
+  border:1px solid var(--line-soft);
+  border-radius:14px;
+  background:rgba(7,21,37,.38);
+  cursor:pointer;
+  transition:.18s ease;
+}
+.contract:hover{transform:translateY(-1px);border-color:rgba(91,155,213,.35);background:rgba(10,28,48,.7)}
+.contract.open{border-color:rgba(91,155,213,.43);background:rgba(13,36,60,.72)}
+.contract-main{min-width:0}
+.contract-kicker{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.contract-id{font-size:10px;color:#c9def2;font-weight:950}
+.sec-pill{
+  font-size:7px;font-weight:950;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 6px;border-radius:999px;background:rgba(91,155,213,.1);
+  color:#9bc7ef;border:1px solid rgba(91,155,213,.22);
+}
+.contract-service{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contract-metric span{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#7891aa;font-weight:900}
+.contract-metric b{display:block;font-size:11px;margin-top:3px}
+.contract-metric.debt b{color:#ff9b91}
+.rate{display:flex;align-items:center;gap:7px}
+.rate-ring{
+  --p:50;
+  width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;
+  background:conic-gradient(var(--green) calc(var(--p)*1%),#17304a 0);
+}
+.rate-ring:after{
+  content:attr(data-label);
+  width:28px;height:28px;border-radius:50%;
+  background:#091a2d;display:grid;place-items:center;
+  font-size:7px;font-weight:950;color:#dfeefa;
+}
+.chev{font-size:18px;color:#6d87a0;transition:.2s}
+.contract.open .chev{transform:rotate(90deg);color:#a9cdeb}
+.contract-detail{
+  display:none;
+  grid-column:1/-1;
+  margin:0 0 4px;
+  padding:13px 14px;
+  border:1px solid rgba(91,155,213,.17);
+  border-radius:12px;
+  background:rgba(4,16,29,.55);
+}
+.contract.open + .contract-detail{display:grid}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.detail-box{padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.detail-box span{font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#7890a8;font-weight:900}
+.detail-box b{display:block;margin-top:4px;font-size:12px}
+
+/* FOOTER */
+.footer{
+  margin-top:20px;
+  padding:20px 2px 2px;
+  border-top:1px solid rgba(255,255,255,.09);
+  color:#7890a8;
+  font-size:10px;
+  line-height:1.55;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+}
+.footer strong{color:#bfd1e3}
+
+/* RESPONSIVE */
+@media(max-width:1180px){
+  .hub-header{grid-template-columns:auto 1fr}
+  .header-meta{grid-column:1/-1;text-align:left}
+  .command-strip{grid-template-columns:1fr 1fr}
+  .command-main{grid-column:1/-1;border-right:0;border-bottom:1px solid var(--line)}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .cockpit,.secondary-grid{grid-template-columns:1fr}
+  .contract{grid-template-columns:minmax(220px,1.4fr) repeat(3,100px) 90px 22px}
+}
+@media(max-width:760px){
+  .app{padding:14px}
+  .hub-header{grid-template-columns:1fr;gap:16px}
+  .logo-img{width:238px;border-right:0;padding-right:0}
+  .header-meta{text-align:left}
+  .command-strip{grid-template-columns:1fr}
+  .command-main,.command-stat{border-right:0;border-bottom:1px solid var(--line)}
+  .filters{grid-template-columns:1fr}
+  .clear-btn{height:42px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi{min-height:130px}
+  .kpi-value{white-space:normal;font-size:28px}
+  .chart-wrap{height:255px}
+  .chart-summary{grid-template-columns:1fr}
+  .exec-insights{grid-template-columns:1fr}
+  .sec-row{grid-template-columns:70px 1fr 90px}
+  .contract{grid-template-columns:minmax(0,1fr) 70px 24px}
+  .contract-metric.fat,.contract-metric.paid{display:none}
+  .contract-metric.debt{grid-column:2}
+  .rate{display:none}
+  .detail-grid{grid-template-columns:1fr 1fr}
+  .footer{flex-direction:column}
+}
+@media(max-width:500px){
+  .kpis{grid-template-columns:1fr}
+  .main-title{font-size:28px}
+  .focus-amount{font-size:46px}
+}
 </style>
 </head>
-<body><main class="app">
-<div id="header"></div>
+<body>
+<div class="app">
 
-<section id="content">
-<div id="stateMsg" class="loadingMsg">Carregando posição de débitos…</div>
-
-<div id="painel" style="display:none">
-
-  <div class="cockpit">
-    <div class="hero" id="heroBox">
-      <div class="gaugeWrap">
-        <canvas id="gaugeChart"></canvas>
-        <div class="gaugeCenter"><div class="val" id="gaugeVal">—</div><div class="lab">Débito / faturado</div></div>
-      </div>
-      <div class="heroCopy">
-        <div class="heroEyebrow">Ciclo corrente</div>
-        <div class="heroStatusPill" id="heroPill">—</div>
-        <div class="heroText" id="heroText">Calculando posição do ciclo corrente.</div>
-      </div>
-    </div>
-
-    <div class="sideStack">
-      <div class="sideKpi"><div class="bar"></div><div class="txt"><div class="sideKpiLabel">Faturado bruto — ciclo</div><div class="sideKpiValue" id="kpiFaturado">—</div><div class="sideKpiMeta" id="kpiFaturadoMeta">—</div></div></div>
-      <div class="sideKpi warn"><div class="bar"></div><div class="txt"><div class="sideKpiLabel">Débito líquido — ciclo</div><div class="sideKpiValue" id="kpiDebitoCorrente">—</div><div class="sideKpiMeta">Formado no próprio ciclo</div></div></div>
-      <div class="sideKpi risk"><div class="bar"></div><div class="txt"><div class="sideKpiLabel">Débito acumulado</div><div class="sideKpiValue" id="kpiDebitoTotal">—</div><div class="sideKpiMeta">Carteira aberta, todos os exercícios</div></div></div>
-    </div>
+<header class="hub-header">
+  <img class="logo-img" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | COMLURB" onerror="this.style.display='none'">
+  <div class="header-copy">
+    <div class="system-label">HUB COMLURB</div>
+    <h1 class="main-title">Performance dos Contratos de Receita</h1>
+    <div class="subtitle">Visão executiva de faturamento, receita líquida recebida e débito líquido dos contratos de receita em 2026.</div>
   </div>
-
-  <div class="chartsRow">
-    <article class="panel">
-      <div class="panelHead"><h2>Débito / faturado por serviço — ciclo corrente</h2><p>do mais crítico ao mais controlado</p></div>
-      <div class="panelBody"><canvas id="rankChart"></canvas></div>
-    </article>
-
-    <article class="panel">
-      <div class="panelHead"><h2>Maior concentração</h2><p>participação do contrato mais exposto na carteira acumulada</p></div>
-      <div class="panelBody">
-        <div class="concWrap">
-          <div class="concDonut">
-            <canvas id="concChart"></canvas>
-            <div class="concCenter"><div class="val" id="concVal">—</div><div class="lab">do total</div></div>
-          </div>
-          <div class="concFacts">
-            <h3 id="concContrato">—</h3>
-            <div class="sub" id="concServico">—</div>
-            <div class="concFactRow"><span>Débito do contrato</span><b id="concDebtValue">—</b></div>
-            <div class="concFactRow"><span>Unidades/CREs atingidas</span><b id="concCres">—</b></div>
-          </div>
-        </div>
-      </div>
-    </article>
+  <div class="header-meta">
+    <div class="live"><span class="live-dot"></span>Base financeira consolidada</div>
+    <div>Competências disponíveis: jan–mar/2026</div>
+    <div id="updatedAt">—</div>
   </div>
+</header>
 
-  <article class="panel" style="margin-bottom:16px">
-    <div class="panelHead"><h2>Composição do débito acumulado</h2><p>passivo represado x formação no ciclo atual</p></div>
-    <div class="panelBody">
-      <div class="divergeWrap">
-        <div class="divergeLabels">
-          <div class="side">Exercícios anteriores<b id="oldValue">—</b></div>
-          <div class="side" style="text-align:right">Ciclo corrente<b id="curValue">—</b></div>
-        </div>
-        <div class="divergeTrack" id="divergeTrack"></div>
+<section class="command-strip">
+  <div class="command-main">
+    <div class="command-ey">Leitura executiva</div>
+    <div class="command-message" id="executiveMessage">—</div>
+  </div>
+  <div class="command-stat">
+    <span>Maior contrato</span><b id="largestContract">—</b><small id="largestShare">—</small>
+  </div>
+  <div class="command-stat">
+    <span>Maior débito</span><b id="largestDebt">—</b><small id="largestDebtName">—</small>
+  </div>
+  <div class="command-stat">
+    <span>Recebimento</span><b id="receiptRate">—</b><small>sobre o faturado</small>
+  </div>
+</section>
+
+<section class="filters">
+  <div class="filter-card"><label>Ano</label><select id="yearFilter"><option value="2026">2026</option></select></div>
+  <div class="filter-card"><label>Secretaria</label><select id="secFilter"><option value="">Todas as secretarias</option></select></div>
+  <div class="filter-card"><label>Serviço</label><select id="serviceFilter"><option value="">Todos os serviços</option></select></div>
+  <button class="clear-btn" id="clearFilters">Limpar filtros</button>
+</section>
+
+<section class="kpis">
+  <article class="kpi">
+    <div>
+      <div class="kpi-label">Faturamento Bruto</div>
+      <div class="kpi-value" id="kpiBilled">—</div>
+    </div>
+    <div class="kpi-note">Valor faturado no recorte selecionado.</div>
+  </article>
+  <article class="kpi green">
+    <div>
+      <div class="kpi-label">Valor Líquido Pago</div>
+      <div class="kpi-value" id="kpiPaid">—</div>
+    </div>
+    <div class="kpi-note">Receita líquida efetivamente recebida.</div>
+  </article>
+  <article class="kpi red">
+    <div>
+      <div class="kpi-label">Débito Líquido</div>
+      <div class="kpi-value" id="kpiDebt">—</div>
+    </div>
+    <div class="kpi-note">Saldo pendente de recebimento na base.</div>
+  </article>
+  <article class="kpi orange">
+    <div>
+      <div class="kpi-label">Taxa de Recebimento</div>
+      <div class="kpi-value" id="kpiRate">—</div>
+    </div>
+    <div class="kpi-note"><strong id="kpiRateContext">—</strong> do faturado já convertido em receita líquida.</div>
+  </article>
+</section>
+
+<section class="cockpit">
+  <article class="panel flow-hero">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Fluxo financeiro de 2026</h2>
+        <div class="panel-hint">Evolução mensal do faturado, líquido pago e débito líquido.</div>
+      </div>
+      <div class="panel-hint">R$ milhões</div>
+    </div>
+    <div class="panel-body">
+      <div class="chart-wrap"><canvas id="flowChart"></canvas></div>
+      <div class="chart-summary">
+        <div><span>Melhor conversão</span><b id="bestMonth">—</b></div>
+        <div><span>Maior faturamento</span><b id="topMonth">—</b></div>
+        <div><span>Maior débito</span><b id="debtMonth">—</b></div>
       </div>
     </div>
   </article>
 
-  <div class="briefing" id="briefing"></div>
+  <article class="panel debt-focus">
+    <div class="focus-ey">Carteira em aberto</div>
+    <div class="focus-amount" id="focusDebt">—</div>
+    <div class="focus-caption" id="focusCaption">—</div>
 
-</div>
+    <div class="focus-contract">
+      <span>Principal exposição</span>
+      <b id="focusContract">—</b>
+      <small id="focusService">—</small>
+    </div>
+
+    <div class="focus-bars">
+      <div class="focus-line"><span>Recebido</span><div class="track"><div class="fill green" id="barPaid"></div></div><b id="barPaidLabel">—</b></div>
+      <div class="focus-line"><span>Débito</span><div class="track"><div class="fill red" id="barDebt"></div></div><b id="barDebtLabel">—</b></div>
+      <div class="focus-line"><span>Top 3 contratos</span><div class="track"><div class="fill" id="barTop3"></div></div><b id="barTop3Label">—</b></div>
+    </div>
+  </article>
 </section>
 
-<div id="footer"></div>
-</main>
+<section class="secondary-grid">
+  <article class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Receita por secretaria</h2>
+        <div class="panel-hint">Participação no faturamento do recorte.</div>
+      </div>
+    </div>
+    <div class="panel-body"><div class="secretary-list" id="secretaryList"></div></div>
+  </article>
 
-<script src="../assets/components/hub-utils.js"></script>
-<script src="../assets/components/hub-layout.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <article class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Sinais para decisão</h2>
+        <div class="panel-hint">Leituras objetivas derivadas da carteira atual.</div>
+      </div>
+    </div>
+    <div class="panel-body"><div class="exec-insights" id="insights"></div></div>
+  </article>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <h2 class="panel-title">Carteira de contratos</h2>
+      <div class="panel-hint">Clique em um contrato para abrir o detalhamento financeiro.</div>
+    </div>
+    <div class="portfolio-head-right" id="portfolioCount">—</div>
+  </div>
+  <div class="panel-body"><div class="portfolio" id="portfolio"></div></div>
+</section>
+
+<footer class="footer">
+  <div><strong>Gabinete da Presidência</strong><br>HUB COMLURB • Núcleo de Inteligência e Gestão Estratégica Operacional</div>
+  <div>Fonte: base financeira dos contratos de receita • valores consolidados por competência.</div>
+</footer>
+
+</div>
+
 <script>
-/* Mesma fonte já usada pelo painel Balanço Financeiro — aba geral publicada. */
-const SOURCES={
-  debt:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=0&single=true&output=csv',
-  billing2026:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=78738371&single=true&output=csv'
+const DATA = {
+  totals:{ faturado:55422878.17, recebido:29010650.85, debito:18915011.57 },
+  months:[
+    {label:"Jan",faturado:16891616.67,recebido:14447806.39,debito:179672.06},
+    {label:"Fev",faturado:18771534.04,recebido:14562844.46,debito:1657586.03},
+    {label:"Mar",faturado:19759727.46,recebido:0,debito:17077753.48}
+  ],
+  contracts:[
+    {contrato:"134/2021",secretaria:"SME",servico:"LIMPEZA E HIGIENIZAÇÃO",faturado:34616058.91,recebido:19418209.31,debito:10490065.98,unidades:16},
+    {contrato:"CONTRATO N° 2402909",secretaria:"SMS",servico:"LIMPEZA HOSPITALAR",faturado:12114779.22,recebido:6053849.90,debito:4613213.32,unidades:3},
+    {contrato:"133/2021",secretaria:"SME",servico:"CONTROLE DE VETORES E PRAGAS URBANAS",faturado:3537609.04,recebido:1464373.01,debito:1514294.18,unidades:19},
+    {contrato:"132/2021",secretaria:"SME",servico:"GESTÃO DE RESÍDUOS ESCOLARES",faturado:3527041.53,recebido:1327442.63,debito:1637738.48,unidades:18},
+    {contrato:"69/2023",secretaria:"SME",servico:"MANEJO ARBÓREO",faturado:1519316.60,recebido:660576.72,debito:652112.84,unidades:1},
+    {contrato:"133/2021",secretaria:"SMS",servico:"CONTROLE DE VETORES E PRAGAS URBANAS",faturado:82721.36,recebido:69651.40,debito:0,unidades:1},
+    {contrato:"03/2022",secretaria:"SMPDA",servico:"GESTÃO DE RESÍDUOS - ANIMAIS",faturado:25351.51,recebido:16547.88,debito:7586.77,unidades:1}
+  ]
 };
-const LIMIAR_CRITICO=8, LIMIAR_ATENCAO=5;
-/* A aba Débitos usa nomes curtos de serviço; a aba Faturamento usa nomes longos.
-   Divergência confirmada na fonte (não é erro de leitura) — reconciliada aqui
-   de forma explícita para permitir o cruzamento débito × faturado por serviço. */
-const SERVICE_ALIASES={'APA':'Agente de Preparo de Alimentos (APA)','Capina':'Capina e Roçada'};
-const aliasService=s=>SERVICE_ALIASES[s]||s;
-const MONTHS={jan:1,janeiro:1,fev:2,fevereiro:2,mar:3,marco:3,abr:4,abril:4,mai:5,maio:5,jun:6,junho:6,jul:7,julho:7,ago:8,agosto:8,set:9,setembro:9,out:10,outubro:10,nov:11,novembro:11,dez:12,dezembro:12};
 
-const $=id=>document.getElementById(id);
-const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-const money=v=>{if(typeof v==='number')return v;let s=String(v??'').trim().replace(/R\$/gi,'').replace(/\s/g,'');if(!s||s==='-'||s==='—')return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else if(s.includes(','))s=s.replace(',','.');return Number(s.replace(/[^0-9.-]/g,''))||0};
-const brl=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const compact=v=>{v=Number(v||0);if(Math.abs(v)>=1e9)return 'R$ '+(v/1e9).toFixed(2).replace('.',',')+' bi';if(Math.abs(v)>=1e6)return 'R$ '+(v/1e6).toFixed(2).replace('.',',')+' mi';if(Math.abs(v)>=1e3)return 'R$ '+(v/1e3).toFixed(0).replace('.',',')+' mil';return brl(v)};
-const pct=v=>Number(v||0).toFixed(1).replace('.',',')+'%';
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const unique=a=>[...new Set(a.filter(v=>v!==''&&v!==null&&v!==undefined))];
-const sum=(rows,key)=>rows.reduce((s,r)=>s+(r[key]||0),0);
-const statusOf=v=>v>=LIMIAR_CRITICO?'crit':v>=LIMIAR_ATENCAO?'warn':'ok';
-const statusLabel=v=>v>=LIMIAR_CRITICO?'Crítico':v>=LIMIAR_ATENCAO?'Atenção':'Dentro da Meta';
-const statusHex=v=>v>=LIMIAR_CRITICO?'#ef6a5d':v>=LIMIAR_ATENCAO?'#e87535':'#78aaa3';
+const $ = id => document.getElementById(id);
+const money = v => {
+  if(v >= 1e6) return "R$ " + (v/1e6).toFixed(1).replace(".",",") + " mi";
+  if(v >= 1e3) return "R$ " + (v/1e3).toFixed(0).replace(".",",") + " mil";
+  return "R$ " + Math.round(v).toLocaleString("pt-BR");
+};
+const moneyFull = v => "R$ " + v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct = v => (isFinite(v)?v:0).toFixed(1).replace(".",",")+"%";
+const share = (a,b) => b ? a/b*100 : 0;
+const esc = s => String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 
-function fetchMatrix(url){return new Promise((resolve,reject)=>Papa.parse(url,{download:true,skipEmptyLines:false,complete:r=>resolve(r.data),error:reject}))}
+let chart;
 
-function matrixObjects(matrix){
-  let best=0,score=-1;
-  matrix.slice(0,20).forEach((r,i)=>{const t=norm(r.join(' ')),s=['contrato','debito liquido','ano exercicio','mes competencia'].filter(k=>t.includes(k)).length;if(s>score){score=s;best=i}});
-  const h=matrix[best].map((x,i)=>String(x||`COL_${i+1}`).trim());
-  return matrix.slice(best+1).filter(r=>r.some(v=>String(v).trim())).map(r=>Object.fromEntries(h.map((x,i)=>[x,r[i]??''])));
-}
-function pick(row,names){const keys=Object.keys(row);for(const n of names){const nn=norm(n),k=keys.find(x=>norm(x)===nn);if(k!==undefined&&String(row[k]??'').trim()!=='')return row[k]}return ''}
-
-function parseDebt(matrix){
-  return matrixObjects(matrix).map(r=>({
-    secretaria:String(pick(r,['SECRETARIA'])).trim(),
-    service:aliasService(String(pick(r,['Serviço','Servico'])).trim())||'Não informado',
-    cre:String(pick(r,['CRE'])).trim(),
-    contract:String(pick(r,['Contrato'])).trim()||'Não informado',
-    year:Number(pick(r,['Ano Exercício','Ano Exercicio']))||0,
-    debt:money(pick(r,['Débito Liquido','Débito Líquido']))
-  })).filter(r=>['SME','SMS','SMPDA'].includes(r.secretaria) && (r.debt||r.contract!=='Não informado'));
+function getFiltered(){
+  const sec = $("secFilter").value;
+  const service = $("serviceFilter").value;
+  return DATA.contracts.filter(c => (!sec || c.secretaria===sec) && (!service || c.servico===service));
 }
 
-function parseBilling(matrix){
-  const hi=matrix.findIndex(r=>norm(r[0])==='servico'&&r.some(v=>norm(v)==='total'));
-  if(hi<0) throw Error('Cabeçalho de faturamento não encontrado');
-  const h=matrix[hi].map(norm), rows=matrix.slice(hi+1);
-  const byService={};
-  rows.filter(r=>/ total$/i.test(String(r[0]||'').trim())&&norm(r[0])!=='total geral').forEach(r=>{
-    const service=String(r[0]).trim().replace(/\s+Total$/i,'');
-    byService[service]=h.reduce((s,x,i)=>s+(MONTHS[x]?money(r[i]):0),0);
+function aggregate(list){
+  return list.reduce((a,c)=>{
+    a.faturado += c.faturado;
+    a.recebido += c.recebido;
+    a.debito += c.debito;
+    return a;
+  },{faturado:0,recebido:0,debito:0});
+}
+
+function currentMonthsRatio(tot){
+  const ratio = DATA.totals.faturado ? tot.faturado / DATA.totals.faturado : 0;
+  return DATA.months.map(m=>({
+    ...m,
+    faturado:m.faturado*ratio,
+    recebido:m.recebido*ratio,
+    debito:m.debito*ratio
+  }));
+}
+
+function render(){
+  const list = getFiltered();
+  const T = aggregate(list);
+  const rate = share(T.recebido,T.faturado);
+  const debtRate = share(T.debito,T.faturado);
+  const sortedDebt = [...list].sort((a,b)=>b.debito-a.debito);
+  const sortedRev = [...list].sort((a,b)=>b.faturado-a.faturado);
+  const topDebt = sortedDebt[0] || {debito:0,contrato:"—",servico:"Sem registros"};
+  const topRev = sortedRev[0] || {faturado:0,contrato:"—"};
+  const top3 = sortedRev.slice(0,3).reduce((s,c)=>s+c.faturado,0);
+  const top3Share = share(top3,T.faturado);
+
+  $("kpiBilled").textContent = money(T.faturado);
+  $("kpiPaid").textContent = money(T.recebido);
+  $("kpiDebt").textContent = money(T.debito);
+  $("kpiRate").textContent = pct(rate);
+  $("kpiRateContext").textContent = pct(rate);
+
+  $("largestContract").textContent = topRev.contrato;
+  $("largestShare").textContent = pct(share(topRev.faturado,T.faturado))+" do faturamento";
+  $("largestDebt").textContent = money(topDebt.debito);
+  $("largestDebtName").textContent = topDebt.contrato;
+  $("receiptRate").textContent = pct(rate);
+
+  const filtered = $("secFilter").value || $("serviceFilter").value;
+  const scope = filtered ? "No recorte selecionado" : "Na carteira de 2026";
+  $("executiveMessage").textContent =
+    `${scope}, ${pct(rate)} do faturamento já foi convertido em receita líquida e ${money(T.debito)} permanecem registrados como débito líquido.`;
+
+  $("focusDebt").textContent = money(T.debito);
+  $("focusCaption").textContent =
+    `${pct(debtRate)} do faturamento do recorte permanece em aberto. A maior exposição individual está concentrada no contrato abaixo.`;
+  $("focusContract").textContent = topDebt.contrato;
+  $("focusService").textContent = topDebt.servico;
+  $("barPaid").style.width = Math.min(100,rate)+"%";
+  $("barDebt").style.width = Math.min(100,debtRate)+"%";
+  $("barTop3").style.width = Math.min(100,top3Share)+"%";
+  $("barPaidLabel").textContent = pct(rate);
+  $("barDebtLabel").textContent = pct(debtRate);
+  $("barTop3Label").textContent = pct(top3Share);
+
+  renderSecretaries(list,T);
+  renderInsights(list,T,rate,debtRate,topDebt,top3Share);
+  renderPortfolio(list,T);
+  renderChart(T);
+}
+
+function renderSecretaries(list,T){
+  const map = {};
+  list.forEach(c=>{
+    if(!map[c.secretaria]) map[c.secretaria]={faturado:0,recebido:0,debito:0};
+    map[c.secretaria].faturado += c.faturado;
+    map[c.secretaria].recebido += c.recebido;
+    map[c.secretaria].debito += c.debito;
   });
-  return byService;
+  const rows = Object.entries(map).sort((a,b)=>b[1].faturado-a[1].faturado);
+  $("secretaryList").innerHTML = rows.length ? rows.map(([sec,v])=>{
+    const p=share(v.faturado,T.faturado);
+    return `<div class="sec-row">
+      <div class="sec-name"><b>${esc(sec)}</b><small>${pct(p)} da receita</small></div>
+      <div class="track"><div class="fill" style="width:${Math.max(2,p)}%"></div></div>
+      <div class="sec-value"><b>${money(v.faturado)}</b><small>${money(v.debito)} em débito</small></div>
+    </div>`;
+  }).join("") : `<div style="color:#839cb5;font-size:12px">Nenhum registro no recorte.</div>`;
 }
 
-function buildGauge(ratio){
-  const ctx=$('gaugeChart').getContext('2d');
-  const scaleMax=Math.max(20, ratio*1.15);
-  const color=statusHex(ratio);
-  new Chart(ctx,{
-    type:'doughnut',
-    data:{datasets:[{
-      data:[ratio, Math.max(scaleMax-ratio,0.001)],
-      backgroundColor:[color,'#132941'],
-      borderWidth:0
-    }]},
-    options:{
-      circumference:270, rotation:-135, cutout:'74%',
-      plugins:{legend:{display:false},tooltip:{enabled:false}},
-      animation:{duration:900}
+function renderInsights(list,T,rate,debtRate,topDebt,top3Share){
+  const topDebtShare = share(topDebt.debito,T.debito);
+  const topRev = [...list].sort((a,b)=>b.faturado-a.faturado)[0];
+  const secMap={};
+  list.forEach(c=>{secMap[c.secretaria]=(secMap[c.secretaria]||0)+c.faturado});
+  const topSec = Object.entries(secMap).sort((a,b)=>b[1]-a[1])[0] || ["—",0];
+
+  const items=[
+    {
+      cls:"red",label:"Exposição principal",
+      title:`${topDebt.contrato} concentra ${pct(topDebtShare)} do débito`,
+      text:`Saldo em aberto de ${money(topDebt.debito)} no maior contrato devedor.`
+    },
+    {
+      cls:"",label:"Concentração da receita",
+      title:`Top 3 respondem por ${pct(top3Share)} do faturamento`,
+      text:"A leitura da carteira deve priorizar os contratos de maior peso financeiro."
+    },
+    {
+      cls:"green",label:"Secretaria líder",
+      title:`${topSec[0]} representa ${pct(share(topSec[1],T.faturado))} da receita`,
+      text:`Faturamento de ${money(topSec[1])} no recorte selecionado.`
+    },
+    {
+      cls:rate>=70?"green":"",label:"Conversão financeira",
+      title:`${pct(rate)} do faturado já foi recebido`,
+      text:`O débito líquido equivale a ${pct(debtRate)} do valor faturado.`
     }
-  });
+  ];
+  $("insights").innerHTML = items.map(i=>`<div class="insight ${i.cls}">
+    <div class="insight-top"><span class="insight-dot"></span><span class="insight-label">${i.label}</span></div>
+    <strong>${i.title}</strong><p>${i.text}</p>
+  </div>`).join("");
 }
 
-function buildRank(rows){
-  const ctx=$('rankChart').getContext('2d');
-  const sorted=[...rows].sort((a,b)=>a.pct-b.pct); // ascending so highest ends up on top visually with indexAxis y
-  new Chart(ctx,{
-    type:'bar',
+function renderPortfolio(list,T){
+  const sorted=[...list].sort((a,b)=>b.faturado-a.faturado);
+  $("portfolioCount").textContent = `${sorted.length} contrato${sorted.length===1?"":"s"} no recorte`;
+  $("portfolio").innerHTML = sorted.length ? sorted.map((c,i)=>{
+    const rate=share(c.recebido,c.faturado);
+    const debtRate=share(c.debito,c.faturado);
+    const ident=`contract-${i}`;
+    return `<div class="contract" onclick="toggleContract('${ident}',this)">
+      <div class="contract-main">
+        <div class="contract-kicker"><span class="contract-id">${esc(c.contrato)}</span><span class="sec-pill">${esc(c.secretaria)}</span></div>
+        <div class="contract-service">${esc(c.servico)}</div>
+      </div>
+      <div class="contract-metric fat"><span>Faturado</span><b>${money(c.faturado)}</b></div>
+      <div class="contract-metric paid"><span>Líq. pago</span><b>${money(c.recebido)}</b></div>
+      <div class="contract-metric debt"><span>Débito</span><b>${money(c.debito)}</b></div>
+      <div class="rate"><div class="rate-ring" style="--p:${Math.min(100,rate)}" data-label="${Math.round(rate)}%"></div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="contract-detail" id="${ident}">
+      <div class="detail-grid">
+        <div class="detail-box"><span>Faturamento bruto</span><b>${moneyFull(c.faturado)}</b></div>
+        <div class="detail-box"><span>Valor líquido pago</span><b>${moneyFull(c.recebido)}</b></div>
+        <div class="detail-box"><span>Débito líquido</span><b>${moneyFull(c.debito)}</b></div>
+        <div class="detail-box"><span>Conversão / débito</span><b>${pct(rate)} / ${pct(debtRate)}</b></div>
+      </div>
+    </div>`;
+  }).join("") : `<div style="color:#839cb5;font-size:12px">Nenhum contrato encontrado.</div>`;
+}
+
+function toggleContract(id,row){
+  row.classList.toggle("open");
+}
+
+function renderChart(T){
+  const months=currentMonthsRatio(T);
+  const usable=months.filter(m=>m.faturado>0);
+  const best=[...usable].sort((a,b)=>share(b.recebido,b.faturado)-share(a.recebido,a.faturado))[0];
+  const top=[...usable].sort((a,b)=>b.faturado-a.faturado)[0];
+  const debt=[...usable].sort((a,b)=>b.debito-a.debito)[0];
+  $("bestMonth").textContent = best ? `${best.label} · ${pct(share(best.recebido,best.faturado))}` : "—";
+  $("topMonth").textContent = top ? `${top.label} · ${money(top.faturado)}` : "—";
+  $("debtMonth").textContent = debt ? `${debt.label} · ${money(debt.debito)}` : "—";
+
+  if(chart) chart.destroy();
+  Chart.defaults.color="#8fa8c0";
+  Chart.defaults.font.family='"Segoe UI", Arial, sans-serif';
+  chart = new Chart($("flowChart"),{
+    type:"bar",
     data:{
-      labels:sorted.map(r=>r.service),
-      datasets:[{
-        data:sorted.map(r=>r.pct),
-        backgroundColor:sorted.map(r=>statusHex(r.pct)),
-        borderRadius:6,
-        barThickness:22
-      }]
+      labels:months.map(m=>m.label),
+      datasets:[
+        {
+          label:"Faturamento bruto",
+          data:months.map(m=>m.faturado/1e6),
+          backgroundColor:"rgba(91,155,213,.78)",
+          borderRadius:8,
+          borderSkipped:false,
+          barPercentage:.72,
+          categoryPercentage:.72
+        },
+        {
+          label:"Valor líquido pago",
+          data:months.map(m=>m.recebido/1e6),
+          backgroundColor:"rgba(120,170,163,.82)",
+          borderRadius:8,
+          borderSkipped:false,
+          barPercentage:.72,
+          categoryPercentage:.72
+        },
+        {
+          label:"Débito líquido",
+          data:months.map(m=>m.debito/1e6),
+          type:"line",
+          borderColor:"rgba(239,106,93,1)",
+          backgroundColor:"rgba(239,106,93,.13)",
+          pointBackgroundColor:"#ef6a5d",
+          pointBorderColor:"#081728",
+          pointBorderWidth:3,
+          pointRadius:5,
+          pointHoverRadius:6,
+          tension:.32,
+          fill:true,
+          borderWidth:2.4
+        }
+      ]
     },
     options:{
-      indexAxis:'y',
       responsive:true,
       maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>pct(c.raw)}}},
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{
+          position:"top",
+          align:"end",
+          labels:{boxWidth:9,boxHeight:9,usePointStyle:true,pointStyle:"circle",padding:16,font:{size:10,weight:"700"}}
+        },
+        tooltip:{
+          backgroundColor:"#07182a",
+          borderColor:"#294866",
+          borderWidth:1,
+          titleColor:"#fff",
+          bodyColor:"#cfe0f1",
+          padding:11,
+          callbacks:{label:c=>` ${c.dataset.label}: R$ ${Number(c.raw).toFixed(1).replace(".",",")} mi`}
+        }
+      },
       scales:{
-        x:{grid:{color:'rgba(130,183,231,.1)'},ticks:{color:'#9db8d4',callback:v=>v+'%'}},
-        y:{grid:{display:false},ticks:{color:'#eef6ff',font:{weight:700,size:12}}}
+        x:{grid:{display:false},ticks:{font:{size:10,weight:"700"},color:"#8da5bd"}},
+        y:{
+          beginAtZero:true,
+          grid:{color:"rgba(73,105,137,.18)",drawBorder:false},
+          border:{display:false},
+          ticks:{color:"#7891aa",font:{size:9},callback:v=>"R$ "+v+" mi"}
+        }
       }
     }
   });
-  $('rankChart').parentElement.style.height=(sorted.length*34+40)+'px';
 }
 
-function buildConc(share){
-  const ctx=$('concChart').getContext('2d');
-  new Chart(ctx,{
-    type:'doughnut',
-    data:{datasets:[{
-      data:[share, Math.max(100-share,0.001)],
-      backgroundColor:['#a78bfa','#132941'],
-      borderWidth:0
-    }]},
-    options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:900}}
-  });
+function populateFilters(){
+  const secs=[...new Set(DATA.contracts.map(c=>c.secretaria))].sort();
+  const services=[...new Set(DATA.contracts.map(c=>c.servico))].sort();
+  $("secFilter").innerHTML='<option value="">Todas as secretarias</option>'+secs.map(v=>`<option>${esc(v)}</option>`).join("");
+  $("serviceFilter").innerHTML='<option value="">Todos os serviços</option>'+services.map(v=>`<option>${esc(v)}</option>`).join("");
 }
 
-async function init(){
-  try{
-    if(typeof HUB === 'undefined' || !HUB.header || !HUB.footer){
-      throw Error('Componentes do HUB (hub-utils.js / hub-layout.js) não carregaram. Confira se este arquivo está na mesma pasta de nível do repositório onde os caminhos ../assets/ resolvem corretamente.');
-    }
-    HUB.header.render('header',{
-      systemLabel:'HUB COMLURB · Contratos de Receita',
-      title:'Débitos',
-      subtitle:'Leitura estratégica da carteira em aberto'
-    });
-    HUB.footer.render('footer');
+$("secFilter").addEventListener("change",render);
+$("serviceFilter").addEventListener("change",render);
+$("clearFilters").addEventListener("click",()=>{
+  $("secFilter").value="";
+  $("serviceFilter").value="";
+  render();
+});
 
-    const [debtMatrix, billMatrix] = await Promise.all([fetchMatrix(SOURCES.debt), fetchMatrix(SOURCES.billing2026)]);
-    const DEBT = parseDebt(debtMatrix);
-    const BILLING_BY_SERVICE = parseBilling(billMatrix);
-    if(!DEBT.length) throw Error('Base de débitos vazia ou não reconhecida.');
-
-    const latestYear = Math.max(...DEBT.map(r=>r.year).filter(Boolean));
-    const currentDebt = DEBT.filter(r=>r.year===latestYear);
-    const oldDebt = DEBT.filter(r=>r.year && r.year<latestYear);
-    const TOTAL_DEBT = sum(DEBT,'debt');
-    const CURRENT_DEBT_TOTAL = sum(currentDebt,'debt');
-    const OLD_DEBT_TOTAL = sum(oldDebt,'debt');
-    const CURRENT_BILLING_TOTAL = Object.values(BILLING_BY_SERVICE).reduce((s,v)=>s+v,0);
-
-    // ---- Hero / gauge ----
-    const headlineRatio = CURRENT_BILLING_TOTAL ? (CURRENT_DEBT_TOTAL/CURRENT_BILLING_TOTAL*100) : 0;
-    const hSt = statusOf(headlineRatio);
-    $('heroBox').classList.add(hSt);
-    $('gaugeVal').textContent = pct(headlineRatio);
-    $('gaugeVal').classList.add(hSt);
-    $('heroPill').textContent = statusLabel(headlineRatio);
-    $('heroPill').classList.add(hSt);
-    $('heroText').innerHTML = `De cada <b>R$ 100</b> faturados no ciclo de ${latestYear}, <b>R$ ${headlineRatio.toFixed(2).replace('.',',')}</b> seguem sem retorno. Limiar de atenção: ${LIMIAR_ATENCAO}% · limiar crítico: ${LIMIAR_CRITICO}%.`;
-    buildGauge(headlineRatio);
-
-    // ---- KPIs laterais ----
-    $('kpiFaturado').textContent = compact(CURRENT_BILLING_TOTAL);
-    $('kpiFaturadoMeta').textContent = `Base do ciclo ${latestYear}, meses fechados.`;
-    $('kpiDebitoCorrente').textContent = compact(CURRENT_DEBT_TOTAL);
-    $('kpiDebitoTotal').textContent = compact(TOTAL_DEBT);
-
-    // ---- Ranking por serviço ----
-    const debtByService = {};
-    currentDebt.forEach(r=>{debtByService[r.service]=(debtByService[r.service]||0)+r.debt});
-    const services = unique([...Object.keys(BILLING_BY_SERVICE), ...Object.keys(debtByService)]);
-    let rankRows = services.map(service=>{
-      const billing = BILLING_BY_SERVICE[service]||0;
-      const debt = debtByService[service]||0;
-      return {service, pct: billing? debt/billing*100 : 0, billing, debt};
-    }).filter(r=>r.billing>0).sort((a,b)=>b.pct-a.pct);
-    buildRank(rankRows);
-
-    // ---- Concentração por contrato ----
-    const cMap = new Map();
-    DEBT.forEach(r=>{
-      if(!cMap.has(r.contract)) cMap.set(r.contract,{contract:r.contract, service:r.service, debt:0, cres:new Set()});
-      const x=cMap.get(r.contract);
-      x.debt+=r.debt;
-      if(r.cre) x.cres.add(r.cre);
-    });
-    const topContract = [...cMap.values()].sort((a,b)=>b.debt-a.debt)[0];
-    const topShare = topContract && TOTAL_DEBT ? topContract.debt/TOTAL_DEBT*100 : 0;
-    $('concVal').textContent = pct(topShare);
-    $('concContrato').textContent = topContract? topContract.contract : '—';
-    $('concServico').textContent = topContract? topContract.service : '—';
-    $('concDebtValue').textContent = topContract? compact(topContract.debt) : '—';
-    $('concCres').textContent = topContract? (topContract.cres.size||'—') : '—';
-    buildConc(topShare);
-
-    // ---- Corrente x Legado ----
-    const oldShare = TOTAL_DEBT? OLD_DEBT_TOTAL/TOTAL_DEBT*100 : 0;
-    const curShare = 100-oldShare;
-    $('oldValue').textContent = `${compact(OLD_DEBT_TOTAL)} · ${pct(oldShare)}`;
-    $('curValue').textContent = `${compact(CURRENT_DEBT_TOTAL)} · ${pct(curShare)}`;
-    $('divergeTrack').innerHTML = `<div class="old" style="width:${oldShare.toFixed(1)}%"></div><div class="cur" style="width:${curShare.toFixed(1)}%"></div>`;
-
-    // ---- Briefing condicional ----
-    const criticalRows = rankRows.filter(r=>statusOf(r.pct)==='crit').sort((a,b)=>b.pct-a.pct);
-    const criticalCount = criticalRows.length;
-    const itens = [];
-
-    if(headlineRatio>=LIMIAR_CRITICO && criticalCount>=Math.ceil(rankRows.length*0.5)){
-      const piores = criticalRows.slice(0,3).map(r=>`<b>${esc(r.service)}</b> (${pct(r.pct)})`).join(', ');
-      itens.push(`O ciclo corrente está em <b>${statusLabel(headlineRatio).toLowerCase()}</b> (${pct(headlineRatio)}) e não é um caso isolado: <b>${criticalCount} de ${rankRows.length}</b> serviços já ultrapassam o limiar crítico de ${LIMIAR_CRITICO}%, liderados por ${piores}. Juntos, somam <b>${compact(criticalRows.reduce((s,r)=>s+r.debt,0))}</b> em débito do próprio ciclo, sobre um faturado de ${compact(criticalRows.reduce((s,r)=>s+r.billing,0))}.`);
-    } else if(headlineRatio>=LIMIAR_CRITICO){
-      itens.push(`O ciclo corrente está em situação <b>crítica</b> (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_CRITICO}%, equivalente a <b>${compact(CURRENT_DEBT_TOTAL)}</b> sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
-    } else if(headlineRatio>=LIMIAR_ATENCAO){
-      itens.push(`O ciclo corrente está em <b>atenção</b> (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_ATENCAO}%, equivalente a <b>${compact(CURRENT_DEBT_TOTAL)}</b> sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
-    }
-
-    if(topShare>=30){
-      itens.push(`O contrato <b>${esc(topContract.contract)}</b> (${esc(topContract.service)}) concentra sozinho <b>${pct(topShare)}</b> de todo o débito acumulado — ${compact(topContract.debt)} de um total de ${compact(TOTAL_DEBT)} — em ${topContract.cres.size||'—'} unidades/CREs distintas. É o maior ponto único de exposição da carteira.`);
-    }
-
-    if(oldShare>=50){
-      itens.push(`<b>${pct(oldShare)}</b> do saldo em aberto (${compact(OLD_DEBT_TOTAL)}) vem de exercícios anteriores a ${latestYear} — passivo represado, que pede tratativa de negociação/quitação, distinto do débito corrente (${compact(CURRENT_DEBT_TOTAL)}), que é controle de ciclo de pagamento.`);
-    }
-
-    $('briefing').innerHTML = (itens.length? itens : ['Nenhum indicador ultrapassou os limiares de atenção definidos para este painel.'])
-      .map((t,i)=>`<div class="briefRow"><div class="briefNum">${String(i+1).padStart(2,'0')}</div><div class="briefText">${t}</div></div>`).join('');
-
-    $('stateMsg').style.display='none';
-    $('painel').style.display='block';
-  }catch(e){
-    console.error(e);
-    $('stateMsg').textContent = 'Não foi possível carregar o painel: ' + (e && e.message ? e.message : 'erro desconhecido.');
-    $('stateMsg').classList.add('errorMsg');
-  }
-}
-init();
+populateFilters();
+render();
+$("updatedAt").textContent="Atualizado em "+new Date().toLocaleDateString("pt-BR")+" · "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 </script>
 </body>
 </html>

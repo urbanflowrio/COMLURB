@@ -4,11 +4,11 @@
   const CONFIG = window.GOVERNANCA_CONFIG;
   const EIXO_LABEL = {
     Pessoas: 'Pessoas', Segurança: 'Segurança do Trabalho', Operação: 'Operação',
-    Atendimento: 'Governança e Atendimento ao Cidadão', Sustentabilidade: 'Sustentabilidade', Receita: 'Financeiro e Receita'
+    Atendimento: 'Relacionamento com o Cidadão', Sustentabilidade: 'Sustentabilidade', Receita: 'Financeiro e Receita'
   };
   const EIXO_DESC = {
     Pessoas: 'Quadro, disponibilidade e ocorrências funcionais', Segurança: 'Acidentes, conformidade e prevenção',
-    Operação: 'Execução operacional e padrão de limpeza', Atendimento: '1746, Ouvidoria, prazos e resposta ao cidadão',
+    Operação: 'Execução operacional e padrão de limpeza', Atendimento: 'Chamados, Ouvidoria, prazos e resposta ao cidadão',
     Sustentabilidade: 'Reciclagem, desvio de aterro e indicadores ambientais', Receita: 'Arrecadação e eficiência financeira',
     Outros: 'Indicadores gerais sem eixo cadastrado'
   };
@@ -32,7 +32,7 @@
   const GRUPO_LABEL = {
     pessoas_seguranca: 'Pessoas e Segurança',
     operacao: 'Operação',
-    atendimento: 'Atendimento ao Cidadão',
+    atendimento: 'Relacionamento com o Cidadão',
     sustentabilidade: 'Sustentabilidade',
     financeiro_receita: 'Financeiro e Receita',
     outros: 'Outros indicadores'

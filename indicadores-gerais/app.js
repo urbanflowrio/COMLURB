@@ -425,7 +425,7 @@
     if (valor === null || valor === undefined || meta === null || meta === undefined) return { cor: '', label: 'sem leitura', desvio: null };
     const menorMelhor = clean(sentido) === '↓';
     const atingiu = menorMelhor ? valor <= meta : valor >= meta;
-    if (atingiu) return { cor: 'green', label: 'estável', desvio: 0 };
+    if (atingiu) return { cor: 'green', label: 'dentro da meta', desvio: 0 };
     if (meta === 0) return { cor: 'red', label: 'crítico', desvio: 1 };
     const desvio = menorMelhor ? (valor - meta) / Math.abs(meta) : (meta - valor) / Math.abs(meta);
     if (desvio <= limiteAtencao) return { cor: 'orange', label: 'atenção', desvio };
@@ -546,7 +546,7 @@
   // usados pela camada "Todos os indicadores".
   // ------------------------------------------------------------------
 
-  function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Estável'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
+  function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Dentro da meta'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
 
   // Contagem por grupo institucional. acompanhamento = críticos + atenção
   // (regra obrigatória: sem meta NUNCA entra nessa contagem). tendencia é o
@@ -811,7 +811,7 @@
     const container = document.getElementById('axisPerformance');
     container.innerHTML = grupos.map(g => {
       const pills = [
-        statusPill(g.dentroMeta, 'estável' + (g.dentroMeta === 1 ? '' : 'is'), 'dotGreen', g.grupo, 'green'),
+        statusPill(g.dentroMeta, 'dentro da meta', 'dotGreen', g.grupo, 'green'),
         statusPill(g.atencao, 'atenção', 'dotOrange', g.grupo, 'orange'),
         statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed', g.grupo, 'red')
       ].join('');

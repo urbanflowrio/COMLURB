@@ -94,3 +94,50 @@
   .statusTileLabel{grid-column:3;align-self:center;margin:0;font-size:9px;overflow:visible}
   .statusTileChevron{grid-column:4;grid-row:1}
 }
+
+
+/* V22 — ajuste de hierarquia tipográfica e escala executiva */
+.contextLabel,.sectionEyebrow,.readoutLabel{font-size:11px;letter-spacing:.15em}
+.contextText{font-size:14px}
+.heroTopline h1{font-size:clamp(25px,2.2vw,34px)}
+.corporateScoreboard{margin-top:24px}
+.scoreItem{padding:20px 18px 18px}
+.scoreValue{font-size:clamp(30px,2.65vw,40px)}
+.scoreLabel{font-size:11px;letter-spacing:.10em;margin-top:8px}
+.scoreSupport{font-size:12.5px;line-height:1.45}
+.executiveReadout h2{font-size:19px}
+.executiveReadout p{font-size:13.5px}
+.sectionTitleRow h2,.panelHeading h2,.arGateway h2{font-size:21px}
+.sectionTitleRow p,.arGateway p{font-size:13.5px;line-height:1.5}
+.axisName{font-size:16px;font-weight:850}
+.axisMeta{font-size:12.5px;line-height:1.4}
+.axisBlock .axisRow{grid-template-columns:minmax(220px,.9fr) minmax(460px,1.65fr);gap:30px;padding:18px 2px}
+.statusDistribution{grid-template-columns:repeat(3,minmax(138px,1fr));gap:10px;max-width:590px}
+.statusTile{min-height:64px;padding:10px 13px 10px 15px;grid-template-columns:auto 1fr auto;column-gap:9px}
+.statusTileAccent{height:30px;box-shadow:none}
+.statusTileValue{font-size:18px;letter-spacing:-.02em}
+.statusTileLabel{font-size:10.5px;letter-spacing:.075em;line-height:1.2;margin-top:3px;white-space:normal}
+.statusTileChevron{font-size:12px}
+.priorityName{font-size:13.5px}
+.priorityAxis{font-size:11.5px}
+.priorityMetric b{font-size:14px}
+.priorityMetric small{font-size:11px}
+.movementTitle{font-size:11px}
+.movementItem b{font-size:13px}
+.movementItem span{font-size:11.5px}
+.axisDrillHeader h3{font-size:16px}
+.axisDrillCount{font-size:11px}
+.axisDrillName{font-size:13px}
+.axisDrillMetric{font-size:18px}
+.axisDrillMeta{font-size:11.5px}
+.axisDrillAction{font-size:10.5px}
+.tag{font-size:9.5px;padding:5px 9px}
+.drawerKicker{font-size:11px}
+.drawer h2{font-size:23px}
+.detailBox small{font-size:11px}
+.detailBox b{font-size:14px}
+.detailSupport{font-size:12px}
+.monthCell small{font-size:10px}.monthCell b{font-size:12px}
+@media(max-width:1100px){.axisBlock .axisRow{grid-template-columns:1fr;gap:14px}.statusDistribution{justify-self:stretch;max-width:none}}
+@media(max-width:760px){.scoreValue{font-size:30px}.scoreLabel{font-size:10.5px}.axisName{font-size:15px}.axisMeta{font-size:12px}.statusDistribution{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.statusTile{min-height:58px;padding:9px 8px 8px 10px}.statusTileValue{font-size:17px}.statusTileLabel{font-size:9.5px;letter-spacing:.05em}.sectionTitleRow h2,.panelHeading h2,.arGateway h2{font-size:19px}}
+@media(max-width:520px){.statusDistribution{grid-template-columns:1fr}.statusTile{grid-template-columns:auto auto 1fr auto;grid-template-rows:1fr;min-height:50px}.statusTileAccent{grid-row:1;height:22px}.statusTileValue{grid-column:2;font-size:17px}.statusTileLabel{grid-column:3;margin:0;font-size:10.5px}.statusTileChevron{grid-column:4;grid-row:1}}

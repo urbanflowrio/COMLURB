@@ -15,6 +15,7 @@
   const EIXO_ORDEM = HUB.indicadores.EIXOS.concat(['Outros']);
   const PRIORIDADE_STATUS = { red: 0, orange: 1, green: 2, '': 3 };
   const FILTER_STORAGE_KEY = 'governanca-corporativa-filtros';
+  const ANO_FIXO = '2026';
 
   // Grupos executivos derivados diretamente dos eixos já existentes (EIXO_LABEL acima).
   // Nenhuma classificação por palavra-chave nova: Operação permanece único (frota, capacidade
@@ -40,8 +41,8 @@
 
   let DATA = [];
   let KPIDATA = [];
-  let anoSelecionado = '';
-  let anosDisponiveis = [];
+  let anoSelecionado = '2026';
+  let anosDisponiveis = ['2026'];
   let diretoriaSelecionada = CONFIG.diretoriaDefault;
   let buscaAtual = '';
   let statusAtual = 'todos';
@@ -370,6 +371,77 @@
     return num + ' ' + u;
   }
 
+  function mesesComValor(row) {
+    if (!row) return [];
+    return HUB.indicadores.MESES.map((mes, index) => ({
+      mes,
+      numero: index + 1,
+      valor: HUB.indicadores.parseNumeroBR(row[mes])
+    })).filter(item => item.valor !== null);
+  }
+
+  function metaMensalExplicita(row, mes) {
+    if (!row || !mes) return null;
+    const alvo = norm(mes);
+    const key = Object.keys(row).find(k => {
+      const n = norm(k).replace(/[_-]+/g, ' ');
+      return n.includes('META') && n.includes(alvo);
+    });
+    return key ? HUB.indicadores.parseNumeroBR(row[key]) : null;
+  }
+
+  function indicadorNaoAditivo(indicador, unidade) {
+    const u = norm(unidade);
+    const nome = norm(indicador);
+    if (u.includes('%') || /PERCENTUAL|TAXA|INDICE|ÍNDICE|MEDIA|MÉDIA|TEMPO MEDIO|TEMPO MÉDIO|IPL|NOTA|PROPORCAO|PROPORÇÃO/.test(nome)) return true;
+    return false;
+  }
+
+  function acumuladoEhSomaMensal(row) {
+    if (!row) return false;
+    const meses = mesesComValor(row);
+    if (meses.length < 2) return false;
+    const acumulado = HUB.indicadores.parseNumeroBR(row.Acumulado);
+    if (acumulado === null) return false;
+    const soma = meses.reduce((acc, item) => acc + item.valor, 0);
+    const tolerancia = Math.max(0.5, Math.abs(soma) * 0.02);
+    return Math.abs(acumulado - soma) <= tolerancia;
+  }
+
+  // Meta usada para classificar o desempenho no ano corrente.
+  // 1) se houver meta específica da última competência, ela prevalece;
+  // 2) percentuais, taxas, índices e médias mantêm a meta integral;
+  // 3) metas anuais cumulativas são linearmente proporcionadas até a última
+  //    competência com resultado (ex.: Fev = 2/12 da meta anual).
+  function referenciaMetaPeriodo(row, indicador, metaAnual, unidade) {
+    if (metaAnual === null || metaAnual === undefined || !row) return { meta: metaAnual, metaAnual, mes: null, mesNumero: null, tipo: 'sem_meta' };
+    const meses = mesesComValor(row);
+    const ultimo = meses.length ? meses[meses.length - 1] : null;
+    if (!ultimo) return { meta: metaAnual, metaAnual, mes: null, mesNumero: null, tipo: 'integral' };
+
+    const metaExplicita = metaMensalExplicita(row, ultimo.mes);
+    if (metaExplicita !== null) return { meta: metaExplicita, metaAnual, mes: ultimo.mes, mesNumero: ultimo.numero, tipo: 'competencia' };
+
+    if (indicadorNaoAditivo(indicador, unidade)) return { meta: metaAnual, metaAnual, mes: ultimo.mes, mesNumero: ultimo.numero, tipo: 'integral' };
+
+    if (acumuladoEhSomaMensal(row)) {
+      return { meta: metaAnual * (ultimo.numero / 12), metaAnual, mes: ultimo.mes, mesNumero: ultimo.numero, tipo: 'proporcional' };
+    }
+
+    return { meta: metaAnual, metaAnual, mes: ultimo.mes, mesNumero: ultimo.numero, tipo: 'integral' };
+  }
+
+  function calcularStatusReferencia(valor, meta, sentido, limiteAtencao) {
+    if (valor === null || valor === undefined || meta === null || meta === undefined) return { cor: '', label: 'sem leitura', desvio: null };
+    const menorMelhor = clean(sentido) === '↓';
+    const atingiu = menorMelhor ? valor <= meta : valor >= meta;
+    if (atingiu) return { cor: 'green', label: 'estável', desvio: 0 };
+    if (meta === 0) return { cor: 'red', label: 'crítico', desvio: 1 };
+    const desvio = menorMelhor ? (valor - meta) / Math.abs(meta) : (meta - valor) / Math.abs(meta);
+    if (desvio <= limiteAtencao) return { cor: 'orange', label: 'atenção', desvio };
+    return { cor: 'red', label: 'crítico', desvio };
+  }
+
   function distanciaMeta(k) {
     if (k.acumulado === null) return 'Sem resultado disponível';
     if (k.meta === null) return 'Sem meta definida';
@@ -396,15 +468,9 @@
     return { texto: `${favoravel ? 'Melhora' : 'Piora'} em relação a ${anterior.mes}`, detalhe: formatDiferenca(delta, unidade), delta, favoravel, mesAnterior: anterior.mes, mesAtual: atual.mes };
   }
 
-  function anoPrincipal() {
-    if (anoSelecionado !== 'comparar') return anoSelecionado;
-    return anosDisponiveis[anosDisponiveis.length - 1] || '';
-  }
+  function anoPrincipal() { return ANO_FIXO; }
 
-  function anoComparacao() {
-    if (anoSelecionado !== 'comparar' || anosDisponiveis.length < 2) return null;
-    return anosDisponiveis[anosDisponiveis.length - 2];
-  }
+  function anoComparacao() { return null; }
 
   function ultimoValorDisponivel(row) {
     if (!row) return null;
@@ -457,13 +523,17 @@
   }
 
   function montarKpi(entry) {
-    const anoBase = anoPrincipal();
+    const anoBase = ANO_FIXO;
     const aval = avaliarComParidade(entry.indicador, diretoriaSelecionada, anoBase);
     const k = Object.assign({ eixo: entry.eixo, eixoLabel: EIXO_LABEL[entry.eixo] || entry.eixo, ano: anoBase }, aval);
+    k.metaAnual = k.meta;
+    k.referenciaMeta = referenciaMetaPeriodo(k.row, k.indicador, k.metaAnual, k.unidade);
+    k.meta = k.referenciaMeta.meta;
+    k.status = calcularStatusReferencia(k.acumulado, k.meta, k.sentido, CONFIG.limiteAtencao);
     k.distanciaTexto = distanciaMeta(k);
     k.atingimento = percentualAtingimento(k);
-    k.variacao = anoSelecionado === 'comparar' ? comparacaoAnual(entry.indicador, k.sentido, k.unidade) : variacaoTemporal(k.row, k.sentido, k.unidade);
-    k.rowComparacao = anoComparacao() ? resolverLinha(entry.indicador, diretoriaSelecionada, anoComparacao()) : null;
+    k.variacao = variacaoTemporal(k.row, k.sentido, k.unidade);
+    k.rowComparacao = null;
     return k;
   }
 
@@ -486,7 +556,7 @@
   // usados pela camada "Todos os indicadores".
   // ------------------------------------------------------------------
 
-  function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Dentro da meta'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
+  function statusTag(k) { return k.status.cor === 'green' ? ['ok', 'Estável'] : k.status.cor === 'orange' ? ['att', 'Atenção'] : k.status.cor === 'red' ? ['crit', 'Crítico'] : ['purple', k.status.label === 'sem dado' ? 'Sem dado' : 'Sem meta']; }
 
   // Contagem por grupo institucional. acompanhamento = críticos + atenção
   // (regra obrigatória: sem meta NUNCA entra nessa contagem). tendencia é o
@@ -706,23 +776,22 @@
   }
 
   function renderExecutiveCockpit(kpis) {
-    const resumo = resumoStatus(kpis);
-    const situacao = gerarSituacaoCorporativa(kpis);
-    const periodo = anoSelecionado === 'comparar' ? `Comparativo ${anoComparacao()} × ${anoPrincipal()}` : anoPrincipal();
-    document.getElementById('heroPeriod').textContent = periodo;
+    const avaliaveis = kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined && k.acumulado !== null && k.acumulado !== undefined);
+    const resumo = resumoStatus(avaliaveis);
+    const situacao = gerarSituacaoCorporativa(avaliaveis);
+    document.getElementById('heroPeriod').textContent = ANO_FIXO;
 
     const pct = valor => resumo.comStatus ? `${Math.round(valor / resumo.comStatus * 100)}% dos avaliados` : 'Sem base classificável';
     const scorecards = [
-      { cls: '', valor: resumo.total, label: 'Monitorados', support: `${resumo.comStatus} com leitura de meta` },
-      { cls: 'is-green', valor: resumo.green, label: 'Dentro da meta', support: pct(resumo.green) },
+      { cls: '', valor: resumo.comStatus, label: 'Avaliados', support: 'Indicadores com meta e resultado em 2026' },
+      { cls: 'is-green', valor: resumo.green, label: 'Estáveis', support: pct(resumo.green) },
       { cls: 'is-orange', valor: resumo.orange, label: 'Atenção', support: pct(resumo.orange) },
-      { cls: 'is-red', valor: resumo.red, label: 'Críticos', support: pct(resumo.red) },
-      { cls: 'is-muted', valor: resumo.sem, label: 'Sem meta / leitura', support: resumo.sem ? 'Fora da classificação de desempenho' : 'Cobertura completa' }
+      { cls: 'is-red', valor: resumo.red, label: 'Críticos', support: pct(resumo.red) }
     ];
     document.getElementById('corporateScoreboard').innerHTML = scorecards.map(item => `<div class="scoreItem ${item.cls}"><div class="scoreValue">${esc(item.valor)}</div><div class="scoreLabel">${esc(item.label)}</div><div class="scoreSupport">${esc(item.support)}</div></div>`).join('');
 
     document.getElementById('executiveHeadline').textContent = situacao.headline;
-    const sintese = gerarSinteseExecutiva(kpis, situacao);
+    const sintese = gerarSinteseExecutiva(avaliaveis, situacao);
     document.getElementById('executiveSubtext').textContent = [situacao.subtext, sintese[0] || ''].filter(Boolean).join(' ');
     return situacao;
   }
@@ -733,15 +802,15 @@
   }
 
   function renderAxisPerformance(kpis) {
-    const grupos = blocosVisaoEstrategica(kpis);
+    const avaliaveis = kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined && k.acumulado !== null && k.acumulado !== undefined);
+    const grupos = blocosVisaoEstrategica(avaliaveis);
     document.getElementById('axisPerformance').innerHTML = grupos.map(g => {
       const pills = [
-        statusPill(g.dentroMeta, 'dentro', 'dotGreen'),
+        statusPill(g.dentroMeta, 'estável' + (g.dentroMeta === 1 ? '' : 'is'), 'dotGreen'),
         statusPill(g.atencao, 'atenção', 'dotOrange'),
-        statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed'),
-        statusPill(g.semMeta, 'sem meta', 'dotMuted')
+        statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed')
       ].filter(Boolean).join('');
-      return `<div class="axisRow"><div><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} monitorado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills || '<span class="statusPill"><span class="statusDot dotMuted"></span>Sem indicadores</span>'}</div><div class="axisTrend ${esc(g.tendencia)}">${esc(TENDENCIA_LABEL[g.tendencia])}</div></div>`;
+      return `<div class="axisRow"><div><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} avaliado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills || '<span class="statusPill"><span class="statusDot dotMuted"></span>Sem indicadores</span>'}</div><div class="axisTrend ${esc(g.tendencia)}">${esc(TENDENCIA_LABEL[g.tendencia])}</div></div>`;
     }).join('');
   }
 
@@ -757,8 +826,14 @@
     });
   }
 
+  function rotuloMetaReferencia(k) {
+    if (!k || !k.referenciaMeta) return 'Meta';
+    if (k.referenciaMeta.tipo === 'proporcional' || k.referenciaMeta.tipo === 'competencia') return `Meta até ${k.referenciaMeta.mes}`;
+    return 'Meta';
+  }
+
   function renderPriorities(kpis) {
-    const prioridades = prioridadeOrdenada(kpis);
+    const prioridades = prioridadeOrdenada(kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined));
     document.getElementById('priorityCount').textContent = prioridades.length ? `${prioridades.length} em acompanhamento` : 'Sem desvios classificados';
     const container = document.getElementById('priorityList');
     if (!prioridades.length) {
@@ -767,7 +842,7 @@
     }
     container.innerHTML = prioridades.slice(0, 5).map(k => {
       const tag = statusTag(k);
-      return `<div class="priorityRow" data-priority-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="priorityName">${esc(k.indicador)}</div><div class="priorityAxis">${esc(k.eixoLabel)}</div></div><div class="priorityMetric"><b>${esc(formatValorIndicador(k, k.acumulado))}</b><small>Meta ${esc(formatValorIndicador(k, k.meta))}</small></div><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
+      return `<div class="priorityRow" data-priority-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="priorityName">${esc(k.indicador)}</div><div class="priorityAxis">${esc(k.eixoLabel)}</div></div><div class="priorityMetric"><b>${esc(formatValorIndicador(k, k.acumulado))}</b><small>${esc(rotuloMetaReferencia(k))} ${esc(formatValorIndicador(k, k.meta))}</small></div><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
     }).join('');
     container.querySelectorAll('[data-priority-indicador]').forEach(row => {
       const open = () => { const k = KPIDATA.find(x => x.indicador === row.dataset.priorityIndicador); if (k) abrirDrawer(k); };
@@ -777,7 +852,7 @@
   }
 
   function renderMovements(kpis) {
-    const movimentos = kpis.filter(k => k.variacao && k.variacao.favoravel !== null && k.variacao.favoravel !== undefined);
+    const movimentos = kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined && k.variacao && k.variacao.favoravel !== null && k.variacao.favoravel !== undefined);
     const melhoras = movimentos.filter(k => k.variacao.favoravel === true).sort((a, b) => Math.abs(b.variacao.delta || 0) - Math.abs(a.variacao.delta || 0)).slice(0, 3);
     const pioras = movimentos.filter(k => k.variacao.favoravel === false).sort((a, b) => {
       const status = PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || ''];
@@ -833,30 +908,25 @@
     const tag = statusTag(k);
     const resultClass = k.status.cor === 'red' ? 'result-critical' : k.status.cor === 'green' ? 'result-positive' : k.status.cor === 'orange' ? 'result-warning' : '';
     const unidadeBox = indicadorCTR(k) ? `<div class="detailBox"><small>Unidade de medida</small><b>${esc(unidadeDescritiva(k.unidade))}</b></div>` : '';
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado ${esc(anoPrincipal())}</small><b class="${resultClass}">${esc(formatValorIndicador(k, k.acumulado))}</b></div><div class="detailBox"><small>Meta</small><b>${esc(formatValorIndicador(k, k.meta))}</b></div><div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div>${unidadeBox}<div class="detailBox detailBoxWide"><small>Como interpretar</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
+    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado ${esc(anoPrincipal())}</small><b class="${resultClass}">${esc(formatValorIndicador(k, k.acumulado))}</b></div><div class="detailBox"><small>${esc(rotuloMetaReferencia(k))}</small><b>${esc(formatValorIndicador(k, k.meta))}</b></div>${k.referenciaMeta && k.referenciaMeta.tipo === 'proporcional' ? `<div class="detailBox"><small>Meta anual</small><b>${esc(formatValorIndicador(k, k.metaAnual))}</b></div>` : ''}<div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div>${unidadeBox}<div class="detailBox detailBoxWide"><small>Como interpretar</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
     document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
   }
 
   function fecharDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'true'); }
 
-  function salvarFiltros() { try { localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify({ ano: anoSelecionado })); } catch (_) {} }
-  function restaurarFiltros() { try { return JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '{}'); } catch (_) { return {}; } }
+  function salvarFiltros() {}
+  function restaurarFiltros() { return {}; }
 
   function popularFiltros() {
-    const saved = restaurarFiltros();
-    anosDisponiveis = Array.from(new Set(DATA.map(r => clean(r.Ano)).filter(Boolean))).sort((a, b) => Number(a) - Number(b));
+    anosDisponiveis = [ANO_FIXO];
+    anoSelecionado = ANO_FIXO;
     diretoriaSelecionada = CONFIG.diretoriaDefault;
-    const podeComparar = anosDisponiveis.length >= 2;
-    anoSelecionado = saved.ano === 'comparar' && podeComparar ? 'comparar' : anosDisponiveis.includes(saved.ano) ? saved.ano : anosDisponiveis.includes(CONFIG.anoPreferencial) ? CONFIG.anoPreferencial : (anosDisponiveis[anosDisponiveis.length - 1] || '');
-    const ano = document.getElementById('filtroAno');
-    const opcoes = anosDisponiveis.map(v => `<option value="${esc(v)}">${esc(v)}</option>`);
-    if (podeComparar) opcoes.push(`<option value="comparar">Comparar ${esc(anosDisponiveis[anosDisponiveis.length - 2])} e ${esc(anosDisponiveis[anosDisponiveis.length - 1])}</option>`);
-    ano.innerHTML = opcoes.join(''); ano.value = anoSelecionado;
   }
 
   function render() {
-    KPIDATA = catalogoIndicadores(DATA).map(montarKpi);
+    const data2026 = DATA.filter(r => clean(r.Ano) === ANO_FIXO);
+    KPIDATA = catalogoIndicadores(data2026).map(montarKpi);
     renderExecutiveCockpit(KPIDATA);
     renderAxisPerformance(KPIDATA);
     renderPriorities(KPIDATA);
@@ -866,7 +936,6 @@
   }
 
   function initEventos() {
-    document.getElementById('filtroAno').addEventListener('change', e => { anoSelecionado = e.target.value; render(); });
     document.getElementById('buscaIndicador').addEventListener('input', e => { buscaAtual = e.target.value; renderIndicadores(KPIDATA); });
     document.getElementById('filtroStatus').addEventListener('change', e => { statusAtual = e.target.value; renderIndicadores(KPIDATA); });
     document.getElementById('toggleIndicadores').addEventListener('click', e => {
@@ -900,7 +969,8 @@
       document.getElementById('conteudo').hidden = false;
       const linhasHoraExtra = fontesHoraExtra.reduce((total, rows) => total + rows.length, 0);
       const fontesAtivas = fontesHoraExtra.filter(rows => rows.length > 0).length;
-      document.getElementById('dataStatus').textContent = `Indicadores gerais atualizados · ${DATA.length.toLocaleString('pt-BR')} registros exibidos · ${INDICADORES_AR.size.toLocaleString('pt-BR')} indicadores do AR direcionados ao módulo próprio · hora extra: ${fontesAtivas}/${fontesHoraExtra.length} fontes`;
+      const registros2026 = DATA.filter(r => clean(r.Ano) === ANO_FIXO).length;
+      document.getElementById('dataStatus').textContent = `Governança Corporativa · ${ANO_FIXO} · ${registros2026.toLocaleString('pt-BR')} registros na competência do painel · hora extra: ${fontesAtivas}/${fontesHoraExtra.length} fontes`;
     } catch (error) {
       const el = document.getElementById('errorState'); el.hidden = false; el.textContent = `Não foi possível carregar a base publicada: ${error.message}`;
       document.getElementById('dataStatus').textContent = 'Falha no carregamento';
@@ -910,7 +980,7 @@
   window.GOVERNANCA_TEST_API = {
     normalizarRow, eixoDaLinha, normalizarEixo, eixoPorPalavras, catalogoIndicadores, ehConsolidado, mesclarBases,
     numeroFlexivel, competenciaDaLinha, agregarFonteHoraExtra, consolidarHoraExtra, aplicarHoraExtra,
-    atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento,
+    atingimentoExplicito, resolverLinha, avaliarComParidade, distanciaMeta, distanciaMetaValor, percentualAtingimento, referenciaMetaPeriodo, calcularStatusReferencia,
     variacaoTemporal, sentidoAmigavel, resumoStatus, indicadorCTR,
     contarPorGrupo, blocosVisaoEstrategica, resumoGrupo, concentracaoPrincipal, gerarSituacaoCorporativa, gerarSinteseExecutiva,
     GRUPO_ORDEM, GRUPO_LABEL

@@ -769,7 +769,6 @@
     const avaliaveis = kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined && k.acumulado !== null && k.acumulado !== undefined);
     const resumo = resumoStatus(avaliaveis);
     const situacao = gerarSituacaoCorporativa(avaliaveis);
-    document.getElementById('heroPeriod').textContent = ANO_FIXO;
 
     const pct = valor => resumo.comStatus ? `${Math.round(valor / resumo.comStatus * 100)}% dos avaliados` : 'Sem base classificável';
     const scorecards = [
@@ -786,22 +785,60 @@
     return situacao;
   }
 
-  function statusPill(qtd, label, dotClass) {
+  function statusPill(qtd, label, dotClass, grupo, status) {
     if (!qtd) return '';
-    return `<span class="statusPill"><span class="statusDot ${dotClass}"></span>${esc(qtd)} ${esc(label)}</span>`;
+    return `<button class="statusPill statusPillButton" type="button" data-axis-group="${esc(grupo)}" data-axis-status="${esc(status)}" aria-expanded="false"><span class="statusDot ${dotClass}"></span><span>${esc(qtd)} ${esc(label)}</span><span class="pillChevron" aria-hidden="true">⌄</span></button>`;
+  }
+
+  function axisDrillCard(k) {
+    const tag = statusTag(k);
+    return `<button class="axisDrillCard" type="button" data-axis-indicador="${esc(k.indicador)}">
+      <span class="axisDrillTop"><span class="axisDrillName">${esc(k.indicador)}</span><span class="tag ${tag[0]}">${esc(tag[1])}</span></span>
+      <span class="axisDrillMetric">${esc(formatValorIndicador(k, k.acumulado))}</span>
+      <span class="axisDrillMeta">${esc(rotuloMetaReferencia(k))}: ${esc(formatValorIndicador(k, k.meta))}</span>
+      <span class="axisDrillAction">Abrir ficha →</span>
+    </button>`;
   }
 
   function renderAxisPerformance(kpis) {
     const avaliaveis = kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined && k.acumulado !== null && k.acumulado !== undefined);
     const grupos = blocosVisaoEstrategica(avaliaveis);
-    document.getElementById('axisPerformance').innerHTML = grupos.map(g => {
+    const container = document.getElementById('axisPerformance');
+    container.innerHTML = grupos.map(g => {
       const pills = [
-        statusPill(g.dentroMeta, 'estável' + (g.dentroMeta === 1 ? '' : 'is'), 'dotGreen'),
-        statusPill(g.atencao, 'atenção', 'dotOrange'),
-        statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed')
+        statusPill(g.dentroMeta, 'estável' + (g.dentroMeta === 1 ? '' : 'is'), 'dotGreen', g.grupo, 'green'),
+        statusPill(g.atencao, 'atenção', 'dotOrange', g.grupo, 'orange'),
+        statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed', g.grupo, 'red')
       ].filter(Boolean).join('');
-      return `<div class="axisRow"><div><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} avaliado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills || '<span class="statusPill"><span class="statusDot dotMuted"></span>Sem indicadores</span>'}</div><div class="axisTrend ${esc(g.tendencia)}">${esc(TENDENCIA_LABEL[g.tendencia])}</div></div>`;
+      return `<div class="axisBlock" data-axis-block="${esc(g.grupo)}"><div class="axisRow"><div><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} avaliado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills || '<span class="statusPill"><span class="statusDot dotMuted"></span>Sem indicadores</span>'}</div></div><div class="axisDrilldown" data-axis-drill="${esc(g.grupo)}" hidden></div></div>`;
     }).join('');
+
+    container.querySelectorAll('[data-axis-group]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const grupo = btn.dataset.axisGroup;
+        const cor = btn.dataset.axisStatus;
+        const block = container.querySelector(`[data-axis-block="${grupo}"]`);
+        const drill = block && block.querySelector(`[data-axis-drill="${grupo}"]`);
+        if (!drill) return;
+        const jaAberto = btn.getAttribute('aria-expanded') === 'true';
+
+        block.querySelectorAll('[data-axis-group]').forEach(b => { b.setAttribute('aria-expanded', 'false'); b.classList.remove('active'); });
+        if (jaAberto) { drill.hidden = true; drill.innerHTML = ''; return; }
+
+        const itens = avaliaveis.filter(k => (GRUPO_EIXO[k.eixo] || 'outros') === grupo && k.status.cor === cor)
+          .sort((a,b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
+        const label = cor === 'green' ? 'Estáveis' : cor === 'orange' ? 'Em atenção' : 'Críticos';
+        drill.innerHTML = `<div class="axisDrillHeader"><div><span class="sectionEyebrow">Drill down</span><h3>${esc(label)} · ${esc(GRUPO_LABEL[grupo] || grupo)}</h3></div><span class="axisDrillCount">${itens.length} indicador${itens.length === 1 ? '' : 'es'}</span></div><div class="axisDrillGrid">${itens.map(axisDrillCard).join('')}</div>`;
+        drill.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        btn.classList.add('active');
+
+        drill.querySelectorAll('[data-axis-indicador]').forEach(card => card.addEventListener('click', () => {
+          const k = KPIDATA.find(x => x.indicador === card.dataset.axisIndicador);
+          if (k) abrirDrawer(k);
+        }));
+      });
+    });
   }
 
   function prioridadeOrdenada(kpis) {

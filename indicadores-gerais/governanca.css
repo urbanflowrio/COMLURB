@@ -22,3 +22,30 @@
 @media(max-width:760px){.governancaToolbar,.heroTopline,.arGateway,.sectionTitleRow{align-items:stretch;flex-direction:column}.toolbarRight{width:100%}.periodField{width:100%;flex:1}.executiveHero,.managementSection,.decisionPanel,.allIndicatorsShell{padding:18px;border-radius:18px}.corporateScoreboard{grid-template-columns:1fr 1fr}.scoreItem{padding:17px 12px}.axisRow{grid-template-columns:1fr;gap:9px}.axisTrend{text-align:left}.movementColumns{grid-template-columns:1fr}.priorityRow{grid-template-columns:1fr auto}.priorityMetric{display:none}.indicatorGrid{grid-template-columns:1fr}.detailsToolbar{grid-template-columns:1fr}.months{grid-template-columns:repeat(3,1fr)}}
 
 .fixedPeriod{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--gov-line,#23425f);border-radius:999px;background:rgba(11,31,52,.68);white-space:nowrap}.fixedPeriod span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gov-muted,#9fb3c8)}.fixedPeriod strong{font-size:13px;color:#fff}
+
+/* V20 — drill down responsivo por criticidade */
+.axisBlock{border-bottom:1px solid rgba(255,255,255,.06)}
+.axisBlock:last-child{border-bottom:0}
+.axisBlock .axisRow{border-bottom:0;grid-template-columns:minmax(180px,1.1fr) 2fr}
+.statusPillButton{font:inherit;cursor:pointer;appearance:none;transition:border-color .16s ease,background .16s ease,transform .16s ease;color:#cbd9e8}
+.statusPillButton:hover{border-color:rgba(91,155,213,.38);background:rgba(91,155,213,.08);transform:translateY(-1px)}
+.statusPillButton.active{border-color:rgba(91,155,213,.58);background:rgba(91,155,213,.13);color:#fff}
+.pillChevron{font-size:12px;line-height:1;opacity:.62;transition:transform .16s ease}
+.statusPillButton[aria-expanded="true"] .pillChevron{transform:rotate(180deg)}
+.axisDrilldown{padding:0 2px 20px;animation:axisReveal .18s ease}
+.axisDrilldown[hidden]{display:none}
+@keyframes axisReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.axisDrillHeader{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:14px 0 12px;border-top:1px solid rgba(91,155,213,.15)}
+.axisDrillHeader h3{margin:4px 0 0;font-size:15px}
+.axisDrillCount{font-size:10px;font-weight:800;color:#9fb3c8;white-space:nowrap}
+.axisDrillGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.axisDrillCard{display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-width:0;padding:14px;border:1px solid rgba(91,155,213,.18);border-radius:14px;background:rgba(8,27,46,.78);color:#fff;cursor:pointer;transition:border-color .16s ease,background .16s ease,transform .16s ease}
+.axisDrillCard:hover{border-color:rgba(91,155,213,.45);background:rgba(12,37,61,.94);transform:translateY(-1px)}
+.axisDrillTop{display:flex;width:100%;align-items:flex-start;justify-content:space-between;gap:10px}
+.axisDrillName{font-size:12px;font-weight:850;line-height:1.35;min-width:0}
+.axisDrillMetric{margin-top:16px;font-size:20px;font-weight:950;letter-spacing:-.025em}
+.axisDrillMeta{margin-top:4px;font-size:10.5px;color:#9fb3c8}
+.axisDrillAction{margin-top:auto;padding-top:14px;font-size:10px;font-weight:850;color:#8fb5db}
+
+@media(max-width:1100px){.axisBlock .axisRow{grid-template-columns:1fr 1.5fr}.axisDrillGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.axisBlock .axisRow{grid-template-columns:1fr}.statusDistribution{gap:8px}.statusPillButton{min-height:38px;padding:8px 10px}.axisDrillHeader{align-items:flex-start;flex-direction:column;gap:5px}.axisDrillGrid{grid-template-columns:1fr}.axisDrillCard{padding:14px 13px}.axisDrillMetric{font-size:18px}}

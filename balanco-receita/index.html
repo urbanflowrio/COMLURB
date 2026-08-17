@@ -268,22 +268,30 @@ async function init(){
 
     // ---- Leitura executiva condicional ----
     const topShare = topContract && TOTAL_DEBT ? topContract.debt/TOTAL_DEBT*100 : 0;
-    const criticalCount = rankRows.filter(r=>statusOf(r.pct)==='crit').length;
-    let texto = '';
+    const criticalRows = rankRows.filter(r=>statusOf(r.pct)==='crit').sort((a,b)=>b.pct-a.pct);
+    const criticalCount = criticalRows.length;
+    const paragrafos = [];
+
     if(headlineRatio>=LIMIAR_CRITICO && criticalCount>=Math.ceil(rankRows.length*0.5)){
-      texto = `O ciclo corrente está em ${statusLabel(headlineRatio).toLowerCase()} (${pct(headlineRatio)}) e não é um caso isolado: ${criticalCount} de ${rankRows.length} serviços já ultrapassam o limiar crítico de ${LIMIAR_CRITICO}%.`;
+      const piores = criticalRows.slice(0,3).map(r=>`${r.service} (${pct(r.pct)})`).join(', ');
+      paragrafos.push(`O ciclo corrente está em ${statusLabel(headlineRatio).toLowerCase()} (${pct(headlineRatio)}) e não é um caso isolado: ${criticalCount} de ${rankRows.length} serviços já ultrapassam o limiar crítico de ${LIMIAR_CRITICO}%, liderados por ${piores}. Juntos, os serviços em situação crítica somam ${compact(criticalRows.reduce((s,r)=>s+r.debt,0))} em débito do próprio ciclo, sobre um faturado de ${compact(criticalRows.reduce((s,r)=>s+r.billing,0))}.`);
     } else if(headlineRatio>=LIMIAR_CRITICO){
-      texto = `O ciclo corrente está em situação crítica (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_CRITICO}%.`;
+      paragrafos.push(`O ciclo corrente está em situação crítica (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_CRITICO}%, equivalente a ${compact(CURRENT_DEBT_TOTAL)} sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
     } else if(headlineRatio>=LIMIAR_ATENCAO){
-      texto = `O ciclo corrente está em atenção (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_ATENCAO}%.`;
+      paragrafos.push(`O ciclo corrente está em atenção (${pct(headlineRatio)}), acima do limiar de ${LIMIAR_ATENCAO}%, equivalente a ${compact(CURRENT_DEBT_TOTAL)} sobre ${compact(CURRENT_BILLING_TOTAL)} faturados.`);
     }
+
     if(topShare>=30){
-      texto += `${texto?' ':''}O contrato ${topContract.contract} concentra ${pct(topShare)} de todo o débito acumulado, distribuído em ${topContract.cres.size||'—'} CREs.`;
+      paragrafos.push(`O contrato ${topContract.contract} (${topContract.service}) concentra sozinho ${pct(topShare)} de todo o débito acumulado — ${compact(topContract.debt)} de um total de ${compact(TOTAL_DEBT)} — distribuído em ${topContract.cres.size||'—'} unidades/CREs distintas. É o maior ponto único de exposição da carteira.`);
     }
+
     if(oldShare>=50){
-      texto += `${texto?' ':''}Mais da metade do saldo em aberto (${pct(oldShare)}) é passivo de exercícios anteriores, não do ciclo atual.`;
+      paragrafos.push(`${pct(oldShare)} do saldo em aberto (${compact(OLD_DEBT_TOTAL)}) vem de exercícios anteriores a ${latestYear}, não do ciclo atual — é passivo represado, que pede tratativa de negociação/quitação, distinto do débito corrente (${compact(CURRENT_DEBT_TOTAL)}), que é controle de ciclo de pagamento.`);
     }
-    $('decisionText').textContent = texto || 'Nenhum indicador ultrapassou os limiares de atenção definidos para este painel.';
+
+    $('decisionText').innerHTML = paragrafos.length
+      ? paragrafos.map(p=>`<p style="margin:0 0 10px">${p}</p>`).join('')
+      : '<p style="margin:0">Nenhum indicador ultrapassou os limiares de atenção definidos para este painel.</p>';
 
     $('stateMsg').style.display='none';
     $('painel').style.display='block';

@@ -141,3 +141,18 @@
 @media(max-width:1100px){.axisBlock .axisRow{grid-template-columns:1fr;gap:14px}.statusDistribution{justify-self:stretch;max-width:none}}
 @media(max-width:760px){.scoreValue{font-size:30px}.scoreLabel{font-size:10.5px}.axisName{font-size:15px}.axisMeta{font-size:12px}.statusDistribution{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.statusTile{min-height:58px;padding:9px 8px 8px 10px}.statusTileValue{font-size:17px}.statusTileLabel{font-size:9.5px;letter-spacing:.05em}.sectionTitleRow h2,.panelHeading h2,.arGateway h2{font-size:19px}}
 @media(max-width:520px){.statusDistribution{grid-template-columns:1fr}.statusTile{grid-template-columns:auto auto 1fr auto;grid-template-rows:1fr;min-height:50px}.statusTileAccent{grid-row:1;height:22px}.statusTileValue{grid-column:2;font-size:17px}.statusTileLabel{grid-column:3;margin:0;font-size:10.5px}.statusTileChevron{grid-column:4;grid-row:1}}
+
+
+/* V23 — padronização textual e alinhamento dos movimentos */
+.governancaFootnote,.dataStatus{display:none!important}
+.movementColumns{gap:18px;align-items:start}
+.movementList{display:grid;grid-template-rows:repeat(3,84px);align-content:start}
+.movementItem{box-sizing:border-box;height:84px;padding:13px 0 12px;display:flex;flex-direction:column;justify-content:center;border-top:1px solid rgba(255,255,255,.07)}
+.movementItem b{margin:0;line-height:1.35}
+.movementItem span{margin-top:4px;line-height:1.35}
+.movementTitle{min-height:28px;display:flex;align-items:flex-end;padding-bottom:9px}
+@media(max-width:760px){
+  .movementList{display:flex}
+  .movementItem{height:auto;min-height:auto;padding:13px 0}
+  .movementTitle{min-height:auto}
+}

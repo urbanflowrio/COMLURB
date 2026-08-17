@@ -773,7 +773,7 @@
     const pct = valor => resumo.comStatus ? `${Math.round(valor / resumo.comStatus * 100)}% dos avaliados` : 'Sem base classificável';
     const scorecards = [
       { cls: '', valor: resumo.comStatus, label: 'Avaliados', support: 'Indicadores com meta e resultado em 2026' },
-      { cls: 'is-green', valor: resumo.green, label: 'Estáveis', support: pct(resumo.green) },
+      { cls: 'is-green', valor: resumo.green, label: 'Dentro da meta', support: pct(resumo.green) },
       { cls: 'is-orange', valor: resumo.orange, label: 'Atenção', support: pct(resumo.orange) },
       { cls: 'is-red', valor: resumo.red, label: 'Críticos', support: pct(resumo.red) }
     ];
@@ -832,7 +832,7 @@
 
         const itens = avaliaveis.filter(k => (GRUPO_EIXO[k.eixo] || 'outros') === grupo && k.status.cor === cor)
           .sort((a,b) => a.indicador.localeCompare(b.indicador, 'pt-BR'));
-        const label = cor === 'green' ? 'Estáveis' : cor === 'orange' ? 'Em atenção' : 'Críticos';
+        const label = cor === 'green' ? 'Dentro da meta' : cor === 'orange' ? 'Em atenção' : 'Críticos';
         drill.innerHTML = `<div class="axisDrillHeader"><div><span class="sectionEyebrow">Drill down</span><h3>${esc(label)} · ${esc(GRUPO_LABEL[grupo] || grupo)}</h3></div><span class="axisDrillCount">${itens.length} indicador${itens.length === 1 ? '' : 'es'}</span></div><div class="axisDrillGrid">${itens.map(axisDrillCard).join('')}</div>`;
         drill.hidden = false;
         btn.setAttribute('aria-expanded', 'true');
@@ -1002,10 +1002,12 @@
       const linhasHoraExtra = fontesHoraExtra.reduce((total, rows) => total + rows.length, 0);
       const fontesAtivas = fontesHoraExtra.filter(rows => rows.length > 0).length;
       const registros2026 = DATA.filter(r => clean(r.Ano) === ANO_FIXO).length;
-      document.getElementById('dataStatus').textContent = `Governança Corporativa · ${ANO_FIXO} · ${registros2026.toLocaleString('pt-BR')} registros na competência do painel · hora extra: ${fontesAtivas}/${fontesHoraExtra.length} fontes`;
+      const dataStatus = document.getElementById('dataStatus');
+      if (dataStatus) dataStatus.textContent = '';
     } catch (error) {
       const el = document.getElementById('errorState'); el.hidden = false; el.textContent = `Não foi possível carregar a base publicada: ${error.message}`;
-      document.getElementById('dataStatus').textContent = 'Falha no carregamento';
+      const dataStatus = document.getElementById('dataStatus');
+      if (dataStatus) dataStatus.textContent = '';
     } finally { HUB.loading.hide('loading'); }
   }
 

@@ -786,8 +786,13 @@
   }
 
   function statusPill(qtd, label, dotClass, grupo, status) {
-    if (!qtd) return '';
-    return `<button class="statusPill statusPillButton" type="button" data-axis-group="${esc(grupo)}" data-axis-status="${esc(status)}" aria-expanded="false"><span class="statusDot ${dotClass}"></span><span>${esc(qtd)} ${esc(label)}</span><span class="pillChevron" aria-hidden="true">⌄</span></button>`;
+    const disabled = !qtd;
+    return `<button class="statusTile statusTileButton ${disabled ? 'is-zero' : ''}" type="button" data-axis-group="${esc(grupo)}" data-axis-status="${esc(status)}" data-status="${esc(status)}" aria-expanded="false" ${disabled ? 'disabled aria-disabled="true"' : ''}>
+      <span class="statusTileAccent ${dotClass}" aria-hidden="true"></span>
+      <span class="statusTileValue">${esc(qtd)}</span>
+      <span class="statusTileLabel">${esc(label)}</span>
+      <span class="statusTileChevron" aria-hidden="true">⌄</span>
+    </button>`;
   }
 
   function axisDrillCard(k) {
@@ -809,8 +814,8 @@
         statusPill(g.dentroMeta, 'estável' + (g.dentroMeta === 1 ? '' : 'is'), 'dotGreen', g.grupo, 'green'),
         statusPill(g.atencao, 'atenção', 'dotOrange', g.grupo, 'orange'),
         statusPill(g.criticos, 'crítico' + (g.criticos === 1 ? '' : 's'), 'dotRed', g.grupo, 'red')
-      ].filter(Boolean).join('');
-      return `<div class="axisBlock" data-axis-block="${esc(g.grupo)}"><div class="axisRow"><div><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} avaliado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills || '<span class="statusPill"><span class="statusDot dotMuted"></span>Sem indicadores</span>'}</div></div><div class="axisDrilldown" data-axis-drill="${esc(g.grupo)}" hidden></div></div>`;
+      ].join('');
+      return `<div class="axisBlock" data-axis-block="${esc(g.grupo)}"><div class="axisRow"><div class="axisIdentity"><div class="axisName">${esc(g.label)}</div><div class="axisMeta">${esc(g.total)} indicador${g.total === 1 ? '' : 'es'} avaliado${g.total === 1 ? '' : 's'}</div></div><div class="statusDistribution">${pills}</div></div><div class="axisDrilldown" data-axis-drill="${esc(g.grupo)}" hidden></div></div>`;
     }).join('');
 
     container.querySelectorAll('[data-axis-group]').forEach(btn => {

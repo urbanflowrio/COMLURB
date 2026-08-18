@@ -23,6 +23,7 @@
 
 .leaflet-tooltip.unitLabel{background:rgba(6,17,31,.82);border:1px solid var(--linha);color:#dcecff;font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 6px;border-radius:6px;box-shadow:none;pointer-events:none}
 .leaflet-tooltip.unitLabel:before{border-right-color:rgba(6,17,31,.82)}
+#map:not(.zoomedIn) .leaflet-tooltip.unitLabel{display:none}
 
 .mapLegend{position:absolute;left:12px;bottom:12px;z-index:500;max-width:calc(100% - 24px);display:flex;gap:7px;flex-wrap:wrap;padding:9px 10px;border-radius:14px;background:rgba(6,17,31,.86);border:1px solid var(--linha)}
 .mapLegend span{font-size:11px;color:var(--silenciado);display:flex;align-items:center;gap:5px;white-space:nowrap}
@@ -47,9 +48,11 @@
 
 <section class="filters" id="filtrosUnidades" style="display:none">
   <div class="field"><label>Categoria</label><select id="fCategoria"></select></div>
+  <div class="field"><label>Subcategoria</label><select id="fSubcategoria"></select></div>
   <div class="field"><label>Diretoria</label><select id="fDiretoria"></select></div>
+  <div class="field"><label>Gerência</label><select id="fGerencia"></select></div>
   <div class="field"><label>Bairro</label><select id="fBairro"></select></div>
-  <div class="field"><label>Buscar</label><input id="fBusca" placeholder="Setor, nome, endereço ou bairro"></div>
+  <div class="field"><label>Buscar</label><input type="text" id="fBusca" placeholder="Setor, nome, endereço ou bairro"></div>
   <button class="actionBtn" onclick="clearAll()">Limpar filtros</button>
 </section>
 
@@ -143,7 +146,9 @@ const CAT_COLORS = {
 
 const UNIT_FILTERS = [
   { id: "fCategoria", field: "categoria_hub" },
+  { id: "fSubcategoria", field: "subcategoria_geo" },
   { id: "fDiretoria", field: "diretoria" },
+  { id: "fGerencia", field: "gerencia" },
   { id: "fBairro", field: "bairro" }
 ];
 
@@ -164,12 +169,21 @@ let DRILL = null;
 /* ============================================
    MAPA BASE
    ============================================ */
+const ZOOM_LABEL_THRESHOLD = 14;
+
 function initMap() {
   map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([-22.9068, -43.1729], 11);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 20,
     attribution: "&copy; OpenStreetMap &copy; CARTO"
   }).addTo(map);
+  map.on("zoomend", updateLabelVisibility);
+}
+
+function updateLabelVisibility() {
+  const el = document.getElementById("map");
+  if (map.getZoom() >= ZOOM_LABEL_THRESHOLD) el.classList.add("zoomedIn");
+  else el.classList.remove("zoomedIn");
 }
 
 function clearMapLayers() {
@@ -184,7 +198,7 @@ function renderLayerTabs() {
   const tabs = [
     { key: "dsu", label: GEO_META.dsu.label },
     { key: "dlu", label: GEO_META.dlu.label },
-    { key: "unidades", label: "Unidades COMLURB" }
+    { key: "unidades", label: "Unidades" }
   ];
   HUB.dom.setHTML("layerTabs", tabs.map(t =>
     `<button class="layerTab ${t.key === currentLayer ? "active" : ""}" data-layer="${t.key}">${HUB.format.esc(t.label)}</button>`
@@ -311,11 +325,12 @@ function normUnit(r) {
   return {
     id: HUB.format.clean(r.id),
     setor: HUB.format.clean(r.setor),
+    pai_setor: HUB.format.clean(r.pai_setor),
+    tipo: HUB.format.clean(r.tipo) || "Não informado",
     nome_setor: HUB.format.clean(r.nome_setor),
     categoria_hub: HUB.format.clean(r.categoria_hub) || "Não classificado",
-    subcategoria_geo: HUB.format.clean(r.subcategoria_geo),
+    subcategoria_geo: HUB.format.clean(r.subcategoria_geo) || "Não classificado",
     diretoria: HUB.format.clean(r.diretoria) || "Não informado",
-    tipo: HUB.format.clean(r.tipo) || "Não informado",
     bairro: HUB.format.clean(r.bairro) || "Não informado",
     endereco: HUB.format.clean(r.endereco),
     latitude: lat,
@@ -324,9 +339,32 @@ function normUnit(r) {
   };
 }
 
+const TIPOS_GERENCIA = new Set(["GERÊNCIA", "GERÊNCIA ADJUNTA", "SUPERINTENDENCIA", "DIRETORIA"]);
+
+function buildSetorMap(rows) {
+  const map = {};
+  rows.forEach(r => { if (r.setor) map[r.setor] = r; });
+  return map;
+}
+
+function computeGerencia(row, setorMap) {
+  let atual = row;
+  let saltos = 0;
+  while (atual && saltos < 8) {
+    if (TIPOS_GERENCIA.has(atual.tipo)) return atual.nome_setor;
+    if (!atual.pai_setor || atual.pai_setor === atual.setor) break;
+    atual = setorMap[atual.pai_setor];
+    saltos++;
+  }
+  return row.nome_setor || "Não classificado";
+}
+
 async function loadUnidadesData() {
   const raw = await HUB.data.loadCSV("data/unidades_comlurb.csv", { name: "Unidades COMLURB", required: true });
   UNIDADES = raw.map(normUnit).filter(d => Number.isFinite(d.latitude) && Number.isFinite(d.longitude) && d.latitude && d.longitude);
+
+  const setorMap = buildSetorMap(UNIDADES);
+  UNIDADES.forEach(d => { d.gerencia = computeGerencia(d, setorMap); });
 }
 
 function populateUnitFilters() {
@@ -383,6 +421,7 @@ function renderMapUnits() {
     const bounds = L.latLngBounds(FILTERED.map(d => [d.latitude, d.longitude]));
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [30, 30] });
   }
+  updateLabelVisibility();
 
   const catsPresentes = [...new Set(FILTERED.map(d => d.categoria_hub))];
   renderMapLegend(catsPresentes);

@@ -9,23 +9,26 @@
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 
 <style>
-/* Somente o que é específico de mapa/legenda — o resto vem do hub-premium.css */
-.mapGrid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
-.mapPanel{position:relative;overflow:hidden;padding:0!important}
-#map{height:640px;width:100%;background:var(--painel2)}
+:root{
+  --territorial-gap:14px;
+}
+.mapGrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.9fr);gap:var(--territorial-gap);align-items:start}
+.mapPanel{position:relative;overflow:hidden;padding:0!important;min-width:0}
+#map{height:clamp(480px,62vh,680px);width:100%;background:var(--painel2)}
 .leaflet-container{background:var(--painel2);font-family:"Segoe UI",Arial,sans-serif}
 .leaflet-control-zoom a{background:var(--painel)!important;color:#fff!important;border-color:var(--linha)!important}
 .leaflet-control-attribution{background:rgba(6,17,31,.82)!important;color:#8faac5!important;font-size:10px}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--painel);color:#fff;border:1px solid var(--linha)}
-.popupTitle{font-size:14px;font-weight:900;margin-bottom:6px;color:#fff}
-.popupLine{font-size:12px;color:#c7d8ee;margin:3px 0}
+.popupTitle{font-size:14px;font-weight:900;margin-bottom:7px;color:#fff}
+.popupLine{font-size:12px;color:#c7d8ee;margin:3px 0;line-height:1.45}
 .popupLine b{color:#fff}
-
+.popupAction{margin-top:10px;width:100%;border:1px solid #5b9bd5;background:#244f82;color:#fff;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:900;cursor:pointer}
+.popupAction:hover{filter:brightness(1.08)}
 .leaflet-tooltip.unitLabel{background:rgba(6,17,31,.82);border:1px solid var(--linha);color:#dcecff;font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 6px;border-radius:6px;box-shadow:none;pointer-events:none}
 .leaflet-tooltip.unitLabel:before{border-right-color:rgba(6,17,31,.82)}
 #map:not(.zoomedIn) .leaflet-tooltip.unitLabel{display:none}
 
-.mapLegend{position:absolute;left:12px;bottom:12px;z-index:500;max-width:calc(100% - 24px);display:flex;gap:7px;flex-wrap:wrap;padding:9px 10px;border-radius:14px;background:rgba(6,17,31,.86);border:1px solid var(--linha)}
+.mapLegend{position:absolute;left:12px;bottom:12px;z-index:500;max-width:calc(100% - 24px);display:flex;gap:7px;flex-wrap:wrap;padding:9px 10px;border-radius:14px;background:rgba(6,17,31,.88);border:1px solid var(--linha);backdrop-filter:blur(10px)}
 .mapLegend span{font-size:11px;color:var(--silenciado);display:flex;align-items:center;gap:5px;white-space:nowrap}
 .legendDot{width:8px;height:8px;border-radius:999px;display:inline-block}
 
@@ -34,63 +37,174 @@
 .layerTab:hover{border-color:var(--azul2)}
 .layerTab.active{background:linear-gradient(90deg,#244f82,#5b9bd5);border-color:#7db7ed;color:#fff}
 
+.filtersShell{display:none;margin-bottom:14px}
+.filtersShell.active{display:block}
+.filterGroup{border:1px solid var(--linha);background:rgba(13,31,54,.58);border-radius:16px;padding:14px;margin-bottom:10px}
+.filterGroup:last-child{margin-bottom:0}
+.filterGroupHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.filterGroupTitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a8bdd5;font-weight:900}
+.filterGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.filterGrid.secondary{grid-template-columns:repeat(4,minmax(0,1fr))}
+.field{min-width:0}
+.field label{display:block}
+.field select,.field input{width:100%;min-width:0}
+.filterActions{display:flex;gap:8px;align-items:end}
+.filterActions .actionBtn{width:100%}
+.mobileFilterToggle{display:none;width:100%;margin-top:10px}
+#secondaryFilters{display:block}
+
+.breadcrumbBar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:2px 0 14px;min-height:34px}
+.crumbLabel{font-size:11px;color:#8faac5;text-transform:uppercase;letter-spacing:.1em;font-weight:900;margin-right:3px}
+.crumbBtn{border:0;background:transparent;color:#dcecff;padding:5px 3px;font-size:12px;font-weight:800;cursor:pointer}
+.crumbBtn:hover{color:#fff;text-decoration:underline}
+.crumbCurrent{color:#fff}
+.crumbSep{color:#5f7895;font-size:11px}
+
+.contextStrip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border:1px solid var(--linha);border-radius:12px;background:rgba(6,17,31,.42);margin-bottom:14px}
+.contextMain{min-width:0}
+.contextTitle{font-size:12px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contextSub{font-size:11px;color:#9fb6ce;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contextReset{border:0;background:transparent;color:#9fc7ef;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap}
+
 .chartWrap{height:210px;position:relative;margin-bottom:14px}
 .sideTitle{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#a8bdd5;font-weight:900;margin:16px 0 10px}
 .sideTitle:first-child{margin-top:0}
+
+.territorialRow{cursor:pointer;transition:.15s}
+.territorialRow:hover{filter:brightness(1.14)}
+.territorialRow.is-static{cursor:default}
+.territorialRow.is-static:hover{filter:none}
+.rankHint{font-size:10px;color:#7f99b5;margin-top:-4px;margin-bottom:8px}
+
+.emptyChart{height:100%;display:flex;align-items:center;justify-content:center;color:#8faac5;font-size:12px;text-align:center;padding:20px}
+
+@media (max-width:1100px){
+  .filterGrid,.filterGrid.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mapGrid{grid-template-columns:minmax(0,1.45fr) minmax(280px,.9fr)}
+}
+@media (max-width:820px){
+  .mapGrid{grid-template-columns:1fr}
+  #map{height:520px}
+  .filterGrid,.filterGrid.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:600px){
+  .layerTabs{gap:6px}
+  .layerTab{flex:1 1 auto;padding:9px 10px;font-size:10px}
+  .filterGroup{padding:12px}
+  .filterGrid,.filterGrid.secondary{grid-template-columns:1fr}
+  .mobileFilterToggle{display:block}
+  #secondaryFilters{display:none}
+  #secondaryFilters.open{display:block}
+  .contextStrip{align-items:flex-start}
+  #map{height:430px}
+  .mapLegend{left:8px;bottom:8px;max-width:calc(100% - 16px);padding:7px 8px}
+  .mapLegend span{font-size:10px}
+  .chartWrap{height:190px}
+  .breadcrumbBar{gap:4px}
+  .crumbBtn{font-size:11px}
+}
+@media (max-width:390px){
+  #map{height:390px}
+  .contextSub{white-space:normal}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
+  <div id="header"></div>
 
-<div id="header"></div>
+  <div class="layerTabs" id="layerTabs"></div>
 
-<div class="layerTabs" id="layerTabs"></div>
+  <section class="filtersShell" id="filtrosUnidades">
+    <div class="filterGroup">
+      <div class="filterGroupHead">
+        <div class="filterGroupTitle">Estrutura organizacional</div>
+      </div>
+      <div class="filterGrid">
+        <div class="field">
+          <label>Diretoria</label>
+          <select id="fDiretoria"></select>
+        </div>
+        <div class="field">
+          <label>Superintendência / Coordenação</label>
+          <select id="fEstrutura"></select>
+        </div>
+        <div class="field">
+          <label>Gerência</label>
+          <select id="fGerencia"></select>
+        </div>
+        <div class="field">
+          <label>Unidade / nível local</label>
+          <select id="fUnidade"></select>
+        </div>
+      </div>
 
-<section class="filters" id="filtrosUnidades" style="display:none">
-  <div class="field"><label>Categoria</label><select id="fCategoria"></select></div>
-  <div class="field"><label>Subcategoria</label><select id="fSubcategoria"></select></div>
-  <div class="field"><label>Diretoria</label><select id="fDiretoria"></select></div>
-  <div class="field"><label>Gerência</label><select id="fGerencia"></select></div>
-  <div class="field"><label>Bairro</label><select id="fBairro"></select></div>
-  <div class="field"><label>Buscar</label><input type="text" id="fBusca" placeholder="Setor, nome, endereço ou bairro"></div>
-  <button class="actionBtn" onclick="clearAll()">Limpar filtros</button>
-</section>
-
-<div id="drillBanner"></div>
-
-<div class="kpis" id="kpis"></div>
-
-<section class="mapGrid">
-  <div class="panel mapPanel">
-    <div id="map"></div>
-    <div class="mapLegend" id="mapLegend"></div>
-  </div>
-
-  <div class="panel">
-    <div class="panelHead">
-      <h2 id="sideHeadTitle">Leitura executiva</h2>
-      <div class="hint" id="sideHeadHint">Distribuição do recorte ativo.</div>
+      <button class="actionBtn mobileFilterToggle" id="toggleSecondary" type="button">Mais filtros</button>
     </div>
-    <div class="body">
-      <div class="territorialNote" id="insightText">Carregando...</div>
 
-      <div class="sideTitle" id="chartTitle">Distribuição</div>
-      <div class="chartWrap"><canvas id="donutChart"></canvas></div>
-
-      <div class="sideTitle" id="rankTitle">Ranking</div>
-      <div class="territorialRank" id="rankBox"></div>
+    <div class="filterGroup" id="secondaryFilters">
+      <div class="filterGroupHead">
+        <div class="filterGroupTitle">Classificação e território</div>
+      </div>
+      <div class="filterGrid secondary">
+        <div class="field">
+          <label>Categoria</label>
+          <select id="fCategoria"></select>
+        </div>
+        <div class="field">
+          <label>Subcategoria</label>
+          <select id="fSubcategoria"></select>
+        </div>
+        <div class="field">
+          <label>Bairro</label>
+          <select id="fBairro"></select>
+        </div>
+        <div class="field">
+          <label>Buscar</label>
+          <input type="text" id="fBusca" placeholder="Setor, unidade, endereço ou bairro">
+        </div>
+      </div>
+      <div class="filterActions" style="margin-top:10px">
+        <button class="actionBtn" id="clearFiltersBtn" type="button">Limpar filtros</button>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div id="footer"></div>
+  <div class="breadcrumbBar" id="breadcrumbBar"></div>
+  <div class="contextStrip" id="contextStrip" style="display:none"></div>
 
+  <div class="kpis" id="kpis"></div>
+
+  <section class="mapGrid">
+    <div class="panel mapPanel">
+      <div id="map"></div>
+      <div class="mapLegend" id="mapLegend"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2 id="sideHeadTitle">Leitura executiva</h2>
+        <div class="hint" id="sideHeadHint">Distribuição do recorte ativo.</div>
+      </div>
+      <div class="body">
+        <div class="territorialNote" id="insightText">Carregando...</div>
+        <div class="sideTitle" id="chartTitle">Distribuição</div>
+        <div class="chartWrap"><canvas id="donutChart"></canvas><div class="emptyChart" id="emptyChart" style="display:none">Sem dados para exibir.</div></div>
+
+        <div class="sideTitle" id="rankTitle">Ranking</div>
+        <div class="rankHint" id="rankHint"></div>
+        <div class="territorialRank" id="rankBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script src="../assets/components/hub-core.js"></script>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-cards.js"></script>
@@ -99,13 +213,10 @@
 <script src="../assets/components/hub-layout.js"></script>
 
 <script>
-/* ============================================
-   CONFIGURAÇÃO
-   ============================================ */
 const CONFIG = {
   panelName: "Território Operacional",
   systemLabel: "HUB COMLURB",
-  subtitle: "Leitura geoespacial das estruturas da COMLURB — áreas territoriais, gerências e unidades físicas em uma camada executiva de apoio à gestão."
+  subtitle: "Leitura geoespacial e hierárquica das estruturas da COMLURB, com navegação por diretoria, estrutura subordinada, gerência e unidade."
 };
 
 const GEO_META = {
@@ -116,7 +227,8 @@ const GEO_META = {
       "../assets/geojson/GERENCIAS_DSU.geojson",
       "assets/geojson/GERENCIAS_DSU.geojson"
     ],
-    color: "#5b9bd5", fill: "#244f82",
+    color: "#5b9bd5",
+    fill: "#244f82",
     insight: "Camada de referência das áreas de atuação das Gerências da Diretoria de Serviços Urbanos."
   },
   dlu: {
@@ -126,445 +238,837 @@ const GEO_META = {
       "../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson",
       "assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson"
     ],
-    color: "#78aaa3", fill: "#1d6b62",
+    color: "#78aaa3",
+    fill: "#1d6b62",
     insight: "Camada de referência territorial por bairros, estrutura DLU 2025."
   }
 };
 
 const CAT_COLORS = {
-  "Operacional": "#5b9bd5",
-  "Administrativo": "#78aaa3",
-  "Apoio": "#b8c9de",
-  "Manutenção": "#e87535",
-  "Engenharia": "#78aaa3",
-  "Gestão de Pessoas": "#a78bfa",
-  "Financeiro": "#78aaa3",
-  "Jurídico": "#ef6a5d",
-  "Tecnologia": "#a78bfa",
-  "Presidência": "#ffa02b"
+  "Operacional":"#5b9bd5",
+  "Administrativo":"#78aaa3",
+  "Apoio":"#b8c9de",
+  "Manutenção":"#e87535",
+  "Engenharia":"#78aaa3",
+  "Gestão de Pessoas":"#a78bfa",
+  "Financeiro":"#78aaa3",
+  "Jurídico":"#ef6a5d",
+  "Tecnologia":"#a78bfa",
+  "Presidência":"#ffa02b"
 };
 
-const UNIT_FILTERS = [
-  { id: "fCategoria", field: "categoria_hub" },
-  { id: "fSubcategoria", field: "subcategoria_geo" },
-  { id: "fDiretoria", field: "diretoria" },
-  { id: "fGerencia", field: "gerencia" },
-  { id: "fBairro", field: "bairro" }
+const FILTERS = [
+  {id:"fDiretoria", field:"diretoria"},
+  {id:"fEstrutura", field:"estrutura"},
+  {id:"fGerencia", field:"gerencia"},
+  {id:"fUnidade", field:"unidade_hierarquica"},
+  {id:"fCategoria", field:"categoria_hub"},
+  {id:"fSubcategoria", field:"subcategoria_geo"},
+  {id:"fBairro", field:"bairro"}
 ];
 
-/* ============================================
-   ESTADO GLOBAL
-   ============================================ */
+const HIERARCHY = [
+  {field:"diretoria", label:"Diretoria", short:"Diretorias"},
+  {field:"estrutura", label:"Estrutura", short:"Estruturas"},
+  {field:"gerencia", label:"Gerência", short:"Gerências"},
+  {field:"unidade_hierarquica", label:"Unidade", short:"Unidades"}
+];
+
 let map = null;
 let activeGeoLayer = null;
 let unitLayer = null;
 let donutInstance = null;
-
 let currentLayer = "unidades";
-let UNIDADES = [];   // dados originais (unidades)
-let DATA = [];       // alias genérico p/ camada ativa (usado no drill)
+let ALL_ROWS = [];
+let UNIDADES = [];
 let FILTERED = [];
-let DRILL = null;
+let SETOR_MAP = {};
+let STATE = {
+  drill: {},
+  lastSource: null
+};
 
-/* ============================================
-   MAPA BASE
-   ============================================ */
-const ZOOM_LABEL_THRESHOLD = 14;
-
-function initMap() {
-  map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([-22.9068, -43.1729], 11);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 20,
-    attribution: "&copy; OpenStreetMap &copy; CARTO"
-  }).addTo(map);
-  map.on("zoomend", updateLabelVisibility);
+function clean(v){
+  return HUB.format.clean(v);
 }
+function normType(v){
+  return clean(v)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toUpperCase()
+    .replace(/\s+/g," ")
+    .trim();
+}
+function isType(row, names){
+  const t = normType(row.tipo);
+  return names.some(n => {
+    const target = normType(n);
+    if (target === "GERENCIA") return t === "GERENCIA";
+    if (target === "GERENCIA ADJUNTA") return t === "GERENCIA ADJUNTA";
+    if (target === "DIRETORIA") return t === "DIRETORIA";
+    return t === target || t.startsWith(target + " ") || t.startsWith(target + " /");
+  });
+}
+function esc(v){ return HUB.format.esc(v ?? ""); }
 
-function updateLabelVisibility() {
+const ZOOM_LABEL_THRESHOLD = 14;
+function initMap(){
+  map = L.map("map",{zoomControl:true,preferCanvas:true}).setView([-22.9068,-43.1729],11);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:20,
+    attribution:"&copy; OpenStreetMap &copy; CARTO"
+  }).addTo(map);
+  map.on("zoomend",updateLabelVisibility);
+}
+function updateLabelVisibility(){
   const el = document.getElementById("map");
-  if (map.getZoom() >= ZOOM_LABEL_THRESHOLD) el.classList.add("zoomedIn");
+  if(map.getZoom() >= ZOOM_LABEL_THRESHOLD) el.classList.add("zoomedIn");
   else el.classList.remove("zoomedIn");
 }
-
-function clearMapLayers() {
-  if (activeGeoLayer) { map.removeLayer(activeGeoLayer); activeGeoLayer = null; }
-  if (unitLayer) { map.removeLayer(unitLayer); unitLayer = null; }
+function clearMapLayers(){
+  if(activeGeoLayer){map.removeLayer(activeGeoLayer);activeGeoLayer=null}
+  if(unitLayer){map.removeLayer(unitLayer);unitLayer=null}
 }
 
-/* ============================================
-   TABS DE CAMADA
-   ============================================ */
-function renderLayerTabs() {
-  const tabs = [
-    { key: "dsu", label: GEO_META.dsu.label },
-    { key: "dlu", label: GEO_META.dlu.label },
-    { key: "unidades", label: "Unidades" }
+function renderLayerTabs(){
+  const tabs=[
+    {key:"dsu",label:GEO_META.dsu.label},
+    {key:"dlu",label:GEO_META.dlu.label},
+    {key:"unidades",label:"Unidades"}
   ];
-  HUB.dom.setHTML("layerTabs", tabs.map(t =>
-    `<button class="layerTab ${t.key === currentLayer ? "active" : ""}" data-layer="${t.key}">${HUB.format.esc(t.label)}</button>`
+  HUB.dom.setHTML("layerTabs",tabs.map(t =>
+    `<button class="layerTab ${t.key===currentLayer?"active":""}" data-layer="${t.key}">${esc(t.label)}</button>`
   ).join(""));
-
-  document.querySelectorAll(".layerTab").forEach(btn => {
-    btn.addEventListener("click", () => switchLayer(btn.dataset.layer));
+  document.querySelectorAll(".layerTab").forEach(btn=>{
+    btn.addEventListener("click",()=>switchLayer(btn.dataset.layer));
   });
 }
 
-function switchLayer(key) {
-  if (key === currentLayer) return;
-  currentLayer = key;
-  DRILL = null;
-  HUB.drillBanner.hide("drillBanner");
+function switchLayer(key){
+  if(key===currentLayer) return;
+  currentLayer=key;
+  STATE.drill={};
   renderLayerTabs();
-  HUB.dom.hide("filtrosUnidades");
-  if (key === "unidades") {
-    HUB.dom.show("filtrosUnidades");
-    document.getElementById("filtrosUnidades").style.display = "grid";
+  if(key==="unidades"){
+    document.getElementById("filtrosUnidades").classList.add("active");
     renderUnidades();
-  } else {
+  }else{
+    document.getElementById("filtrosUnidades").classList.remove("active");
+    document.getElementById("breadcrumbBar").innerHTML="";
+    document.getElementById("contextStrip").style.display="none";
     loadGeo(key);
   }
+  setTimeout(()=>map.invalidateSize(),60);
 }
 
-/* ============================================
-   CAMADAS GEOJSON (DSU / DLU)
-   ============================================ */
-async function fetchFirst(paths, type) {
-  const errors = [];
-  for (const p of paths) {
-    try {
-      const r = await fetch(p + (p.includes("?") ? "&" : "?") + "v=" + Date.now(), { cache: "no-store" });
-      if (!r.ok) throw new Error(r.status + " " + p);
-      return type === "json" ? await r.json() : await r.text();
-    } catch (e) { errors.push(e.message); }
+async function fetchFirst(paths,type){
+  const errors=[];
+  for(const p of paths){
+    try{
+      const r=await fetch(p+(p.includes("?")?"&":"?")+"v="+Date.now(),{cache:"no-store"});
+      if(!r.ok) throw new Error(r.status+" "+p);
+      return type==="json"?await r.json():await r.text();
+    }catch(e){errors.push(e.message)}
   }
   throw new Error(errors.join(" | "));
 }
-
-function prop(o, keys) {
-  o = o || {};
-  const lower = {};
-  Object.keys(o).forEach(k => lower[k.toLowerCase()] = o[k]);
-  for (const k of keys) {
-    if (o[k] !== undefined && String(o[k]).trim() !== "") return o[k];
-    if (lower[k.toLowerCase()] !== undefined && String(lower[k.toLowerCase()]).trim() !== "") return lower[k.toLowerCase()];
+function prop(o,keys){
+  o=o||{};
+  const lower={};
+  Object.keys(o).forEach(k=>lower[k.toLowerCase()]=o[k]);
+  for(const k of keys){
+    if(o[k]!==undefined && String(o[k]).trim()!=="") return o[k];
+    if(lower[k.toLowerCase()]!==undefined && String(lower[k.toLowerCase()]).trim()!=="") return lower[k.toLowerCase()];
   }
   return "";
 }
-
-function nomeGeo(p) {
-  return prop(p, ["GERENCIA", "Gerencia", "GERÊNCIA", "NM_GERENCIA", "BAIRRO", "Bairro", "NM_BAIRRO", "NOME", "Nome", "name"]) || "Território";
+function nomeGeo(p){
+  return prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA","BAIRRO","Bairro","NM_BAIRRO","NOME","Nome","name"])||"Território";
 }
-
-function popupGeo(p) {
-  const nome = nomeGeo(p);
-  const ger = prop(p, ["GERENCIA", "Gerencia", "GERÊNCIA", "NM_GERENCIA"]);
-  const bairro = prop(p, ["BAIRRO", "Bairro", "NM_BAIRRO"]);
-  return `<div class="popupTitle">${HUB.format.esc(nome)}</div>` +
-    (ger ? `<div class="popupLine"><b>Gerência:</b> ${HUB.format.esc(ger)}</div>` : "") +
-    (bairro ? `<div class="popupLine"><b>Bairro:</b> ${HUB.format.esc(bairro)}</div>` : "");
+function popupGeo(p,key){
+  const nome=nomeGeo(p);
+  const ger=prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA"]);
+  const bairro=prop(p,["BAIRRO","Bairro","NM_BAIRRO"]);
+  let html=`<div class="popupTitle">${esc(nome)}</div>`+
+    (ger?`<div class="popupLine"><b>Gerência:</b> ${esc(ger)}</div>`:"")+
+    (bairro?`<div class="popupLine"><b>Bairro:</b> ${esc(bairro)}</div>`:"");
+  if(ger){
+    html+=`<button class="popupAction" data-geo-gerencia="${esc(ger)}">Ver estrutura relacionada</button>`;
+  }else if(bairro){
+    html+=`<button class="popupAction" data-geo-bairro="${esc(bairro)}">Ver unidades no bairro</button>`;
+  }
+  return html;
 }
-
-async function loadGeo(key) {
+async function loadGeo(key){
   clearMapLayers();
-  const meta = GEO_META[key];
-  HUB.loading.showMultiple(["kpis", "rankBox"]);
-  document.getElementById("insightText").textContent = "Carregando " + meta.label + "...";
-  document.getElementById("chartTitle").textContent = "Distribuição";
-  document.getElementById("rankTitle").textContent = "Ranking";
+  const meta=GEO_META[key];
+  HUB.loading.showMultiple(["kpis","rankBox"]);
+  document.getElementById("insightText").textContent="Carregando "+meta.label+"...";
+  document.getElementById("chartTitle").textContent="Distribuição";
+  document.getElementById("rankTitle").textContent="Ranking";
+  document.getElementById("rankHint").textContent="";
 
-  try {
-    const geo = await fetchFirst(meta.paths, "json");
-    const features = geo.features || [];
-
-    activeGeoLayer = L.geoJSON(geo, {
-      style: { color: meta.color, weight: 1.8, fillColor: meta.fill, fillOpacity: .22, opacity: .95 },
-      onEachFeature: (feature, layer) => {
-        layer.bindPopup(popupGeo(feature.properties || {}));
+  try{
+    const geo=await fetchFirst(meta.paths,"json");
+    const features=geo.features||[];
+    activeGeoLayer=L.geoJSON(geo,{
+      style:{color:meta.color,weight:1.8,fillColor:meta.fill,fillOpacity:.22,opacity:.95},
+      onEachFeature:(feature,layer)=>{
+        const p=feature.properties||{};
+        layer.bindPopup(popupGeo(p,key));
         layer.on({
-          mouseover: e => e.target.setStyle({ weight: 3, fillOpacity: .34 }),
-          mouseout: e => activeGeoLayer.resetStyle(e.target)
+          mouseover:e=>e.target.setStyle({weight:3,fillOpacity:.34}),
+          mouseout:e=>activeGeoLayer.resetStyle(e.target),
+          click:()=>{
+            const ger=prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA"]);
+            const bairro=prop(p,["BAIRRO","Bairro","NM_BAIRRO"]);
+            layer.once("popupopen",()=>{
+              const popupEl=layer.getPopup().getElement();
+              if(!popupEl) return;
+              const bGer=popupEl.querySelector("[data-geo-gerencia]");
+              const bBairro=popupEl.querySelector("[data-geo-bairro]");
+              if(bGer) bGer.addEventListener("click",()=>openUnitsFromGeo("gerencia",ger));
+              if(bBairro) bBairro.addEventListener("click",()=>openUnitsFromGeo("bairro",bairro));
+            });
+          }
         });
       }
     }).addTo(map);
 
-    if (activeGeoLayer.getBounds && activeGeoLayer.getBounds().isValid()) {
-      map.fitBounds(activeGeoLayer.getBounds(), { padding: [24, 24] });
+    if(activeGeoLayer.getBounds && activeGeoLayer.getBounds().isValid()){
+      map.fitBounds(activeGeoLayer.getBounds(),{padding:[24,24]});
     }
 
-    const counts = {};
-    features.forEach(f => { const n = nomeGeo(f.properties || {}); counts[n] = (counts[n] || 0) + 1; });
-    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    const top = entries[0] || ["-", 0];
+    const counts={};
+    features.forEach(f=>{
+      const n=nomeGeo(f.properties||{});
+      counts[n]=(counts[n]||0)+1;
+    });
+    const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const top=entries[0]||["-",0];
 
-    HUB.cards.render("kpis", [
-      { label: "Camada ativa", value: 0, note: meta.label, feature: true, format: "custom", customFormatter: () => meta.label },
-      { label: "Feições carregadas", value: features.length, note: "Registros na camada", color: "blue" },
-      { label: "Grupos identificados", value: entries.length, note: "Agrupamentos distintos", color: "green" },
-      { label: "Maior concentração", value: 0, note: top[0] + " · " + HUB.format.int(top[1]) + " feições", color: "purple", format: "custom", customFormatter: () => top[0].length > 14 ? top[0].slice(0, 14) + "…" : top[0] }
+    HUB.cards.render("kpis",[
+      {label:"Camada ativa",value:0,note:meta.label,feature:true,format:"custom",customFormatter:()=>meta.label},
+      {label:"Feições carregadas",value:features.length,note:"Registros na camada",color:"blue"},
+      {label:"Grupos identificados",value:entries.length,note:"Agrupamentos distintos",color:"green"},
+      {label:"Maior concentração",value:0,note:top[0]+" · "+HUB.format.int(top[1])+" feições",color:"purple",format:"custom",customFormatter:()=>top[0].length>14?top[0].slice(0,14)+"…":top[0]}
     ]);
 
     renderMapLegend([]);
-    renderDonut(entries.slice(0, 5), meta.color);
-    renderRankBars(entries.slice(0, 10), features.length);
-
-    document.getElementById("insightText").innerHTML =
-      meta.insight + " Foram carregadas <b>" + HUB.format.int(features.length) + "</b> feições, agrupadas em <b>" + HUB.format.int(entries.length) + "</b> conjuntos territoriais distintos.";
-  } catch (e) {
-    document.getElementById("insightText").innerHTML =
-      "Não foi possível carregar <b>" + meta.label + "</b>. Confirme se o arquivo está publicado em <b>assets/geojson/</b>. Detalhe: " + HUB.format.esc(e.message);
-    HUB.cards.render("kpis", [{ label: "Camada ativa", value: 0, note: meta.label, feature: true, format: "custom", customFormatter: () => meta.label }]);
+    renderDonut(entries.slice(0,5),meta.color);
+    renderRankBars(entries.slice(0,10),features.length,null);
+    document.getElementById("insightText").innerHTML=
+      meta.insight+" Foram carregadas <b>"+HUB.format.int(features.length)+"</b> feições, agrupadas em <b>"+HUB.format.int(entries.length)+"</b> conjuntos territoriais distintos.";
+  }catch(e){
+    document.getElementById("insightText").innerHTML=
+      "Não foi possível carregar <b>"+esc(meta.label)+"</b>. Confirme o arquivo GeoJSON. Detalhe: "+esc(e.message);
+    HUB.cards.render("kpis",[{label:"Camada ativa",value:0,note:meta.label,feature:true,format:"custom",customFormatter:()=>meta.label}]);
   }
 }
 
-/* ============================================
-   CAMADA UNIDADES COMLURB
-   ============================================ */
-function normUnit(r) {
-  let lat = HUB.format.toNumber(r.latitude);
-  let lon = HUB.format.toNumber(r.longitude);
+function openUnitsFromGeo(field,value){
+  currentLayer="unidades";
+  STATE.drill={};
+  renderLayerTabs();
+  document.getElementById("filtrosUnidades").classList.add("active");
+  clearAll(false);
+  const target = field==="bairro" ? document.getElementById("fBairro") : null;
+  if(target){
+    setSelectValueIfExists(target,value);
+  }else{
+    const match=UNIDADES.find(d=>sameText(d.gerencia,value));
+    if(match && match.gerencia){
+      setSelectValueIfExists(document.getElementById("fDiretoria"),match.diretoria);
+      refreshCascadeOptions("fDiretoria");
+      setSelectValueIfExists(document.getElementById("fEstrutura"),match.estrutura);
+      refreshCascadeOptions("fEstrutura");
+      setSelectValueIfExists(document.getElementById("fGerencia"),match.gerencia);
+    }
+  }
+  refreshCascadeOptions();
+  renderUnidades();
+}
+
+function sameText(a,b){
+  return normType(a)===normType(b);
+}
+
+function normUnit(r){
+  const lat=HUB.format.toNumber(r.latitude);
+  const lon=HUB.format.toNumber(r.longitude);
   return {
-    id: HUB.format.clean(r.id),
-    setor: HUB.format.clean(r.setor),
-    pai_setor: HUB.format.clean(r.pai_setor),
-    tipo: HUB.format.clean(r.tipo) || "Não informado",
-    nome_setor: HUB.format.clean(r.nome_setor),
-    categoria_hub: HUB.format.clean(r.categoria_hub) || "Não classificado",
-    subcategoria_geo: HUB.format.clean(r.subcategoria_geo) || "Não classificado",
-    diretoria: HUB.format.clean(r.diretoria) || "Não informado",
-    bairro: HUB.format.clean(r.bairro) || "Não informado",
-    endereco: HUB.format.clean(r.endereco),
-    latitude: lat,
-    longitude: lon,
-    street_view: HUB.format.clean(r.street_view)
+    id:clean(r.id),
+    setor:clean(r.setor),
+    pai_setor:clean(r.pai_setor),
+    tipo:clean(r.tipo)||"Não informado",
+    nome_setor:clean(r.nome_setor),
+    categoria_hub:clean(r.categoria_hub)||"Não classificado",
+    subcategoria_geo:clean(r.subcategoria_geo)||"Não classificado",
+    diretoria:clean(r.diretoria)||"Não informado",
+    bairro:clean(r.bairro)||"Não informado",
+    endereco:clean(r.endereco),
+    latitude:lat,
+    longitude:lon,
+    street_view:clean(r.street_view)
   };
 }
 
-const TIPOS_GERENCIA = new Set(["GERÊNCIA", "GERÊNCIA ADJUNTA", "SUPERINTENDENCIA", "DIRETORIA"]);
-
-function buildSetorMap(rows) {
-  const map = {};
-  rows.forEach(r => { if (r.setor) map[r.setor] = r; });
-  return map;
+function buildSetorMap(rows){
+  const m={};
+  rows.forEach(r=>{if(r.setor)m[r.setor]=r});
+  return m;
 }
 
-function computeGerencia(row, setorMap) {
-  let atual = row;
-  let saltos = 0;
-  while (atual && saltos < 8) {
-    if (TIPOS_GERENCIA.has(atual.tipo)) return atual.nome_setor;
-    if (!atual.pai_setor || atual.pai_setor === atual.setor) break;
-    atual = setorMap[atual.pai_setor];
-    saltos++;
+function ancestorChain(row,max=16){
+  const chain=[];
+  let atual=row;
+  const seen=new Set();
+  let hops=0;
+  while(atual && hops<max && !seen.has(atual.setor)){
+    chain.push(atual);
+    seen.add(atual.setor);
+    if(!atual.pai_setor || atual.pai_setor===atual.setor) break;
+    atual=SETOR_MAP[atual.pai_setor];
+    hops++;
   }
-  return row.nome_setor || "Não classificado";
+  return chain;
 }
 
-async function loadUnidadesData() {
-  const raw = await HUB.data.loadCSV("data/unidades_comlurb.csv", { name: "Unidades COMLURB", required: true });
-  UNIDADES = raw.map(normUnit).filter(d => Number.isFinite(d.latitude) && Number.isFinite(d.longitude) && d.latitude && d.longitude);
-
-  const setorMap = buildSetorMap(UNIDADES);
-  UNIDADES.forEach(d => { d.gerencia = computeGerencia(d, setorMap); });
+function nearestByTypes(chain,types,excludeCurrent=false){
+  const start=excludeCurrent?1:0;
+  for(let i=start;i<chain.length;i++){
+    if(isType(chain[i],types)) return chain[i];
+  }
+  return null;
 }
 
-function populateUnitFilters() {
-  HUB.filters.populateAll(UNIDADES, UNIT_FILTERS);
+function deriveHierarchy(row){
+  const chain=ancestorChain(row);
+
+  const dirNode=nearestByTypes(chain,["DIRETORIA"]);
+  const structNode=nearestByTypes(chain,["SUPERINTENDENCIA","COORDENADORIA","COORDENADORIA GERAL"]);
+  const gerNode=nearestByTypes(chain,["GERENCIA"]);
+  const gerAdjNode=nearestByTypes(chain,["GERENCIA ADJUNTA"]);
+
+  const diretoria=(dirNode && dirNode.setor) || row.diretoria || "Não informado";
+  const estrutura=structNode ? (structNode.nome_setor||structNode.setor) : "Sem estrutura intermediária";
+  const gerencia=gerNode ? (gerNode.nome_setor||gerNode.setor) : "Sem gerência";
+  const gerencia_adjunta=gerAdjNode ? (gerAdjNode.nome_setor||gerAdjNode.setor) : "";
+
+  return {
+    diretoria,
+    estrutura,
+    gerencia,
+    gerencia_adjunta,
+    unidade_hierarquica:row.nome_setor||row.setor||"Não informado",
+    path:chain.slice().reverse().map(n=>({
+      setor:n.setor,
+      nome:n.nome_setor||n.setor,
+      tipo:n.tipo
+    }))
+  };
 }
 
-function applyUnitFilters() {
-  FILTERED = HUB.filters.apply(UNIDADES, UNIT_FILTERS.map(f => ({
-    id: f.id, field: f.field,
-    matcher: f.id === "fBusca" ? undefined : undefined
-  })));
+async function loadUnidadesData(){
+  const raw=await HUB.data.loadCSV("data/unidades_comlurb.csv",{name:"Unidades COMLURB",required:true});
 
-  const busca = HUB.format.clean(document.getElementById("fBusca").value).toLowerCase();
-  if (busca) {
-    FILTERED = FILTERED.filter(d => {
-      const hay = [d.setor, d.nome_setor, d.endereco, d.bairro, d.diretoria, d.categoria_hub].join(" ").toLowerCase();
+  ALL_ROWS=raw.map(normUnit);
+  SETOR_MAP=buildSetorMap(ALL_ROWS);
+
+  ALL_ROWS.forEach(d=>Object.assign(d,deriveHierarchy(d)));
+
+  UNIDADES=ALL_ROWS.filter(d=>
+    Number.isFinite(d.latitude) &&
+    Number.isFinite(d.longitude) &&
+    d.latitude!==0 &&
+    d.longitude!==0
+  );
+}
+
+function getSelectValue(id){
+  return document.getElementById(id)?.value || "";
+}
+
+function setSelectValueIfExists(select,value){
+  if(!select || !value) return false;
+  const opt=[...select.options].find(o=>sameText(o.value,value));
+  if(opt){
+    select.value=opt.value;
+    return true;
+  }
+  return false;
+}
+
+function baseFilter(rows,ignoreId=null,includeDrill=true){
+  let result=rows.filter(d=>{
+    for(const f of FILTERS){
+      if(f.id===ignoreId) continue;
+      const v=getSelectValue(f.id);
+      if(v && d[f.field]!==v) return false;
+    }
+    return true;
+  });
+
+  const busca=clean(document.getElementById("fBusca")?.value).toLowerCase();
+  if(busca){
+    result=result.filter(d=>{
+      const hay=[
+        d.setor,d.nome_setor,d.endereco,d.bairro,d.diretoria,d.estrutura,d.gerencia,
+        d.categoria_hub,d.subcategoria_geo,d.tipo
+      ].join(" ").toLowerCase();
       return hay.includes(busca);
     });
   }
 
-  if (DRILL) {
-    FILTERED = FILTERED.filter(d => d[DRILL.field] === DRILL.value);
+  if(includeDrill){
+    Object.entries(STATE.drill).forEach(([field,value])=>{
+      if(value) result=result.filter(d=>d[field]===value);
+    });
+  }
+  return result;
+}
+
+function populateSelect(id,field,rows,preserve=true){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const current=preserve?el.value:"";
+  const values=[...new Set(rows.map(d=>d[field]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  el.innerHTML=`<option value="">Todos</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+  if(current && values.includes(current)) el.value=current;
+}
+
+function refreshCascadeOptions(sourceId=null){
+  FILTERS.forEach(f=>{
+    const rows=baseFilter(UNIDADES,f.id,true);
+    populateSelect(f.id,f.field,rows,true);
+  });
+
+  // Se uma seleção ficou inválida após uma mudança hierárquica, limpa-a.
+  let changed=false;
+  FILTERS.forEach(f=>{
+    const el=document.getElementById(f.id);
+    if(el && el.value && ![...el.options].some(o=>o.value===el.value)){
+      el.value="";
+      changed=true;
+    }
+  });
+  if(changed){
+    FILTERS.forEach(f=>{
+      const rows=baseFilter(UNIDADES,f.id,true);
+      populateSelect(f.id,f.field,rows,true);
+    });
   }
 }
 
-function popupUnidade(d) {
-  return `<div class="popupTitle">${HUB.format.esc(d.nome_setor || d.setor)}</div>` +
-    `<div class="popupLine"><b>Setor:</b> ${HUB.format.esc(d.setor)}</div>` +
-    `<div class="popupLine"><b>Categoria:</b> ${HUB.format.esc(d.categoria_hub)}</div>` +
-    `<div class="popupLine"><b>Diretoria:</b> ${HUB.format.esc(d.diretoria)}</div>` +
-    `<div class="popupLine"><b>Tipo:</b> ${HUB.format.esc(d.tipo)}</div>` +
-    `<div class="popupLine"><b>Bairro:</b> ${HUB.format.esc(d.bairro)}</div>` +
-    (d.endereco ? `<div class="popupLine"><b>Endereço:</b> ${HUB.format.esc(d.endereco)}</div>` : "") +
-    (d.street_view ? `<div class="popupLine"><a href="${HUB.format.esc(d.street_view)}" target="_blank" rel="noopener">Street View →</a></div>` : "");
+function applyUnitFilters(){
+  FILTERED=baseFilter(UNIDADES,null,true);
 }
 
-function renderMapUnits() {
-  clearMapLayers();
-  unitLayer = L.layerGroup();
+function getHierarchyDepth(){
+  const vals=HIERARCHY.map(h=>getSelectValue(FILTERS.find(f=>f.field===h.field)?.id || ""));
+  const drillFields=Object.keys(STATE.drill);
+  let deepest=-1;
+  HIERARCHY.forEach((h,i)=>{
+    if(vals[i] || drillFields.includes(h.field)) deepest=i;
+  });
+  return deepest;
+}
 
-  FILTERED.forEach(d => {
-    const color = CAT_COLORS[d.categoria_hub] || "#5b9bd5";
-    L.circleMarker([d.latitude, d.longitude], {
-      radius: 6.5, color: "#06111f", weight: 1.3, fillColor: color, fillOpacity: .9
+function nextHierarchyField(){
+  const depth=getHierarchyDepth();
+  if(depth<0) return HIERARCHY[0];
+  if(depth>=HIERARCHY.length-1) return null;
+  return HIERARCHY[depth+1];
+}
+
+function activePath(){
+  const items=[];
+  const selected={
+    diretoria:getSelectValue("fDiretoria"),
+    estrutura:getSelectValue("fEstrutura"),
+    gerencia:getSelectValue("fGerencia"),
+    unidade_hierarquica:getSelectValue("fUnidade")
+  };
+  HIERARCHY.forEach(h=>{
+    const v=STATE.drill[h.field] || selected[h.field];
+    if(v) items.push({field:h.field,label:h.label,value:v});
+  });
+  return items;
+}
+
+function renderBreadcrumb(){
+  const path=activePath();
+  const el=document.getElementById("breadcrumbBar");
+  if(currentLayer!=="unidades"){
+    el.innerHTML="";
+    return;
+  }
+
+  let html=`<span class="crumbLabel">Navegação</span>
+    <button class="crumbBtn" data-clear-depth="-1">COMLURB</button>`;
+  path.forEach((item,idx)=>{
+    html+=`<span class="crumbSep">›</span>
+      <button class="crumbBtn ${idx===path.length-1?"crumbCurrent":""}" data-clear-depth="${idx}">${esc(item.value)}</button>`;
+  });
+  el.innerHTML=html;
+
+  el.querySelectorAll("[data-clear-depth]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const depth=Number(btn.dataset.clearDepth);
+      trimHierarchy(depth);
+    });
+  });
+}
+
+function trimHierarchy(depth){
+  const keep=new Set(HIERARCHY.slice(0,depth+1).map(h=>h.field));
+  HIERARCHY.forEach((h,i)=>{
+    const f=FILTERS.find(x=>x.field===h.field);
+    if(i>depth && f){
+      document.getElementById(f.id).value="";
+    }
+  });
+  Object.keys(STATE.drill).forEach(k=>{
+    if(HIERARCHY.some(h=>h.field===k) && !keep.has(k)) delete STATE.drill[k];
+  });
+  refreshCascadeOptions();
+  renderUnidades();
+}
+
+function renderContextStrip(){
+  const el=document.getElementById("contextStrip");
+  const path=activePath();
+  const extra=[];
+  if(getSelectValue("fCategoria")) extra.push(getSelectValue("fCategoria"));
+  if(getSelectValue("fSubcategoria")) extra.push(getSelectValue("fSubcategoria"));
+  if(getSelectValue("fBairro")) extra.push(getSelectValue("fBairro"));
+
+  if(!path.length && !extra.length && !clean(document.getElementById("fBusca").value)){
+    el.style.display="none";
+    el.innerHTML="";
+    return;
+  }
+
+  const title=path.length ? path.map(p=>p.value).join(" › ") : "Recorte filtrado";
+  const sub=[
+    extra.length?extra.join(" · "):"",
+    clean(document.getElementById("fBusca").value) ? `Busca: ${clean(document.getElementById("fBusca").value)}` : ""
+  ].filter(Boolean).join(" · ");
+
+  el.style.display="flex";
+  el.innerHTML=`
+    <div class="contextMain">
+      <div class="contextTitle">${esc(title)}</div>
+      <div class="contextSub">${esc(sub || "Hierarquia ativa")}</div>
+    </div>
+    <button class="contextReset" id="contextReset" type="button">Limpar recorte</button>
+  `;
+  document.getElementById("contextReset").addEventListener("click",()=>clearAll());
+}
+
+function popupUnidade(d){
+  const struct=d.estrutura && d.estrutura!=="Sem estrutura intermediária" ? `<div class="popupLine"><b>Estrutura:</b> ${esc(d.estrutura)}</div>` : "";
+  const ger=d.gerencia && d.gerencia!=="Sem gerência" ? `<div class="popupLine"><b>Gerência:</b> ${esc(d.gerencia)}</div>` : "";
+  return `<div class="popupTitle">${esc(d.nome_setor||d.setor)}</div>`+
+    `<div class="popupLine"><b>Setor:</b> ${esc(d.setor)}</div>`+
+    `<div class="popupLine"><b>Diretoria:</b> ${esc(d.diretoria)}</div>`+
+    struct+ger+
+    `<div class="popupLine"><b>Tipo:</b> ${esc(d.tipo)}</div>`+
+    `<div class="popupLine"><b>Categoria:</b> ${esc(d.categoria_hub)}</div>`+
+    `<div class="popupLine"><b>Bairro:</b> ${esc(d.bairro)}</div>`+
+    (d.endereco?`<div class="popupLine"><b>Endereço:</b> ${esc(d.endereco)}</div>`:"")+
+    `<button class="popupAction" data-unit-setor="${esc(d.setor)}">Ver estrutura</button>`+
+    (d.street_view?`<div class="popupLine" style="margin-top:8px"><a href="${esc(d.street_view)}" target="_blank" rel="noopener">Street View →</a></div>`:"");
+}
+
+function drillToUnit(d){
+  const hierarchyValues={
+    fDiretoria:d.diretoria,
+    fEstrutura:d.estrutura,
+    fGerencia:d.gerencia,
+    fUnidade:d.unidade_hierarquica
+  };
+  STATE.drill={};
+  for(const [id,value] of Object.entries(hierarchyValues)){
+    if(value && !value.startsWith("Sem ")){
+      refreshCascadeOptions(id);
+      setSelectValueIfExists(document.getElementById(id),value);
+    }
+  }
+  refreshCascadeOptions();
+  renderUnidades();
+}
+
+function renderMapUnits(){
+  clearMapLayers();
+  unitLayer=L.layerGroup();
+
+  FILTERED.forEach(d=>{
+    const color=CAT_COLORS[d.categoria_hub]||"#5b9bd5";
+    const marker=L.circleMarker([d.latitude,d.longitude],{
+      radius:6.5,color:"#06111f",weight:1.3,fillColor:color,fillOpacity:.9
     })
       .bindPopup(popupUnidade(d))
-      .bindTooltip(d.setor, { permanent: true, direction: "right", offset: [7, 0], className: "unitLabel" })
-      .addTo(unitLayer);
+      .bindTooltip(d.setor,{permanent:true,direction:"right",offset:[7,0],className:"unitLabel"});
+
+    marker.on("popupopen",()=>{
+      const popupEl=marker.getPopup().getElement();
+      if(!popupEl) return;
+      const btn=popupEl.querySelector("[data-unit-setor]");
+      if(btn) btn.addEventListener("click",()=>drillToUnit(d),{once:true});
+    });
+
+    marker.addTo(unitLayer);
   });
 
   unitLayer.addTo(map);
 
-  if (FILTERED.length) {
-    const bounds = L.latLngBounds(FILTERED.map(d => [d.latitude, d.longitude]));
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [30, 30] });
+  if(FILTERED.length){
+    const bounds=L.latLngBounds(FILTERED.map(d=>[d.latitude,d.longitude]));
+    if(bounds.isValid()) map.fitBounds(bounds,{padding:[30,30],maxZoom:FILTERED.length===1?16:15});
   }
   updateLabelVisibility();
 
-  const catsPresentes = [...new Set(FILTERED.map(d => d.categoria_hub))];
+  const catsPresentes=[...new Set(FILTERED.map(d=>d.categoria_hub))];
   renderMapLegend(catsPresentes);
 }
 
-function renderMapLegend(cats) {
-  const el = document.getElementById("mapLegend");
-  if (!cats.length) { el.innerHTML = ""; return; }
-  el.innerHTML = cats.slice(0, 10).map(c =>
-    `<span><i class="legendDot" style="background:${CAT_COLORS[c] || "#5b9bd5"}"></i>${HUB.format.esc(c)}</span>`
+function renderMapLegend(cats){
+  const el=document.getElementById("mapLegend");
+  if(!cats.length){el.innerHTML="";return}
+  el.innerHTML=cats.slice(0,10).map(c=>
+    `<span><i class="legendDot" style="background:${CAT_COLORS[c]||"#5b9bd5"}"></i>${esc(c)}</span>`
   ).join("");
 }
 
-function countBy(rows, field) {
-  const grouped = {};
-  rows.forEach(d => { const k = d[field] || "Não informado"; grouped[k] = (grouped[k] || 0) + 1; });
-  return Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+function countBy(rows,field,{dropPlaceholders=false}={}){
+  const grouped={};
+  rows.forEach(d=>{
+    let k=d[field]||"Não informado";
+    if(dropPlaceholders && (k.startsWith("Sem ") || k==="Não informado")) return;
+    grouped[k]=(grouped[k]||0)+1;
+  });
+  return Object.entries(grouped).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0],"pt-BR"));
 }
 
-function renderRankBars(entries, total) {
-  const max = entries[0] ? entries[0][1] : 1;
-  document.getElementById("rankBox").innerHTML = entries.map(([name, val]) => `
-    <div class="territorialRow" onclick="${currentLayer === "unidades" ? `setDrillFrom('${escapeAttr(name)}')` : ""}">
-      <div class="territorialName" title="${HUB.format.esc(name)}">${HUB.format.esc(name)}</div>
-      <div class="territorialTrack"><div class="territorialFill" style="width:${Math.max(4, val / max * 100)}%"></div></div>
+function renderRankBars(entries,total,field){
+  const max=entries[0]?entries[0][1]:1;
+  const clickable=currentLayer==="unidades" && !!field;
+  const box=document.getElementById("rankBox");
+
+  box.innerHTML=entries.map(([name,val])=>`
+    <div class="territorialRow ${clickable?"":"is-static"}" data-rank-value="${esc(name)}">
+      <div class="territorialName" title="${esc(name)}">${esc(name)}</div>
+      <div class="territorialTrack"><div class="territorialFill" style="width:${Math.max(4,val/max*100)}%"></div></div>
       <div class="territorialNum">${HUB.format.int(val)}</div>
-      <div class="territorialPct">${HUB.format.pct(HUB.format.calcPct(val, total))}</div>
+      <div class="territorialPct">${HUB.format.pct(HUB.format.calcPct(val,total))}</div>
     </div>
   `).join("") || `<div class="empty">Sem registros no recorte.</div>`;
+
+  if(clickable){
+    box.querySelectorAll("[data-rank-value]").forEach(row=>{
+      row.addEventListener("click",()=>drillFromRanking(field,row.dataset.rankValue));
+    });
+  }
 }
 
-function escapeAttr(s) { return String(s).replace(/'/g, "\\'"); }
+function drillFromRanking(field,value){
+  const idx=HIERARCHY.findIndex(h=>h.field===field);
+  if(idx<0) return;
 
-let drillField = "categoria_hub";
-function setDrillFrom(value) {
-  setDrill(drillField, value, value);
+  // Escreve o nível clicado no select correspondente sempre que possível.
+  const filter=FILTERS.find(f=>f.field===field);
+  if(filter){
+    setSelectValueIfExists(document.getElementById(filter.id),value);
+  }else{
+    STATE.drill[field]=value;
+  }
+
+  // Níveis abaixo são limpos para o ranking poder continuar descendo corretamente.
+  HIERARCHY.slice(idx+1).forEach(h=>{
+    const f=FILTERS.find(x=>x.field===h.field);
+    if(f) document.getElementById(f.id).value="";
+    delete STATE.drill[h.field];
+  });
+
+  refreshCascadeOptions(filter?.id);
+  renderUnidades();
 }
 
-function renderDonut(entries, singleColor) {
-  const canvas = document.getElementById("donutChart");
-  if (donutInstance) { donutInstance.destroy(); donutInstance = null; }
-  if (!entries.length) return;
-  donutInstance = HUB.charts.donut("donutChart", {
-    labels: entries.map(e => e[0]),
-    values: entries.map(e => e[1])
-  }, singleColor ? { colors: entries.map(() => singleColor) } : {});
+function renderDonut(entries,singleColor){
+  const canvas=document.getElementById("donutChart");
+  const empty=document.getElementById("emptyChart");
+  if(donutInstance){donutInstance.destroy();donutInstance=null}
+
+  if(!entries.length){
+    canvas.style.display="none";
+    empty.style.display="flex";
+    return;
+  }
+  canvas.style.display="block";
+  empty.style.display="none";
+
+  donutInstance=HUB.charts.donut("donutChart",{
+    labels:entries.map(e=>e[0]),
+    values:entries.map(e=>e[1])
+  },singleColor?{colors:entries.map(()=>singleColor)}:{});
 }
 
-function renderUnidades() {
-  document.getElementById("sideHeadTitle").textContent = "Leitura executiva";
-  document.getElementById("sideHeadHint").textContent = "Distribuição das unidades no recorte ativo.";
-  document.getElementById("chartTitle").textContent = "Por categoria";
-  document.getElementById("rankTitle").textContent = "Por diretoria";
-  drillField = "diretoria";
-
+function renderUnidades(){
   applyUnitFilters();
+  renderBreadcrumb();
+  renderContextStrip();
   renderMapUnits();
 
-  const total = FILTERED.length;
-  const operacional = FILTERED.filter(d => d.categoria_hub === "Operacional").length;
-  const diretorias = new Set(FILTERED.map(d => d.diretoria)).size;
-  const bairros = new Set(FILTERED.map(d => d.bairro)).size;
+  const total=FILTERED.length;
+  const operacional=FILTERED.filter(d=>d.categoria_hub==="Operacional").length;
+  const diretorias=new Set(FILTERED.map(d=>d.diretoria)).size;
+  const bairros=new Set(FILTERED.map(d=>d.bairro)).size;
 
-  HUB.cards.render("kpis", [
-    { label: "Unidades no recorte", value: total, note: "Total mapeado", feature: true, onclick: "clearDrill()" },
-    { label: "Operacional", value: operacional, note: HUB.format.pct(HUB.format.calcPct(operacional, total)) + " do recorte", color: "blue", onclick: "setDrill('categoria_hub','Operacional','Operacional')" },
-    { label: "Diretorias", value: diretorias, note: "Diretorias representadas", color: "green" },
-    { label: "Bairros", value: bairros, note: "Bairros com presença mapeada", color: "purple" }
+  const next=nextHierarchyField();
+  const path=activePath();
+
+  HUB.cards.render("kpis",[
+    {label:"Unidades no recorte",value:total,note:path.length?"Hierarquia ativa":"Total mapeado",feature:true,onclick:"clearAll()"},
+    {label:"Operacional",value:operacional,note:HUB.format.pct(HUB.format.calcPct(operacional,total))+" do recorte",color:"blue"},
+    {label:"Diretorias",value:diretorias,note:"Diretorias representadas",color:"green"},
+    {label:"Bairros",value:bairros,note:"Bairros com presença mapeada",color:"purple"}
   ]);
 
-  const byCat = countBy(FILTERED, "categoria_hub");
-  const byDir = countBy(FILTERED, "diretoria");
+  const byCat=countBy(FILTERED,"categoria_hub");
+  renderDonut(byCat.slice(0,6));
+  document.getElementById("chartTitle").textContent="Composição por categoria";
 
-  renderDonut(byCat.slice(0, 6));
-  drillField = "diretoria";
-  renderRankBars(byDir.slice(0, 10), total);
+  let rankField;
+  let rankLabel;
+  if(next){
+    rankField=next.field;
+    rankLabel=next.short;
+  }else{
+    rankField="bairro";
+    rankLabel="Bairros";
+  }
 
-  const topDir = byDir[0] || ["-", 0];
-  document.getElementById("insightText").innerHTML =
-    "O recorte atual reúne <b>" + HUB.format.int(total) + "</b> unidades. A diretoria com maior presença é <b>" + HUB.format.esc(topDir[0]) + "</b>, com <b>" + HUB.format.int(topDir[1]) + "</b> registros. A categoria Operacional responde por <b>" + HUB.format.pct(HUB.format.calcPct(operacional, total)) + "</b> do total mapeado.";
+  let entries=countBy(FILTERED,rankField,{dropPlaceholders:true});
+  if(!entries.length && next){
+    // Se o nível hierárquico não existe naquele ramo, pula para o próximo disponível.
+    const start=HIERARCHY.findIndex(h=>h.field===rankField)+1;
+    for(let i=start;i<HIERARCHY.length;i++){
+      const candidate=countBy(FILTERED,HIERARCHY[i].field,{dropPlaceholders:true});
+      if(candidate.length){
+        rankField=HIERARCHY[i].field;
+        rankLabel=HIERARCHY[i].short;
+        entries=candidate;
+        break;
+      }
+    }
+  }
+
+  document.getElementById("rankTitle").textContent=rankLabel;
+  document.getElementById("rankHint").textContent=
+    HIERARCHY.some(h=>h.field===rankField)
+      ? "Clique em uma linha para descer um nível."
+      : "Concentração territorial do recorte.";
+  renderRankBars(entries.slice(0,12),total,HIERARCHY.some(h=>h.field===rankField)?rankField:null);
+
+  const top=entries[0]||["-",0];
+  const hierarchyText=path.length
+    ? `O recorte está em <b>${esc(path[path.length-1].value)}</b>.`
+    : "A visão está no nível geral da COMLURB.";
+
+  const nextText=entries.length
+    ? ` A maior concentração no próximo nível é <b>${esc(top[0])}</b>, com <b>${HUB.format.int(top[1])}</b> registros.`
+    : "";
+
+  document.getElementById("sideHeadTitle").textContent="Leitura executiva";
+  document.getElementById("sideHeadHint").textContent=next ? `Próximo nível: ${next.label}.` : "Recorte detalhado por unidade e território.";
+  document.getElementById("insightText").innerHTML=
+    hierarchyText+
+    ` O recorte reúne <b>${HUB.format.int(total)}</b> unidades mapeadas em <b>${HUB.format.int(bairros)}</b> bairros.`+
+    nextText+
+    ` A categoria Operacional representa <b>${HUB.format.pct(HUB.format.calcPct(operacional,total))}</b> do total.`;
 }
 
-/* ============================================
-   FILTROS / DRILL
-   ============================================ */
-function clearAll() {
-  HUB.filters.clear();
-  document.getElementById("fBusca").value = "";
-  DRILL = null;
-  HUB.drillBanner.hide("drillBanner");
-  renderUnidades();
-}
-
-function setDrill(field, value, label) {
-  DRILL = { field, value, label };
-  HUB.drillBanner.show("drillBanner", {
-    title: "Drill down: " + label,
-    description: "Mapa e ranking filtrados por este recorte.",
-    onClear: "clearDrill()"
+function clearAll(render=true){
+  FILTERS.forEach(f=>{
+    const el=document.getElementById(f.id);
+    if(el) el.value="";
   });
-  renderUnidades();
+  const busca=document.getElementById("fBusca");
+  if(busca) busca.value="";
+  STATE.drill={};
+  refreshCascadeOptions();
+  if(render) renderUnidades();
 }
 
-function clearDrill() {
-  DRILL = null;
-  HUB.drillBanner.hide("drillBanner");
-  renderUnidades();
+function bindFilters(){
+  FILTERS.forEach(f=>{
+    const el=document.getElementById(f.id);
+    el.addEventListener("change",()=>{
+      STATE.lastSource=f.id;
+
+      // Mudou um nível hierárquico: limpa níveis hierárquicos abaixo.
+      const hIdx=HIERARCHY.findIndex(h=>h.field===f.field);
+      if(hIdx>=0){
+        HIERARCHY.slice(hIdx+1).forEach(h=>{
+          const child=FILTERS.find(x=>x.field===h.field);
+          if(child) document.getElementById(child.id).value="";
+          delete STATE.drill[h.field];
+        });
+      }
+
+      // Se o usuário alterou manualmente um nível, o drill daquele nível sai.
+      delete STATE.drill[f.field];
+
+      refreshCascadeOptions(f.id);
+      renderUnidades();
+    });
+  });
+
+  let searchTimer=null;
+  document.getElementById("fBusca").addEventListener("input",()=>{
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(()=>{
+      refreshCascadeOptions();
+      renderUnidades();
+    },120);
+  });
+
+  document.getElementById("clearFiltersBtn").addEventListener("click",()=>clearAll());
+
+  document.getElementById("toggleSecondary").addEventListener("click",()=>{
+    const sec=document.getElementById("secondaryFilters");
+    const open=sec.classList.toggle("open");
+    document.getElementById("toggleSecondary").textContent=open?"Menos filtros":"Mais filtros";
+  });
 }
 
-/* ============================================
-   BOOT
-   ============================================ */
-async function init() {
-  HUB.header.render("header", {
-    systemLabel: CONFIG.systemLabel,
-    title: CONFIG.panelName,
-    subtitle: CONFIG.subtitle
+async function init(){
+  HUB.header.render("header",{
+    systemLabel:CONFIG.systemLabel,
+    title:CONFIG.panelName,
+    subtitle:CONFIG.subtitle
   });
 
   renderLayerTabs();
   initMap();
 
-  HUB.loading.showMultiple(["kpis", "rankBox"]);
-
-  try {
+  HUB.loading.showMultiple(["kpis","rankBox"]);
+  try{
     await loadUnidadesData();
-    HUB.filters.init({});
-    populateUnitFilters();
-    HUB.filters.onChange(() => renderUnidades());
-    document.getElementById("fBusca").addEventListener("input", () => renderUnidades());
-
-    HUB.dom.show("filtrosUnidades");
-    document.getElementById("filtrosUnidades").style.display = "grid";
+    bindFilters();
+    refreshCascadeOptions();
+    document.getElementById("filtrosUnidades").classList.add("active");
     renderUnidades();
-  } catch (e) {
-    document.getElementById("insightText").textContent = "Erro ao carregar unidades: " + e.message;
+  }catch(e){
+    document.getElementById("insightText").textContent="Erro ao carregar unidades: "+e.message;
   }
 
   HUB.footer.render("footer");
+  window.addEventListener("resize",()=>map && map.invalidateSize());
 }
 
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded",init);
 </script>
-
 </body>
 </html>

@@ -1,122 +1,730 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Performance dos Contratos de Receita | HUB COMLURB</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HUB COMLURB · Centro de Inteligência e Gestão Estratégica Operacional</title>
 
-  <link rel="stylesheet" href="../assets/css/hub-premium.css">
-  <link rel="stylesheet" href="receita.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <script src="../assets/components/hub-utils.js"></script>
-  <script src="../assets/components/hub-layout.js"></script>
-  <script src="../assets/components/hub-cards.js"></script>
-  <script src="../assets/components/hub-filters.js"></script>
-  <script src="data.js"></script>
+<style>
+:root{
+  --bg:#030d19;
+  --panel:#071a2c;
+  --line:#203a55;
+  --line2:#315a7c;
+  --text:#f7f9ff;
+  --soft:#c8d8eb;
+  --muted:#8ba4bf;
+  --blue:#5b9bd5;
+  --blue2:#8ec5f3;
+  --green:#78aaa3;
+  --orange:#e87535;
+  --red:#ef6a5d;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background:
+    radial-gradient(circle at 78% 12%, rgba(91,155,213,.17), transparent 31%),
+    radial-gradient(circle at 12% 88%, rgba(120,170,163,.08), transparent 31%),
+    linear-gradient(180deg,#04101d 0%,#061524 48%,#030a14 100%);
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  opacity:.45;
+  background-image:
+    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size:88px 88px;
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.18));
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.shell{
+  width:min(1480px,94vw);
+  min-height:100vh;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  padding:30px 0 28px;
+}
+
+/* HEADER */
+.header{
+  height:104px;
+  display:grid;
+  grid-template-columns:340px 1fr;
+  align-items:center;
+  gap:32px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.logoBlock{
+  height:72px;
+  display:flex;
+  align-items:center;
+  padding-right:30px;
+  border-right:1px solid rgba(255,255,255,.23);
+}
+
+.logoBlock img{
+  width:310px;
+  max-width:100%;
+  display:block;
+}
+
+.brand h1{
+  margin:0;
+  font-size:34px;
+  line-height:1;
+  letter-spacing:-.7px;
+  font-weight:900;
+}
+
+.brand p{
+  margin:8px 0 0;
+  color:var(--blue);
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.18px;
+}
+
+/* HERO */
+.hero{
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  gap:64px;
+  align-items:stretch;
+  padding:66px 0 48px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.heroMark{
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:3.4px;
+  text-transform:uppercase;
+  margin-bottom:28px;
+}
+
+.heroTitle{
+  margin:0;
+  max-width:760px;
+  font-size:clamp(58px,7.4vw,106px);
+  line-height:.89;
+  letter-spacing:-6.1px;
+  font-weight:900;
+}
+
+.heroSub{
+  margin:30px 0 0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.heroSub span{
+  border:1px solid rgba(91,155,213,.34);
+  background:rgba(7,26,44,.42);
+  color:#e9f3ff;
+  border-radius:999px;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:800;
+}
+
+/* SÍNTESE EXECUTIVA */
+.sintesePanel{
+  border:1px solid rgba(49,90,124,.68);
+  border-radius:24px;
+  background:linear-gradient(180deg,rgba(7,26,44,.72),rgba(5,18,31,.48));
+  padding:26px;
+  display:flex;
+  flex-direction:column;
+}
+
+.sinteseTop{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+  padding-bottom:20px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.sinteseTop small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.sinteseTop strong{
+  display:block;
+  margin-top:8px;
+  font-size:34px;
+  line-height:1;
+  letter-spacing:-1.2px;
+  font-weight:900;
+}
+
+.sinteseTop .atualizado{
+  display:block;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:600;
+}
+
+.sinteseTag{
+  color:#06111f;
+  background:var(--blue2);
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.insightList{
+  display:grid;
+  gap:14px;
+  margin-top:20px;
+}
+
+.insight{
+  display:grid;
+  grid-template-columns:6px 1fr;
+  gap:16px;
+  align-items:start;
+}
+
+.bar{
+  width:6px;
+  height:100%;
+  min-height:62px;
+  border-radius:99px;
+  background:var(--blue);
+}
+
+.insight.warn .bar{background:var(--orange)}
+.insight.good .bar{background:var(--green)}
+
+.insight h3{
+  margin:0;
+  color:var(--soft);
+  font-size:16px;
+  line-height:1.25;
+  letter-spacing:-.25px;
+  font-weight:850;
+}
+
+.insight p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.42;
+}
+
+.mockNote{
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px dashed rgba(255,255,255,.12);
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.4px;
+}
+
+/* FAIXA DE LEITURA RÁPIDA */
+.quickRead{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.quick{
+  padding:30px 28px 28px 0;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+
+.quick:last-child{border-right:0}
+
+.quick b{
+  display:block;
+  font-size:40px;
+  line-height:.9;
+  letter-spacing:-2px;
+  font-weight:900;
+  color:var(--muted);
+}
+
+.quick span{
+  display:block;
+  margin-top:11px;
+  color:var(--soft);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.1px;
+  text-transform:uppercase;
+}
+
+.quickNote{
+  padding:14px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.3px;
+}
+
+/* GRADE DE MÓDULOS */
+.command{
+  flex:1;
+  padding:46px 0 42px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.sectionLabel{
+  margin:0 0 24px;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:3.2px;
+  text-transform:uppercase;
+}
+
+.commandGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:22px;
+}
+
+.column{
+  border:1px solid rgba(49,90,124,.58);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(7,26,44,.62),rgba(5,18,31,.40));
+  overflow:hidden;
+}
+
+.columnHead{
+  padding:25px 25px 22px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.columnHead small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2.2px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+.columnHead h3{
+  margin:0;
+  font-size:24px;
+  line-height:1.05;
+  letter-spacing:-.9px;
+  font-weight:900;
+}
+
+.links{
+  padding:8px 25px 20px;
+}
+
+.module{
+  display:grid;
+  grid-template-columns:1fr 30px;
+  gap:18px;
+  align-items:center;
+  min-height:88px;
+  padding:17px 0;
+  border-bottom:1px solid rgba(255,255,255,.075);
+  transition:.16s ease;
+}
+
+.module:hover{
+  transform:translateX(5px);
+}
+
+.module:last-child{
+  border-bottom:0;
+}
+
+.module strong{
+  display:block;
+  font-size:18px;
+  line-height:1.08;
+  letter-spacing:-.35px;
+  font-weight:850;
+}
+
+.module span{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:10px;
+}
+
+.module em{
+  font-style:normal;
+  color:#b8d9d5;
+  border:1px solid rgba(120,170,163,.22);
+  background:rgba(120,170,163,.06);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  line-height:1;
+  font-weight:700;
+}
+
+.arrow{
+  color:var(--blue);
+  font-size:29px;
+  font-weight:300;
+  text-align:right;
+}
+
+/* FOOTER */
+.footer{
+  padding:22px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
+
+.footer strong{
+  display:block;
+  color:var(--soft);
+  font-weight:800;
+  margin-bottom:2px;
+}
+
+@media(max-width:1180px){
+  .header{
+    height:auto;
+    grid-template-columns:1fr;
+    gap:18px;
+    padding-bottom:26px;
+  }
+
+  .logoBlock{
+    height:auto;
+    padding-right:0;
+    border-right:0;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    gap:34px;
+  }
+
+  .quickRead{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .quick{
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  .commandGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:720px){
+  .shell{
+    width:92vw;
+    padding-top:22px;
+  }
+
+  .logoBlock img{
+    width:282px;
+  }
+
+  .hero{
+    padding:52px 0 40px;
+  }
+
+  .heroTitle{
+    font-size:56px;
+    letter-spacing:-3.2px;
+  }
+
+  .sinteseTop{
+    flex-direction:column;
+  }
+
+  .quickRead{
+    grid-template-columns:1fr;
+  }
+
+  .quick{
+    border-right:0;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="app receitaApp">
-    <div id="hubHeader"></div>
+<main class="shell">
 
-    <section class="receitaToolbar" aria-label="Filtros">
-      <div class="toolbarContext">
-        <span class="contextLabel">Contratos de receita</span>
-        <span class="contextText">Posição financeira consolidada de 2026</span>
+  <header class="header">
+    <div class="logoBlock">
+      <img src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | COMLURB">
+    </div>
+
+    <div class="brand">
+      <h1>HUB COMLURB</h1>
+      <p>Centro de Inteligência e Gestão Estratégica Operacional</p>
+    </div>
+  </header>
+
+  <section class="hero" aria-label="Panorama Corporativo">
+    <div>
+      <div class="heroMark">Inteligência corporativa para alta gestão</div>
+      <h2 class="heroTitle">Inteligência para Decisão.<br>Governança para Resultado.</h2>
+
+      <div class="heroSub">
+        <span>Visão Presidência</span>
+        <span>Desempenho Institucional</span>
+        <span>Operação e Território</span>
+        <span>Recursos Corporativos</span>
       </div>
-      <div class="toolbarFilters">
-        <div class="field compactField">
-          <label for="secretaria">Secretaria</label>
-          <select id="secretaria"><option value="">Todas</option></select>
+    </div>
+
+    <aside class="sintesePanel" aria-label="Visão Executiva do Portfólio">
+      <div class="sinteseTop">
+        <div>
+          <small>Visão Executiva do Portfólio</small>
+          <strong>7 PAINÉIS ATIVOS</strong>
+          <span class="atualizado">Acesso integrado aos principais instrumentos de gestão da COMLURB</span>
         </div>
-        <div class="field serviceField">
-          <label for="servico">Serviço</label>
-          <select id="servico"><option value="">Todos</option></select>
-        </div>
-        <button class="actionBtn" id="clearFilters" type="button">Limpar</button>
-        <a class="actionBtn" href="../index.html">Voltar para a Home</a>
+        <div class="sinteseTag">Alta Gestão</div>
       </div>
-    </section>
 
-    <main id="conteudo">
-      <section class="financialHero" aria-label="Situação financeira">
-        <div class="sectionTop">
+      <div class="insightList">
+        <article class="insight">
+          <div class="bar"></div>
           <div>
-            <div class="sectionEyebrow">Situação financeira</div>
-            <h1>Receita dos contratos</h1>
-          </div>
-          <div class="periodTag">2026 · jan–mar</div>
-        </div>
-
-        <div id="kpis" class="financialKpis"></div>
-
-        <div class="executiveReadout">
-          <span class="readoutMarker" aria-hidden="true"></span>
-          <div>
-            <div class="readoutLabel">Leitura executiva</div>
-            <h2 id="executiveHeadline">—</h2>
-            <p id="executiveSubtext">—</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="financialGrid">
-        <article class="panel mainChartPanel">
-          <div class="panelHead">
-            <div>
-              <h2>Fluxo financeiro mensal</h2>
-              <div class="hint">Faturamento, valor líquido pago e débito líquido por competência.</div>
-            </div>
-          </div>
-          <div class="body chartBody">
-            <canvas id="flowChart"></canvas>
+            <h3>Governança e resultados institucionais.</h3>
+            <p>Monitoramento consolidado de indicadores corporativos, metas pactuadas e desempenho das áreas.</p>
           </div>
         </article>
 
-        <article class="panel concentrationPanel">
-          <div class="panelHead">
-            <div>
-              <h2>Concentração da receita</h2>
-              <div class="hint">Participação das secretarias no faturamento.</div>
-            </div>
-          </div>
-          <div class="body">
-            <div id="secretaryBars" class="secretaryBars"></div>
+        <article class="insight good">
+          <div class="bar"></div>
+          <div>
+            <h3>Operação urbana orientada por território.</h3>
+            <p>Leitura integrada da engenharia operacional, do padrão de limpeza e da organização territorial dos serviços.</p>
           </div>
         </article>
-      </section>
 
-      <section class="priorityPanel">
-        <div class="panelHeading">
+        <article class="insight">
+          <div class="bar"></div>
           <div>
-            <div class="sectionEyebrow">Ação gerencial</div>
-            <h2>Contratos que exigem acompanhamento</h2>
-            <p>Ordenados pelo maior débito líquido no recorte selecionado.</p>
+            <h3>Pessoas e resultado financeiro sob visão executiva.</h3>
+            <p>Acompanhamento da força de trabalho e da performance dos contratos de receita.</p>
           </div>
-          <span id="priorityMeta" class="panelMeta"></span>
+        </article>
+      </div>
+    </aside>
+  </section>
+
+  <section class="quickRead" aria-label="Leitura Rápida">
+    <article class="quick">
+      <b>7</b>
+      <span>Painéis Ativos</span>
+    </article>
+
+    <article class="quick">
+      <b>4</b>
+      <span>Dimensões Estratégicas</span>
+    </article>
+
+    <article class="quick">
+      <b>1</b>
+      <span>Portal Executivo Integrado</span>
+    </article>
+
+    <article class="quick">
+      <b>WEB</b>
+      <span>Acesso Direto aos Painéis</span>
+    </article>
+  </section>
+  <p class="quickNote">Portfólio executivo com acesso aos painéis ativos de governança, operação, território, pessoas e receitas.</p>
+
+  <section class="command" aria-label="Portfólio Executivo">
+    <h3 class="sectionLabel">Portfólio Executivo</h3>
+
+    <div class="commandGrid">
+
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 01</small>
+          <h3>Governança e Resultados</h3>
         </div>
-        <div id="priorityList" class="priorityList"></div>
-      </section>
 
-      <section class="portfolioShell">
-        <div class="sectionTitleRow">
-          <div>
-            <div class="sectionEyebrow">Camada analítica</div>
-            <h2>Carteira completa</h2>
-            <p>Consulta por contrato, secretaria e serviço.</p>
-          </div>
-          <button id="togglePortfolio" class="secondaryAction" type="button" aria-expanded="false">
-            Explorar carteira <span aria-hidden="true">↓</span>
-          </button>
+        <div class="links">
+          <a class="module" href="indicadores-gerais/">
+            <div>
+              <strong>Governança Corporativa</strong>
+              <span><em>indicadores institucionais</em><em>desempenho</em><em>gestão</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="ar/">
+            <div>
+              <strong>Acordo de Resultados</strong>
+              <span><em>metas pactuadas</em><em>evolução</em><em>resultado</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
         </div>
-        <div id="portfolio" hidden></div>
-      </section>
-    </main>
+      </article>
 
-    <div id="hubFooter"></div>
-  </div>
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 02</small>
+          <h3>Operação e Território</h3>
+        </div>
 
-  <script src="app.js"></script>
+        <div class="links">
+          <a class="module" href="engenharia-operacional/">
+            <div>
+              <strong>Desempenho da Operação Urbana</strong>
+              <span><em>engenharia</em><em>eficiência operacional</em><em>indicadores técnicos</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="ipl/">
+            <div>
+              <strong>Inteligência Territorial da Limpeza Urbana</strong>
+              <span><em>IPL</em><em>padrão de limpeza</em><em>análise territorial</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="territorial/">
+            <div>
+              <strong>Território Operacional</strong>
+              <span><em>estrutura territorial</em><em>áreas de atuação</em><em>serviços</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
+      </article>
+
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 03</small>
+          <h3>Pessoas e Capacidade Organizacional</h3>
+        </div>
+
+        <div class="links">
+          <a class="module" href="pessoas/">
+            <div>
+              <strong>Gestão Estratégica de Pessoas</strong>
+              <span><em>força de trabalho</em><em>disponibilidade</em><em>distribuição</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
+      </article>
+
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 04</small>
+          <h3>Receita e Sustentabilidade Financeira</h3>
+        </div>
+
+        <div class="links">
+          <a class="module" href="balanco-receita/">
+            <div>
+              <strong>Performance dos Contratos de Receita</strong>
+              <span><em>faturamento</em><em>recebimento</em><em>débitos</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="contratos/">
+            <div>
+              <strong>Contratos de Prestação de Serviços</strong>
+              <span><em>faturamento</em><em>glosas</em><em>execução contratual</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
+      </article>
+
+      <article class="column">
+        <div class="columnHead">
+          <small>Eixo 05</small>
+          <h3>Relacionamento com o Cidadão</h3>
+        </div>
+
+        <div class="links">
+          <a class="module" href="chamados-1746/">
+            <div>
+              <strong>Chamados</strong>
+              <span><em>demanda operacional</em><em>prazos</em><em>território</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+
+          <a class="module" href="ouvidoria/">
+            <div>
+              <strong>Ouvidoria Operacional</strong>
+              <span><em>manifestações</em><em>evolução</em><em>concentração territorial</em></span>
+            </div>
+            <div class="arrow">›</div>
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <strong>HUB COMLURB</strong>
+    Núcleo de Inteligência e Gestão Estratégica Operacional
+  </footer>
+
+</main>
 </body>
 </html>

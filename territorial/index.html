@@ -8,113 +8,453 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 
+
 <style>
 :root{
-  --territorial-gap:14px;
+  --territorial-gap:16px;
+  --territorial-soft:rgba(255,255,255,.055);
+  --territorial-line:rgba(151,184,216,.18);
+  --territorial-blue:#6aa7df;
 }
-.mapGrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.9fr);gap:var(--territorial-gap);align-items:start}
-.mapPanel{position:relative;overflow:hidden;padding:0!important;min-width:0}
-#map{height:clamp(480px,62vh,680px);width:100%;background:var(--painel2)}
-.leaflet-container{background:var(--painel2);font-family:"Segoe UI",Arial,sans-serif}
-.leaflet-control-zoom a{background:var(--painel)!important;color:#fff!important;border-color:var(--linha)!important}
-.leaflet-control-attribution{background:rgba(6,17,31,.82)!important;color:#8faac5!important;font-size:10px}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--painel);color:#fff;border:1px solid var(--linha)}
-.popupTitle{font-size:14px;font-weight:900;margin-bottom:7px;color:#fff}
-.popupLine{font-size:12px;color:#c7d8ee;margin:3px 0;line-height:1.45}
-.popupLine b{color:#fff}
-.popupAction{margin-top:10px;width:100%;border:1px solid #5b9bd5;background:#244f82;color:#fff;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:900;cursor:pointer}
-.popupAction:hover{filter:brightness(1.08)}
-.leaflet-tooltip.unitLabel{background:rgba(6,17,31,.82);border:1px solid var(--linha);color:#dcecff;font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 6px;border-radius:6px;box-shadow:none;pointer-events:none}
-.leaflet-tooltip.unitLabel:before{border-right-color:rgba(6,17,31,.82)}
-#map:not(.zoomedIn) .leaflet-tooltip.unitLabel{display:none}
 
-.mapLegend{position:absolute;left:12px;bottom:12px;z-index:500;max-width:calc(100% - 24px);display:flex;gap:7px;flex-wrap:wrap;padding:9px 10px;border-radius:14px;background:rgba(6,17,31,.88);border:1px solid var(--linha);backdrop-filter:blur(10px)}
-.mapLegend span{font-size:11px;color:var(--silenciado);display:flex;align-items:center;gap:5px;white-space:nowrap}
-.legendDot{width:8px;height:8px;border-radius:999px;display:inline-block}
+/* ===== Territorial shell ===== */
+.app{
+  max-width:1720px;
+}
+.viewDock{
+  position:sticky;
+  top:8px;
+  z-index:900;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:8px 10px;
+  margin:0 0 14px;
+  border:1px solid var(--territorial-line);
+  border-radius:15px;
+  background:rgba(6,17,31,.88);
+  backdrop-filter:blur(16px);
+}
+.viewDockLabel{
+  padding-left:4px;
+  color:#8faac5;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.layerTabs{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  min-width:0;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.layerTabs::-webkit-scrollbar{display:none}
+.layerTab{
+  flex:0 0 auto;
+  border:0;
+  background:transparent;
+  color:#9fb6ce;
+  border-radius:10px;
+  padding:9px 13px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.02em;
+  cursor:pointer;
+  transition:.16s ease;
+  white-space:nowrap;
+}
+.layerTab:hover{background:rgba(91,155,213,.09);color:#eaf4ff}
+.layerTab.active{
+  background:rgba(91,155,213,.16);
+  color:#fff;
+  box-shadow:inset 0 0 0 1px rgba(111,167,216,.34);
+}
 
-.layerTabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
-.layerTab{border:1px solid var(--linha);background:var(--painel);color:#dcecff;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:.15s}
-.layerTab:hover{border-color:var(--azul2)}
-.layerTab.active{background:linear-gradient(90deg,#244f82,#5b9bd5);border-color:#7db7ed;color:#fff}
-
-.filtersShell{display:none;margin-bottom:14px}
+/* ===== Filters ===== */
+.filtersShell{display:none;margin-bottom:12px}
 .filtersShell.active{display:block}
-.filterGroup{border:1px solid var(--linha);background:rgba(13,31,54,.58);border-radius:16px;padding:14px;margin-bottom:10px}
+.filterGroup{
+  border:1px solid var(--territorial-line);
+  background:rgba(10,27,49,.62);
+  border-radius:15px;
+  padding:12px;
+  margin-bottom:8px;
+}
 .filterGroup:last-child{margin-bottom:0}
-.filterGroupHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
-.filterGroupTitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a8bdd5;font-weight:900}
-.filterGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.filterGroupHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.filterGroupTitle{
+  font-size:10px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:#91abc5;
+  font-weight:800;
+}
+.filterGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .filterGrid.secondary{grid-template-columns:repeat(4,minmax(0,1fr))}
-.field{min-width:0}
-.field label{display:block}
-.field select,.field input{width:100%;min-width:0}
+.field{
+  min-width:0;
+  padding:10px 11px!important;
+  border-radius:12px!important;
+  border-color:rgba(151,184,216,.14)!important;
+  background:rgba(13,31,54,.68)!important;
+}
+.field label{margin-bottom:5px!important;font-size:9px!important;letter-spacing:.12em!important;color:#86a3bf!important}
+.field select,.field input{
+  width:100%;
+  min-width:0;
+  font-size:13px!important;
+  font-weight:700!important;
+  color:#f2f7ff!important;
+}
 .filterActions{display:flex;gap:8px;align-items:end}
 .filterActions .actionBtn{width:100%}
-.mobileFilterToggle{display:none;width:100%;margin-top:10px}
+.actionBtn{
+  border-radius:12px!important;
+  padding:10px 13px!important;
+  font-size:11px!important;
+  background:rgba(10,27,49,.76)!important;
+}
+.mobileFilterToggle{display:none;width:100%;margin-top:8px}
 #secondaryFilters{display:block}
 
-.breadcrumbBar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:2px 0 14px;min-height:34px}
-.crumbLabel{font-size:11px;color:#8faac5;text-transform:uppercase;letter-spacing:.1em;font-weight:900;margin-right:3px}
-.crumbBtn{border:0;background:transparent;color:#dcecff;padding:5px 3px;font-size:12px;font-weight:800;cursor:pointer}
-.crumbBtn:hover{color:#fff;text-decoration:underline}
+/* ===== Context / breadcrumb ===== */
+.breadcrumbBar{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:wrap;
+  margin:2px 0 10px;
+  min-height:26px;
+}
+.crumbLabel{font-size:9px;color:#718da9;text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-right:2px}
+.crumbBtn{border:0;background:transparent;color:#b6c9dc;padding:4px 2px;font-size:11px;font-weight:700;cursor:pointer}
+.crumbBtn:hover{color:#fff}
 .crumbCurrent{color:#fff}
-.crumbSep{color:#5f7895;font-size:11px}
-
-.contextStrip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border:1px solid var(--linha);border-radius:12px;background:rgba(6,17,31,.42);margin-bottom:14px}
+.crumbSep{color:#4c6985;font-size:10px}
+.contextStrip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 11px;
+  border:1px solid var(--territorial-line);
+  border-radius:11px;
+  background:rgba(6,17,31,.34);
+  margin-bottom:12px;
+}
 .contextMain{min-width:0}
-.contextTitle{font-size:12px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.contextSub{font-size:11px;color:#9fb6ce;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.contextReset{border:0;background:transparent;color:#9fc7ef;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap}
+.contextTitle{font-size:11px;font-weight:800;color:#eef6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contextSub{font-size:10px;color:#839eb9;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contextReset{border:0;background:transparent;color:#8fc0ea;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap}
 
-.chartWrap{height:210px;position:relative;margin-bottom:14px}
-.sideTitle{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#a8bdd5;font-weight:900;margin:16px 0 10px}
-.sideTitle:first-child{margin-top:0}
+/* ===== KPI strip: intentionally lighter than global HUB cards ===== */
+#kpis.kpis{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:9px!important;
+  margin-bottom:12px!important;
+}
+#kpis .kpi{
+  min-height:96px!important;
+  padding:14px 15px!important;
+  border-radius:15px!important;
+  border-color:var(--territorial-line)!important;
+  background:rgba(10,27,49,.68)!important;
+  box-shadow:none!important;
+}
+#kpis .kpi.feature{
+  background:linear-gradient(135deg,rgba(18,54,92,.72),rgba(10,27,49,.78))!important;
+}
+#kpis .kpi .label{
+  min-height:auto!important;
+  font-size:9px!important;
+  letter-spacing:.09em!important;
+  -webkit-line-clamp:2!important;
+  color:#8ea9c4!important;
+}
+#kpis .kpi .value,
+#kpis .kpi.feature .value{
+  margin:7px 0 2px!important;
+  font-size:clamp(25px,2vw,31px)!important;
+  font-weight:850!important;
+}
+#kpis .kpi .note{
+  font-size:10px!important;
+  color:#91a9c1!important;
+  -webkit-line-clamp:2!important;
+}
 
-.territorialRow{cursor:pointer;transition:.15s}
-.territorialRow:hover{filter:brightness(1.14)}
+/* ===== Main workspace ===== */
+.mapGrid{
+  display:grid;
+  grid-template-columns:minmax(0,1.75fr) minmax(330px,.72fr);
+  gap:var(--territorial-gap);
+  align-items:start;
+}
+.mapPanel{
+  position:relative;
+  overflow:hidden;
+  padding:0!important;
+  min-width:0;
+  min-height:0!important;
+  border-radius:18px!important;
+  border-color:var(--territorial-line)!important;
+}
+#map{
+  height:clamp(520px,66vh,720px);
+  width:100%;
+  background:var(--painel2);
+}
+.leaflet-container{background:var(--painel2);font-family:"Segoe UI",Arial,sans-serif}
+.leaflet-control-zoom a{background:rgba(10,27,49,.94)!important;color:#fff!important;border-color:rgba(151,184,216,.22)!important}
+.leaflet-control-attribution{background:rgba(6,17,31,.78)!important;color:#718aa4!important;font-size:9px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0a1b31;color:#fff;border:1px solid rgba(151,184,216,.25);box-shadow:0 12px 34px rgba(0,0,0,.26)}
+.popupTitle{font-size:13px;font-weight:850;margin-bottom:7px;color:#fff}
+.popupLine{font-size:11px;color:#bed0e3;margin:3px 0;line-height:1.45}
+.popupLine b{color:#fff}
+.popupAction{
+  margin-top:9px;
+  width:100%;
+  border:1px solid rgba(106,167,223,.48);
+  background:rgba(36,79,130,.7);
+  color:#fff;
+  border-radius:9px;
+  padding:8px 9px;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer
+}
+.leaflet-tooltip.unitLabel{
+  background:rgba(6,17,31,.8);
+  border:1px solid rgba(151,184,216,.18);
+  color:#dcecff;
+  font-size:9px;
+  font-weight:750;
+  padding:2px 5px;
+  border-radius:5px;
+  box-shadow:none;
+  pointer-events:none
+}
+.leaflet-tooltip.unitLabel:before{border-right-color:rgba(6,17,31,.8)}
+#map:not(.zoomedIn) .leaflet-tooltip.unitLabel{display:none}
+.mapLegend{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:500;
+  max-width:calc(100% - 20px);
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  padding:7px 8px;
+  border-radius:11px;
+  background:rgba(6,17,31,.78);
+  border:1px solid rgba(151,184,216,.17);
+  backdrop-filter:blur(10px)
+}
+.mapLegend span{font-size:9px;color:#9db2c7;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.legendDot{width:6px;height:6px;border-radius:999px;display:inline-block}
+
+/* ===== Executive explorer ===== */
+.executivePanel{
+  min-height:0!important;
+  border-radius:18px!important;
+  border-color:var(--territorial-line)!important;
+  background:rgba(10,27,49,.72)!important;
+  overflow:hidden;
+}
+.executivePanel .panelHead{
+  padding:14px 15px!important;
+  border-bottom-color:var(--territorial-line)!important;
+  align-items:flex-start!important;
+}
+.executiveTitleWrap{min-width:0}
+.executivePanel h2{font-size:15px!important;font-weight:850!important}
+.executivePanel .hint{font-size:10px!important;color:#809bb6!important;margin-top:3px!important}
+.executivePanel .body{padding:14px 15px 15px!important}
+.explorerModes{
+  display:flex;
+  gap:4px;
+  margin-bottom:12px;
+  padding:3px;
+  border:1px solid rgba(151,184,216,.12);
+  border-radius:10px;
+  background:rgba(6,17,31,.32);
+}
+.explorerMode{
+  flex:1;
+  border:0;
+  background:transparent;
+  color:#809bb6;
+  padding:7px 6px;
+  border-radius:8px;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  cursor:pointer;
+}
+.explorerMode.active{background:rgba(91,155,213,.14);color:#edf6ff}
+.territorialNote{
+  color:#b5c8da!important;
+  font-size:11px!important;
+  line-height:1.5!important;
+  padding:0 0 10px;
+}
+.territorialNote b{color:#f2f8ff}
+.explorerMeta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin:4px 0 8px;
+}
+.sideTitle{
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#7894af;
+  font-weight:800;
+  margin:0;
+}
+.drillPill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  border:1px solid rgba(106,167,223,.2);
+  background:rgba(91,155,213,.08);
+  color:#a8cbea;
+  border-radius:999px;
+  padding:4px 7px;
+  font-size:9px;
+  font-weight:750;
+  white-space:nowrap;
+}
+.chartWrap{height:185px;position:relative;margin:0 0 12px}
+.emptyChart{height:100%;display:flex;align-items:center;justify-content:center;color:#7890a8;font-size:11px;text-align:center;padding:18px}
+.rankHint{font-size:9px;color:#6f8aa5;margin:2px 0 8px}
+.territorialRank{display:grid!important;gap:6px!important}
+.territorialRow{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-areas:
+    "name num"
+    "track pct"!important;
+  gap:5px 9px!important;
+  align-items:center!important;
+  padding:8px 9px!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.025)!important;
+  border:1px solid rgba(151,184,216,.09)!important;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.territorialRow:hover{
+  background:rgba(91,155,213,.07)!important;
+  border-color:rgba(106,167,223,.24)!important;
+  transform:none!important;
+}
 .territorialRow.is-static{cursor:default}
-.territorialRow.is-static:hover{filter:none}
-.rankHint{font-size:10px;color:#7f99b5;margin-top:-4px;margin-bottom:8px}
-
-.emptyChart{height:100%;display:flex;align-items:center;justify-content:center;color:#8faac5;font-size:12px;text-align:center;padding:20px}
-
-@media (max-width:1100px){
-  .filterGrid,.filterGrid.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .mapGrid{grid-template-columns:minmax(0,1.45fr) minmax(280px,.9fr)}
+.territorialRow.is-static:hover{background:rgba(255,255,255,.025)!important;border-color:rgba(151,184,216,.09)!important}
+.territorialName{
+  grid-area:name;
+  min-width:0;
+  font-size:10px!important;
+  font-weight:750!important;
+  color:#dce8f4!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
 }
-@media (max-width:820px){
+.territorialNum{grid-area:num;font-size:10px!important;font-weight:850!important;color:#f4f8fd!important}
+.territorialTrack{
+  grid-area:track;
+  height:4px!important;
+  border-radius:999px!important;
+  overflow:hidden;
+  background:rgba(255,255,255,.07)!important
+}
+.territorialFill{
+  height:100%;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#3976ad,#6aa7df)!important
+}
+.territorialPct{grid-area:pct;font-size:9px!important;color:#7690aa!important;text-align:right!important}
+
+/* ===== Responsive ===== */
+@media (max-width:1180px){
+  .mapGrid{grid-template-columns:minmax(0,1.45fr) minmax(310px,.8fr)}
+  .filterGrid,.filterGrid.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  .app{padding:18px!important}
   .mapGrid{grid-template-columns:1fr}
-  #map{height:520px}
-  .filterGrid,.filterGrid.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .executivePanel{order:2}
+  #map{height:530px}
+  #kpis.kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .chartWrap{height:210px}
 }
-@media (max-width:600px){
-  .layerTabs{gap:6px}
-  .layerTab{flex:1 1 auto;padding:9px 10px;font-size:10px}
-  .filterGroup{padding:12px}
+@media (max-width:640px){
+  .app{padding:10px!important}
+  .header{padding:16px!important;border-radius:16px!important;margin-bottom:10px!important}
+  .mainTitle{font-size:26px!important}
+  .subtitle{font-size:12px!important}
+  .logoImg{width:190px!important;max-height:60px!important;padding-right:14px!important}
+
+  .viewDock{
+    top:5px;
+    padding:6px;
+    border-radius:12px;
+    margin-bottom:9px;
+  }
+  .viewDockLabel{display:none}
+  .layerTabs{width:100%}
+  .layerTab{flex:1 0 auto;text-align:center;padding:8px 9px;font-size:10px}
+
+  .filterGroup{padding:9px;border-radius:12px}
   .filterGrid,.filterGrid.secondary{grid-template-columns:1fr}
   .mobileFilterToggle{display:block}
   #secondaryFilters{display:none}
   #secondaryFilters.open{display:block}
   .contextStrip{align-items:flex-start}
-  #map{height:430px}
-  .mapLegend{left:8px;bottom:8px;max-width:calc(100% - 16px);padding:7px 8px}
-  .mapLegend span{font-size:10px}
+  .contextSub{white-space:normal}
+  #kpis.kpis{gap:7px!important}
+  #kpis .kpi{min-height:82px!important;padding:11px 12px!important;border-radius:12px!important}
+  #kpis .kpi .value,#kpis .kpi.feature .value{font-size:24px!important}
+  #kpis .kpi .note{font-size:9px!important}
+  .mapGrid{gap:10px}
+  .mapPanel,.executivePanel{border-radius:14px!important}
+  #map{height:400px}
+  .mapLegend{left:7px;bottom:7px;max-width:calc(100% - 14px)}
+  .executivePanel .panelHead{padding:12px!important}
+  .executivePanel .body{padding:12px!important}
   .chartWrap{height:190px}
-  .breadcrumbBar{gap:4px}
-  .crumbBtn{font-size:11px}
+  .breadcrumbBar{gap:3px}
+  .crumbBtn{font-size:10px}
 }
 @media (max-width:390px){
-  #map{height:390px}
-  .contextSub{white-space:normal}
+  .app{padding:8px!important}
+  #map{height:360px}
+  #kpis.kpis{grid-template-columns:1fr 1fr!important}
+  .layerTab{font-size:9px;padding:8px 7px}
 }
 </style>
+
 </head>
 
 <body>
 <div class="app">
   <div id="header"></div>
 
-  <div class="layerTabs" id="layerTabs"></div>
+  <div class="viewDock">
+    <div class="viewDockLabel">Visão territorial</div>
+    <div class="layerTabs" id="layerTabs"></div>
+  </div>
 
   <section class="filtersShell" id="filtrosUnidades">
     <div class="filterGroup">
@@ -182,17 +522,34 @@
       <div class="mapLegend" id="mapLegend"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel executivePanel">
       <div class="panelHead">
-        <h2 id="sideHeadTitle">Leitura executiva</h2>
-        <div class="hint" id="sideHeadHint">Distribuição do recorte ativo.</div>
+        <div class="executiveTitleWrap">
+          <h2 id="sideHeadTitle">Leitura executiva</h2>
+          <div class="hint" id="sideHeadHint">Explore a estrutura pelo gráfico ou ranking.</div>
+        </div>
       </div>
       <div class="body">
-        <div class="territorialNote" id="insightText">Carregando...</div>
-        <div class="sideTitle" id="chartTitle">Distribuição</div>
-        <div class="chartWrap"><canvas id="donutChart"></canvas><div class="emptyChart" id="emptyChart" style="display:none">Sem dados para exibir.</div></div>
+        <div class="explorerModes" id="explorerModes">
+          <button class="explorerMode active" data-mode="hierarquia" type="button">Estrutura</button>
+          <button class="explorerMode" data-mode="categoria" type="button">Categoria</button>
+          <button class="explorerMode" data-mode="territorio" type="button">Território</button>
+        </div>
 
-        <div class="sideTitle" id="rankTitle">Ranking</div>
+        <div class="territorialNote" id="insightText">Carregando...</div>
+
+        <div class="explorerMeta">
+          <div class="sideTitle" id="chartTitle">Próximo nível</div>
+          <div class="drillPill" id="drillPill">Clique para explorar</div>
+        </div>
+        <div class="chartWrap">
+          <canvas id="donutChart"></canvas>
+          <div class="emptyChart" id="emptyChart" style="display:none">Sem dados para exibir.</div>
+        </div>
+
+        <div class="explorerMeta">
+          <div class="sideTitle" id="rankTitle">Detalhamento</div>
+        </div>
         <div class="rankHint" id="rankHint"></div>
         <div class="territorialRank" id="rankBox"></div>
       </div>
@@ -216,7 +573,7 @@
 const CONFIG = {
   panelName: "Território Operacional",
   systemLabel: "HUB COMLURB",
-  subtitle: "Leitura geoespacial e hierárquica das estruturas da COMLURB, com navegação por diretoria, estrutura subordinada, gerência e unidade."
+  subtitle: "Visão territorial e hierárquica das estruturas da COMLURB, com exploração integrada entre mapa, filtros e níveis organizacionais."
 };
 
 const GEO_META = {
@@ -285,7 +642,9 @@ let FILTERED = [];
 let SETOR_MAP = {};
 let STATE = {
   drill: {},
-  lastSource: null
+  lastSource: null,
+  explorerMode: "hierarquia",
+  explorerField: null
 };
 
 function clean(v){
@@ -358,7 +717,10 @@ function switchLayer(key){
     document.getElementById("contextStrip").style.display="none";
     loadGeo(key);
   }
-  setTimeout(()=>map.invalidateSize(),60);
+  setTimeout(()=>{
+    map.invalidateSize();
+    if(donutInstance) donutInstance.resize();
+  },80);
 }
 
 async function fetchFirst(paths,type){
@@ -455,7 +817,7 @@ async function loadGeo(key){
     ]);
 
     renderMapLegend([]);
-    renderDonut(entries.slice(0,5),meta.color);
+    renderDonut(entries.slice(0,7),null,meta.color);
     renderRankBars(entries.slice(0,10),features.length,null);
     document.getElementById("insightText").innerHTML=
       meta.insight+" Foram carregadas <b>"+HUB.format.int(features.length)+"</b> feições, agrupadas em <b>"+HUB.format.int(entries.length)+"</b> conjuntos territoriais distintos.";
@@ -867,7 +1229,7 @@ function renderRankBars(entries,total,field){
 
   if(clickable){
     box.querySelectorAll("[data-rank-value]").forEach(row=>{
-      row.addEventListener("click",()=>drillFromRanking(field,row.dataset.rankValue));
+      row.addEventListener("click",()=>applyExplorerSelection(field,row.dataset.rankValue));
     });
   }
 }
@@ -895,7 +1257,56 @@ function drillFromRanking(field,value){
   renderUnidades();
 }
 
-function renderDonut(entries,singleColor){
+function explorerAxis(){
+  if(STATE.explorerMode==="categoria"){
+    return {field:"categoria_hub",label:"Categorias",singular:"categoria"};
+  }
+  if(STATE.explorerMode==="territorio"){
+    return {field:"bairro",label:"Bairros",singular:"bairro"};
+  }
+
+  const next=nextHierarchyField();
+  if(next) return {field:next.field,label:next.short,singular:next.label.toLowerCase()};
+  return {field:"bairro",label:"Bairros",singular:"bairro"};
+}
+
+function explorerEntries(){
+  let axis=explorerAxis();
+  let entries=countBy(FILTERED,axis.field,{dropPlaceholders:true});
+
+  if(STATE.explorerMode==="hierarquia" && !entries.length){
+    const start=HIERARCHY.findIndex(h=>h.field===axis.field)+1;
+    for(let i=start;i<HIERARCHY.length;i++){
+      const candidate=countBy(FILTERED,HIERARCHY[i].field,{dropPlaceholders:true});
+      if(candidate.length){
+        axis={field:HIERARCHY[i].field,label:HIERARCHY[i].short,singular:HIERARCHY[i].label.toLowerCase()};
+        entries=candidate;
+        break;
+      }
+    }
+  }
+  STATE.explorerField=axis.field;
+  return {axis,entries};
+}
+
+function applyExplorerSelection(field,value){
+  if(!value) return;
+  if(HIERARCHY.some(h=>h.field===field)){
+    drillFromRanking(field,value);
+    return;
+  }
+  const filter=FILTERS.find(f=>f.field===field);
+  if(filter){
+    const el=document.getElementById(filter.id);
+    refreshCascadeOptions(filter.id);
+    if(setSelectValueIfExists(el,value)){
+      refreshCascadeOptions(filter.id);
+      renderUnidades();
+    }
+  }
+}
+
+function renderDonut(entries,field,singleColor){
   const canvas=document.getElementById("donutChart");
   const empty=document.getElementById("emptyChart");
   if(donutInstance){donutInstance.destroy();donutInstance=null}
@@ -908,10 +1319,54 @@ function renderDonut(entries,singleColor){
   canvas.style.display="block";
   empty.style.display="none";
 
-  donutInstance=HUB.charts.donut("donutChart",{
-    labels:entries.map(e=>e[0]),
-    values:entries.map(e=>e[1])
-  },singleColor?{colors:entries.map(()=>singleColor)}:{});
+  const labels=entries.slice(0,8).map(e=>e[0]);
+  const values=entries.slice(0,8).map(e=>e[1]);
+  const palette=labels.map((_,i)=>{
+    if(singleColor) return singleColor;
+    const colors=["#6aa7df","#78aaa3","#8fb7d8","#a78bfa","#e0a06a","#6f8fae","#9caec1","#5f7892"];
+    return colors[i%colors.length];
+  });
+
+  donutInstance=new Chart(canvas,{
+    type:"doughnut",
+    data:{
+      labels,
+      datasets:[{
+        data:values,
+        backgroundColor:palette,
+        borderColor:"rgba(6,17,31,.92)",
+        borderWidth:3,
+        hoverOffset:3
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:"70%",
+      animation:{duration:260},
+      onHover:(evt,els)=>{
+        canvas.style.cursor=els.length?"pointer":"default";
+      },
+      onClick:(evt,els)=>{
+        if(!els.length) return;
+        const idx=els[0].index;
+        applyExplorerSelection(field,labels[idx]);
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          displayColors:false,
+          callbacks:{
+            label:(ctx)=>{
+              const total=values.reduce((a,b)=>a+b,0)||1;
+              const pct=(ctx.raw/total*100).toFixed(1).replace(".",",");
+              return `${ctx.label}: ${HUB.format.int(ctx.raw)} · ${pct}%`;
+            }
+          }
+        }
+      }
+    }
+  });
 }
 
 function renderUnidades(){
@@ -935,58 +1390,58 @@ function renderUnidades(){
     {label:"Bairros",value:bairros,note:"Bairros com presença mapeada",color:"purple"}
   ]);
 
-  const byCat=countBy(FILTERED,"categoria_hub");
-  renderDonut(byCat.slice(0,6));
-  document.getElementById("chartTitle").textContent="Composição por categoria";
+  const explorer=explorerEntries();
+  const axis=explorer.axis;
+  const entries=explorer.entries;
+  const clickableField=axis.field;
 
-  let rankField;
-  let rankLabel;
-  if(next){
-    rankField=next.field;
-    rankLabel=next.short;
-  }else{
-    rankField="bairro";
-    rankLabel="Bairros";
-  }
+  document.getElementById("chartTitle").textContent=
+    STATE.explorerMode==="hierarquia" ? `Próximo nível · ${axis.label}` : axis.label;
+  document.getElementById("rankTitle").textContent=axis.label;
 
-  let entries=countBy(FILTERED,rankField,{dropPlaceholders:true});
-  if(!entries.length && next){
-    // Se o nível hierárquico não existe naquele ramo, pula para o próximo disponível.
-    const start=HIERARCHY.findIndex(h=>h.field===rankField)+1;
-    for(let i=start;i<HIERARCHY.length;i++){
-      const candidate=countBy(FILTERED,HIERARCHY[i].field,{dropPlaceholders:true});
-      if(candidate.length){
-        rankField=HIERARCHY[i].field;
-        rankLabel=HIERARCHY[i].short;
-        entries=candidate;
-        break;
-      }
-    }
-  }
+  const canDrill=entries.length>0;
+  document.getElementById("drillPill").textContent=
+    canDrill ? "Clique no gráfico ou lista" : "Sem próximo nível";
 
-  document.getElementById("rankTitle").textContent=rankLabel;
   document.getElementById("rankHint").textContent=
-    HIERARCHY.some(h=>h.field===rankField)
-      ? "Clique em uma linha para descer um nível."
-      : "Concentração territorial do recorte.";
-  renderRankBars(entries.slice(0,12),total,HIERARCHY.some(h=>h.field===rankField)?rankField:null);
+    canDrill
+      ? (HIERARCHY.some(h=>h.field===axis.field)
+          ? "Selecione um item para aprofundar a estrutura."
+          : `Selecione um ${axis.singular} para aplicar o recorte.`)
+      : "Não há registros no recorte atual.";
+
+  renderDonut(entries,clickableField);
+  renderRankBars(entries.slice(0,10),total,clickableField);
 
   const top=entries[0]||["-",0];
   const hierarchyText=path.length
-    ? `O recorte está em <b>${esc(path[path.length-1].value)}</b>.`
-    : "A visão está no nível geral da COMLURB.";
+    ? `Você está em <b>${esc(path[path.length-1].value)}</b>.`
+    : "Você está na visão geral da COMLURB.";
 
-  const nextText=entries.length
-    ? ` A maior concentração no próximo nível é <b>${esc(top[0])}</b>, com <b>${HUB.format.int(top[1])}</b> registros.`
-    : "";
+  let modeText="";
+  if(STATE.explorerMode==="hierarquia"){
+    modeText=entries.length
+      ? ` O próximo nível disponível é <b>${esc(axis.label)}</b>; <b>${esc(top[0])}</b> concentra ${HUB.format.int(top[1])} registros.`
+      : "";
+  }else if(STATE.explorerMode==="categoria"){
+    modeText=entries.length
+      ? ` Na classificação, <b>${esc(top[0])}</b> é a categoria mais representativa, com ${HUB.format.pct(HUB.format.calcPct(top[1],total))} do recorte.`
+      : "";
+  }else{
+    modeText=entries.length
+      ? ` Territorialmente, <b>${esc(top[0])}</b> concentra ${HUB.format.int(top[1])} registros (${HUB.format.pct(HUB.format.calcPct(top[1],total))}).`
+      : "";
+  }
 
   document.getElementById("sideHeadTitle").textContent="Leitura executiva";
-  document.getElementById("sideHeadHint").textContent=next ? `Próximo nível: ${next.label}.` : "Recorte detalhado por unidade e território.";
+  document.getElementById("sideHeadHint").textContent=
+    STATE.explorerMode==="hierarquia"
+      ? "Navegue pela estrutura sem sair da leitura executiva."
+      : "Clique para aplicar o recorte ao painel inteiro.";
   document.getElementById("insightText").innerHTML=
     hierarchyText+
-    ` O recorte reúne <b>${HUB.format.int(total)}</b> unidades mapeadas em <b>${HUB.format.int(bairros)}</b> bairros.`+
-    nextText+
-    ` A categoria Operacional representa <b>${HUB.format.pct(HUB.format.calcPct(operacional,total))}</b> do total.`;
+    ` O recorte reúne <b>${HUB.format.int(total)}</b> unidades em <b>${HUB.format.int(bairros)}</b> bairros.`+
+    modeText;
 }
 
 function clearAll(render=true){
@@ -1041,6 +1496,14 @@ function bindFilters(){
     const open=sec.classList.toggle("open");
     document.getElementById("toggleSecondary").textContent=open?"Menos filtros":"Mais filtros";
   });
+
+  document.querySelectorAll(".explorerMode").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      STATE.explorerMode=btn.dataset.mode;
+      document.querySelectorAll(".explorerMode").forEach(b=>b.classList.toggle("active",b===btn));
+      if(currentLayer==="unidades") renderUnidades();
+    });
+  });
 }
 
 async function init(){
@@ -1065,7 +1528,10 @@ async function init(){
   }
 
   HUB.footer.render("footer");
-  window.addEventListener("resize",()=>map && map.invalidateSize());
+  window.addEventListener("resize",()=>{
+    if(map) map.invalidateSize();
+    if(donutInstance) donutInstance.resize();
+  });
 }
 
 document.addEventListener("DOMContentLoaded",init);

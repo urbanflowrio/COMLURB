@@ -21,58 +21,39 @@
 .app{
   max-width:1720px;
 }
-.viewDock{
-  position:sticky;
-  top:8px;
-  z-index:900;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  padding:8px 10px;
-  margin:0 0 14px;
-  border:1px solid var(--territorial-line);
-  border-radius:15px;
-  background:rgba(6,17,31,.88);
-  backdrop-filter:blur(16px);
-}
-.viewDockLabel{
-  padding-left:4px;
-  color:#8faac5;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
 .layerTabs{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:650;
   display:flex;
   align-items:center;
   gap:4px;
-  min-width:0;
-  overflow-x:auto;
-  scrollbar-width:none;
+  padding:4px;
+  border:1px solid rgba(151,184,216,.16);
+  border-radius:12px;
+  background:rgba(6,17,31,.72);
+  backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(0,0,0,.14);
 }
-.layerTabs::-webkit-scrollbar{display:none}
 .layerTab{
-  flex:0 0 auto;
   border:0;
   background:transparent;
   color:#9fb6ce;
-  border-radius:10px;
-  padding:9px 13px;
-  font-size:11px;
+  border-radius:9px;
+  padding:8px 11px;
+  font-size:10px;
   font-weight:800;
   letter-spacing:.02em;
   cursor:pointer;
   transition:.16s ease;
   white-space:nowrap;
 }
-.layerTab:hover{background:rgba(91,155,213,.09);color:#eaf4ff}
+.layerTab:hover{background:rgba(91,155,213,.08);color:#eaf4ff}
 .layerTab.active{
-  background:rgba(91,155,213,.16);
+  background:rgba(91,155,213,.14);
   color:#fff;
-  box-shadow:inset 0 0 0 1px rgba(111,167,216,.34);
+  box-shadow:inset 0 0 0 1px rgba(111,167,216,.26);
 }
 
 /* ===== Filters ===== */
@@ -80,7 +61,7 @@
 .filtersShell.active{display:block}
 .filterGroup{
   border:1px solid var(--territorial-line);
-  background:rgba(10,27,49,.62);
+  background:rgba(8,23,41,.52);
   border-radius:15px;
   padding:12px;
   margin-bottom:8px;
@@ -101,7 +82,7 @@
   padding:10px 11px!important;
   border-radius:12px!important;
   border-color:rgba(151,184,216,.14)!important;
-  background:rgba(13,31,54,.68)!important;
+  background:rgba(10,27,47,.58)!important;
 }
 .field label{margin-bottom:5px!important;font-size:9px!important;letter-spacing:.12em!important;color:#86a3bf!important}
 .field select,.field input{
@@ -164,7 +145,7 @@
   padding:14px 15px!important;
   border-radius:15px!important;
   border-color:var(--territorial-line)!important;
-  background:rgba(10,27,49,.68)!important;
+  background:rgba(9,25,44,.56)!important;
   box-shadow:none!important;
 }
 #kpis .kpi.feature{
@@ -203,8 +184,35 @@
   min-width:0;
   min-height:0!important;
   border-radius:18px!important;
-  border-color:var(--territorial-line)!important;
+  border-color:rgba(151,184,216,.14)!important;
+  background:rgba(7,22,39,.68)!important;
 }
+.mapToolbar{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:650;
+}
+.mapToolbar .layerTabs{
+  position:static;
+}
+.mapEyebrow{
+  position:absolute;
+  top:15px;
+  left:16px;
+  z-index:620;
+  padding:6px 8px;
+  border-radius:9px;
+  background:rgba(6,17,31,.54);
+  border:1px solid rgba(151,184,216,.12);
+  color:#a8bdd3;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+}
+
 #map{
   height:clamp(520px,66vh,720px);
   width:100%;
@@ -265,7 +273,7 @@
   min-height:0!important;
   border-radius:18px!important;
   border-color:var(--territorial-line)!important;
-  background:rgba(10,27,49,.72)!important;
+  background:rgba(9,25,44,.62)!important;
   overflow:hidden;
 }
 .executivePanel .panelHead{
@@ -349,14 +357,14 @@
   align-items:center!important;
   padding:8px 9px!important;
   border-radius:10px!important;
-  background:rgba(255,255,255,.025)!important;
-  border:1px solid rgba(151,184,216,.09)!important;
+  background:rgba(255,255,255,.018)!important;
+  border:1px solid rgba(151,184,216,.07)!important;
   cursor:pointer;
   transition:.15s ease;
 }
 .territorialRow:hover{
   background:rgba(91,155,213,.07)!important;
-  border-color:rgba(106,167,223,.24)!important;
+  border-color:rgba(106,167,223,.18)!important;
   transform:none!important;
 }
 .territorialRow.is-static{cursor:default}
@@ -406,15 +414,23 @@
   .subtitle{font-size:12px!important}
   .logoImg{width:190px!important;max-height:60px!important;padding-right:14px!important}
 
-  .viewDock{
-    top:5px;
-    padding:6px;
-    border-radius:12px;
-    margin-bottom:9px;
+  .mapEyebrow{display:none}
+  .mapToolbar{
+    top:8px;
+    right:8px;
+    left:8px;
   }
-  .viewDockLabel{display:none}
-  .layerTabs{width:100%}
-  .layerTab{flex:1 0 auto;text-align:center;padding:8px 9px;font-size:10px}
+  .mapToolbar .layerTabs{
+    width:100%;
+    justify-content:space-between;
+    overflow-x:auto;
+  }
+  .layerTab{
+    flex:1 1 auto;
+    text-align:center;
+    padding:8px 7px;
+    font-size:9px;
+  }
 
   .filterGroup{padding:9px;border-radius:12px}
   .filterGrid,.filterGrid.secondary{grid-template-columns:1fr}
@@ -451,15 +467,10 @@
 <div class="app">
   <div id="header"></div>
 
-  <div class="viewDock">
-    <div class="viewDockLabel">Visão territorial</div>
-    <div class="layerTabs" id="layerTabs"></div>
-  </div>
-
   <section class="filtersShell" id="filtrosUnidades">
     <div class="filterGroup">
       <div class="filterGroupHead">
-        <div class="filterGroupTitle">Estrutura organizacional</div>
+        <div class="filterGroupTitle">Hierarquia</div>
       </div>
       <div class="filterGrid">
         <div class="field">
@@ -485,7 +496,7 @@
 
     <div class="filterGroup" id="secondaryFilters">
       <div class="filterGroupHead">
-        <div class="filterGroupTitle">Classificação e território</div>
+        <div class="filterGroupTitle">Recortes complementares</div>
       </div>
       <div class="filterGrid secondary">
         <div class="field">
@@ -518,6 +529,10 @@
 
   <section class="mapGrid">
     <div class="panel mapPanel">
+      <div class="mapEyebrow">Mapa operacional</div>
+      <div class="mapToolbar" aria-label="Camadas territoriais">
+        <div class="layerTabs" id="layerTabs"></div>
+      </div>
       <div id="map"></div>
       <div class="mapLegend" id="mapLegend"></div>
     </div>
@@ -573,7 +588,7 @@
 const CONFIG = {
   panelName: "Território Operacional",
   systemLabel: "HUB COMLURB",
-  subtitle: "Visão territorial e hierárquica das estruturas da COMLURB, com exploração integrada entre mapa, filtros e níveis organizacionais."
+  subtitle: "Leitura territorial da estrutura operacional, com navegação integrada entre mapa, hierarquia e recortes de gestão."
 };
 
 const GEO_META = {

@@ -748,7 +748,7 @@ async function renderClimaChorume(meses, chorume){
   const first=valid[0], last=valid[valid.length-1];
   const start=isoDate(first.year,first.month,1);
   const end=isoDate(last.year,last.month,lastDay(last.year,last.month));
-  const inmetUrl='https://tempo.inmet.gov.br/TabelaEstacoes/A601';
+  const inmetUrl='https://portal.inmet.gov.br/dadoshistoricos';
   try{
     let rain;
     try{ rain=await fetchRainINMET(start,end); }
@@ -789,11 +789,11 @@ async function renderClimaChorume(meses, chorume){
         <div class="climateMetric"><div class="k">Correlação no mesmo mês</div><div class="v">${r0===null?'—':r0.toFixed(2).replace('.',',')}</div><div class="s">Associação ${classe}; correlação não significa causalidade.</div></div>
         <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${HUB.format.int(Math.round(chuvaPico))} mm</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${HUB.format.int(Math.round(chuvaAvg))} mm.</div></div>
         <div class="climateMetric"><div class="k">Defasagem de 1 mês</div><div class="v">${r1===null?'—':r1.toFixed(2).replace('.',',')}</div><div class="s">Testa se chuva do mês anterior se relaciona ao chorume do mês seguinte.</div></div>
-        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]} · referência espacial: Seropédica/RJ.<br><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar estação A601 no INMET</a></div>`;
+        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]} · referência espacial: Seropédica/RJ.<br><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar histórico oficial do INMET</a></div>`;
     }
   }catch(err){
     if(status) status.textContent='chuva indisponível';
-    if(leitura) leitura.innerHTML=`<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div><div class="climateSource"><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar estação A601 no INMET</a></div>`;
+    if(leitura) leitura.innerHTML=`<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div><div class="climateSource"><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar histórico oficial do INMET</a></div>`;
     console.warn('Falha ao carregar precipitação:',err);
   }
 }

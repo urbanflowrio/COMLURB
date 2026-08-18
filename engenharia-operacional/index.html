@@ -46,6 +46,35 @@
 .climateSource a{color:var(--azul2, var(--azul));text-decoration:none;font-weight:700;}
 .climateSource a:hover{text-decoration:underline;}
 @media (max-width:900px){ .climateGrid{grid-template-columns:1fr;} .climateRead{justify-content:flex-start;} }
+.fleetKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px;}
+.fleetKpi{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:15px 16px;}
+.fleetKpi .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:7px;}
+.fleetKpi .v{font-size:22px;font-weight:850;color:var(--texto);line-height:1.1;}
+.fleetKpi .s{font-size:11px;color:var(--silenciado);margin-top:5px;line-height:1.35;}
+.fleetInsights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0;}
+.fleetInsight{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:14px 15px;}
+.fleetInsight .label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:6px;}
+.fleetInsight .title{font-size:15px;font-weight:800;color:var(--texto);line-height:1.3;}
+.fleetInsight .text{font-size:11.5px;color:var(--silenciado);line-height:1.45;margin-top:5px;}
+.segmentGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px;}
+.segmentSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.segmentStat{background:var(--painel2);border:1px solid var(--linha);border-radius:10px;padding:10px;}
+.segmentStat .v{font-size:17px;font-weight:850;color:var(--texto);}
+.segmentStat .k{font-size:9.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.05em;margin-top:3px;}
+.segmentList{display:flex;flex-direction:column;gap:9px;}
+.segmentRow{display:grid;grid-template-columns:minmax(72px,.7fr) minmax(120px,1.5fr) 48px;gap:10px;align-items:center;}
+.segmentRow .name{font-size:11px;font-weight:750;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.segmentTrack{height:7px;background:var(--linha);border-radius:8px;overflow:hidden;}
+.segmentFill{height:100%;border-radius:8px;background:var(--azul2,var(--azul));}
+.segmentFill.low{background:var(--vermelho);}
+.segmentFill.high{background:var(--laranja,var(--amarelo));}
+.segmentRow .pct{font-size:11px;font-weight:800;color:var(--texto);text-align:right;}
+.segmentLegend{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:9.5px;color:var(--silenciado);}
+.segmentLegend span::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--azul2,var(--azul));}
+.segmentLegend span.low::before{background:var(--vermelho);}
+.segmentLegend span.high::before{background:var(--laranja,var(--amarelo));}
+@media (max-width:1050px){.fleetKpis{grid-template-columns:repeat(2,1fr)}.fleetInsights,.segmentGrid{grid-template-columns:1fr;}}
+@media (max-width:600px){.fleetKpis{grid-template-columns:1fr}.segmentSummary{grid-template-columns:repeat(3,1fr)}.segmentRow{grid-template-columns:70px 1fr 44px;}}
 .flowRow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;position:relative;}
 .flowNode{flex:1;min-width:150px;background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:16px 12px;text-align:center;position:relative;}
 .flowLabel{font-size:10.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;line-height:1.3;}
@@ -192,10 +221,12 @@
 
   <!-- ===================== FROTA & EFICIÊNCIA ===================== -->
   <section class="screen" id="screenFrota">
+    <div class="fleetKpis" id="fleetKpis"></div>
+    <div class="fleetInsights" id="fleetInsights"></div>
     <div class="grid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Horas extras</h2><div class="hint">Valor mensal (R$) e % do faturado</div></div>
+          <div><h2>Horas extras</h2><div class="hint">Valor mensal (R$)</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div></div>
       </div>
@@ -212,46 +243,18 @@
         <div class="body"><div class="chartWrap"><canvas id="chartFrotaComparativo"></canvas></div></div>
       </div>
     </div>
-    <div class="rankGrid" style="margin-top:14px;">
+    <div class="segmentGrid">
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Domiciliar — utilização mais baixa</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
-        </div>
-        <div class="body" id="rankBaixaDomiciliar"></div>
+        <div class="panelHead"><div><h2>Domiciliar</h2><div class="hint">Utilização da capacidade por gerência</div></div></div>
+        <div class="body" id="segmentDomiciliar"></div>
       </div>
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Domiciliar — utilização mais alta</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
-        </div>
-        <div class="body" id="rankAltaDomiciliar"></div>
-      </div>
-    </div>
-    <div class="rankGrid" style="margin-top:14px;">
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Seletiva — utilização mais baixa</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
-        </div>
-        <div class="body" id="rankBaixaSeletiva"></div>
+        <div class="panelHead"><div><h2>Seletiva</h2><div class="hint">Utilização da capacidade por gerência</div></div></div>
+        <div class="body" id="segmentSeletiva"></div>
       </div>
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Seletiva — utilização mais alta</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
-        </div>
-        <div class="body" id="rankAltaSeletiva"></div>
-      </div>
-    </div>
-    <div class="rankGrid" style="margin-top:14px;">
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Lixo Público — utilização mais baixa</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
-        </div>
-        <div class="body" id="rankBaixaLixoPublico"></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Lixo Público — utilização mais alta</h2><div class="hint">Peso/capacidade médio por gerência</div></div>
-        </div>
-        <div class="body" id="rankAltaLixoPublico"></div>
+        <div class="panelHead"><div><h2>Lixo Público</h2><div class="hint">Utilização da capacidade por gerência</div></div></div>
+        <div class="body" id="segmentLixoPublico"></div>
       </div>
     </div>
   </section>
@@ -660,8 +663,8 @@ function renderDestinacao() {
   const slot = document.getElementById("chorumeAlertSlot");
   if (baseAvg > 0 && pico > baseAvg * 2) {
     slot.innerHTML = `
-      <div class="noteBanner crit">
-        <div class="noteTag">CRÍTICO</div>
+      <div class="noteBanner warn">
+        <div class="noteTag">ATENÇÃO</div>
         <div>
           <b>Acúmulo de chorume acima do padrão histórico</b>
           <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${mesesFmt[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). O painel cruza este comportamento com a precipitação local abaixo; a chuva pode contribuir para a geração de chorume, mas não explica sozinha a variação operacional.</p>
@@ -745,7 +748,7 @@ async function renderClimaChorume(meses, chorume){
   const first=valid[0], last=valid[valid.length-1];
   const start=isoDate(first.year,first.month,1);
   const end=isoDate(last.year,last.month,lastDay(last.year,last.month));
-  const inmetUrl=`https://apitempo.inmet.gov.br/estacao/${start}/${end}/A601`;
+  const inmetUrl='https://tempo.inmet.gov.br/TabelaEstacoes/A601';
   try{
     let rain;
     try{ rain=await fetchRainINMET(start,end); }
@@ -779,18 +782,18 @@ async function renderClimaChorume(meses, chorume){
     let leituraTxt='Os dados não sustentam atribuição automática do aumento de chorume à chuva.';
     if(r0!==null && r0>=.65) leituraTxt='Há associação positiva forte no mesmo mês. A chuva é compatível com parte da variação, mas não prova causalidade.';
     else if(r0!==null && r0>=.35) leituraTxt='Há associação positiva moderada. Chuva pode contribuir, mas fatores de drenagem, tratamento e estoque precisam ser considerados.';
-    else if(r0!==null && r0<.35) leituraTxt='A associação no mesmo mês é baixa. O salto do chorume deve ser investigado também por capacidade de tratamento, retirada, estoque e mudança de operação.';
+    else if(r0!==null && r0<.35) leituraTxt='A precipitação é apresentada como variável de contexto para comparação temporal com o chorume.';
 
     if(leitura){
       leitura.innerHTML=`
         <div class="climateMetric"><div class="k">Correlação no mesmo mês</div><div class="v">${r0===null?'—':r0.toFixed(2).replace('.',',')}</div><div class="s">Associação ${classe}; correlação não significa causalidade.</div></div>
         <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${HUB.format.int(Math.round(chuvaPico))} mm</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${HUB.format.int(Math.round(chuvaAvg))} mm.</div></div>
         <div class="climateMetric"><div class="k">Defasagem de 1 mês</div><div class="v">${r1===null?'—':r1.toFixed(2).replace('.',',')}</div><div class="s">Testa se chuva do mês anterior se relaciona ao chorume do mês seguinte.</div></div>
-        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]} · referência espacial: Seropédica/RJ.<br><a href="${inmetUrl}" target="_blank" rel="noopener">Abrir consulta INMET A601 para o período</a></div>`;
+        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]} · referência espacial: Seropédica/RJ.<br><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar estação A601 no INMET</a></div>`;
     }
   }catch(err){
     if(status) status.textContent='chuva indisponível';
-    if(leitura) leitura.innerHTML=`<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div><div class="climateSource"><a href="${inmetUrl}" target="_blank" rel="noopener">Abrir consulta INMET A601 para o período</a></div>`;
+    if(leitura) leitura.innerHTML=`<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div><div class="climateSource"><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar estação A601 no INMET</a></div>`;
     console.warn('Falha ao carregar precipitação:',err);
   }
 }
@@ -799,207 +802,175 @@ async function renderClimaChorume(meses, chorume){
 // TELA 3 — COLETA SELETIVA & RECICLAGEM
 // ============================================
 function renderReciclagem() {
-  const idx2026 = ind1493Serie(RAW.ind2026, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  const mesesLabel = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-  const usar2026 = lastValidIndex(idx2026.meses) >= 0;
-  const serieIdxBase = usar2026 ? idx2026.meses : idx2025.meses;
-  const anoUsado = usar2026 ? "2026" : "2025";
-  const ultimoIdxSerie = lastValidIndex(serieIdxBase);
-  const labelsIdx = ultimoIdxSerie >= 0 ? mesesLabel.slice(0, ultimoIdxSerie + 1).map(m => m + "/" + anoUsado.slice(2)) : [];
-  const serieIdx = ultimoIdxSerie >= 0 ? serieIdxBase.slice(0, ultimoIdxSerie + 1) : [];
+  const mesesJanDez = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  const labels13 = ["Jul/25","Ago/25","Set/25","Out/25","Nov/25","Dez/25","Jan/26","Fev/26","Mar/26","Abr/26","Mai/26","Jun/26","Jul/26"];
 
-  chartOuVazio("chartIndiceMensal", serieIdx, () => HUB.charts.line("chartIndiceMensal", {
-    labels: labelsIdx,
-    values: serieIdx
-  }, { color: HUB.charts.colors.green }));
+  function rolling13(label2025, label2026) {
+    const s25 = ind1493Serie(RAW.ind2025, label2025 || label2026).meses;
+    const s26 = ind1493Serie(RAW.ind2026, label2026 || label2025).meses;
+    return s25.slice(6,12).concat(s26.slice(0,7)).map(v => v > 0 ? v : null);
+  }
+  function lastDataIndex(arr){ for(let i=arr.length-1;i>=0;i--) if(Number.isFinite(arr[i]) && arr[i]>0) return i; return -1; }
+
+  const serieIdx = rolling13("INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL", "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
+  chartOuVazio("chartIndiceMensal", serieIdx.map(v=>v||0), () => HUB.charts.line("chartIndiceMensal", { labels: labels13, values: serieIdx }, { color: HUB.charts.colors.green }));
 
   const bannerTitleEl = document.getElementById("bannerTitle");
   const bannerEl2 = document.getElementById("bannerIndice");
   const bannerTagEl = document.getElementById("bannerTag");
   if (bannerTitleEl) {
-    const iIdx = serieIdx.length - 1;
-    const anteriores = serieIdx.slice(0, iIdx).filter(v => v > 0);
-    const mediaAnterior = anteriores.length ? anteriores.reduce((a, b) => a + b, 0) / anteriores.length : 0;
-    const destoante = iIdx >= 0 && mediaAnterior > 0 && Math.abs(serieIdx[iIdx] - mediaAnterior) / mediaAnterior > 0.3;
+    const iIdx = lastDataIndex(serieIdx);
+    const anteriores = serieIdx.slice(0, iIdx).filter(v => Number.isFinite(v) && v > 0);
+    const mediaAnterior = anteriores.length ? anteriores.reduce((a,b)=>a+b,0)/anteriores.length : 0;
+    const destoante = iIdx >= 0 && mediaAnterior > 0 && Math.abs(serieIdx[iIdx]-mediaAnterior)/mediaAnterior > 0.3;
     if (destoante) {
-      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${labelsIdx[iIdx]} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% vs. média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
+      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${labels13[iIdx]} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% vs. média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
       if (bannerEl2) bannerEl2.className = "noteBanner warn compact";
       if (bannerTagEl) bannerTagEl.textContent = "ATENÇÃO";
     } else if (iIdx >= 0) {
-      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${labelsIdx[iIdx]}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%, dentro do padrão da série disponível`;
+      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${labels13[iIdx]}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%`;
       if (bannerEl2) bannerEl2.className = "noteBanner compact";
       if (bannerTagEl) bannerTagEl.textContent = "MONITORADO";
-    } else {
-      bannerTitleEl.textContent = "Índice de captura EGP-RIO — sem dados mensais disponíveis";
-      if (bannerEl2) bannerEl2.className = "noteBanner compact";
-      if (bannerTagEl) bannerTagEl.textContent = "SEM DADO";
     }
   }
 
-  const fonte = usar2026 ? RAW.ind2026 : RAW.ind2025;
-
-  // Composição: Frota Comlurb vs. Não Cadastrados por mês — mostra a origem do salto
-  const frotaComlurbMeses = ind1493Serie(fonte, "COLETA SELETIVA - FROTA COMLURB").meses;
-  const naoCadastradosMeses = ind1493Serie(fonte, "NAO CADASTRADOS").meses;
-  const mesesComDado = frotaComlurbMeses.map((v, idx) => (v > 0 || naoCadastradosMeses[idx] > 0) ? idx : -1).filter(i => i >= 0);
-  const ultimoIdx = mesesComDado.length ? Math.max(...mesesComDado) + 1 : 0;
-  chartOuVazio("chartComposicao", frotaComlurbMeses.slice(0, ultimoIdx), () => {
-    const canvas = document.getElementById("chartComposicao");
-    if (!canvas) return;
-    new Chart(canvas.getContext("2d"), {
-      type: "bar",
-      data: {
-        labels: mesesLabel.slice(0, ultimoIdx).map(m => m + "/" + anoUsado.slice(2)),
-        datasets: [
-          { label: "Frota Comlurb", data: frotaComlurbMeses.slice(0, ultimoIdx), backgroundColor: HUB.charts.colors.blue },
-          { label: "Cooperativas / não cadastrados", data: naoCadastradosMeses.slice(0, ultimoIdx), backgroundColor: HUB.charts.colors.orange }
-        ]
-      },
-      options: { ...HUB.charts.baseConfig, scales: { ...HUB.charts.baseConfig.scales, x: { ...HUB.charts.baseConfig.scales.x, stacked: true }, y: { ...HUB.charts.baseConfig.scales.y, stacked: true } } }
+  const frota25 = ind1493Serie(RAW.ind2025, "COLETA SELETIVA - FROTA COMLURB").meses;
+  const frota26 = ind1493Serie(RAW.ind2026, "COLETA SELETIVA - FROTA COMLURB").meses;
+  const nao25 = ind1493Serie(RAW.ind2025, "NAO CADASTRADOS").meses;
+  const nao26 = ind1493Serie(RAW.ind2026, "NAO CADASTRADOS").meses;
+  const frotaRolling = frota25.slice(6,12).concat(frota26.slice(0,7)).map(v=>v>0?v:null);
+  const naoRolling = nao25.slice(6,12).concat(nao26.slice(0,7)).map(v=>v>0?v:null);
+  const compHas = frotaRolling.map((v,i)=>(v||0)+(naoRolling[i]||0));
+  chartOuVazio("chartComposicao", compHas, () => {
+    const canvas=document.getElementById("chartComposicao"); if(!canvas)return;
+    new Chart(canvas.getContext("2d"),{
+      type:"bar",
+      data:{labels:labels13,datasets:[
+        {label:"Frota Comlurb",data:frotaRolling,backgroundColor:HUB.charts.colors.blue},
+        {label:"Cooperativas / não cadastrados",data:naoRolling,backgroundColor:HUB.charts.colors.orange}
+      ]},
+      options:{...HUB.charts.baseConfig,scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,stacked:true},y:{...HUB.charts.baseConfig.scales.y,stacked:true}}}
     });
   });
 
-  const bannerEl = document.getElementById("bannerComposicao");
-  if (bannerEl) {
-    const iUlt = lastValidIndex(naoCadastradosMeses);
-    const iAnteriores = mesesComDado.filter(idx => idx < iUlt);
-    const baseNaoCad = iAnteriores.length ? iAnteriores.reduce((a, i) => a + naoCadastradosMeses[i], 0) / iAnteriores.length : 0;
-    const baseFrota = iAnteriores.length ? iAnteriores.reduce((a, i) => a + frotaComlurbMeses[i], 0) / iAnteriores.length : 0;
-    if (iUlt >= 0 && baseNaoCad > 0) {
-      const multNaoCad = naoCadastradosMeses[iUlt] / baseNaoCad;
-      const varFrota = baseFrota > 0 ? (frotaComlurbMeses[iUlt] - baseFrota) / baseFrota * 100 : 0;
-      bannerEl.innerHTML = `<b>Leitura da composição:</b> em ${mesesLabel[iUlt]}/${anoUsado.slice(2)}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoCadastradosMeses[iUlt]))} t — ${multNaoCad.toFixed(1).replace(".", ",")}x a média dos meses anteriores (${HUB.format.int(Math.round(baseNaoCad))} t). No mesmo mês, a frota Comlurb variou ${varFrota >= 0 ? "+" : ""}${varFrota.toFixed(1).replace(".", ",")}% frente à própria média.`;
-    } else {
-      bannerEl.textContent = "A composição mensal será exibida conforme houver dados válidos no ano corrente.";
-    }
+  const bannerEl=document.getElementById("bannerComposicao");
+  if(bannerEl){
+    const iUlt=Math.max(lastDataIndex(frotaRolling),lastDataIndex(naoRolling));
+    const prevIdx=[...Array(iUlt).keys()].filter(i=>(naoRolling[i]||0)>0);
+    const baseNao=prevIdx.length?prevIdx.reduce((a,i)=>a+(naoRolling[i]||0),0)/prevIdx.length:0;
+    const prevF=prevIdx.filter(i=>(frotaRolling[i]||0)>0);
+    const baseF=prevF.length?prevF.reduce((a,i)=>a+(frotaRolling[i]||0),0)/prevF.length:0;
+    if(iUlt>=0 && (naoRolling[iUlt]||0)>0 && baseNao>0){
+      const mult=(naoRolling[iUlt]||0)/baseNao;
+      const vf=baseF>0?((frotaRolling[iUlt]||0)-baseF)/baseF*100:0;
+      bannerEl.innerHTML=`<b>Leitura da composição:</b> em ${labels13[iUlt]}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoRolling[iUlt]||0))} t — ${mult.toFixed(1).replace(".", ",")}x a média anterior. A frota Comlurb variou ${vf>=0?"+":""}${vf.toFixed(1).replace(".", ",")}% frente à própria média.`;
+    } else bannerEl.textContent='A leitura considera apenas os meses com dados publicados na janela Jul/25–Jul/26.';
   }
 
-  const regionais = ["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
-  const valoresRegional = regionais.map(r => ind1493Serie(fonte, r).total).filter(v => v > 0);
-  const labelsRegional = regionais.filter(r => ind1493Serie(fonte, r).total > 0);
-  chartOuVazio("chartRegional", valoresRegional, () => HUB.charts.bar("chartRegional", {
-    labels: labelsRegional,
-    values: valoresRegional
-  }, { color: HUB.charts.colors.greenGradient }));
+  // Regional: usa o ano corrente acumulado publicado; não inventa meses sem dado.
+  const regionais=["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
+  const valoresRegional=regionais.map(r=>ind1493Serie(RAW.ind2026,r).total);
+  const paresRegional=regionais.map((label,i)=>({label,value:valoresRegional[i]})).filter(x=>x.value>0);
+  chartOuVazio("chartRegional",paresRegional.map(x=>x.value),()=>HUB.charts.bar("chartRegional",{labels:paresRegional.map(x=>x.label),values:paresRegional.map(x=>x.value)},{color:HUB.charts.colors.greenGradient}));
 
-  const frotaComlurb = ind1493Serie(fonte, "COLETA SELETIVA - FROTA COMLURB").total;
-  const alternativa = ind1493Serie(fonte, "FROTA ALTERNATIVA").total;
-  const naoCadastrados = ind1493Serie(fonte, "NAO CADASTRADOS").total;
-  const origemLabels = ["Frota Comlurb", "Frota alternativa cadastrada", "Não cadastrados / cooperativas"];
-  const origemValores = [frotaComlurb, alternativa, naoCadastrados];
-  const origemFiltrada = origemLabels.map((label, i) => ({ label, value: origemValores[i] })).filter(x => x.value > 0);
-  chartOuVazio("chartOrigem", origemFiltrada.map(x => x.value), () => HUB.charts.donut("chartOrigem", {
-    labels: origemFiltrada.map(x => x.label),
-    values: origemFiltrada.map(x => x.value)
-  }, { colors: [HUB.charts.colors.blue, HUB.charts.colors.purple, HUB.charts.colors.orange].slice(0, origemFiltrada.length) }));
+  const frotaComlurb=ind1493Serie(RAW.ind2026,"COLETA SELETIVA - FROTA COMLURB").total;
+  const alternativa=ind1493Serie(RAW.ind2026,"FROTA ALTERNATIVA").total;
+  const naoCadastrados=ind1493Serie(RAW.ind2026,"NAO CADASTRADOS").total;
+  const origem=[{label:"Frota Comlurb",value:frotaComlurb,color:HUB.charts.colors.blue},{label:"Frota alternativa cadastrada",value:alternativa,color:HUB.charts.colors.purple},{label:"Não cadastrados / cooperativas",value:naoCadastrados,color:HUB.charts.colors.orange}].filter(x=>x.value>0);
+  chartOuVazio("chartOrigem",origem.map(x=>x.value),()=>{
+    const canvas=document.getElementById("chartOrigem"); if(!canvas)return;
+    new Chart(canvas.getContext("2d"),{
+      type:"doughnut",
+      data:{labels:origem.map(x=>x.label),datasets:[{data:origem.map(x=>x.value),backgroundColor:origem.map(x=>x.color),borderWidth:0,hoverOffset:5}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:true,position:"bottom",labels:{color:"#b8c9de",usePointStyle:true,boxWidth:8,padding:14}},tooltip:{callbacks:{label:(ctx)=>`${ctx.label}: ${HUB.format.int(Math.round(ctx.raw))} t`}}}}
+    });
+  });
 }
 
 // ============================================
 // TELA 4 — FROTA & EFICIÊNCIA
 // ============================================
 function renderFrota() {
-  const meses = relatorioMeses(RAW.relatorio);
-  const n = meses.length || 13;
+  const meses=relatorioMeses(RAW.relatorio).map(prettyRef);
+  const n=meses.length||13;
+  const horasExtras=relatorioSerie(RAW.relatorio,"VALOR TOTAL DE HORAS EXTRAS",n);
+  const sobrecarga=relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",n).map(v=>v>1?v:v*100);
+  const secFrota=findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
+  const frotaTotal=secFrota?relatorioSerie(secFrota.rows,"FROTA TOTAL",n):Array(n).fill(0);
+  const frotaOp=secFrota?relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",n):Array(n).fill(0);
 
-  const horasExtras = relatorioSerie(RAW.relatorio, "VALOR TOTAL DE HORAS EXTRAS", n);
-  const sobrecarga = relatorioSerie(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL", n).map(v => v > 1 ? v : v * 100);
-
-  const secFrota = findSecao(RAW.secoes, "MANUTENCAO FROTA PROPRIA");
-  const frotaTotal = secFrota ? relatorioSerie(secFrota.rows, "FROTA TOTAL", n) : Array(n).fill(0);
-  const frotaOp = secFrota ? relatorioSerie(secFrota.rows, "TOTAL EM OPERACAO", n) : Array(n).fill(0);
-
-  chartOuVazio("chartHorasExtras", horasExtras, () => HUB.charts.bar("chartHorasExtras", { labels: meses, values: horasExtras }, { color: HUB.charts.colors.orangeGradient }));
-  chartOuVazio("chartSobrecarga", sobrecarga, () => HUB.charts.line("chartSobrecarga", { labels: meses, values: sobrecarga }, { color: HUB.charts.colors.red }));
-
-  chartOuVazio("chartFrotaComparativo", frotaTotal, () => {
-    const canvas = document.getElementById("chartFrotaComparativo");
-    if (!canvas) return;
-    new Chart(canvas.getContext("2d"), {
-      type: "line",
-      data: {
-        labels: meses,
-        datasets: [
-          { label: "Frota total", data: frotaTotal, borderColor: HUB.charts.colors.blue, backgroundColor: "transparent", tension: 0.3 },
-          { label: "Em operação", data: frotaOp, borderColor: HUB.charts.colors.orange, backgroundColor: "transparent", tension: 0.3 }
-        ]
-      },
-      options: HUB.charts.baseConfig
-    });
+  chartOuVazio("chartHorasExtras",horasExtras,()=>HUB.charts.bar("chartHorasExtras",{labels:meses,values:horasExtras},{color:HUB.charts.colors.orangeGradient}));
+  chartOuVazio("chartSobrecarga",sobrecarga,()=>HUB.charts.line("chartSobrecarga",{labels:meses,values:sobrecarga},{color:HUB.charts.colors.red}));
+  chartOuVazio("chartFrotaComparativo",frotaTotal,()=>{
+    const c=document.getElementById("chartFrotaComparativo"); if(!c)return;
+    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[
+      {label:"Frota total",data:frotaTotal,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",tension:.3},
+      {label:"Em operação",data:frotaOp,borderColor:HUB.charts.colors.orange,backgroundColor:"transparent",tension:.3}
+    ]},options:HUB.charts.baseConfig});
   });
 
-  // Rankings de utilização por gerência — um ranking por segmento (não misturado)
-  const fontesFrota = [
-    { rows: RAW.coletaDom || [], tipo: "Domiciliar", sufixo: "Domiciliar" },
-    { rows: RAW.coletaSel || [], tipo: "Seletiva", sufixo: "Seletiva" },
-    { rows: RAW.lixoPub || [], tipo: "Lixo Público", sufixo: "LixoPublico" }
+  const iFT=lastValidIndex(frotaTotal), iFO=lastValidIndex(frotaOp), iHE=lastValidIndex(horasExtras), iSO=lastValidIndex(sobrecarga);
+  const disponibilidade=(iFT>=0&&iFO>=0&&frotaTotal[iFT]>0)?frotaOp[iFO]/frotaTotal[iFT]*100:null;
+  const kpis=document.getElementById('fleetKpis');
+  if(kpis){
+    const cards=[
+      {k:'Frota em operação',v:iFO>=0?HUB.format.int(Math.round(frotaOp[iFO])):'—',s:iFO>=0?meses[iFO]:''},
+      {k:'Disponibilidade',v:disponibilidade!==null?disponibilidade.toFixed(1).replace('.',',')+'%':'—',s:'em operação ÷ frota total'},
+      {k:'Sobrecarga >10% PBT',v:iSO>=0?sobrecarga[iSO].toFixed(1).replace('.',',')+'%':'—',s:iSO>=0?meses[iSO]:''},
+      {k:'Horas extras',v:iHE>=0?'R$ '+HUB.format.int(Math.round(horasExtras[iHE])):'—',s:iHE>=0?meses[iHE]:''}
+    ];
+    kpis.innerHTML=cards.map(c=>`<div class="fleetKpi"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join('');
+  }
+
+  const fontes=[
+    {rows:RAW.coletaDom||[],tipo:'Domiciliar',id:'segmentDomiciliar'},
+    {rows:RAW.coletaSel||[],tipo:'Seletiva',id:'segmentSeletiva'},
+    {rows:RAW.lixoPub||[],tipo:'Lixo Público',id:'segmentLixoPublico'}
   ];
-
-  function renderRankList(containerId, list, colorVar) {
-    const el = document.getElementById(containerId);
-    if (!el) return;
-    if (!list.length) { el.innerHTML = '<div class="loading">Sem dados suficientes</div>'; return; }
-    el.innerHTML = list.map(r => `
-      <div class="barRow">
-        <div class="barName">${HUB.format.esc(r.ger)}</div>
-        <div style="background:var(--linha);border-radius:6px;height:8px;overflow:hidden;">
-          <div style="width:${Math.min(r.avg,150)}%;height:100%;background:${colorVar};"></div>
-        </div>
-        <div style="text-align:right;font-weight:800;">${r.avg.toFixed(0)}%</div>
-      </div>
-    `).join("");
-  }
-
-  function ajustarPainelRanking(sufixo, tipo, qtdGerencias) {
-    const baixaBody = document.getElementById("rankBaixa" + sufixo);
-    const altaBody = document.getElementById("rankAlta" + sufixo);
-    const baixaPanel = baixaBody ? baixaBody.closest('.panel') : null;
-    const altaPanel = altaBody ? altaBody.closest('.panel') : null;
-    const baixaTitle = baixaPanel ? baixaPanel.querySelector('h2') : null;
-    const baixaHint = baixaPanel ? baixaPanel.querySelector('.hint') : null;
-    const altaTitle = altaPanel ? altaPanel.querySelector('h2') : null;
-    const altaHint = altaPanel ? altaPanel.querySelector('.hint') : null;
-
-    if (qtdGerencias <= 3) {
-      if (baixaTitle) baixaTitle.textContent = `${tipo} — gerências monitoradas`;
-      if (baixaHint) baixaHint.textContent = 'Peso/capacidade médio por gerência';
-      if (baixaPanel) baixaPanel.style.gridColumn = '1 / -1';
-      if (altaPanel) altaPanel.style.display = 'none';
-    } else {
-      if (baixaTitle) baixaTitle.textContent = `${tipo} — utilização mais baixa`;
-      if (baixaHint) baixaHint.textContent = 'Peso/capacidade médio por gerência';
-      if (altaTitle) altaTitle.textContent = `${tipo} — utilização mais alta`;
-      if (altaHint) altaHint.textContent = 'Peso/capacidade médio por gerência';
-      if (baixaPanel) baixaPanel.style.gridColumn = '';
-      if (altaPanel) altaPanel.style.display = '';
-    }
-  }
-
-  fontesFrota.forEach(({ rows, sufixo, tipo }) => {
-    const map = new Map();
-    rows.forEach(r => {
-      const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
-      const pct = HUB.format.toNumber(HUB.pick(r, ["Capacidade Total 2 Viagens (%)"]));
-      if (!ger || !pct) return;
-      if (!map.has(ger)) map.set(ger, []);
-      map.get(ger).push(pct);
+  const allSegments=[];
+  function classPct(v){return v<70?'low':v>100?'high':'';}
+  function segmentData(rows){
+    const map=new Map();
+    rows.forEach(r=>{
+      const ger=HUB.pick(r,["Gerência","Gerencia"]);
+      const pct=HUB.format.toNumber(HUB.pick(r,["Capacidade Total 2 Viagens (%)"]));
+      if(!ger||!pct)return; if(!map.has(ger))map.set(ger,[]); map.get(ger).push(pct);
     });
-    const ranked = [...map.entries()]
-      .map(([ger, vals]) => ({ ger, avg: vals.reduce((a, b) => a + b, 0) / vals.length }))
-      .filter(r => r.avg > 0)
-      .sort((a, b) => a.avg - b.avg);
-
-    ajustarPainelRanking(sufixo, tipo, ranked.length);
-
-    if (ranked.length <= 3) {
-      renderRankList("rankBaixa" + sufixo, ranked, HUB.charts.colors.blue);
-      const altaEl = document.getElementById("rankAlta" + sufixo);
-      if (altaEl) altaEl.innerHTML = '';
-    } else {
-      renderRankList("rankBaixa" + sufixo, ranked.slice(0, 5), HUB.charts.colors.red);
-      renderRankList("rankAlta" + sufixo, ranked.slice(-5).reverse(), HUB.charts.colors.green);
-    }
+    return [...map.entries()].map(([ger,vals])=>({ger,avg:vals.reduce((a,b)=>a+b,0)/vals.length})).filter(x=>x.avg>0).sort((a,b)=>a.avg-b.avg);
+  }
+  fontes.forEach(f=>{
+    const ranked=segmentData(f.rows); allSegments.push({tipo:f.tipo,ranked});
+    const el=document.getElementById(f.id); if(!el)return;
+    if(!ranked.length){el.innerHTML='<div class="loading">Sem dados suficientes</div>';return;}
+    const media=ranked.reduce((a,b)=>a+b.avg,0)/ranked.length;
+    const min=ranked[0].avg,max=ranked[ranked.length-1].avg;
+    const lows=ranked.filter(x=>x.avg<70).length, highs=ranked.filter(x=>x.avg>100).length;
+    let mostrados;
+    if(ranked.length<=6) mostrados=ranked;
+    else mostrados=[...ranked.slice(0,3),...ranked.slice(-3)];
+    el.innerHTML=`
+      <div class="segmentSummary">
+        <div class="segmentStat"><div class="v">${media.toFixed(0)}%</div><div class="k">média</div></div>
+        <div class="segmentStat"><div class="v">${lows}</div><div class="k">&lt;70%</div></div>
+        <div class="segmentStat"><div class="v">${highs}</div><div class="k">&gt;100%</div></div>
+      </div>
+      <div class="segmentList">${mostrados.map(r=>`<div class="segmentRow"><div class="name" title="${HUB.format.esc(r.ger)}">${HUB.format.esc(r.ger)}</div><div class="segmentTrack"><div class="segmentFill ${classPct(r.avg)}" style="width:${Math.min(r.avg,150)/1.5}%"></div></div><div class="pct">${r.avg.toFixed(0)}%</div></div>`).join('')}</div>
+      <div class="segmentLegend"><span class="low">abaixo de 70%</span><span>70–100%</span><span class="high">acima de 100%</span></div>
+      <div style="font-size:10px;color:var(--silenciado);margin-top:8px;">Faixa observada: ${min.toFixed(0)}%–${max.toFixed(0)}% · ${ranked.length} gerência${ranked.length===1?'':'s'}</div>`;
   });
+
+  const allRows=allSegments.flatMap(s=>s.ranked.map(r=>({...r,tipo:s.tipo})));
+  const acima=allRows.filter(r=>r.avg>100).sort((a,b)=>b.avg-a.avg);
+  const abaixo=allRows.filter(r=>r.avg<70).sort((a,b)=>a.avg-b.avg);
+  const dispersao=allSegments.filter(s=>s.ranked.length).map(s=>({tipo:s.tipo,range:s.ranked.at(-1).avg-s.ranked[0].avg,min:s.ranked[0],max:s.ranked.at(-1)})).sort((a,b)=>b.range-a.range)[0];
+  const insights=document.getElementById('fleetInsights');
+  if(insights){
+    const a=acima[0],b=abaixo[0];
+    insights.innerHTML=`
+      <div class="fleetInsight"><div class="label">Pressão de capacidade</div><div class="title">${acima.length?acima.length+' gerência'+(acima.length>1?'s':'')+' acima de 100%':'Nenhuma gerência acima de 100%'}</div><div class="text">${a?`${a.ger} apresenta o maior índice (${a.avg.toFixed(0)}%), o que merece leitura como pressão sobre a capacidade estimada, não como desempenho positivo.`:'Sem pressão acima da capacidade estimada no recorte.'}</div></div>
+      <div class="fleetInsight"><div class="label">Baixa utilização</div><div class="title">${abaixo.length?abaixo.length+' gerência'+(abaixo.length>1?'s':'')+' abaixo de 70%':'Sem gerências abaixo de 70%'}</div><div class="text">${b?`${b.ger} registra a menor utilização (${b.avg.toFixed(0)}%). O recorte ajuda a separar ociosidade de excesso de carga.`:'Não há baixa utilização relevante no recorte.'}</div></div>
+      <div class="fleetInsight"><div class="label">Dispersão</div><div class="title">${dispersao?dispersao.tipo:'Sem dado'}</div><div class="text">${dispersao?`É o segmento com maior amplitude entre gerências: ${dispersao.min.avg.toFixed(0)}% a ${dispersao.max.avg.toFixed(0)}%. Isso indica maior heterogeneidade operacional.`:'Dados insuficientes para comparar segmentos.'}</div></div>`;
+  }
 }
 
 // ============================================

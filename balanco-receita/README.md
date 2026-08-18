@@ -1,27 +1,26 @@
-# Performance dos Contratos de Receita
+# Performance dos Contratos de Receita — NOVO
 
-Módulo financeiro do HUB COMLURB.
+Versão atualizada do módulo financeiro do HUB COMLURB.
 
-## Escopo executivo
-- Faturamento Bruto
-- Valor Líquido Pago
-- Débito Líquido
-- Pendências anteriores a 2026 como contexto secundário
-- Fluxo financeiro mensal
-- Receita por Secretaria
-- Ranking de contratos por débito líquido
-- Carteira completa recolhida por padrão
+## O que aparece na página executiva
+1. Faturamento Bruto
+2. Valor Líquido Pago
+3. Débito Líquido
+4. Uma única leitura executiva
+5. Pendências anteriores a 2026 como contexto secundário
+6. Fluxo financeiro mensal
+7. Receita por Secretaria
+8. Ranking "Onde está o débito"
+9. Carteira completa recolhida por padrão
 
 ## Filtros
-- Ano (2026 como padrão)
+- Ano, com 2026 como padrão
 - Secretaria
 - Serviço
 
-## Fonte
-Mantidas as três URLs CSV oficiais já utilizadas no painel anterior:
-- Relatório de Débitos – DAF
-- Abas anuais de valores faturados
-
-## Regra de arquitetura
-Este módulo está restrito à pasta `/balanco-receita/`.
-O `index.html` da raiz permanece sendo a Home do HUB.
+## Arquitetura
+- Mantém `hub-premium.css`
+- Usa `hub-layout.js` para header/footer, como os módulos consolidados do HUB
+- Não altera a Home
+- Não altera nenhum outro módulo
+- Mantém as mesmas fontes CSV oficiais do painel anterior

@@ -1,16 +1,3 @@
-CORREÇÃO HUB COMLURB
-
-Arquivos deste patch:
-1. /index.html
-   - Home restaurada a partir do COMLURB-main (32)(1)
-   - Únicas alterações intencionais:
-     Eixo 05 = Relacionamento com o Cidadão
-     Chamados 1746 = Chamados
-
-2. /balanco-receita/index.html
-3. /balanco-receita/README.md
-
-IMPORTANTE:
-- NÃO coloque o index.html de /balanco-receita na raiz.
-- O index.html da raiz é a HOME.
-- O index.html financeiro fica somente em /balanco-receita/.
+SUBA SOMENTE A PASTA balanco-receita PARA O REPOSITÓRIO.
+NÃO SUBSTITUA /index.html DA RAIZ.
+A HOME NÃO FAZ PARTE DESTE PATCH.

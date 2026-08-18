@@ -21,40 +21,6 @@
 .app{
   max-width:1720px;
 }
-.layerTabs{
-  position:absolute;
-  top:12px;
-  right:12px;
-  z-index:650;
-  display:flex;
-  align-items:center;
-  gap:4px;
-  padding:4px;
-  border:1px solid rgba(151,184,216,.16);
-  border-radius:12px;
-  background:rgba(6,17,31,.72);
-  backdrop-filter:blur(14px);
-  box-shadow:0 8px 24px rgba(0,0,0,.14);
-}
-.layerTab{
-  border:0;
-  background:transparent;
-  color:#9fb6ce;
-  border-radius:9px;
-  padding:8px 11px;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.02em;
-  cursor:pointer;
-  transition:.16s ease;
-  white-space:nowrap;
-}
-.layerTab:hover{background:rgba(91,155,213,.08);color:#eaf4ff}
-.layerTab.active{
-  background:rgba(91,155,213,.14);
-  color:#fff;
-  box-shadow:inset 0 0 0 1px rgba(111,167,216,.26);
-}
 
 /* ===== Filters ===== */
 .filtersShell{display:none;margin-bottom:12px}
@@ -126,7 +92,7 @@
   border:1px solid var(--territorial-line);
   border-radius:11px;
   background:rgba(6,17,31,.34);
-  margin-bottom:12px;
+  margin-bottom:9px;
 }
 .contextMain{min-width:0}
 .contextTitle{font-size:11px;font-weight:800;color:#eef6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -142,7 +108,7 @@
 }
 #kpis .kpi{
   min-height:96px!important;
-  padding:14px 15px!important;
+  padding:12px 14px!important;
   border-radius:15px!important;
   border-color:var(--territorial-line)!important;
   background:rgba(9,25,44,.56)!important;
@@ -173,9 +139,9 @@
 /* ===== Main workspace ===== */
 .mapGrid{
   display:grid;
-  grid-template-columns:minmax(0,1.75fr) minmax(330px,.72fr);
-  gap:var(--territorial-gap);
-  align-items:start;
+  grid-template-columns:minmax(0,1.8fr) minmax(300px,.62fr);
+  gap:14px;
+  align-items:stretch;
 }
 .mapPanel{
   position:relative;
@@ -187,34 +153,9 @@
   border-color:rgba(151,184,216,.14)!important;
   background:rgba(7,22,39,.68)!important;
 }
-.mapToolbar{
-  position:absolute;
-  top:12px;
-  right:12px;
-  z-index:650;
-}
-.mapToolbar .layerTabs{
-  position:static;
-}
-.mapEyebrow{
-  position:absolute;
-  top:15px;
-  left:16px;
-  z-index:620;
-  padding:6px 8px;
-  border-radius:9px;
-  background:rgba(6,17,31,.54);
-  border:1px solid rgba(151,184,216,.12);
-  color:#a8bdd3;
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  backdrop-filter:blur(10px);
-}
 
 #map{
-  height:clamp(520px,66vh,720px);
+  height:clamp(560px,68vh,720px);
   width:100%;
   background:var(--painel2);
 }
@@ -271,10 +212,14 @@
 /* ===== Executive explorer ===== */
 .executivePanel{
   min-height:0!important;
+  height:clamp(560px,68vh,720px);
+  max-height:clamp(560px,68vh,720px);
   border-radius:18px!important;
   border-color:var(--territorial-line)!important;
   background:rgba(9,25,44,.62)!important;
   overflow:hidden;
+  display:flex;
+  flex-direction:column;
 }
 .executivePanel .panelHead{
   padding:14px 15px!important;
@@ -284,12 +229,18 @@
 .executiveTitleWrap{min-width:0}
 .executivePanel h2{font-size:15px!important;font-weight:850!important}
 .executivePanel .hint{font-size:10px!important;color:#809bb6!important;margin-top:3px!important}
-.executivePanel .body{padding:14px 15px 15px!important}
+.executivePanel .body{
+  padding:13px 14px 14px!important;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  flex:1;
+}
 .explorerModes{
   display:flex;
   gap:4px;
-  margin-bottom:12px;
-  padding:3px;
+  margin-bottom:9px;
+  padding:2px;
   border:1px solid rgba(151,184,216,.12);
   border-radius:10px;
   background:rgba(6,17,31,.32);
@@ -299,7 +250,7 @@
   border:0;
   background:transparent;
   color:#809bb6;
-  padding:7px 6px;
+  padding:6px 5px;
   border-radius:8px;
   font-size:9px;
   font-weight:800;
@@ -343,10 +294,23 @@
   font-weight:750;
   white-space:nowrap;
 }
-.chartWrap{height:185px;position:relative;margin:0 0 12px}
+.chartWrap{
+  height:150px;
+  flex:0 0 150px;
+  position:relative;
+  margin:0 0 10px;
+}
 .emptyChart{height:100%;display:flex;align-items:center;justify-content:center;color:#7890a8;font-size:11px;text-align:center;padding:18px}
 .rankHint{font-size:9px;color:#6f8aa5;margin:2px 0 8px}
-.territorialRank{display:grid!important;gap:6px!important}
+.territorialRank{
+  display:grid!important;
+  gap:5px!important;
+  min-height:0;
+  overflow:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(106,167,223,.28) transparent;
+}
 .territorialRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto!important;
@@ -355,7 +319,7 @@
     "track pct"!important;
   gap:5px 9px!important;
   align-items:center!important;
-  padding:8px 9px!important;
+  padding:7px 8px!important;
   border-radius:10px!important;
   background:rgba(255,255,255,.018)!important;
   border:1px solid rgba(151,184,216,.07)!important;
@@ -396,16 +360,26 @@
 
 /* ===== Responsive ===== */
 @media (max-width:1180px){
-  .mapGrid{grid-template-columns:minmax(0,1.45fr) minmax(310px,.8fr)}
+  .mapGrid{grid-template-columns:minmax(0,1.55fr) minmax(295px,.68fr)}
   .filterGrid,.filterGrid.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:900px){
   .app{padding:18px!important}
   .mapGrid{grid-template-columns:1fr}
-  .executivePanel{order:2}
-  #map{height:530px}
+  .executivePanel{
+    order:2;
+    height:auto;
+    max-height:none;
+  }
+  #map{height:500px}
   #kpis.kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .chartWrap{height:210px}
+  .chartWrap{
+    height:190px;
+    flex:0 0 190px;
+  }
+  .territorialRank{
+    overflow:visible;
+  }
 }
 @media (max-width:640px){
   .app{padding:10px!important}
@@ -413,24 +387,6 @@
   .mainTitle{font-size:26px!important}
   .subtitle{font-size:12px!important}
   .logoImg{width:190px!important;max-height:60px!important;padding-right:14px!important}
-
-  .mapEyebrow{display:none}
-  .mapToolbar{
-    top:8px;
-    right:8px;
-    left:8px;
-  }
-  .mapToolbar .layerTabs{
-    width:100%;
-    justify-content:space-between;
-    overflow-x:auto;
-  }
-  .layerTab{
-    flex:1 1 auto;
-    text-align:center;
-    padding:8px 7px;
-    font-size:9px;
-  }
 
   .filterGroup{padding:9px;border-radius:12px}
   .filterGrid,.filterGrid.secondary{grid-template-columns:1fr}
@@ -445,11 +401,14 @@
   #kpis .kpi .note{font-size:9px!important}
   .mapGrid{gap:10px}
   .mapPanel,.executivePanel{border-radius:14px!important}
-  #map{height:400px}
+  #map{height:390px}
   .mapLegend{left:7px;bottom:7px;max-width:calc(100% - 14px)}
   .executivePanel .panelHead{padding:12px!important}
   .executivePanel .body{padding:12px!important}
-  .chartWrap{height:190px}
+  .chartWrap{
+    height:175px;
+    flex:0 0 175px;
+  }
   .breadcrumbBar{gap:3px}
   .crumbBtn{font-size:10px}
 }
@@ -457,7 +416,6 @@
   .app{padding:8px!important}
   #map{height:360px}
   #kpis.kpis{grid-template-columns:1fr 1fr!important}
-  .layerTab{font-size:9px;padding:8px 7px}
 }
 </style>
 
@@ -529,10 +487,6 @@
 
   <section class="mapGrid">
     <div class="panel mapPanel">
-      <div class="mapEyebrow">Mapa operacional</div>
-      <div class="mapToolbar" aria-label="Camadas territoriais">
-        <div class="layerTabs" id="layerTabs"></div>
-      </div>
       <div id="map"></div>
       <div class="mapLegend" id="mapLegend"></div>
     </div>
@@ -704,34 +658,13 @@ function clearMapLayers(){
   if(unitLayer){map.removeLayer(unitLayer);unitLayer=null}
 }
 
-function renderLayerTabs(){
-  const tabs=[
-    {key:"dsu",label:GEO_META.dsu.label},
-    {key:"dlu",label:GEO_META.dlu.label},
-    {key:"unidades",label:"Unidades"}
-  ];
-  HUB.dom.setHTML("layerTabs",tabs.map(t =>
-    `<button class="layerTab ${t.key===currentLayer?"active":""}" data-layer="${t.key}">${esc(t.label)}</button>`
-  ).join(""));
-  document.querySelectorAll(".layerTab").forEach(btn=>{
-    btn.addEventListener("click",()=>switchLayer(btn.dataset.layer));
-  });
-}
+function renderLayerTabs(){}
 
 function switchLayer(key){
-  if(key===currentLayer) return;
-  currentLayer=key;
+  currentLayer="unidades";
   STATE.drill={};
-  renderLayerTabs();
-  if(key==="unidades"){
-    document.getElementById("filtrosUnidades").classList.add("active");
-    renderUnidades();
-  }else{
-    document.getElementById("filtrosUnidades").classList.remove("active");
-    document.getElementById("breadcrumbBar").innerHTML="";
-    document.getElementById("contextStrip").style.display="none";
-    loadGeo(key);
-  }
+  document.getElementById("filtrosUnidades").classList.add("active");
+  renderUnidades();
   setTimeout(()=>{
     map.invalidateSize();
     if(donutInstance) donutInstance.resize();
@@ -1426,7 +1359,7 @@ function renderUnidades(){
       : "Não há registros no recorte atual.";
 
   renderDonut(entries,clickableField);
-  renderRankBars(entries.slice(0,10),total,clickableField);
+  renderRankBars(entries.slice(0,7),total,clickableField);
 
   const top=entries[0]||["-",0];
   const hierarchyText=path.length

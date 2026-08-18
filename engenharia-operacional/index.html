@@ -55,6 +55,15 @@
 .derivFormula{font-size:10.5px;color:var(--silenciado);margin-top:4px;font-family:"Courier New",monospace;}
 @media (max-width:900px){ .derivGrid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 #kpisVisao{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+
+.climateGrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.85fr);gap:14px;margin-top:14px;}
+.climateRead{height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;}
+.climateMetric{padding:13px 14px;border:1px solid var(--linha);border-radius:12px;background:var(--painel2);}
+.climateMetric .k{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--silenciado);margin-bottom:5px;}
+.climateMetric .v{font-size:20px;font-weight:850;color:var(--texto);line-height:1.15;}
+.climateMetric .s{font-size:11.5px;color:var(--silenciado);margin-top:5px;line-height:1.45;}
+.climateSource{font-size:10.5px;color:var(--silenciado);line-height:1.45;}
+@media (max-width:900px){.climateGrid{grid-template-columns:1fr;}.climateRead{justify-content:flex-start;}}
 </style>
 </head>
 
@@ -125,6 +134,19 @@
           <div><h2>Chorume acumulado</h2><div class="hint">Volume mensal (m³)</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartChorume"></canvas></div></div>
+      </div>
+    </div>
+    <div class="climateGrid">
+      <div class="panel">
+        <div class="panelHead">
+          <div><h2>Chorume × precipitação</h2><div class="hint">Comparação mensal para Seropédica · chuva no eixo direito (mm)</div></div>
+          <div class="readAutoBadge" id="climaStatus">carregando chuva…</div>
+        </div>
+        <div class="body"><div class="chartWrap" style="height:260px;"><canvas id="chartChorumeChuva"></canvas></div></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Leitura ambiental</h2><div class="hint">Associação estatística, sem atribuir causalidade</div></div></div>
+        <div class="body"><div class="climateRead" id="climaChorumeLeitura"><div class="loading">Aguardando dados meteorológicos…</div></div></div>
       </div>
     </div>
     <div id="chorumeAlertSlot" style="margin-top:14px;"></div>
@@ -620,6 +642,8 @@ function renderDestinacao() {
   chartOuVazio("chartBiogas", biogas, () => HUB.charts.line("chartBiogas", { labels: meses, values: biogas }, { color: HUB.charts.colors.purple }));
   chartOuVazio("chartChorume", chorume, () => HUB.charts.line("chartChorume", { labels: meses, values: chorume }, { color: HUB.charts.colors.red }));
 
+  renderClimaChorume(meses, chorume);
+
   // Alerta dinâmico de chorume: pico vs média dos primeiros meses da janela
   const base = chorume.slice(0, Math.max(1, n - 5));
   const baseAvg = base.length ? base.reduce((a,b)=>a+b,0) / base.length : 0;
@@ -632,11 +656,104 @@ function renderDestinacao() {
         <div class="noteTag">CRÍTICO</div>
         <div>
           <b>Acúmulo de chorume acima do padrão histórico</b>
-          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${meses[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). Vale checar com a TCD se é sazonalidade ou risco operacional.</p>
+          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${meses[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). O painel cruza este comportamento com a precipitação local abaixo; a chuva pode contribuir para a geração de chorume, mas não explica sozinha a variação operacional.</p>
         </div>
       </div>`;
   } else {
     slot.innerHTML = "";
+  }
+}
+
+
+// ============================================
+// CHORUME × PRECIPITAÇÃO — SEROPÉDICA
+// ============================================
+let climateChart = null;
+
+function labelToYearMonth(label) {
+  const m = String(label || "").toLowerCase().match(/^([a-z]{3})\/(\d{2})$/);
+  if (!m) return null;
+  const idx = MESES_ABREV.indexOf(m[1]);
+  if (idx < 0) return null;
+  return { year: 2000 + Number(m[2]), month: idx + 1, key: `${2000 + Number(m[2])}-${String(idx + 1).padStart(2,"0")}` };
+}
+function isoDate(y,m,d){ return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`; }
+function lastDay(y,m){ return new Date(y, m, 0).getDate(); }
+function pearson(a,b){
+  const pairs=a.map((v,i)=>[Number(v),Number(b[i])]).filter(([x,y])=>Number.isFinite(x)&&Number.isFinite(y));
+  if(pairs.length<4) return null;
+  const xs=pairs.map(p=>p[0]), ys=pairs.map(p=>p[1]);
+  const mx=xs.reduce((s,v)=>s+v,0)/xs.length, my=ys.reduce((s,v)=>s+v,0)/ys.length;
+  let num=0,dx=0,dy=0;
+  for(let i=0;i<xs.length;i++){const vx=xs[i]-mx,vy=ys[i]-my;num+=vx*vy;dx+=vx*vx;dy+=vy*vy;}
+  return dx>0&&dy>0?num/Math.sqrt(dx*dy):null;
+}
+async function fetchRainINMET(start,end){
+  const out=[];
+  let cur=new Date(start+'T12:00:00');
+  const fim=new Date(end+'T12:00:00');
+  while(cur<=fim){
+    const blockEnd=new Date(Math.min(fim.getTime(), cur.getTime()+79*86400000));
+    const ss=isoDate(cur.getFullYear(),cur.getMonth()+1,cur.getDate());
+    const ee=isoDate(blockEnd.getFullYear(),blockEnd.getMonth()+1,blockEnd.getDate());
+    const r=await fetch(`https://apitempo.inmet.gov.br/estacao/${ss}/${ee}/A601`,{cache:'no-store'});
+    if(!r.ok) throw new Error('INMET '+r.status);
+    const json=await r.json();
+    if(!Array.isArray(json)) throw new Error('INMET formato inesperado');
+    out.push(...json);
+    cur=new Date(blockEnd.getTime()+86400000);
+  }
+  const monthly={};
+  out.forEach(row=>{
+    const date=String(row.DT_MEDICAO||'').slice(0,10), key=date.slice(0,7);
+    const rain=Number(String(row.CHUVA??'').replace(',','.'));
+    if(!/^\d{4}-\d{2}$/.test(key) || !Number.isFinite(rain) || rain<0 || rain>=9999) return;
+    monthly[key]=(monthly[key]||0)+rain;
+  });
+  return {monthly, source:'INMET A601'};
+}
+async function fetchRainOpenMeteo(start,end){
+  const url=`https://archive-api.open-meteo.com/v1/archive?latitude=-22.757778&longitude=-43.6833&start_date=${start}&end_date=${end}&daily=precipitation_sum&timezone=America%2FSao_Paulo`;
+  const r=await fetch(url,{cache:'no-store'});
+  if(!r.ok) throw new Error('Open-Meteo '+r.status);
+  const j=await r.json(), dates=j?.daily?.time||[], vals=j?.daily?.precipitation_sum||[], monthly={};
+  dates.forEach((d,i)=>{const v=Number(vals[i]); if(Number.isFinite(v)){const k=d.slice(0,7);monthly[k]=(monthly[k]||0)+v;}});
+  return {monthly, source:'Open-Meteo (fallback)'};
+}
+async function renderClimaChorume(meses, chorume){
+  const status=document.getElementById('climaStatus'), leitura=document.getElementById('climaChorumeLeitura');
+  const parsed=meses.map(labelToYearMonth), valid=parsed.filter(Boolean);
+  if(!valid.length){ if(status)status.textContent='sem referência mensal'; return; }
+  const first=valid[0], last=valid[valid.length-1];
+  const start=isoDate(first.year,first.month,1), end=isoDate(last.year,last.month,lastDay(last.year,last.month));
+  try{
+    let rain; try{ rain=await fetchRainINMET(start,end); } catch(e){ rain=await fetchRainOpenMeteo(start,end); }
+    const chuva=parsed.map(p=>p?Number((rain.monthly[p.key]||0).toFixed(1)):0);
+    if(status) status.textContent=rain.source;
+    const canvas=document.getElementById('chartChorumeChuva');
+    if(canvas){
+      if(climateChart) climateChart.destroy();
+      climateChart=new Chart(canvas.getContext('2d'),{data:{labels:meses,datasets:[
+        {type:'line',label:'Chorume acumulado (m³)',data:chorume,borderColor:HUB.charts.colors.red,backgroundColor:'rgba(239,106,93,.10)',fill:true,tension:.32,yAxisID:'y',pointRadius:3,pointHoverRadius:5},
+        {type:'bar',label:'Precipitação (mm)',data:chuva,backgroundColor:'rgba(91,147,232,.38)',borderColor:HUB.charts.colors.blue,borderWidth:1,yAxisID:'y1',borderRadius:4,maxBarThickness:24}
+      ]},options:{...HUB.charts.baseConfig,interaction:{mode:'index',intersect:false},scales:{x:{...HUB.charts.baseConfig.scales.x},y:{...HUB.charts.baseConfig.scales.y,position:'left',title:{display:true,text:'m³',color:'#8195aa'}},y1:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},ticks:{color:'#8195aa'},title:{display:true,text:'mm',color:'#8195aa'}}}}});
+    }
+    const r0=pearson(chorume,chuva), r1=pearson(chorume.slice(1),chuva.slice(0,-1));
+    const iMax=chorume.indexOf(Math.max(...chorume)), chuvaPico=iMax>=0?chuva[iMax]:0, chuvaAvg=chuva.length?chuva.reduce((a,b)=>a+b,0)/chuva.length:0;
+    const corrAbs=r0===null?null:Math.abs(r0), classe=corrAbs===null?'indeterminada':corrAbs>=.65?'forte':corrAbs>=.35?'moderada':'fraca';
+    let leituraTxt='Os dados não sustentam atribuição automática do aumento de chorume à chuva.';
+    if(r0!==null && r0>=.65) leituraTxt='Há associação positiva forte no mesmo mês. A chuva é compatível com parte da variação, mas não prova causalidade.';
+    else if(r0!==null && r0>=.35) leituraTxt='Há associação positiva moderada. Chuva pode contribuir, mas fatores de drenagem, tratamento e estoque precisam ser considerados.';
+    else if(r0!==null && r0<.35) leituraTxt='A associação no mesmo mês é baixa. O salto do chorume deve ser investigado também por capacidade de tratamento, retirada, estoque e mudança de operação.';
+    if(leitura) leitura.innerHTML=`
+      <div class="climateMetric"><div class="k">Correlação no mesmo mês</div><div class="v">${r0===null?'—':r0.toFixed(2).replace('.',',')}</div><div class="s">Associação ${classe}; correlação não significa causalidade.</div></div>
+      <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${HUB.format.int(Math.round(chuvaPico))} mm</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${HUB.format.int(Math.round(chuvaAvg))} mm.</div></div>
+      <div class="climateMetric"><div class="k">Defasagem de 1 mês</div><div class="v">${r1===null?'—':r1.toFixed(2).replace('.',',')}</div><div class="s">Testa se chuva do mês anterior se relaciona ao chorume do mês seguinte.</div></div>
+      <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica: ${rain.source}; referência espacial: Seropédica/RJ.</div>`;
+  }catch(err){
+    if(status) status.textContent='chuva indisponível';
+    if(leitura) leitura.innerHTML='<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div>';
+    console.warn('Falha ao carregar precipitação:',err);
   }
 }
 

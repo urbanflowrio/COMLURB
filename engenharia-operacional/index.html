@@ -36,6 +36,16 @@
 .noteBanner p{color:var(--silenciado);font-size:12.5px;line-height:1.55;margin:0;}
 .rankGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media (max-width:900px){ .rankGrid{grid-template-columns:1fr;} }
+.climateGrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.85fr);gap:14px;margin-top:14px;}
+.climateRead{height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;}
+.climateMetric{padding:13px 14px;border:1px solid var(--linha);border-radius:12px;background:var(--painel2);}
+.climateMetric .k{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--silenciado);margin-bottom:5px;}
+.climateMetric .v{font-size:20px;font-weight:850;color:var(--texto);line-height:1.15;}
+.climateMetric .s{font-size:11.5px;color:var(--silenciado);margin-top:5px;line-height:1.45;}
+.climateSource{font-size:10.5px;color:var(--silenciado);line-height:1.5;}
+.climateSource a{color:var(--azul2, var(--azul));text-decoration:none;font-weight:700;}
+.climateSource a:hover{text-decoration:underline;}
+@media (max-width:900px){ .climateGrid{grid-template-columns:1fr;} .climateRead{justify-content:flex-start;} }
 .flowRow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;position:relative;}
 .flowNode{flex:1;min-width:150px;background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:16px 12px;text-align:center;position:relative;}
 .flowLabel{font-size:10.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;line-height:1.3;}
@@ -55,15 +65,6 @@
 .derivFormula{font-size:10.5px;color:var(--silenciado);margin-top:4px;font-family:"Courier New",monospace;}
 @media (max-width:900px){ .derivGrid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 #kpisVisao{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
-
-.climateGrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.85fr);gap:14px;margin-top:14px;}
-.climateRead{height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;}
-.climateMetric{padding:13px 14px;border:1px solid var(--linha);border-radius:12px;background:var(--painel2);}
-.climateMetric .k{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--silenciado);margin-bottom:5px;}
-.climateMetric .v{font-size:20px;font-weight:850;color:var(--texto);line-height:1.15;}
-.climateMetric .s{font-size:11.5px;color:var(--silenciado);margin-top:5px;line-height:1.45;}
-.climateSource{font-size:10.5px;color:var(--silenciado);line-height:1.45;}
-@media (max-width:900px){.climateGrid{grid-template-columns:1fr;}.climateRead{justify-content:flex-start;}}
 </style>
 </head>
 
@@ -139,7 +140,7 @@
     <div class="climateGrid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Chorume × precipitação</h2><div class="hint">Comparação mensal para Seropédica · chuva no eixo direito (mm)</div></div>
+          <div><h2>Chorume × precipitação</h2><div class="hint">Comparação mensal para Seropédica · chorume no eixo esquerdo (m³) e chuva no direito (mm)</div></div>
           <div class="readAutoBadge" id="climaStatus">carregando chuva…</div>
         </div>
         <div class="body"><div class="chartWrap" style="height:260px;"><canvas id="chartChorumeChuva"></canvas></div></div>
@@ -154,24 +155,23 @@
 
   <!-- ===================== COLETA SELETIVA & RECICLAGEM ===================== -->
   <section class="screen" id="screenReciclagem">
-    <div class="noteBanner warn">
-    <div class="noteBanner warn compact" id="bannerIndice">
-      <div class="noteTag" id="bannerTag">EM VALIDAÇÃO</div>
+    <div class="noteBanner compact" id="bannerIndice">
+      <div class="noteTag" id="bannerTag">MONITORADO</div>
       <div>
-        <b id="bannerTitle">Índice de captura EGP-RIO — em validação</b>
+        <b id="bannerTitle">Índice de captura EGP-RIO — monitoramento mensal</b>
         <p id="bannerComposicao" style="margin-top:4px;"></p>
       </div>
     </div>
     <div class="panel" style="margin-bottom:16px;">
       <div class="panelHead">
-        <div><h2>Composição da coleta seletiva</h2><div class="hint">Frota Comlurb vs. cooperativas/não cadastrados — origem do salto de mai/26</div></div>
+        <div><h2>Composição da coleta seletiva</h2><div class="hint">Frota Comlurb vs. cooperativas/não cadastrados · leitura da composição mensal</div></div>
       </div>
       <div class="body"><div class="chartWrap"><canvas id="chartComposicao"></canvas></div></div>
     </div>
     <div class="grid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente · em validação (ver nota acima)</div></div>
+          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal"></canvas></div></div>
       </div>
@@ -332,6 +332,13 @@ function parseDateLabel(s) {
   // formato ISO aaaa-mm-dd
   m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   if (m) return (MESES_ABREV[parseInt(m[2], 10) - 1] || "?") + "/" + m[1].slice(2);
+  return str;
+}
+
+function prettyRef(label) {
+  const str = String(label ?? "").trim();
+  const m = str.toLowerCase().match(/^([a-z]{3})\/(\d{2})$/);
+  if (m && MESES_ABREV.includes(m[1])) return m[1].charAt(0).toUpperCase() + m[1].slice(1) + "/" + m[2];
   return str;
 }
 
@@ -631,6 +638,7 @@ function renderVisaoGeral() {
 // ============================================
 function renderDestinacao() {
   const meses = relatorioMeses(RAW.relatorio);
+  const mesesFmt = meses.map(prettyRef);
   const n = meses.length || 13;
 
   const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
@@ -638,11 +646,11 @@ function renderDestinacao() {
   const biogas = secBiogas ? relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", n) : Array(n).fill(0);
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
 
-  chartOuVazio("chartEtrTotal", etrTotal, () => HUB.charts.line("chartEtrTotal", { labels: meses, values: etrTotal }, { color: HUB.charts.colors.blue }));
-  chartOuVazio("chartBiogas", biogas, () => HUB.charts.line("chartBiogas", { labels: meses, values: biogas }, { color: HUB.charts.colors.purple }));
-  chartOuVazio("chartChorume", chorume, () => HUB.charts.line("chartChorume", { labels: meses, values: chorume }, { color: HUB.charts.colors.red }));
+  chartOuVazio("chartEtrTotal", etrTotal, () => HUB.charts.line("chartEtrTotal", { labels: mesesFmt, values: etrTotal }, { color: HUB.charts.colors.blue }));
+  chartOuVazio("chartBiogas", biogas, () => HUB.charts.line("chartBiogas", { labels: mesesFmt, values: biogas }, { color: HUB.charts.colors.purple }));
+  chartOuVazio("chartChorume", chorume, () => HUB.charts.line("chartChorume", { labels: mesesFmt, values: chorume }, { color: HUB.charts.colors.red }));
 
-  renderClimaChorume(meses, chorume);
+  renderClimaChorume(mesesFmt, chorume);
 
   // Alerta dinâmico de chorume: pico vs média dos primeiros meses da janela
   const base = chorume.slice(0, Math.max(1, n - 5));
@@ -656,14 +664,13 @@ function renderDestinacao() {
         <div class="noteTag">CRÍTICO</div>
         <div>
           <b>Acúmulo de chorume acima do padrão histórico</b>
-          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${meses[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). O painel cruza este comportamento com a precipitação local abaixo; a chuva pode contribuir para a geração de chorume, mas não explica sozinha a variação operacional.</p>
+          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${mesesFmt[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). O painel cruza este comportamento com a precipitação local abaixo; a chuva pode contribuir para a geração de chorume, mas não explica sozinha a variação operacional.</p>
         </div>
       </div>`;
   } else {
     slot.innerHTML = "";
   }
 }
-
 
 // ============================================
 // CHORUME × PRECIPITAÇÃO — SEROPÉDICA
@@ -677,8 +684,10 @@ function labelToYearMonth(label) {
   if (idx < 0) return null;
   return { year: 2000 + Number(m[2]), month: idx + 1, key: `${2000 + Number(m[2])}-${String(idx + 1).padStart(2,"0")}` };
 }
+
 function isoDate(y,m,d){ return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`; }
 function lastDay(y,m){ return new Date(y, m, 0).getDate(); }
+
 function pearson(a,b){
   const pairs=a.map((v,i)=>[Number(v),Number(b[i])]).filter(([x,y])=>Number.isFinite(x)&&Number.isFinite(y));
   if(pairs.length<4) return null;
@@ -688,15 +697,17 @@ function pearson(a,b){
   for(let i=0;i<xs.length;i++){const vx=xs[i]-mx,vy=ys[i]-my;num+=vx*vy;dx+=vx*vx;dy+=vy*vy;}
   return dx>0&&dy>0?num/Math.sqrt(dx*dy):null;
 }
+
 async function fetchRainINMET(start,end){
   const out=[];
   let cur=new Date(start+'T12:00:00');
   const fim=new Date(end+'T12:00:00');
   while(cur<=fim){
     const blockEnd=new Date(Math.min(fim.getTime(), cur.getTime()+79*86400000));
-    const ss=isoDate(cur.getFullYear(),cur.getMonth()+1,cur.getDate());
-    const ee=isoDate(blockEnd.getFullYear(),blockEnd.getMonth()+1,blockEnd.getDate());
-    const r=await fetch(`https://apitempo.inmet.gov.br/estacao/${ss}/${ee}/A601`,{cache:'no-store'});
+    const s=isoDate(cur.getFullYear(),cur.getMonth()+1,cur.getDate());
+    const e=isoDate(blockEnd.getFullYear(),blockEnd.getMonth()+1,blockEnd.getDate());
+    const url=`https://apitempo.inmet.gov.br/estacao/${s}/${e}/A601`;
+    const r=await fetch(url,{cache:'no-store'});
     if(!r.ok) throw new Error('INMET '+r.status);
     const json=await r.json();
     if(!Array.isArray(json)) throw new Error('INMET formato inesperado');
@@ -705,54 +716,81 @@ async function fetchRainINMET(start,end){
   }
   const monthly={};
   out.forEach(row=>{
-    const date=String(row.DT_MEDICAO||'').slice(0,10), key=date.slice(0,7);
-    const rain=Number(String(row.CHUVA??'').replace(',','.'));
+    const date=String(row.DT_MEDICAO||'').slice(0,10);
+    const key=date.slice(0,7);
+    let rain=Number(String(row.CHUVA??'').replace(',','.'));
     if(!/^\d{4}-\d{2}$/.test(key) || !Number.isFinite(rain) || rain<0 || rain>=9999) return;
     monthly[key]=(monthly[key]||0)+rain;
   });
   return {monthly, source:'INMET A601'};
 }
+
 async function fetchRainOpenMeteo(start,end){
   const url=`https://archive-api.open-meteo.com/v1/archive?latitude=-22.757778&longitude=-43.6833&start_date=${start}&end_date=${end}&daily=precipitation_sum&timezone=America%2FSao_Paulo`;
   const r=await fetch(url,{cache:'no-store'});
   if(!r.ok) throw new Error('Open-Meteo '+r.status);
-  const j=await r.json(), dates=j?.daily?.time||[], vals=j?.daily?.precipitation_sum||[], monthly={};
+  const j=await r.json();
+  const dates=j?.daily?.time||[], vals=j?.daily?.precipitation_sum||[];
+  const monthly={};
   dates.forEach((d,i)=>{const v=Number(vals[i]); if(Number.isFinite(v)){const k=d.slice(0,7);monthly[k]=(monthly[k]||0)+v;}});
   return {monthly, source:'Open-Meteo (fallback)'};
 }
+
 async function renderClimaChorume(meses, chorume){
-  const status=document.getElementById('climaStatus'), leitura=document.getElementById('climaChorumeLeitura');
-  const parsed=meses.map(labelToYearMonth), valid=parsed.filter(Boolean);
+  const status=document.getElementById('climaStatus');
+  const leitura=document.getElementById('climaChorumeLeitura');
+  const parsed=meses.map(labelToYearMonth);
+  const valid=parsed.filter(Boolean);
   if(!valid.length){ if(status)status.textContent='sem referência mensal'; return; }
   const first=valid[0], last=valid[valid.length-1];
-  const start=isoDate(first.year,first.month,1), end=isoDate(last.year,last.month,lastDay(last.year,last.month));
+  const start=isoDate(first.year,first.month,1);
+  const end=isoDate(last.year,last.month,lastDay(last.year,last.month));
+  const inmetUrl=`https://apitempo.inmet.gov.br/estacao/${start}/${end}/A601`;
   try{
-    let rain; try{ rain=await fetchRainINMET(start,end); } catch(e){ rain=await fetchRainOpenMeteo(start,end); }
+    let rain;
+    try{ rain=await fetchRainINMET(start,end); }
+    catch(e){ rain=await fetchRainOpenMeteo(start,end); }
     const chuva=parsed.map(p=>p?Number((rain.monthly[p.key]||0).toFixed(1)):0);
     if(status) status.textContent=rain.source;
+
     const canvas=document.getElementById('chartChorumeChuva');
     if(canvas){
       if(climateChart) climateChart.destroy();
-      climateChart=new Chart(canvas.getContext('2d'),{data:{labels:meses,datasets:[
-        {type:'line',label:'Chorume acumulado (m³)',data:chorume,borderColor:HUB.charts.colors.red,backgroundColor:'rgba(239,106,93,.10)',fill:true,tension:.32,yAxisID:'y',pointRadius:3,pointHoverRadius:5},
-        {type:'bar',label:'Precipitação (mm)',data:chuva,backgroundColor:'rgba(91,147,232,.38)',borderColor:HUB.charts.colors.blue,borderWidth:1,yAxisID:'y1',borderRadius:4,maxBarThickness:24}
-      ]},options:{...HUB.charts.baseConfig,interaction:{mode:'index',intersect:false},scales:{x:{...HUB.charts.baseConfig.scales.x},y:{...HUB.charts.baseConfig.scales.y,position:'left',title:{display:true,text:'m³',color:'#8195aa'}},y1:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},ticks:{color:'#8195aa'},title:{display:true,text:'mm',color:'#8195aa'}}}}});
+      climateChart=new Chart(canvas.getContext('2d'),{
+        data:{labels:meses,datasets:[
+          {type:'bar',label:'Chorume acumulado (m³)',data:chorume,backgroundColor:'rgba(239,106,93,.38)',borderColor:HUB.charts.colors.red,borderWidth:1,yAxisID:'y',borderRadius:4,maxBarThickness:28,order:1},
+          {type:'line',label:'Precipitação (mm)',data:chuva,borderColor:HUB.charts.colors.blue,backgroundColor:'rgba(91,147,232,.10)',fill:false,tension:.32,yAxisID:'y1',pointRadius:3,pointHoverRadius:5,order:0}
+        ]},
+        options:{...HUB.charts.baseConfig,interaction:{mode:'index',intersect:false},scales:{
+          x:{...HUB.charts.baseConfig.scales.x},
+          y:{...HUB.charts.baseConfig.scales.y,position:'left',title:{display:true,text:'m³',color:'#8195aa'}},
+          y1:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},ticks:{color:'#8195aa'},title:{display:true,text:'mm',color:'#8195aa'}}
+        }}
+      });
     }
-    const r0=pearson(chorume,chuva), r1=pearson(chorume.slice(1),chuva.slice(0,-1));
-    const iMax=chorume.indexOf(Math.max(...chorume)), chuvaPico=iMax>=0?chuva[iMax]:0, chuvaAvg=chuva.length?chuva.reduce((a,b)=>a+b,0)/chuva.length:0;
-    const corrAbs=r0===null?null:Math.abs(r0), classe=corrAbs===null?'indeterminada':corrAbs>=.65?'forte':corrAbs>=.35?'moderada':'fraca';
+
+    const r0=pearson(chorume,chuva);
+    const r1=pearson(chorume.slice(1),chuva.slice(0,-1));
+    const iMax=chorume.indexOf(Math.max(...chorume));
+    const chuvaPico=iMax>=0?chuva[iMax]:0;
+    const chuvaAvg=chuva.length?chuva.reduce((a,b)=>a+b,0)/chuva.length:0;
+    const corrAbs=r0===null?null:Math.abs(r0);
+    const classe=corrAbs===null?'indeterminada':corrAbs>=.65?'forte':corrAbs>=.35?'moderada':'fraca';
     let leituraTxt='Os dados não sustentam atribuição automática do aumento de chorume à chuva.';
     if(r0!==null && r0>=.65) leituraTxt='Há associação positiva forte no mesmo mês. A chuva é compatível com parte da variação, mas não prova causalidade.';
     else if(r0!==null && r0>=.35) leituraTxt='Há associação positiva moderada. Chuva pode contribuir, mas fatores de drenagem, tratamento e estoque precisam ser considerados.';
     else if(r0!==null && r0<.35) leituraTxt='A associação no mesmo mês é baixa. O salto do chorume deve ser investigado também por capacidade de tratamento, retirada, estoque e mudança de operação.';
-    if(leitura) leitura.innerHTML=`
-      <div class="climateMetric"><div class="k">Correlação no mesmo mês</div><div class="v">${r0===null?'—':r0.toFixed(2).replace('.',',')}</div><div class="s">Associação ${classe}; correlação não significa causalidade.</div></div>
-      <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${HUB.format.int(Math.round(chuvaPico))} mm</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${HUB.format.int(Math.round(chuvaAvg))} mm.</div></div>
-      <div class="climateMetric"><div class="k">Defasagem de 1 mês</div><div class="v">${r1===null?'—':r1.toFixed(2).replace('.',',')}</div><div class="s">Testa se chuva do mês anterior se relaciona ao chorume do mês seguinte.</div></div>
-      <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica: ${rain.source}; referência espacial: Seropédica/RJ.</div>`;
+
+    if(leitura){
+      leitura.innerHTML=`
+        <div class="climateMetric"><div class="k">Correlação no mesmo mês</div><div class="v">${r0===null?'—':r0.toFixed(2).replace('.',',')}</div><div class="s">Associação ${classe}; correlação não significa causalidade.</div></div>
+        <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${HUB.format.int(Math.round(chuvaPico))} mm</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${HUB.format.int(Math.round(chuvaAvg))} mm.</div></div>
+        <div class="climateMetric"><div class="k">Defasagem de 1 mês</div><div class="v">${r1===null?'—':r1.toFixed(2).replace('.',',')}</div><div class="s">Testa se chuva do mês anterior se relaciona ao chorume do mês seguinte.</div></div>
+        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]} · referência espacial: Seropédica/RJ.<br><a href="${inmetUrl}" target="_blank" rel="noopener">Abrir consulta INMET A601 para o período</a></div>`;
+    }
   }catch(err){
     if(status) status.textContent='chuva indisponível';
-    if(leitura) leitura.innerHTML='<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div>';
+    if(leitura) leitura.innerHTML=`<div class="climateMetric"><div class="k">Dados meteorológicos</div><div class="v">Indisponíveis</div><div class="s">O painel de chorume permanece funcional. A comparação com chuva será carregada quando a fonte meteorológica responder.</div></div><div class="climateSource"><a href="${inmetUrl}" target="_blank" rel="noopener">Abrir consulta INMET A601 para o período</a></div>`;
     console.warn('Falha ao carregar precipitação:',err);
   }
 }
@@ -765,31 +803,37 @@ function renderReciclagem() {
   const idx2025 = ind1493Serie(RAW.ind2025, "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
   const mesesLabel = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
   const usar2026 = lastValidIndex(idx2026.meses) >= 0;
-  const serieIdx = usar2026 ? idx2026.meses : idx2025.meses;
+  const serieIdxBase = usar2026 ? idx2026.meses : idx2025.meses;
   const anoUsado = usar2026 ? "2026" : "2025";
+  const ultimoIdxSerie = lastValidIndex(serieIdxBase);
+  const labelsIdx = ultimoIdxSerie >= 0 ? mesesLabel.slice(0, ultimoIdxSerie + 1).map(m => m + "/" + anoUsado.slice(2)) : [];
+  const serieIdx = ultimoIdxSerie >= 0 ? serieIdxBase.slice(0, ultimoIdxSerie + 1) : [];
 
-  HUB.charts.line("chartIndiceMensal", {
-    labels: mesesLabel.map(m => m + "/" + anoUsado.slice(2)),
+  chartOuVazio("chartIndiceMensal", serieIdx, () => HUB.charts.line("chartIndiceMensal", {
+    labels: labelsIdx,
     values: serieIdx
-  }, { color: HUB.charts.colors.green });
+  }, { color: HUB.charts.colors.green }));
 
-  // Título dinâmico do banner de validação — não fixa o mês/valor no código
   const bannerTitleEl = document.getElementById("bannerTitle");
   const bannerEl2 = document.getElementById("bannerIndice");
   const bannerTagEl = document.getElementById("bannerTag");
   if (bannerTitleEl) {
-    const iIdx = lastValidIndex(serieIdx);
+    const iIdx = serieIdx.length - 1;
     const anteriores = serieIdx.slice(0, iIdx).filter(v => v > 0);
     const mediaAnterior = anteriores.length ? anteriores.reduce((a, b) => a + b, 0) / anteriores.length : 0;
     const destoante = iIdx >= 0 && mediaAnterior > 0 && Math.abs(serieIdx[iIdx] - mediaAnterior) / mediaAnterior > 0.3;
     if (destoante) {
-      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${mesesLabel[iIdx]}/${anoUsado.slice(2)} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% vs. média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
+      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${labelsIdx[iIdx]} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% vs. média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
       if (bannerEl2) bannerEl2.className = "noteBanner warn compact";
-      if (bannerTagEl) bannerTagEl.textContent = "EM VALIDAÇÃO";
+      if (bannerTagEl) bannerTagEl.textContent = "ATENÇÃO";
     } else if (iIdx >= 0) {
-      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${mesesLabel[iIdx]}/${anoUsado.slice(2)}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%, dentro do padrão da série`;
+      bannerTitleEl.textContent = `Índice de captura EGP-RIO — ${labelsIdx[iIdx]}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%, dentro do padrão da série disponível`;
       if (bannerEl2) bannerEl2.className = "noteBanner compact";
       if (bannerTagEl) bannerTagEl.textContent = "MONITORADO";
+    } else {
+      bannerTitleEl.textContent = "Índice de captura EGP-RIO — sem dados mensais disponíveis";
+      if (bannerEl2) bannerEl2.className = "noteBanner compact";
+      if (bannerTagEl) bannerTagEl.textContent = "SEM DADO";
     }
   }
 
@@ -816,7 +860,6 @@ function renderReciclagem() {
     });
   });
 
-  // Frase dinâmica do banner: origem do salto (frota Comlurb vs. não cadastrados)
   const bannerEl = document.getElementById("bannerComposicao");
   if (bannerEl) {
     const iUlt = lastValidIndex(naoCadastradosMeses);
@@ -826,26 +869,30 @@ function renderReciclagem() {
     if (iUlt >= 0 && baseNaoCad > 0) {
       const multNaoCad = naoCadastradosMeses[iUlt] / baseNaoCad;
       const varFrota = baseFrota > 0 ? (frotaComlurbMeses[iUlt] - baseFrota) / baseFrota * 100 : 0;
-      bannerEl.innerHTML = `<b>Origem provável:</b> em ${mesesLabel[iUlt]}/${anoUsado.slice(2)}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoCadastradosMeses[iUlt]))} t — ${multNaoCad.toFixed(1).replace(".", ",")}x a média dos meses anteriores (${HUB.format.int(Math.round(baseNaoCad))} t). No mesmo mês, a frota Comlurb variou ${varFrota >= 0 ? "+" : ""}${varFrota.toFixed(1).replace(".", ",")}% frente à própria média — o salto do índice está nas cooperativas, não na operação própria.`;
+      bannerEl.innerHTML = `<b>Leitura da composição:</b> em ${mesesLabel[iUlt]}/${anoUsado.slice(2)}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoCadastradosMeses[iUlt]))} t — ${multNaoCad.toFixed(1).replace(".", ",")}x a média dos meses anteriores (${HUB.format.int(Math.round(baseNaoCad))} t). No mesmo mês, a frota Comlurb variou ${varFrota >= 0 ? "+" : ""}${varFrota.toFixed(1).replace(".", ",")}% frente à própria média.`;
+    } else {
+      bannerEl.textContent = "A composição mensal será exibida conforme houver dados válidos no ano corrente.";
     }
   }
 
-  // Regional — ano corrente
   const regionais = ["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
-  const valoresRegional = regionais.map(r => ind1493Serie(fonte, r).total);
-  HUB.charts.bar("chartRegional", {
-    labels: regionais,
+  const valoresRegional = regionais.map(r => ind1493Serie(fonte, r).total).filter(v => v > 0);
+  const labelsRegional = regionais.filter(r => ind1493Serie(fonte, r).total > 0);
+  chartOuVazio("chartRegional", valoresRegional, () => HUB.charts.bar("chartRegional", {
+    labels: labelsRegional,
     values: valoresRegional
-  }, { color: HUB.charts.colors.greenGradient });
+  }, { color: HUB.charts.colors.greenGradient }));
 
-  // Origem do peso: frota Comlurb vs. cooperativas/não cadastrados
   const frotaComlurb = ind1493Serie(fonte, "COLETA SELETIVA - FROTA COMLURB").total;
   const alternativa = ind1493Serie(fonte, "FROTA ALTERNATIVA").total;
   const naoCadastrados = ind1493Serie(fonte, "NAO CADASTRADOS").total;
-  HUB.charts.donut("chartOrigem", {
-    labels: ["Frota Comlurb", "Frota alternativa cadastrada", "Não cadastrados / cooperativas"],
-    values: [frotaComlurb, alternativa, naoCadastrados]
-  }, { colors: [HUB.charts.colors.blue, HUB.charts.colors.purple, HUB.charts.colors.orange] });
+  const origemLabels = ["Frota Comlurb", "Frota alternativa cadastrada", "Não cadastrados / cooperativas"];
+  const origemValores = [frotaComlurb, alternativa, naoCadastrados];
+  const origemFiltrada = origemLabels.map((label, i) => ({ label, value: origemValores[i] })).filter(x => x.value > 0);
+  chartOuVazio("chartOrigem", origemFiltrada.map(x => x.value), () => HUB.charts.donut("chartOrigem", {
+    labels: origemFiltrada.map(x => x.label),
+    values: origemFiltrada.map(x => x.value)
+  }, { colors: [HUB.charts.colors.blue, HUB.charts.colors.purple, HUB.charts.colors.orange].slice(0, origemFiltrada.length) }));
 }
 
 // ============================================
@@ -903,7 +950,32 @@ function renderFrota() {
     `).join("");
   }
 
-  fontesFrota.forEach(({ rows, sufixo }) => {
+  function ajustarPainelRanking(sufixo, tipo, qtdGerencias) {
+    const baixaBody = document.getElementById("rankBaixa" + sufixo);
+    const altaBody = document.getElementById("rankAlta" + sufixo);
+    const baixaPanel = baixaBody ? baixaBody.closest('.panel') : null;
+    const altaPanel = altaBody ? altaBody.closest('.panel') : null;
+    const baixaTitle = baixaPanel ? baixaPanel.querySelector('h2') : null;
+    const baixaHint = baixaPanel ? baixaPanel.querySelector('.hint') : null;
+    const altaTitle = altaPanel ? altaPanel.querySelector('h2') : null;
+    const altaHint = altaPanel ? altaPanel.querySelector('.hint') : null;
+
+    if (qtdGerencias <= 3) {
+      if (baixaTitle) baixaTitle.textContent = `${tipo} — gerências monitoradas`;
+      if (baixaHint) baixaHint.textContent = 'Peso/capacidade médio por gerência';
+      if (baixaPanel) baixaPanel.style.gridColumn = '1 / -1';
+      if (altaPanel) altaPanel.style.display = 'none';
+    } else {
+      if (baixaTitle) baixaTitle.textContent = `${tipo} — utilização mais baixa`;
+      if (baixaHint) baixaHint.textContent = 'Peso/capacidade médio por gerência';
+      if (altaTitle) altaTitle.textContent = `${tipo} — utilização mais alta`;
+      if (altaHint) altaHint.textContent = 'Peso/capacidade médio por gerência';
+      if (baixaPanel) baixaPanel.style.gridColumn = '';
+      if (altaPanel) altaPanel.style.display = '';
+    }
+  }
+
+  fontesFrota.forEach(({ rows, sufixo, tipo }) => {
     const map = new Map();
     rows.forEach(r => {
       const ger = HUB.pick(r, ["Gerência", "Gerencia"]);
@@ -917,8 +989,16 @@ function renderFrota() {
       .filter(r => r.avg > 0)
       .sort((a, b) => a.avg - b.avg);
 
-    renderRankList("rankBaixa" + sufixo, ranked.slice(0, 5), HUB.charts.colors.red);
-    renderRankList("rankAlta" + sufixo, ranked.slice(-5).reverse(), HUB.charts.colors.green);
+    ajustarPainelRanking(sufixo, tipo, ranked.length);
+
+    if (ranked.length <= 3) {
+      renderRankList("rankBaixa" + sufixo, ranked, HUB.charts.colors.blue);
+      const altaEl = document.getElementById("rankAlta" + sufixo);
+      if (altaEl) altaEl.innerHTML = '';
+    } else {
+      renderRankList("rankBaixa" + sufixo, ranked.slice(0, 5), HUB.charts.colors.red);
+      renderRankList("rankAlta" + sufixo, ranked.slice(-5).reverse(), HUB.charts.colors.green);
+    }
   });
 }
 

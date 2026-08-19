@@ -35,16 +35,6 @@
 .receitaKpi .rkValue{font-size:clamp(36px,4vw,58px);font-weight:950;line-height:.95;letter-spacing:-.055em;color:#fff;white-space:nowrap}
 .receitaKpi .rkNote{margin-top:10px;color:#aebfd5;font-size:11px;line-height:1.35}
 
-/* leitura executiva */
-.execRead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;background:var(--painel);border:1px solid rgba(91,155,213,.3);border-radius:20px;padding:18px 20px;margin-bottom:12px}
-.execRead .ey{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#7ec3f5}
-.execRead h2{margin:5px 0 5px;font-size:clamp(18px,1.7vw,26px);letter-spacing:-.025em;line-height:1.2}
-.execRead p{margin:0;color:#aebfd5;font-size:12px;line-height:1.45}
-.oldDebtBox{min-width:225px;padding-left:18px;border-left:1px solid rgba(255,255,255,.08);text-align:right}
-.oldDebtBox small{display:block;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase;color:#9fb0c7}
-.oldDebtBox b{display:block;margin-top:6px;font-size:24px;color:#ffa02b}
-.oldDebtBox span{display:block;margin-top:4px;font-size:10px;color:#8da4bc}
-
 /* corpo principal */
 .receitaGrid{display:grid;grid-template-columns:1.35fr .65fr;gap:12px;margin-bottom:12px}
 .receitaPanel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden;min-width:0}
@@ -64,19 +54,6 @@
 .secPct{font-size:23px;font-weight:950;color:#fff}
 .track{height:9px;background:#142b44;border-radius:999px;overflow:hidden}
 .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2f67a5,#5b9bd5)}
-
-/* ranking */
-.debtPanel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden;margin-bottom:12px}
-.debtList{padding:2px 18px 10px}
-.debtRow{display:grid;grid-template-columns:42px minmax(250px,1.35fr) minmax(150px,.85fr) 135px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)}
-.debtRow:last-child{border-bottom:0}
-.debtRank{font-size:22px;font-weight:950;color:#607a93}
-.debtName{min-width:0}
-.debtName b{display:block;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.debtName span{display:block;margin-top:3px;color:#8fa8c0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.debtValue{text-align:right}
-.debtValue b{display:block;font-size:15px;color:#ff8e83}
-.debtValue span{display:block;margin-top:3px;font-size:10px;color:#93abc3}
 
 /* detalhe recolhido */
 .detailPanel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden}
@@ -102,10 +79,6 @@
   .receitaFilters .field,.receitaFilters .field.servico{min-width:0;width:100%}
   .receitaKpis{grid-template-columns:1fr}
   .receitaKpi .rkValue{white-space:normal;font-size:40px}
-  .execRead{grid-template-columns:1fr}
-  .oldDebtBox{text-align:left;border-left:0;border-top:1px solid rgba(255,255,255,.08);padding:12px 0 0}
-  .debtRow{grid-template-columns:32px minmax(0,1fr) 108px}
-  .debtRow .track{display:none}
 }
 </style>
 </head>
@@ -154,16 +127,16 @@
   </article>
 </section>
 
-<section class="execRead">
-  <div>
-    <div class="ey">Leitura executiva</div>
-    <h2 id="execTitle">—</h2>
-    <p id="execNote">—</p>
+<section class="receitaPanel" style="margin-bottom:12px">
+  <div class="receitaPanelHead">
+    <div>
+      <h2>Aging do débito líquido</h2>
+      <div class="hint">Tempo real em aberto desde a competência de cada nota fiscal — todos os exercícios, não só 2026.</div>
+    </div>
+    <span class="hint" id="agingMeta">—</span>
   </div>
-  <div class="oldDebtBox">
-    <small>Pendências anteriores a 2026</small>
-    <b id="oldDebt">—</b>
-    <span>mantidas fora dos KPIs de 2026</span>
+  <div class="receitaPanelBody">
+    <div id="agingList" class="secList"></div>
   </div>
 </section>
 
@@ -194,15 +167,29 @@
   </article>
 </section>
 
-<section class="debtPanel">
+<section class="receitaPanel" style="margin-bottom:12px">
   <div class="receitaPanelHead">
     <div>
-      <h2>Onde está o débito</h2>
-      <div class="hint">Contratos com maior saldo líquido pendente.</div>
+      <h2>Débito líquido acumulado</h2>
+      <div class="hint">Evolução do saldo em aberto ao longo do tempo — mostra se a dívida está acelerando, estável ou recuando. Todos os exercícios, ignora o filtro de Ano.</div>
     </div>
-    <span class="hint" id="rankingMeta">—</span>
   </div>
-  <div id="debtList" class="debtList"></div>
+  <div class="receitaPanelBody">
+    <div class="chartBox"><canvas id="cumulativeChart"></canvas></div>
+  </div>
+</section>
+
+<section class="receitaPanel" style="margin-bottom:12px">
+  <div class="receitaPanelHead">
+    <div>
+      <h2>% Inadimplência por Secretaria e Serviço</h2>
+      <div class="hint">Débito líquido sobre faturamento bruto do recorte — ranking por taxa, não por valor absoluto.</div>
+    </div>
+    <span class="hint" id="inadimpMeta">—</span>
+  </div>
+  <div class="receitaPanelBody">
+    <div id="inadimpList" class="secList"></div>
+  </div>
 </section>
 
 <section class="detailPanel">
@@ -237,7 +224,7 @@ const MONTHS={
 };
 const MONTH_LABEL=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-let RAW_DEBT=[],RAW_BILLED=[],flowChart=null;
+let RAW_DEBT=[],RAW_BILLED=[],flowChart=null,cumulativeChart=null;
 const $=id=>document.getElementById(id);
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 
@@ -381,33 +368,122 @@ function render(){
 
   const billed=RAW_BILLED.filter(r=>String(r.year)===String(f.year)&&commonMatch(r,f));
   const debt2026=RAW_DEBT.filter(r=>String(r.year)===String(f.year)&&commonMatch(r,f));
-  const oldDebtRows=RAW_DEBT.filter(r=>r.year&&r.year<Number(f.year)&&commonMatch(r,f));
+  const debtAllYears=RAW_DEBT.filter(r=>commonMatch(r,f));
 
   const billedTotal=total(billed,'billed');
   const paidTotal=total(debt2026,'paid');
   const debtTotal=total(debt2026,'debt');
-  const oldDebtTotal=total(oldDebtRows,'debt');
 
   $('kpiBilled').textContent=compact(billedTotal);
   $('kpiPaid').textContent=compact(paidTotal);
   $('kpiDebt').textContent=compact(debtTotal);
-  $('oldDebt').textContent=compact(oldDebtTotal);
 
   const ranking=aggregate(debt2026,r=>r.contract).sort((a,b)=>b.debt-a.debt);
-  const top=ranking[0];
-  if(top&&debtTotal>0){
-    const sh=top.debt/debtTotal*100;
-    $('execTitle').textContent=`${top.key} concentra ${pct(sh)} do débito líquido de ${f.year}.`;
-    $('execNote').textContent=`Saldo prioritário de ${compact(top.debt)}. A carteira abaixo mostra a concentração do débito sem repetir os valores dos KPIs.`;
-  }else{
-    $('execTitle').textContent=`Sem débito líquido no recorte selecionado para ${f.year}.`;
-    $('execNote').textContent='Ajuste Secretaria ou Serviço para consultar outro recorte.';
-  }
 
   renderChart(billed,debt2026);
   renderSecretarias(billed,billedTotal);
-  renderRanking(ranking,debtTotal);
+  renderAging(debtAllYears);
+  renderCumulative(debtAllYears);
+  renderInadimplencia(debt2026);
   renderTable(ranking,debtTotal);
+}
+
+const AGING_BUCKETS=[
+  {label:'0–6 meses',min:0,max:6},
+  {label:'6–12 meses',min:6,max:12},
+  {label:'12–24 meses',min:12,max:24},
+  {label:'24+ meses',min:24,max:Infinity}
+];
+function monthsOpen(r){
+  if(!r.year||!r.month)return null;
+  const start=new Date(r.year,r.month-1,1);
+  const now=new Date();
+  return (now.getFullYear()-start.getFullYear())*12+(now.getMonth()-start.getMonth());
+}
+function renderAging(rows){
+  const buckets=AGING_BUCKETS.map(b=>({...b,total:0}));
+  rows.forEach(r=>{
+    if(!(r.debt>0))return;
+    const m=monthsOpen(r);
+    if(m==null)return;
+    const b=buckets.find(x=>m>=x.min&&m<x.max)||buckets[buckets.length-1];
+    b.total+=r.debt;
+  });
+  const grandTotal=buckets.reduce((s,b)=>s+b.total,0);
+  const max=Math.max(...buckets.map(b=>b.total),1);
+  $('agingList').innerHTML=grandTotal?buckets.map(b=>{
+    const p=grandTotal?b.total/grandTotal*100:0;
+    return `<div class="secItem">
+      <div class="secTop">
+        <div><div class="secName">${b.label}</div><div class="secAmount">${compact(b.total)}</div></div>
+        <div class="secPct">${pct(p)}</div>
+      </div>
+      <div class="track"><div class="fill" style="width:${Math.max(1,b.total/max*100)}%"></div></div>
+    </div>`;
+  }).join(''):'<div class="emptyState">Sem débito líquido no recorte.</div>';
+  const critical=buckets[buckets.length-1];
+  $('agingMeta').textContent=grandTotal?`${pct(critical.total/grandTotal*100)} há mais de 24 meses`:'—';
+}
+
+function renderCumulative(rows){
+  const m=new Map();
+  rows.forEach(r=>{
+    if(!r.year||!r.month||!(r.debt>0))return;
+    const key=`${r.year}-${String(r.month).padStart(2,'0')}`;
+    m.set(key,(m.get(key)||0)+r.debt);
+  });
+  const keys=[...m.keys()].sort();
+  let running=0;
+  const points=keys.map(k=>{running+=m.get(k);return running});
+  const labels=keys.map(k=>{
+    const [y,mo]=k.split('-');
+    return `${MONTH_LABEL[Number(mo)]}/${y.slice(2)}`;
+  });
+
+  if(cumulativeChart)cumulativeChart.destroy();
+  cumulativeChart=new Chart($('cumulativeChart'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Débito líquido acumulado',
+        data:points,
+        borderColor:'#ef6a5d',
+        backgroundColor:'rgba(239,106,93,.10)',
+        fill:true,tension:.25,pointRadius:0,borderWidth:2.2
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>`Acumulado: ${brl(c.raw)}`}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#9db8d4',maxRotation:0,autoSkip:true}},
+        y:{beginAtZero:true,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa8c0',callback:v=>compact(v)}}
+      }
+    }
+  });
+}
+
+function renderInadimplencia(rows){
+  const MIN_BILLED=1000;
+  const combos=aggregate(rows,r=>`${r.secretaria}__${r.service}`)
+    .filter(x=>x.billed>=MIN_BILLED)
+    .map(x=>({...x,rate:x.billed?x.debt/x.billed*100:0}))
+    .sort((a,b)=>b.rate-a.rate)
+    .slice(0,8);
+  const max=combos[0]?.rate||1;
+  $('inadimpMeta').textContent=combos.length?`Top ${combos.length} · mín. ${compact(MIN_BILLED)} faturados`:'Sem dados';
+  $('inadimpList').innerHTML=combos.length?combos.map(x=>`
+    <div class="secItem">
+      <div class="secTop">
+        <div><div class="secName">${x.secretaria} · ${x.service}</div><div class="secAmount">${compact(x.debt)} de ${compact(x.billed)} faturados</div></div>
+        <div class="secPct">${pct(x.rate)}</div>
+      </div>
+      <div class="track"><div class="fill" style="width:${Math.max(1,x.rate/max*100)}%"></div></div>
+    </div>`).join(''):'<div class="emptyState">Sem faturamento suficiente no recorte.</div>';
 }
 
 function renderChart(billed,debtRows){
@@ -454,22 +530,6 @@ function renderSecretarias(billed,billedTotal){
       <div class="track"><div class="fill" style="width:${Math.max(1,p)}%"></div></div>
     </div>`;
   }).join(''):'<div class="emptyState">Sem faturamento no recorte.</div>';
-}
-
-function renderRanking(ranking,totalDebt){
-  const rows=ranking.filter(x=>x.debt>0).slice(0,5);
-  const max=rows[0]?.debt||1;
-  $('rankingMeta').textContent=rows.length?`Top ${rows.length}`:'Sem pendências';
-  $('debtList').innerHTML=rows.length?rows.map((x,i)=>`
-    <div class="debtRow">
-      <div class="debtRank">${String(i+1).padStart(2,'0')}</div>
-      <div class="debtName">
-        <b>${x.key}</b>
-        <span>${x.secretaria||'Secretaria não informada'}${x.service?' · '+x.service:''}</span>
-      </div>
-      <div class="track"><div class="fill" style="width:${Math.max(2,x.debt/max*100)}%"></div></div>
-      <div class="debtValue"><b>${compact(x.debt)}</b><span>${pct(totalDebt?x.debt/totalDebt*100:0)} do débito</span></div>
-    </div>`).join(''):'<div class="emptyState">Nenhum contrato com débito no recorte.</div>';
 }
 
 function renderTable(ranking,totalDebt){

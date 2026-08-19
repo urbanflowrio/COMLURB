@@ -1,600 +1,115 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Performance dos Contratos de Receita · HUB COMLURB</title>
-
-<link rel="stylesheet" href="../assets/css/hub-premium.css">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script src="../assets/components/hub-core.js"></script>
-<script src="../assets/components/hub-sources.js"></script>
-<script src="../assets/components/hub-utils.js"></script>
-<script src="../assets/components/hub-layout.js"></script>
-
-<style>
-.app{max-width:1880px;padding:18px}
-
-/* filtros */
-.receitaFilters{display:flex!important;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0}
-.receitaFilters .field{min-width:220px}
-.receitaFilters .field.servico{min-width:320px;flex:1}
-.btnLimpar{background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#7a9bbf;font-size:11px;font-weight:950;letter-spacing:.08em;padding:0 16px;height:44px;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s}
-.btnLimpar:hover{border-color:rgba(255,255,255,.28);color:#c7d8ee}
-.homeLink{display:inline-flex;align-items:center;height:44px;padding:0 16px;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#9fb0c7;text-decoration:none;font-size:11px;font-weight:950;letter-spacing:.06em}
-.homeLink:hover{border-color:rgba(91,155,213,.45);color:#dcecff}
-
-/* 3 KPIs */
-.receitaKpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px}
-.receitaKpi{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:18px 20px;min-height:132px;position:relative;overflow:hidden}
-.receitaKpi::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:#5b9bd5}
-.receitaKpi.pago::before{background:var(--verde)}
-.receitaKpi.debito::before{background:var(--vermelho)}
-.receitaKpi .rkLabel{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c7;margin-bottom:10px}
-.receitaKpi .rkValue{font-size:clamp(36px,4vw,58px);font-weight:950;line-height:.95;letter-spacing:-.055em;color:#fff;white-space:nowrap}
-.receitaKpi .rkNote{margin-top:10px;color:#aebfd5;font-size:11px;line-height:1.35}
-
-/* corpo principal */
-.receitaGrid{display:grid;grid-template-columns:1.35fr .65fr;gap:12px;margin-bottom:12px}
-.receitaPanel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden;min-width:0}
-.receitaPanelHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:16px 18px;border-bottom:1px solid var(--linha)}
-.receitaPanelHead h2{margin:0;font-size:16px;font-weight:950;color:#fff}
-.receitaPanelHead .hint{margin-top:4px;color:#9fb0c7;font-size:11px;line-height:1.35}
-.receitaPanelBody{padding:18px}
-.chartBox{height:330px;position:relative}
-.chartBox canvas{width:100%!important;height:100%!important}
-
-/* secretaria */
-.secList{display:grid;gap:18px}
-.secItem{display:grid;gap:8px}
-.secTop{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
-.secName{font-size:13px;font-weight:950;color:#fff}
-.secAmount{font-size:10px;color:#8ea5bd;margin-top:3px}
-.secPct{font-size:23px;font-weight:950;color:#fff}
-.track{height:9px;background:#142b44;border-radius:999px;overflow:hidden}
-.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2f67a5,#5b9bd5)}
-
-/* detalhe recolhido */
-.detailPanel{background:var(--painel);border:1px solid var(--linha);border-radius:20px;overflow:hidden}
-.detailToggle{border:1px solid rgba(255,255,255,.12);background:transparent;color:#9fb0c7;border-radius:10px;padding:9px 13px;font-weight:950;font-size:11px;cursor:pointer}
-.detailToggle:hover{border-color:rgba(91,155,213,.42);color:#dcecff}
-.tableWrap{display:none;overflow:auto;max-height:520px}
-.tableWrap.open{display:block}
-.dataTable{width:100%;border-collapse:collapse;min-width:980px;font-size:12px}
-.dataTable th{position:sticky;top:0;background:#0c2036;color:#afc7de;text-align:right;padding:11px 13px;text-transform:uppercase;letter-spacing:.08em;font-size:9px;border-bottom:1px solid var(--linha);z-index:2}
-.dataTable th:first-child,.dataTable th:nth-child(2),.dataTable td:first-child,.dataTable td:nth-child(2){text-align:left}
-.dataTable td{padding:11px 13px;text-align:right;border-bottom:1px solid rgba(255,255,255,.065);white-space:nowrap}
-.dataTable tr:hover td{background:rgba(91,155,213,.045)}
-
-.emptyState{padding:28px;text-align:center;color:#9fb0c7;font-size:12px}
-.errorBox{display:none;margin:14px 0;padding:14px 16px;border:1px solid rgba(239,106,93,.42);border-radius:14px;background:rgba(239,106,93,.08);color:#ffc2bc;font-size:13px;line-height:1.5}
-
-@media(max-width:1180px){
-  .receitaGrid{grid-template-columns:1fr}
-  .receitaKpis{grid-template-columns:repeat(3,1fr)}
-}
-@media(max-width:760px){
-  .receitaFilters{display:grid!important;grid-template-columns:1fr!important}
-  .receitaFilters .field,.receitaFilters .field.servico{min-width:0;width:100%}
-  .receitaKpis{grid-template-columns:1fr}
-  .receitaKpi .rkValue{white-space:normal;font-size:40px}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#06111f">
+  <title>Performance dos Contratos de Receita · HUB COMLURB</title>
+  <link rel="stylesheet" href="../assets/css/hub-premium.css">
+  <link rel="stylesheet" href="./balanco-receita.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="../assets/components/hub-core.js"></script>
+  <script src="../assets/components/hub-utils.js"></script>
+  <script src="../assets/components/hub-layout.js"></script>
 </head>
-
 <body>
 <div class="app">
+  <div id="header"></div>
 
-<div id="header"></div>
-
-<section class="filters receitaFilters">
-  <div class="field">
-    <label>Ano</label>
-    <select id="yearFilter"><option value="2026">2026</option></select>
-  </div>
-  <div class="field">
-    <label>Secretaria</label>
-    <select id="secFilter"><option value="">Todas</option></select>
-  </div>
-  <div class="field servico">
-    <label>Serviço</label>
-    <select id="serviceFilter"><option value="">Todos</option></select>
-  </div>
-  <button class="btnLimpar" id="clearFilters" type="button">✕ Limpar</button>
-  <a class="homeLink" href="../index.html">← Home</a>
-</section>
-
-<div id="errorBox" class="errorBox"></div>
-
-<main id="content" style="display:none">
-
-<section class="receitaKpis">
-  <article class="receitaKpi">
-    <div class="rkLabel">Faturamento Bruto</div>
-    <div class="rkValue" id="kpiBilled">—</div>
-    <div class="rkNote">Total faturado no recorte selecionado.</div>
-  </article>
-  <article class="receitaKpi pago">
-    <div class="rkLabel">Valor Líquido Pago</div>
-    <div class="rkValue" id="kpiPaid">—</div>
-    <div class="rkNote">Valor líquido efetivamente registrado como pago.</div>
-  </article>
-  <article class="receitaKpi debito">
-    <div class="rkLabel">Débito Líquido</div>
-    <div class="rkValue" id="kpiDebt">—</div>
-    <div class="rkNote">Saldo líquido pendente de recebimento.</div>
-  </article>
-</section>
-
-<section class="receitaPanel" style="margin-bottom:12px">
-  <div class="receitaPanelHead">
-    <div>
-      <h2>Aging do débito líquido</h2>
-      <div class="hint">Tempo real em aberto desde a competência de cada nota fiscal — todos os exercícios, não só 2026.</div>
+  <section class="receitaToolbar" aria-label="Filtros do painel">
+    <div class="scopeBox">
+      <span>Escopo do painel</span>
+      <strong>Pendências anteriores a 2026</strong>
     </div>
-    <span class="hint" id="agingMeta">—</span>
-  </div>
-  <div class="receitaPanelBody">
-    <div id="agingList" class="secList"></div>
-  </div>
-</section>
+    <label class="serviceField">
+      <span>Serviço</span>
+      <select id="serviceFilter"><option value="">Todos os serviços</option></select>
+    </label>
+    <button id="clearFilter" class="clearBtn" type="button">Limpar filtro</button>
+    <a class="homeLink" href="../index.html">← Home</a>
+  </section>
 
-<section class="receitaGrid">
-  <article class="receitaPanel">
-    <div class="receitaPanelHead">
+  <main id="dashboard">
+    <section class="receitaKpis" aria-label="Indicadores financeiros">
+      <article class="receitaKpi billed">
+        <span>Faturamento bruto</span><strong id="kpiBilled">—</strong>
+        <small id="kpiLaunches">—</small>
+      </article>
+      <article class="receitaKpi paid">
+        <span>Valor líquido pago</span><strong id="kpiPaid">—</strong>
+        <small>Valor líquido registrado como pago</small>
+      </article>
+      <article class="receitaKpi debt">
+        <span>Débito líquido</span><strong id="kpiDebt">—</strong>
+        <small id="kpiPositions">—</small>
+      </article>
+    </section>
+
+    <section class="execRead">
       <div>
-        <h2>Fluxo financeiro mensal</h2>
-        <div class="hint">Faturamento bruto, valor líquido pago e débito líquido por competência.</div>
+        <span class="eyebrow">Leitura executiva</span>
+        <h2 id="execTitle">—</h2>
+        <p id="execText">—</p>
       </div>
-      <span class="hint">2026</span>
-    </div>
-    <div class="receitaPanelBody">
-      <div class="chartBox"><canvas id="flowChart"></canvas></div>
-    </div>
-  </article>
+      <aside>
+        <small>Percentual em aberto</small>
+        <strong id="openRate">—</strong>
+        <div class="meter"><i id="openMeter"></i></div>
+      </aside>
+    </section>
 
-  <article class="receitaPanel">
-    <div class="receitaPanelHead">
-      <div>
-        <h2>Receita por Secretaria</h2>
-        <div class="hint">Participação no faturamento do recorte.</div>
+    <section class="mainGrid">
+      <article class="receitaPanel rankingPanel">
+        <header class="panelHead">
+          <div><span>Concentração</span><h2>Maiores saldos em aberto</h2></div>
+          <small>Débito líquido</small>
+        </header>
+        <div id="ranking" class="ranking"></div>
+      </article>
+      <aside class="receitaPanel signalPanel">
+        <span class="eyebrow">Sinal executivo</span>
+        <strong id="signalValue" class="signalValue">—</strong>
+        <h2 id="signalUnit">—</h2>
+        <p id="signalText">—</p>
+        <div class="signalDivider"></div>
+        <dl>
+          <div><dt>Percentual em aberto</dt><dd id="signalRate">—</dd></div>
+          <div><dt>Lançamentos</dt><dd id="signalLaunches">—</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <header class="sectionHead">
+      <div><span>Leitura por serviço</span><h2>Quem lidera cada frente</h2></div>
+      <p>O valor resume os principais devedores identificados em cada serviço.</p>
+    </header>
+    <section id="serviceCards" class="serviceGrid"></section>
+
+    <section id="hospitalPanel" class="receitaPanel hospitalPanel">
+      <div class="hospitalCopy">
+        <span class="eyebrow">Limpeza hospitalar</span>
+        <h2>Pressão financeira por unidade hospitalar</h2>
+        <p>As unidades são apresentadas por extenso, com nomes padronizados para evitar duplicidades.</p>
       </div>
-    </div>
-    <div class="receitaPanelBody">
-      <div id="secList" class="secList"></div>
-    </div>
-  </article>
-</section>
+      <div id="hospitalList" class="hospitalList"></div>
+    </section>
 
-<section class="receitaPanel" style="margin-bottom:12px">
-  <div class="receitaPanelHead">
-    <div>
-      <h2>Débito líquido acumulado</h2>
-      <div class="hint">Evolução do saldo em aberto ao longo do tempo — mostra se a dívida está acelerando, estável ou recuando. Todos os exercícios, ignora o filtro de Ano.</div>
-    </div>
-  </div>
-  <div class="receitaPanelBody">
-    <div class="chartBox"><canvas id="cumulativeChart"></canvas></div>
-  </div>
-</section>
+    <section class="receitaPanel detailPanel">
+      <header class="panelHead">
+        <div><span>Base analítica</span><h2>Principais devedores do recorte</h2></div>
+        <button id="toggleDetails" class="detailButton" type="button" aria-expanded="false">Explorar dados</button>
+      </header>
+      <div id="detailWrap" class="detailWrap">
+        <table class="detailTable">
+          <thead><tr><th>Serviço</th><th>Unidade</th><th>Fat. bruto</th><th>Valor pago</th><th>Débito</th><th>Em aberto</th></tr></thead>
+          <tbody id="detailBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-<section class="receitaPanel" style="margin-bottom:12px">
-  <div class="receitaPanelHead">
-    <div>
-      <h2>% Inadimplência por Secretaria e Serviço</h2>
-      <div class="hint">Débito líquido sobre faturamento bruto do recorte — ranking por taxa, não por valor absoluto.</div>
-    </div>
-    <span class="hint" id="inadimpMeta">—</span>
-  </div>
-  <div class="receitaPanelBody">
-    <div id="inadimpList" class="secList"></div>
-  </div>
-</section>
-
-<section class="detailPanel">
-  <div class="receitaPanelHead">
-    <div>
-      <h2>Carteira completa</h2>
-      <div class="hint">Detalhamento por contrato, secretaria e serviço.</div>
-    </div>
-    <button class="detailToggle" id="toggleDetail" type="button">Explorar carteira</button>
-  </div>
-  <div id="tableWrap" class="tableWrap">
-    <table id="dataTable" class="dataTable"></table>
-  </div>
-</section>
-
-</main>
-
-<div id="footer"></div>
+  <div id="footer"></div>
 </div>
-
-<script>
-const SOURCES = [
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=0&single=true&output=csv',
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=1268018723&single=true&output=csv',
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQD7hVIrhBv9laCl7mdFFdFtldWKchNRibgc7e0M5dgzxfx-nSwB-vi-3zMdLswUN3C6U92q6VWplxW/pub?gid=78738371&single=true&output=csv'
-];
-
-const MONTHS={
-  janeiro:1,fevereiro:2,marco:3,'março':3,abril:4,maio:5,junho:6,
-  julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12,
-  jan:1,fev:2,mar:3,abr:4,mai:5,jun:6,jul:7,ago:8,set:9,out:10,nov:11,dez:12
-};
-const MONTH_LABEL=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-
-let RAW_DEBT=[],RAW_BILLED=[],flowChart=null,cumulativeChart=null;
-const $=id=>document.getElementById(id);
-const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-
-const get=(obj,aliases)=>{
-  const keys=Object.keys(obj);
-  for(const a of aliases){
-    const na=norm(a);
-    const k=keys.find(x=>norm(x)===na)||keys.find(x=>norm(x).includes(na));
-    if(k!==undefined && String(obj[k]??'').trim()!=='') return obj[k];
-  }
-  return '';
-};
-
-const parseMoney=v=>{
-  if(typeof v==='number') return v;
-  let s=String(v??'').trim().replace(/R\$/gi,'').replace(/\s/g,'');
-  if(!s) return 0;
-  if(s.includes(',')&&s.includes('.')) s=s.replace(/\./g,'').replace(',','.');
-  else if(s.includes(',')) s=s.replace(',','.');
-  return Number(s.replace(/[^0-9.-]/g,''))||0;
-};
-
-const brl=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const compact=v=>{
-  v=Number(v||0);
-  if(Math.abs(v)>=1e9)return 'R$ '+(v/1e9).toFixed(2).replace('.',',')+' bi';
-  if(Math.abs(v)>=1e6)return 'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi';
-  if(Math.abs(v)>=1e3)return 'R$ '+(v/1e3).toFixed(0).replace('.',',')+' mil';
-  return brl(v);
-};
-const pct=v=>(Number(v||0)).toFixed(1).replace('.',',')+'%';
-
-function detectHeader(matrix){
-  let best=0,score=-1;
-  matrix.slice(0,20).forEach((row,i)=>{
-    const joined=norm(row.join(' '));
-    const s=['contrato','fat bruto','faturamento','debito liquido','mes competencia','ano exercicio']
-      .reduce((a,k)=>a+(joined.includes(norm(k))?1:0),0);
-    if(s>score){score=s;best=i}
-  });
-  return best;
-}
-function matrixToObjects(matrix){
-  const hi=detectHeader(matrix);
-  const headers=(matrix[hi]||[]).map((h,i)=>String(h||`COL_${i+1}`).trim());
-  return matrix.slice(hi+1).filter(r=>r.some(v=>String(v).trim()))
-    .map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
-}
-function parseCSV(url){
-  return new Promise((resolve,reject)=>Papa.parse(url,{
-    download:true,skipEmptyLines:false,
-    complete:r=>resolve(matrixToObjects(r.data)),error:reject
-  }));
-}
-function classify(rows){
-  const keys=norm(Object.keys(rows[0]||{}).join(' '));
-  return keys.includes('debito liquido')||keys.includes('valor liquido pag')?'debt':'billed';
-}
-function inferYear(r){
-  const direct=Number(get(r,['Ano Exercício','Ano Exercicio','Ano','Exercício']));
-  if(direct)return direct;
-  for(const v of Object.values(r)){
-    const m=String(v).match(/\b(20\d{2})\b/);
-    if(m)return Number(m[1]);
-  }
-  return 0;
-}
-function inferMonth(r){
-  const raw=String(get(r,['Mês Competência','Mes Competencia','Competência','Mês','Mes'])).trim();
-  return MONTHS[norm(raw)]||Number(raw)||0;
-}
-function mapDebt(r){
-  return {
-    contract:String(get(r,['Contrato','Nº Contrato','Numero Contrato'])).trim()||'Não informado',
-    secretaria:String(get(r,['Secretaria','Órgão','Orgao','Cliente','Contratante'])).trim()||'Não informada',
-    service:String(get(r,['Serviço','Servico','Objeto','Descrição','Descricao'])).trim()||'Não informado',
-    classification:String(get(r,['CLASSIFICAÇÃO','Classificação','Classificacao'])).trim(),
-    year:inferYear(r),month:inferMonth(r),
-    billed:parseMoney(get(r,['Fat. Bruto','Fat Bruto','Faturamento Bruto','Valor Faturado'])),
-    paid:parseMoney(get(r,['Valor Líquido Pago','Valor Liquido Pago','Líquido Pago','Liquido Pago'])),
-    debt:parseMoney(get(r,['Débito Líquido','Debito Liquido']))
-  };
-}
-function mapBilled(r){
-  return {
-    contract:String(get(r,['Contrato','Nº Contrato','Numero Contrato'])).trim()||'Não informado',
-    secretaria:String(get(r,['Secretaria','Órgão','Orgao','Cliente','Contratante'])).trim()||'Não informada',
-    service:String(get(r,['Serviço','Servico','Objeto','Descrição','Descricao'])).trim()||'Não informado',
-    year:inferYear(r),month:inferMonth(r),
-    billed:parseMoney(get(r,['Fat. Bruto','Fat Bruto','Faturamento Bruto','Valor Faturado','Valor Bruto','Total Faturado']))
-  };
-}
-function unique(a){
-  return [...new Set(a.filter(v=>v!==''&&v!==null&&v!==undefined))]
-    .sort((x,y)=>String(x).localeCompare(String(y),'pt-BR',{numeric:true}));
-}
-function total(rows,field){return rows.reduce((s,r)=>s+(Number(r[field])||0),0)}
-function filters(){
-  return {
-    year:$('yearFilter').value||'2026',
-    sec:$('secFilter').value,
-    service:$('serviceFilter').value
-  };
-}
-function commonMatch(r,f){
-  return (!f.sec||r.secretaria===f.sec)&&(!f.service||r.service===f.service);
-}
-function fillSelect(id,vals,label,preferred){
-  const el=$(id),before=el.value;
-  el.innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option value="${String(v).replace(/"/g,'&quot;')}">${v}</option>`).join('');
-  if(vals.map(String).includes(before))el.value=before;
-  else if(preferred&&vals.map(String).includes(String(preferred)))el.value=String(preferred);
-}
-function updateFilters(){
-  const years=unique([...RAW_BILLED.map(r=>r.year),...RAW_DEBT.map(r=>r.year)].filter(Boolean));
-  fillSelect('yearFilter',years,'Todos','2026');
-
-  const y=$('yearFilter').value||'2026';
-  const base=[...RAW_BILLED,...RAW_DEBT].filter(r=>String(r.year)===String(y));
-  const secs=unique(base.map(r=>r.secretaria));
-  fillSelect('secFilter',secs,'Todas');
-
-  const sec=$('secFilter').value;
-  const services=unique(base.filter(r=>!sec||r.secretaria===sec).map(r=>r.service).filter(Boolean));
-  fillSelect('serviceFilter',services,'Todos');
-}
-function aggregate(rows,key){
-  const m=new Map();
-  rows.forEach(r=>{
-    const k=key(r);
-    if(!m.has(k))m.set(k,{key:k,billed:0,paid:0,debt:0,secretaria:r.secretaria,service:r.service});
-    const x=m.get(k);
-    x.billed+=r.billed||0;x.paid+=r.paid||0;x.debt+=r.debt||0;
-  });
-  return [...m.values()];
-}
-
-function render(){
-  updateFilters();
-  const f=filters();
-
-  const billed=RAW_BILLED.filter(r=>String(r.year)===String(f.year)&&commonMatch(r,f));
-  const debt2026=RAW_DEBT.filter(r=>String(r.year)===String(f.year)&&commonMatch(r,f));
-  const debtAllYears=RAW_DEBT.filter(r=>commonMatch(r,f));
-
-  const billedTotal=total(billed,'billed');
-  const paidTotal=total(debt2026,'paid');
-  const debtTotal=total(debt2026,'debt');
-
-  $('kpiBilled').textContent=compact(billedTotal);
-  $('kpiPaid').textContent=compact(paidTotal);
-  $('kpiDebt').textContent=compact(debtTotal);
-
-  const ranking=aggregate(debt2026,r=>r.contract).sort((a,b)=>b.debt-a.debt);
-
-  renderChart(billed,debt2026);
-  renderSecretarias(billed,billedTotal);
-  renderAging(debtAllYears);
-  renderCumulative(debtAllYears);
-  renderInadimplencia(debt2026);
-  renderTable(ranking,debtTotal);
-}
-
-const AGING_BUCKETS=[
-  {label:'0–6 meses',min:0,max:6},
-  {label:'6–12 meses',min:6,max:12},
-  {label:'12–24 meses',min:12,max:24},
-  {label:'24+ meses',min:24,max:Infinity}
-];
-function monthsOpen(r){
-  if(!r.year||!r.month)return null;
-  const start=new Date(r.year,r.month-1,1);
-  const now=new Date();
-  return (now.getFullYear()-start.getFullYear())*12+(now.getMonth()-start.getMonth());
-}
-function renderAging(rows){
-  const buckets=AGING_BUCKETS.map(b=>({...b,total:0}));
-  rows.forEach(r=>{
-    if(!(r.debt>0))return;
-    const m=monthsOpen(r);
-    if(m==null)return;
-    const b=buckets.find(x=>m>=x.min&&m<x.max)||buckets[buckets.length-1];
-    b.total+=r.debt;
-  });
-  const grandTotal=buckets.reduce((s,b)=>s+b.total,0);
-  const max=Math.max(...buckets.map(b=>b.total),1);
-  $('agingList').innerHTML=grandTotal?buckets.map(b=>{
-    const p=grandTotal?b.total/grandTotal*100:0;
-    return `<div class="secItem">
-      <div class="secTop">
-        <div><div class="secName">${b.label}</div><div class="secAmount">${compact(b.total)}</div></div>
-        <div class="secPct">${pct(p)}</div>
-      </div>
-      <div class="track"><div class="fill" style="width:${Math.max(1,b.total/max*100)}%"></div></div>
-    </div>`;
-  }).join(''):'<div class="emptyState">Sem débito líquido no recorte.</div>';
-  const critical=buckets[buckets.length-1];
-  $('agingMeta').textContent=grandTotal?`${pct(critical.total/grandTotal*100)} há mais de 24 meses`:'—';
-}
-
-function renderCumulative(rows){
-  const m=new Map();
-  rows.forEach(r=>{
-    if(!r.year||!r.month||!(r.debt>0))return;
-    const key=`${r.year}-${String(r.month).padStart(2,'0')}`;
-    m.set(key,(m.get(key)||0)+r.debt);
-  });
-  const keys=[...m.keys()].sort();
-  let running=0;
-  const points=keys.map(k=>{running+=m.get(k);return running});
-  const labels=keys.map(k=>{
-    const [y,mo]=k.split('-');
-    return `${MONTH_LABEL[Number(mo)]}/${y.slice(2)}`;
-  });
-
-  if(cumulativeChart)cumulativeChart.destroy();
-  cumulativeChart=new Chart($('cumulativeChart'),{
-    type:'line',
-    data:{
-      labels,
-      datasets:[{
-        label:'Débito líquido acumulado',
-        data:points,
-        borderColor:'#ef6a5d',
-        backgroundColor:'rgba(239,106,93,.10)',
-        fill:true,tension:.25,pointRadius:0,borderWidth:2.2
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:c=>`Acumulado: ${brl(c.raw)}`}}
-      },
-      scales:{
-        x:{grid:{display:false},ticks:{color:'#9db8d4',maxRotation:0,autoSkip:true}},
-        y:{beginAtZero:true,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa8c0',callback:v=>compact(v)}}
-      }
-    }
-  });
-}
-
-function renderInadimplencia(rows){
-  const MIN_BILLED=1000;
-  const combos=aggregate(rows,r=>`${r.secretaria}__${r.service}`)
-    .filter(x=>x.billed>=MIN_BILLED)
-    .map(x=>({...x,rate:x.billed?x.debt/x.billed*100:0}))
-    .sort((a,b)=>b.rate-a.rate)
-    .slice(0,8);
-  const max=combos[0]?.rate||1;
-  $('inadimpMeta').textContent=combos.length?`Top ${combos.length} · mín. ${compact(MIN_BILLED)} faturados`:'Sem dados';
-  $('inadimpList').innerHTML=combos.length?combos.map(x=>`
-    <div class="secItem">
-      <div class="secTop">
-        <div><div class="secName">${x.secretaria} · ${x.service}</div><div class="secAmount">${compact(x.debt)} de ${compact(x.billed)} faturados</div></div>
-        <div class="secPct">${pct(x.rate)}</div>
-      </div>
-      <div class="track"><div class="fill" style="width:${Math.max(1,x.rate/max*100)}%"></div></div>
-    </div>`).join(''):'<div class="emptyState">Sem faturamento suficiente no recorte.</div>';
-}
-
-function renderChart(billed,debtRows){
-  const m=new Map();
-  for(let i=1;i<=12;i++)m.set(i,{billed:0,paid:0,debt:0});
-  billed.forEach(r=>{if(r.month&&m.has(r.month))m.get(r.month).billed+=r.billed});
-  debtRows.forEach(r=>{if(r.month&&m.has(r.month)){m.get(r.month).paid+=r.paid;m.get(r.month).debt+=r.debt}});
-  const a=[...m.entries()].map(([month,v])=>({month,...v})).filter(x=>x.billed||x.paid||x.debt);
-
-  if(flowChart)flowChart.destroy();
-  flowChart=new Chart($('flowChart'),{
-    type:'bar',
-    data:{
-      labels:a.map(x=>MONTH_LABEL[x.month]),
-      datasets:[
-        {label:'Faturamento bruto',data:a.map(x=>x.billed),backgroundColor:'rgba(91,155,213,.82)',borderRadius:7,borderSkipped:false},
-        {label:'Valor líquido pago',data:a.map(x=>x.paid),backgroundColor:'rgba(120,170,163,.86)',borderRadius:7,borderSkipped:false},
-        {label:'Débito líquido',type:'line',data:a.map(x=>x.debt),borderColor:'#ef6a5d',backgroundColor:'rgba(239,106,93,.10)',fill:true,tension:.3,pointRadius:4,borderWidth:2.2}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{labels:{color:'#b8c9de',boxWidth:9,usePointStyle:true,pointStyle:'circle',font:{size:10,weight:'700'}}},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${brl(c.raw)}`}}
-      },
-      scales:{
-        x:{grid:{display:false},ticks:{color:'#9db8d4'}},
-        y:{beginAtZero:true,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa8c0',callback:v=>compact(v)}}
-      }
-    }
-  });
-}
-
-function renderSecretarias(billed,billedTotal){
-  const rows=aggregate(billed,r=>r.secretaria||'Não informada').sort((a,b)=>b.billed-a.billed);
-  $('secList').innerHTML=rows.length?rows.map(x=>{
-    const p=billedTotal?x.billed/billedTotal*100:0;
-    return `<div class="secItem">
-      <div class="secTop">
-        <div><div class="secName">${x.key}</div><div class="secAmount">${compact(x.billed)} faturados</div></div>
-        <div class="secPct">${pct(p)}</div>
-      </div>
-      <div class="track"><div class="fill" style="width:${Math.max(1,p)}%"></div></div>
-    </div>`;
-  }).join(''):'<div class="emptyState">Sem faturamento no recorte.</div>';
-}
-
-function renderTable(ranking,totalDebt){
-  $('dataTable').innerHTML=`<thead><tr>
-    <th>Contrato / Serviço</th><th>Secretaria</th><th>Fat. Bruto</th>
-    <th>Valor Líq. Pago</th><th>Débito Líquido</th><th>% do Débito</th>
-  </tr></thead><tbody>${ranking.map(x=>`
-    <tr>
-      <td><b>${x.key}</b>${x.service?`<br><span style="color:#8fa8c0">${x.service}</span>`:''}</td>
-      <td>${x.secretaria||'Não informada'}</td>
-      <td>${brl(x.billed)}</td><td>${brl(x.paid)}</td>
-      <td><b>${brl(x.debt)}</b></td>
-      <td>${pct(totalDebt?x.debt/totalDebt*100:0)}</td>
-    </tr>`).join('')||'<tr><td colspan="6" class="emptyState">Sem dados para o recorte.</td></tr>'}</tbody>`;
-}
-
-async function init(){
-  HUB.header.render("header",{
-    systemLabel:"HUB COMLURB · RECEITA",
-    title:"Performance dos Contratos de Receita",
-    subtitle:"Faturamento bruto, valor líquido pago e débito líquido · visão executiva 2026"
-  });
-  HUB.footer.render("footer");
-
-  Chart.defaults.color='#a8bdd3';
-  Chart.defaults.borderColor='rgba(41,72,102,.42)';
-  Chart.defaults.font.family='Segoe UI, Arial, sans-serif';
-
-  try{
-    const sets=await Promise.all(SOURCES.map(parseCSV));
-    sets.forEach(rows=>{
-      if(!rows.length)return;
-      if(classify(rows)==='debt')RAW_DEBT.push(...rows.map(mapDebt));
-      else RAW_BILLED.push(...rows.map(mapBilled));
-    });
-    RAW_DEBT=RAW_DEBT.filter(r=>r.contract!=='Não informado'||r.billed||r.paid||r.debt);
-    RAW_BILLED=RAW_BILLED.filter(r=>r.contract!=='Não informado'||r.billed);
-
-    if(!RAW_DEBT.length)throw new Error('A base de débitos não foi identificada.');
-
-    updateFilters();
-    if([...$('yearFilter').options].some(o=>o.value==='2026'))$('yearFilter').value='2026';
-
-    ['yearFilter','secFilter','serviceFilter'].forEach(id=>$(id).addEventListener('change',render));
-    $('clearFilters').addEventListener('click',()=>{
-      if([...$('yearFilter').options].some(o=>o.value==='2026'))$('yearFilter').value='2026';
-      else $('yearFilter').value='';
-      $('secFilter').value='';$('serviceFilter').value='';
-      render();
-    });
-    $('toggleDetail').addEventListener('click',()=>{
-      $('tableWrap').classList.toggle('open');
-      $('toggleDetail').textContent=$('tableWrap').classList.contains('open')?'Recolher carteira':'Explorar carteira';
-    });
-
-    $('content').style.display='';
-    render();
-    if(HUB.footer.updateTimestamp)HUB.footer.updateTimestamp();
-  }catch(e){
-    console.error(e);
-    $('errorBox').style.display='block';
-    $('errorBox').innerHTML=`Não foi possível carregar as bases publicadas.<br><b>Detalhe:</b> ${e.message}`;
-  }
-}
-document.addEventListener('DOMContentLoaded',init);
-</script>
+<script src="./balanco-receita.js"></script>
 </body>
 </html>

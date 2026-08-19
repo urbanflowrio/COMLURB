@@ -1,26 +1,21 @@
-# Performance dos Contratos de Receita — NOVO
+# Performance dos Contratos de Receita
 
-Versão atualizada do módulo financeiro do HUB COMLURB.
+Módulo financeiro do HUB COMLURB para leitura das pendências anteriores a 2026.
 
-## O que aparece na página executiva
-1. Faturamento Bruto
-2. Valor Líquido Pago
-3. Débito Líquido
-4. Uma única leitura executiva
-5. Pendências anteriores a 2026 como contexto secundário
-6. Fluxo financeiro mensal
-7. Receita por Secretaria
-8. Ranking "Onde está o débito"
-9. Carteira completa recolhida por padrão
+## Arquivos
 
-## Filtros
-- Ano, com 2026 como padrão
-- Secretaria
-- Serviço
+- `index.html`: estrutura da página;
+- `balanco-receita.css`: estilos específicos do módulo;
+- `balanco-receita.js`: leitura da planilha, filtros, cálculos e renderização.
 
-## Arquitetura
-- Mantém `hub-premium.css`
-- Usa `hub-layout.js` para header/footer, como os módulos consolidados do HUB
-- Não altera a Home
-- Não altera nenhum outro módulo
-- Mantém as mesmas fontes CSV oficiais do painel anterior
+## Fonte
+
+Google Sheets, aba `Principais_Devedores`, intervalo `A4:J500`.
+
+## Atualização
+
+Os indicadores são recalculados no navegador sempre que a página é aberta. Para atualizar o painel, basta manter a aba `Principais_Devedores` preenchida e acessível para leitura.
+
+## Integração com o HUB
+
+O módulo reutiliza o cabeçalho, o rodapé, a identidade visual e os componentes localizados em `../assets`.

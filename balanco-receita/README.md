@@ -10,11 +10,11 @@ Módulo financeiro do HUB COMLURB para leitura das pendências anteriores a 2026
 
 ## Fonte
 
-Google Sheets, aba `Principais_Devedores`, intervalo `A4:J500`.
+Google Sheets, aba `Base_Padronizada`, intervalo `A2:T5000`.
 
 ## Atualização
 
-Os indicadores são recalculados no navegador sempre que a página é aberta. Para atualizar o painel, basta manter a aba `Principais_Devedores` preenchida e acessível para leitura.
+Os indicadores são recalculados no navegador sempre que a página é aberta. O seletor de período permite alternar entre 2026, exercícios anteriores e a visão consolidada. Para atualizar o painel, basta manter a aba `Base_Padronizada` preenchida e acessível para leitura.
 
 ## Integração com o HUB
 

@@ -17,9 +17,13 @@
   <div id="header"></div>
 
   <section class="receitaToolbar" aria-label="Filtros do painel">
-    <div class="scopeBox">
-      <span>Escopo do painel</span>
-      <strong>Pendências anteriores a 2026</strong>
+    <div class="periodField">
+      <span>Período</span>
+      <div class="periodSwitch" role="group" aria-label="Período da análise">
+        <button type="button" data-period="all">Consolidado</button>
+        <button type="button" data-period="2026" class="active">2026</button>
+        <button type="button" data-period="prior">Anteriores</button>
+      </div>
     </div>
     <label class="serviceField">
       <span>Serviço</span>
@@ -29,19 +33,18 @@
     <a class="homeLink" href="../index.html">← Home</a>
   </section>
 
+  <div id="dataAlert" class="dataAlert" hidden>Não foi possível atualizar a base neste momento.</div>
+
   <main id="dashboard">
     <section class="receitaKpis" aria-label="Indicadores financeiros">
       <article class="receitaKpi billed">
         <span>Faturamento bruto</span><strong id="kpiBilled">—</strong>
-        <small id="kpiLaunches">—</small>
       </article>
       <article class="receitaKpi paid">
         <span>Valor líquido pago</span><strong id="kpiPaid">—</strong>
-        <small>Valor líquido registrado como pago</small>
       </article>
       <article class="receitaKpi debt">
         <span>Débito líquido</span><strong id="kpiDebt">—</strong>
-        <small id="kpiPositions">—</small>
       </article>
     </section>
 
@@ -58,30 +61,31 @@
       </aside>
     </section>
 
-    <section class="mainGrid">
-      <article class="receitaPanel rankingPanel">
-        <header class="panelHead">
-          <div><span>Concentração</span><h2>Maiores saldos em aberto</h2></div>
-          <small>Débito líquido</small>
-        </header>
-        <div id="ranking" class="ranking"></div>
-      </article>
-      <aside class="receitaPanel signalPanel">
-        <span class="eyebrow">Sinal executivo</span>
-        <strong id="signalValue" class="signalValue">—</strong>
-        <h2 id="signalUnit">—</h2>
-        <p id="signalText">—</p>
-        <div class="signalDivider"></div>
-        <dl>
-          <div><dt>Percentual em aberto</dt><dd id="signalRate">—</dd></div>
-          <div><dt>Lançamentos</dt><dd id="signalLaunches">—</dd></div>
-        </dl>
-      </aside>
+    <section class="receitaPanel concentrationPanel">
+      <header class="panelHead concentrationHead">
+        <div><span>Concentração financeira</span><h2>Onde está o débito</h2></div>
+        <small id="rankingScope">—</small>
+      </header>
+      <div class="concentrationBody">
+        <div class="rankingPanel">
+          <div id="ranking" class="ranking"></div>
+        </div>
+        <aside class="executiveSummary">
+          <span class="eyebrow">Síntese do recorte</span>
+          <h3 id="signalUnit">—</h3>
+          <strong id="signalValue" class="signalValue">—</strong>
+          <p id="signalText">—</p>
+          <div class="summaryMetrics">
+            <div><span>Em aberto</span><b id="signalRate">—</b></div>
+            <div><span>Concentração do líder</span><b id="leaderShare">—</b></div>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <header class="sectionHead">
       <div><span>Leitura por serviço</span><h2>Quem lidera cada frente</h2></div>
-      <p>O valor resume os principais devedores identificados em cada serviço.</p>
+      <p>Identifica a unidade com maior saldo em aberto em cada frente de serviço.</p>
     </header>
     <section id="serviceCards" class="serviceGrid"></section>
 
@@ -89,7 +93,6 @@
       <div class="hospitalCopy">
         <span class="eyebrow">Limpeza hospitalar</span>
         <h2>Pressão financeira por unidade hospitalar</h2>
-        <p>As unidades são apresentadas por extenso, com nomes padronizados para evitar duplicidades.</p>
       </div>
       <div id="hospitalList" class="hospitalList"></div>
     </section>

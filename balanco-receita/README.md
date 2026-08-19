@@ -14,7 +14,9 @@ Google Sheets, aba `Base_Padronizada`, intervalo `A2:T5000`.
 
 ## Atualização
 
-Os indicadores são recalculados no navegador sempre que a página é aberta. O seletor de período permite alternar entre 2026, exercícios anteriores e a visão consolidada. Para atualizar o painel, basta manter a aba `Base_Padronizada` preenchida e acessível para leitura.
+Os indicadores são recalculados no navegador sempre que a página é aberta. O seletor de período permite alternar entre 2026, exercícios anteriores e a visão consolidada. Os filtros seguem a hierarquia período → secretaria → serviço → mês. Para atualizar o painel, basta manter a aba `Base_Padronizada` preenchida e acessível para leitura.
+
+Quando a base não contém valores na coluna `Valor Líquido Pago`, o KPI exibe `Não informado`, evitando interpretar ausência de registro como pagamento igual a zero.
 
 ## Integração com o HUB
 

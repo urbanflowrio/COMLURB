@@ -26,8 +26,16 @@
       </div>
     </div>
     <label class="serviceField">
+      <span>Secretaria</span>
+      <select id="secretaryFilter"><option value="">Todas as secretarias</option></select>
+    </label>
+    <label class="serviceField">
       <span>Serviço</span>
       <select id="serviceFilter"><option value="">Todos os serviços</option></select>
+    </label>
+    <label class="serviceField monthField">
+      <span>Mês</span>
+      <select id="monthFilter"><option value="">Todos os meses</option></select>
     </label>
     <button id="clearFilter" class="clearBtn" type="button">Limpar filtro</button>
     <a class="homeLink" href="../index.html">← Home</a>
@@ -104,7 +112,7 @@
       </header>
       <div id="detailWrap" class="detailWrap">
         <table class="detailTable">
-          <thead><tr><th>Serviço</th><th>Unidade</th><th>Fat. bruto</th><th>Valor pago</th><th>Débito</th><th>Em aberto</th></tr></thead>
+          <thead><tr><th>Secretaria</th><th>Serviço</th><th>Unidade</th><th>Fat. bruto</th><th>Valor pago</th><th>Débito</th><th>Em aberto</th></tr></thead>
           <tbody id="detailBody"></tbody>
         </table>
       </div>

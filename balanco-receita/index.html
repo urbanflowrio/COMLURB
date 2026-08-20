@@ -47,11 +47,18 @@
 
   <main id="dashboard">
     <section id="kpiGrid" class="kpis receitaKpis" aria-label="Indicadores financeiros"></section>
+    <section id="serviceDebtDrill" class="kpiDrill" hidden>
+      <header>
+        <div><span>Serviços com valores em aberto</span><h2>Detalhamento dos débitos</h2></div>
+        <button id="closeServiceDebt" type="button">Fechar</button>
+      </header>
+      <div id="serviceDebtList" class="serviceDebtList"></div>
+    </section>
 
     <section class="execRead">
       <div>
         <span class="eyebrow">Leitura executiva</span>
-        <h2 id="execTitle">O que exige atenção no recorte</h2>
+        <h2 id="execTitle">Principais pontos de atenção</h2>
         <ul id="insightList" class="insightList"></ul>
       </div>
     </section>
@@ -60,23 +67,23 @@
     <section class="receitaPanel concentrationPanel">
       <header class="panelHead concentrationHead">
         <div><span>Concentração financeira</span><h2 id="rankingTitle">Onde está o débito</h2></div>
-        <div class="panelActions"><small id="rankingScope">—</small><button id="rankingBack" class="drillBack" type="button" hidden>← Voltar para unidades</button></div>
+        <div class="panelActions"><small id="rankingScope">Aguardando dados</small><button id="rankingBack" class="drillBack" type="button" hidden>Voltar para unidades</button></div>
       </header>
       <div class="chartBody rankingChartBody"><canvas id="rankingChart"></canvas></div>
     </section>
 
     <section class="receitaPanel trendPanel">
       <header class="panelHead">
-        <div><span>Evolução mensal</span><h2 id="trendTitle">Movimento do recorte</h2></div>
-        <div class="panelActions"><small id="trendScope">—</small><button id="trendBack" class="drillBack" type="button" hidden>← Voltar para evolução mensal</button></div>
+        <div><span>Evolução mensal</span><h2 id="trendTitle">Faturamento ao longo do ano</h2></div>
+        <div class="panelActions"><small id="trendScope">Aguardando dados</small><button id="trendBack" class="drillBack" type="button" hidden>Voltar para evolução mensal</button></div>
       </header>
       <div class="chartBody trendChartBody"><canvas id="monthlyChart"></canvas></div>
     </section>
     </section>
 
     <header class="sectionHead">
-      <div><span>Leitura por serviço</span><h2>Desempenho por frente de receita</h2></div>
-      <p id="serviceLeadText">Identifica a unidade com maior saldo em aberto em cada frente de serviço.</p>
+      <div><span>Leitura por serviço</span><h2>Desempenho por serviço</h2></div>
+      <p id="serviceLeadText">Mostra a unidade com maior saldo em aberto em cada serviço.</p>
     </header>
     <section class="receitaPanel servicePanel"><div id="serviceBars" class="serviceBars"></div></section>
 

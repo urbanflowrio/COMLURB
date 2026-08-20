@@ -24,7 +24,7 @@ Linhas identificadas como total ou total geral são excluídas da leitura. Servi
 O início da tabela de `Valores Faturados 2026` é localizado automaticamente pelo cabeçalho `Local` / `jan`, evitando a perda da primeira linha de dados. Para a APA, o acumulado validado de janeiro a julho de 2026 é de R$ 9.630.464,45.
 
 Em 2026, a planilha não possui uma fonte de pagamentos realizados. Por isso, a visão apresenta faturamento bruto acumulado, débito líquido identificado e quantidade de serviços com débito. O KPI `Valor Líquido Pago` permanece apenas na visão dos exercícios anteriores, onde o campo existe.
-Em 2026, o painel não calcula uma taxa de inadimplência nem relaciona percentualmente o débito ao faturamento. O terceiro KPI informa quantos serviços possuem débito identificado no recorte. No gráfico `Onde está o débito`, o clique em uma unidade abre o detalhamento dos valores por mês de competência; o botão `Voltar para unidades` retorna ao ranking.
+Em 2026, o painel não calcula uma taxa de inadimplência nem relaciona percentualmente o débito ao faturamento. O terceiro KPI informa quantos serviços possuem débito identificado nos filtros aplicados. Ao clicar no card, o painel mostra os serviços, os valores e a quantidade de unidades. A seleção de um serviço atualiza o painel. No gráfico `Onde está o débito`, o clique em uma unidade abre os valores por mês de competência. O botão `Voltar para unidades` retorna ao ranking.
 No gráfico `Faturamento mês a mês`, o clique em uma competência abre a composição do faturamento por serviço. O botão `Voltar para evolução mensal` retorna à série temporal.
 
 ## Integração com o HUB
@@ -35,12 +35,12 @@ O módulo reutiliza o cabeçalho, o rodapé, a identidade visual, os cards (`HUB
 
 A leitura executiva apresenta até três fatos distintos, quando houver base suficiente:
 
-- concentração financeira nas três maiores posições;
+- concentração financeira nas três maiores unidades;
 - variação em relação à competência mensal anterior;
-- serviço com maior débito identificado em 2026 ou maior exposição proporcional nos exercícios anteriores.
+- serviço com maior débito identificado em 2026 ou maior percentual em aberto nos exercícios anteriores.
 
-O gráfico mensal usa faturamento em 2026 e débito nas competências históricas. A série respeita os filtros de secretaria e serviço; o filtro de mês define o recorte dos indicadores e, em 2026, a competência usada na comparação.
+O gráfico mensal usa faturamento em 2026 e débito nas competências históricas. A série respeita os filtros de secretaria e serviço. O filtro de mês define o período dos indicadores e, em 2026, a competência usada na comparação.
 
-O ranking identifica as unidades no eixo e mostra o valor diretamente em cada barra. A evolução mensal também exibe rótulos de valor nos pontos. O detalhamento das unidades hospitalares integra a leitura por serviço, dentro de `Limpeza Hospitalar`, sem ocupar um bloco isolado no painel. A leitura por serviço é apresentada como `Desempenho por frente de receita`, e a base analítica como `Débitos em aberto por unidade`.
+O ranking mostra as unidades no eixo e o valor em cada barra. A evolução mensal também exibe os valores nos pontos. As unidades hospitalares aparecem dentro de `Limpeza Hospitalar`, sem ocupar um bloco isolado. A leitura por serviço é apresentada como `Desempenho por serviço`, e a base analítica como `Débitos em aberto por unidade`.
 
 O painel não consolida 2026 com os exercícios anteriores porque as duas visões possuem fontes e grãos distintos. A linha mensal foi priorizada em lugar de gauge radial ou gráfico de rosca por permitir comparação temporal direta.

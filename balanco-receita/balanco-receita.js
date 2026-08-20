@@ -7,7 +7,7 @@ const percent=new Intl.NumberFormat("pt-BR",{style:"percent",maximumFractionDigi
 const MONTHS={janeiro:1,fevereiro:2,"março":3,marco:3,abril:4,maio:5,junho:6,julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12};
 const MONTH_LABELS={1:"Janeiro",2:"Fevereiro",3:"Março",4:"Abril",5:"Maio",6:"Junho",7:"Julho",8:"Agosto",9:"Setembro",10:"Outubro",11:"Novembro",12:"Dezembro"};
 const SERVICE_SECRETARY={APA:"SME",Capina:"SME","Manejo e Poda de árvores":"SME","Higienização Escolar":"SME","Gestão de Resíduos":"SME","Controle de Vetores e Pragas":"SME","Gestão de Resíduos Hospitalares":"SMPDA",Dengue:"SMS","Limpeza Hospitalar":"SMS"};
-let debtRows=[],billed2026Rows=[],period="2026",rankingChart=null,monthlyChart=null,selectedDebtPosition=null,selectedBilledMonth=null;
+let debtRows=[],billed2026Rows=[],period="2026",rankingChart=null,monthlyChart=null,selectedDebtPosition=null,selectedBilledMonth=null,serviceDebtDrillOpen=false;
 
 const valueLabelsPlugin={id:"hubValueLabels",afterDatasetsDraw(chart,args,options){
   if(!options?.display)return;
@@ -144,7 +144,7 @@ function distinctInsights(a,positions,services){
   const facts=[],leader=positions.find(r=>r[a.focus]>0),total=a[a.focus];
   if(leader&&total>0){
     const top3=positions.slice(0,3).reduce((sum,r)=>sum+r[a.focus],0)/total;
-    facts.push({type:"Concentração",text:`As três maiores posições reúnem ${percent.format(top3)} do ${a.focus==="debt"?"débito":"faturamento"}; ${leader.unit} lidera com ${money.format(leader[a.focus])}.`});
+    facts.push({type:"Concentração",text:`As três maiores unidades somam ${percent.format(top3)} do ${a.focus==="debt"?"débito":"faturamento"}. ${leader.unit} tem o maior valor, com ${money.format(leader[a.focus])}.`});
   }
   const series=monthlySeries(),selectedMonth=numeric($("monthFilter").value);
   let idx=selectedMonth&&period==="2026"?series.findIndex(x=>numeric(x.key)===selectedMonth):series.length-1;
@@ -153,7 +153,7 @@ function distinctInsights(a,positions,services){
     facts.push({type:"Movimento mensal",text:`${metric} ${direction} ${percent.format(Math.abs(change))} em ${series[idx].label}, na comparação com ${series[idx-1].label}.`});
   }
   const anomaly=services.filter(s=>s.value>0&&(!leader||s.name!==leader.service)).sort((x,y)=>y.value-x.value)[0]||services.filter(s=>s.value>0).sort((x,y)=>y.value-x.value)[0];
-  if(anomaly)facts.push({type:"Ponto de atenção",text:period==="2026"?`${anomaly.name} concentra ${money.format(anomaly.value)} em débitos identificados no recorte.`:`${anomaly.name} apresenta a maior exposição proporcional entre os serviços: ${percent.format(anomaly.rate)} permanece em aberto.`});
+  if(anomaly)facts.push({type:"Ponto de atenção",text:period==="2026"?`${anomaly.name} apresenta ${money.format(anomaly.value)} em débitos.`:`Em ${anomaly.name}, ${percent.format(anomaly.rate)} do valor permanece em aberto.`});
   return facts.slice(0,3);
 }
 
@@ -173,19 +173,31 @@ function render(){
   const servicesWithDebt=new Set(applyFilters(periodDebtRows()).filter(r=>r.debt>0).map(r=>r.service)).size;
 
   HUB.cards.render("kpiGrid",period==="2026"?[
-    {label:"Faturamento bruto acumulado",value:a.billed,note:"Valores faturados em 2026 no recorte",feature:true,color:"blue",customFormatter:v=>money.format(v)},
+    {label:"Faturamento bruto acumulado",value:a.billed,note:"Total faturado em 2026 conforme os filtros aplicados",feature:true,color:"blue",customFormatter:v=>money.format(v)},
     {label:"Débito líquido identificado",value:a.debt,note:"Saldo em aberto localizado na razão de débito",color:"red",customFormatter:v=>money.format(v)},
-    {label:"Serviços com débito identificado",value:servicesWithDebt,note:"Frentes com saldo em aberto no recorte",color:"orange",customFormatter:v=>String(v)}
+    {label:"Serviços com débito identificado",value:servicesWithDebt,note:"Clique para ver os serviços e os valores",color:"orange",customFormatter:v=>String(v)}
   ]:[
     {label:"Faturamento bruto",value:a.billed,note:"Faturamento registrado no período",feature:true,color:"blue",customFormatter:v=>money.format(v)},
     {label:"Valor líquido pago",value:a.paid,note:"Pagamentos informados na base histórica",color:"green",customFormatter:v=>money.format(v)},
     {label:"Débito líquido",value:a.debt,note:"Saldo em aberto no período",color:"red",customFormatter:v=>money.format(v)}
   ]);
 
-  $("serviceLeadText").textContent=a.focus==="debt"?"Identifica a unidade com maior saldo em aberto em cada frente de serviço.":"Identifica a unidade com maior faturamento em cada frente de serviço.";
+  setupServiceDebtDrill(positions);
+  $("serviceLeadText").textContent=a.focus==="debt"?"Mostra a unidade com maior saldo em aberto em cada serviço.":"Mostra a unidade com maior faturamento em cada serviço.";
   const services=serviceSummary(positions,a.focus),insights=distinctInsights(a,positions,services);
-  $("insightList").innerHTML=insights.length?insights.map(x=>`<li><b>${escapeHTML(x.type)}</b><span>${escapeHTML(x.text)}</span></li>`).join(""):'<li class="emptyState">Sem fatos comparáveis para o recorte selecionado.</li>';
+  $("insightList").innerHTML=insights.length?insights.map(x=>`<li><b>${escapeHTML(x.type)}</b><span>${escapeHTML(x.text)}</span></li>`).join(""):'<li class="emptyState">Não há dados comparáveis para os filtros aplicados.</li>';
   renderRanking(positions,a.focus);renderMonthly();renderServices(services,a.focus);renderTable(positions);
+}
+
+function setupServiceDebtDrill(positions){
+  const drill=$("serviceDebtDrill"),card=document.querySelector("#kpiGrid > :nth-child(3)"),map=new Map();
+  if(period!=="2026"){serviceDebtDrillOpen=false;drill.hidden=true;return;}
+  positions.filter(r=>r.debt>0).forEach(r=>{if(!map.has(r.service))map.set(r.service,{value:0,units:new Set()});const item=map.get(r.service);item.value+=r.debt;item.units.add(r.unit);});
+  const services=[...map].sort((a,b)=>b[1].value-a[1].value);
+  $("serviceDebtList").innerHTML=services.length?services.map(([service,item])=>`<button type="button" data-service="${escapeHTML(service)}"><span><b>${escapeHTML(service)}</b><small>${item.units.size} ${item.units.size===1?"unidade":"unidades"}</small></span><strong>${escapeHTML(money.format(item.value))}</strong></button>`).join(""):'<div class="emptyState">Não há débitos para os filtros aplicados.</div>';
+  drill.hidden=!serviceDebtDrillOpen;
+  if(card){card.classList.add("interactiveKpi");card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-expanded",String(serviceDebtDrillOpen));const toggle=()=>{serviceDebtDrillOpen=!serviceDebtDrillOpen;drill.hidden=!serviceDebtDrillOpen;card.setAttribute("aria-expanded",String(serviceDebtDrillOpen));if(serviceDebtDrillOpen)drill.scrollIntoView({behavior:"smooth",block:"nearest"});};card.addEventListener("click",toggle);card.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();toggle();}});}
+  $("serviceDebtList").querySelectorAll("button[data-service]").forEach(button=>button.addEventListener("click",()=>{selectedDebtPosition=null;selectedBilledMonth=null;serviceDebtDrillOpen=false;$("serviceFilter").value=button.dataset.service;$("monthFilter").value="";populateCascade();render();}));
 }
 
 function renderRanking(rows,focus){
@@ -203,7 +215,7 @@ function renderRanking(rows,focus){
   }
   const top=rows.filter(r=>r[focus]>0).slice(0,7);
   $("rankingTitle").textContent=focus==="debt"?"Onde está o débito":"Onde está o faturamento";
-  $("rankingScope").textContent=`${periodLabel()} · ${rows.length} posições`;
+  $("rankingScope").textContent=`${periodLabel()} · ${rows.length} unidades`;
   $("rankingBack").hidden=true;
   if(rankingChart)HUB.charts.destroy(rankingChart);
   rankingChart=HUB.charts.barHorizontal("rankingChart",{labels:top.map(r=>r.unit),values:top.map(r=>r[focus])},{label:focus==="debt"?"Débito líquido":"Faturamento",color:HUB.charts.colors.blue});
@@ -229,7 +241,7 @@ function renderMonthly(){
     return;
   }
   $("trendTitle").textContent=period==="2026"?"Faturamento mês a mês":"Débito nas últimas competências";
-  $("trendScope").textContent=series.length?`${series[0].label} — ${series.at(-1).label}`:"Sem série comparável";
+  $("trendScope").textContent=series.length?`${series[0].label} a ${series.at(-1).label}`:"Sem dados mensais";
   $("trendBack").hidden=true;
   if(monthlyChart)HUB.charts.destroy(monthlyChart);
   monthlyChart=HUB.charts.line("monthlyChart",{labels:series.map(x=>x.label),values:series.map(x=>x.value)},{label:period==="2026"?"Faturamento":"Débito",color:period==="2026"?HUB.charts.colors.green:HUB.charts.colors.red});
@@ -243,15 +255,15 @@ function renderMonthly(){
 function renderServices(cards,focus){
   const filtered=cards.filter(s=>s.value>0);
   $("serviceBars").innerHTML=filtered.length?filtered.map(s=>{
-    const breakdown=s.name==="Limpeza Hospitalar"?`<div class="hospitalInline"><em>Unidades com maior exposição</em>${s.list.filter(h=>h[focus]>0).slice(0,4).map((h,i)=>`<div><span>${i+1}. ${escapeHTML(h.unit)}</span><b>${escapeHTML(money.format(h[focus]))}</b></div>`).join("")}</div>`:"";
+    const breakdown=s.name==="Limpeza Hospitalar"?`<div class="hospitalInline"><em>Maiores débitos por unidade</em>${s.list.filter(h=>h[focus]>0).slice(0,4).map((h,i)=>`<div><span>${i+1}. ${escapeHTML(h.unit)}</span><b>${escapeHTML(money.format(h[focus]))}</b></div>`).join("")}</div>`:"";
     const note=period==="2026"?`${s.list.filter(r=>r.debt>0).length} ${s.list.filter(r=>r.debt>0).length===1?"unidade com débito":"unidades com débito"}`:`${percent.format(s.rate)} em aberto`;
     return `<div class="serviceBar ${breakdown?"hasBreakdown":""}"><div><b>${escapeHTML(s.name)}</b><span>Líder: ${escapeHTML(s.leader.unit)}</span></div><strong>${escapeHTML(money.format(s.value))}</strong><small>${escapeHTML(note)}</small>${breakdown}</div>`;
-  }).join(""):'<div class="emptyState">Sem serviços no recorte selecionado.</div>';
+  }).join(""):'<div class="emptyState">Não há serviços para os filtros aplicados.</div>';
 }
 
 function renderTable(rows){
   $("statusColumn").textContent=period==="2026"?"Situação":"Em aberto";
-  $("detailBody").innerHTML=rows.map(r=>`<tr><td>${escapeHTML(r.secretaria)}</td><td>${escapeHTML(r.service)}</td><td><b>${escapeHTML(r.unit)}</b></td><td>${escapeHTML(money.format(r.billed))}</td><td>${period==="2026"?"—":r.paidProvided?escapeHTML(money.format(r.paid)):"—"}</td><td><b>${escapeHTML(money.format(r.debt))}</b></td><td>${period==="2026"?(r.debt>0?"Débito identificado":"Sem débito identificado"):escapeHTML(percent.format(currentRate(r)))}</td></tr>`).join("");
+  $("detailBody").innerHTML=rows.map(r=>`<tr><td>${escapeHTML(r.secretaria)}</td><td>${escapeHTML(r.service)}</td><td><b>${escapeHTML(r.unit)}</b></td><td>${escapeHTML(money.format(r.billed))}</td><td>${period==="2026"?"Sem informação":r.paidProvided?escapeHTML(money.format(r.paid)):"Sem informação"}</td><td><b>${escapeHTML(money.format(r.debt))}</b></td><td>${period==="2026"?(r.debt>0?"Débito identificado":"Sem débito identificado"):escapeHTML(percent.format(currentRate(r)))}</td></tr>`).join("");
 }
 
 function fillSelect(id,items,placeholder,current,label=value=>value){const select=$(id);select.innerHTML=`<option value="">${placeholder}</option>`+items.map(value=>`<option value="${escapeHTML(value)}">${escapeHTML(label(value))}</option>`).join("");select.value=items.includes(current)?current:"";}
@@ -278,12 +290,13 @@ async function load(){
 function init(){
   Chart.register(valueLabelsPlugin);
   HUB.header.render("header",{systemLabel:"HUB COMLURB · INTELIGÊNCIA OPERACIONAL",title:"Performance dos Contratos de Receita",subtitle:"Faturamento e débitos por período, secretaria, serviço, mês e unidade."});HUB.footer.render("footer");
-  document.querySelectorAll("[data-period]").forEach(btn=>btn.addEventListener("click",()=>{period=btn.dataset.period;selectedDebtPosition=null;selectedBilledMonth=null;document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b===btn));$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";populateCascade();render();}));
+  document.querySelectorAll("[data-period]").forEach(btn=>btn.addEventListener("click",()=>{period=btn.dataset.period;selectedDebtPosition=null;selectedBilledMonth=null;serviceDebtDrillOpen=false;document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b===btn));$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";populateCascade();render();}));
   $("secretaryFilter").addEventListener("change",()=>{selectedDebtPosition=null;selectedBilledMonth=null;$("serviceFilter").value="";$("monthFilter").value="";populateCascade();render();});
   $("serviceFilter").addEventListener("change",()=>{selectedDebtPosition=null;selectedBilledMonth=null;$("monthFilter").value="";populateCascade();render();});$("monthFilter").addEventListener("change",()=>{selectedDebtPosition=null;selectedBilledMonth=null;render();});
-  $("clearFilter").addEventListener("click",()=>{selectedDebtPosition=null;selectedBilledMonth=null;$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";period="2026";document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b.dataset.period==="2026"));populateCascade();render();});
+  $("clearFilter").addEventListener("click",()=>{selectedDebtPosition=null;selectedBilledMonth=null;serviceDebtDrillOpen=false;$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";period="2026";document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b.dataset.period==="2026"));populateCascade();render();});
   $("rankingBack").addEventListener("click",()=>{selectedDebtPosition=null;render();});
   $("trendBack").addEventListener("click",()=>{selectedBilledMonth=null;renderMonthly();});
+  $("closeServiceDebt").addEventListener("click",()=>{serviceDebtDrillOpen=false;$("serviceDebtDrill").hidden=true;const card=document.querySelector("#kpiGrid > :nth-child(3)");if(card)card.setAttribute("aria-expanded","false");});
   $("toggleDetails").addEventListener("click",()=>{const open=$("detailWrap").classList.toggle("open");$("toggleDetails").textContent=open?"Recolher dados":"Explorar dados";$("toggleDetails").setAttribute("aria-expanded",String(open));});load();
 }
 document.addEventListener("DOMContentLoaded",init);

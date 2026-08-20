@@ -58,7 +58,8 @@ function parseDebtRows(text){
 function parseBilled2026(text){
   const data=Papa.parse(text,{skipEmptyLines:false}).data;
   const rows=[];let currentService="";const unmappedServices=new Set();
-  data.slice(2).forEach(r=>{
+  const headerIndex=data.findIndex(r=>String(r[1]||"").trim().toLowerCase()==="local"&&String(r[2]||"").trim().toLowerCase()==="jan");
+  data.slice(headerIndex>=0?headerIndex+1:1).forEach(r=>{
     const cellService=String(r[0]||"").trim();
     if(cellService)currentService=cellService;
     if(!currentService||/ Total$/i.test(currentService)||/^Total Geral$/i.test(currentService)||!String(r[1]||"").trim())return;

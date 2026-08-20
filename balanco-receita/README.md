@@ -21,6 +21,8 @@ Os indicadores são recalculados no navegador sempre que a página é aberta. O 
 
 Linhas identificadas como total ou total geral são excluídas da leitura. Serviços novos da aba de faturamento que ainda não estejam vinculados a uma secretaria geram um alerta no console do navegador para revisão do mapa `SERVICE_SECRETARY`.
 
+O início da tabela de `Valores Faturados 2026` é localizado automaticamente pelo cabeçalho `Local` / `jan`, evitando a perda da primeira linha de dados. Para a APA, o acumulado validado de janeiro a julho de 2026 é de R$ 9.630.464,45.
+
 Em 2026, a planilha não possui uma fonte de pagamentos realizados. Por isso, a visão apresenta faturamento bruto acumulado, débito líquido identificado e débito sobre faturamento. O KPI `Valor Líquido Pago` permanece apenas na visão dos exercícios anteriores, onde o campo existe.
 
 ## Integração com o HUB

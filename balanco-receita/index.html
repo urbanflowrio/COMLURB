@@ -8,9 +8,12 @@
   <link rel="stylesheet" href="../assets/css/hub-premium.css">
   <link rel="stylesheet" href="./balanco-receita.css">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="../assets/components/hub-core.js"></script>
   <script src="../assets/components/hub-utils.js"></script>
   <script src="../assets/components/hub-layout.js"></script>
+  <script src="../assets/components/hub-charts.js"></script>
+  <script src="../assets/components/hub-cards.js"></script>
 </head>
 <body>
 <div class="app">
@@ -20,7 +23,6 @@
     <div class="periodField">
       <span>Período</span>
       <div class="periodSwitch" role="group" aria-label="Período da análise">
-        <button type="button" data-period="all">Consolidado</button>
         <button type="button" data-period="2026" class="active">2026</button>
         <button type="button" data-period="prior">Anteriores</button>
       </div>
@@ -44,58 +46,44 @@
   <div id="dataAlert" class="dataAlert" hidden>Não foi possível atualizar a base neste momento.</div>
 
   <main id="dashboard">
-    <section class="receitaKpis" aria-label="Indicadores financeiros">
-      <article class="receitaKpi billed">
-        <span>Faturamento bruto</span><strong id="kpiBilled">—</strong>
-      </article>
-      <article class="receitaKpi paid">
-        <span>Valor líquido pago</span><strong id="kpiPaid">—</strong>
-      </article>
-      <article class="receitaKpi debt">
-        <span>Débito líquido</span><strong id="kpiDebt">—</strong>
-      </article>
-    </section>
+    <section id="kpiGrid" class="kpis receitaKpis" aria-label="Indicadores financeiros"></section>
 
     <section class="execRead">
       <div>
         <span class="eyebrow">Leitura executiva</span>
-        <h2 id="execTitle">—</h2>
-        <p id="execText">—</p>
+        <h2 id="execTitle">O que exige atenção no recorte</h2>
+        <ul id="insightList" class="insightList"></ul>
       </div>
       <aside>
-        <small>Percentual em aberto</small>
+        <small id="openRateLabel">Percentual em aberto</small>
         <strong id="openRate">—</strong>
         <div class="meter"><i id="openMeter"></i></div>
       </aside>
     </section>
 
+    <section class="analysisGrid">
     <section class="receitaPanel concentrationPanel">
       <header class="panelHead concentrationHead">
-        <div><span>Concentração financeira</span><h2>Onde está o débito</h2></div>
+        <div><span>Concentração financeira</span><h2 id="rankingTitle">Onde está o débito</h2></div>
         <small id="rankingScope">—</small>
       </header>
-      <div class="concentrationBody">
-        <div class="rankingPanel">
-          <div id="ranking" class="ranking"></div>
-        </div>
-        <aside class="executiveSummary">
-          <span class="eyebrow">Síntese do recorte</span>
-          <h3 id="signalUnit">—</h3>
-          <strong id="signalValue" class="signalValue">—</strong>
-          <p id="signalText">—</p>
-          <div class="summaryMetrics">
-            <div><span>Em aberto</span><b id="signalRate">—</b></div>
-            <div><span>Concentração do líder</span><b id="leaderShare">—</b></div>
-          </div>
-        </aside>
-      </div>
+      <div class="chartBody rankingChartBody"><canvas id="rankingChart"></canvas></div>
+    </section>
+
+    <section class="receitaPanel trendPanel">
+      <header class="panelHead">
+        <div><span>Evolução mensal</span><h2 id="trendTitle">Movimento do recorte</h2></div>
+        <small id="trendScope">—</small>
+      </header>
+      <div class="chartBody trendChartBody"><canvas id="monthlyChart"></canvas></div>
+    </section>
     </section>
 
     <header class="sectionHead">
       <div><span>Leitura por serviço</span><h2>Quem lidera cada frente</h2></div>
-      <p>Identifica a unidade com maior saldo em aberto em cada frente de serviço.</p>
+      <p id="serviceLeadText">Identifica a unidade com maior saldo em aberto em cada frente de serviço.</p>
     </header>
-    <section id="serviceCards" class="serviceGrid"></section>
+    <section class="receitaPanel servicePanel"><div id="serviceBars" class="serviceBars"></div></section>
 
     <section id="hospitalPanel" class="receitaPanel hospitalPanel">
       <div class="hospitalCopy">

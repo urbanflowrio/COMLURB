@@ -1,6 +1,6 @@
 # Performance dos Contratos de Receita
 
-Módulo financeiro do HUB COMLURB para leitura das pendências anteriores a 2026.
+Módulo financeiro do HUB COMLURB para leitura do faturamento e dos débitos de 2026 e dos exercícios anteriores.
 
 ## Arquivos
 
@@ -10,14 +10,31 @@ Módulo financeiro do HUB COMLURB para leitura das pendências anteriores a 2026
 
 ## Fonte
 
-Google Sheets, aba `Base_Padronizada`, intervalo `A2:T5000`.
+Google Sheets:
+
+- `Valores Faturados 2026`, para o faturamento mensal acumulado de 2026;
+- `Base_Padronizada`, para os débitos de 2026 e para o estoque dos exercícios anteriores.
 
 ## Atualização
 
-Os indicadores são recalculados no navegador sempre que a página é aberta. O seletor de período permite alternar entre 2026, exercícios anteriores e a visão consolidada. Os filtros seguem a hierarquia período → secretaria → serviço → mês. Para atualizar o painel, basta manter a aba `Base_Padronizada` preenchida e acessível para leitura.
+Os indicadores são recalculados no navegador sempre que a página é aberta. O seletor de período alterna entre 2026 e exercícios anteriores. Os filtros seguem a hierarquia período → secretaria → serviço → mês.
 
-Quando a base não contém valores na coluna `Valor Líquido Pago`, o KPI exibe `Não informado`, evitando interpretar ausência de registro como pagamento igual a zero.
+Linhas identificadas como total ou total geral são excluídas da leitura. Serviços novos da aba de faturamento que ainda não estejam vinculados a uma secretaria geram um alerta no console do navegador para revisão do mapa `SERVICE_SECRETARY`.
+
+Em 2026, a planilha não possui uma fonte de pagamentos realizados. Por isso, a visão apresenta faturamento bruto acumulado, débito líquido identificado e débito sobre faturamento. O KPI `Valor Líquido Pago` permanece apenas na visão dos exercícios anteriores, onde o campo existe.
 
 ## Integração com o HUB
 
-O módulo reutiliza o cabeçalho, o rodapé, a identidade visual e os componentes localizados em `../assets`.
+O módulo reutiliza o cabeçalho, o rodapé, a identidade visual, os cards (`HUB.cards`) e os gráficos (`HUB.charts`) localizados em `../assets`.
+
+## Síntese executiva
+
+A leitura executiva apresenta até três fatos distintos, quando houver base suficiente:
+
+- concentração financeira nas três maiores posições;
+- variação em relação à competência mensal anterior;
+- serviço com maior exposição proporcional.
+
+O gráfico mensal usa faturamento em 2026 e débito nas competências históricas. A série respeita os filtros de secretaria e serviço; o filtro de mês define o recorte dos indicadores e, em 2026, a competência usada na comparação.
+
+O painel não consolida 2026 com os exercícios anteriores porque as duas visões possuem fontes e grãos distintos. A linha mensal foi priorizada em lugar de gauge radial ou gráfico de rosca por permitir comparação temporal direta.

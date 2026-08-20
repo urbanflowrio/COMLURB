@@ -9,6 +9,13 @@ const MONTH_LABELS={1:"Janeiro",2:"Fevereiro",3:"Março",4:"Abril",5:"Maio",6:"J
 const SERVICE_SECRETARY={APA:"SME",Capina:"SME","Manejo e Poda de árvores":"SME","Higienização Escolar":"SME","Gestão de Resíduos":"SME","Controle de Vetores e Pragas":"SME","Gestão de Resíduos Hospitalares":"SMPDA",Dengue:"SMS","Limpeza Hospitalar":"SMS"};
 let debtRows=[],billed2026Rows=[],period="2026",rankingChart=null,monthlyChart=null;
 
+const valueLabelsPlugin={id:"hubValueLabels",afterDatasetsDraw(chart,args,options){
+  if(!options?.display)return;
+  const {ctx}=chart;ctx.save();ctx.fillStyle="#f7f9ff";ctx.font="800 10px Segoe UI";
+  chart.getDatasetMeta(0).data.forEach((element,index)=>{const label=compact.format(chart.data.datasets[0].data[index]),point=element.tooltipPosition();if(chart.config.type==="bar"){ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(label,point.x-8,point.y);}else{ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillText(label,point.x,point.y-9);}});
+  ctx.restore();
+}};
+
 function numeric(value){
   if(typeof value==="number")return value;
   let s=String(value||"").trim().replace(/R\$/gi,"").replace(/\s/g,"");
@@ -110,7 +117,7 @@ function serviceSummary(positions,focus){
   return [...map].map(([name,list])=>{
     const ordered=list.slice().sort((a,b)=>b[focus]-a[focus]);
     const sum=totals(list);
-    return{name,leader:ordered[0],value:sum[focus],rate:period==="2026"?sum.debt/Math.max(1,sum.billed):sum.debt/Math.max(1,sum.debt+sum.paid)};
+    return{name,list:ordered,leader:ordered[0],value:sum[focus],rate:period==="2026"?sum.debt/Math.max(1,sum.billed):sum.debt/Math.max(1,sum.debt+sum.paid)};
   }).sort((a,b)=>b.value-a.value);
 }
 
@@ -154,6 +161,9 @@ function tuneMoneyChart(chart,horizontal=false){
   chart.options.plugins.tooltip.callbacks.label=context=>`${context.dataset.label}: ${money.format(horizontal?context.parsed.x:context.parsed.y)}`;
   const axis=horizontal?chart.options.scales.x:chart.options.scales.y;
   axis.ticks.callback=value=>compact.format(value);
+  chart.options.plugins.hubValueLabels={display:true};
+  if(horizontal){chart.options.scales.y.ticks.callback=function(value){return this.getLabelForValue(value);};chart.options.scales.y.ticks.autoSkip=false;}
+  chart.options.layout={padding:horizontal?{right:12}:{top:22,right:12}};
   chart.update();
 }
 
@@ -182,7 +192,7 @@ function render(){
   $("rankingScope").textContent=`${periodLabel()} · ${positions.length} posições`;
   const services=serviceSummary(positions,a.focus),insights=distinctInsights(a,positions,services);
   $("insightList").innerHTML=insights.length?insights.map(x=>`<li><b>${escapeHTML(x.type)}</b><span>${escapeHTML(x.text)}</span></li>`).join(""):'<li class="emptyState">Sem fatos comparáveis para o recorte selecionado.</li>';
-  renderRanking(positions,a.focus);renderMonthly();renderServices(services,a.focus);renderHospitals(positions,a.focus);renderTable(positions);
+  renderRanking(positions,a.focus);renderMonthly();renderServices(services,a.focus);renderTable(positions);
 }
 
 function renderRanking(rows,focus){
@@ -203,13 +213,10 @@ function renderMonthly(){
 
 function renderServices(cards,focus){
   const filtered=cards.filter(s=>s.value>0);
-  $("serviceBars").innerHTML=filtered.length?filtered.map(s=>`<div class="serviceBar"><div><b>${escapeHTML(s.name)}</b><span>Líder: ${escapeHTML(s.leader.unit)}</span></div><strong>${escapeHTML(money.format(s.value))}</strong><small>${escapeHTML(percent.format(s.rate))} ${period==="2026"?"do faturamento em débito":"em aberto"}</small></div>`).join(""):'<div class="emptyState">Sem serviços no recorte selecionado.</div>';
-}
-
-function renderHospitals(rows,focus){
-  const hospitals=rows.filter(r=>r.type==="Unidade hospitalar"||r.service==="Limpeza Hospitalar").sort((a,b)=>b[focus]-a[focus]);
-  $("hospitalPanel").hidden=!hospitals.length;
-  $("hospitalList").innerHTML=hospitals.slice(0,6).map((h,i)=>`<div><span>${i+1}</span><p><b>${escapeHTML(h.unit)}</b><small>${period==="2026"?escapeHTML(percent.format(h.debt/Math.max(1,h.billed)))+" do faturamento em débito":escapeHTML(percent.format(priorRate(h)))+" em aberto"}</small></p><strong>${escapeHTML(money.format(h[focus]))}</strong></div>`).join("");
+  $("serviceBars").innerHTML=filtered.length?filtered.map(s=>{
+    const breakdown=s.name==="Limpeza Hospitalar"?`<div class="hospitalInline"><em>Unidades com maior exposição</em>${s.list.filter(h=>h[focus]>0).slice(0,4).map((h,i)=>`<div><span>${i+1}. ${escapeHTML(h.unit)}</span><b>${escapeHTML(money.format(h[focus]))}</b></div>`).join("")}</div>`:"";
+    return `<div class="serviceBar ${breakdown?"hasBreakdown":""}"><div><b>${escapeHTML(s.name)}</b><span>Líder: ${escapeHTML(s.leader.unit)}</span></div><strong>${escapeHTML(money.format(s.value))}</strong><small>${escapeHTML(percent.format(s.rate))} ${period==="2026"?"do faturamento em débito":"em aberto"}</small>${breakdown}</div>`;
+  }).join(""):'<div class="emptyState">Sem serviços no recorte selecionado.</div>';
 }
 
 function renderTable(rows){
@@ -238,6 +245,7 @@ async function load(){
 }
 
 function init(){
+  Chart.register(valueLabelsPlugin);
   HUB.header.render("header",{systemLabel:"HUB COMLURB · INTELIGÊNCIA OPERACIONAL",title:"Performance dos Contratos de Receita",subtitle:"Faturamento e débitos por período, secretaria, serviço, mês e unidade."});HUB.footer.render("footer");
   document.querySelectorAll("[data-period]").forEach(btn=>btn.addEventListener("click",()=>{period=btn.dataset.period;document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b===btn));$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";populateCascade();render();}));
   $("secretaryFilter").addEventListener("change",()=>{$("serviceFilter").value="";$("monthFilter").value="";populateCascade();render();});

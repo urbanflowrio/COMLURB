@@ -37,4 +37,6 @@ A leitura executiva apresenta até três fatos distintos, quando houver base suf
 
 O gráfico mensal usa faturamento em 2026 e débito nas competências históricas. A série respeita os filtros de secretaria e serviço; o filtro de mês define o recorte dos indicadores e, em 2026, a competência usada na comparação.
 
+O ranking identifica as unidades no eixo e mostra o valor diretamente em cada barra. A evolução mensal também exibe rótulos de valor nos pontos. O detalhamento das unidades hospitalares integra a leitura por serviço, dentro de `Limpeza Hospitalar`, sem ocupar um bloco isolado no painel.
+
 O painel não consolida 2026 com os exercícios anteriores porque as duas visões possuem fontes e grãos distintos. A linha mensal foi priorizada em lugar de gauge radial ou gráfico de rosca por permitir comparação temporal direta.

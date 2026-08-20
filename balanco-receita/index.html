@@ -54,18 +54,13 @@
         <h2 id="execTitle">O que exige atenção no recorte</h2>
         <ul id="insightList" class="insightList"></ul>
       </div>
-      <aside>
-        <small id="openRateLabel">Percentual em aberto</small>
-        <strong id="openRate">—</strong>
-        <div class="meter"><i id="openMeter"></i></div>
-      </aside>
     </section>
 
     <section class="analysisGrid">
     <section class="receitaPanel concentrationPanel">
       <header class="panelHead concentrationHead">
         <div><span>Concentração financeira</span><h2 id="rankingTitle">Onde está o débito</h2></div>
-        <small id="rankingScope">—</small>
+        <div class="panelActions"><small id="rankingScope">—</small><button id="rankingBack" class="drillBack" type="button" hidden>← Voltar para unidades</button></div>
       </header>
       <div class="chartBody rankingChartBody"><canvas id="rankingChart"></canvas></div>
     </section>
@@ -73,7 +68,7 @@
     <section class="receitaPanel trendPanel">
       <header class="panelHead">
         <div><span>Evolução mensal</span><h2 id="trendTitle">Movimento do recorte</h2></div>
-        <small id="trendScope">—</small>
+        <div class="panelActions"><small id="trendScope">—</small><button id="trendBack" class="drillBack" type="button" hidden>← Voltar para evolução mensal</button></div>
       </header>
       <div class="chartBody trendChartBody"><canvas id="monthlyChart"></canvas></div>
     </section>
@@ -92,7 +87,7 @@
       </header>
       <div id="detailWrap" class="detailWrap">
         <table class="detailTable">
-          <thead><tr><th>Secretaria</th><th>Serviço</th><th>Unidade</th><th>Fat. bruto</th><th>Valor pago</th><th>Débito</th><th>Em aberto</th></tr></thead>
+          <thead><tr><th>Secretaria</th><th>Serviço</th><th>Unidade</th><th>Fat. bruto</th><th>Valor pago</th><th>Débito</th><th id="statusColumn">Situação</th></tr></thead>
           <tbody id="detailBody"></tbody>
         </table>
       </div>

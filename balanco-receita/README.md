@@ -23,7 +23,9 @@ Linhas identificadas como total ou total geral são excluídas da leitura. Servi
 
 O início da tabela de `Valores Faturados 2026` é localizado automaticamente pelo cabeçalho `Local` / `jan`, evitando a perda da primeira linha de dados. Para a APA, o acumulado validado de janeiro a julho de 2026 é de R$ 9.630.464,45.
 
-Em 2026, a planilha não possui uma fonte de pagamentos realizados. Por isso, a visão apresenta faturamento bruto acumulado, débito líquido identificado e débito sobre faturamento. O KPI `Valor Líquido Pago` permanece apenas na visão dos exercícios anteriores, onde o campo existe.
+Em 2026, a planilha não possui uma fonte de pagamentos realizados. Por isso, a visão apresenta faturamento bruto acumulado, débito líquido identificado e quantidade de serviços com débito. O KPI `Valor Líquido Pago` permanece apenas na visão dos exercícios anteriores, onde o campo existe.
+Em 2026, o painel não calcula uma taxa de inadimplência nem relaciona percentualmente o débito ao faturamento. O terceiro KPI informa quantos serviços possuem débito identificado no recorte. No gráfico `Onde está o débito`, o clique em uma unidade abre o detalhamento dos valores por mês de competência; o botão `Voltar para unidades` retorna ao ranking.
+No gráfico `Faturamento mês a mês`, o clique em uma competência abre a composição do faturamento por serviço. O botão `Voltar para evolução mensal` retorna à série temporal.
 
 ## Integração com o HUB
 
@@ -35,7 +37,7 @@ A leitura executiva apresenta até três fatos distintos, quando houver base suf
 
 - concentração financeira nas três maiores posições;
 - variação em relação à competência mensal anterior;
-- serviço com maior exposição proporcional.
+- serviço com maior débito identificado em 2026 ou maior exposição proporcional nos exercícios anteriores.
 
 O gráfico mensal usa faturamento em 2026 e débito nas competências históricas. A série respeita os filtros de secretaria e serviço; o filtro de mês define o recorte dos indicadores e, em 2026, a competência usada na comparação.
 

@@ -1,0 +1,432 @@
+{
+  "snapshotVersion": "1.0.0",
+  "moduloId": "ar",
+  "hash": "sha256:46efbb947ed68433cb6bbcbb82f4157f8453162fd0d2b6818136d23a66485613",
+  "hashInputVersion": "1.0.0",
+  "geradoEm": "2026-08-24T11:27:50.196Z",
+  "envelope": {
+    "schemaVersion": "indicadores.v1",
+    "sourceId": "AR_2026",
+    "capturedAt": "2026-08-24T11:27:50.194Z",
+    "referencePeriod": "2026",
+    "domain": "indicadores_metas",
+    "payload": {
+      "linhas": [
+        {
+          "id": "E01",
+          "nome": "Revitalização de Praças",
+          "meta": 2789,
+          "realizado": 1603,
+          "unidade": "Quantidade",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 1603,
+          "origem": "geral+mapeamento",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Revitalizações e manutenções em praças, parques infantis e espaços públicos residuais",
+            "fonte": "SARC / AR 2026",
+            "pendencia": "",
+            "tipoAcumulado": "SOMA",
+            "periodicidade": "Mensal",
+            "ordem": 1,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [
+              211,
+              195,
+              198,
+              250,
+              262,
+              255,
+              232
+            ],
+            "encontradoNaGeral": true
+          }
+        },
+        {
+          "id": "E02",
+          "nome": "Recuperação de Resíduos",
+          "meta": 3.8,
+          "realizado": 4.5,
+          "unidade": "Percentual",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 4.5,
+          "origem": "geral+mapeamento",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Recuperação de resíduos recicláveis secos e orgânicos",
+            "fonte": "SARC / AR 2026",
+            "pendencia": "",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Mensal",
+            "ordem": 2,
+            "statusPublicadoRaw": "Superado",
+            "serieMensal": [
+              5,
+              4,
+              5,
+              4,
+              4,
+              4,
+              5
+            ],
+            "encontradoNaGeral": true
+          }
+        },
+        {
+          "id": "E03",
+          "nome": "Ranking Nacional de Reciclagem",
+          "meta": 5,
+          "realizado": null,
+          "unidade": "Posição",
+          "sentido": "menor_melhor",
+          "periodo": "2026",
+          "acumulado": null,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "sem_dado",
+          "metadados": {
+            "descricao": "Manter posicionamento entre os 5 municípios com maior índice de recuperação de resíduos",
+            "fonte": "Fonte externa / AR 2026",
+            "pendencia": "",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Anual",
+            "ordem": 3,
+            "statusPublicadoRaw": "Indisponível",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "E04",
+          "nome": "Atendimento 1746 - Poda",
+          "meta": 95,
+          "realizado": 81.1,
+          "unidade": "Percentual",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 81.1,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Percentual de solicitações de poda de árvore em vias públicas atendidas dentro do prazo",
+            "fonte": "1746 / SARC",
+            "pendencia": "",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Mensal",
+            "ordem": 4,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "E05",
+          "nome": "Satisfação - Poda",
+          "meta": 4.5,
+          "realizado": 3.6,
+          "unidade": "Nota",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 3.6,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Nota de satisfação dos chamados de poda fechados com solução ou providência",
+            "fonte": "Pesquisa 1746",
+            "pendencia": "",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Bimestral",
+            "ordem": 5,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "E06",
+          "nome": "Atendimento 1746 - Remoção",
+          "meta": 100,
+          "realizado": 0,
+          "unidade": "Binário",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 0,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "sem_dado",
+          "metadados": {
+            "descricao": "Percentual de chamados de remoção de resíduos em vias públicas atendidos dentro do prazo",
+            "fonte": "1746 / SARC",
+            "pendencia": "Regra binária: os 12 indicadores regionais precisam atingir suas respectivas metas.",
+            "tipoAcumulado": "SOMA",
+            "periodicidade": "Mensal",
+            "ordem": 6,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "E07",
+          "nome": "Satisfação - Remoção",
+          "meta": 4.4,
+          "realizado": 3.9,
+          "unidade": "Nota",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 3.9,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Nota de satisfação dos chamados de remoção de resíduos fechados com solução ou providência",
+            "fonte": "Pesquisa 1746",
+            "pendencia": "",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Bimestral",
+            "ordem": 7,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "E08",
+          "nome": "Microdrenagem Urbana",
+          "meta": 50,
+          "realizado": 0,
+          "unidade": "Quantidade",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 0,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Estratégica",
+          "statusDisponibilidade": "sem_dado",
+          "metadados": {
+            "descricao": "Vistoria e limpeza/manutenção de pontos críticos de microdrenagem urbana",
+            "fonte": "SARC / COR / SECONSERVA",
+            "pendencia": "Validar se meta operacional é 50 pontos ou 150 intervenções",
+            "tipoAcumulado": "SOMA",
+            "periodicidade": "Cíclica",
+            "ordem": 8,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "C01",
+          "nome": "Conformidade IPL",
+          "meta": 80,
+          "realizado": 82.6,
+          "unidade": "Percentual",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 82.6,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Condicionada",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Conformidade nos itens avaliados no Índice Padrão de Limpeza",
+            "fonte": "SARC",
+            "pendencia": "Validar definição oficial de Conformidade IPL",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Bimestral",
+            "ordem": 9,
+            "statusPublicadoRaw": "Superado",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "C02",
+          "nome": "Desvio Padrão IPL",
+          "meta": 5.9,
+          "realizado": 4.5,
+          "unidade": "Desvio Padrão",
+          "sentido": "menor_melhor",
+          "periodo": "2026",
+          "acumulado": 4.5,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Condicionada",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Desvio padrão dos resultados setoriais do IPL",
+            "fonte": "SARC",
+            "pendencia": "Validar unidade territorial do cálculo e confirmar Referência=Meta",
+            "tipoAcumulado": "MÉDIA",
+            "periodicidade": "Bimestral",
+            "ordem": 10,
+            "statusPublicadoRaw": "Superado",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "C03",
+          "nome": "Manejo Arbóreo",
+          "meta": 211534,
+          "realizado": 128465,
+          "unidade": "Quantidade",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 128465,
+          "origem": "geral+mapeamento",
+          "condicaoPactuacao": "Condicionada",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Produção de manejo arbóreo",
+            "fonte": "SARC / AR 2026",
+            "pendencia": "",
+            "tipoAcumulado": "SOMA",
+            "periodicidade": "Mensal",
+            "ordem": 11,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [
+              15718,
+              12190,
+              20403,
+              18981,
+              20406,
+              19576,
+              21191
+            ],
+            "encontradoNaGeral": true
+          }
+        },
+        {
+          "id": "C04",
+          "nome": "RCC Gericinó",
+          "meta": 66000,
+          "realizado": 21759,
+          "unidade": "Toneladas",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 21759,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Condicionada",
+          "statusDisponibilidade": "disponivel",
+          "metadados": {
+            "descricao": "Recebimento de Resíduos de Construção Civil no Aterro de Gericinó",
+            "fonte": "SARC / AR 2026",
+            "pendencia": "",
+            "tipoAcumulado": "SOMA",
+            "periodicidade": "Mensal",
+            "ordem": 12,
+            "statusPublicadoRaw": "Crítico",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        },
+        {
+          "id": "P01",
+          "nome": "Performance Institucional CVL",
+          "meta": 1,
+          "realizado": 0,
+          "unidade": "Binário",
+          "sentido": "maior_melhor",
+          "periodo": "2026",
+          "acumulado": 0,
+          "origem": "ar2026",
+          "condicaoPactuacao": "Performance",
+          "statusDisponibilidade": "sem_dado",
+          "metadados": {
+            "descricao": "Itens de performance definidos pela CVL",
+            "fonte": "CVL",
+            "pendencia": "Detalhar itens de performance definidos pela CVL",
+            "tipoAcumulado": "SOMA",
+            "periodicidade": "Anual",
+            "ordem": 13,
+            "statusPublicadoRaw": "Indisponível",
+            "serieMensal": [],
+            "encontradoNaGeral": false
+          }
+        }
+      ]
+    },
+    "quality": {
+      "erros": [],
+      "avisos": [
+        {
+          "linha": 2,
+          "campo": "realizado",
+          "tipo": "valor_ausente_ou_invalido",
+          "mensagem": "Realizado ausente/não numérico para E03 — indicador será 'Sem dado', não descartado."
+        },
+        {
+          "linha": 2,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para E03 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 3,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para E04 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 4,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para E05 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 5,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para E06 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 6,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para E07 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 7,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para E08 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 8,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para C01 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 9,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para C02 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 11,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para C04 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        },
+        {
+          "linha": 12,
+          "campo": "origem",
+          "tipo": "sem_correspondencia_geral",
+          "mensagem": "Nenhuma linha correspondente encontrada na aba Geral para P01 — tendência ficará 'Série curta', sentido/unidade dependem só de AR_2026."
+        }
+      ],
+      "status": "atencao"
+    },
+    "lineage": {
+      "origem": "AR_2026",
+      "etapa": "validator",
+      "versaoPipeline": "1.0.0",
+      "timestamp": "2026-08-24T11:27:50.194Z"
+    }
+  }
+}

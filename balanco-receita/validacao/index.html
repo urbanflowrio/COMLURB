@@ -63,7 +63,7 @@
 <div class="kpis" id="liveKpis">
   <div class="kpi"><span class="muted">Faturamento Bruto</span><b>—</b></div>
   <div class="kpi"><span class="muted">Débito Líquido</span><b>—</b></div>
-  <div class="kpi"><span class="muted">Grupos conciliados</span><b>—</b></div>
+  <div class="kpi"><span class="muted">Grupos com dados</span><b>—</b></div>
   <div class="kpi"><span class="muted">Divergências</span><b>—</b></div>
 </div>
 
@@ -72,7 +72,7 @@
   <th>Período</th><th>Serviço</th><th>Secretaria (fonte)</th><th>Secretaria (padronizada)</th>
   <th>Fat. Bruto — fonte oficial</th><th>Fat. Bruto — réplica</th><th>Valor Líquido Pago</th>
   <th>Débito Líquido — fonte oficial</th><th>Débito Líquido — réplica</th><th>Diferença</th>
-  <th>Qtd. linhas</th><th>Total/Subtotal na origem?</th><th>Situação</th>
+  <th>Situação</th>
 </tr></thead><tbody></tbody></table></div>
 
 <h2>2. Cobertura do Valor Líquido Pago</h2>
@@ -153,7 +153,7 @@ function parseDebtRows_PAINEL(text){
 // Réplica exata de parseBilled2026 (balanco-receita.js)
 function parseBilled2026_PAINEL(text){
   const data=Papa.parse(text,{skipEmptyLines:false}).data;
-  const rows=[];let currentService="";const unmappedServices=new Set();
+  const rows=[];let currentService="";let sourceRows=0;const unmappedServices=new Set();
   const headerIndex=data.findIndex(r=>String(r[1]||"").trim().toLowerCase()==="local"&&String(r[2]||"").trim().toLowerCase()==="jan");
   data.slice(headerIndex>=0?headerIndex+1:1).forEach(r=>{
     const cellService=String(r[0]||"").trim();
@@ -161,12 +161,13 @@ function parseBilled2026_PAINEL(text){
     if(!currentService||/ Total$/i.test(currentService)||/^Total Geral$/i.test(currentService)||!String(r[1]||"").trim())return;
     const service=standardService(currentService),unit=standardUnit(r[1]),secretaria=SERVICE_SECRETARY[service]||"Não informada";
     if(secretaria==="Não informada")unmappedServices.add(service);
+    sourceRows++;
     for(let month=1;month<=12;month++){
       const billed=numeric(r[month+1]);
       if(billed>0)rows.push({secretaria,service,unit,type:service==="Limpeza Hospitalar"?"Unidade hospitalar":"",year:2026,month,billed,paid:0,paidProvided:false,debt:0,launches:0});
     }
   });
-  return {rows,unmappedServices:[...unmappedServices]};
+  return {rows,sourceRows,unmappedServices:[...unmappedServices]};
 }
 
 /* ==========================================================================
@@ -226,6 +227,7 @@ function parseBilled2026_FONTE(text){
 function money(v){return v==null?"—":new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:2}).format(v);}
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 function csvEscape(v){const s=String(v??"");return /[",\n;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function csvNumber(v){return typeof v==="number"&&Number.isFinite(v)?v.toFixed(2):v;}
 
 let ultimaConciliacao=[];
 function hashText(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,"0")}
@@ -234,7 +236,7 @@ async function fetchOfficial(url,label){
   try{const r=await fetch(url+(url.includes("?")?"&":"?")+"_="+Date.now(),{cache:"no-store",signal:ctrl.signal});if(!r.ok)throw new Error(label+": HTTP "+r.status);const text=await r.text();if(!text.trim())throw new Error(label+": resposta vazia");return {label,url,text,status:r.status,ms:Math.round(performance.now()-started),hash:hashText(text)};}finally{clearTimeout(timer)}
 }
 function renderSourceCards(items){const cards=document.querySelectorAll("#sourceGrid .source-card");items.forEach((x,i)=>{cards[i].querySelector("span").textContent="Disponível · HTTP "+x.status+" · "+x.ms+" ms";cards[i].querySelector("small").textContent=x.url+" · assinatura "+x.hash;});}
-function renderLiveKpis(){const cards=document.querySelectorAll("#liveKpis .kpi b"),fat=ultimaConciliacao.reduce((s,x)=>s+x.fatBrutoFonte,0),deb=ultimaConciliacao.reduce((s,x)=>s+x.debitoFonte,0),div=ultimaConciliacao.filter(x=>x.situacao==="diverge").length;cards[0].textContent=money(fat);cards[1].textContent=money(deb);cards[2].textContent=ultimaConciliacao.length-div+" de "+ultimaConciliacao.length;cards[3].textContent=String(div);}
+function renderLiveKpis(){const cards=document.querySelectorAll("#liveKpis .kpi b"),fat=ultimaConciliacao.reduce((s,x)=>s+x.fatBrutoFonte,0),deb=ultimaConciliacao.reduce((s,x)=>s+x.debitoFonte,0),div=ultimaConciliacao.filter(x=>x.situacao==="diverge").length,expected=Object.keys(SERVICE_SECRETARY).length*2,missing=Math.max(0,expected-ultimaConciliacao.length);cards[0].textContent=money(fat);cards[1].textContent=money(deb);cards[2].textContent=(ultimaConciliacao.length-div)+" conciliados"+(missing?" · "+missing+" sem dados":"");cards[3].textContent=String(div);}
 function renderVlpCoverage(rows){const periods=[["2026",r=>r.year===2026],["Anteriores a 2026",r=>r.year<2026]];document.getElementById("vlpCoverage").innerHTML='<table><thead><tr><th>Período</th><th>Linhas válidas</th><th>Com informação</th><th>Sem informação</th><th>Cobertura</th><th>Valor apurado nas linhas disponíveis</th><th>Leitura correta</th></tr></thead><tbody>'+periods.map(([label,fn])=>{const a=rows.filter(fn),ok=a.filter(r=>r.paidProvided),sum=ok.reduce((s,r)=>s+r.paid,0),coverage=a.length?ok.length/a.length:0;return '<tr><td>'+label+'</td><td>'+a.length+'</td><td>'+ok.length+'</td><td>'+(a.length-ok.length)+'</td><td>'+(coverage*100).toFixed(1).replace('.',',')+'%</td><td>'+(ok.length?money(sum):'sem informação disponível')+'</td><td>'+(coverage===1?'cobertura completa':coverage===0?'não apresentar como R$ 0,00':'valor parcial; não representa o total do período')+'</td></tr>'}).join('')+'</tbody></table>';}
 function clearLiveOutputs(){ultimaConciliacao=[];document.querySelectorAll("#liveKpis .kpi b").forEach(x=>x.textContent="—");document.querySelectorAll("#sourceGrid .source-card").forEach(x=>{x.querySelector("span").textContent="Fonte indisponível";x.querySelector("small").textContent="Nenhum dado anterior foi reutilizado."});document.getElementById("vlpCoverage").innerHTML='<p class="muted">fonte indisponível</p>';}
 
@@ -261,7 +263,7 @@ async function carregar(){
   const fonteDebt=parseDebtRows_FONTE(baseText);
   const fonteBilled=parseBilled2026_FONTE(billedText);
 
-  alertBox.innerHTML=`<div class="ok">Fontes carregadas: ${painelDebt.length} lançamentos em Base_Padronizada (réplica do painel) · ${painelBilled.rows.length} lançamentos em Valores Faturados 2026 (réplica do painel).</div>`;
+  alertBox.innerHTML=`<div class="ok">Fontes carregadas: ${painelDebt.length} linhas válidas em Base_Padronizada · ${painelBilled.sourceRows} linhas válidas em Valores Faturados 2026 (${painelBilled.rows.length} competências mensais processadas).</div>`;
   status.textContent=`Atualizado em ${new Date().toLocaleString("pt-BR")}`;
 
   renderConciliacao(painelDebt,painelBilled.rows,fonteDebt,fonteBilled.rows);
@@ -350,13 +352,12 @@ function renderConciliacao(painelDebt,painelBilledRows,fonteDebt,fonteBilledRows
     <td>${money(l.fatBrutoFonte)}</td><td>${money(l.fatBrutoPainel)}</td>
     <td>${typeof l.valorLiquidoPago==="number"?money(l.valorLiquidoPago):esc(l.valorLiquidoPago)}</td>
     <td>${money(l.debitoFonte)}</td><td>${money(l.debitoPainel)}</td><td>${money(l.diferenca)}</td>
-    <td>${l.qtdLinhas}</td><td>${esc(l.totalNaOrigem)}</td>
     <td><span class="tag ${l.situacao}">${l.situacao}</span></td>
-  </tr>`).join("")||`<tr><td colspan="13" class="muted">Sem linhas para exibir.</td></tr>`;
+  </tr>`).join("")||`<tr><td colspan="11" class="muted">Sem linhas para exibir.</td></tr>`;
 }
 
 function renderSemFonte(){
-  document.querySelector("#tblConciliacao tbody").innerHTML=`<tr class="semfonte"><td colspan="13">sem fonte disponível — falha ao carregar as planilhas neste carregamento</td></tr>`;
+  document.querySelector("#tblConciliacao tbody").innerHTML=`<tr class="semfonte"><td colspan="11">sem fonte disponível — falha ao carregar as planilhas neste carregamento</td></tr>`;
   document.querySelector("#tblSecretarias tbody").innerHTML=`<tr><td colspan="3" class="muted">sem fonte disponível</td></tr>`;
   document.getElementById("semMapeamento").innerHTML=`<p class="muted">sem fonte disponível</p>`;
   document.getElementById("secretariaVazia").innerHTML=`<p class="muted">sem fonte disponível</p>`;
@@ -445,8 +446,8 @@ function renderAPA(painelBilledRows){
 document.getElementById("btnReload").addEventListener("click",carregar);
 document.getElementById("btnExport").addEventListener("click",()=>{
   if(!ultimaConciliacao.length){alert("Carregue os dados antes de exportar.");return;}
-  const headers=["Periodo","Servico","Secretaria (fonte)","Secretaria (padronizada)","Fat. Bruto - fonte","Fat. Bruto - replica","Valor Liquido Pago","Debito Liquido - fonte","Debito Liquido - replica","Diferenca","Qtd linhas","Total/Subtotal na origem","Situacao"];
-  const linhas=ultimaConciliacao.map(l=>[l.periodo,l.servico,l.secretariaFonte,l.secretariaPadronizada,l.fatBrutoFonte,l.fatBrutoPainel,l.valorLiquidoPago,l.debitoFonte,l.debitoPainel,l.diferenca,l.qtdLinhas,l.totalNaOrigem,l.situacao].map(csvEscape).join(";"));
+  const headers=["Periodo","Servico","Secretaria (fonte)","Secretaria (padronizada)","Fat. Bruto - fonte","Fat. Bruto - replica","Valor Liquido Pago","Debito Liquido - fonte","Debito Liquido - replica","Diferenca","Situacao"];
+  const linhas=ultimaConciliacao.map(l=>[l.periodo,l.servico,l.secretariaFonte,l.secretariaPadronizada,csvNumber(l.fatBrutoFonte),csvNumber(l.fatBrutoPainel),csvNumber(l.valorLiquidoPago),csvNumber(l.debitoFonte),csvNumber(l.debitoPainel),csvNumber(l.diferenca),l.situacao].map(csvEscape).join(";"));
   const csv="\uFEFF"+headers.map(csvEscape).join(";")+"\n"+linhas.join("\n");
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`conciliacao-balanco-receita-${new Date().toISOString().slice(0,10)}.csv`;a.click();

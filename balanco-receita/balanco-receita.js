@@ -12,7 +12,13 @@ let debtRows=[],billed2026Rows=[],period="2026",rankingChart=null,monthlyChart=n
 const valueLabelsPlugin={id:"hubValueLabels",afterDatasetsDraw(chart,args,options){
   if(!options?.display)return;
   const {ctx}=chart;ctx.save();ctx.fillStyle="#f7f9ff";ctx.font="800 10px Segoe UI";
-  chart.getDatasetMeta(0).data.forEach((element,index)=>{const label=compact.format(chart.data.datasets[0].data[index]),point=element.tooltipPosition();if(chart.config.type==="bar"){ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(label,point.x-8,point.y);}else{ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillText(label,point.x,point.y-9);}});
+  chart.getDatasetMeta(0).data.forEach((element,index)=>{
+    const label=compact.format(chart.data.datasets[0].data[index]),point=element.tooltipPosition();
+    if(chart.config.type==="bar"){
+      const labelWidth=ctx.measureText(label).width,shortBar=point.x-chart.chartArea.left<labelWidth+20;
+      ctx.textAlign=shortBar?"left":"right";ctx.textBaseline="middle";ctx.fillText(label,point.x+(shortBar?8:-8),point.y);
+    }else{ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillText(label,point.x,point.y-9);}
+  });
   ctx.restore();
 }};
 
@@ -81,9 +87,9 @@ function currentRate(row){return period==="2026"?row.debt/Math.max(1,row.billed)
 
 function selectedFilters(){return{secretaria:$("secretaryFilter").value,service:$("serviceFilter").value,month:numeric($("monthFilter").value)};}
 function applyFilters(rows){const f=selectedFilters();return rows.filter(r=>(!f.secretaria||r.secretaria===f.secretaria)&&(!f.service||r.service===f.service)&&(!f.month||r.month===f.month));}
-function periodDebtRows(){return period==="2026"?debtRows.filter(r=>r.year===2026):debtRows.filter(r=>r.year<2026);}
-function periodBilledRows(){return period==="2026"?billed2026Rows:debtRows.filter(r=>r.year<2026);}
-function periodLabel(){return period==="2026"?"2026":"Anteriores a 2026";}
+function periodDebtRows(){return period==="2026"?debtRows.filter(r=>r.year===2026):debtRows.filter(r=>r.year<2026&&(!selectedDebtYear||r.year===selectedDebtYear));}
+function periodBilledRows(){return period==="2026"?billed2026Rows:debtRows.filter(r=>r.year<2026&&(!selectedDebtYear||r.year===selectedDebtYear));}
+function periodLabel(){return period==="2026"?"2026":selectedDebtYear?String(selectedDebtYear):"Anteriores a 2026";}
 
 function mergePositions(billed,debt){
   const map=new Map();
@@ -128,7 +134,7 @@ function filteredIgnoringMonth(rows){
 }
 
 function monthlySeries(){
-  const source=period==="2026"?filteredIgnoringMonth(billed2026Rows):filteredIgnoringMonth(debtRows.filter(r=>r.year<2026));
+  const source=period==="2026"?filteredIgnoringMonth(billed2026Rows):filteredIgnoringMonth(debtRows.filter(r=>r.year<2026&&(!selectedDebtYear||r.year===selectedDebtYear)));
   const values=new Map();
   source.forEach(r=>{
     if(!r.month)return;
@@ -268,7 +274,7 @@ function renderMonthly(){
     if(monthlyChart)HUB.charts.destroy(monthlyChart);
     monthlyChart=HUB.charts.barHorizontal("monthlyChart",{labels:years.map(([year])=>String(year)),values:years.map(([,value])=>value)},{label:"Débito líquido",color:HUB.charts.colors.red});
     tuneMoneyChart(monthlyChart,true);
-    monthlyChart.options.onClick=(event,elements)=>{if(!elements.length)return;selectedDebtYear=years[elements[0].index][0];renderMonthly();};
+    monthlyChart.options.onClick=(event,elements)=>{if(!elements.length)return;selectedDebtYear=years[elements[0].index][0];render();};
     monthlyChart.update();
     return;
   }
@@ -327,7 +333,7 @@ function init(){
   $("serviceFilter").addEventListener("change",()=>{selectedDebtPosition=null;selectedBilledMonth=null;selectedDebtYear=null;$("monthFilter").value="";populateCascade();render();});$("monthFilter").addEventListener("change",()=>{selectedDebtPosition=null;selectedBilledMonth=null;selectedDebtYear=null;render();});
   $("clearFilter").addEventListener("click",()=>{selectedDebtPosition=null;selectedBilledMonth=null;selectedDebtYear=null;serviceDebtDrillOpen=false;$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";period="2026";document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b.dataset.period==="2026"));populateCascade();render();});
   $("rankingBack").addEventListener("click",()=>{selectedDebtPosition=null;render();});
-  $("trendBack").addEventListener("click",()=>{selectedBilledMonth=null;selectedDebtYear=null;renderMonthly();});
+  $("trendBack").addEventListener("click",()=>{selectedBilledMonth=null;selectedDebtYear=null;render();});
   $("closeServiceDebt").addEventListener("click",()=>{serviceDebtDrillOpen=false;$("serviceDebtDrill").hidden=true;const card=document.querySelector("#kpiGrid > :nth-child(3)");if(card)card.setAttribute("aria-expanded","false");});
   $("toggleDetails").addEventListener("click",()=>{const open=$("detailWrap").classList.toggle("open");$("toggleDetails").textContent=open?"Recolher dados":"Explorar dados";$("toggleDetails").setAttribute("aria-expanded",String(open));});load();
 }

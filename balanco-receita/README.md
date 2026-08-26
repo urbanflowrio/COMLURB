@@ -43,6 +43,8 @@ O gráfico mensal usa faturamento em 2026 e débito nas competências histórica
 
 O ranking mostra as unidades no eixo e o valor em cada barra. A evolução mensal também exibe os valores nos pontos. As unidades hospitalares aparecem dentro de `Limpeza Hospitalar`, sem ocupar um bloco isolado. A leitura por serviço é apresentada como `Situação financeira por serviço`, e a base analítica como `Débitos em aberto por unidade`.
 
+Em `Anteriores a 2026`, a evolução financeira é consolidada dinamicamente por ano. Cada ano é clicável e abre o detalhamento somente dos meses disponíveis naquele exercício, respeitando os filtros de secretaria e serviço. O botão `Voltar para anos` retorna à visão anual.
+
 Em 2026, o terceiro card apresenta a quantidade de serviços com débito identificado e abre o detalhamento por serviço. O `Valor Líquido Pago` permanece na tabela analítica como `Sem informação` quando a fonte oficial não fornece o dado. O validador independente permanece disponível em `validacao/`, sem ocupar espaço no painel executivo.
 
 O painel não consolida 2026 com os exercícios anteriores porque as duas visões possuem fontes e grãos distintos. A linha mensal foi priorizada em lugar de gauge radial ou gráfico de rosca por permitir comparação temporal direta.

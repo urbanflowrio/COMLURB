@@ -41,6 +41,8 @@ A leitura executiva apresenta até três fatos distintos, quando houver base suf
 
 O gráfico mensal usa faturamento em 2026 e débito nas competências históricas. A série respeita os filtros de secretaria e serviço. O filtro de mês define o período dos indicadores e, em 2026, a competência usada na comparação.
 
-O ranking mostra as unidades no eixo e o valor em cada barra. A evolução mensal também exibe os valores nos pontos. As unidades hospitalares aparecem dentro de `Limpeza Hospitalar`, sem ocupar um bloco isolado. A leitura por serviço é apresentada como `Desempenho por serviço`, e a base analítica como `Débitos em aberto por unidade`.
+O ranking mostra as unidades no eixo e o valor em cada barra. A evolução mensal também exibe os valores nos pontos. As unidades hospitalares aparecem dentro de `Limpeza Hospitalar`, sem ocupar um bloco isolado. A leitura por serviço é apresentada como `Situação financeira por serviço`, e a base analítica como `Débitos em aberto por unidade`.
+
+Em 2026, o card `Valor Líquido Pago` informa explicitamente que a fonte oficial não possui o dado. A faixa de governança registra o horário da leitura bem-sucedida do Google Sheets, mantém o detalhamento dos serviços com débito e oferece acesso ao validador independente em `validacao/`.
 
 O painel não consolida 2026 com os exercícios anteriores porque as duas visões possuem fontes e grãos distintos. A linha mensal foi priorizada em lugar de gauge radial ou gráfico de rosca por permitir comparação temporal direta.

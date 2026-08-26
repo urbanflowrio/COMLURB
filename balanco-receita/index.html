@@ -47,6 +47,18 @@
 
   <main id="dashboard">
     <section id="kpiGrid" class="kpis receitaKpis" aria-label="Indicadores financeiros"></section>
+    <section class="governanceStrip" aria-label="Atualização e validação dos dados">
+      <div class="sourceStatus">
+        <span>Fonte oficial</span>
+        <strong id="sourceUpdated">Google Sheets · aguardando atualização</strong>
+      </div>
+      <button id="serviceDebtTrigger" class="debtSummaryButton" type="button" aria-expanded="false">
+        <span>Serviços com débito</span>
+        <strong id="servicesWithDebtValue">—</strong>
+        <small>Ver detalhamento</small>
+      </button>
+      <a class="validationLink" href="./validacao/">Ver validação dos dados</a>
+    </section>
     <section id="serviceDebtDrill" class="kpiDrill" hidden>
       <header>
         <div><span>Serviços com valores em aberto</span><h2>Detalhamento dos débitos</h2></div>
@@ -82,7 +94,7 @@
     </section>
 
     <header class="sectionHead">
-      <div><span>Leitura por serviço</span><h2>Desempenho por serviço</h2></div>
+      <div><span>Leitura por serviço</span><h2>Situação financeira por serviço</h2></div>
       <p id="serviceLeadText">Mostra a unidade com maior saldo em aberto em cada serviço.</p>
     </header>
     <section class="receitaPanel servicePanel"><div id="serviceBars" class="serviceBars"></div></section>

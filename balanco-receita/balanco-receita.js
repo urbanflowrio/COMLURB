@@ -149,8 +149,11 @@ function distinctInsights(a,positions,services){
   const series=monthlySeries(),selectedMonth=numeric($("monthFilter").value);
   let idx=selectedMonth&&period==="2026"?series.findIndex(x=>numeric(x.key)===selectedMonth):series.length-1;
   if(idx>0&&series[idx-1].value>0){
-    const change=series[idx].value/series[idx-1].value-1,direction=change>0?"aumentou":"recuou",metric=period==="2026"?"O faturamento":"O débito registrado";
-    facts.push({type:"Movimento mensal",text:`${metric} ${direction} ${percent.format(Math.abs(change))} em ${series[idx].label}, na comparação com ${series[idx-1].label}.`});
+    const change=series[idx].value/series[idx-1].value-1,metric=period==="2026"?"O faturamento":"O débito registrado";
+    const movement=Math.abs(change)<0.0005
+      ?`${metric} permaneceu no mesmo nível em ${series[idx].label}, na comparação com ${series[idx-1].label}.`
+      :`${metric} ${change>0?"aumentou":"recuou"} ${percent.format(Math.abs(change))} em ${series[idx].label}, na comparação com ${series[idx-1].label}.`;
+    facts.push({type:"Movimento mensal",text:movement});
   }
   const anomaly=services.filter(s=>s.value>0&&(!leader||s.name!==leader.service)).sort((x,y)=>y.value-x.value)[0]||services.filter(s=>s.value>0).sort((x,y)=>y.value-x.value)[0];
   if(anomaly)facts.push({type:"Ponto de atenção",text:period==="2026"?`${anomaly.name} apresenta ${money.format(anomaly.value)} em débitos.`:`Em ${anomaly.name}, ${percent.format(anomaly.rate)} do valor permanece em aberto.`});
@@ -175,12 +178,15 @@ function render(){
   HUB.cards.render("kpiGrid",period==="2026"?[
     {label:"Faturamento bruto acumulado",value:a.billed,note:"Total faturado em 2026 conforme os filtros aplicados",feature:true,color:"blue",customFormatter:v=>money.format(v)},
     {label:"Débito líquido identificado",value:a.debt,note:"Saldo em aberto localizado na razão de débito",color:"red",customFormatter:v=>money.format(v)},
-    {label:"Serviços com débito identificado",value:servicesWithDebt,note:"Clique para ver os serviços e os valores",color:"orange",customFormatter:v=>String(v)}
+    {label:"Valor líquido pago",value:0,note:"A fonte oficial de 2026 não apresenta esse valor",color:"green",customFormatter:()=>"Sem informação disponível"}
   ]:[
     {label:"Faturamento bruto",value:a.billed,note:"Faturamento registrado no período",feature:true,color:"blue",customFormatter:v=>money.format(v)},
     {label:"Valor líquido pago",value:a.paid,note:"Pagamentos informados na base histórica",color:"green",customFormatter:v=>money.format(v)},
     {label:"Débito líquido",value:a.debt,note:"Saldo em aberto no período",color:"red",customFormatter:v=>money.format(v)}
   ]);
+
+  document.querySelector("#kpiGrid > :nth-child(3)")?.classList.toggle("noDataKpi",period==="2026");
+  $("servicesWithDebtValue").textContent=String(servicesWithDebt);
 
   setupServiceDebtDrill(positions);
   $("serviceLeadText").textContent=a.focus==="debt"?"Mostra a unidade com maior saldo em aberto em cada serviço.":"Mostra a unidade com maior faturamento em cada serviço.";
@@ -190,13 +196,14 @@ function render(){
 }
 
 function setupServiceDebtDrill(positions){
-  const drill=$("serviceDebtDrill"),card=document.querySelector("#kpiGrid > :nth-child(3)"),map=new Map();
-  if(period!=="2026"){serviceDebtDrillOpen=false;drill.hidden=true;return;}
+  const drill=$("serviceDebtDrill"),trigger=$("serviceDebtTrigger"),map=new Map();
+  if(period!=="2026"){serviceDebtDrillOpen=false;drill.hidden=true;trigger.hidden=true;return;}
+  trigger.hidden=false;
   positions.filter(r=>r.debt>0).forEach(r=>{if(!map.has(r.service))map.set(r.service,{value:0,units:new Set()});const item=map.get(r.service);item.value+=r.debt;item.units.add(r.unit);});
   const services=[...map].sort((a,b)=>b[1].value-a[1].value);
   $("serviceDebtList").innerHTML=services.length?services.map(([service,item])=>`<button type="button" data-service="${escapeHTML(service)}"><span><b>${escapeHTML(service)}</b><small>${item.units.size} ${item.units.size===1?"unidade":"unidades"}</small></span><strong>${escapeHTML(money.format(item.value))}</strong></button>`).join(""):'<div class="emptyState">Não há débitos para os filtros aplicados.</div>';
   drill.hidden=!serviceDebtDrillOpen;
-  if(card){card.classList.add("interactiveKpi");card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-expanded",String(serviceDebtDrillOpen));const toggle=()=>{serviceDebtDrillOpen=!serviceDebtDrillOpen;drill.hidden=!serviceDebtDrillOpen;card.setAttribute("aria-expanded",String(serviceDebtDrillOpen));if(serviceDebtDrillOpen)drill.scrollIntoView({behavior:"smooth",block:"nearest"});};card.addEventListener("click",toggle);card.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();toggle();}});}
+  trigger.setAttribute("aria-expanded",String(serviceDebtDrillOpen));
   $("serviceDebtList").querySelectorAll("button[data-service]").forEach(button=>button.addEventListener("click",()=>{selectedDebtPosition=null;selectedBilledMonth=null;serviceDebtDrillOpen=false;$("serviceFilter").value=button.dataset.service;$("monthFilter").value="";populateCascade();render();}));
 }
 
@@ -283,7 +290,8 @@ async function load(){
     if(!baseResponse.ok||!billedResponse.ok)throw new Error("Fonte indisponível");
     debtRows=parseDebtRows(await baseResponse.text());billed2026Rows=parseBilled2026(await billedResponse.text());
     if(!debtRows.length||!billed2026Rows.length)throw new Error("Base vazia");$("dataAlert").hidden=true;
-  }catch(error){$("dataAlert").hidden=false;console.warn("HUB COMLURB: falha na atualização das bases.",error);}
+    $("sourceUpdated").textContent=`Google Sheets · atualizado em ${new Date().toLocaleString("pt-BR")}`;
+  }catch(error){$("dataAlert").hidden=false;$("sourceUpdated").textContent="Google Sheets · fonte indisponível";console.warn("HUB COMLURB: falha na atualização das bases.",error);}
   populateCascade();render();
 }
 
@@ -296,7 +304,8 @@ function init(){
   $("clearFilter").addEventListener("click",()=>{selectedDebtPosition=null;selectedBilledMonth=null;serviceDebtDrillOpen=false;$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";period="2026";document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b.dataset.period==="2026"));populateCascade();render();});
   $("rankingBack").addEventListener("click",()=>{selectedDebtPosition=null;render();});
   $("trendBack").addEventListener("click",()=>{selectedBilledMonth=null;renderMonthly();});
-  $("closeServiceDebt").addEventListener("click",()=>{serviceDebtDrillOpen=false;$("serviceDebtDrill").hidden=true;const card=document.querySelector("#kpiGrid > :nth-child(3)");if(card)card.setAttribute("aria-expanded","false");});
+  $("serviceDebtTrigger").addEventListener("click",()=>{serviceDebtDrillOpen=!serviceDebtDrillOpen;$("serviceDebtDrill").hidden=!serviceDebtDrillOpen;$("serviceDebtTrigger").setAttribute("aria-expanded",String(serviceDebtDrillOpen));if(serviceDebtDrillOpen)$("serviceDebtDrill").scrollIntoView({behavior:"smooth",block:"nearest"});});
+  $("closeServiceDebt").addEventListener("click",()=>{serviceDebtDrillOpen=false;$("serviceDebtDrill").hidden=true;$("serviceDebtTrigger").setAttribute("aria-expanded","false");});
   $("toggleDetails").addEventListener("click",()=>{const open=$("detailWrap").classList.toggle("open");$("toggleDetails").textContent=open?"Recolher dados":"Explorar dados";$("toggleDetails").setAttribute("aria-expanded",String(open));});load();
 }
 document.addEventListener("DOMContentLoaded",init);

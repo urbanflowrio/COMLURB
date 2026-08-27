@@ -130,6 +130,35 @@
 @media (max-width:980px){.fleetFilters,.fleetSummary,.infraKpis{grid-template-columns:repeat(2,1fr)}.fleetAnalysisGrid{grid-template-columns:1fr;}}
 @media (max-width:580px){.fleetFilters,.fleetSummary,.infraKpis{grid-template-columns:1fr}.fleetTab{flex:1}.fleetTable{font-size:10.5px}.fleetTable th,.fleetTable td{padding:7px 5px}}
 
+
+/* Frota v2 · workspace executivo */
+.fleetServiceCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px;}
+.fleetServiceCard{appearance:none;text-align:left;border:1px solid var(--linha);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006)),var(--painel2);border-radius:15px;padding:15px 16px;color:var(--texto);cursor:pointer;transition:.18s ease;min-height:92px;}
+.fleetServiceCard:hover{transform:translateY(-1px);border-color:#3c4b58;}
+.fleetServiceCard.active{border-color:rgba(91,147,232,.62);box-shadow:inset 0 0 0 1px rgba(91,147,232,.12),0 8px 28px rgba(0,0,0,.12);background:linear-gradient(180deg,rgba(91,147,232,.10),rgba(91,147,232,.025)),var(--painel2);}
+.fleetServiceCard .serviceName{font-size:11px;font-weight:800;color:var(--silenciado);letter-spacing:.015em;}
+.fleetServiceCard .serviceValue{font-size:25px;font-weight:900;letter-spacing:-.025em;margin-top:7px;line-height:1;}
+.fleetServiceCard .serviceMeta{font-size:10.5px;color:var(--silenciado);margin-top:7px;}
+.fleetWorkspace .panelHead{align-items:center;}
+.fleetStatus{font-size:10.5px;color:var(--silenciado);display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.fleetStatus::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--verde);box-shadow:0 0 8px rgba(38,217,174,.38);}
+.fleetStatus.snapshot::before{background:var(--amarelo);box-shadow:0 0 8px rgba(255,160,43,.32);}
+.fleetStatus.error::before{background:var(--vermelho);}
+.fleetWorkspace .fleetFilters{grid-template-columns:.75fr 1fr 1fr 1.25fr;margin:0 0 12px;}
+.fleetWorkspace .fleetSummary{margin:0;}
+.fleetSummaryCard{position:relative;overflow:hidden;min-height:89px;}
+.fleetSummaryCard:first-child::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:2px;background:linear-gradient(90deg,var(--azul2,var(--azul)),transparent);}
+.fleetAnalysisTop{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(330px,.65fr);gap:14px;margin-top:14px;}
+.fleetAnalysisBottom{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:14px;margin-top:14px;}
+.fleetAnalysisTop .panel,.fleetAnalysisBottom .panel{margin:0;}
+.fleetRankBody{max-height:330px;overflow:auto;scrollbar-width:thin;}
+.fleetTable tr:hover td{background:rgba(91,147,232,.035);}
+.fleetEmpty{min-height:210px;display:flex;align-items:center;justify-content:center;}
+.fleetMicroNote{font-size:10.5px;color:var(--silenciado);margin-top:10px;line-height:1.45;}
+@media (max-width:1000px){.fleetAnalysisTop,.fleetAnalysisBottom{grid-template-columns:1fr}.fleetWorkspace .fleetFilters{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:650px){.fleetServiceCards{grid-template-columns:1fr}.fleetWorkspace .fleetFilters{grid-template-columns:1fr}.fleetServiceCard{min-height:auto}.fleetStatus{white-space:normal}.fleetSummary{grid-template-columns:repeat(2,1fr)!important}}
+@media (max-width:420px){.fleetSummary{grid-template-columns:1fr!important}}
+
 </style>
 </head>
 
@@ -274,19 +303,24 @@
       </div>
     </div>
 
-    <div class="panel" style="margin-bottom:16px;">
+    <div class="fleetServiceCards" id="fleetTabs">
+      <button class="fleetServiceCard active" data-fleet="domiciliar">
+        <div class="serviceName">Coleta Domiciliar</div><div class="serviceValue" id="fleetTabValDomiciliar">—</div><div class="serviceMeta">utilização · competência vigente</div>
+      </button>
+      <button class="fleetServiceCard" data-fleet="seletiva">
+        <div class="serviceName">Coleta Seletiva</div><div class="serviceValue" id="fleetTabValSeletiva">—</div><div class="serviceMeta">utilização · competência vigente</div>
+      </button>
+      <button class="fleetServiceCard" data-fleet="lixo">
+        <div class="serviceName">Lixo Público</div><div class="serviceValue" id="fleetTabValLixo">—</div><div class="serviceMeta">utilização · base detalhada</div>
+      </button>
+    </div>
+
+    <div class="panel fleetWorkspace">
       <div class="panelHead">
-        <div><h2>Utilização da Frota</h2><div class="hint">Peso transportado ÷ capacidade estimada · detalhamento mensal por operação, unidade e família de veículo</div></div>
+        <div><h2>Diagnóstico de utilização</h2><div class="hint">Peso transportado ÷ capacidade estimada · filtros em cascata</div></div>
+        <div class="fleetStatus" id="fleetSourceStatus">carregando base detalhada…</div>
       </div>
       <div class="body">
-        <div class="fleetSourceNote">
-          O consolidado executivo permanece no Relatório Mensal DTE. Esta área usa as bases detalhadas de Coleta Domiciliar, Coleta Seletiva e Lixo Público para explicar a distribuição da utilização. O percentual é recalculado por <strong>peso total ÷ capacidade total</strong>, evitando média simples de percentuais.
-        </div>
-        <div class="fleetTabs" id="fleetTabs">
-          <button class="fleetTab active" data-fleet="domiciliar">Coleta Domiciliar</button>
-          <button class="fleetTab" data-fleet="seletiva">Coleta Seletiva</button>
-          <button class="fleetTab" data-fleet="lixo">Lixo Público</button>
-        </div>
         <div class="fleetFilters">
           <div class="fleetFilter"><label for="fleetPeriodo">Competência</label><select id="fleetPeriodo"></select></div>
           <div class="fleetFilter"><label for="fleetSuper">Superintendência</label><select id="fleetSuper"></select></div>
@@ -294,27 +328,28 @@
           <div class="fleetFilter"><label for="fleetVeiculo">Veículo / equipamento</label><select id="fleetVeiculo"></select></div>
         </div>
         <div class="fleetSummary" id="fleetSummary"></div>
+        <div class="fleetMicroNote">O indicador executivo continua sendo o publicado no Relatório Mensal DTE. O detalhamento abaixo serve para localizar a distribuição por unidade e família de veículo.</div>
       </div>
     </div>
 
-    <div class="fleetAnalysisGrid">
+    <div class="fleetAnalysisTop">
       <div class="panel">
         <div class="panelHead"><div><h2>Evolução mensal</h2><div class="hint" id="fleetTrendHint">Utilização no recorte selecionado</div></div></div>
-        <div class="body"><div class="chartWrap"><canvas id="chartFleetTrend"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:270px"><canvas id="chartFleetTrend"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Utilização por família de veículo</h2><div class="hint">Famílias consolidadas · variantes técnicas permanecem na base de origem</div></div></div>
-        <div class="body" id="fleetVehicleRanking"></div>
+        <div class="panelHead"><div><h2>Por família de veículo</h2><div class="hint">Famílias consolidadas · menor utilização primeiro</div></div></div>
+        <div class="body fleetRankBody" id="fleetVehicleRanking"></div>
       </div>
     </div>
 
-    <div class="fleetAnalysisGrid">
+    <div class="fleetAnalysisBottom">
       <div class="panel">
-        <div class="panelHead"><div><h2>Gerências do recorte</h2><div class="hint">Ordenação da menor para a maior utilização</div></div></div>
-        <div class="body" id="fleetGerRanking"></div>
+        <div class="panelHead"><div><h2>Gerências do recorte</h2><div class="hint">Peso, capacidade e utilização · menor utilização primeiro</div></div></div>
+        <div class="body fleetRankBody" id="fleetGerRanking"></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Leitura do recorte</h2><div class="hint">Síntese automática baseada somente na base detalhada selecionada</div></div></div>
+        <div class="panelHead"><div><h2>Leitura do recorte</h2><div class="hint">Pontos que exigem leitura gerencial</div></div></div>
         <div class="body"><div class="leituraChips" id="fleetInsights"></div></div>
       </div>
     </div>
@@ -549,6 +584,68 @@ function chartOuVazio(canvasId, values, drawFn) {
   drawFn();
 }
 
+
+// ============================================
+// FROTA · CARREGAMENTO ROBUSTO
+// CSV publicado -> GViz/JSONP -> snapshot local de contingência
+// ============================================
+const FLEET_SOURCE_MODE = { domiciliar:"pending", seletiva:"pending", lixo:"pending" };
+function fleetSnapshot(tipo){
+  const snap=window.DTE_FLEET_SNAPSHOT||{};
+  return Array.isArray(snap[tipo])?snap[tipo]:[];
+}
+function fleetPublishedGviz(url, callbackName){
+  const m=String(url||"").match(/\/spreadsheets\/d\/e\/([^/]+)/);
+  if(!m)return null;
+  const gid=(String(url).match(/[?&]gid=([^&]+)/)||[])[1]||"0";
+  const tqx=encodeURIComponent(`out:json;responseHandler:${callbackName}`);
+  return `https://docs.google.com/spreadsheets/d/e/${m[1]}/gviz/tq?gid=${gid}&headers=1&tqx=${tqx}`;
+}
+function gvizRows(resp){
+  const t=resp&&resp.table;
+  if(!t||!Array.isArray(t.cols)||!Array.isArray(t.rows))return [];
+  const heads=t.cols.map((c,i)=>HUB.format.clean(c.label||c.id||`col${i+1}`));
+  return t.rows.map(r=>{
+    const o={};
+    heads.forEach((h,i)=>{
+      const c=r.c&&r.c[i];
+      if(!h)return;
+      if(!c){o[h]="";return;}
+      // Para datas, o valor formatado preserva a competência exibida no Sheets.
+      o[h]=(c.f!==undefined&&c.f!==null)?c.f:c.v;
+    });
+    return o;
+  }).filter(r=>Object.values(r).some(v=>String(v??"").trim()!==""));
+}
+function loadFleetJsonp(url,tipo){
+  return new Promise((resolve,reject)=>{
+    const cb=`__dteFleet_${tipo}_${Date.now()}_${Math.floor(Math.random()*9999)}`;
+    const src=fleetPublishedGviz(url,cb);
+    if(!src){reject(new Error("URL publicada inválida"));return;}
+    const s=document.createElement("script");
+    let done=false;
+    const finish=(err,rows)=>{if(done)return;done=true;clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}s.remove();err?reject(err):resolve(rows)};
+    window[cb]=(resp)=>{try{const rows=gvizRows(resp);rows.length?finish(null,rows):finish(new Error("GViz sem linhas"));}catch(e){finish(e)}};
+    s.onerror=()=>finish(new Error("falha JSONP"));
+    s.src=src; document.head.appendChild(s);
+    const timer=setTimeout(()=>finish(new Error("timeout JSONP")),9000);
+  });
+}
+async function loadFleetSource(url,tipo,label){
+  try{
+    const rows=await HUB.data.loadCSV(url,{name:label,cache:false});
+    if(rows&&rows.length){FLEET_SOURCE_MODE[tipo]="live";return rows;}
+  }catch(e){console.warn(label+" CSV:",e)}
+  try{
+    const rows=await loadFleetJsonp(url,tipo);
+    if(rows&&rows.length){FLEET_SOURCE_MODE[tipo]="live";console.log(`OK ${label} via GViz: ${rows.length} linhas`);return rows;}
+  }catch(e){console.warn(label+" GViz:",e)}
+  const snap=fleetSnapshot(tipo);
+  if(snap.length){FLEET_SOURCE_MODE[tipo]="snapshot";console.warn(`${label}: usando snapshot local de contingência (${snap.length} linhas)`);return snap;}
+  FLEET_SOURCE_MODE[tipo]="error";
+  return [];
+}
+
 // ============================================
 // INICIALIZAÇÃO
 // ============================================
@@ -572,9 +669,9 @@ async function init() {
     loadRawCSV(CONFIG.urls.relatorio, "relatorio"),
     loadRawCSV(CONFIG.urls.ind2025, "ind2025"),
     loadRawCSV(CONFIG.urls.ind2026, "ind2026"),
-    HUB.data.loadCSV(CONFIG.urls.coletaDomiciliar, { name: "coletaDomiciliar" }),
-    HUB.data.loadCSV(CONFIG.urls.coletaSeletiva, { name: "coletaSeletiva" }),
-    HUB.data.loadCSV(CONFIG.urls.lixoPublico, { name: "lixoPublico" })
+    loadFleetSource(CONFIG.urls.coletaDomiciliar, "domiciliar", "Coleta Domiciliar"),
+    loadFleetSource(CONFIG.urls.coletaSeletiva, "seletiva", "Coleta Seletiva"),
+    loadFleetSource(CONFIG.urls.lixoPublico, "lixo", "Lixo Público")
   ]);
   RAW = { relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub };
   RAW.secoes = parseSecoes(relatorio);
@@ -1151,10 +1248,21 @@ function renderFrota() {
     kpis.innerHTML=cards.map(c=>`<div class="fleetKpi"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join("");
   }
 
-  document.querySelectorAll("#fleetTabs .fleetTab").forEach(btn=>{
+  const setServiceMetric=(id,tipo,official)=>{
+    const el=document.getElementById(id); if(!el)return;
+    if(official!==null&&official!==undefined){el.textContent=Number(official).toFixed(1).replace(".",",")+"%";return;}
+    const rr=fleetRowsForType(tipo), pp=[...new Set(rr.map(r=>r.periodo))].sort(), lastp=pp.at(-1);
+    const a=weightedFleet(rr.filter(r=>r.periodo===lastp));
+    el.textContent=a.pct==null?"—":a.pct.toFixed(1).replace(".",",")+"%";
+  };
+  setServiceMetric("fleetTabValDomiciliar","domiciliar",iDom>=0?domicOf[iDom]:null);
+  setServiceMetric("fleetTabValSeletiva","seletiva",iSel>=0?seletivaOf[iSel]:null);
+  setServiceMetric("fleetTabValLixo","lixo",null);
+
+  document.querySelectorAll("#fleetTabs .fleetServiceCard").forEach(btn=>{
     btn.onclick=()=>{
       FLEET_STATE={tipo:btn.dataset.fleet,periodo:"",super:"",gerencia:"",veiculo:""};
-      document.querySelectorAll("#fleetTabs .fleetTab").forEach(b=>b.classList.toggle("active",b===btn));
+      document.querySelectorAll("#fleetTabs .fleetServiceCard").forEach(b=>b.classList.toggle("active",b===btn));
       setupFleetFilters();
       renderFleetDetail();
     };
@@ -1194,6 +1302,12 @@ function renderFleetDetail(){
   const current=fleetBaseFiltered(rows);
   const agg=weightedFleet(current);
   const serviceName=FLEET_STATE.tipo==="seletiva"?"Coleta Seletiva":FLEET_STATE.tipo==="lixo"?"Lixo Público":"Coleta Domiciliar";
+  const status=document.getElementById("fleetSourceStatus");
+  if(status){
+    const mode=FLEET_SOURCE_MODE[FLEET_STATE.tipo]||"error";
+    status.className="fleetStatus "+(mode==="snapshot"?"snapshot":mode==="error"?"error":"");
+    status.textContent=mode==="live"?"base publicada · atualização automática":mode==="snapshot"?"base de contingência · dados até jul/26":"base detalhada indisponível";
+  }
   const summary=document.getElementById("fleetSummary");
   const gerCount=new Set(current.map(r=>r.gerencia)).size;
   const vehCount=new Set(current.map(r=>r.familia)).size;
@@ -1208,6 +1322,7 @@ function renderFleetDetail(){
 
   const trendRows=fleetBaseFiltered(rows,{ignorePeriodo:true});
   const trend=fleetGroup(trendRows,"periodo").sort((a,b)=>a.name.localeCompare(b.name));
+  const th=document.getElementById("fleetTrendHint"); if(th)th.textContent=`${serviceName}${FLEET_STATE.gerencia?" · "+FLEET_STATE.gerencia:""}${FLEET_STATE.veiculo?" · "+fleetLabel(FLEET_STATE.veiculo):""}`;
   const c=document.getElementById("chartFleetTrend");
   if(fleetTrendChart){fleetTrendChart.destroy();fleetTrendChart=null;}
   if(c&&trend.length){

@@ -94,6 +94,42 @@
 .derivFormula{font-size:10.5px;color:var(--silenciado);margin-top:4px;font-family:"Courier New",monospace;}
 @media (max-width:900px){ .derivGrid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 #kpisVisao{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+
+/* Evolução segura do módulo DTE — somente nesta página */
+.fleetSourceNote{font-size:11px;color:var(--silenciado);line-height:1.55;margin:0 0 14px;padding:11px 13px;border:1px solid var(--linha);border-radius:12px;background:var(--painel2);}
+.fleetTabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.fleetTab{appearance:none;border:1px solid var(--linha);background:var(--painel2);color:var(--silenciado);padding:9px 13px;border-radius:10px;font:inherit;font-size:12px;font-weight:750;cursor:pointer;transition:.18s ease;}
+.fleetTab:hover{border-color:#425161;color:var(--texto);}
+.fleetTab.active{background:rgba(91,147,232,.13);border-color:rgba(91,147,232,.5);color:var(--texto);}
+.fleetFilters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;}
+.fleetFilter{display:flex;flex-direction:column;gap:6px;}
+.fleetFilter label{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--silenciado);font-weight:800;}
+.fleetFilter select{width:100%;background:var(--painel2);color:var(--texto);border:1px solid var(--linha);border-radius:10px;padding:10px 11px;font:inherit;font-size:12px;outline:none;}
+.fleetFilter select:focus{border-color:rgba(91,147,232,.65);}
+.fleetSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;}
+.fleetSummaryCard{padding:14px;border:1px solid var(--linha);border-radius:13px;background:var(--painel2);}
+.fleetSummaryCard .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:6px;}
+.fleetSummaryCard .v{font-size:21px;font-weight:850;color:var(--texto);}
+.fleetSummaryCard .s{font-size:10.5px;color:var(--silenciado);margin-top:4px;}
+.fleetAnalysisGrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:14px;margin-top:14px;}
+.fleetTable{width:100%;border-collapse:collapse;font-size:11.5px;}
+.fleetTable th{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);text-align:left;padding:8px 9px;border-bottom:1px solid var(--linha);}
+.fleetTable td{padding:9px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--texto);vertical-align:middle;}
+.fleetTable td.num,.fleetTable th.num{text-align:right;}
+.fleetTable tr:last-child td{border-bottom:0;}
+.fleetBar{height:6px;border-radius:8px;background:var(--linha);overflow:hidden;min-width:90px;}
+.fleetBar > span{display:block;height:100%;border-radius:8px;background:var(--azul2,var(--azul));}
+.fleetBar > span.over{background:var(--amarelo);}
+.fleetMetaLine{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--silenciado);}
+.fleetEmpty{padding:28px 14px;text-align:center;color:var(--silenciado);font-size:12px;}
+.infraKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px;}
+.infraKpi{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:15px;}
+.infraKpi .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:6px;}
+.infraKpi .v{font-size:21px;font-weight:850;color:var(--texto);}
+.infraKpi .s{font-size:10.5px;color:var(--silenciado);margin-top:4px;}
+@media (max-width:980px){.fleetFilters,.fleetSummary,.infraKpis{grid-template-columns:repeat(2,1fr)}.fleetAnalysisGrid{grid-template-columns:1fr;}}
+@media (max-width:580px){.fleetFilters,.fleetSummary,.infraKpis{grid-template-columns:1fr}.fleetTab{flex:1}.fleetTable{font-size:10.5px}.fleetTable th,.fleetTable td{padding:7px 5px}}
+
 </style>
 </head>
 
@@ -219,42 +255,92 @@
     </div>
   </section>
 
-  <!-- ===================== FROTA & EFICIÊNCIA ===================== -->
+  <!-- ===================== UTILIZAÇÃO DA FROTA ===================== -->
   <section class="screen" id="screenFrota">
     <div class="fleetKpis" id="fleetKpis"></div>
-    <div class="fleetInsights" id="fleetInsights"></div>
-    <div class="grid">
+
+    <div class="grid" style="margin-bottom:16px;">
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Horas extras</h2><div class="hint">Valor mensal (R$)</div></div>
-        </div>
+        <div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal (R$) · consolidado oficial DTE</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite</div></div>
-        </div>
+        <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite · consolidado oficial DTE</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartSobrecarga"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead">
-          <div><h2>Frota total vs. em operação</h2><div class="hint">Veículos por mês</div></div>
-        </div>
+        <div class="panelHead"><div><h2>Frota própria</h2><div class="hint">Total vs. veículos em operação</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartFrotaComparativo"></canvas></div></div>
       </div>
     </div>
-    <div class="segmentGrid">
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panelHead">
+        <div><h2>Utilização da Frota</h2><div class="hint">Peso transportado ÷ capacidade estimada · detalhamento mensal por operação, unidade e família de veículo</div></div>
+      </div>
+      <div class="body">
+        <div class="fleetSourceNote">
+          O consolidado executivo permanece no Relatório Mensal DTE. Esta área usa as bases detalhadas de Coleta Domiciliar, Coleta Seletiva e Lixo Público para explicar a distribuição da utilização. O percentual é recalculado por <strong>peso total ÷ capacidade total</strong>, evitando média simples de percentuais.
+        </div>
+        <div class="fleetTabs" id="fleetTabs">
+          <button class="fleetTab active" data-fleet="domiciliar">Coleta Domiciliar</button>
+          <button class="fleetTab" data-fleet="seletiva">Coleta Seletiva</button>
+          <button class="fleetTab" data-fleet="lixo">Lixo Público</button>
+        </div>
+        <div class="fleetFilters">
+          <div class="fleetFilter"><label for="fleetPeriodo">Competência</label><select id="fleetPeriodo"></select></div>
+          <div class="fleetFilter"><label for="fleetSuper">Superintendência</label><select id="fleetSuper"></select></div>
+          <div class="fleetFilter"><label for="fleetGerencia">Gerência</label><select id="fleetGerencia"></select></div>
+          <div class="fleetFilter"><label for="fleetVeiculo">Veículo / equipamento</label><select id="fleetVeiculo"></select></div>
+        </div>
+        <div class="fleetSummary" id="fleetSummary"></div>
+      </div>
+    </div>
+
+    <div class="fleetAnalysisGrid">
       <div class="panel">
-        <div class="panelHead"><div><h2>Domiciliar</h2><div class="hint">Utilização da capacidade por gerência</div></div></div>
-        <div class="body" id="segmentDomiciliar"></div>
+        <div class="panelHead"><div><h2>Evolução mensal</h2><div class="hint" id="fleetTrendHint">Utilização no recorte selecionado</div></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartFleetTrend"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Seletiva</h2><div class="hint">Utilização da capacidade por gerência</div></div></div>
-        <div class="body" id="segmentSeletiva"></div>
+        <div class="panelHead"><div><h2>Utilização por família de veículo</h2><div class="hint">Famílias consolidadas · variantes técnicas permanecem na base de origem</div></div></div>
+        <div class="body" id="fleetVehicleRanking"></div>
+      </div>
+    </div>
+
+    <div class="fleetAnalysisGrid">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Gerências do recorte</h2><div class="hint">Ordenação da menor para a maior utilização</div></div></div>
+        <div class="body" id="fleetGerRanking"></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Lixo Público</h2><div class="hint">Utilização da capacidade por gerência</div></div></div>
-        <div class="body" id="segmentLixoPublico"></div>
+        <div class="panelHead"><div><h2>Leitura do recorte</h2><div class="hint">Síntese automática baseada somente na base detalhada selecionada</div></div></div>
+        <div class="body"><div class="leituraChips" id="fleetInsights"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== EQUIPAMENTOS & INFRAESTRUTURA ===================== -->
+  <section class="screen" id="screenInfra">
+    <div class="infraKpis" id="infraKpis"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Utilização de equipamentos</h2><div class="hint">Tratores e pás carregadeiras · Relatório Mensal DTE</div></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartEquipUtil"></canvas></div></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Consumo da frota própria</h2><div class="hint">Diesel e lubrificantes · evolução mensal</div></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartConsumoFrota"></canvas></div></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:14px;">
+      <div class="panel">
+        <div class="panelHead"><div><h2>Poda mecanizada</h2><div class="hint">KM por manejo e manejos por apresentação</div></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartPoda"></canvas></div></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead"><div><h2>Manutenção predial</h2><div class="hint">Intervenções registradas pela Gerência de Obras</div></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartPredial"></canvas></div></div>
       </div>
     </div>
   </section>
@@ -475,7 +561,8 @@ async function init() {
       { id: "screenVisao", label: "Visão Geral" },
       { id: "screenDestinacao", label: "Destinação e Biogás" },
       { id: "screenReciclagem", label: "Coleta Seletiva e Reciclagem" },
-      { id: "screenFrota", label: "Frota e Eficiência" }
+      { id: "screenFrota", label: "Utilização da Frota" },
+      { id: "screenInfra", label: "Equipamentos e Infraestrutura" }
     ]
   });
 
@@ -497,6 +584,7 @@ async function init() {
   renderDestinacao();
   renderReciclagem();
   renderFrota();
+  renderInfra();
 
   HUB.footer.render("footer", {
     author: "Greicy Moreira",
@@ -890,6 +978,145 @@ function renderReciclagem() {
 // ============================================
 // TELA 4 — FROTA & EFICIÊNCIA
 // ============================================
+
+const FLEET_LABELS = {
+  P5:"Caminhão compactador 6 m³",
+  P6:"Caminhão compactador 15 m³",
+  P7:"Caminhão compactador 19 m³",
+  P8:"Caminhão basculante 6/8 m³",
+  P9:"Caminhão basculante 10/12 m³",
+  P10:"Caminhão poliguindaste",
+  P10A:"Caminhão poliguindaste duplo",
+  P11:"Caminhão-pipa",
+  P12:"Caminhão roll-on/roll-off",
+  P13:"Varredeira mecânica",
+  P15:"Microtrator",
+  P16:"Trator de praia",
+  P20:"Pá carregadeira compacta",
+  P21:"Roçadeira mecânica / capinadeira",
+  P22:"Trator com roçadeira hidráulica articulada",
+  P22A:"Trator com roçadeira hidráulica deslocável",
+  P23:"Pá carregadeira articulada",
+  P23A:"Pá carregadeira articulada 1,5 m³",
+  P25:"Caminhão compactador 19 m³",
+  P26:"Mini basculante 5 m³",
+  P27:"Caminhão basculante 3 m³",
+  P28A:"Caminhão gaiola para recicláveis",
+  P29:"Caminhão para sistema Molok",
+  P30:"Caminhão auto-socorro",
+  P31:"Veículo com cesta elevatória 24 m",
+  P32:"Veículo com cesta elevatória 18 m",
+  P33:"Veículo com cesta elevatória 13 m",
+  P34:"Basculante com guindaste hidráulico",
+  P37:"Guindaste autopropelido",
+  P38:"Retroescavadeira",
+  P41:"Trator de esteiras"
+};
+const FLEET_FAMILIES = ["P28A","P23A","P22A","P10A","P41","P38","P37","P34","P33","P32","P31","P30","P29","P27","P26","P25","P23","P22","P21","P20","P16","P15","P13","P12","P11","P10","P9","P8","P7","P6","P5"];
+let FLEET_STATE = { tipo:"domiciliar", periodo:"", super:"", gerencia:"", veiculo:"" };
+let fleetTrendChart = null;
+
+function fleetFamily(raw){
+  const code = norm(raw).replace(/\s+/g,"");
+  for(const fam of FLEET_FAMILIES) if(code.startsWith(fam)) return fam;
+  const m=code.match(/^P\d+[A-Z]?/);
+  return m?m[0]:code;
+}
+function fleetLabel(code){
+  return FLEET_LABELS[code] ? `${FLEET_LABELS[code]} · ${code}` : code;
+}
+function fleetDateKey(v){
+  const s=String(v??"").trim();
+  let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m) return `${m[3]}-${String(m[2]).padStart(2,"0")}`;
+  m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return `${m[1]}-${String(m[2]).padStart(2,"0")}`;
+  m=s.match(/^(\d{1,2})\/(\d{4})$/);
+  if(m) return `${m[2]}-${String(m[1]).padStart(2,"0")}`;
+  const d=new Date(s);
+  if(!Number.isNaN(d.getTime())) return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  return "";
+}
+function fleetPrettyMonth(key){
+  if(!key) return "—";
+  const [y,m]=key.split("-").map(Number);
+  return `${MESES_ABREV[m-1].charAt(0).toUpperCase()+MESES_ABREV[m-1].slice(1)}/${String(y).slice(2)}`;
+}
+function officialMaxFleetMonth(){
+  const refs=relatorioMeses(RAW.relatorio);
+  let best="";
+  refs.forEach(r=>{
+    const m=String(r).toLowerCase().match(/^([a-z]{3})\/(\d{2})$/);
+    if(!m) return;
+    const mi=MESES_ABREV.indexOf(m[1])+1;
+    if(mi<1) return;
+    const key=`20${m[2]}-${String(mi).padStart(2,"0")}`;
+    if(key>best) best=key;
+  });
+  return best;
+}
+function fleetRowsForType(tipo){
+  const src=tipo==="seletiva"?(RAW.coletaSel||[]):tipo==="lixo"?(RAW.lixoPub||[]):(RAW.coletaDom||[]);
+  const maxOfficial=officialMaxFleetMonth();
+  return src.map(r=>{
+    const periodo=fleetDateKey(HUB.pick(r,["Período","Periodo"]));
+    const superi=String(HUB.pick(r,["Superintendencia","Superintendência"])||"").trim();
+    const ger=String(HUB.pick(r,["Gerência","Gerencia"])||"").trim();
+    const rawVeh=String(HUB.pick(r,["Tipo de Veiculo","Tipo de Veículo"])||"").trim();
+    const fam=fleetFamily(rawVeh);
+    const peso=HUB.format.toNumber(HUB.pick(r,["Peso Total (ton)"]));
+    const capacidade=HUB.format.toNumber(HUB.pick(r,["Capacidade Total (ton)"]));
+    return {periodo,super:superi,gerencia:ger,rawVeh,familia:fam,peso,capacidade};
+  }).filter(r=>{
+    if(!r.periodo||!r.gerencia||!r.capacidade) return false;
+    if(maxOfficial && r.periodo>maxOfficial) return false;
+    if(tipo==="lixo" && r.periodo>="2023-01" && (r.familia==="P13"||r.familia==="P26")) return false;
+    return true;
+  });
+}
+function weightedFleet(rows){
+  const peso=rows.reduce((a,r)=>a+(r.peso||0),0);
+  const capacidade=rows.reduce((a,r)=>a+(r.capacidade||0),0);
+  return {peso,capacidade,pct:capacidade>0?peso/capacidade*100:null};
+}
+function fleetGroup(rows,key){
+  const map=new Map();
+  rows.forEach(r=>{
+    const k=r[key]||"Não informado";
+    if(!map.has(k)) map.set(k,[]);
+    map.get(k).push(r);
+  });
+  return [...map.entries()].map(([name,rr])=>({name,...weightedFleet(rr),count:rr.length}));
+}
+function fleetSelect(elId,values,current,allLabel){
+  const el=document.getElementById(elId); if(!el)return;
+  const opts=[`<option value="">${allLabel}</option>`].concat(values.map(v=>`<option value="${HUB.format.esc(v)}">${HUB.format.esc(v)}</option>`));
+  el.innerHTML=opts.join("");
+  el.value=values.includes(current)?current:"";
+}
+function fleetBaseFiltered(rows,{ignorePeriodo=false,ignoreSuper=false,ignoreGer=false,ignoreVeh=false}={}){
+  return rows.filter(r=>
+    (ignorePeriodo||!FLEET_STATE.periodo||r.periodo===FLEET_STATE.periodo) &&
+    (ignoreSuper||!FLEET_STATE.super||r.super===FLEET_STATE.super) &&
+    (ignoreGer||!FLEET_STATE.gerencia||r.gerencia===FLEET_STATE.gerencia) &&
+    (ignoreVeh||!FLEET_STATE.veiculo||r.familia===FLEET_STATE.veiculo)
+  );
+}
+function serieAposTitulo(rows,title,metric,n){
+  const target=norm(title), metricTarget=norm(metric);
+  for(let i=0;i<rows.length;i++){
+    if(norm(rows[i]?.[0])===target || norm(rows[i]?.[0]).includes(target)){
+      for(let j=i+1;j<Math.min(rows.length,i+8);j++){
+        if(norm(rows[j]?.[0]).includes(metricTarget)){
+          const idx=firstNonEmptyIdx(rows[j]);
+          return rows[j].slice(idx+1,idx+1+n).map(parseNumBR);
+        }
+      }
+    }
+  }
+  return Array(n).fill(0);
+}
+
 function renderFrota() {
   const meses=relatorioMeses(RAW.relatorio).map(prettyRef);
   const n=meses.length||13;
@@ -898,6 +1125,8 @@ function renderFrota() {
   const secFrota=findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
   const frotaTotal=secFrota?relatorioSerie(secFrota.rows,"FROTA TOTAL",n):Array(n).fill(0);
   const frotaOp=secFrota?relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",n):Array(n).fill(0);
+  const domicOf=serieAposTitulo(RAW.relatorio,"Coleta Domiciliar e Comunidade","Peso Coletado / Capacidade Estimada",n).map(v=>v>1?v:v*100);
+  const seletivaOf=serieAposTitulo(RAW.relatorio,"Coleta Seletiva","Peso Coletado / Capacidade Estimada",n).map(v=>v>1?v:v*100);
 
   chartOuVazio("chartHorasExtras",horasExtras,()=>HUB.charts.bar("chartHorasExtras",{labels:meses,values:horasExtras},{color:HUB.charts.colors.orangeGradient}));
   chartOuVazio("chartSobrecarga",sobrecarga,()=>HUB.charts.line("chartSobrecarga",{labels:meses,values:sobrecarga},{color:HUB.charts.colors.red}));
@@ -909,68 +1138,160 @@ function renderFrota() {
     ]},options:HUB.charts.baseConfig});
   });
 
-  const iFT=lastValidIndex(frotaTotal), iFO=lastValidIndex(frotaOp), iHE=lastValidIndex(horasExtras), iSO=lastValidIndex(sobrecarga);
-  const disponibilidade=(iFT>=0&&iFO>=0&&frotaTotal[iFT]>0)?frotaOp[iFO]/frotaTotal[iFT]*100:null;
-  const kpis=document.getElementById('fleetKpis');
+  const last=i=>lastValidIndex(i);
+  const iDom=last(domicOf),iSel=last(seletivaOf),iSO=last(sobrecarga),iHE=last(horasExtras);
+  const kpis=document.getElementById("fleetKpis");
   if(kpis){
     const cards=[
-      {k:'Frota em operação',v:iFO>=0?HUB.format.int(Math.round(frotaOp[iFO])):'—',s:iFO>=0?meses[iFO]:''},
-      {k:'Disponibilidade',v:disponibilidade!==null?disponibilidade.toFixed(1).replace('.',',')+'%':'—',s:'em operação ÷ frota total'},
-      {k:'Sobrecarga >10% PBT',v:iSO>=0?sobrecarga[iSO].toFixed(1).replace('.',',')+'%':'—',s:iSO>=0?meses[iSO]:''},
-      {k:'Horas extras',v:iHE>=0?'R$ '+HUB.format.int(Math.round(horasExtras[iHE])):'—',s:iHE>=0?meses[iHE]:''}
+      {k:"Coleta domiciliar",v:iDom>=0?domicOf[iDom].toFixed(1).replace(".",",")+"%":"—",s:iDom>=0?meses[iDom]+" · oficial DTE":""},
+      {k:"Coleta seletiva",v:iSel>=0?seletivaOf[iSel].toFixed(1).replace(".",",")+"%":"—",s:iSel>=0?meses[iSel]+" · oficial DTE":""},
+      {k:"Sobrecarga >10% PBT",v:iSO>=0?sobrecarga[iSO].toFixed(1).replace(".",",")+"%":"—",s:iSO>=0?meses[iSO]+" · oficial DTE":""},
+      {k:"Horas extras",v:iHE>=0?"R$ "+HUB.format.int(Math.round(horasExtras[iHE])):"—",s:iHE>=0?meses[iHE]+" · oficial DTE":""}
     ];
-    kpis.innerHTML=cards.map(c=>`<div class="fleetKpi"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join('');
+    kpis.innerHTML=cards.map(c=>`<div class="fleetKpi"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join("");
   }
 
-  const fontes=[
-    {rows:RAW.coletaDom||[],tipo:'Domiciliar',id:'segmentDomiciliar'},
-    {rows:RAW.coletaSel||[],tipo:'Seletiva',id:'segmentSeletiva'},
-    {rows:RAW.lixoPub||[],tipo:'Lixo Público',id:'segmentLixoPublico'}
-  ];
-  const allSegments=[];
-  function classPct(v){return v<70?'low':v>100?'high':'';}
-  function segmentData(rows){
-    const map=new Map();
-    rows.forEach(r=>{
-      const ger=HUB.pick(r,["Gerência","Gerencia"]);
-      const pct=HUB.format.toNumber(HUB.pick(r,["Capacidade Total 2 Viagens (%)"]));
-      if(!ger||!pct)return; if(!map.has(ger))map.set(ger,[]); map.get(ger).push(pct);
-    });
-    return [...map.entries()].map(([ger,vals])=>({ger,avg:vals.reduce((a,b)=>a+b,0)/vals.length})).filter(x=>x.avg>0).sort((a,b)=>a.avg-b.avg);
-  }
-  fontes.forEach(f=>{
-    const ranked=segmentData(f.rows); allSegments.push({tipo:f.tipo,ranked});
-    const el=document.getElementById(f.id); if(!el)return;
-    if(!ranked.length){el.innerHTML='<div class="loading">Sem dados suficientes</div>';return;}
-    const media=ranked.reduce((a,b)=>a+b.avg,0)/ranked.length;
-    const min=ranked[0].avg,max=ranked[ranked.length-1].avg;
-    const lows=ranked.filter(x=>x.avg<70).length, highs=ranked.filter(x=>x.avg>100).length;
-    let mostrados;
-    if(ranked.length<=6) mostrados=ranked;
-    else mostrados=[...ranked.slice(0,3),...ranked.slice(-3)];
-    el.innerHTML=`
-      <div class="segmentSummary">
-        <div class="segmentStat"><div class="v">${media.toFixed(0)}%</div><div class="k">média</div></div>
-        <div class="segmentStat"><div class="v">${lows}</div><div class="k">&lt;70%</div></div>
-        <div class="segmentStat"><div class="v">${highs}</div><div class="k">&gt;100%</div></div>
-      </div>
-      <div class="segmentList">${mostrados.map(r=>`<div class="segmentRow"><div class="name" title="${HUB.format.esc(r.ger)}">${HUB.format.esc(r.ger)}</div><div class="segmentTrack"><div class="segmentFill ${classPct(r.avg)}" style="width:${Math.min(r.avg,150)/1.5}%"></div></div><div class="pct">${r.avg.toFixed(0)}%</div></div>`).join('')}</div>
-      <div class="segmentLegend"><span class="low">abaixo de 70%</span><span>70–100%</span><span class="high">acima de 100%</span></div>
-      <div style="font-size:10px;color:var(--silenciado);margin-top:8px;">Faixa observada: ${min.toFixed(0)}%–${max.toFixed(0)}% · ${ranked.length} gerência${ranked.length===1?'':'s'}</div>`;
+  document.querySelectorAll("#fleetTabs .fleetTab").forEach(btn=>{
+    btn.onclick=()=>{
+      FLEET_STATE={tipo:btn.dataset.fleet,periodo:"",super:"",gerencia:"",veiculo:""};
+      document.querySelectorAll("#fleetTabs .fleetTab").forEach(b=>b.classList.toggle("active",b===btn));
+      setupFleetFilters();
+      renderFleetDetail();
+    };
   });
+  setupFleetFilters();
+  renderFleetDetail();
+}
 
-  const allRows=allSegments.flatMap(s=>s.ranked.map(r=>({...r,tipo:s.tipo})));
-  const acima=allRows.filter(r=>r.avg>100).sort((a,b)=>b.avg-a.avg);
-  const abaixo=allRows.filter(r=>r.avg<70).sort((a,b)=>a.avg-b.avg);
-  const dispersao=allSegments.filter(s=>s.ranked.length).map(s=>({tipo:s.tipo,range:s.ranked.at(-1).avg-s.ranked[0].avg,min:s.ranked[0],max:s.ranked.at(-1)})).sort((a,b)=>b.range-a.range)[0];
-  const insights=document.getElementById('fleetInsights');
-  if(insights){
-    const a=acima[0],b=abaixo[0];
-    insights.innerHTML=`
-      <div class="fleetInsight"><div class="label">Pressão de capacidade</div><div class="title">${acima.length?acima.length+' gerência'+(acima.length>1?'s':'')+' acima de 100%':'Nenhuma gerência acima de 100%'}</div><div class="text">${a?`${a.ger} apresenta o maior índice (${a.avg.toFixed(0)}%), o que merece leitura como pressão sobre a capacidade estimada, não como desempenho positivo.`:'Sem pressão acima da capacidade estimada no recorte.'}</div></div>
-      <div class="fleetInsight"><div class="label">Baixa utilização</div><div class="title">${abaixo.length?abaixo.length+' gerência'+(abaixo.length>1?'s':'')+' abaixo de 70%':'Sem gerências abaixo de 70%'}</div><div class="text">${b?`${b.ger} registra a menor utilização (${b.avg.toFixed(0)}%). O recorte ajuda a separar ociosidade de excesso de carga.`:'Não há baixa utilização relevante no recorte.'}</div></div>
-      <div class="fleetInsight"><div class="label">Dispersão</div><div class="title">${dispersao?dispersao.tipo:'Sem dado'}</div><div class="text">${dispersao?`É o segmento com maior amplitude entre gerências: ${dispersao.min.avg.toFixed(0)}% a ${dispersao.max.avg.toFixed(0)}%. Isso indica maior heterogeneidade operacional.`:'Dados insuficientes para comparar segmentos.'}</div></div>`;
+function setupFleetFilters(){
+  const rows=fleetRowsForType(FLEET_STATE.tipo);
+  const periods=[...new Set(rows.map(r=>r.periodo))].sort();
+  if(!FLEET_STATE.periodo || !periods.includes(FLEET_STATE.periodo)) FLEET_STATE.periodo=periods.at(-1)||"";
+
+  const rPeriod=rows.filter(r=>!FLEET_STATE.periodo||r.periodo===FLEET_STATE.periodo);
+  const supers=[...new Set(rPeriod.map(r=>r.super).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  if(FLEET_STATE.super&&!supers.includes(FLEET_STATE.super)) FLEET_STATE.super="";
+  const rSuper=rPeriod.filter(r=>!FLEET_STATE.super||r.super===FLEET_STATE.super);
+  const gers=[...new Set(rSuper.map(r=>r.gerencia).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  if(FLEET_STATE.gerencia&&!gers.includes(FLEET_STATE.gerencia)) FLEET_STATE.gerencia="";
+  const rGer=rSuper.filter(r=>!FLEET_STATE.gerencia||r.gerencia===FLEET_STATE.gerencia);
+  const vehs=[...new Set(rGer.map(r=>r.familia).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  if(FLEET_STATE.veiculo&&!vehs.includes(FLEET_STATE.veiculo)) FLEET_STATE.veiculo="";
+
+  const p=document.getElementById("fleetPeriodo");
+  if(p){p.innerHTML=periods.slice().reverse().map(v=>`<option value="${v}">${fleetPrettyMonth(v)}</option>`).join("");p.value=FLEET_STATE.periodo;p.onchange=()=>{FLEET_STATE.periodo=p.value;FLEET_STATE.super="";FLEET_STATE.gerencia="";FLEET_STATE.veiculo="";setupFleetFilters();renderFleetDetail();};}
+  fleetSelect("fleetSuper",supers,FLEET_STATE.super,"Todas");
+  fleetSelect("fleetGerencia",gers,FLEET_STATE.gerencia,"Todas");
+  const ve=document.getElementById("fleetVeiculo"); if(ve){ve.innerHTML='<option value="">Todos</option>'+vehs.map(v=>`<option value="${v}">${HUB.format.esc(fleetLabel(v))}</option>`).join("");ve.value=FLEET_STATE.veiculo;}
+
+  const su=document.getElementById("fleetSuper"); if(su)su.onchange=()=>{FLEET_STATE.super=su.value;FLEET_STATE.gerencia="";FLEET_STATE.veiculo="";setupFleetFilters();renderFleetDetail();};
+  const ge=document.getElementById("fleetGerencia"); if(ge)ge.onchange=()=>{FLEET_STATE.gerencia=ge.value;FLEET_STATE.veiculo="";setupFleetFilters();renderFleetDetail();};
+  if(ve)ve.onchange=()=>{FLEET_STATE.veiculo=ve.value;renderFleetDetail();};
+}
+
+function renderFleetDetail(){
+  const rows=fleetRowsForType(FLEET_STATE.tipo);
+  const current=fleetBaseFiltered(rows);
+  const agg=weightedFleet(current);
+  const serviceName=FLEET_STATE.tipo==="seletiva"?"Coleta Seletiva":FLEET_STATE.tipo==="lixo"?"Lixo Público":"Coleta Domiciliar";
+  const summary=document.getElementById("fleetSummary");
+  const gerCount=new Set(current.map(r=>r.gerencia)).size;
+  const vehCount=new Set(current.map(r=>r.familia)).size;
+  if(summary){
+    summary.innerHTML=[
+      ["Utilização",agg.pct==null?"—":agg.pct.toFixed(1).replace(".",",")+"%","peso ÷ capacidade"],
+      ["Peso transportado",HUB.format.int(Math.round(agg.peso))+" t",fleetPrettyMonth(FLEET_STATE.periodo)],
+      ["Capacidade estimada",HUB.format.int(Math.round(agg.capacidade))+" t","base detalhada"],
+      ["Cobertura",`${gerCount} gerência${gerCount===1?"":"s"}`,`${vehCount} família${vehCount===1?"":"s"} de veículo`]
+    ].map(c=>`<div class="fleetSummaryCard"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join("");
   }
+
+  const trendRows=fleetBaseFiltered(rows,{ignorePeriodo:true});
+  const trend=fleetGroup(trendRows,"periodo").sort((a,b)=>a.name.localeCompare(b.name));
+  const c=document.getElementById("chartFleetTrend");
+  if(fleetTrendChart){fleetTrendChart.destroy();fleetTrendChart=null;}
+  if(c&&trend.length){
+    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trend.map(x=>fleetPrettyMonth(x.name)),datasets:[{label:"Utilização",data:trend.map(x=>x.pct),borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",tension:.3,pointRadius:3}]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,y:{...HUB.charts.baseConfig.scales.y,ticks:{...HUB.charts.baseConfig.scales.y.ticks,callback:v=>v+"%"}}}}});
+  }
+  const hint=document.getElementById("fleetTrendHint"); if(hint)hint.textContent=`${serviceName} · histórico até ${fleetPrettyMonth(officialMaxFleetMonth())}`;
+
+  const vehicleBase=fleetBaseFiltered(rows,{ignoreVeh:true});
+  const vehicles=fleetGroup(vehicleBase,"familia").filter(x=>x.pct!=null).sort((a,b)=>a.pct-b.pct);
+  renderFleetTable("fleetVehicleRanking",vehicles.slice(0,10),true);
+
+  const gerBase=fleetBaseFiltered(rows,{ignoreGer:true});
+  const gers=fleetGroup(gerBase,"gerencia").filter(x=>x.pct!=null).sort((a,b)=>a.pct-b.pct);
+  renderFleetTable("fleetGerRanking",gers.slice(0,12),false);
+
+  const insights=document.getElementById("fleetInsights");
+  if(insights){
+    const arr=[];
+    if(agg.pct!=null) arr.push(`${serviceName} opera a ${agg.pct.toFixed(1).replace(".",",")}% da capacidade estimada no recorte selecionado.`);
+    if(gers.length) arr.push(`${gers[0].name} apresenta a menor utilização entre as gerências comparáveis do recorte: ${gers[0].pct.toFixed(1).replace(".",",")}%.`);
+    if(vehicles.length) arr.push(`${fleetLabel(vehicles[0].name)} registra a menor utilização entre as famílias disponíveis: ${vehicles[0].pct.toFixed(1).replace(".",",")}%.`);
+    const over=[...gers,...vehicles].filter(x=>x.pct>100).sort((a,b)=>b.pct-a.pct);
+    if(over.length) arr.push(`Há ${over.length} resultado${over.length===1?"":"s"} acima de 100% da capacidade de referência. O maior é ${over[0].name in FLEET_LABELS?fleetLabel(over[0].name):over[0].name}, com ${over[0].pct.toFixed(1).replace(".",",")}%.`);
+    insights.innerHTML=(arr.length?arr:["Sem dados suficientes para gerar leitura do recorte."]).map(t=>`<div class="leituraChip"><div class="dot"></div><span>${HUB.format.esc(t)}</span></div>`).join("");
+  }
+}
+function renderFleetTable(id,rows,isVehicle){
+  const el=document.getElementById(id); if(!el)return;
+  if(!rows.length){el.innerHTML='<div class="fleetEmpty">Sem dados para o recorte selecionado.</div>';return;}
+  const max=Math.max(100,...rows.map(r=>r.pct||0));
+  el.innerHTML=`<table class="fleetTable"><thead><tr><th>${isVehicle?"Veículo / equipamento":"Gerência"}</th><th>Utilização</th><th class="num">Peso</th><th class="num">Capacidade</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${HUB.format.esc(isVehicle?fleetLabel(r.name):r.name)}</td><td><div style="display:grid;grid-template-columns:1fr 48px;gap:8px;align-items:center;"><div class="fleetBar"><span class="${r.pct>100?"over":""}" style="width:${Math.min(100,(r.pct/max)*100)}%"></span></div><strong>${r.pct.toFixed(1).replace(".",",")}%</strong></div></td><td class="num">${HUB.format.int(Math.round(r.peso))} t</td><td class="num">${HUB.format.int(Math.round(r.capacidade))} t</td></tr>`).join("")}</tbody></table><div class="fleetMetaLine"><span>Percentual ponderado pelo total de capacidade.</span><span>${rows.length} item${rows.length===1?"":"s"} exibido${rows.length===1?"":"s"}</span></div>`;
+}
+
+function renderInfra(){
+  const meses=relatorioMeses(RAW.relatorio).map(prettyRef);
+  const n=meses.length||13;
+  const trComun=serieAposTitulo(RAW.relatorio,"Utilização de Tratores de Comunidade","Horas Utilizadas / Horas Estimadas",n).map(v=>v>1?v:v*100);
+  const trPraia12=serieAposTitulo(RAW.relatorio,"Utilização de Tratores Limp. Praia - AP1 / 2","Horas Utilizadas / Horas Estimadas",n).map(v=>v>1?v:v*100);
+  const trPraia345=serieAposTitulo(RAW.relatorio,"Utilização de Tratores Limp. Praia - AP3/4/5","Horas Utilizadas / Horas Estimadas",n).map(v=>v>1?v:v*100);
+  const trCorte=serieAposTitulo(RAW.relatorio,"Utilização Tratores de Corte Vegetação","Horas Utilizadas / Horas Estimadas",n).map(v=>v>1?v:v*100);
+  const pas123=serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 1/2/3","Total P20, P23, P23A",n).map(v=>v>1?v:v*100);
+  const pas45=serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 4/5","Total P20, P23, P23A",n).map(v=>v>1?v:v*100);
+
+  const diesel=relatorioSerie(RAW.relatorio,"CONSUMO OLEO DIESEL",n);
+  const lub15=relatorioSerie(RAW.relatorio,"CONSUMO OLEO LUBRIFICANTE (15W40)",n);
+  const lub10=relatorioSerie(RAW.relatorio,"CONSUMO OLEO LUBRIFICANTE (10W)",n);
+  const podaKm=serieAposTitulo(RAW.relatorio,"Indicador de Poda: KM/Manejo","KM / Manejo",n);
+  const podaMan=serieAposTitulo(RAW.relatorio,"Indicador de Poda: Manejo/Apresentação","Manejo/Apresentação",n);
+  const predial=relatorioSerie(RAW.relatorio,"QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS",n);
+  const refrig=relatorioSerie(RAW.relatorio,"REFRIGERACAO",n);
+  const eco=relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPOINTOS",n);
+
+  const lastVal=arr=>{const i=lastValidIndex(arr);return i>=0?{i,v:arr[i]}:{i:-1,v:null};};
+  const a=lastVal(trComun),b=lastVal(trPraia12),d=lastVal(diesel),pr=lastVal(predial);
+  const k=document.getElementById("infraKpis");
+  if(k)k.innerHTML=[
+    ["Tratores de comunidade",a.v==null?"—":a.v.toFixed(1).replace(".",",")+"%",a.i>=0?meses[a.i]:""],
+    ["Tratores de praia AP1/2",b.v==null?"—":b.v.toFixed(1).replace(".",",")+"%",b.i>=0?meses[b.i]:""],
+    ["Consumo de diesel",d.v==null?"—":HUB.format.int(Math.round(d.v))+" l",d.i>=0?meses[d.i]:""],
+    ["Intervenções prediais",pr.v==null?"—":HUB.format.int(Math.round(pr.v)),pr.i>=0?meses[pr.i]:""]
+  ].map(c=>`<div class="infraKpi"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join("");
+
+  const ce=document.getElementById("chartEquipUtil");
+  if(ce)new Chart(ce.getContext("2d"),{type:"bar",data:{labels:["Trator comunidade","Praia AP1/2","Praia AP3/4/5","Corte vegetação","Pás AP1/2/3","Pás AP4/5"],datasets:[{label:"Utilização",data:[a.v,lastVal(trPraia12).v,lastVal(trPraia345).v,lastVal(trCorte).v,lastVal(pas123).v,lastVal(pas45).v],backgroundColor:HUB.charts.colors.blueGradient}]},options:{...HUB.charts.baseConfig,indexAxis:"y",plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}}}}});
+
+  const cc=document.getElementById("chartConsumoFrota");
+  if(cc)new Chart(cc.getContext("2d"),{type:"line",data:{labels:meses,datasets:[
+    {label:"Diesel (l)",data:diesel,borderColor:HUB.charts.colors.blue,tension:.3},
+    {label:"Lubrificante 15W40 (l)",data:lub15,borderColor:HUB.charts.colors.orange,tension:.3},
+    {label:"Lubrificante 10W (l)",data:lub10,borderColor:HUB.charts.colors.purple,tension:.3}
+  ]},options:HUB.charts.baseConfig});
+
+  const cp=document.getElementById("chartPoda");
+  if(cp)new Chart(cp.getContext("2d"),{type:"line",data:{labels:meses,datasets:[
+    {label:"KM / Manejo",data:podaKm,borderColor:HUB.charts.colors.blue,tension:.3},
+    {label:"Manejo / Apresentação",data:podaMan,borderColor:HUB.charts.colors.orange,tension:.3}
+  ]},options:HUB.charts.baseConfig});
+
+  const cpr=document.getElementById("chartPredial");
+  if(cpr)new Chart(cpr.getContext("2d"),{type:"bar",data:{labels:meses,datasets:[
+    {label:"Intervenções",data:predial,backgroundColor:HUB.charts.colors.blueGradient},
+    {label:"Refrigeração",data:refrig,backgroundColor:HUB.charts.colors.orangeGradient},
+    {label:"Ecopontos",data:eco,backgroundColor:HUB.charts.colors.purple}
+  ]},options:HUB.charts.baseConfig});
 }
 
 // ============================================

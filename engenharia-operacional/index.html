@@ -290,11 +290,11 @@
 
     <div class="grid" style="margin-bottom:16px;">
       <div class="panel">
-        <div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal (R$) · consolidado oficial DTE</div></div></div>
+        <div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal (R$), consolidado oficial DTE</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite · consolidado oficial DTE</div></div></div>
+        <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite, consolidado oficial DTE</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartSobrecarga"></canvas></div></div>
       </div>
       <div class="panel">
@@ -1215,24 +1215,57 @@ function serieAposTitulo(rows,title,metric,n){
 }
 
 function renderFrota() {
-  const meses=relatorioMeses(RAW.relatorio).map(prettyRef);
-  const n=meses.length||13;
-  const horasExtras=relatorioSerie(RAW.relatorio,"VALOR TOTAL DE HORAS EXTRAS",n);
-  const sobrecarga=relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",n).map(v=>v>1?v:v*100);
-  const secFrota=findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
-  const frotaTotal=secFrota?relatorioSerie(secFrota.rows,"FROTA TOTAL",n):Array(n).fill(0);
-  const frotaOp=secFrota?relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",n):Array(n).fill(0);
-  const domicOf=serieAposTitulo(RAW.relatorio,"Coleta Domiciliar e Comunidade","Peso Coletado / Capacidade Estimada",n).map(v=>v>1?v:v*100);
-  const seletivaOf=serieAposTitulo(RAW.relatorio,"Coleta Seletiva","Peso Coletado / Capacidade Estimada",n).map(v=>v>1?v:v*100);
+  // Padrão temporal oficial do DTE: janela móvel de 13 meses.
+  // Exemplo para a competência jul/26: jul/25 a jul/26.
+  const mesesTodos=relatorioMeses(RAW.relatorio);
+  const nTodos=mesesTodos.length||13;
+  const inicio=Math.max(0,nTodos-13);
+  const meses=mesesTodos.slice(inicio).map(prettyRef);
+  const corta13=arr=>arr.slice(inicio,inicio+meses.length);
 
-  chartOuVazio("chartHorasExtras",horasExtras,()=>HUB.charts.bar("chartHorasExtras",{labels:meses,values:horasExtras},{color:HUB.charts.colors.orangeGradient}));
-  chartOuVazio("chartSobrecarga",sobrecarga,()=>HUB.charts.line("chartSobrecarga",{labels:meses,values:sobrecarga},{color:HUB.charts.colors.red}));
+  const horasExtras=corta13(relatorioSerie(RAW.relatorio,"VALOR TOTAL DE HORAS EXTRAS",nTodos));
+  const sobrecarga=corta13(relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",nTodos)).map(v=>v>1?v:v*100);
+  const secFrota=findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
+  const frotaTotal=secFrota?corta13(relatorioSerie(secFrota.rows,"FROTA TOTAL",nTodos)):Array(meses.length).fill(0);
+  const frotaOp=secFrota?corta13(relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",nTodos)):Array(meses.length).fill(0);
+  const domicOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Domiciliar e Comunidade","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v>1?v:v*100);
+  const seletivaOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Seletiva","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v>1?v:v*100);
+
+  const eixoX={
+    ...HUB.charts.baseConfig.scales.x,
+    grid:{display:false},
+    border:{display:false},
+    ticks:{...HUB.charts.baseConfig.scales.x.ticks,maxRotation:38,minRotation:38,autoSkip:false}
+  };
+  const eixoY={
+    ...HUB.charts.baseConfig.scales.y,
+    grid:{color:"rgba(41,72,102,.16)",drawTicks:false},
+    border:{display:false}
+  };
+  const legendaLimpa={
+    ...HUB.charts.baseConfig.plugins.legend,
+    labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}
+  };
+  const ultimo=arr=>Math.max(0,arr.length-1);
+
+  chartOuVazio("chartHorasExtras",horasExtras,()=>{
+    const c=document.getElementById("chartHorasExtras"); if(!c)return;
+    const ctx=c.getContext("2d");
+    const grad=ctx.createLinearGradient(0,0,0,260); grad.addColorStop(0,"rgba(232,117,53,.92)"); grad.addColorStop(1,"rgba(232,117,53,.42)");
+    new Chart(ctx,{type:"bar",data:{labels:meses,datasets:[{label:"Horas extras",data:horasExtras,backgroundColor:horasExtras.map((_,i)=>i===ultimo(horasExtras)?grad:"rgba(91,147,232,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:26}]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false}},scales:{x:eixoX,y:eixoY}}});
+  });
+
+  chartOuVazio("chartSobrecarga",sobrecarga,()=>{
+    const c=document.getElementById("chartSobrecarga"); if(!c)return;
+    new Chart(c.getContext("2d"),{type:"bar",data:{labels:meses,datasets:[{label:"Pesagens acima do limite",data:sobrecarga,backgroundColor:sobrecarga.map((_,i)=>i===ultimo(sobrecarga)?"rgba(239,106,93,.92)":"rgba(239,106,93,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24}]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{x:eixoX,y:{...eixoY,ticks:{...eixoY.ticks,callback:v=>v+"%"}}}}});
+  });
+
   chartOuVazio("chartFrotaComparativo",frotaTotal,()=>{
     const c=document.getElementById("chartFrotaComparativo"); if(!c)return;
     new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[
-      {label:"Frota total",data:frotaTotal,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",tension:.3},
-      {label:"Em operação",data:frotaOp,borderColor:HUB.charts.colors.orange,backgroundColor:"transparent",tension:.3}
-    ]},options:HUB.charts.baseConfig});
+      {label:"Frota total",data:frotaTotal,borderColor:HUB.charts.colors.blue,backgroundColor:"rgba(91,147,232,.08)",borderWidth:2.4,tension:.22,pointRadius:frotaTotal.map((_,i)=>i===ultimo(frotaTotal)?4:0),pointHoverRadius:5,fill:false},
+      {label:"Em operação",data:frotaOp,borderColor:HUB.charts.colors.orange,backgroundColor:"rgba(232,117,53,.08)",borderWidth:2.4,tension:.22,pointRadius:frotaOp.map((_,i)=>i===ultimo(frotaOp)?4:0),pointHoverRadius:5,fill:false}
+    ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},plugins:{...HUB.charts.baseConfig.plugins,legend:legendaLimpa},scales:{x:eixoX,y:eixoY}}});
   });
 
   const last=i=>lastValidIndex(i);
@@ -1357,27 +1390,32 @@ function renderFleetTable(id,rows,isVehicle){
 }
 
 function renderInfra(){
-  const meses=relatorioMeses(RAW.relatorio).map(prettyRef);
+  // Mesma regra temporal da aba de frota: sempre os 13 meses mais recentes,
+  // preservando a comparação com o mesmo mês do ano anterior.
+  const mesesTodos=relatorioMeses(RAW.relatorio);
+  const nTodos=mesesTodos.length||13;
+  const inicio=Math.max(0,nTodos-13);
+  const meses=mesesTodos.slice(inicio).map(prettyRef);
   const n=meses.length||13;
+  const corta13=arr=>arr.slice(inicio,inicio+n);
 
   // O Relatório DTE traz a utilização consolidada na linha imediatamente abaixo
   // do cabeçalho de cada bloco. Usamos os rótulos operacionais diretamente para
   // evitar depender da linha de datas, que não contém o percentual.
-  const pctSerie=(label)=>relatorioSerie(RAW.relatorio,label,n).map(v=>v>1?v:v*100);
+  const pctSerie=(label)=>corta13(relatorioSerie(RAW.relatorio,label,nTodos)).map(v=>v>1?v:v*100);
   const trComun=pctSerie("P15A - TRATOR DE COMUNIDADE");
   const trPraia12=pctSerie("P16A - TRATOR DE PRAIA");
-  // Existem dois blocos P16A. O segundo corresponde a AP3/4/5, por isso buscamos
-  // especificamente a série a partir do título da seção.
-  const trPraia345=serieAposTitulo(RAW.relatorio,"Utilização de Tratores Limp. Praia - AP3/4/5","P16A - Trator de Praia",n).map(v=>v>1?v:v*100);
-  const trCorte=serieAposTitulo(RAW.relatorio,"Utilização Tratores de Corte Vegetação","Total P21, P22, P22A",n).map(v=>v>1?v:v*100);
-  const pas123=serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 1/2/3","Total P20, P23, P23A",n).map(v=>v>1?v:v*100);
-  const pas45=serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 4/5","Total P20, P23, P23A",n).map(v=>v>1?v:v*100);
+  // Existem dois blocos P16A. O segundo corresponde a AP3/4/5.
+  const trPraia345=corta13(serieAposTitulo(RAW.relatorio,"Utilização de Tratores Limp. Praia - AP3/4/5","P16A - Trator de Praia",nTodos)).map(v=>v>1?v:v*100);
+  const trCorte=corta13(serieAposTitulo(RAW.relatorio,"Utilização Tratores de Corte Vegetação","Total P21, P22, P22A",nTodos)).map(v=>v>1?v:v*100);
+  const pas123=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 1/2/3","Total P20, P23, P23A",nTodos)).map(v=>v>1?v:v*100);
+  const pas45=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 4/5","Total P20, P23, P23A",nTodos)).map(v=>v>1?v:v*100);
 
-  const podaKm=serieAposTitulo(RAW.relatorio,"Indicador de Poda: KM/Manejo","KM / Manejo",n);
-  const podaMan=serieAposTitulo(RAW.relatorio,"Indicador de Poda: Manejo/Apresentação","Manejo/Apresentação",n);
-  const predial=relatorioSerie(RAW.relatorio,"QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS",n);
-  const refrig=relatorioSerie(RAW.relatorio,"REFRIGERACAO",n);
-  const eco=relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPOINTOS",n);
+  const podaKm=corta13(serieAposTitulo(RAW.relatorio,"Indicador de Poda: KM/Manejo","KM / Manejo",nTodos));
+  const podaMan=corta13(serieAposTitulo(RAW.relatorio,"Indicador de Poda: Manejo/Apresentação","Manejo/Apresentação",nTodos));
+  const predial=corta13(relatorioSerie(RAW.relatorio,"QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS",nTodos));
+  const refrig=corta13(relatorioSerie(RAW.relatorio,"REFRIGERACAO",nTodos));
+  const eco=corta13(relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPOINTOS",nTodos));
 
   const lastVal=arr=>{const i=lastValidIndex(arr);return i>=0?{i,v:arr[i]}:{i:-1,v:null};};
   const a=lastVal(trComun),b=lastVal(trPraia12),c=lastVal(trCorte),p45=lastVal(pas45);
@@ -1395,18 +1433,22 @@ function renderInfra(){
     new Chart(ce.getContext("2d"),{type:"bar",data:{labels:["Trator comunidade","Trator praia AP1/2","Trator praia AP3/4/5","Trator de corte","Pás AP1/2/3","Pás AP4/5"],datasets:[{label:"Utilização",data:vals,backgroundColor:HUB.charts.colors.blueGradient}]},options:{...HUB.charts.baseConfig,indexAxis:"y",plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{callbacks:{label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,suggestedMax:120,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}}}}});
   }
 
+  const eixoXInfra={...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,maxRotation:38,minRotation:38,autoSkip:false}};
+  const eixoYInfra={...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)",drawTicks:false},border:{display:false}};
+  const lastInfra=Math.max(0,meses.length-1);
+
   const cp=document.getElementById("chartPoda");
-  if(cp)new Chart(cp.getContext("2d"),{type:"line",data:{labels:meses,datasets:[
-    {label:"KM / Manejo",data:podaKm,borderColor:HUB.charts.colors.blue,tension:.3},
-    {label:"Manejo / Apresentação",data:podaMan,borderColor:HUB.charts.colors.orange,tension:.3}
-  ]},options:HUB.charts.baseConfig});
+  if(cp)new Chart(cp.getContext("2d"),{data:{labels:meses,datasets:[
+    {type:"bar",label:"KM por manejo",data:podaKm,backgroundColor:podaKm.map((_,i)=>i===lastInfra?"rgba(91,147,232,.88)":"rgba(91,147,232,.30)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24,order:2},
+    {type:"line",label:"Manejo por apresentação",data:podaMan,borderColor:HUB.charts.colors.orange,backgroundColor:"transparent",borderWidth:2.3,tension:.22,pointRadius:podaMan.map((_,i)=>i===lastInfra?4:0),pointHoverRadius:5,order:1}
+  ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}});
 
   const cpr=document.getElementById("chartPredial");
   if(cpr)new Chart(cpr.getContext("2d"),{type:"bar",data:{labels:meses,datasets:[
-    {label:"Intervenções",data:predial,backgroundColor:HUB.charts.colors.blueGradient},
-    {label:"Refrigeração",data:refrig,backgroundColor:HUB.charts.colors.orangeGradient},
-    {label:"Ecopontos",data:eco,backgroundColor:HUB.charts.colors.purple}
-  ]},options:HUB.charts.baseConfig});
+    {label:"Intervenções",data:predial,backgroundColor:"rgba(91,147,232,.78)",borderWidth:0,borderRadius:5,borderSkipped:false,maxBarThickness:18},
+    {label:"Refrigeração",data:refrig,backgroundColor:"rgba(232,117,53,.72)",borderWidth:0,borderRadius:5,borderSkipped:false,maxBarThickness:18},
+    {label:"Ecopontos",data:eco,backgroundColor:"rgba(167,139,250,.60)",borderWidth:0,borderRadius:5,borderSkipped:false,maxBarThickness:18}
+  ]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}});
 }
 
 // ============================================

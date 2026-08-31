@@ -51,6 +51,16 @@
 .fleetKpi .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:7px;}
 .fleetKpi .v{font-size:22px;font-weight:850;color:var(--texto);line-height:1.1;}
 .fleetKpi .s{font-size:11px;color:var(--silenciado);margin-top:5px;line-height:1.35;}
+.fleetAvailGrid{display:flex;flex-direction:column;gap:9px;}
+.fleetAvailStat{background:var(--painel2);border:1px solid var(--linha);border-radius:10px;padding:9px 12px;}
+.fleetAvailStat .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--silenciado);margin-bottom:4px;}
+.fleetAvailStat .v{font-size:16.5px;font-weight:850;color:var(--texto);line-height:1.15;}
+.fleetAvailStat .v.up{color:var(--verde);}
+.fleetAvailStat .v.down{color:var(--vermelho);}
+.fleetAvailStat .s{font-size:10.5px;color:var(--silenciado);margin-top:3px;line-height:1.35;}
+.fleetAvailSpark{height:40px;margin-top:10px;position:relative;}
+.chartInsight{font-size:11.5px;color:var(--silenciado);line-height:1.5;margin-bottom:10px;}
+.chartInsight.flag{color:#e8b3ac;}
 .fleetInsights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0;}
 .fleetInsight{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:14px 15px;}
 .fleetInsight .label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:6px;}
@@ -211,7 +221,7 @@
 
   <!-- ===================== DESTINAÇÃO & BIOGÁS ===================== -->
   <section class="screen" id="screenDestinacao">
-    <div class="grid">
+    <div class="grid2">
       <div class="panel">
         <div class="panelHead">
           <div><h2>ETR Total</h2><div class="hint">Recebimento mensal (t)</div></div>
@@ -224,20 +234,16 @@
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartBiogas"></canvas></div></div>
       </div>
-      <div class="panel">
-        <div class="panelHead">
-          <div><h2>Chorume acumulado</h2><div class="hint">Volume mensal (m³)</div></div>
-        </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartChorume"></canvas></div></div>
-      </div>
     </div>
-    <div class="climateGrid">
+    <!-- Chorume isolado removido: redundante com o painel Chorume × Precipitação abaixo,
+         que já traz a mesma série de chorume no eixo esquerdo. -->
+    <div class="climateGrid" style="grid-template-columns:minmax(0,1.9fr) minmax(280px,.75fr);margin-top:14px;">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Chorume × precipitação</h2><div class="hint">Comparação mensal para Seropédica · chorume no eixo esquerdo (m³) e chuva no direito (mm)</div></div>
+          <div><h2>Chorume × precipitação</h2><div class="hint">Volume mensal de chorume acumulado (m³, eixo esquerdo) e precipitação em Seropédica (mm, eixo direito)</div></div>
           <div class="readAutoBadge" id="climaStatus">carregando chuva…</div>
         </div>
-        <div class="body"><div class="chartWrap" style="height:260px;"><canvas id="chartChorumeChuva"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:300px;"><canvas id="chartChorumeChuva"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead"><div><h2>Leitura ambiental</h2><div class="hint">Associação estatística, sem atribuir causalidade</div></div></div>
@@ -291,15 +297,21 @@
     <div class="grid" style="margin-bottom:16px;">
       <div class="panel">
         <div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal (R$), consolidado oficial DTE</div></div></div>
-        <div class="body"><div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div></div>
+        <div class="body">
+          <div class="chartInsight" id="insightHorasExtras"></div>
+          <div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div>
+        </div>
       </div>
       <div class="panel">
         <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite, consolidado oficial DTE</div></div></div>
         <div class="body"><div class="chartWrap"><canvas id="chartSobrecarga"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Frota própria</h2><div class="hint">Total vs. veículos em operação</div></div></div>
-        <div class="body"><div class="chartWrap"><canvas id="chartFrotaComparativo"></canvas></div></div>
+        <div class="panelHead"><div><h2>Frota própria</h2><div class="hint">Disponibilidade vs. mesmo mês do ano anterior</div></div></div>
+        <div class="body">
+          <div class="fleetAvailGrid" id="fleetAvailKpis"></div>
+          <div class="fleetAvailSpark"><canvas id="chartFrotaDisponibilidade"></canvas></div>
+        </div>
       </div>
     </div>
 
@@ -595,6 +607,29 @@ function lastValidIndex(arr) {
   return -1;
 }
 
+// --- Insight textual automático: prioriza YoY, depois MoM, depois média da janela de 13 meses ---
+function insightYoyMomAvg(nome, arr, meses, fmt) {
+  const i = lastValidIndex(arr);
+  if (i < 0) return null;
+  const atual = arr[i];
+  const iYoY = i - 12;
+  if (iYoY >= 0 && arr[iYoY] > 0) {
+    const pct = (atual - arr[iYoY]) / arr[iYoY] * 100;
+    return `${nome} em ${meses[i]}: ${fmt(atual)}, ${pct >= 0 ? "alta" : "queda"} de ${Math.abs(pct).toFixed(1).replace(".", ",")}% frente a ${meses[iYoY]}.`;
+  }
+  if (i - 1 >= 0 && arr[i - 1] > 0) {
+    const pct = (atual - arr[i - 1]) / arr[i - 1] * 100;
+    return `${nome} em ${meses[i]}: ${fmt(atual)}, ${pct >= 0 ? "alta" : "queda"} de ${Math.abs(pct).toFixed(1).replace(".", ",")}% frente ao mês anterior.`;
+  }
+  const base = arr.slice(0, i + 1).filter(v => v > 0);
+  const avg = base.length ? base.reduce((a, b) => a + b, 0) / base.length : 0;
+  if (avg > 0) {
+    const pct = (atual - avg) / avg * 100;
+    return `${nome} em ${meses[i]}: ${fmt(atual)}, ${pct >= 0 ? "acima" : "abaixo"} da média dos meses com dado na janela (${Math.abs(pct).toFixed(1).replace(".", ",")}%).`;
+  }
+  return `${nome} em ${meses[i]}: ${fmt(atual)}.`;
+}
+
 // --- Renderiza gráfico ou mostra estado "sem dado" em vez de zero mudo ---
 function chartOuVazio(canvasId, values, drawFn) {
   const temDado = values.some(v => v && v !== 0);
@@ -877,7 +912,7 @@ function renderDestinacao() {
 
   chartOuVazio("chartEtrTotal", etrTotal, () => barras("chartEtrTotal", etrTotal, "rgba(91,166,225,.92)", v => Math.round(v/1000)+"k"));
   chartOuVazio("chartBiogas", biogas, () => barras("chartBiogas", biogas, "rgba(167,139,250,.92)", v => (v/1e6).toFixed(1).replace(".",",")+"M"));
-  chartOuVazio("chartChorume", chorume, () => barras("chartChorume", chorume, "rgba(239,106,93,.92)", v => Math.round(v/1000)+"k"));
+  // chartChorume isolado eliminado (redundante com Chorume x Precipitacao, que exibe a mesma serie).
 
   renderClimaChorume(mesesFmt, chorume);
 
@@ -1288,10 +1323,6 @@ function renderFrota() {
     grid:{color:"rgba(41,72,102,.16)",drawTicks:false},
     border:{display:false}
   };
-  const legendaLimpa={
-    ...HUB.charts.baseConfig.plugins.legend,
-    labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}
-  };
   const ultimo=arr=>Math.max(0,arr.length-1);
 
   chartOuVazio("chartHorasExtras",horasExtras,()=>{
@@ -1303,16 +1334,42 @@ function renderFrota() {
 
   chartOuVazio("chartSobrecarga",sobrecarga,()=>{
     const c=document.getElementById("chartSobrecarga"); if(!c)return;
-    new Chart(c.getContext("2d"),{type:"bar",data:{labels:meses,datasets:[{label:"Pesagens acima do limite",data:sobrecarga,backgroundColor:sobrecarga.map((_,i)=>i===ultimo(sobrecarga)?"rgba(239,106,93,.92)":"rgba(239,106,93,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24}]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{x:eixoX,y:{...eixoY,ticks:{...eixoY.ticks,callback:v=>v+"%"}}}}});
+    const limite=Array(sobrecarga.length).fill(10);
+    new Chart(c.getContext("2d"),{data:{labels:meses,datasets:[
+      {type:"bar",label:"Pesagens acima do limite",data:sobrecarga,backgroundColor:sobrecarga.map((_,i)=>i===ultimo(sobrecarga)?"rgba(239,106,93,.92)":"rgba(239,106,93,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24,order:2},
+      {type:"line",label:"Limite de referência (10%)",data:limite,borderColor:"rgba(200,210,222,.55)",borderWidth:1.4,borderDash:[6,4],pointRadius:0,pointHoverRadius:0,fill:false,tension:0,order:1}
+    ]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>ctx.datasetIndex===1?"Limite 10%":` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{x:eixoX,y:{...eixoY,ticks:{...eixoY.ticks,callback:v=>v+"%"}}}}});
   });
 
-  chartOuVazio("chartFrotaComparativo",frotaTotal,()=>{
-    const c=document.getElementById("chartFrotaComparativo"); if(!c)return;
-    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[
-      {label:"Frota total",data:frotaTotal,borderColor:HUB.charts.colors.blue,backgroundColor:"rgba(91,147,232,.08)",borderWidth:2.4,tension:.22,pointRadius:frotaTotal.map((_,i)=>i===ultimo(frotaTotal)?4:0),pointHoverRadius:5,fill:false},
-      {label:"Em operação",data:frotaOp,borderColor:HUB.charts.colors.orange,backgroundColor:"rgba(232,117,53,.08)",borderWidth:2.4,tension:.22,pointRadius:frotaOp.map((_,i)=>i===ultimo(frotaOp)?4:0),pointHoverRadius:5,fill:false}
-    ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},plugins:{...HUB.charts.baseConfig.plugins,legend:legendaLimpa},scales:{x:eixoX,y:eixoY}}});
+  // Frota própria: disponibilidade (%) em vez de duas linhas comparativas.
+  const disponibilidade=frotaTotal.map((v,i)=>v>0?(frotaOp[i]/v*100):0);
+  const iDisp=lastValidIndex(disponibilidade);
+  const iDispYoY=iDisp-12;
+  const temYoYDisp=iDisp>=0 && iDispYoY>=0 && disponibilidade[iDispYoY]>0;
+
+  const availKpis=document.getElementById("fleetAvailKpis");
+  if(availKpis){
+    const dispAtual=iDisp>=0?disponibilidade[iDisp]:null;
+    const indisponiveis=iDisp>=0?Math.max(0,Math.round(frotaTotal[iDisp]-frotaOp[iDisp])):null;
+    const deltaYoY=temYoYDisp?(disponibilidade[iDisp]-disponibilidade[iDispYoY]):null;
+    const cards=[
+      {k:"Disponibilidade da frota",v:dispAtual==null?"n/d":dispAtual.toFixed(1).replace(".",",")+"%",s:iDisp>=0?meses[iDisp]+" · oficial DTE":"",cls:""},
+      {k:"Veículos indisponíveis",v:indisponiveis==null?"n/d":HUB.format.int(indisponiveis)+" veíc.",s:iDisp>=0?meses[iDisp]+" · frota total − em operação":"",cls:""},
+      {k:"Vs. mesmo mês do ano anterior",v:deltaYoY==null?"sem comparação disponível":(deltaYoY>=0?"+":"")+deltaYoY.toFixed(1).replace(".",",")+" p.p.",s:temYoYDisp?meses[iDispYoY]+" → "+meses[iDisp]:"aguardando 13 meses de histórico",cls:deltaYoY==null?"":(deltaYoY>=0?"up":"down")}
+    ];
+    availKpis.innerHTML=cards.map(c=>`<div class="fleetAvailStat"><div class="k">${c.k}</div><div class="v ${c.cls}">${c.v}</div><div class="s">${c.s}</div></div>`).join("");
+  }
+
+  chartOuVazio("chartFrotaDisponibilidade",disponibilidade,()=>{
+    const c=document.getElementById("chartFrotaDisponibilidade"); if(!c)return;
+    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:disponibilidade,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:disponibilidade.map((_,i)=>i===iDisp?3:0),pointHoverRadius:3,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Disponibilidade: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{display:false},y:{display:false}}}});
   });
+
+  const insightHE=document.getElementById("insightHorasExtras");
+  if(insightHE){
+    const texto=insightYoyMomAvg("Horas extras",horasExtras,meses,v=>"R$ "+HUB.format.int(Math.round(v)));
+    insightHE.textContent=texto||"Sem dado suficiente para leitura automática.";
+  }
 
   const last=i=>lastValidIndex(i);
   const iDom=last(domicOf),iSel=last(seletivaOf),iSO=last(sobrecarga),iHE=last(horasExtras);
@@ -1410,7 +1467,8 @@ function renderFleetDetail(){
   if(c&&trend.length){
     const vals=trend.map(x=>x.pct);
     const iUlt=lastValidIndex(vals);
-    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trend.map(x=>fleetPrettyMonth(x.name)),datasets:[{label:"Utilização",data:vals,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.5,tension:.28,pointRadius:vals.map((_,i)=>i===iUlt?4:0),pointHoverRadius:4,pointBorderWidth:1.5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:v=>v.toFixed(1).replace(".",",")+"%"},tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:6,callback:v=>v+"%"}}}}});
+    const iYoYTrend=iUlt-12;
+    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trend.map(x=>fleetPrettyMonth(x.name)),datasets:[{label:"Utilização",data:vals,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.5,tension:.28,pointRadius:vals.map((_,i)=>(i===iUlt||i===iYoYTrend)?4:0),pointHoverRadius:4,pointBorderWidth:1.5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:(v,i)=>(i===iUlt||i===iYoYTrend)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:6,callback:v=>v+"%"}}}}});
   }
   const hint=document.getElementById("fleetTrendHint");
   if(hint){

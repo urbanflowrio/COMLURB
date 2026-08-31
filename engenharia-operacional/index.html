@@ -369,7 +369,7 @@
           <div class="fleetFilter"><label for="fleetVeiculo">Veículo / equipamento</label><select id="fleetVeiculo"></select></div>
         </div>
         <div class="fleetSummary" id="fleetSummary"></div>
-        <div class="fleetMicroNote">O indicador executivo continua sendo o publicado no Relatório Mensal DTE. O detalhamento abaixo serve para localizar a distribuição por unidade e família de veículo.</div>
+        <div class="fleetMicroNote">O indicador executivo continua sendo o publicado no Relatório Mensal DTE. O detalhamento abaixo serve para localizar a distribuição por unidade e tipo de veículo.</div>
       </div>
     </div>
 
@@ -379,7 +379,7 @@
         <div class="body"><div class="chartWrap" style="height:270px"><canvas id="chartFleetTrend"></canvas></div></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Por família de veículo</h2><div class="hint">Famílias consolidadas · menor utilização primeiro</div></div></div>
+        <div class="panelHead"><div><h2>Por tipo de veículo</h2><div class="hint">Tipos consolidados · menor utilização primeiro</div></div></div>
         <div class="body fleetRankBody" id="fleetVehicleRanking"></div>
       </div>
     </div>
@@ -400,7 +400,7 @@
   <section class="screen" id="screenInfra">
     <div class="infraKpis" id="infraKpis"></div>
     <div class="panel">
-      <div class="panelHead"><div><h2>Utilização de equipamentos</h2><div class="hint">Tratores e pás carregadeiras · competência mais recente do Relatório Mensal DTE</div></div></div>
+      <div class="panelHead"><div><h2>Utilização de equipamentos</h2><div class="hint" id="equipUtilHint">Tratores e pás carregadeiras · competência mais recente do Relatório Mensal DTE</div></div></div>
       <div class="body"><div class="chartWrap" style="height:360px"><canvas id="chartEquipUtil"></canvas></div></div>
     </div>
 
@@ -678,6 +678,85 @@ function chartOuVazio(canvasId, values, drawFn) {
 
 
 // ============================================
+// DRILL DOWN / DETALHE DA COMPETÊNCIA
+// Infraestrutura compartilhada por todas as abas do DTE.
+// Dois comportamentos distintos, nunca confundidos na interface:
+//  - dteShowDrillReal: dimensão real existente na fonte (recorte, muda o gráfico)
+//  - dteShowDetalheCompetencia: série mensal única, sem dimensão inferior
+//    (não muda o gráfico, só abre o valor exato do mês clicado)
+// ============================================
+const DTE_DRILL = { visaoEtr: null, visaoSeletivaAno: null, reciclagemRegional: null, reciclagemOrigem: null, infraEquip: null };
+
+function dteCloseDrill() {
+  DTE_DRILL.visaoEtr = null;
+  DTE_DRILL.visaoSeletivaAno = null;
+  DTE_DRILL.reciclagemRegional = null;
+  DTE_DRILL.reciclagemOrigem = null;
+  DTE_DRILL.infraEquip = null;
+  HUB.drillBanner.hide("drillNote");
+  if (typeof renderVisaoGeral === "function" && RAW.relatorio.length) renderVisaoGeral();
+  if (typeof renderReciclagem === "function" && RAW.relatorio.length) renderReciclagem();
+  if (typeof renderInfra === "function" && RAW.relatorio.length) renderInfra();
+}
+
+// Recorte real: existe dimensão inferior na fonte, o clique muda o gráfico.
+function dteShowDrillReal(titulo, descricao) {
+  HUB.drillBanner.show("drillNote", {
+    title: "Recorte · " + titulo,
+    description: descricao,
+    onClear: "dteCloseDrill()"
+  });
+}
+
+// Detalhe da competência: série mensal única e oficial, sem dimensão por baixo.
+// Não inventa recorte — só expõe o que já está no gráfico com precisão (valor,
+// YoY, MoM, média da janela de 13 meses, fonte).
+function dteShowDetalheCompetencia({ titulo, meses, serie, idx, fonte, fmt, extraLinhas }) {
+  fmt = fmt || (v => HUB.format.int(Math.round(v)));
+  if (idx == null || idx < 0 || !Number.isFinite(serie[idx])) {
+    HUB.drillBanner.show("drillNote", {
+      title: "Detalhe da competência · " + titulo,
+      description: "Sem dado publicado para este mês.",
+      onClear: "dteCloseDrill()"
+    });
+    return;
+  }
+  const mesLabel = meses[idx];
+  const partes = ["Valor: " + fmt(serie[idx])];
+  const iYoY = idx - 12;
+  if (iYoY >= 0 && Number.isFinite(serie[iYoY]) && serie[iYoY] !== 0) {
+    const d = serie[idx] - serie[iYoY];
+    partes.push(`YoY (${meses[iYoY]}): ${d >= 0 ? "+" : ""}${fmt(d)}`);
+  } else {
+    partes.push("YoY: sem comparação disponível");
+  }
+  const iMoM = idx - 1;
+  if (iMoM >= 0 && Number.isFinite(serie[iMoM]) && serie[iMoM] !== 0) {
+    const d = serie[idx] - serie[iMoM];
+    partes.push(`MoM: ${d >= 0 ? "+" : ""}${fmt(d)}`);
+  }
+  const janela = serie.filter(v => Number.isFinite(v) && v > 0);
+  if (janela.length > 1) {
+    const media = janela.reduce((a, b) => a + b, 0) / janela.length;
+    const d = serie[idx] - media;
+    partes.push(`vs. média 13m: ${d >= 0 ? "+" : ""}${fmt(d)}`);
+  }
+  if (extraLinhas && extraLinhas.length) partes.push(...extraLinhas);
+  if (fonte) partes.push("Fonte: " + fonte);
+  HUB.drillBanner.show("drillNote", {
+    title: `Detalhe da competência · ${titulo} (${mesLabel})`,
+    description: partes.join(" · "),
+    onClear: "dteCloseDrill()"
+  });
+}
+
+// Lê o índice do ponto/barra clicado num gráfico Chart.js.
+function dteClickIndex(elements) {
+  if (!elements || !elements.length) return -1;
+  return elements[0].index;
+}
+
+// ============================================
 // FROTA · CARREGAMENTO ROBUSTO
 // CSV publicado -> GViz/JSONP -> snapshot local de contingência
 // ============================================
@@ -884,22 +963,57 @@ function renderVisaoGeral() {
     `).join("");
   }
 
-  // Fluxo por unidade ETR (último mês disponível)
+  // Janela móvel de 13 meses, reaproveitada pelos dois drills reais desta aba.
+  const mesesTodos = relatorioMeses(RAW.relatorio);
+  const nTodos = mesesTodos.length || 13;
+  const inicio13 = Math.max(0, nTodos - 13);
+  const meses13 = mesesTodos.slice(inicio13).map(prettyRef);
+  const corta13v = arr => arr.slice(inicio13, inicio13 + meses13.length);
+  const eixoXV = { ...HUB.charts.baseConfig.scales.x, grid: { display: false }, border: { display: false }, ticks: { ...HUB.charts.baseConfig.scales.x.ticks, maxRotation: 38, minRotation: 38, autoSkip: false } };
+  const eixoYV = { ...HUB.charts.baseConfig.scales.y, grid: { color: "rgba(41,72,102,.16)", drawTicks: false }, border: { display: false } };
+
+  // Fluxo por unidade ETR
   const unidades = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
-  const valoresUnidades = unidades.map(u => {
-    const s = relatorioSerie(RAW.relatorio, u, n);
-    const i = lastValidIndex(s);
-    return i >= 0 ? s[i] : 0;
-  });
-  chartOuVazio("chartEtrUnidade", valoresUnidades, () => HUB.charts.bar("chartEtrUnidade", {
-    labels: unidades.map(u => u.replace("ETR ", "")),
-    values: valoresUnidades
-  }, { color: HUB.charts.colors.blueGradient }));
+  const etrEl = document.getElementById("chartEtrUnidade");
+  if (etrEl) {
+    if (!DTE_DRILL.visaoEtr) {
+      const valoresUnidades = unidades.map(u => { const s = relatorioSerie(RAW.relatorio, u, n); const i = lastValidIndex(s); return i >= 0 ? s[i] : 0; });
+      chartOuVazio("chartEtrUnidade", valoresUnidades, () => {
+        new Chart(etrEl.getContext("2d"), {
+          type: "bar",
+          data: { labels: unidades.map(u => u.replace("ETR ", "")), datasets: [{ label: "ETR", data: valoresUnidades, backgroundColor: HUB.charts.colors.blueGradient[1], borderWidth: 0, borderRadius: 7, borderSkipped: false, maxBarThickness: 46 }] },
+          options: {
+            ...HUB.charts.baseConfig,
+            onClick: (evt, items) => {
+              const idx = dteClickIndex(items); if (idx < 0) return;
+              DTE_DRILL.visaoEtr = unidades[idx];
+              dteShowDrillReal(unidades[idx], `Histórico de recebimento em ${meses13[meses13.length - 1]}, janela de 13 meses.`);
+              renderVisaoGeral();
+            },
+            plugins: { ...HUB.charts.baseConfig.plugins, legend: { display: false }, dteValueLabels: { display: true, offset: 8, formatter: v => HUB.format.int(Math.round(v)) + " t" } },
+            scales: { x: { ...HUB.charts.baseConfig.scales.x, grid: { display: false }, border: { display: false } }, y: { ...HUB.charts.baseConfig.scales.y, grid: { color: "rgba(41,72,102,.16)" }, border: { display: false } } }
+          }
+        });
+      });
+    } else {
+      const unidade = DTE_DRILL.visaoEtr;
+      const serieUnidade = corta13v(relatorioSerie(RAW.relatorio, unidade, nTodos));
+      const iUlt = lastValidIndex(serieUnidade), iYoY = iUlt - 12;
+      chartOuVazio("chartEtrUnidade", serieUnidade, () => {
+        new Chart(etrEl.getContext("2d"), {
+          type: "line",
+          data: { labels: meses13, datasets: [{ label: unidade, data: serieUnidade, borderColor: HUB.charts.colors.blue, backgroundColor: "transparent", borderWidth: 2.4, tension: .22, pointRadius: serieUnidade.map((_, i) => (i === iUlt || i === iYoY) ? 4 : 0), pointHoverRadius: 5 }] },
+          options: { ...HUB.charts.baseConfig, layout: { padding: { top: 20 } }, plugins: { ...HUB.charts.baseConfig.plugins, legend: { display: false }, dteValueLabels: { display: true, fontSize: 9, offset: 8, formatter: (v, i) => (i === iUlt || i === iYoY) ? HUB.format.int(Math.round(v)) + " t" : "" } }, scales: { x: eixoXV, y: eixoYV } }
+        });
+      });
+    }
+  }
 
   // Coleta seletiva anual · histórico + live
   const anos = ["2022","2023","2024","2025","2026"];
   const seletiva2025 = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
   const seletiva2026 = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
+  const anosComMes = { "2025": seletiva2025.meses, "2026": seletiva2026.meses };
   const valoresSeletiva = [
     HIST.coletaSeletivaAnual["2022"],
     HIST.coletaSeletivaAnual["2023"],
@@ -907,10 +1021,41 @@ function renderVisaoGeral() {
     seletiva2025.total || HIST.coletaSeletivaAnual["2024"],
     seletiva2026.meses.reduce((a,b)=>a+b,0)
   ];
-  chartOuVazio("chartSeletivaAnual", valoresSeletiva, () => HUB.charts.bar("chartSeletivaAnual", {
-    labels: anos,
-    values: valoresSeletiva
-  }, { color: HUB.charts.colors.greenGradient }));
+  const selEl = document.getElementById("chartSeletivaAnual");
+  if (selEl) {
+    if (!DTE_DRILL.visaoSeletivaAno) {
+      chartOuVazio("chartSeletivaAnual", valoresSeletiva, () => {
+        new Chart(selEl.getContext("2d"), {
+          type: "bar",
+          data: { labels: anos, datasets: [{ label: "Coleta seletiva", data: valoresSeletiva, backgroundColor: anos.map(a => anosComMes[a] ? HUB.charts.colors.greenGradient[1] : "rgba(120,170,163,.42)"), borderWidth: 0, borderRadius: 7, borderSkipped: false, maxBarThickness: 46 }] },
+          options: {
+            ...HUB.charts.baseConfig,
+            onClick: (evt, items) => {
+              const idx = dteClickIndex(items); if (idx < 0) return;
+              const ano = anos[idx];
+              if (!anosComMes[ano]) { HUB.drillBanner.show("drillNote", { title: "Coleta seletiva · " + ano, description: "Sem detalhamento mensal disponível na fonte para este ano.", onClear: "dteCloseDrill()" }); return; }
+              DTE_DRILL.visaoSeletivaAno = ano;
+              dteShowDrillReal("Coleta seletiva · " + ano, "Detalhamento mensal, Tabela 1493.");
+              renderVisaoGeral();
+            },
+            plugins: { ...HUB.charts.baseConfig.plugins, legend: { display: false }, dteValueLabels: { display: true, offset: 8, formatter: v => HUB.format.int(Math.round(v)) + " t" } },
+            scales: { x: { ...HUB.charts.baseConfig.scales.x, grid: { display: false }, border: { display: false } }, y: { ...HUB.charts.baseConfig.scales.y, grid: { color: "rgba(41,72,102,.16)" }, border: { display: false } } }
+          }
+        });
+      });
+    } else {
+      const ano = DTE_DRILL.visaoSeletivaAno;
+      const serieMensal = anosComMes[ano];
+      const iUlt = lastValidIndex(serieMensal);
+      chartOuVazio("chartSeletivaAnual", serieMensal, () => {
+        new Chart(selEl.getContext("2d"), {
+          type: "bar",
+          data: { labels: MESES_ABREV.map(m => m[0].toUpperCase() + m.slice(1)), datasets: [{ label: ano, data: serieMensal, backgroundColor: serieMensal.map((_, i) => i === iUlt ? "rgba(120,170,163,.92)" : "rgba(120,170,163,.38)"), borderWidth: 0, borderRadius: 7, borderSkipped: false, maxBarThickness: 34 }] },
+          options: { ...HUB.charts.baseConfig, plugins: { ...HUB.charts.baseConfig.plugins, legend: { display: false }, dteValueLabels: { display: true, offset: 8, formatter: v => v > 0 ? HUB.format.int(Math.round(v)) + " t" : "" } }, scales: { x: eixoXV, y: eixoYV } }
+        });
+      });
+    }
+  }
 }
 
 // ============================================
@@ -1106,7 +1251,7 @@ function renderReciclagem() {
   function lastDataIndex(arr){ for(let i=arr.length-1;i>=0;i--) if(Number.isFinite(arr[i]) && arr[i]>0) return i; return -1; }
 
   const serieIdx = rolling13("INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL", "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  chartOuVazio("chartIndiceMensal", serieIdx.map(v=>v||0), () => HUB.charts.line("chartIndiceMensal", { labels: labels13, values: serieIdx }, { color: HUB.charts.colors.green }));
+  renderTendenciaAnualChart("chartIndiceMensal", labels13, serieIdx.map(v=>v||0), HUB.charts.colors.green, "%", { titulo: "Índice de captura EGP-RIO", fonte: "Tabela 1493 · Índice do coletado em relação ao potencial reciclável" });
 
   const bannerTitleEl = document.getElementById("bannerTitle");
   const bannerEl2 = document.getElementById("bannerIndice");
@@ -1142,7 +1287,18 @@ function renderReciclagem() {
         {label:"Frota Comlurb",data:frotaRolling,backgroundColor:HUB.charts.colors.blue},
         {label:"Cooperativas / não cadastrados",data:naoRolling,backgroundColor:HUB.charts.colors.orange}
       ]},
-      options:{...HUB.charts.baseConfig,scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,stacked:true},y:{...HUB.charts.baseConfig.scales.y,stacked:true}}}
+      options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+        const idx=dteClickIndex(items); if(idx<0)return;
+        const f=frotaRolling[idx]||0, nc=naoRolling[idx]||0, tot=f+nc;
+        if(tot<=0){HUB.drillBanner.show("drillNote",{title:"Detalhe da competência · Composição da coleta seletiva",description:"Sem dado publicado para "+labels13[idx]+".",onClear:"dteCloseDrill()"});return;}
+        dteShowDetalheCompetencia({
+          titulo:"Composição da coleta seletiva",
+          meses:labels13, serie:frotaRolling.map((v,i)=>(v||0)+(naoRolling[i]||0)), idx,
+          fonte:"Tabela 1493 · Coleta Seletiva - Frota Comlurb / Não Cadastrados",
+          fmt:v=>HUB.format.int(Math.round(v))+" t",
+          extraLinhas:[`Frota Comlurb: ${HUB.format.int(Math.round(f))} t (${(f/tot*100).toFixed(1).replace(".",",")}%)`,`Cooperativas/não cadastrados: ${HUB.format.int(Math.round(nc))} t (${(nc/tot*100).toFixed(1).replace(".",",")}%)`]
+        });
+      },scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,stacked:true},y:{...HUB.charts.baseConfig.scales.y,stacked:true}}}
     });
   });
 
@@ -1161,23 +1317,69 @@ function renderReciclagem() {
   }
 
   // Regional: usa o ano corrente acumulado publicado; não inventa meses sem dado.
+  // A Tabela 1493 tem os 12 meses por trás de cada regional — dimensão real, não snapshot.
   const regionais=["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
-  const valoresRegional=regionais.map(r=>ind1493Serie(RAW.ind2026,r).total);
-  const paresRegional=regionais.map((label,i)=>({label,value:valoresRegional[i]})).filter(x=>x.value>0);
-  chartOuVazio("chartRegional",paresRegional.map(x=>x.value),()=>HUB.charts.bar("chartRegional",{labels:paresRegional.map(x=>x.label),values:paresRegional.map(x=>x.value)},{color:HUB.charts.colors.greenGradient}));
+  const eixoXRec={...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,maxRotation:38,minRotation:38,autoSkip:false}};
+  const eixoYRec={...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)",drawTicks:false},border:{display:false}};
+  const regEl=document.getElementById("chartRegional");
+  if(regEl){
+    if(!DTE_DRILL.reciclagemRegional){
+      const valoresRegional=regionais.map(r=>ind1493Serie(RAW.ind2026,r).total);
+      const paresRegional=regionais.map((label,i)=>({label,value:valoresRegional[i]})).filter(x=>x.value>0);
+      chartOuVazio("chartRegional",paresRegional.map(x=>x.value),()=>{
+        new Chart(regEl.getContext("2d"),{type:"bar",data:{labels:paresRegional.map(x=>x.label),datasets:[{label:"Coleta seletiva",data:paresRegional.map(x=>x.value),backgroundColor:HUB.charts.colors.greenGradient[1],borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:46}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+          const idx=dteClickIndex(items); if(idx<0)return;
+          const label=paresRegional[idx].label;
+          DTE_DRILL.reciclagemRegional=label;
+          dteShowDrillReal("Coleta seletiva · "+label,"Evolução mensal, Jul/25–Jul/26 (Tabela 1493).");
+          renderReciclagem();
+        },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>HUB.format.int(Math.round(v))+" t"}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)"},border:{display:false}}}}});
+      });
+    } else {
+      const label=DTE_DRILL.reciclagemRegional;
+      const serieReg=rolling13(label,label);
+      const iUlt=lastDataIndex(serieReg);
+      chartOuVazio("chartRegional",serieReg.map(v=>v||0),()=>{
+        new Chart(regEl.getContext("2d"),{type:"bar",data:{labels:labels13,datasets:[{label,data:serieReg,backgroundColor:serieReg.map((_,i)=>i===iUlt?"rgba(120,170,163,.92)":"rgba(120,170,163,.38)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:34}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+          const idx=dteClickIndex(items); if(idx<0)return;
+          dteShowDetalheCompetencia({titulo:"Coleta seletiva · "+label,meses:labels13,serie:serieReg,idx,fonte:"Tabela 1493 · "+label,fmt:v=>HUB.format.int(Math.round(v))+" t"});
+        },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>v>0?HUB.format.int(Math.round(v))+" t":""}},scales:{x:eixoXRec,y:eixoYRec}}});
+      });
+    }
+  }
 
-  const frotaComlurb=ind1493Serie(RAW.ind2026,"COLETA SELETIVA - FROTA COMLURB").total;
-  const alternativa=ind1493Serie(RAW.ind2026,"FROTA ALTERNATIVA").total;
-  const naoCadastrados=ind1493Serie(RAW.ind2026,"NAO CADASTRADOS").total;
-  const origem=[{label:"Frota Comlurb",value:frotaComlurb,color:HUB.charts.colors.blue},{label:"Frota alternativa cadastrada",value:alternativa,color:HUB.charts.colors.purple},{label:"Não cadastrados / cooperativas",value:naoCadastrados,color:HUB.charts.colors.orange}].filter(x=>x.value>0);
-  chartOuVazio("chartOrigem",origem.map(x=>x.value),()=>{
-    const canvas=document.getElementById("chartOrigem"); if(!canvas)return;
-    new Chart(canvas.getContext("2d"),{
-      type:"doughnut",
-      data:{labels:origem.map(x=>x.label),datasets:[{data:origem.map(x=>x.value),backgroundColor:origem.map(x=>x.color),borderWidth:0,hoverOffset:5}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:"64%",plugins:{legend:{display:true,position:"bottom",labels:{color:"#b8c9de",usePointStyle:true,boxWidth:8,padding:14}},tooltip:{callbacks:{label:(ctx)=>`${ctx.label}: ${HUB.format.int(Math.round(ctx.raw))} t`}}}}
-    });
-  });
+  const origemLabels={"Frota Comlurb":"COLETA SELETIVA - FROTA COMLURB","Frota alternativa cadastrada":"FROTA ALTERNATIVA","Não cadastrados / cooperativas":"NAO CADASTRADOS"};
+  const origemCores={"Frota Comlurb":HUB.charts.colors.blue,"Frota alternativa cadastrada":HUB.charts.colors.purple,"Não cadastrados / cooperativas":HUB.charts.colors.orange};
+  const origEl=document.getElementById("chartOrigem");
+  if(origEl){
+    if(!DTE_DRILL.reciclagemOrigem){
+      const origem=Object.keys(origemLabels).map(label=>({label,value:ind1493Serie(RAW.ind2026,origemLabels[label]).total,color:origemCores[label]})).filter(x=>x.value>0);
+      const totalOrigem=origem.reduce((a,x)=>a+x.value,0);
+      chartOuVazio("chartOrigem",origem.map(x=>x.value),()=>{
+        new Chart(origEl.getContext("2d"),{
+          type:"doughnut",
+          data:{labels:origem.map(x=>x.label),datasets:[{data:origem.map(x=>x.value),backgroundColor:origem.map(x=>x.color),borderWidth:0,hoverOffset:5}]},
+          options:{responsive:true,maintainAspectRatio:false,cutout:"64%",onClick:(evt,items)=>{
+            const idx=dteClickIndex(items); if(idx<0)return;
+            const label=origem[idx].label;
+            DTE_DRILL.reciclagemOrigem=label;
+            dteShowDrillReal("Origem do peso · "+label,"Evolução mensal, Jul/25–Jul/26 (Tabela 1493).");
+            renderReciclagem();
+          },plugins:{legend:{display:true,position:"bottom",labels:{color:"#b8c9de",usePointStyle:true,boxWidth:8,padding:14}},tooltip:{callbacks:{label:(ctx)=>{const v=Number(ctx.raw||0);return `${ctx.label}: ${HUB.format.int(Math.round(v))} t (${totalOrigem>0?(v/totalOrigem*100).toFixed(1).replace(".",","):"0"}%)`;}}}}}
+        });
+      });
+    } else {
+      const label=DTE_DRILL.reciclagemOrigem;
+      const serieOrig=rolling13(origemLabels[label],origemLabels[label]);
+      const iUlt=lastDataIndex(serieOrig);
+      chartOuVazio("chartOrigem",serieOrig.map(v=>v||0),()=>{
+        new Chart(origEl.getContext("2d"),{type:"bar",data:{labels:labels13,datasets:[{label,data:serieOrig,backgroundColor:serieOrig.map((_,i)=>i===iUlt?origemCores[label]:origemCores[label]+"66"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:34}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+          const idx=dteClickIndex(items); if(idx<0)return;
+          dteShowDetalheCompetencia({titulo:"Origem do peso · "+label,meses:labels13,serie:serieOrig,idx,fonte:"Tabela 1493 · "+origemLabels[label],fmt:v=>HUB.format.int(Math.round(v))+" t"});
+        },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>v>0?HUB.format.int(Math.round(v))+" t":""}},scales:{x:eixoXRec,y:eixoYRec}}});
+      });
+    }
+  }
 }
 
 // ============================================
@@ -1331,12 +1533,15 @@ const FLEET_SERVICE_LABEL={domiciliar:"Coleta Domiciliar",seletiva:"Coleta Selet
 
 // Gráfico de tendência anual reutilizável: marca e rotula apenas o mês atual
 // e o mesmo mês do ano anterior, mantendo o restante da série limpo.
-function renderTendenciaAnualChart(canvasId,meses,serie,cor,sufixo){
+// detalhe: {titulo, fonte} — quando presente, clicar num ponto abre Detalhe da Competência
+// (série mensal única, sem dimensão inferior; nunca chamado de "drill down" na interface).
+function renderTendenciaAnualChart(canvasId,meses,serie,cor,sufixo,detalhe){
   chartOuVazio(canvasId,serie,()=>{
     const c=document.getElementById(canvasId); if(!c)return;
     const iUlt=lastValidIndex(serie);
     const iYoY=iUlt-12;
-    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:serie,borderColor:cor,backgroundColor:"transparent",borderWidth:2.4,tension:.25,pointRadius:serie.map((_,i)=>(i===iUlt||i===iYoY)?4:0),pointHoverRadius:4}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:20}},plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:(v,i)=>(i===iUlt||i===iYoY)?v.toFixed(1).replace(".",",")+sufixo:""},tooltip:{callbacks:{label:ctx=>`${Number(ctx.raw).toFixed(1).replace(".",",")}${sufixo}`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:5,callback:v=>v+sufixo}}}}});
+    const fmt=v=>v.toFixed(1).replace(".",",")+sufixo;
+    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:serie,borderColor:cor,backgroundColor:"transparent",borderWidth:2.4,tension:.25,pointRadius:serie.map((_,i)=>(i===iUlt||i===iYoY)?4:0),pointHoverRadius:5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:20}},onClick:detalhe?(evt,items)=>{const idx=dteClickIndex(items);if(idx<0)return;dteShowDetalheCompetencia({titulo:detalhe.titulo,meses,serie,idx,fonte:detalhe.fonte,fmt});}:undefined,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:(v,i)=>(i===iUlt||i===iYoY)?fmt(v):""},tooltip:{callbacks:{label:ctx=>fmt(Number(ctx.raw))}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:5,callback:v=>v+sufixo}}}}});
   });
 }
 
@@ -1378,7 +1583,10 @@ function renderFrota() {
     const c=document.getElementById("chartHorasExtras"); if(!c)return;
     const ctx=c.getContext("2d");
     const grad=ctx.createLinearGradient(0,0,0,260); grad.addColorStop(0,"rgba(232,117,53,.92)"); grad.addColorStop(1,"rgba(232,117,53,.42)");
-    new Chart(ctx,{type:"bar",data:{labels:meses,datasets:[{label:"Horas extras",data:horasExtras,backgroundColor:horasExtras.map((_,i)=>i===ultimo(horasExtras)?grad:"rgba(91,147,232,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:26}]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false}},scales:{x:eixoX,y:eixoY}}});
+    new Chart(ctx,{type:"bar",data:{labels:meses,datasets:[{label:"Horas extras",data:horasExtras,backgroundColor:horasExtras.map((_,i)=>i===ultimo(horasExtras)?grad:"rgba(91,147,232,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:26}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+      const idx=dteClickIndex(items); if(idx<0)return;
+      dteShowDetalheCompetencia({titulo:"Horas extras",meses,serie:horasExtras,idx,fonte:"Relatório Mensal DTE · VALOR TOTAL DE HORAS EXTRAS",fmt:v=>"R$ "+HUB.format.int(Math.round(v))});
+    },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false}},scales:{x:eixoX,y:eixoY}}});
   });
 
   chartOuVazio("chartSobrecarga",sobrecarga,()=>{
@@ -1387,7 +1595,10 @@ function renderFrota() {
     new Chart(c.getContext("2d"),{data:{labels:meses,datasets:[
       {type:"bar",label:"Pesagens acima do limite",data:sobrecarga,backgroundColor:sobrecarga.map((_,i)=>i===ultimo(sobrecarga)?"rgba(239,106,93,.92)":"rgba(239,106,93,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24,order:2},
       {type:"line",label:"Limite de referência (10%)",data:limite,borderColor:"rgba(200,210,222,.55)",borderWidth:1.4,borderDash:[6,4],pointRadius:0,pointHoverRadius:0,fill:false,tension:0,order:1}
-    ]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>ctx.datasetIndex===1?"Limite 10%":` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{x:eixoX,y:{...eixoY,ticks:{...eixoY.ticks,callback:v=>v+"%"}}}}});
+    ]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+      const idx=dteClickIndex(items.filter(it=>it.datasetIndex===0)); if(idx<0)return;
+      dteShowDetalheCompetencia({titulo:"Sobrecarga acima de 10% do PBT",meses,serie:sobrecarga,idx,fonte:"Relatório Mensal DTE · QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",fmt:v=>v.toFixed(1).replace(".",",")+"%"});
+    },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>ctx.datasetIndex===1?"Limite 10%":` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{x:eixoX,y:{...eixoY,ticks:{...eixoY.ticks,callback:v=>v+"%"}}}}});
   });
 
   const insightHE=document.getElementById("insightHorasExtras");
@@ -1417,7 +1628,11 @@ function renderFrota() {
   }
   chartOuVazio("chartFrotaDisponibilidade",disponibilidade,()=>{
     const c=document.getElementById("chartFrotaDisponibilidade"); if(!c)return;
-    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:disponibilidade,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:disponibilidade.map((_,i)=>i===iDisp?3:0),pointHoverRadius:3,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Disponibilidade: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{display:false},y:{display:false}}}});
+    new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:disponibilidade,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:disponibilidade.map((_,i)=>i===iDisp?3:0),pointHoverRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,items)=>{
+      const idx=dteClickIndex(items); if(idx<0)return;
+      const indisp=frotaTotal[idx]>0?Math.max(0,Math.round(frotaTotal[idx]-frotaOp[idx])):null;
+      dteShowDetalheCompetencia({titulo:"Disponibilidade da Frota Própria COMLURB",meses,serie:disponibilidade,idx,fonte:"MANUTENÇÃO FROTA PRÓPRIA · FROTA TOTAL / TOTAL EM OPERAÇÃO",fmt:v=>v.toFixed(1).replace(".",",")+"%",extraLinhas:indisp!=null?[`Veículos indisponíveis: ${HUB.format.int(indisp)}`]:[]});
+    },plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Disponibilidade: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{display:false},y:{display:false}}}});
   });
 
   const last=i=>lastValidIndex(i);
@@ -1445,7 +1660,7 @@ function renderFrota() {
     const tipo=FLEET_STATE.tipo||"domiciliar";
     const hint=document.getElementById("utilOficialHint");
     if(hint) hint.textContent=`Série oficial DTE · ${FLEET_SERVICE_LABEL[tipo]}`;
-    renderTendenciaAnualChart("chartUtilizacaoOficial",meses,officialUtilFor(tipo),HUB.charts.colors.blue,"%");
+    renderTendenciaAnualChart("chartUtilizacaoOficial",meses,officialUtilFor(tipo),HUB.charts.colors.blue,"%",{titulo:"Utilização · "+FLEET_SERVICE_LABEL[tipo],fonte:"Relatório Mensal DTE · Peso Coletado / Capacidade Estimada"});
   }
 
   // LINHA 2 · Insight Executivo, largura total
@@ -1557,7 +1772,7 @@ function renderFleetDetail(){
       ["Utilização",agg.pct==null?"n/d":agg.pct.toFixed(1).replace(".",",")+"%","peso ÷ capacidade"],
       ["Peso transportado",HUB.format.int(Math.round(agg.peso))+" t",fleetPrettyMonth(FLEET_STATE.periodo)],
       ["Capacidade estimada",HUB.format.int(Math.round(agg.capacidade))+" t","base detalhada"],
-      ["Cobertura",`${gerCount} gerência${gerCount===1?"":"s"}`,`${vehCount} família${vehCount===1?"":"s"} de veículo`]
+      ["Cobertura",`${gerCount} gerência${gerCount===1?"":"s"}`,`${vehCount} tipo${vehCount===1?"":"s"} de veículo`]
     ].map(c=>`<div class="fleetSummaryCard"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join("");
   }
 
@@ -1573,7 +1788,12 @@ function renderFleetDetail(){
     const vals=trend.map(x=>x.pct);
     const iUlt=lastValidIndex(vals);
     const iYoYTrend=iUlt-12;
-    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trend.map(x=>fleetPrettyMonth(x.name)),datasets:[{label:"Utilização",data:vals,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.5,tension:.28,pointRadius:vals.map((_,i)=>(i===iUlt||i===iYoYTrend)?4:0),pointHoverRadius:4,pointBorderWidth:1.5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:(v,i)=>(i===iUlt||i===iYoYTrend)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:6,callback:v=>v+"%"}}}}});
+    const trendLabels=trend.map(x=>fleetPrettyMonth(x.name));
+    const filtroAtivo=[FLEET_STATE.gerencia||"",FLEET_STATE.veiculo?fleetLabel(FLEET_STATE.veiculo):""].filter(Boolean).join(" · ")||"sem filtro adicional";
+    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trendLabels,datasets:[{label:"Utilização",data:vals,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.5,tension:.28,pointRadius:vals.map((_,i)=>(i===iUlt||i===iYoYTrend)?4:0),pointHoverRadius:5,pointBorderWidth:1.5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},onClick:(evt,items)=>{
+      const idx=dteClickIndex(items); if(idx<0)return;
+      dteShowDetalheCompetencia({titulo:"Evolução mensal · "+serviceName,meses:trendLabels,serie:vals,idx,fonte:"Base detalhada DTE · peso ÷ capacidade estimada",fmt:v=>v.toFixed(1).replace(".",",")+"%",extraLinhas:["Recorte de filtro ativo: "+filtroAtivo]});
+    },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:(v,i)=>(i===iUlt||i===iYoYTrend)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:6,callback:v=>v+"%"}}}}});
   }
   const hint=document.getElementById("fleetTrendHint");
   if(hint){
@@ -1594,7 +1814,7 @@ function renderFleetDetail(){
     const arr=[];
     if(agg.pct!=null) arr.push(`${serviceName} opera a ${agg.pct.toFixed(1).replace(".",",")}% da capacidade estimada no recorte selecionado.`);
     if(gers.length) arr.push(`${gers[0].name} apresenta a menor utilização entre as gerências comparáveis do recorte: ${gers[0].pct.toFixed(1).replace(".",",")}%.`);
-    if(vehicles.length) arr.push(`${fleetLabel(vehicles[0].name)} registra a menor utilização entre as famílias disponíveis: ${vehicles[0].pct.toFixed(1).replace(".",",")}%.`);
+    if(vehicles.length) arr.push(`${fleetLabel(vehicles[0].name)} registra a menor utilização entre os tipos disponíveis: ${vehicles[0].pct.toFixed(1).replace(".",",")}%.`);
     const over=[...gers,...vehicles].filter(x=>x.pct>100).sort((a,b)=>b.pct-a.pct);
     if(over.length) arr.push(`Há ${over.length} resultado${over.length===1?"":"s"} acima de 100% da capacidade de referência. O maior é ${over[0].name in FLEET_LABELS?fleetLabel(over[0].name):over[0].name}, com ${over[0].pct.toFixed(1).replace(".",",")}%.`);
     insights.innerHTML=(arr.length?arr:["Sem dados suficientes para gerar leitura do recorte."]).map(t=>`<div class="leituraChip"><div class="dot"></div><span>${HUB.format.esc(t)}</span></div>`).join("");
@@ -1645,28 +1865,68 @@ function renderInfra(){
     ["Pás carregadeiras AP4/5",p45.v==null?"n/d":p45.v.toFixed(1).replace(".",",")+"%",p45.i>=0?meses[p45.i]:""]
   ].map(c=>`<div class="infraKpi"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join("");
 
-  const ce=document.getElementById("chartEquipUtil");
-  if(ce){
-    const vals=[lastVal(trComun).v,lastVal(trPraia12).v,lastVal(trPraia345).v,lastVal(trCorte).v,lastVal(pas123).v,lastVal(pas45).v];
-    new Chart(ce.getContext("2d"),{type:"bar",data:{labels:["Trator comunidade","Trator praia AP1/2","Trator praia AP3/4/5","Trator de corte","Pás AP1/2/3","Pás AP4/5"],datasets:[{label:"Utilização",data:vals,backgroundColor:HUB.charts.colors.blueGradient}]},options:{...HUB.charts.baseConfig,indexAxis:"y",plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},tooltip:{callbacks:{label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,suggestedMax:120,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}}}}});
-  }
-
   const eixoXInfra={...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,maxRotation:38,minRotation:38,autoSkip:false}};
   const eixoYInfra={...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)",drawTicks:false},border:{display:false}};
   const lastInfra=Math.max(0,meses.length-1);
 
+  // Utilização de equipamentos: comparativo do mês (padrão) ou histórico de 13
+  // meses de UM equipamento (drill real). As 6 séries mensais já estão calculadas
+  // acima — o drill só exibe o que já existe, nunca inventa granularidade nova.
+  const equipCategorias={
+    "Trator comunidade":trComun,
+    "Trator praia AP1/2":trPraia12,
+    "Trator praia AP3/4/5":trPraia345,
+    "Trator de corte":trCorte,
+    "Pás AP1/2/3":pas123,
+    "Pás AP4/5":pas45
+  };
+  const equipHintEl=document.getElementById("equipUtilHint");
+  if(equipHintEl) equipHintEl.textContent="% de utilização (peso ou área operada ÷ capacidade) · Relatório Mensal DTE, seção Utilização de Tratores/Pás";
+  const ce=document.getElementById("chartEquipUtil");
+  if(ce){
+    if(!DTE_DRILL.infraEquip){
+      const labels=Object.keys(equipCategorias);
+      const vals=labels.map(l=>lastVal(equipCategorias[l]).v);
+      new Chart(ce.getContext("2d"),{type:"bar",data:{labels,datasets:[{label:"Utilização",data:vals,backgroundColor:HUB.charts.colors.blueGradient}]},options:{...HUB.charts.baseConfig,indexAxis:"y",onClick:(evt,items)=>{
+        const idx=dteClickIndex(items); if(idx<0)return;
+        const label=labels[idx];
+        DTE_DRILL.infraEquip=label;
+        dteShowDrillReal(label,"Histórico de utilização, janela de 13 meses.");
+        renderInfra();
+      },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>Number.isFinite(v)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,suggestedMax:120,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}}}}});
+    } else {
+      const label=DTE_DRILL.infraEquip;
+      const serieEquip=equipCategorias[label];
+      const iUlt=lastValidIndex(serieEquip),iYoYEquip=iUlt-12;
+      chartOuVazio("chartEquipUtil",serieEquip,()=>{
+        new Chart(ce.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{label,data:serieEquip,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.4,tension:.22,pointRadius:serieEquip.map((_,i)=>(i===iUlt||i===iYoYEquip)?4:0),pointHoverRadius:5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:20}},onClick:(evt,items)=>{
+          const idx=dteClickIndex(items); if(idx<0)return;
+          dteShowDetalheCompetencia({titulo:label,meses,serie:serieEquip,idx,fonte:"Relatório Mensal DTE · Utilização de Tratores/Pás",fmt:v=>v.toFixed(1).replace(".",",")+"%"});
+        },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,offset:8,formatter:(v,i)=>(i===iUlt||i===iYoYEquip)?v.toFixed(1).replace(".",",")+"%":""}},scales:{x:eixoXInfra,y:eixoYInfra}}});
+      });
+    }
+  }
+
+  // Poda mecanizada: escalas validadas contra a fonte (KM/Manejo ~3,5–4,9;
+  // Manejo/Apresentação ~5,4–7,1 — mesma ordem de grandeza). Eixo único mantido
+  // por ser leitura honesta; não é eixo duplo automático.
   const cp=document.getElementById("chartPoda");
   if(cp)new Chart(cp.getContext("2d"),{data:{labels:meses,datasets:[
     {type:"bar",label:"KM por manejo",data:podaKm,backgroundColor:podaKm.map((_,i)=>i===lastInfra?"rgba(91,147,232,.88)":"rgba(91,147,232,.30)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24,order:2},
     {type:"line",label:"Manejo por apresentação",data:podaMan,borderColor:HUB.charts.colors.orange,backgroundColor:"transparent",borderWidth:2.3,tension:.22,pointRadius:podaMan.map((_,i)=>i===lastInfra?4:0),pointHoverRadius:5,order:1}
-  ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}});
+  ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},onClick:(evt,items)=>{
+    const idx=dteClickIndex(items); if(idx<0)return;
+    const km=podaKm[idx],man=podaMan[idx];
+    if(!Number.isFinite(km)&&!Number.isFinite(man)){HUB.drillBanner.show("drillNote",{title:"Detalhe da competência · Poda mecanizada",description:"Sem dado publicado para "+meses[idx]+".",onClear:"dteCloseDrill()"});return;}
+    dteShowDetalheCompetencia({titulo:"Poda mecanizada · KM por manejo",meses,serie:podaKm,idx,fonte:"Relatório Mensal DTE · Indicador de Poda",fmt:v=>v.toFixed(1).replace(".",",")+" km",extraLinhas:[`Manejo por apresentação em ${meses[idx]}: ${Number.isFinite(man)?man.toFixed(1).replace(".",","):"n/d"}`]});
+  },plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}});
 
   const cpr=document.getElementById("predialKpis");
   if(cpr){
     const itensPredial=[
-      {id:"Interv",label:"Intervenções",serie:predial,cor:HUB.charts.colors.blue},
-      {id:"Refrig",label:"Refrigeração",serie:refrig,cor:HUB.charts.colors.orange},
-      {id:"Eco",label:"Ecopontos",serie:eco,cor:HUB.charts.colors.purple}
+      {id:"Interv",label:"Intervenções",serie:predial,cor:HUB.charts.colors.blue,fonte:"Relatório Mensal DTE · QUANTIDADES INTERVENÇÕES HIDRÁULICAS E ELÉTRICAS E OUTRAS"},
+      {id:"Refrig",label:"Refrigeração",serie:refrig,cor:HUB.charts.colors.orange,fonte:"Relatório Mensal DTE · REFRIGERAÇÃO"},
+      {id:"Eco",label:"Ecopontos",serie:eco,cor:HUB.charts.colors.purple,fonte:"Relatório Mensal DTE · MANUTENÇÃO DE ECOPONTOS"}
     ];
     cpr.innerHTML=itensPredial.map(it=>{
       const iLast=lastValidIndex(it.serie);
@@ -1678,7 +1938,10 @@ function renderInfra(){
       chartOuVazio(`chartPredial${it.id}`,it.serie,()=>{
         const c=document.getElementById(`chartPredial${it.id}`); if(!c)return;
         const iLast=lastValidIndex(it.serie);
-        new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:it.serie,borderColor:it.cor,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:it.serie.map((_,i)=>i===iLast?3:0),pointHoverRadius:3,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${it.label}: ${HUB.format.int(Math.round(ctx.raw))}`}}},scales:{x:{display:false},y:{display:false}}}});
+        new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:it.serie,borderColor:it.cor,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:it.serie.map((_,i)=>i===iLast?3:0),pointHoverRadius:4,fill:false}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,items)=>{
+          const idx=dteClickIndex(items); if(idx<0)return;
+          dteShowDetalheCompetencia({titulo:it.label,meses,serie:it.serie,idx,fonte:it.fonte,fmt:v=>HUB.format.int(Math.round(v))});
+        },plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${it.label}: ${HUB.format.int(Math.round(ctx.raw))}`}}},scales:{x:{display:false},y:{display:false}}}});
       });
     });
   }

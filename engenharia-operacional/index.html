@@ -381,6 +381,36 @@
 <!-- DEPENDÊNCIAS -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const DTEValueLabelsPlugin = {
+  id: "dteValueLabels",
+  afterDatasetsDraw(chart, args, opts) {
+    if (!opts || !opts.display) return;
+    const { ctx, chartArea } = chart;
+    const formatter = typeof opts.formatter === "function" ? opts.formatter : (v => String(v));
+    ctx.save();
+    ctx.font = `${opts.fontWeight || 700} ${opts.fontSize || 9}px Inter, Arial, sans-serif`;
+    ctx.fillStyle = opts.color || "#c7d4e3";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    chart.data.datasets.forEach((dataset, di) => {
+      const meta = chart.getDatasetMeta(di);
+      if (meta.hidden) return;
+      meta.data.forEach((el, i) => {
+        const value = dataset.data[i];
+        if (value === null || value === undefined || !Number.isFinite(Number(value))) return;
+        const pos = el.tooltipPosition();
+        if (!pos || pos.x < chartArea.left || pos.x > chartArea.right) return;
+        let y = pos.y - (opts.offset || 7);
+        if (y < chartArea.top + 9) y = chartArea.top + 9;
+        ctx.fillText(formatter(Number(value), i, dataset, di), pos.x, y);
+      });
+    });
+    ctx.restore();
+  }
+};
+Chart.register(DTEValueLabelsPlugin);
+</script>
 
 <!-- COMPONENTES HUB -->
 <script src="../assets/components/hub-core.js"></script>
@@ -820,18 +850,34 @@ function renderVisaoGeral() {
 // TELA 2 · DESTINAÇÃO & BIOGÁS
 // ============================================
 function renderDestinacao() {
-  const meses = relatorioMeses(RAW.relatorio);
-  const mesesFmt = meses.map(prettyRef);
-  const n = meses.length || 13;
+  const mesesTodos = relatorioMeses(RAW.relatorio);
+  const nTodos = mesesTodos.length || 13;
+  const inicio = Math.max(0, nTodos - 13);
+  const mesesFmt = mesesTodos.slice(inicio).map(prettyRef);
+  const n = mesesFmt.length || 13;
+  const corta13 = arr => arr.slice(inicio, inicio + n);
 
-  const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
+  const etrTotal = corta13(relatorioSerie(RAW.relatorio, "ETR TOTAL", nTodos));
   const secBiogas = findSecao(RAW.secoes, "GERACAO BIOGAS");
-  const biogas = secBiogas ? relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", n) : Array(n).fill(0);
-  const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
+  const biogas = secBiogas ? corta13(relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", nTodos)) : Array(n).fill(0);
+  const chorume = corta13(relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", nTodos));
 
-  chartOuVazio("chartEtrTotal", etrTotal, () => HUB.charts.line("chartEtrTotal", { labels: mesesFmt, values: etrTotal }, { color: HUB.charts.colors.blue }));
-  chartOuVazio("chartBiogas", biogas, () => HUB.charts.line("chartBiogas", { labels: mesesFmt, values: biogas }, { color: HUB.charts.colors.purple }));
-  chartOuVazio("chartChorume", chorume, () => HUB.charts.line("chartChorume", { labels: mesesFmt, values: chorume }, { color: HUB.charts.colors.red }));
+  const eixoXCalmo = { ...HUB.charts.baseConfig.scales.x, grid: { display:false }, ticks:{ ...HUB.charts.baseConfig.scales.x.ticks, maxRotation:45, minRotation:45 } };
+  const eixoYCalmo = { ...HUB.charts.baseConfig.scales.y, grid:{ color:"rgba(120,150,180,.08)", drawBorder:false }, ticks:{ ...HUB.charts.baseConfig.scales.y.ticks, maxTicksLimit:5 } };
+  const ultimoValido = arr => lastValidIndex(arr);
+  const barras = (canvasId, values, cor, formatLabel) => {
+    const c=document.getElementById(canvasId); if(!c) return;
+    const iUlt=ultimoValido(values);
+    new Chart(c.getContext("2d"),{
+      type:"bar",
+      data:{labels:mesesFmt,datasets:[{label:"Valor mensal",data:values,backgroundColor:values.map((_,i)=>i===iUlt?cor:cor.replace(/\.?\d+\)$/,".34)")),borderWidth:0,borderRadius:6,borderSkipped:false,maxBarThickness:24}]},
+      options:{...HUB.charts.baseConfig,layout:{padding:{top:18}},plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:8.5,color:"#c4d2e1",offset:5,formatter:formatLabel}},scales:{x:eixoXCalmo,y:eixoYCalmo}}
+    });
+  };
+
+  chartOuVazio("chartEtrTotal", etrTotal, () => barras("chartEtrTotal", etrTotal, "rgba(91,166,225,.92)", v => Math.round(v/1000)+"k"));
+  chartOuVazio("chartBiogas", biogas, () => barras("chartBiogas", biogas, "rgba(167,139,250,.92)", v => (v/1e6).toFixed(1).replace(".",",")+"M"));
+  chartOuVazio("chartChorume", chorume, () => barras("chartChorume", chorume, "rgba(239,106,93,.92)", v => Math.round(v/1000)+"k"));
 
   renderClimaChorume(mesesFmt, chorume);
 
@@ -1354,14 +1400,23 @@ function renderFleetDetail(){
   }
 
   const trendRows=fleetBaseFiltered(rows,{ignorePeriodo:true});
-  const trend=fleetGroup(trendRows,"periodo").sort((a,b)=>a.name.localeCompare(b.name));
-  const th=document.getElementById("fleetTrendHint"); if(th)th.textContent=`${serviceName}${FLEET_STATE.gerencia?"n/d"+FLEET_STATE.gerencia:""}${FLEET_STATE.veiculo?"n/d"+fleetLabel(FLEET_STATE.veiculo):""}`;
+  const fimJanela=FLEET_STATE.periodo||officialMaxFleetMonth();
+  const [fy,fm]=fimJanela.split("-").map(Number);
+  const dInicio=new Date(fy, fm-1-12, 1);
+  const inicioJanela=`${dInicio.getFullYear()}-${String(dInicio.getMonth()+1).padStart(2,"0")}`;
+  const trend=fleetGroup(trendRows,"periodo").filter(x=>x.name>=inicioJanela&&x.name<=fimJanela).sort((a,b)=>a.name.localeCompare(b.name));
   const c=document.getElementById("chartFleetTrend");
   if(fleetTrendChart){fleetTrendChart.destroy();fleetTrendChart=null;}
   if(c&&trend.length){
-    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trend.map(x=>fleetPrettyMonth(x.name)),datasets:[{label:"Utilização",data:trend.map(x=>x.pct),borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",tension:.3,pointRadius:3}]},options:{...HUB.charts.baseConfig,plugins:{...HUB.charts.baseConfig.plugins,tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,y:{...HUB.charts.baseConfig.scales.y,ticks:{...HUB.charts.baseConfig.scales.y.ticks,callback:v=>v+"%"}}}}});
+    const vals=trend.map(x=>x.pct);
+    const iUlt=lastValidIndex(vals);
+    fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trend.map(x=>fleetPrettyMonth(x.name)),datasets:[{label:"Utilização",data:vals,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.5,tension:.28,pointRadius:vals.map((_,i)=>i===iUlt?4:0),pointHoverRadius:4,pointBorderWidth:1.5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,color:"#c6d5e5",offset:7,formatter:v=>v.toFixed(1).replace(".",",")+"%"},tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:6,callback:v=>v+"%"}}}}});
   }
-  const hint=document.getElementById("fleetTrendHint"); if(hint)hint.textContent=`${serviceName} · histórico até ${fleetPrettyMonth(officialMaxFleetMonth())}`;
+  const hint=document.getElementById("fleetTrendHint");
+  if(hint){
+    const filtros=[FLEET_STATE.gerencia||"",FLEET_STATE.veiculo?fleetLabel(FLEET_STATE.veiculo):""].filter(Boolean).join(" · ");
+    hint.textContent=`${serviceName} · ${fleetPrettyMonth(inicioJanela)} a ${fleetPrettyMonth(fimJanela)}${filtros?" · "+filtros:""}`;
+  }
 
   const vehicleBase=fleetBaseFiltered(rows,{ignoreVeh:true});
   const vehicles=fleetGroup(vehicleBase,"familia").filter(x=>x.pct!=null).sort((a,b)=>a.pct-b.pct);

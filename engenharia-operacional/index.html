@@ -18,6 +18,15 @@
 .insightList li.flag{color:#e8b3ac;}
 .insightList li.flag::before{content:"!";color:var(--vermelho);font-weight:900;}
 .readAutoBadge{font-size:11px;color:var(--silenciado);letter-spacing:.02em;white-space:nowrap;}
+/* Drill DTE local: não depende da API do hub-layout para abrir/fechar */
+.dteDrillBanner{margin:0 0 16px;padding:14px 16px;border:1px solid rgba(91,147,232,.42);border-radius:14px;background:linear-gradient(180deg,rgba(91,147,232,.10),rgba(91,147,232,.035)),var(--painel2);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;box-shadow:0 10px 28px rgba(0,0,0,.14);}
+.dteDrillBanner .dteDrillText{min-width:0;}
+.dteDrillBanner .dteDrillKind{font-size:9.5px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:var(--azul2,var(--azul));margin-bottom:5px;}
+.dteDrillBanner .dteDrillTitle{font-size:14px;font-weight:850;color:var(--texto);line-height:1.3;}
+.dteDrillBanner .dteDrillDesc{font-size:11.5px;color:var(--silenciado);line-height:1.55;margin-top:5px;}
+.dteDrillClose{appearance:none;border:1px solid var(--linha);background:var(--painel);color:var(--texto);border-radius:9px;padding:8px 11px;font:inherit;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.dteDrillClose:hover{border-color:rgba(91,147,232,.55);}
+@media (max-width:650px){.dteDrillBanner{flex-direction:column}.dteDrillClose{width:100%}}
 .leituraChips{display:flex;flex-direction:column;gap:10px;}
 .leituraChip{display:flex;align-items:flex-start;gap:12px;background:var(--painel2);border:1px solid var(--linha);border-radius:12px;padding:14px 16px;transition:border-color .2s;}
 .leituraChip:hover{border-color:#334049;}
@@ -483,7 +492,7 @@ const CONFIG = {
   },
   panelName: "Inteligência Operacional DTE",
   systemLabel: "DIRETORIA TÉCNICA E DE ENGENHARIA",
-  subtitle: "Destinação, biogás, coleta seletiva e eficiência de frota · dados ao vivo"
+  subtitle: "Destinação, biogás, coleta seletiva e eficiência de frota · Fonte oficial DTE"
 };
 
 // Anos fechados (2022 a 2024): não mudam mais, fonte Tabela 1493 histórica.
@@ -663,16 +672,25 @@ function insightYoyMomAvg(nome, arr, meses, fmt) {
 }
 
 // --- Renderiza gráfico ou mostra estado "sem dado" em vez de zero mudo ---
+function dteDestroyChart(canvasOrId) {
+  const canvas = typeof canvasOrId === "string" ? document.getElementById(canvasOrId) : canvasOrId;
+  if (!canvas || typeof Chart === "undefined" || typeof Chart.getChart !== "function") return;
+  const existente = Chart.getChart(canvas);
+  if (existente) existente.destroy();
+}
+
 function chartOuVazio(canvasId, values, drawFn) {
   const temDado = values.some(v => v && v !== 0);
   const canvas = document.getElementById(canvasId);
   if (!temDado) {
     console.warn(canvasId + ": série sem dado carregado.");
     if (canvas && canvas.parentElement) {
+      dteDestroyChart(canvas);
       canvas.parentElement.innerHTML = '<div class="loading">Sem dado carregado · ver console (F12)</div>';
     }
     return;
   }
+  dteDestroyChart(canvas);
   drawFn();
 }
 
@@ -687,13 +705,37 @@ function chartOuVazio(canvasId, values, drawFn) {
 // ============================================
 const DTE_DRILL = { visaoEtr: null, visaoSeletivaAno: null, reciclagemRegional: null, reciclagemOrigem: null, infraEquip: null };
 
+function dteEscapeHtml(v) {
+  return String(v ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+
+function dteBannerShow({ kind, title, description }) {
+  const slot = document.getElementById("drillNote");
+  if (!slot) return;
+  slot.innerHTML = `
+    <div class="dteDrillBanner" role="status" aria-live="polite">
+      <div class="dteDrillText">
+        <div class="dteDrillKind">${dteEscapeHtml(kind || "Detalhe")}</div>
+        <div class="dteDrillTitle">${dteEscapeHtml(title || "")}</div>
+        <div class="dteDrillDesc">${dteEscapeHtml(description || "")}</div>
+      </div>
+      <button class="dteDrillClose" type="button" onclick="dteCloseDrill()">Fechar</button>
+    </div>`;
+  slot.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function dteBannerHide() {
+  const slot = document.getElementById("drillNote");
+  if (slot) slot.innerHTML = "";
+}
+
 function dteCloseDrill() {
   DTE_DRILL.visaoEtr = null;
   DTE_DRILL.visaoSeletivaAno = null;
   DTE_DRILL.reciclagemRegional = null;
   DTE_DRILL.reciclagemOrigem = null;
   DTE_DRILL.infraEquip = null;
-  HUB.drillBanner.hide("drillNote");
+  dteBannerHide();
   if (typeof renderVisaoGeral === "function" && RAW.relatorio.length) renderVisaoGeral();
   if (typeof renderReciclagem === "function" && RAW.relatorio.length) renderReciclagem();
   if (typeof renderInfra === "function" && RAW.relatorio.length) renderInfra();
@@ -701,23 +743,21 @@ function dteCloseDrill() {
 
 // Recorte real: existe dimensão inferior na fonte, o clique muda o gráfico.
 function dteShowDrillReal(titulo, descricao) {
-  HUB.drillBanner.show("drillNote", {
+  dteBannerShow({
+    kind: "Drill down",
     title: "Recorte · " + titulo,
-    description: descricao,
-    onClear: "dteCloseDrill()"
+    description: descricao
   });
 }
 
 // Detalhe da competência: série mensal única e oficial, sem dimensão por baixo.
-// Não inventa recorte — só expõe o que já está no gráfico com precisão (valor,
-// YoY, MoM, média da janela de 13 meses, fonte).
 function dteShowDetalheCompetencia({ titulo, meses, serie, idx, fonte, fmt, extraLinhas }) {
   fmt = fmt || (v => HUB.format.int(Math.round(v)));
   if (idx == null || idx < 0 || !Number.isFinite(serie[idx])) {
-    HUB.drillBanner.show("drillNote", {
-      title: "Detalhe da competência · " + titulo,
-      description: "Sem dado publicado para este mês.",
-      onClear: "dteCloseDrill()"
+    dteBannerShow({
+      kind: "Detalhe da competência",
+      title: titulo,
+      description: "Sem dado publicado para este mês."
     });
     return;
   }
@@ -743,10 +783,10 @@ function dteShowDetalheCompetencia({ titulo, meses, serie, idx, fonte, fmt, extr
   }
   if (extraLinhas && extraLinhas.length) partes.push(...extraLinhas);
   if (fonte) partes.push("Fonte: " + fonte);
-  HUB.drillBanner.show("drillNote", {
-    title: `Detalhe da competência · ${titulo} (${mesLabel})`,
-    description: partes.join(" · "),
-    onClear: "dteCloseDrill()"
+  dteBannerShow({
+    kind: "Detalhe da competência",
+    title: `${titulo} (${mesLabel})`,
+    description: partes.join(" · ")
   });
 }
 
@@ -828,7 +868,7 @@ async function init() {
     navigation: [
       { id: "screenVisao", label: "Visão Geral" },
       { id: "screenDestinacao", label: "Destinação e Biogás" },
-      { id: "screenReciclagem", label: "Coleta Seletiva e Reciclagem" },
+      { id: "screenReciclagem", label: "Coleta Seletiva" },
       { id: "screenFrota", label: "Utilização da Frota" },
       { id: "screenInfra", label: "Equipamentos e Infraestrutura" }
     ]
@@ -1033,7 +1073,7 @@ function renderVisaoGeral() {
             onClick: (evt, items) => {
               const idx = dteClickIndex(items); if (idx < 0) return;
               const ano = anos[idx];
-              if (!anosComMes[ano]) { HUB.drillBanner.show("drillNote", { title: "Coleta seletiva · " + ano, description: "Sem detalhamento mensal disponível na fonte para este ano.", onClear: "dteCloseDrill()" }); return; }
+              if (!anosComMes[ano]) { dteBannerShow({ kind: "Informação", title: "Coleta seletiva · " + ano, description: "Sem detalhamento mensal disponível na fonte para este ano." }); return; }
               DTE_DRILL.visaoSeletivaAno = ano;
               dteShowDrillReal("Coleta seletiva · " + ano, "Detalhamento mensal, Tabela 1493.");
               renderVisaoGeral();
@@ -1290,7 +1330,7 @@ function renderReciclagem() {
       options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
         const idx=dteClickIndex(items); if(idx<0)return;
         const f=frotaRolling[idx]||0, nc=naoRolling[idx]||0, tot=f+nc;
-        if(tot<=0){HUB.drillBanner.show("drillNote",{title:"Detalhe da competência · Composição da coleta seletiva",description:"Sem dado publicado para "+labels13[idx]+".",onClear:"dteCloseDrill()"});return;}
+        if(tot<=0){dteBannerShow({kind:"Detalhe da competência",title:"Composição da coleta seletiva",description:"Sem dado publicado para "+labels13[idx]+"."});return;}
         dteShowDetalheCompetencia({
           titulo:"Composição da coleta seletiva",
           meses:labels13, serie:frotaRolling.map((v,i)=>(v||0)+(naoRolling[i]||0)), idx,
@@ -1359,13 +1399,17 @@ function renderReciclagem() {
         new Chart(origEl.getContext("2d"),{
           type:"doughnut",
           data:{labels:origem.map(x=>x.label),datasets:[{data:origem.map(x=>x.value),backgroundColor:origem.map(x=>x.color),borderWidth:0,hoverOffset:5}]},
-          options:{responsive:true,maintainAspectRatio:false,cutout:"64%",onClick:(evt,items)=>{
+          options:{responsive:true,maintainAspectRatio:false,cutout:"64%",layout:{padding:{top:10,bottom:6}},onClick:(evt,items)=>{
             const idx=dteClickIndex(items); if(idx<0)return;
             const label=origem[idx].label;
             DTE_DRILL.reciclagemOrigem=label;
-            dteShowDrillReal("Origem do peso · "+label,"Evolução mensal, Jul/25–Jul/26 (Tabela 1493).");
+            dteShowDrillReal("Origem do peso · "+label,"Evolução mensal, janela móvel de 13 meses (Tabela 1493).");
             renderReciclagem();
-          },plugins:{legend:{display:true,position:"bottom",labels:{color:"#b8c9de",usePointStyle:true,boxWidth:8,padding:14}},tooltip:{callbacks:{label:(ctx)=>{const v=Number(ctx.raw||0);return `${ctx.label}: ${HUB.format.int(Math.round(v))} t (${totalOrigem>0?(v/totalOrigem*100).toFixed(1).replace(".",","):"0"}%)`;}}}}}
+          },plugins:{
+            dteValueLabels:{display:true,fontSize:10,fontWeight:850,color:"#eef5ff",offset:0,formatter:(v)=>{const pct=totalOrigem>0?v/totalOrigem*100:0;return pct>=6?pct.toFixed(1).replace(".",",")+"%":"";}},
+            legend:{display:true,position:"bottom",labels:{color:"#b8c9de",usePointStyle:true,boxWidth:8,padding:14,generateLabels:(chart)=>chart.data.labels.map((label,i)=>{const v=Number(chart.data.datasets[0].data[i]||0);const pct=totalOrigem>0?v/totalOrigem*100:0;return{text:`${label} · ${pct.toFixed(1).replace(".",",")}%`,fillStyle:chart.data.datasets[0].backgroundColor[i],strokeStyle:chart.data.datasets[0].backgroundColor[i],pointStyle:"circle",hidden:false,index:i};})}},
+            tooltip:{callbacks:{label:(ctx)=>{const v=Number(ctx.raw||0);return `${ctx.label}: ${HUB.format.int(Math.round(v))} t (${totalOrigem>0?(v/totalOrigem*100).toFixed(1).replace(".",","):"0"}%)`;}}}
+          }}
         });
       });
     } else {
@@ -1762,7 +1806,7 @@ function renderFleetDetail(){
   if(status){
     const mode=FLEET_SOURCE_MODE[FLEET_STATE.tipo]||"error";
     status.className="fleetStatus "+(mode==="snapshot"?"snapshot":mode==="error"?"error":"");
-    status.textContent=mode==="live"?"base publicada · atualização automática":mode==="snapshot"?"base de contingência · dados até jul/26":"base detalhada indisponível";
+    status.textContent=mode==="live"?"Fonte oficial DTE · atualização automática":mode==="snapshot"?"base de contingência · dados até jul/26":"base detalhada indisponível";
   }
   const summary=document.getElementById("fleetSummary");
   const gerCount=new Set(current.map(r=>r.gerencia)).size;
@@ -1884,6 +1928,7 @@ function renderInfra(){
   if(equipHintEl) equipHintEl.textContent="% de utilização (peso ou área operada ÷ capacidade) · Relatório Mensal DTE, seção Utilização de Tratores/Pás";
   const ce=document.getElementById("chartEquipUtil");
   if(ce){
+    dteDestroyChart(ce);
     if(!DTE_DRILL.infraEquip){
       const labels=Object.keys(equipCategorias);
       const vals=labels.map(l=>lastVal(equipCategorias[l]).v);
@@ -1911,15 +1956,15 @@ function renderInfra(){
   // Manejo/Apresentação ~5,4–7,1 — mesma ordem de grandeza). Eixo único mantido
   // por ser leitura honesta; não é eixo duplo automático.
   const cp=document.getElementById("chartPoda");
-  if(cp)new Chart(cp.getContext("2d"),{data:{labels:meses,datasets:[
+  if(cp){ dteDestroyChart(cp); new Chart(cp.getContext("2d"),{data:{labels:meses,datasets:[
     {type:"bar",label:"KM por manejo",data:podaKm,backgroundColor:podaKm.map((_,i)=>i===lastInfra?"rgba(91,147,232,.88)":"rgba(91,147,232,.30)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24,order:2},
     {type:"line",label:"Manejo por apresentação",data:podaMan,borderColor:HUB.charts.colors.orange,backgroundColor:"transparent",borderWidth:2.3,tension:.22,pointRadius:podaMan.map((_,i)=>i===lastInfra?4:0),pointHoverRadius:5,order:1}
   ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},onClick:(evt,items)=>{
     const idx=dteClickIndex(items); if(idx<0)return;
     const km=podaKm[idx],man=podaMan[idx];
-    if(!Number.isFinite(km)&&!Number.isFinite(man)){HUB.drillBanner.show("drillNote",{title:"Detalhe da competência · Poda mecanizada",description:"Sem dado publicado para "+meses[idx]+".",onClear:"dteCloseDrill()"});return;}
+    if(!Number.isFinite(km)&&!Number.isFinite(man)){dteBannerShow({kind:"Detalhe da competência",title:"Poda mecanizada",description:"Sem dado publicado para "+meses[idx]+"."});return;}
     dteShowDetalheCompetencia({titulo:"Poda mecanizada · KM por manejo",meses,serie:podaKm,idx,fonte:"Relatório Mensal DTE · Indicador de Poda",fmt:v=>v.toFixed(1).replace(".",",")+" km",extraLinhas:[`Manejo por apresentação em ${meses[idx]}: ${Number.isFinite(man)?man.toFixed(1).replace(".",","):"n/d"}`]});
-  },plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}});
+  },plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}}); }
 
   const cpr=document.getElementById("predialKpis");
   if(cpr){

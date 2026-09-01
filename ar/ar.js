@@ -6,6 +6,9 @@
 <title>Indicadores AR 2026 · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="../assets/components/hub-core.js"></script>
+<script src="../assets/components/hub-sources.js"></script>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <style>
@@ -100,6 +103,39 @@
 .govNote{margin:16px 0 0;border:1px solid rgba(167,139,250,.28);background:rgba(167,139,250,.06);border-radius:16px;padding:13px 15px;color:#cdbdff;font-size:12px;line-height:1.45}
 .emptyBlock{color:#aebfd5;border:1px solid var(--linha);background:var(--painel);border-radius:16px;padding:18px;text-align:center}
 
+/* ── Drill-down E06 · Atendimento por Subprefeitura ── */
+.indicatorRow.drillable{cursor:pointer;transition:border-color .18s ease,background .18s ease}
+.indicatorRow.drillable:hover{border-color:rgba(91,155,213,.5);background:rgba(91,155,213,.045)}
+.drillCue{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:#7ec3f5;font-size:10px;font-weight:900;letter-spacing:.05em}
+.drillCue .arr{transition:transform .18s ease}
+.indicatorRow.expanded .drillCue .arr{transform:rotate(90deg)}
+.e06Drill{display:none;margin:-2px 0 10px;padding:16px 18px 18px;border:1px solid rgba(91,155,213,.28);border-top:0;border-radius:0 0 16px 16px;background:linear-gradient(180deg,rgba(10,32,54,.92),rgba(7,24,42,.96))}
+.e06Drill.open{display:block}
+.e06DrillHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.e06DrillHead h3{margin:0 0 4px;color:#fff;font-size:15px}
+.e06DrillHead p{margin:0;color:#9fb0c7;font-size:11px;line-height:1.4}
+.e06Summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.e06Mini{border:1px solid var(--linha);border-radius:12px;background:rgba(255,255,255,.025);padding:10px 12px}
+.e06Mini small{display:block;color:#8fa6bf;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.e06Mini b{font-size:20px;color:#fff}
+.subprefGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.subprefCard{appearance:none;text-align:left;border:1px solid var(--linha);border-radius:12px;background:rgba(255,255,255,.025);padding:11px 12px;cursor:pointer;color:inherit;transition:.15s ease}
+.subprefCard:hover,.subprefCard.active{border-color:rgba(91,155,213,.55);background:rgba(91,155,213,.08)}
+.subprefCardTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.subprefName{font-size:12px;font-weight:900;color:#e6f0fb}
+.subprefVal{font-size:15px;font-weight:950;color:#fff;white-space:nowrap}
+.subprefMeta{margin-top:5px;font-size:10px;color:#8fa6bf}
+.subprefDot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;background:#ff7d72}.subprefCard.ok .subprefDot{background:#83d99d}
+.e06History{display:none;margin-top:14px;border-top:1px solid rgba(41,72,102,.65);padding-top:14px}
+.e06History.open{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.7fr);gap:16px}
+.e06ChartWrap{height:250px;min-width:0}
+.e06HistoryInfo{display:flex;flex-direction:column;justify-content:center;border:1px solid var(--linha);border-radius:12px;padding:14px;background:rgba(255,255,255,.025)}
+.e06HistoryInfo small{font-size:9px;color:#8fa6bf;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.e06HistoryInfo b{font-size:25px;color:#fff;margin:4px 0 8px}
+.e06HistoryInfo span{font-size:11px;color:#aebfd5;line-height:1.45}
+@media(max-width:980px){.e06Summary{grid-template-columns:repeat(2,1fr)}.subprefGrid{grid-template-columns:repeat(2,1fr)}.e06History.open{grid-template-columns:1fr}}
+@media(max-width:620px){.e06Summary,.subprefGrid{grid-template-columns:1fr}.e06Drill{padding:12px}.e06ChartWrap{height:220px}}
+
 /* ── Responsivo ── */
 @media(max-width:1380px){
   .indicatorRow{grid-template-columns:70px minmax(250px,1.4fr) repeat(3,minmax(110px,.6fr))}
@@ -119,6 +155,12 @@
   .arBlockHead{flex-direction:column;align-items:flex-start}
   .bonusGrid{grid-template-columns:1fr}
 }
+
+/* ── Situação das metas ── */
+.situacaoHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 2px 10px}
+.situacaoHead h2{margin:0;color:#fff;font-size:18px;font-weight:950;letter-spacing:.01em}
+.situacaoHead p{margin:4px 0 0;color:#9fb0c7;font-size:12px;line-height:1.4}
+.situacaoHead .competencia{color:#b8d4f2;font-size:11px;font-weight:900;white-space:nowrap}
 
 /* ── Placar executivo ── */
 .placarGrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px}
@@ -163,20 +205,27 @@
 
 <main id="conteudo" style="display:none">
 
-  <!-- PLACAR EXECUTIVO -->
+  <!-- SITUAÇÃO DAS METAS -->
+  <div class="situacaoHead">
+    <div>
+      <h2>Situação das metas</h2>
+      <p>Leitura gerencial da competência atual, sem substituir a avaliação anual oficial.</p>
+    </div>
+    <div class="competencia">Acordo de Resultados 2026</div>
+  </div>
   <div class="placarGrid" id="placarGrid"></div>
 
-  <!-- PAINEL DE BONIFICAÇÃO -->
+  <!-- CENÁRIO DE PREMIAÇÃO -->
   <section class="bonusPanel" id="bonusPanel"></section>
 
   <!-- INDICADORES -->
   <div id="indicadoresContainer"></div>
 
   <div class="govNote">
-    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado são comparados à meta do período, não à meta anual cheia. O badge <em>prop.</em> identifica esses casos.
-    <strong>Tendência:</strong> compara a média dos últimos 3 meses com os 3 anteriores. Quando há menos de 6 meses de histórico, aparece "Série curta".
-    <strong>Metas casadas:</strong> nos pares de indicadores, os dois precisam ser atingidos para contar uma meta na bonificação. O bom resultado de um não compensa o outro.
-    <strong>Bonificação:</strong> a projeção é calculada com base no status atual e está sujeita à validação oficial pela CVL.
+    <strong>Situação das metas:</strong> leitura gerencial da competência disponível. Não equivale ao resultado anual oficial do Acordo.
+    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado são comparados à referência esperada para o período, não à meta anual cheia. O badge <em>prop.</em> identifica esses casos.
+    <strong>Metas casadas:</strong> os requisitos precisam ser observados em conjunto. O bom resultado de um indicador não compensa o outro.
+    <strong>Cenário de premiação:</strong> simulação com os dados disponíveis. A Meta de Performance só é computada após avaliação oficial da CVL, GBP e SMIT.
   </div>
 </main>
 
@@ -192,25 +241,25 @@ const CASADOS = [
     id: "par-02",
     label: "Meta dupla: Recuperação de Resíduos + Ranking Nacional",
     membros: ["E02","E03"],
-    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação."
+    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação. O ranking nacional é apurado pela SINISA com dados do ano anterior — o resultado de 2026 só será publicado em 2027."
   },
   {
     id: "par-03",
     label: "Meta dupla: Atendimento 1746 Poda + Satisfação Poda",
     membros: ["E04","E05"],
-    bonusNote: "Atingir o prazo de atendimento não garante a meta se a nota de satisfação ficar abaixo de 4,5."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 95% no prazo e nota de satisfação igual ou superior a 4,5. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-04",
     label: "Meta dupla: Atendimento 1746 Remoção + Satisfação Remoção",
     membros: ["E06","E07"],
-    bonusNote: "O prazo de atendimento e a nota de satisfação precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85% no prazo em cada subprefeitura e nota de satisfação igual ou superior a 4,4 para a cidade. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-c06",
     label: "Meta dupla (Condicionada): Conformidade IPL + Desvio Padrão IPL",
     membros: ["C01","C02"],
-    bonusNote: "A conformidade e o desvio padrão do IPL precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: conformidade acumulada igual ou superior a 80% e desvio padrão entre gerências igual ou inferior a 5,9. Os dois precisam ser atingidos juntos."
   }
 ];
 
@@ -243,6 +292,7 @@ const URLS = {
 
 const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 let RAW = {geral:[], ar:[], map:[]}, DATA = [], FILTRADOS = [];
+let E06_CHART = null;
 const $ = id => document.getElementById(id);
 
 /* ═══════════════════════════════════════════════════════════
@@ -300,7 +350,7 @@ function statusCanonico(atual,meta,sentido){
   if(atual===null||meta===null||atual===0||meta===0)return "Sem dado";
   const ating=maiorMelhor(sentido)?atual/meta:meta/atual;
   if(ating>=1)return "Dentro da Meta";
-  if(ating>=.9)return "Atenção";
+  if(ating>=.90)return "Atenção";
   return "Crítico";
 }
 function tagClass(status){
@@ -374,6 +424,105 @@ function tendenciaClass(t){
 }
 
 /* ═══════════════════════════════════════════════════════════
+   E06 · ATENDIMENTO 1746 POR SUBPREFEITURA
+   ═══════════════════════════════════════════════════════════ */
+function e06Subprefeituras(){
+  const prefixo="performance de atendimento de remocao de residuos -";
+  const rows=RAW.geral.filter(r=>{
+    if(String(get(r,["Ano"])).trim()!=="2026")return false;
+    if(norm(get(r,["Diretoria"]))!=="comlurb")return false;
+    return norm(get(r,["Indicador"])).startsWith(prefixo);
+  });
+  const out=[];
+  rows.forEach(r=>{
+    const nomeRaw=String(get(r,["Indicador"])).trim();
+    const nome=nomeRaw.split("-").slice(1).join("-").trim();
+    const vals=MESES.map(m=>calcValue(get(r,[m]),"%")).map(v=>v===null?null:v);
+    const acum=calcValue(get(r,["Acumulado"]),"%");
+    const meta=calcValue(get(r,["Meta"]),"%")??85;
+    out.push({nome,row:r,vals,acum,meta,ok:acum!==null&&acum>=meta});
+  });
+  return out.sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
+}
+function aplicarRegraE06(d){
+  const subs=e06Subprefeituras();
+  if(!subs.length)return;
+  const avaliadas=subs.filter(s=>s.acum!==null);
+  const conformes=avaliadas.filter(s=>s.ok).length;
+  const total=subs.length;
+  const pct=total?conformes/total*100:null;
+  d.e06Subs=subs;
+  d.atual=pct;
+  d.meta=100;
+  d.metaProporcional=null;
+  d.atingimento=pct===null?null:pct/100;
+  d.atingimentoProporcional=false;
+  d.unidade="%";
+  d.status=pct===100?"Dentro da Meta":pct!==null?"Crítico":"Sem dado";
+  d.statusDisplay=d.status;
+  d.statusClass=tagClass(d.status);
+  d.e06Conformes=conformes;
+  d.e06Total=total;
+  // Tendência = comparação entre conformidade das subprefeituras no último mês e mês anterior.
+  const mesesComDados=MESES.map((m,i)=>({i,vals:subs.map(s=>s.vals[i]).filter(v=>v!==null)})).filter(x=>x.vals.length);
+  if(mesesComDados.length>=2){
+    const calc=x=>x.vals.filter(v=>v>=85).length/subs.length*100;
+    const a=calc(mesesComDados[mesesComDados.length-2]),b=calc(mesesComDados[mesesComDados.length-1]);
+    d.tendencia=b>a?"Favorável":b<a?"Desfavorável":"Estável";
+    d.tendenciaClass=tendenciaClass(d.tendencia);
+  }else{d.tendencia="Série curta";d.tendenciaClass="nd";}
+}
+function renderE06Drill(d){
+  const subs=d.e06Subs||e06Subprefeituras();
+  if(!subs.length)return '<div class="e06Drill" id="e06Drill"><div class="emptyBlock">Sem detalhamento por subprefeitura na fonte SARC.</div></div>';
+  const conformes=subs.filter(s=>s.ok).length;
+  const abaixo=subs.filter(s=>!s.ok).length;
+  const vals=subs.map(s=>s.acum).filter(v=>v!==null);
+  const menor=vals.length?Math.min(...vals):null;
+  const cards=subs.map((s,i)=>`<button class="subprefCard ${s.ok?'ok':'crit'}" data-e06-index="${i}" type="button"><div class="subprefCardTop"><span class="subprefName"><span class="subprefDot"></span>${esc(s.nome)}</span><span class="subprefVal">${esc(fmtValor(s.acum,'%'))}</span></div><div class="subprefMeta">Meta ≥ ${esc(fmtValor(s.meta,'%'))} · ${s.ok?'Dentro da meta':'Abaixo da meta'}</div></button>`).join('');
+  return `<div class="e06Drill" id="e06Drill">
+    <div class="e06DrillHead"><div><h3>Atendimento no prazo por Subprefeitura</h3><p>Resultado acumulado de 2026. Clique em uma Subprefeitura para abrir o histórico mês a mês.</p></div></div>
+    <div class="e06Summary">
+      <div class="e06Mini"><small>Na meta</small><b>${conformes}/${subs.length}</b></div>
+      <div class="e06Mini"><small>Conformidade</small><b>${(conformes/subs.length*100).toFixed(1).replace('.',',')}%</b></div>
+      <div class="e06Mini"><small>Abaixo de 85%</small><b>${abaixo}</b></div>
+      <div class="e06Mini"><small>Menor acumulado</small><b>${esc(fmtValor(menor,'%'))}</b></div>
+    </div>
+    <div class="subprefGrid">${cards}</div>
+    <div class="e06History" id="e06History"><div class="e06ChartWrap"><canvas id="e06HistoryChart"></canvas></div><div class="e06HistoryInfo" id="e06HistoryInfo"></div></div>
+  </div>`;
+}
+function toggleE06(ev){
+  if(ev && ev.target.closest('.subprefCard'))return;
+  const row=document.querySelector('[data-indicator-code="E06"]');
+  const panel=document.getElementById('e06Drill');
+  if(!row||!panel)return;
+  const open=!panel.classList.contains('open');
+  panel.classList.toggle('open',open);row.classList.toggle('expanded',open);
+}
+function showE06History(index){
+  const d=DATA.find(x=>x.codigo==='E06');if(!d)return;
+  const s=(d.e06Subs||[])[Number(index)];if(!s)return;
+  document.querySelectorAll('.subprefCard').forEach((el,i)=>el.classList.toggle('active',i===Number(index)));
+  const box=document.getElementById('e06History');const info=document.getElementById('e06HistoryInfo');
+  if(!box||!info)return;box.classList.add('open');
+  const lastIdx=s.vals.reduce((acc,v,i)=>v!==null?i:acc,-1);
+  const lastVal=lastIdx>=0?s.vals[lastIdx]:null;
+  info.innerHTML=`<small>${esc(s.nome)}</small><b>${esc(fmtValor(s.acum,'%'))}</b><span>Acumulado de 2026 · meta ≥ ${esc(fmtValor(s.meta,'%'))}.<br>Última competência com dado: ${lastIdx>=0?MESES[lastIdx]+'/2026':'sem dado'} · ${esc(fmtValor(lastVal,'%'))}.</span>`;
+  if(typeof Chart==='undefined')return;
+  if(E06_CHART)E06_CHART.destroy();
+  const ctx=document.getElementById('e06HistoryChart');if(!ctx)return;
+  E06_CHART=new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
+    {label:s.nome,data:s.vals,borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5},
+    {label:'Meta 85%',data:MESES.map(()=>85),borderWidth:1.2,borderDash:[5,5],pointRadius:0,tension:0}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: ${c.parsed.y==null?'—':c.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})+'%'}`}}},scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{min:50,max:100,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:v=>v+'%'}}}}});
+}
+function bindE06Drill(){
+  const row=document.querySelector('[data-indicator-code="E06"]');if(row)row.addEventListener('click',toggleE06);
+  document.querySelectorAll('.subprefCard').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();showE06History(el.dataset.e06Index);}));
+}
+
+/* ═══════════════════════════════════════════════════════════
    PROCESSAMENTO PRINCIPAL
    ═══════════════════════════════════════════════════════════ */
 function processar(){
@@ -433,9 +582,22 @@ function processar(){
       d.statusDisplay=d.status;
     }
 
-    d.statusClass=tagClass(d.statusDisplay);
+    // Distinção entre leitura gerencial e apuração contratual.
+    // O ranking SINISA de 2026 só será conhecido no ano subsequente;
+    // a Meta de Performance é apurada ao final do exercício pela CVL/GBP/SMIT.
+    d.statusCenario=d.status;
+    if(d.codigo==="E03"){
+      d.statusDisplay="Em apuração";
+      d.statusClass="nd";
+    } else if(d.codigo==="P01"){
+      d.statusDisplay="Em avaliação";
+      d.statusClass="nd";
+    } else {
+      d.statusClass=tagClass(d.statusDisplay);
+    }
     d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);
     d.tendenciaClass=tendenciaClass(d.tendencia);
+    if(d.codigo==="E06")aplicarRegraE06(d);
 
     const par=CASADOS.find(c=>c.membros.includes(codigo));
     d.casadoId=par?par.id:null;
@@ -448,7 +610,7 @@ function processar(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CÁLCULO DE BONIFICAÇÃO
+   CÁLCULO DO CENÁRIO DE PREMIAÇÃO
    ═══════════════════════════════════════════════════════════ */
 function calcularBonificacao(lista){
   const byId=Object.fromEntries(lista.map(d=>[d.codigo,d]));
@@ -462,13 +624,13 @@ function calcularBonificacao(lista){
   estratIndividuais.forEach(cod=>{
     const d=byId[cod];
     if(!d)return;
-    const atingiu=d.status==="Dentro da Meta";
+    const atingiu=(d.statusCenario||d.status)==="Dentro da Meta";
     if(atingiu)metasEstrategicasAtingidas++;
     detalhesEstrategicos.push({cod,label:d.indicador,atingiu,casado:false});
   });
 
   estratCasados.forEach(par=>{
-    const todos=par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    const todos=par.membros.every(m=>{const d=byId[m];return d&&(d.statusCenario||d.status)==="Dentro da Meta";});
     if(todos)metasEstrategicasAtingidas++;
     detalhesEstrategicos.push({
       cod:par.membros.join("+"),
@@ -500,7 +662,7 @@ function calcularBonificacao(lista){
   });
 
   condCasados.forEach(par=>{
-    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&(d.statusCenario||d.status)==="Dentro da Meta";});
     if(todos)metasCondicionadasAtingidas++;
     detalhesCondicionados.push({
       cod:par.membros.join("+"),
@@ -516,17 +678,20 @@ function calcularBonificacao(lista){
   const regC=BONUS_CONDICIONADO.find(r=>metasCondicionadasAtingidas>=r.metas)||BONUS_CONDICIONADO[BONUS_CONDICIONADO.length-1];
 
   const p01=byId["P01"];
-  const performanceAtingida=condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
-  const bonusPerformance=performanceAtingida?BONUS_PERFORMANCE.pct:0;
+  // Meta de Performance não é projetada como cumprida durante o exercício.
+  // O contrato prevê apuração conjunta ao final de 2026.
+  const performanceAtingida=false;
+  const bonusPerformance=0;
 
-  const bonusTotal=regE.pct+(condicionalAtiva?regC.pct:0)+(condicionalAtiva?bonusPerformance:0);
+  const bonusTotal=regE.pct+(condicionalAtiva?regC.pct:0);
+  const bonusPotencialMax=bonusTotal+(condicionalAtiva?BONUS_PERFORMANCE.pct:0);
 
   return {
     metasEstrategicasAtingidas,totalEstrategicas,
     regE,condicionalAtiva,
     metasCondicionadasAtingidas,regC,
     performanceAtingida,bonusPerformance,
-    bonusTotal,
+    bonusTotal,bonusPotencialMax,
     detalhesEstrategicos,detalhesCondicionados
   };
 }
@@ -555,66 +720,55 @@ function aplicarFiltros(){
 function renderResumo(){
   const b=calcularBonificacao(DATA);
 
-  // Card Estratégicas
   const eStrStatus=b.metasEstrategicasAtingidas===0
-    ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
+    ?'<span class="pcStatus pcStatusCrit">Nenhuma favorável</span>'
     :b.metasEstrategicasAtingidas>=5
-    ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
-    :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5</span>`;
+    ?'<span class="pcStatus pcStatusOk">Todas favoráveis</span>'
+    :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5 favoráveis</span>`;
 
-  // Card Condicionadas — inclui inline a nota de ativação, sem bloco separado
   const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"—";
   const condSub=b.condicionalAtiva?" / 3":"";
   const condStatus=!b.condicionalAtiva
     ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
     :b.metasCondicionadasAtingidas===0
-    ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
+    ?'<span class="pcStatus pcStatusCrit">Nenhuma favorável</span>'
     :b.metasCondicionadasAtingidas>=3
-    ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
-    :`<span class="pcStatus pcStatusAtt">${b.metasCondicionadasAtingidas} de 3</span>`;
+    ?'<span class="pcStatus pcStatusOk">Todas favoráveis</span>'
+    :`<span class="pcStatus pcStatusAtt">${b.metasCondicionadasAtingidas} de 3 favoráveis</span>`;
   const condDesc=b.condicionalAtiva
-    ?"Ativas: "+b.metasEstrategicasAtingidas+" metas estratégicas atingidas."
-    :"Entram na avaliação após 3 metas estratégicas. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
+    ?"Habilitadas no cenário atual: "+b.metasEstrategicasAtingidas+" metas estratégicas favoráveis."
+    :"São consideradas a partir de 3 metas estratégicas favoráveis. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
 
-  // Card Performance
   const p01=DATA.find(d=>d.codigo==="P01");
-  const perfAtingida=b.condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
-  const perfVal=b.condicionalAtiva?(perfAtingida?"1":"0"):"—";
-  const perfSub=b.condicionalAtiva?" / 1":"";
-  const perfStatus=!b.condicionalAtiva
-    ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
-    :perfAtingida
-    ?'<span class="pcStatus pcStatusOk">Cumprida</span>'
-    :'<span class="pcStatus pcStatusCrit">Não cumprida</span>';
-  const perfDesc=b.condicionalAtiva
-    ?"Mesma condição de ativação das condicionadas."
-    :"Mesma condição de ativação das condicionadas.";
+  const perfVal="—";
+  const perfSub="";
+  const perfStatus='<span class="pcStatus pcStatusBloq">Em avaliação</span>';
+  const perfDesc="Apuração conjunta da CVL, GBP e SMIT ao final do exercício de 2026.";
 
-  // Card Bônus
   const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
-  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
+  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · Performance: em avaliação";
 
   $("placarGrid").innerHTML=
     '<div class="placarCard bonus">'+
-      '<div class="pcLabel">Bônus Projetado</div>'+
+      '<div class="pcLabel">Cenário de premiação</div>'+
       '<div class="pcPlacar">'+b.bonusTotal+'<span>%</span></div>'+
       '<div class="pcDesc">'+descBonus+'</div>'+
-      '<span class="pcStatus '+bonusClass+'">'+(b.bonusTotal>0?"Bônus ativo":"Sem bônus")+'</span>'+
+      '<span class="pcStatus '+bonusClass+'">'+"Simulação atual"+'</span>'+
     '</div>'+
     '<div class="placarCard estr">'+
-      '<div class="pcLabel">Metas Estratégicas</div>'+
+      '<div class="pcLabel">Metas estratégicas</div>'+
       '<div class="pcPlacar">'+b.metasEstrategicasAtingidas+'<span> / 5</span></div>'+
       '<div class="pcDesc">8 indicadores monitorados. Pares contam como uma meta.</div>'+
       eStrStatus+
     '</div>'+
     '<div class="placarCard cond">'+
-      '<div class="pcLabel">Metas Condicionadas</div>'+
+      '<div class="pcLabel">Metas condicionadas</div>'+
       '<div class="pcPlacar">'+condVal+'<span>'+condSub+'</span></div>'+
       '<div class="pcDesc">'+condDesc+'</div>'+
       condStatus+
     '</div>'+
     '<div class="placarCard perf">'+
-      '<div class="pcLabel">Meta de Performance</div>'+
+      '<div class="pcLabel">Meta de performance</div>'+
       '<div class="pcPlacar">'+perfVal+'<span>'+perfSub+'</span></div>'+
       '<div class="pcDesc">'+perfDesc+'</div>'+
       perfStatus+
@@ -622,7 +776,7 @@ function renderResumo(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDER: PAINEL DE BONIFICAÇÃO
+   RENDER: CENÁRIO DE PREMIAÇÃO
    ═══════════════════════════════════════════════════════════ */
 function renderBonus(){
   const b=calcularBonificacao(DATA);
@@ -630,7 +784,7 @@ function renderBonus(){
 
   function linhaSimples(item){
     var cls=item.atingiu?"ok":"crit";
-    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Favorável":"Pendente");
     return '<div class="metaLinha '+cls+'">'+
       '<span class="cod">'+esc(item.cod)+'</span>'+
       '<span class="desc">'+esc(item.label)+'</span>'+
@@ -641,7 +795,7 @@ function renderBonus(){
 
   function linhaCasada(item){
     var cls=item.atingiu?"ok":"crit";
-    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Favorável":"Pendente");
     var membrosHtml=item.membros.map(function(m){
       return '<div class="metaLinha '+esc(m.statusClass)+'" style="padding-left:20px">'+
         '<span class="cod">'+esc(m.cod)+'</span>'+
@@ -667,22 +821,22 @@ function renderBonus(){
 
   var condTotal=[...["C03","C04"].filter(function(c){return DATA.some(function(d){return d.codigo===c;});}),...CASADOS.filter(function(p){return p.membros.some(function(m){return DATA.some(function(d){return d.codigo===m&&d.grupo.toLowerCase().includes("condicion");});});})].length;
   var condDetalhe=b.condicionalAtiva
-    ?"Ponto adicional: "+b.regC.ponto+" — "+b.regC.pct+"% de bônus adicional"
-    :"Estas metas só são consideradas se pelo menos 3 estratégicas forem atingidas";
+    ?"Ponto adicional no cenário atual: "+b.regC.ponto+" — "+b.regC.pct+"% adicional"
+    :"Estas metas só são consideradas a partir de 3 estratégicas favoráveis no cenário atual";
   var condCls=b.condicionalAtiva?"ok":"nd";
   var condStyle=b.condicionalAtiva?"":"opacity:.6";
   var condLabel="Condicionadas"+(b.condicionalAtiva?"":" · Bloqueado");
 
   panel.innerHTML=
     '<div class="bonusPanelHead">'+
-      '<h2>Projeção de Bonificação</h2>'+
-      '<div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>'+
+      '<h2>Cenário de premiação</h2>'+
+      '<div class="hint">Simulação com os dados disponíveis. Não representa o resultado anual oficial.</div>'+
     '</div>'+
     '<div class="bonusGrid">'+
       '<div class="bonusCard">'+
         '<div class="label">Estratégicas</div>'+
         '<div class="valor">'+b.metasEstrategicasAtingidas+'/'+b.totalEstrategicas+'</div>'+
-        '<div class="detalhe">Nota projetada: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% de bônus. Pares de indicadores contam como uma meta.</div>'+
+        '<div class="detalhe">Nota no cenário atual: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% na faixa estratégica. Pares de indicadores contam como uma meta.</div>'+
       '</div>'+
       '<div class="bonusCard '+condCls+'" style="'+condStyle+'">'+
         '<div class="label">'+condLabel+'</div>'+
@@ -744,7 +898,7 @@ function renderIndicadores(){
           <div class="casadoWrap">
             <div class="casadoLabel">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Indicadores casados: contam como uma meta na bonificação · ${todosOk?"✓ Ambas atingidas":"⚠ Pelo menos uma não foi atingida"}
+              Requisitos conjuntos · ${todosOk?"✓ Situação favorável":"⚠ Há requisito pendente"}
             </div>
             ${bloco.membros.map(d=>renderRow(d,true)).join("")}
             <div class="casadoBonusNote">⊞ ${esc(par.bonusNote)}</div>
@@ -758,7 +912,7 @@ function renderIndicadores(){
         <div class="arBlockHead">
           <div>
             <h2 class="arBlockTitle">${esc(grupo)}</h2>
-            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
+            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro da meta · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
           </div>
         </div>
         <div class="indicatorList">${blocosHtml}</div>
@@ -776,16 +930,20 @@ function renderRow(d,dentroCasado){
   const metaHtml=d.metaProporcional
     ?`${fmtValor(d.meta,d.unidade)} <span class="propBadge" title="Meta proporcional ao mês: ${fmtValor(d.metaProporcional,d.unidade)}">→ ${fmtValor(d.metaProporcional,d.unidade)}</span>`
     :fmtValor(d.meta,d.unidade);
-  return `
-    <article class="indicatorRow ${esc(d.statusClass)}${dentroCasado?" style='border-radius:14px;margin-bottom:8px'":""}">
+  const isE06=d.codigo==="E06";
+  const atualDisplay=isE06&&d.e06Total?`${(d.e06Conformes/d.e06Total*100).toFixed(1).replace(".",",")}%`:fmtValor(d.atual,d.unidade);
+  const nomeExtra=isE06?`<span class="drillCue"><span class="arr">›</span> Ver ${d.e06Total||12} Subprefeituras e histórico mensal</span>`:"";
+  const row=`
+    <article data-indicator-code="${esc(d.codigo)}" class="indicatorRow ${esc(d.statusClass)}${isE06?" drillable":""}"${dentroCasado?" style='border-radius:14px;margin-bottom:8px'":""}>
       <div class="codeBox">${esc(d.codigo)}</div>
-      <div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span></div>
-      <div class="metricCell"><small>Atual</small><b>${esc(fmtValor(d.atual,d.unidade))}</b></div>
+      <div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span>${nomeExtra}</div>
+      <div class="metricCell"><small>Atual</small><b>${esc(atualDisplay)}</b></div>
       <div class="metricCell"><small>${esc(metaLabel)}</small><b>${metaHtml}</b></div>
       <div class="metricCell"><small>Atingimento</small><b>${atingHtml}</b></div>
       <div class="metricCell"><small>Status</small><span class="tag ${esc(d.statusClass)}">${esc(d.statusDisplay)}</span></div>
       <div class="metricCell"><small>Tendência</small><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></div>
     </article>`;
+  return row+(isE06?renderE06Drill(d):"");
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -796,6 +954,7 @@ function render(){
   renderResumo();
   renderBonus();
   renderIndicadores();
+  bindE06Drill();
 }
 function bind(){
   $("fGrupo").addEventListener("change",render);
@@ -810,9 +969,9 @@ async function init(){
   HUB.header.render("header", {
     systemLabel: "HUB COMLURB · ACORDO DE RESULTADOS",
     title: "Acordo de Resultados 2026",
-    subtitle: "Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas."
+    subtitle: "Acompanhamento dos indicadores pactuados, situação das metas e cenário de premiação do Acordo de Resultados 2026."
   });
-  HUB.footer.render("footer", { showTimestamp: true });
+  HUB.footer.render("footer");
   const mostrarErro=(fonte,msg)=>{
     $("loading").style.display="none";
     $("errorState").style.display="block";
@@ -839,6 +998,7 @@ async function init(){
     render();
     $("loading").style.display="none";
     $("conteudo").style.display="block";
+    HUB.footer.updateTimestamp();
   }catch(e){
     console.error(e);
     mostrarErro(e.fonte||"desconhecida", e.message||String(e));

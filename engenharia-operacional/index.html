@@ -73,7 +73,8 @@
 .infraSecondaryKpi .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:7px;}
 .infraSecondaryKpi .v{font-size:19px;font-weight:850;color:var(--texto);}
 .infraSecondaryKpi .s{font-size:10.5px;color:var(--silenciado);margin-top:5px;}
-.infraSecondarySpark{height:34px;margin-top:8px;}
+.infraSecondarySpark{height:52px;margin-top:8px;}
+.infraRange{font-size:10px;color:var(--silenciado);margin-top:6px;}
 @media (max-width:900px){.infraSecondaryKpis{grid-template-columns:1fr;}}
 .fleetInsights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0;}
 .fleetInsight{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:14px 15px;}
@@ -148,6 +149,9 @@
 .fleetEmpty{padding:28px 14px;text-align:center;color:var(--silenciado);font-size:12px;}
 .infraKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px;}
 .infraKpi{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:15px;}
+.infraKpi.isClickable{cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;}
+.infraKpi.isClickable:hover{transform:translateY(-1px);border-color:rgba(123,171,255,.38);box-shadow:0 10px 22px rgba(5,15,28,.18);}
+.infraKpi.isClickable.active{border-color:rgba(123,171,255,.62);box-shadow:0 0 0 1px rgba(123,171,255,.18) inset,0 12px 24px rgba(7,18,35,.24);}
 .infraKpi .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:6px;}
 .infraKpi .v{font-size:21px;font-weight:850;color:var(--texto);}
 .infraKpi .s{font-size:10.5px;color:var(--silenciado);margin-top:4px;}
@@ -1623,6 +1627,19 @@ function serieAposTitulo(rows,title,metric,n){
 
 const FLEET_SERVICE_LABEL={domiciliar:"Coleta Domiciliar",seletiva:"Coleta Seletiva",lixo:"Lixo Público"};
 
+function wrapAxisLabel(label,maxLen=16){
+  const words=String(label||"").split(/\s+/).filter(Boolean);
+  const lines=[];
+  let line="";
+  words.forEach(word=>{
+    const next=(line?line+" ":"")+word;
+    if(line && next.length>maxLen){lines.push(line);line=word;}
+    else line=next;
+  });
+  if(line) lines.push(line);
+  return lines.length>1?lines:[String(label||"")];
+}
+
 // Gráfico de tendência anual reutilizável: marca e rotula apenas o mês atual
 // e o mesmo mês do ano anterior, mantendo o restante da série limpo.
 // detalhe: {titulo, fonte} — quando presente, clicar num ponto abre Detalhe da Competência
@@ -1949,13 +1966,27 @@ function renderInfra(){
 
   const lastVal=arr=>{const i=lastValidIndex(arr);return i>=0?{i,v:arr[i]}:{i:-1,v:null};};
   const a=lastVal(trComun),b=lastVal(trPraia12),c=lastVal(trCorte),p45=lastVal(pas45);
+  const infraCards=[
+    {titulo:"Tratores de comunidade",chave:"Trator comunidade",ref:a},
+    {titulo:"Tratores de praia AP1/2",chave:"Trator praia AP1/2",ref:b},
+    {titulo:"Tratores de corte",chave:"Trator de corte",ref:c},
+    {titulo:"Pás carregadeiras AP4/5",chave:"Pás AP4/5",ref:p45}
+  ];
   const k=document.getElementById("infraKpis");
-  if(k)k.innerHTML=[
-    ["Tratores de comunidade",a.v==null?"n/d":a.v.toFixed(1).replace(".",",")+"%",a.i>=0?meses[a.i]:""],
-    ["Tratores de praia AP1/2",b.v==null?"n/d":b.v.toFixed(1).replace(".",",")+"%",b.i>=0?meses[b.i]:""],
-    ["Tratores de corte",c.v==null?"n/d":c.v.toFixed(1).replace(".",",")+"%",c.i>=0?meses[c.i]:""],
-    ["Pás carregadeiras AP4/5",p45.v==null?"n/d":p45.v.toFixed(1).replace(".",",")+"%",p45.i>=0?meses[p45.i]:""]
-  ].map(c=>`<div class="infraKpi"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join("");
+  if(k){
+    k.innerHTML=infraCards.map(card=>`<div class="infraKpi isClickable ${DTE_DRILL.infraEquip===card.chave?"active":""}" data-equip="${HUB.format.esc(card.chave)}" role="button" tabindex="0" aria-label="Abrir histórico de ${HUB.format.esc(card.titulo)}"><div class="k">${card.titulo}</div><div class="v">${card.ref.v==null?"n/d":card.ref.v.toFixed(1).replace(".",",")+"%"}</div><div class="s">${card.ref.i>=0?meses[card.ref.i]+" · clique para abrir a janela móvel":"sem dado na janela"}</div></div>`).join("");
+    k.querySelectorAll('.infraKpi[data-equip]').forEach(el=>{
+      const openSeries=()=>{
+        const label=el.getAttribute('data-equip');
+        if(!label) return;
+        DTE_DRILL.infraEquip=label;
+        dteShowDrillReal(label,"Histórico de utilização, janela móvel de 13 meses, com destaque para o mês atual e o mesmo mês do ano anterior.");
+        renderInfra();
+      };
+      el.addEventListener('click',openSeries);
+      el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openSeries();}});
+    });
+  }
 
   const eixoXInfra={...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,maxRotation:38,minRotation:38,autoSkip:false}};
   const eixoYInfra={...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)",drawTicks:false},border:{display:false}};
@@ -1978,15 +2009,16 @@ function renderInfra(){
   if(ce){
     dteDestroyChart(ce);
     if(!DTE_DRILL.infraEquip){
-      const labels=Object.keys(equipCategorias);
-      const vals=labels.map(l=>lastVal(equipCategorias[l]).v);
+      const labelsRaw=Object.keys(equipCategorias);
+      const labels=labelsRaw.map(l=>wrapAxisLabel(l,16));
+      const vals=labelsRaw.map(l=>lastVal(equipCategorias[l]).v);
       new Chart(ce.getContext("2d"),{type:"bar",data:{labels,datasets:[{label:"Utilização",data:vals,backgroundColor:HUB.charts.colors.blueGradient}]},options:{...HUB.charts.baseConfig,indexAxis:"y",onClick:(evt,items)=>{
         const idx=dteClickIndex(items); if(idx<0)return;
-        const label=labels[idx];
+        const label=labelsRaw[idx];
         DTE_DRILL.infraEquip=label;
-        dteShowDrillReal(label,"Histórico de utilização, janela de 13 meses.");
+        dteShowDrillReal(label,"Histórico de utilização, janela móvel de 13 meses, com destaque para o mês atual e o mesmo mês do ano anterior.");
         renderInfra();
-      },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>Number.isFinite(v)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,suggestedMax:120,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}}}}});
+      },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>Number.isFinite(v)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{title:(items)=>labelsRaw[items?.[0]?.dataIndex]||"",label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,suggestedMax:120,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}},y:{...HUB.charts.baseConfig.scales.y,grid:{display:false},ticks:{...HUB.charts.baseConfig.scales.y.ticks,autoSkip:false,font:{size:11}}}}});
     } else {
       const label=DTE_DRILL.infraEquip;
       const serieEquip=equipCategorias[label];
@@ -2004,15 +2036,18 @@ function renderInfra(){
   // Manejo/Apresentação ~5,4–7,1 — mesma ordem de grandeza). Eixo único mantido
   // por ser leitura honesta; não é eixo duplo automático.
   const cp=document.getElementById("chartPoda");
-  if(cp){ dteDestroyChart(cp); new Chart(cp.getContext("2d"),{data:{labels:meses,datasets:[
+  if(cp){ dteDestroyChart(cp); const iYoYPoda=lastInfra-12; new Chart(cp.getContext("2d"),{data:{labels:meses,datasets:[
     {type:"bar",label:"KM por manejo",data:podaKm,backgroundColor:podaKm.map((_,i)=>i===lastInfra?"rgba(91,147,232,.88)":"rgba(91,147,232,.30)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:24,order:2},
     {type:"line",label:"Manejo por apresentação",data:podaMan,borderColor:HUB.charts.colors.orange,backgroundColor:"transparent",borderWidth:2.3,tension:.22,pointRadius:podaMan.map((_,i)=>i===lastInfra?4:0),pointHoverRadius:5,order:1}
-  ]},options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},onClick:(evt,items)=>{
+  ]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},interaction:{mode:"index",intersect:false},onClick:(evt,items)=>{
     const idx=dteClickIndex(items); if(idx<0)return;
     const km=podaKm[idx],man=podaMan[idx];
     if(!Number.isFinite(km)&&!Number.isFinite(man)){dteBannerShow({kind:"Detalhe da competência",title:"Poda mecanizada",description:"Sem dado publicado para "+meses[idx]+"."});return;}
     dteShowDetalheCompetencia({titulo:"Poda mecanizada · KM por manejo",meses,serie:podaKm,idx,fonte:"Relatório Mensal DTE · Indicador de Poda",fmt:v=>v.toFixed(1).replace(".",",")+" km",extraLinhas:[`Manejo por apresentação em ${meses[idx]}: ${Number.isFinite(man)?man.toFixed(1).replace(".",","):"n/d"}`]});
-  },plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}}},scales:{x:eixoXInfra,y:eixoYInfra}}}); }
+  },plugins:{...HUB.charts.baseConfig.plugins,legend:{...HUB.charts.baseConfig.plugins.legend,labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}},dteValueLabels:{display:true,fontSize:9,offset:7,formatter:(v,i,dataset,di)=>{
+    if(i!==lastInfra && i!==iYoYPoda) return "";
+    return di===0 ? `${Number(v).toFixed(1).replace(".",",")} km` : Number(v).toFixed(1).replace(".",",");
+  }}},scales:{x:eixoXInfra,y:eixoYInfra}}}); }
 
   const cpr=document.getElementById("predialKpis");
   if(cpr){
@@ -2025,16 +2060,18 @@ function renderInfra(){
       const iLast=lastValidIndex(it.serie);
       const v=iLast>=0?HUB.format.int(Math.round(it.serie[iLast])):"n/d";
       const s=iLast>=0?meses[iLast]+" · oficial DTE":"sem dado na janela";
-      return `<div class="infraSecondaryKpi"><div class="k">${it.label}</div><div class="v">${v}</div><div class="s">${s}</div><div class="infraSecondarySpark"><canvas id="chartPredial${it.id}"></canvas></div></div>`;
+      const range=meses.length?`${meses[0]} → ${meses[meses.length-1]}`:"janela móvel de 13 meses";
+      return `<div class="infraSecondaryKpi"><div class="k">${it.label}</div><div class="v">${v}</div><div class="s">${s}</div><div class="infraSecondarySpark"><canvas id="chartPredial${it.id}"></canvas></div><div class="infraRange">${range}</div></div>`;
     }).join("");
     itensPredial.forEach(it=>{
       chartOuVazio(`chartPredial${it.id}`,it.serie,()=>{
         const c=document.getElementById(`chartPredial${it.id}`); if(!c)return;
         const iLast=lastValidIndex(it.serie);
-        new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:it.serie,borderColor:it.cor,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:it.serie.map((_,i)=>i===iLast?3:0),pointHoverRadius:4,fill:false}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,items)=>{
+        const iYoY=iLast-12;
+        new Chart(c.getContext("2d"),{type:"bar",data:{labels:meses,datasets:[{data:it.serie,backgroundColor:it.serie.map((_,i)=>i===iLast?it.cor:(i===iYoY?"rgba(200,214,231,.42)":"rgba(120,150,180,.18)")),borderWidth:0,borderRadius:6,borderSkipped:false,maxBarThickness:12}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:16}},responsive:true,maintainAspectRatio:false,onClick:(evt,items)=>{
           const idx=dteClickIndex(items); if(idx<0)return;
           dteShowDetalheCompetencia({titulo:it.label,meses,serie:it.serie,idx,fonte:it.fonte,fmt:v=>HUB.format.int(Math.round(v))});
-        },plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${it.label}: ${HUB.format.int(Math.round(ctx.raw))}`}}},scales:{x:{display:false},y:{display:false}}}});
+        },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:8,offset:5,formatter:(v,i)=>(i===iLast||i===iYoY)?HUB.format.int(Math.round(v)):""},tooltip:{callbacks:{label:ctx=>`${it.label}: ${HUB.format.int(Math.round(ctx.raw))}`}}},scales:{x:{display:false},y:{display:false}}}});
       });
     });
   }

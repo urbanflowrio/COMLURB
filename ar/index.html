@@ -122,6 +122,12 @@
   .bonusGrid{grid-template-columns:1fr}
 }
 
+/* ── Situação das metas ── */
+.situacaoHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 2px 10px}
+.situacaoHead h2{margin:0;color:#fff;font-size:18px;font-weight:950;letter-spacing:.01em}
+.situacaoHead p{margin:4px 0 0;color:#9fb0c7;font-size:12px;line-height:1.4}
+.situacaoHead .competencia{color:#b8d4f2;font-size:11px;font-weight:900;white-space:nowrap}
+
 /* ── Placar executivo ── */
 .placarGrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .placarCard{background:var(--painel);border:1px solid var(--linha);border-radius:20px;padding:18px 20px}
@@ -165,20 +171,27 @@
 
 <main id="conteudo" style="display:none">
 
-  <!-- PLACAR EXECUTIVO -->
+  <!-- SITUAÇÃO DAS METAS -->
+  <div class="situacaoHead">
+    <div>
+      <h2>Situação das metas</h2>
+      <p>Leitura gerencial da competência atual, sem substituir a avaliação anual oficial.</p>
+    </div>
+    <div class="competencia">Acordo de Resultados 2026</div>
+  </div>
   <div class="placarGrid" id="placarGrid"></div>
 
-  <!-- PAINEL DE BONIFICAÇÃO -->
+  <!-- CENÁRIO DE PREMIAÇÃO -->
   <section class="bonusPanel" id="bonusPanel"></section>
 
   <!-- INDICADORES -->
   <div id="indicadoresContainer"></div>
 
   <div class="govNote">
-    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado são comparados à meta do período, não à meta anual cheia. O badge <em>prop.</em> identifica esses casos.
-    <strong>Tendência:</strong> compara a média dos últimos 3 meses com os 3 anteriores. Quando há menos de 6 meses de histórico, aparece "Série curta".
-    <strong>Metas casadas:</strong> nos pares de indicadores, os dois precisam ser atingidos para contar uma meta na bonificação. O bom resultado de um não compensa o outro.
-    <strong>Bonificação:</strong> a projeção é calculada com base no status atual e está sujeita à validação oficial pela CVL.
+    <strong>Situação das metas:</strong> leitura gerencial da competência disponível. Não equivale ao resultado anual oficial do Acordo.
+    <strong>Atingimento proporcional:</strong> indicadores de volume acumulado são comparados à referência esperada para o período, não à meta anual cheia. O badge <em>prop.</em> identifica esses casos.
+    <strong>Metas casadas:</strong> os requisitos precisam ser observados em conjunto. O bom resultado de um indicador não compensa o outro.
+    <strong>Cenário de premiação:</strong> simulação com os dados disponíveis. A Meta de Performance só é computada após avaliação oficial da CVL, GBP e SMIT.
   </div>
 </main>
 
@@ -435,7 +448,19 @@ function processar(){
       d.statusDisplay=d.status;
     }
 
-    d.statusClass=tagClass(d.statusDisplay);
+    // Distinção entre leitura gerencial e apuração contratual.
+    // O ranking SINISA de 2026 só será conhecido no ano subsequente;
+    // a Meta de Performance é apurada ao final do exercício pela CVL/GBP/SMIT.
+    d.statusCenario=d.status;
+    if(d.codigo==="E03"){
+      d.statusDisplay="Em apuração";
+      d.statusClass="nd";
+    } else if(d.codigo==="P01"){
+      d.statusDisplay="Em avaliação";
+      d.statusClass="nd";
+    } else {
+      d.statusClass=tagClass(d.statusDisplay);
+    }
     d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);
     d.tendenciaClass=tendenciaClass(d.tendencia);
 
@@ -450,7 +475,7 @@ function processar(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CÁLCULO DE BONIFICAÇÃO
+   CÁLCULO DO CENÁRIO DE PREMIAÇÃO
    ═══════════════════════════════════════════════════════════ */
 function calcularBonificacao(lista){
   const byId=Object.fromEntries(lista.map(d=>[d.codigo,d]));
@@ -464,13 +489,13 @@ function calcularBonificacao(lista){
   estratIndividuais.forEach(cod=>{
     const d=byId[cod];
     if(!d)return;
-    const atingiu=d.status==="Dentro da Meta";
+    const atingiu=(d.statusCenario||d.status)==="Dentro da Meta";
     if(atingiu)metasEstrategicasAtingidas++;
     detalhesEstrategicos.push({cod,label:d.indicador,atingiu,casado:false});
   });
 
   estratCasados.forEach(par=>{
-    const todos=par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    const todos=par.membros.every(m=>{const d=byId[m];return d&&(d.statusCenario||d.status)==="Dentro da Meta";});
     if(todos)metasEstrategicasAtingidas++;
     detalhesEstrategicos.push({
       cod:par.membros.join("+"),
@@ -502,7 +527,7 @@ function calcularBonificacao(lista){
   });
 
   condCasados.forEach(par=>{
-    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&d.status==="Dentro da Meta";});
+    const todos=condicionalAtiva&&par.membros.every(m=>{const d=byId[m];return d&&(d.statusCenario||d.status)==="Dentro da Meta";});
     if(todos)metasCondicionadasAtingidas++;
     detalhesCondicionados.push({
       cod:par.membros.join("+"),
@@ -518,17 +543,20 @@ function calcularBonificacao(lista){
   const regC=BONUS_CONDICIONADO.find(r=>metasCondicionadasAtingidas>=r.metas)||BONUS_CONDICIONADO[BONUS_CONDICIONADO.length-1];
 
   const p01=byId["P01"];
-  const performanceAtingida=condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
-  const bonusPerformance=performanceAtingida?BONUS_PERFORMANCE.pct:0;
+  // Meta de Performance não é projetada como cumprida durante o exercício.
+  // O contrato prevê apuração conjunta ao final de 2026.
+  const performanceAtingida=false;
+  const bonusPerformance=0;
 
-  const bonusTotal=regE.pct+(condicionalAtiva?regC.pct:0)+(condicionalAtiva?bonusPerformance:0);
+  const bonusTotal=regE.pct+(condicionalAtiva?regC.pct:0);
+  const bonusPotencialMax=bonusTotal+(condicionalAtiva?BONUS_PERFORMANCE.pct:0);
 
   return {
     metasEstrategicasAtingidas,totalEstrategicas,
     regE,condicionalAtiva,
     metasCondicionadasAtingidas,regC,
     performanceAtingida,bonusPerformance,
-    bonusTotal,
+    bonusTotal,bonusPotencialMax,
     detalhesEstrategicos,detalhesCondicionados
   };
 }
@@ -558,61 +586,54 @@ function renderResumo(){
   const b=calcularBonificacao(DATA);
 
   const eStrStatus=b.metasEstrategicasAtingidas===0
-    ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
+    ?'<span class="pcStatus pcStatusCrit">Nenhuma favorável</span>'
     :b.metasEstrategicasAtingidas>=5
-    ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
-    :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5</span>`;
+    ?'<span class="pcStatus pcStatusOk">Todas favoráveis</span>'
+    :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5 favoráveis</span>`;
 
   const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"—";
   const condSub=b.condicionalAtiva?" / 3":"";
   const condStatus=!b.condicionalAtiva
     ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
     :b.metasCondicionadasAtingidas===0
-    ?'<span class="pcStatus pcStatusCrit">Nenhuma atingida</span>'
+    ?'<span class="pcStatus pcStatusCrit">Nenhuma favorável</span>'
     :b.metasCondicionadasAtingidas>=3
-    ?'<span class="pcStatus pcStatusOk">Todas atingidas</span>'
-    :`<span class="pcStatus pcStatusAtt">${b.metasCondicionadasAtingidas} de 3</span>`;
+    ?'<span class="pcStatus pcStatusOk">Todas favoráveis</span>'
+    :`<span class="pcStatus pcStatusAtt">${b.metasCondicionadasAtingidas} de 3 favoráveis</span>`;
   const condDesc=b.condicionalAtiva
-    ?"Ativas: "+b.metasEstrategicasAtingidas+" metas estratégicas atingidas."
-    :"Entram na avaliação após 3 metas estratégicas. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
+    ?"Habilitadas no cenário atual: "+b.metasEstrategicasAtingidas+" metas estratégicas favoráveis."
+    :"São consideradas a partir de 3 metas estratégicas favoráveis. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
 
   const p01=DATA.find(d=>d.codigo==="P01");
-  const perfAtingida=b.condicionalAtiva&&p01&&p01.status==="Dentro da Meta";
-  const perfVal=b.condicionalAtiva?(perfAtingida?"1":"0"):"—";
-  const perfSub=b.condicionalAtiva?" / 1":"";
-  const perfStatus=!b.condicionalAtiva
-    ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
-    :perfAtingida
-    ?'<span class="pcStatus pcStatusOk">Cumprida</span>'
-    :'<span class="pcStatus pcStatusCrit">Não cumprida</span>';
-  const perfDesc=b.condicionalAtiva
-    ?"Mesma condição de ativação das condicionadas."
-    :"Mesma condição de ativação das condicionadas.";
+  const perfVal="—";
+  const perfSub="";
+  const perfStatus='<span class="pcStatus pcStatusBloq">Em avaliação</span>';
+  const perfDesc="Apuração conjunta da CVL, GBP e SMIT ao final do exercício de 2026.";
 
   const bonusClass=b.bonusTotal>=60?"pcStatusOk":b.bonusTotal>=20?"pcStatusAtt":"pcStatusCrit";
-  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · P: "+(b.condicionalAtiva?b.bonusPerformance:0)+"%";
+  const descBonus="E: "+b.regE.pct+"% · C: "+(b.condicionalAtiva?b.regC.pct:0)+"% · Performance: em avaliação";
 
   $("placarGrid").innerHTML=
     '<div class="placarCard bonus">'+
-      '<div class="pcLabel">Bônus Projetado</div>'+
+      '<div class="pcLabel">Cenário de premiação</div>'+
       '<div class="pcPlacar">'+b.bonusTotal+'<span>%</span></div>'+
       '<div class="pcDesc">'+descBonus+'</div>'+
-      '<span class="pcStatus '+bonusClass+'">'+(b.bonusTotal>0?"Bônus ativo":"Sem bônus")+'</span>'+
+      '<span class="pcStatus '+bonusClass+'">'+"Simulação atual"+'</span>'+
     '</div>'+
     '<div class="placarCard estr">'+
-      '<div class="pcLabel">Metas Estratégicas</div>'+
+      '<div class="pcLabel">Metas estratégicas</div>'+
       '<div class="pcPlacar">'+b.metasEstrategicasAtingidas+'<span> / 5</span></div>'+
       '<div class="pcDesc">8 indicadores monitorados. Pares contam como uma meta.</div>'+
       eStrStatus+
     '</div>'+
     '<div class="placarCard cond">'+
-      '<div class="pcLabel">Metas Condicionadas</div>'+
+      '<div class="pcLabel">Metas condicionadas</div>'+
       '<div class="pcPlacar">'+condVal+'<span>'+condSub+'</span></div>'+
       '<div class="pcDesc">'+condDesc+'</div>'+
       condStatus+
     '</div>'+
     '<div class="placarCard perf">'+
-      '<div class="pcLabel">Meta de Performance</div>'+
+      '<div class="pcLabel">Meta de performance</div>'+
       '<div class="pcPlacar">'+perfVal+'<span>'+perfSub+'</span></div>'+
       '<div class="pcDesc">'+perfDesc+'</div>'+
       perfStatus+
@@ -620,7 +641,7 @@ function renderResumo(){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDER: PAINEL DE BONIFICAÇÃO
+   RENDER: CENÁRIO DE PREMIAÇÃO
    ═══════════════════════════════════════════════════════════ */
 function renderBonus(){
   const b=calcularBonificacao(DATA);
@@ -628,7 +649,7 @@ function renderBonus(){
 
   function linhaSimples(item){
     var cls=item.atingiu?"ok":"crit";
-    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Favorável":"Pendente");
     return '<div class="metaLinha '+cls+'">'+
       '<span class="cod">'+esc(item.cod)+'</span>'+
       '<span class="desc">'+esc(item.label)+'</span>'+
@@ -639,7 +660,7 @@ function renderBonus(){
 
   function linhaCasada(item){
     var cls=item.atingiu?"ok":"crit";
-    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Atingido":"Não atingido");
+    var statusTxt=item.bloqueado?"Bloqueado":(item.atingiu?"Favorável":"Pendente");
     var membrosHtml=item.membros.map(function(m){
       return '<div class="metaLinha '+esc(m.statusClass)+'" style="padding-left:20px">'+
         '<span class="cod">'+esc(m.cod)+'</span>'+
@@ -665,22 +686,22 @@ function renderBonus(){
 
   var condTotal=[...["C03","C04"].filter(function(c){return DATA.some(function(d){return d.codigo===c;});}),...CASADOS.filter(function(p){return p.membros.some(function(m){return DATA.some(function(d){return d.codigo===m&&d.grupo.toLowerCase().includes("condicion");});});})].length;
   var condDetalhe=b.condicionalAtiva
-    ?"Ponto adicional: "+b.regC.ponto+" — "+b.regC.pct+"% de bônus adicional"
-    :"Estas metas só são consideradas se pelo menos 3 estratégicas forem atingidas";
+    ?"Ponto adicional no cenário atual: "+b.regC.ponto+" — "+b.regC.pct+"% adicional"
+    :"Estas metas só são consideradas a partir de 3 estratégicas favoráveis no cenário atual";
   var condCls=b.condicionalAtiva?"ok":"nd";
   var condStyle=b.condicionalAtiva?"":"opacity:.6";
   var condLabel="Condicionadas"+(b.condicionalAtiva?"":" · Bloqueado");
 
   panel.innerHTML=
     '<div class="bonusPanelHead">'+
-      '<h2>Projeção de Bonificação</h2>'+
-      '<div class="hint">Calculada com base no status atual. Sujeita à validação da CVL.</div>'+
+      '<h2>Cenário de premiação</h2>'+
+      '<div class="hint">Simulação com os dados disponíveis. Não representa o resultado anual oficial.</div>'+
     '</div>'+
     '<div class="bonusGrid">'+
       '<div class="bonusCard">'+
         '<div class="label">Estratégicas</div>'+
         '<div class="valor">'+b.metasEstrategicasAtingidas+'/'+b.totalEstrategicas+'</div>'+
-        '<div class="detalhe">Nota projetada: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% de bônus. Pares de indicadores contam como uma meta.</div>'+
+        '<div class="detalhe">Nota no cenário atual: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% na faixa estratégica. Pares de indicadores contam como uma meta.</div>'+
       '</div>'+
       '<div class="bonusCard '+condCls+'" style="'+condStyle+'">'+
         '<div class="label">'+condLabel+'</div>'+
@@ -742,7 +763,7 @@ function renderIndicadores(){
           <div class="casadoWrap">
             <div class="casadoLabel">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Indicadores casados: contam como uma meta na bonificação · ${todosOk?"✓ Ambas atingidas":"⚠ Pelo menos uma não foi atingida"}
+              Requisitos conjuntos · ${todosOk?"✓ Situação favorável":"⚠ Há requisito pendente"}
             </div>
             ${bloco.membros.map(d=>renderRow(d,true)).join("")}
             <div class="casadoBonusNote">⊞ ${esc(par.bonusNote)}</div>
@@ -756,7 +777,7 @@ function renderIndicadores(){
         <div class="arBlockHead">
           <div>
             <h2 class="arBlockTitle">${esc(grupo)}</h2>
-            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
+            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro da meta · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
           </div>
         </div>
         <div class="indicatorList">${blocosHtml}</div>
@@ -808,7 +829,7 @@ async function init(){
   HUB.header.render("header", {
     systemLabel: "HUB COMLURB · ACORDO DE RESULTADOS",
     title: "Acordo de Resultados 2026",
-    subtitle: "Acompanhamento dos indicadores pactuados no Acordo de Resultados 2026, com projeção de bonificação e lógica de metas casadas."
+    subtitle: "Acompanhamento dos indicadores pactuados, situação das metas e cenário de premiação do Acordo de Resultados 2026."
   });
   HUB.footer.render("footer");
   const mostrarErro=(fonte,msg)=>{

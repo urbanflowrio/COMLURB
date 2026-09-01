@@ -27,6 +27,9 @@
 .dteDrillClose{appearance:none;border:1px solid var(--linha);background:var(--painel);color:var(--texto);border-radius:9px;padding:8px 11px;font:inherit;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;}
 .dteDrillClose:hover{border-color:rgba(91,147,232,.55);}
 .drillSlot{margin:14px 0 16px;}
+.dteDetailFloat{position:fixed;right:24px;bottom:24px;z-index:9999;width:min(560px,calc(100vw - 32px));}
+.dteDetailFloat .dteDrillBanner{margin:0;box-shadow:0 18px 48px rgba(0,0,0,.32);backdrop-filter:blur(12px);}
+@media(max-width:700px){.dteDetailFloat{left:16px;right:16px;bottom:16px;width:auto;}}
 @media (max-width:650px){.dteDrillBanner{flex-direction:column}.dteDrillClose{width:100%}}
 .leituraChips{display:flex;flex-direction:column;gap:10px;}
 .leituraChip{display:flex;align-items:flex-start;gap:12px;background:var(--painel2);border:1px solid var(--linha);border-radius:12px;padding:14px 16px;transition:border-color .2s;}
@@ -470,7 +473,7 @@
          bloco secundário de KPI + microtendência, evitando comparar séries de escalas
          não validadas no mesmo eixo. -->
     <div class="panel" style="margin-top:14px;">
-      <div class="panelHead"><div><h2>Poda mecanizada</h2><div class="hint">KM por manejo e manejos por apresentação · indicador acompanhado no Acordo de Resultados</div></div></div>
+      <div class="panelHead"><div><h2>Poda mecanizada</h2><div class="hint">Manejos realizados · indicador acompanhado no Acordo de Resultados</div></div></div>
       <div class="body">
         <div class="podaSummary" id="podaSummary"></div>
         <div class="podaCharts">
@@ -789,9 +792,9 @@ function dteClearAllDrillSlots(){
 
 function dteBannerShow({ kind, title, description }) {
   dteClearAllDrillSlots();
-  const slot = dteGetActiveDrillSlot();
-  if (!slot) return;
-  slot.innerHTML = `
+  const oldFloat=document.getElementById("dteDetailFloat");
+  if(oldFloat) oldFloat.remove();
+  const html = `
     <div class="dteDrillBanner" role="status" aria-live="polite">
       <div class="dteDrillText">
         <div class="dteDrillKind">${dteEscapeHtml(kind || "Detalhe")}</div>
@@ -800,11 +803,23 @@ function dteBannerShow({ kind, title, description }) {
       </div>
       <button class="dteDrillClose" type="button" onclick="dteCloseDrill()">Fechar</button>
     </div>`;
-  slot.scrollIntoView({ behavior: "smooth", block: "start" });
+  if((kind||"")==="Detalhe da competência"){
+    const float=document.createElement("div");
+    float.id="dteDetailFloat";
+    float.className="dteDetailFloat";
+    float.innerHTML=html;
+    document.body.appendChild(float);
+    return;
+  }
+  const slot = dteGetActiveDrillSlot();
+  if (!slot) return;
+  slot.innerHTML = html;
 }
 
 function dteBannerHide() {
   dteClearAllDrillSlots();
+  const oldFloat=document.getElementById("dteDetailFloat");
+  if(oldFloat) oldFloat.remove();
 }
 
 function dteCloseDrill() {
@@ -840,30 +855,24 @@ function dteShowDetalheCompetencia({ titulo, meses, serie, idx, fonte, fmt, extr
     return;
   }
   const mesLabel = meses[idx];
-  const partes = ["Valor: " + fmt(serie[idx])];
-  const iYoY = idx - 12;
-  if (iYoY >= 0 && Number.isFinite(serie[iYoY]) && serie[iYoY] !== 0) {
-    const d = serie[idx] - serie[iYoY];
-    partes.push(`YoY (${meses[iYoY]}): ${d >= 0 ? "+" : ""}${fmt(d)}`);
-  } else {
-    partes.push("YoY: sem comparação disponível");
-  }
+  const partes = [`${mesLabel}: ${fmt(serie[idx])}`];
   const iMoM = idx - 1;
-  if (iMoM >= 0 && Number.isFinite(serie[iMoM]) && serie[iMoM] !== 0) {
-    const d = serie[idx] - serie[iMoM];
-    partes.push(`MoM: ${d >= 0 ? "+" : ""}${fmt(d)}`);
+  if (iMoM >= 0 && Number.isFinite(serie[iMoM])) {
+    partes.push(`Mês anterior (${meses[iMoM]}): ${fmt(serie[iMoM])}`);
   }
-  const janela = serie.filter(v => Number.isFinite(v) && v > 0);
+  const iYoY = idx - 12;
+  if (iYoY >= 0 && Number.isFinite(serie[iYoY])) {
+    partes.push(`Mesmo mês do ano anterior (${meses[iYoY]}): ${fmt(serie[iYoY])}`);
+  }
+  const janela = serie.filter(v => Number.isFinite(v));
   if (janela.length > 1) {
     const media = janela.reduce((a, b) => a + b, 0) / janela.length;
-    const d = serie[idx] - media;
-    partes.push(`vs. média 13m: ${d >= 0 ? "+" : ""}${fmt(d)}`);
+    partes.push(`Média da janela: ${fmt(media)}`);
   }
   if (extraLinhas && extraLinhas.length) partes.push(...extraLinhas);
-  if (fonte) partes.push("Fonte: " + fonte);
   dteBannerShow({
     kind: "Detalhe da competência",
-    title: `${titulo} (${mesLabel})`,
+    title: titulo,
     description: partes.join(" · ")
   });
 }
@@ -2046,7 +2055,7 @@ function renderInfra(){
     "Pás AP4/5":pas45
   };
   const equipHintEl=document.getElementById("equipUtilHint");
-  if(equipHintEl) equipHintEl.textContent="% de utilização (peso ou área operada ÷ capacidade) · Relatório Mensal DTE, seção Utilização de Tratores/Pás";
+  if(equipHintEl) equipHintEl.textContent="Tratores e pás carregadeiras · competência mais recente";
   const ce=document.getElementById("chartEquipUtil");
   if(ce){
     dteDestroyChart(ce);
@@ -2215,7 +2224,7 @@ function renderInfra(){
           },
           scales:{
             x:{...eixoXInfra,ticks:{...eixoXInfra.ticks,maxRotation:38,minRotation:38,autoSkip:false,font:{size:11}}},
-            y:{...eixoYInfra,ticks:{...eixoYInfra.ticks,font:{size:11}}}
+            y:{...eixoYInfra,beginAtZero:true,ticks:{...eixoYInfra.ticks,stepSize:1,font:{size:11}}}
           }
         }
       });

@@ -76,6 +76,16 @@
 .infraSecondaryKpi .s{font-size:10.5px;color:var(--silenciado);margin-top:5px;}
 .infraSecondarySpark{height:52px;margin-top:8px;}
 .infraRange{font-size:10px;color:var(--silenciado);margin-top:6px;}
+.podaSummary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px;}
+.podaMetric{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:14px 15px;}
+.podaMetric .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--silenciado);margin-bottom:7px;}
+.podaMetric .v{font-size:22px;font-weight:850;color:var(--texto);line-height:1.1;}
+.podaMetric .s{font-size:11px;color:var(--silenciado);margin-top:5px;line-height:1.4;}
+.podaCharts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.podaChartCard{border:1px solid var(--linha);border-radius:14px;background:var(--painel2);padding:12px 14px 10px;}
+.podaChartCard .h{font-size:11px;font-weight:800;color:var(--texto);margin-bottom:4px;}
+.podaChartCard .sub{font-size:10.5px;color:var(--silenciado);margin-bottom:10px;}
+@media (max-width:900px){.podaSummary,.podaCharts{grid-template-columns:1fr;}}
 @media (max-width:900px){.infraSecondaryKpis{grid-template-columns:1fr;}}
 .fleetInsights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0;}
 .fleetInsight{background:var(--painel2);border:1px solid var(--linha);border-radius:14px;padding:14px 15px;}
@@ -461,7 +471,21 @@
          não validadas no mesmo eixo. -->
     <div class="panel" style="margin-top:14px;">
       <div class="panelHead"><div><h2>Poda mecanizada</h2><div class="hint">KM por manejo e manejos por apresentação · indicador acompanhado no Acordo de Resultados</div></div></div>
-      <div class="body"><div class="chartWrap" style="height:300px;"><canvas id="chartPoda"></canvas></div></div>
+      <div class="body">
+        <div class="podaSummary" id="podaSummary"></div>
+        <div class="podaCharts">
+          <div class="podaChartCard">
+            <div class="h">KM por manejo</div>
+            <div class="sub">janela móvel de 13 meses · destaque para a competência atual</div>
+            <div class="chartWrap" style="height:210px;"><canvas id="chartPodaKm"></canvas></div>
+          </div>
+          <div class="podaChartCard">
+            <div class="h">Manejos por apresentação</div>
+            <div class="sub">janela móvel de 13 meses · destaque para a competência atual</div>
+            <div class="chartWrap" style="height:210px;"><canvas id="chartPodaMan"></canvas></div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="panel" style="margin-top:14px;">
       <div class="panelHead"><div><h2>Manutenção predial</h2><div class="hint">Intervenções, refrigeração e ecopontos · acompanhamento dos registros disponíveis</div></div></div>
@@ -2027,8 +2051,16 @@ function renderInfra(){
   if(ce){
     dteDestroyChart(ce);
     if(!DTE_DRILL.infraEquip){
-      const labelsRaw=Object.keys(equipCategorias);
-      const labels=labelsRaw.map(l=>wrapAxisLabel(l,12));
+      const equipMeta=[
+        {key:"Trator comunidade",tick:["Trator","comunidade"]},
+        {key:"Trator praia AP1/2",tick:["Trator praia","AP1/2"]},
+        {key:"Trator praia AP3/4/5",tick:["Trator praia","AP3/4/5"]},
+        {key:"Trator de corte",tick:["Trator de","corte"]},
+        {key:"Pás AP1/2/3",tick:["Pás","AP1/2/3"]},
+        {key:"Pás AP4/5",tick:["Pás","AP4/5"]}
+      ];
+      const labelsRaw=equipMeta.map(x=>x.key);
+      const labels=equipMeta.map(x=>x.tick);
       const vals=labelsRaw.map(l=>lastVal(equipCategorias[l]).v);
       new Chart(ce.getContext("2d"),{
         type:"bar",
@@ -2037,9 +2069,9 @@ function renderInfra(){
           datasets:[{
             label:"Utilização",
             data:vals,
-            backgroundColor:vals.map((_,i)=>i===0?"rgba(91,147,232,.90)":"rgba(91,147,232,.34)"),
+            backgroundColor:vals.map(()=>"rgba(91,147,232,.72)"),
             borderWidth:0,
-            borderRadius:7,
+            borderRadius:8,
             borderSkipped:false,
             maxBarThickness:42
           }]
@@ -2059,7 +2091,7 @@ function renderInfra(){
             legend:{display:false},
             dteValueLabels:{
               display:true,
-              fontSize:11,
+              fontSize:12,
               color:"#eef5ff",
               offset:8,
               formatter:v=>Number.isFinite(v)?v.toFixed(1).replace(".",",")+"%":""
@@ -2076,7 +2108,7 @@ function renderInfra(){
               ...HUB.charts.baseConfig.scales.x,
               grid:{display:false},
               border:{display:false},
-              ticks:{...HUB.charts.baseConfig.scales.x.ticks,autoSkip:false,maxRotation:0,minRotation:0,font:{size:11}}
+              ticks:{...HUB.charts.baseConfig.scales.x.ticks,autoSkip:false,maxRotation:0,minRotation:0,font:{size:12}}
             },
             y:{
               ...HUB.charts.baseConfig.scales.y,
@@ -2129,83 +2161,68 @@ function renderInfra(){
     }
   }
 
-  // Poda mecanizada: escalas validadas contra a fonte (KM/Manejo ~3,5–4,9;
-  // Manejo/Apresentação ~5,4–7,1 — mesma ordem de grandeza). Eixo único mantido
-  // por ser leitura honesta; não é eixo duplo automático.
-  const cp=document.getElementById("chartPoda");
-  if(cp){
-    dteDestroyChart(cp);
-    const iYoYPoda=lastInfra-12;
-    new Chart(cp.getContext("2d"),{
-      type:"bar",
-      data:{
-        labels:meses,
-        datasets:[
-          {
-            label:"KM por manejo",
-            data:podaKm,
-            backgroundColor:podaKm.map((_,i)=>i===lastInfra?"rgba(91,147,232,.90)":(i===iYoYPoda?"rgba(91,147,232,.55)":"rgba(91,147,232,.24)")),
-            borderWidth:0,
-            borderRadius:6,
-            borderSkipped:false,
-            maxBarThickness:18
-          },
-          {
-            label:"Manejo por apresentação",
-            data:podaMan,
-            backgroundColor:podaMan.map((_,i)=>i===lastInfra?"rgba(232,117,53,.90)":(i===iYoYPoda?"rgba(232,117,53,.55)":"rgba(232,117,53,.24)")),
-            borderWidth:0,
-            borderRadius:6,
-            borderSkipped:false,
-            maxBarThickness:18
-          }
-        ]
+  // Poda mecanizada: leitura separada em dois micrográficos para evitar mistura
+  // de escalas e melhorar a elegância visual.
+  const podaSummary=document.getElementById("podaSummary");
+  if(podaSummary){
+    const iKm=lastValidIndex(podaKm), iMan=lastValidIndex(podaMan);
+    const yoyKm=iKm>=12 && Number.isFinite(podaKm[iKm-12]) ? podaKm[iKm]-podaKm[iKm-12] : null;
+    const yoyMan=iMan>=12 && Number.isFinite(podaMan[iMan-12]) ? podaMan[iMan]-podaMan[iMan-12] : null;
+    podaSummary.innerHTML=[
+      {
+        k:"KM por manejo",
+        v:iKm>=0?`${podaKm[iKm].toFixed(1).replace(".",",")} km`:"n/d",
+        s:iKm>=0?`${meses[iKm]} · ${yoyKm==null?"sem YoY":`${yoyKm>=0?"+":""}${yoyKm.toFixed(1).replace(".",",")} vs. ${meses[iKm-12]}`}`:"sem dado na janela"
       },
-      options:{
-        ...HUB.charts.baseConfig,
-        layout:{padding:{top:22}},
-        interaction:{mode:"index",intersect:false},
-        onClick:(evt,items)=>{
-          const idx=dteClickIndex(items); if(idx<0)return;
-          const km=podaKm[idx],man=podaMan[idx];
-          if(!Number.isFinite(km)&&!Number.isFinite(man)){
-            dteBannerShow({kind:"Detalhe da competência",title:"Poda mecanizada",description:"Sem dado publicado para "+meses[idx]+"."});
-            return;
-          }
-          dteShowDetalheCompetencia({
-            titulo:"Poda mecanizada · KM por manejo",
-            meses,
-            serie:podaKm,
-            idx,
-            fonte:"Relatório Mensal DTE · Indicador de Poda",
-            fmt:v=>v.toFixed(1).replace(".",",")+" km",
-            extraLinhas:[`Manejo por apresentação em ${meses[idx]}: ${Number.isFinite(man)?man.toFixed(1).replace(".",","):"n/d"}`]
-          });
-        },
-        plugins:{
-          ...HUB.charts.baseConfig.plugins,
-          legend:{
-            ...HUB.charts.baseConfig.plugins.legend,
-            labels:{...HUB.charts.baseConfig.plugins.legend.labels,boxWidth:8,boxHeight:8,padding:18}
-          },
-          dteValueLabels:{
-            display:true,
-            fontSize:10,
-            color:"#eef5ff",
-            offset:7,
-            formatter:(v,i,dataset,di)=>{
-              if(i!==lastInfra) return "";
-              return di===0 ? `${Number(v).toFixed(1).replace(".",",")} km` : Number(v).toFixed(1).replace(".",",");
-            }
-          }
-        },
-        scales:{
-          x:{...eixoXInfra,ticks:{...eixoXInfra.ticks,maxRotation:38,minRotation:38,autoSkip:false,font:{size:11}}},
-          y:{...eixoYInfra,ticks:{...eixoYInfra.ticks,font:{size:11}}}
-        }
+      {
+        k:"Manejos por apresentação",
+        v:iMan>=0?podaMan[iMan].toFixed(1).replace(".",","):"n/d",
+        s:iMan>=0?`${meses[iMan]} · ${yoyMan==null?"sem YoY":`${yoyMan>=0?"+":""}${yoyMan.toFixed(1).replace(".",",")} vs. ${meses[iMan-12]}`}`:"sem dado na janela"
       }
-    });
+    ].map(x=>`<div class="podaMetric"><div class="k">${x.k}</div><div class="v">${x.v}</div><div class="s">${x.s}</div></div>`).join("");
   }
+
+  const renderPodaSingle=(canvasId,serie,label,formatter,fonte)=>{
+    chartOuVazio(canvasId,serie,()=>{
+      const c=document.getElementById(canvasId); if(!c)return;
+      const iUlt=lastValidIndex(serie), iYoY=iUlt-12;
+      new Chart(c.getContext("2d"),{
+        type:"bar",
+        data:{
+          labels:meses,
+          datasets:[{
+            label,
+            data:serie,
+            backgroundColor:serie.map((_,i)=>i===iUlt?"rgba(91,147,232,.90)":(i===iYoY?"rgba(91,147,232,.50)":"rgba(91,147,232,.18)")),
+            borderWidth:0,
+            borderRadius:6,
+            borderSkipped:false,
+            maxBarThickness:18
+          }]
+        },
+        options:{
+          ...HUB.charts.baseConfig,
+          layout:{padding:{top:22}},
+          onClick:(evt,items)=>{
+            const idx=dteClickIndex(items); if(idx<0)return;
+            dteShowDetalheCompetencia({titulo:label,meses,serie,idx,fonte,fmt:formatter});
+          },
+          plugins:{
+            ...HUB.charts.baseConfig.plugins,
+            legend:{display:false},
+            dteValueLabels:{display:true,fontSize:11,color:"#eef5ff",offset:7,formatter:(v,i)=>(i===iUlt||i===iYoY)?formatter(v):""},
+            tooltip:{callbacks:{label:ctx=>formatter(Number(ctx.raw))}}
+          },
+          scales:{
+            x:{...eixoXInfra,ticks:{...eixoXInfra.ticks,maxRotation:38,minRotation:38,autoSkip:false,font:{size:11}}},
+            y:{...eixoYInfra,ticks:{...eixoYInfra.ticks,font:{size:11}}}
+          }
+        }
+      });
+    });
+  };
+  renderPodaSingle("chartPodaKm",podaKm,"Poda mecanizada · KM por manejo",v=>v.toFixed(1).replace(".",",")+" km","Relatório Mensal DTE · Indicador de Poda");
+  renderPodaSingle("chartPodaMan",podaMan,"Poda mecanizada · Manejos por apresentação",v=>v.toFixed(1).replace(".",","),"Relatório Mensal DTE · Indicador de Poda");
 
   const cpr=document.getElementById("predialKpis");
   if(cpr){

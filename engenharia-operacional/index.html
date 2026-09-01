@@ -183,6 +183,38 @@
 @media (max-width:650px){.fleetServiceCards{grid-template-columns:1fr}.fleetWorkspace .fleetFilters{grid-template-columns:1fr}.fleetServiceCard{min-height:auto}.fleetStatus{white-space:normal}.fleetSummary{grid-template-columns:repeat(2,1fr)!important}}
 @media (max-width:420px){.fleetSummary{grid-template-columns:1fr!important}}
 
+/* ENG-OP v3 · visão executiva */
+.dteExecutiveTop{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr);gap:16px;margin-bottom:16px;align-items:stretch;}
+.dtePulseBlock{padding:22px 22px 20px;border:1px solid var(--linha);border-radius:18px;background:linear-gradient(140deg,rgba(91,147,232,.085),rgba(91,147,232,.018) 45%,rgba(255,255,255,.008)),var(--painel);box-shadow:0 14px 38px rgba(0,0,0,.13);}
+.dteSectionEyebrow{font-size:9px;font-weight:900;letter-spacing:.14em;color:var(--azul2,var(--azul));margin-bottom:7px;}
+.dteSectionTitle{font-size:23px;font-weight:900;letter-spacing:-.025em;color:var(--texto);}
+.dteSectionSub{font-size:11.5px;color:var(--silenciado);margin-top:5px;line-height:1.5;}
+.dtePulseGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:20px;}
+.dtePulseCard{min-width:0;padding:14px 14px 13px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(4,15,27,.25);}
+.dtePulseCard .k{font-size:9px;font-weight:800;letter-spacing:.065em;text-transform:uppercase;color:var(--silenciado);min-height:25px;line-height:1.35;}
+.dtePulseCard .v{font-size:23px;font-weight:900;letter-spacing:-.025em;color:var(--texto);margin-top:7px;white-space:nowrap;}
+.dtePulseCard .s{font-size:10.5px;color:var(--silenciado);margin-top:6px;line-height:1.35;}
+.dtePulseCard .s.good{color:var(--verde)}.dtePulseCard .s.bad{color:#e8a49c}.dtePulseCard .s.warn{color:var(--amarelo)}
+.dteAttentionPanel{margin:0;display:flex;flex-direction:column;}
+.dteAttentionPanel .body{flex:1;display:flex;}
+.dteAttentionList{width:100%;display:flex;flex-direction:column;gap:0;}
+.dteAttentionItem{padding:14px 0;border-bottom:1px solid var(--linha);}
+.dteAttentionItem:first-child{padding-top:2px}.dteAttentionItem:last-child{border-bottom:0;padding-bottom:2px}
+.dteAttentionItem .top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;}
+.dteAttentionItem .label{font-size:11px;font-weight:800;color:var(--texto);}
+.dteAttentionItem .value{font-size:11px;font-weight:850;color:var(--texto);white-space:nowrap;}
+.dteAttentionItem .text{font-size:11.5px;color:var(--silenciado);line-height:1.45;margin-top:5px;}
+.dteAttentionItem.flag .value,.dteAttentionItem.flag .text{color:#e8b3ac;}
+.dteAttentionItem.warn .value{color:var(--amarelo)}
+.dteExecutiveGrid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:16px;margin-bottom:16px;}
+.dteChartPanel{margin:0;}
+.dteGuideStrip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--linha);border-radius:15px;overflow:hidden;background:var(--linha);}
+.dteGuideStrip>div{background:var(--painel2);padding:14px 16px;min-height:72px;}
+.dteGuideStrip b{display:block;font-size:11px;color:var(--texto);margin-bottom:5px;}
+.dteGuideStrip span{display:block;font-size:10.5px;color:var(--silenciado);line-height:1.4;}
+@media(max-width:1100px){.dteExecutiveTop,.dteExecutiveGrid{grid-template-columns:1fr}.dtePulseGrid{grid-template-columns:repeat(2,1fr)}.dteGuideStrip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.dtePulseBlock{padding:17px 15px}.dtePulseGrid{grid-template-columns:1fr 1fr}.dtePulseCard .v{font-size:20px}.dteGuideStrip{grid-template-columns:1fr}.dteSectionTitle{font-size:21px}}
+
 </style>
 </head>
 
@@ -195,41 +227,41 @@
 
   <!-- ===================== VISÃO GERAL ===================== -->
   <section class="screen active" id="screenVisao">
-    <div class="panel" style="margin-bottom:16px;">
-      <div class="panelHead">
-        <div><h2>Radar do Mês</h2><div class="hint">DTE · leitura calculada a partir dos dados carregados</div></div>
-        <div class="readAutoBadge">leitura automática</div>
+    <div class="dteExecutiveTop">
+      <div class="dtePulseBlock">
+        <div class="dteSectionEyebrow">LEITURA EXECUTIVA</div>
+        <div class="dteSectionTitle">Pulso operacional</div>
+        <div class="dteSectionSub">Competência mais recente disponível · visão consolidada da operação técnica</div>
+        <div class="dtePulseGrid" id="kpisVisao"></div>
       </div>
-      <div class="body">
-        <div class="leituraChips" id="leituraMes"></div>
-      </div>
-    </div>
-    <div class="kpis" id="kpisVisao"></div>
-    <div class="panel" style="margin-bottom:16px;">
-      <div class="panelHead">
-        <div><h2>Fluxo Operacional</h2><div class="hint">Coleta → ETRs → CTR (biogás) → chorume → coleta seletiva · mês mais recente</div></div>
-      </div>
-      <div class="body"><div class="flowRow" id="fluxoOperacional"></div></div>
-    </div>
-    <div class="panel" style="margin-bottom:16px;">
-      <div class="panelHead">
-        <div><h2>Indicadores Derivados HUB</h2><div class="hint">Calculados a partir dos dados brutos · não são indicadores oficiais publicados</div></div>
-      </div>
-      <div class="body"><div class="derivGrid" id="indicadoresDerivados"></div></div>
-    </div>
-    <div class="grid2">
-      <div class="panel">
+      <div class="panel dteAttentionPanel">
         <div class="panelHead">
-          <div><h2>Fluxo entre ETRs</h2><div class="hint">Recebimento por estação · mês mais recente</div></div>
+          <div><h2>Pontos de atenção</h2><div class="hint">Somente variações relevantes e situações que merecem leitura gerencial</div></div>
         </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartEtrUnidade"></canvas></div></div>
+        <div class="body"><div class="dteAttentionList" id="leituraMes"></div></div>
       </div>
-      <div class="panel">
+    </div>
+
+    <div class="dteExecutiveGrid">
+      <div class="panel dteChartPanel">
         <div class="panelHead">
-          <div><h2>Coleta seletiva · série anual</h2><div class="hint">2022 a 2026 (t/ano)</div></div>
+          <div><h2>Distribuição do recebimento</h2><div class="hint">Participação das ETRs no volume da competência mais recente</div></div>
         </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartSeletivaAnual"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:285px"><canvas id="chartEtrUnidade"></canvas></div></div>
       </div>
+      <div class="panel dteChartPanel">
+        <div class="panelHead">
+          <div><h2>Coleta seletiva</h2><div class="hint">Trajetória anual · leitura de escala, não de meta</div></div>
+        </div>
+        <div class="body"><div class="chartWrap" style="height:285px"><canvas id="chartSeletivaAnual"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="dteGuideStrip">
+      <div><b>Destinação e Biogás</b><span>ETRs, biogás e comportamento do chorume</span></div>
+      <div><b>Coleta Seletiva</b><span>captura, origem e distribuição regional</span></div>
+      <div><b>Utilização da Frota</b><span>capacidade, disponibilidade, sobrecarga e recortes operacionais</span></div>
+      <div><b>Equipamentos e Infraestrutura</b><span>equipamentos, poda mecanizada e manutenção predial</span></div>
     </div>
   </section>
 
@@ -311,7 +343,7 @@
     <!-- LINHA 2 · insight executivo, largura total -->
     <div class="panel frotaInsightPanel" style="margin-bottom:16px;">
       <div class="panelHead">
-        <div><h2>Insight Executivo</h2><div class="hint">Leitura automática · prioriza comparação com o mesmo mês do ano anterior</div></div>
+        <div><h2>Leitura operacional</h2><div class="hint">Variações relevantes da frota e da capacidade utilizada</div></div>
       </div>
       <div class="body"><div class="leituraChips" id="frotaInsightExecutivo"></div></div>
     </div>
@@ -367,7 +399,7 @@
 
     <div class="panel fleetWorkspace">
       <div class="panelHead">
-        <div><h2>Diagnóstico de utilização</h2><div class="hint">Peso transportado ÷ capacidade estimada · filtros em cascata</div></div>
+        <div><h2>Capacidade utilizada</h2><div class="hint">Peso transportado ÷ capacidade estimada · detalhamento por unidade e veículo</div></div>
         <div class="fleetStatus" id="fleetSourceStatus">carregando base detalhada…</div>
       </div>
       <div class="body">
@@ -399,7 +431,7 @@
         <div class="body fleetRankBody" id="fleetGerRanking"></div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Leitura do recorte</h2><div class="hint">Pontos que exigem leitura gerencial</div></div></div>
+        <div class="panelHead"><div><h2>Sinais do recorte</h2><div class="hint">Concentrações e desvios no recorte selecionado</div></div></div>
         <div class="body"><div class="leituraChips" id="fleetInsights"></div></div>
       </div>
     </div>
@@ -422,7 +454,7 @@
       <div class="body"><div class="chartWrap" style="height:300px;"><canvas id="chartPoda"></canvas></div></div>
     </div>
     <div class="panel" style="margin-top:14px;">
-      <div class="panelHead"><div><h2>Manutenção predial</h2><div class="hint">Intervenções, refrigeração e ecopontos · leitura por KPI, escalas ainda não validadas em navegador</div></div></div>
+      <div class="panelHead"><div><h2>Manutenção predial</h2><div class="hint">Intervenções, refrigeração e ecopontos · acompanhamento dos registros disponíveis</div></div></div>
       <div class="body"><div class="infraSecondaryKpis" id="predialKpis"></div></div>
     </div>
   </section>
@@ -918,24 +950,40 @@ function renderVisaoGeral() {
   const iAtual = lastValidIndex(etrTotal);
   const iChorume = lastValidIndex(chorume);
 
-  HUB.cards.render("kpisVisao", [
-    {
-      label: "ETR Total",
-      value: iAtual >= 0 ? etrTotal[iAtual] : 0,
-      format: "custom",
-      customFormatter: v => HUB.format.int(Math.round(v)) + " t",
-      note: iAtual >= 0 ? meses[iAtual] || "mês mais recente" : "sem dado",
-      color: "blue"
-    },
-    {
-      label: "Chorume acumulado",
-      value: iChorume >= 0 ? chorume[iChorume] : 0,
-      format: "custom",
-      customFormatter: v => HUB.format.int(Math.round(v)) + " m³",
-      note: iChorume >= 0 ? meses[iChorume] || "" : "sem dado",
-      color: (iChorume > 3 && chorume[iChorume] > (HUB.array.avg(chorume.slice(0, 4).map(v => ({ v })), "v") * 2)) ? "red" : "orange"
-    }
-  ]);
+  // Pulso operacional: poucos sinais, todos apoiados em fontes existentes.
+  const idx2026SelTop = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
+  const idx2025SelTop = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
+  const selSerieTop = lastValidIndex(idx2026SelTop.meses) >= 0 ? idx2026SelTop.meses : idx2025SelTop.meses;
+  const iSelTop = lastValidIndex(selSerieTop);
+  const seletivaMesTop = iSelTop >= 0 ? selSerieTop[iSelTop] : null;
+
+  const mesesTodosTop = relatorioMeses(RAW.relatorio);
+  const nTodosTop = mesesTodosTop.length || n;
+  const secFrotaTop = findSecao(RAW.secoes, "MANUTENCAO FROTA PROPRIA");
+  const frotaTotalTop = secFrotaTop ? relatorioSerie(secFrotaTop.rows, "FROTA TOTAL", nTodosTop) : [];
+  const frotaOpTop = secFrotaTop ? relatorioSerie(secFrotaTop.rows, "TOTAL EM OPERACAO", nTodosTop) : [];
+  const iFrotaTop = lastValidIndex(frotaTotalTop);
+  const dispTop = iFrotaTop >= 0 && frotaTotalTop[iFrotaTop] > 0 ? frotaOpTop[iFrotaTop] / frotaTotalTop[iFrotaTop] * 100 : null;
+  const domicTop = serieAposTitulo(RAW.relatorio, "Coleta Domiciliar e Comunidade", "Peso Coletado / Capacidade Estimada", nTodosTop).map(v=>v>1?v:v*100);
+  const iDomicTop = lastValidIndex(domicTop);
+  const utilDomicTop = iDomicTop >= 0 ? domicTop[iDomicTop] : null;
+
+  const pulse = document.getElementById("kpisVisao");
+  if (pulse) {
+    const deltaTxt = (serie, idx, sufixo="%") => {
+      if (idx <= 0 || !serie[idx-1]) return "competência mais recente";
+      const d = ((serie[idx]-serie[idx-1])/serie[idx-1])*100;
+      return `${d>=0?"+":""}${d.toFixed(1).replace(".",",")}% vs. mês anterior`;
+    };
+    const dispDelta = (iFrotaTop > 0 && frotaTotalTop[iFrotaTop-1] > 0) ? dispTop - (frotaOpTop[iFrotaTop-1]/frotaTotalTop[iFrotaTop-1]*100) : null;
+    const cards = [
+      {k:"Recebimento nas ETRs",v:iAtual>=0?HUB.format.int(Math.round(etrTotal[iAtual]))+" t":"n/d",s:iAtual>=0?deltaTxt(etrTotal,iAtual):"sem dado",tone:""},
+      {k:"Frota própria disponível",v:dispTop!=null?dispTop.toFixed(1).replace(".",",")+"%":"n/d",s:dispDelta==null?"competência mais recente":`${dispDelta>=0?"+":""}${dispDelta.toFixed(1).replace(".",",")} p.p. vs. mês anterior`,tone:dispDelta!=null?(dispDelta<0?"bad":"good"):""},
+      {k:"Utilização · domiciliar",v:utilDomicTop!=null?utilDomicTop.toFixed(1).replace(".",",")+"%":"n/d",s:iDomicTop>=0?(prettyRef(mesesTodosTop[iDomicTop])||"série oficial DTE"):"sem dado",tone:utilDomicTop!=null&&utilDomicTop>100?"warn":""},
+      {k:"Coleta seletiva · mês",v:seletivaMesTop!=null?HUB.format.int(Math.round(seletivaMesTop))+" t":"n/d",s:iSelTop>=0?"Tabela 1493 · competência vigente":"sem dado",tone:""}
+    ];
+    pulse.innerHTML = cards.map(c=>`<div class="dtePulseCard"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s ${c.tone}">${c.s}</div></div>`).join("");
+  }
 
   // --- Fluxo Operacional: coleta -> ETRs -> CTR/biogás -> chorume -> coleta seletiva ---
   const idx2026Sel = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
@@ -2003,80 +2051,48 @@ function renderLeituraMes() {
   const n = meses.length || 13;
   const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
-
-  const unidadesRaw = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
-  const seriesUnidades = unidadesRaw.map(u => relatorioSerie(RAW.relatorio, u, n));
-
+  const sobrecarga = relatorioSerie(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL", n).map(v=>v>1?v:v*100);
+  const unidades = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
+  const seriesUnidades = unidades.map(u => relatorioSerie(RAW.relatorio, u, n));
   const items = [];
-  const pct = v => Math.abs(v).toFixed(1).replace(".", ",");
 
-  // --- ETR Total: valor + variação MoM ---
-  const i = lastValidIndex(etrTotal);
-  if (i >= 0) {
-    const mesLabel = meses[i] || "mês mais recente";
-    if (i - 1 >= 0 && etrTotal[i - 1] > 0) {
-      const varPct = (etrTotal[i] - etrTotal[i - 1]) / etrTotal[i - 1] * 100;
-      items.push({
-        text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t, ${varPct >= 0 ? "alta" : "queda"} de ${pct(varPct)}% frente ao mês anterior.`,
-        severity: Math.abs(varPct),
-        flag: Math.abs(varPct) > 8
-      });
-    } else {
-      items.push({ text: `ETR Total em ${mesLabel}: ${HUB.format.int(Math.round(etrTotal[i]))} t.`, severity: 0 });
-    }
+  const iEtr = lastValidIndex(etrTotal);
+  if (iEtr >= 0 && iEtr > 0 && etrTotal[iEtr-1] > 0) {
+    const d = (etrTotal[iEtr]-etrTotal[iEtr-1])/etrTotal[iEtr-1]*100;
+    if (Math.abs(d) >= 5) items.push({label:"Recebimento nas ETRs",value:`${d>=0?"+":""}${d.toFixed(1).replace(".",",")}%`,text:`Variação frente à competência anterior (${prettyRef(meses[iEtr])}).`,tone:Math.abs(d)>=10?"warn":""});
+  }
 
-    // --- Concentração e maior queda por unidade no mês ---
-    const atual = unidadesRaw.map((u, idx) => ({
-      u: u.replace("ETR ", ""),
-      v: seriesUnidades[idx][i] || 0,
-      prev: i - 1 >= 0 ? (seriesUnidades[idx][i - 1] || 0) : 0
-    }));
-    const total = atual.reduce((a, b) => a + b.v, 0);
-    if (total > 0) {
-      const maiorConc = [...atual].sort((a, b) => b.v - a.v)[0];
-      const share = maiorConc.v / total * 100;
-      items.push({
-        text: `${maiorConc.u} concentrou ${share.toFixed(0)}% do fluxo recebido em ${mesLabel} (${HUB.format.int(Math.round(maiorConc.v))} t).`,
-        severity: share
-      });
-    }
-    const comVariacao = atual.filter(a => a.prev > 0).map(a => ({ ...a, varPct: (a.v - a.prev) / a.prev * 100 }));
-    if (comVariacao.length) {
-      const maiorQueda = [...comVariacao].sort((a, b) => a.varPct - b.varPct)[0];
-      if (maiorQueda.varPct < -5) {
-        items.push({
-          text: `Maior queda do mês: ${maiorQueda.u}, ${pct(maiorQueda.varPct)}% abaixo do mês anterior.`,
-          severity: Math.abs(maiorQueda.varPct),
-          flag: true
-        });
-      }
+  if (iEtr >= 0) {
+    const vals = unidades.map((u,i)=>({name:u.replace("ETR ",""),v:seriesUnidades[i][iEtr]||0})).filter(x=>x.v>0);
+    const total = vals.reduce((a,b)=>a+b.v,0);
+    if (vals.length && total>0) {
+      const top = [...vals].sort((a,b)=>b.v-a.v)[0];
+      const share = top.v/total*100;
+      if (share >= 30) items.push({label:"Concentração do fluxo",value:`${share.toFixed(0)}%`,text:`${top.name} responde pela maior parcela do recebimento da competência.`,tone:""});
     }
   }
 
-  // --- Chorume: valor + desvio vs. média da janela ---
   const iCh = lastValidIndex(chorume);
   if (iCh >= 0) {
-    const base = chorume.slice(0, Math.max(1, n - 5));
-    const baseAvg = base.length ? base.reduce((a, b) => a + b, 0) / base.length : 0;
-    if (baseAvg > 0) {
-      const diffPct = (chorume[iCh] - baseAvg) / baseAvg * 100;
-      items.push({
-        text: `Chorume acumulado em ${meses[iCh]}: ${HUB.format.int(Math.round(chorume[iCh]))} m³, ${pct(diffPct)}% ${diffPct >= 0 ? "acima" : "abaixo"} da média dos meses iniciais da janela.`,
-        severity: Math.abs(diffPct),
-        flag: diffPct > 50
-      });
+    const base = chorume.filter((v,i)=>v>0 && i<iCh);
+    const media = base.length ? base.reduce((a,b)=>a+b,0)/base.length : 0;
+    if (media>0) {
+      const rel = chorume[iCh]/media;
+      if (rel >= 1.5) items.push({label:"Chorume",value:`${rel.toFixed(1).replace(".",",")}x`,text:"Volume acima da média da janela disponível; a aba de Destinação cruza a série com precipitação.",tone:"flag"});
     }
   }
 
-  if (!items.length) {
-    el.innerHTML = '<div class="leituraChip"><span>Sem dados suficientes carregados para gerar o radar do mês.</span></div>';
-    return;
+  const iSo = lastValidIndex(sobrecarga);
+  if (iSo >= 0 && sobrecarga[iSo] > 10) {
+    items.push({label:"Sobrecarga >10% PBT",value:`${sobrecarga[iSo].toFixed(1).replace(".",",")}%`,text:"Percentual da competência acima da referência de 10% usada no painel.",tone:"flag"});
   }
 
-  // Radar por exceção: itens com alerta primeiro, depois por magnitude do desvio
-  items.sort((a, b) => (b.flag ? 1 : 0) - (a.flag ? 1 : 0) || (b.severity || 0) - (a.severity || 0));
-
-  el.innerHTML = items.map(it => `<div class="leituraChip ${it.flag ? "flag" : ""}"><div class="dot"></div><span>${it.text}</span></div>`).join("");
+  const shown = items.slice(0,3);
+  if (!shown.length) {
+    el.innerHTML = '<div class="dteAttentionItem"><div class="top"><div class="label">Sem exceção relevante</div><div class="value">—</div></div><div class="text">Os sinais consolidados não ultrapassaram os critérios de destaque desta visão.</div></div>';
+    return;
+  }
+  el.innerHTML = shown.map(it=>`<div class="dteAttentionItem ${it.tone||""}"><div class="top"><div class="label">${it.label}</div><div class="value">${it.value}</div></div><div class="text">${it.text}</div></div>`).join("");
 }
 
 document.addEventListener("DOMContentLoaded", init);

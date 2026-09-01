@@ -2012,22 +2012,104 @@ function renderInfra(){
       const labelsRaw=Object.keys(equipCategorias);
       const labels=labelsRaw.map(l=>wrapAxisLabel(l,16));
       const vals=labelsRaw.map(l=>lastVal(equipCategorias[l]).v);
-      new Chart(ce.getContext("2d"),{type:"bar",data:{labels,datasets:[{label:"Utilização",data:vals,backgroundColor:HUB.charts.colors.blueGradient}]},options:{...HUB.charts.baseConfig,indexAxis:"y",onClick:(evt,items)=>{
-        const idx=dteClickIndex(items); if(idx<0)return;
-        const label=labelsRaw[idx];
-        DTE_DRILL.infraEquip=label;
-        dteShowDrillReal(label,"Histórico de utilização, janela móvel de 13 meses, com destaque para o mês atual e o mesmo mês do ano anterior.");
-        renderInfra();
-      },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>Number.isFinite(v)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{title:(items)=>labelsRaw[items?.[0]?.dataIndex]||"",label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`}}},scales:{...HUB.charts.baseConfig.scales,x:{...HUB.charts.baseConfig.scales.x,suggestedMax:120,ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}},y:{...HUB.charts.baseConfig.scales.y,grid:{display:false},ticks:{...HUB.charts.baseConfig.scales.y.ticks,autoSkip:false,font:{size:11}}}}});
+      new Chart(ce.getContext("2d"),{
+        type:"bar",
+        data:{
+          labels,
+          datasets:[{
+            label:"Utilização",
+            data:vals,
+            backgroundColor:HUB.charts.colors.blueGradient
+          }]
+        },
+        options:{
+          ...HUB.charts.baseConfig,
+          indexAxis:"y",
+          onClick:(evt,items)=>{
+            const idx=dteClickIndex(items);
+            if(idx<0)return;
+            const label=labelsRaw[idx];
+            DTE_DRILL.infraEquip=label;
+            dteShowDrillReal(label,"Histórico de utilização, janela móvel de 13 meses, com destaque para o mês atual e o mesmo mês do ano anterior.");
+            renderInfra();
+          },
+          plugins:{
+            ...HUB.charts.baseConfig.plugins,
+            legend:{display:false},
+            dteValueLabels:{
+              display:true,
+              offset:8,
+              formatter:v=>Number.isFinite(v)?v.toFixed(1).replace(".",",")+"%":""
+            },
+            tooltip:{
+              callbacks:{
+                title:(items)=>labelsRaw[items?.[0]?.dataIndex]||"",
+                label:(ctx)=>` ${Number(ctx.raw||0).toFixed(1).replace(".",",")}%`
+              }
+            }
+          },
+          scales:{
+            x:{
+              ...HUB.charts.baseConfig.scales.x,
+              suggestedMax:120,
+              ticks:{...HUB.charts.baseConfig.scales.x.ticks,callback:v=>v+"%"}
+            },
+            y:{
+              ...HUB.charts.baseConfig.scales.y,
+              grid:{display:false},
+              ticks:{...HUB.charts.baseConfig.scales.y.ticks,autoSkip:false,font:{size:11}}
+            }
+          }
+        }
+      });
     } else {
       const label=DTE_DRILL.infraEquip;
       const serieEquip=equipCategorias[label];
       const iUlt=lastValidIndex(serieEquip),iYoYEquip=iUlt-12;
       chartOuVazio("chartEquipUtil",serieEquip,()=>{
-        new Chart(ce.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{label,data:serieEquip,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.4,tension:.22,pointRadius:serieEquip.map((_,i)=>(i===iUlt||i===iYoYEquip)?4:0),pointHoverRadius:5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:20}},onClick:(evt,items)=>{
-          const idx=dteClickIndex(items); if(idx<0)return;
-          dteShowDetalheCompetencia({titulo:label,meses,serie:serieEquip,idx,fonte:"Relatório Mensal DTE · Utilização de Tratores/Pás",fmt:v=>v.toFixed(1).replace(".",",")+"%"});
-        },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:9,offset:8,formatter:(v,i)=>(i===iUlt||i===iYoYEquip)?v.toFixed(1).replace(".",",")+"%":""}},scales:{x:eixoXInfra,y:eixoYInfra}}});
+        new Chart(ce.getContext("2d"),{
+          type:"line",
+          data:{
+            labels:meses,
+            datasets:[{
+              label,
+              data:serieEquip,
+              borderColor:HUB.charts.colors.blue,
+              backgroundColor:"transparent",
+              borderWidth:2.4,
+              tension:.22,
+              pointRadius:serieEquip.map((_,i)=>(i===iUlt||i===iYoYEquip)?4:0),
+              pointHoverRadius:5
+            }]
+          },
+          options:{
+            ...HUB.charts.baseConfig,
+            layout:{padding:{top:20}},
+            onClick:(evt,items)=>{
+              const idx=dteClickIndex(items);
+              if(idx<0)return;
+              dteShowDetalheCompetencia({
+                titulo:label,
+                meses,
+                serie:serieEquip,
+                idx,
+                fonte:"Relatório Mensal DTE · Utilização de Tratores/Pás",
+                fmt:v=>v.toFixed(1).replace(".",",")+"%"
+              });
+            },
+            plugins:{
+              ...HUB.charts.baseConfig.plugins,
+              legend:{display:false},
+              dteValueLabels:{
+                display:true,
+                fontSize:9,
+                offset:8,
+                formatter:(v,i)=>(i===iUlt||i===iYoYEquip)?v.toFixed(1).replace(".",",")+"%":""
+              }
+            },
+            scales:{x:eixoXInfra,y:eixoYInfra}
+          }
+        });
       });
     }
   }

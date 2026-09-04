@@ -534,7 +534,7 @@ h2 {
   background: rgba(91, 155, 213, 0.07);
 }
 
-/* nome quebra em linhas — nunca trunca */
+/* nome quebra em linhas, nunca trunca */
 .barName {
   font-weight: 800;
   min-width: 0;
@@ -1025,7 +1025,7 @@ h2 {
 @media(max-width:1050px){.kpisExecutive{grid-template-columns:repeat(2,1fr)}.execStrip{grid-template-columns:1fr}.span8,.span7,.span6,.span5,.span4{grid-column:span 12}.insightGrid{grid-template-columns:1fr}.chartBox{height:310px}.dualRankWrap{grid-template-columns:1fr}.bairroDetail{grid-template-columns:1fr 1fr}}@media(max-width:620px){.app{padding:14px}.kpisExecutive{grid-template-columns:1fr}.rankItem{grid-template-columns:28px minmax(0,1fr) 78px}.rankDelta{display:none}.moduleBar{align-items:stretch}.periodSwitch{width:100%}.periodBtn{flex:1}.execLead h2{font-size:18px}.bairroDetail{grid-template-columns:1fr}}
 
 
-/* V3 — drill-down e cross-filter */
+/* V3, drill-down e cross-filter */
 .execStrip{display:block}.execLead{width:100%}.auditBadge{display:none!important}
 .moduleControls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .filterContext{display:flex;align-items:center;gap:8px;max-width:min(620px,60vw);padding:7px 10px;border-radius:999px;background:rgba(75,134,189,.12);border:1px solid rgba(91,155,213,.55);color:#dcecff;font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1057,7 +1057,7 @@ h2 {
 @media(max-width:760px){.globalClearBtn{flex:0 0 auto}.moduleControls{gap:8px}.filterContext{order:3;flex-basis:100%}}
 
 
-/* V7 — leitura mais clara do papel de cada item no resultado */
+/* V7, leitura mais clara do papel de cada item no resultado */
 #analyticImpactHeader{min-width:230px;}
 .tableCompact td:nth-child(6){min-width:unset;white-space:normal;}
 .impactPos,.impactNeg,.impactNeutral{display:inline-flex;align-items:center;gap:5px;line-height:1.25;}
@@ -1117,8 +1117,8 @@ h2 {
         <div id="filterContext" class="filterContext" style="display:none"></div>
         <button id="clearAllFilters" class="globalClearBtn" disabled>Limpar filtros</button>
         <div class="periodSwitch">
-          <button class="periodBtn active" data-period="acumulado">Jan–Jul</button>
-          <button class="periodBtn" data-period="julho">Julho</button>
+          <button class="periodBtn active" data-period="acumulado">Jan a Ago</button>
+          <button class="periodBtn" data-period="agosto">Agosto</button>
         </div>
       </div>
     </div>
@@ -1223,12 +1223,12 @@ h2 {
           <div class="panelHead">
             <div>
               <h2>Áreas de Planejamento</h2>
-              <div id="apHint" class="hint">Acumulado jan–jul</div>
+              <div id="apHint" class="hint">Acumulado jan a ago</div>
             </div>
           </div>
           <div class="body">
             <div class="chartBox short" id="apChartWrap"><canvas id="chartAP"></canvas></div>
-            <div class="emptyState" id="apEmpty" style="display:none;">A leitura por AP não foi exibida em julho para evitar mistura de recortes. O mapa, o ranking e o detalhamento territorial permanecem no recorte mensal correto.</div>
+            <div class="emptyState" id="apEmpty" style="display:none;">A leitura por AP não foi exibida em agosto. O mapa, o ranking e o detalhamento territorial permanecem no recorte mensal correto.</div>
           </div>
         </div>
       </div>
@@ -2074,8 +2074,8 @@ let map, polygonLayer, markerLayer;
 let selectedBairro = null;
 
 const fmt = n => new Intl.NumberFormat('pt-BR').format(Math.round(Number(n || 0)));
-const pct = n => (n == null || !isFinite(n) ? '—' : `${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n*100)}%`);
-const pctSigned = n => (n == null || !isFinite(n) ? '—' : `${n>=0?'+':''}${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n*100)}%`);
+const pct = n => (n == null || !isFinite(n) ? 'Não informado' : `${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n*100)}%`);
+const pctSigned = n => (n == null || !isFinite(n) ? 'Não informado' : `${n>=0?'+':''}${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n*100)}%`);
 const signed = n => `${n>=0?'+':''}${fmt(n)}`;
 const cssClass = n => n>=0?'up':'down';
 const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -2099,10 +2099,10 @@ function level(){return filterSubtype?'subtipo':filterType?'tipo':'all';}
 function contextLabel(){return filterSubtype?`${filterType} › ${filterSubtype}`:filterType||'Todos os serviços';}
 function prettyTypeLabel(s){return String(s||'').toLocaleLowerCase('pt-BR');}
 function prettyPlace(s){return String(s||'').toLocaleLowerCase('pt-BR').replace(/(^|[\s(\/-])([a-zà-ÿ])/g,(m,p1,p2)=>p1+p2.toLocaleUpperCase('pt-BR')).replace(/\b(Da|De|Do|Das|Dos|E|Em|Na|No|Nas|Nos)\b/g,m=>m.toLocaleLowerCase('pt-BR'));}
-function currentPeriodText(){return period==='acumulado'?'no acumulado jan–jul/2026':'em julho/2026';}
-function previousPeriodText(){return period==='acumulado'?'jan–jul/2025':'julho/2025';}
-function currentPeriodShort(){return period==='acumulado'?'jan–jul/2026':'jul/2026';}
-function previousPeriodShort(){return period==='acumulado'?'jan–jul/2025':'jul/2025';}
+function currentPeriodText(){return period==='acumulado'?'no acumulado de janeiro a agosto de 2026':'em agosto de 2026';}
+function previousPeriodText(){return period==='acumulado'?'jan a ago/2025':'agosto/2025';}
+function currentPeriodShort(){return period==='acumulado'?'jan a ago/2026':'ago/2026';}
+function previousPeriodShort(){return period==='acumulado'?'jan a ago/2025':'ago/2025';}
 
 function init(){
   HUB.header.render('header',{systemLabel:'CANAIS DO CIDADÃO',title:'Chamados 1746',subtitle:'Leitura executiva da demanda operacional, evolução temporal e concentração territorial',navigation:[
@@ -2341,12 +2341,12 @@ function renderInsights(x){
   const moveText=movement.dif>=0?`${signed(movement.dif)} chamados a mais`:`${fmt(Math.abs(movement.dif))} chamados a menos`;
   const rateTag=rateTop?(rateTop.var>=0?'Maior variação percentual positiva':'Maior variação percentual negativa'):'Variação percentual';
   const rateText=rateTop?`${pctSigned(rateTop.var)} frente a 2025.`:'Sem categoria elegível para destaque.';
-  document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> chamados ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume do recorte.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'—'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
+  document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> chamados ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume do recorte.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'Não informado'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
 }
 function renderBairroRankings(x){const bairros=[...x.bairros].filter(b=>b.v2026>0);const topVol=bairros.slice().sort((a,b)=>b.v2026-a.v2026).slice(0,5);const topGrowth=bairros.slice().sort((a,b)=>b.dif-a.dif).slice(0,5);document.getElementById('rankVolume').innerHTML=buildRank(topVol,'v2026',topVol[0]?.v2026||1);document.getElementById('rankGrowth').innerHTML=buildRank(topGrowth,'dif',topGrowth[0]?.dif||1);}
 function buildRank(arr,metric,maxValue){return arr.map((d,i)=>{const main=metric==='v2026'?fmt(d.v2026):signed(d.dif);const width=Math.max(6,(Math.abs(metric==='v2026'?d.v2026:d.dif)/Math.abs(maxValue||1))*100);return `<div class="rankItem"><div class="rankPos">${i+1}</div><div class="rankName" title="${d.nome}">${d.nome}</div><div class="rankValue">${main}</div><div class="rankDelta ${cssClass(d.dif)}">${pctSigned(d.var)}</div><div class="rankBar"><i style="width:${width}%"></i></div></div>`}).join('');}
 function getDefaultDetail(x){const b=[...x.bairros].sort((a,b)=>b.v2026-a.v2026)[0];return buildBairroDetail(b?.nome);}
-function buildBairroDetail(nome){const rec=getSummary().bairros.find(b=>norm(b.nome)===norm(nome));const feat=D.geojson.features.find(f=>norm(f.properties?.nome)===norm(nome));if(!rec)return null;return{...rec,ap:feat?.properties?.area_plane?`AP${String(feat.properties.area_plane).trim()}`:'—',gerencia:feat?.properties?.gerdlu||feat?.properties?.first_superdlu||'—',regiao:feat?.properties?.rp||feat?.properties?.regiao_adm?.trim()||'—'};}
+function buildBairroDetail(nome){const rec=getSummary().bairros.find(b=>norm(b.nome)===norm(nome));const feat=D.geojson.features.find(f=>norm(f.properties?.nome)===norm(nome));if(!rec)return null;return{...rec,ap:feat?.properties?.area_plane?`AP${String(feat.properties.area_plane).trim()}`:'Não informado',gerencia:feat?.properties?.gerdlu||feat?.properties?.first_superdlu||'Não informado',regiao:feat?.properties?.rp||feat?.properties?.regiao_adm?.trim()||'Não informado'};}
 function renderDetailCard(item){const el=document.getElementById('bairroDetail');if(!item){el.innerHTML='<div class="emptyState">Nenhum detalhe territorial disponível.</div>';return;}selectedBairro=norm(item.nome);const movement=item.dif>=0?'Aumento':'Redução';el.innerHTML=`<div class="detailHero"><div class="bairroName">${prettyPlace(item.nome)}</div><div class="bairroMeta">${item.ap} • Gerência ${item.gerencia} • Região ${item.regiao}</div></div><div class="detailKpi"><div class="label">Período anterior</div><div class="value">${fmt(item.v2025)}</div><div class="sub">${previousPeriodShort()}</div></div><div class="detailKpi"><div class="label">Período atual</div><div class="value">${fmt(item.v2026)}</div><div class="sub">${currentPeriodShort()}</div></div><div class="detailKpi"><div class="label">${movement}</div><div class="value ${cssClass(item.dif)}">${signed(item.dif)}</div><div class="sub">Diferença entre ${previousPeriodShort()} e ${currentPeriodShort()}</div></div><div class="detailKpi"><div class="label">Variação</div><div class="value ${cssClass(item.var||0)}">${pctSigned(item.var)}</div><div class="sub">${currentPeriodShort()} em relação a ${previousPeriodShort()}</div></div><div class="detailNote">Filtro atual: <b>${contextLabel()}</b>. O bairro é a evidência territorial; AP e gerência aparecem no detalhamento.</div>`;}
 
 function renderAP(x){
@@ -2410,7 +2410,7 @@ function fitMapViewport(){
 
 function initMap(){map=L.map('map',{zoomControl:true,attributionControl:false});L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(map);}
 function drawMap(){if(!map)return;const records=getSummary().bairros;const recordMap=new Map(records.map(d=>[norm(d.nome),d]));const usable=D.geojson.features.filter(f=>f.properties?.nome&&recordMap.has(norm(f.properties.nome)));if(polygonLayer)map.removeLayer(polygonLayer);if(markerLayer)map.removeLayer(markerLayer);polygonLayer=L.geoJSON({type:'FeatureCollection',features:usable},{style:featureStyle,onEachFeature:(feature,layer)=>{const item=enrichFeature(feature);layer.bindPopup(popupHTML(item),{className:'mapPopup'});layer.on('click',()=>{renderDetailCard(buildBairroDetail(item.nome));polygonLayer.setStyle(featureStyle);layer.setStyle({weight:2.2,color:'#fff',fillOpacity:.92});highlightMarker(item.nome);});}}).addTo(map);const markerItems=usable.map(feature=>{const temp=L.geoJSON(feature);return{center:temp.getBounds().getCenter(),item:enrichFeature(feature)}});markerLayer=L.layerGroup(markerItems.map(({center,item})=>{const size=markerSize(item);const icon=L.divIcon({className:'',html:`<div class="pulseMarker" data-bairro="${norm(item.nome)}" style="--pulse-size:${size}px;--pulse-color:${metricColor(item)}"></div>`,iconSize:[size+14,size+14],iconAnchor:[(size+14)/2,(size+14)/2]});const marker=L.marker(center,{icon,keyboard:false});marker.bindPopup(popupHTML(item),{className:'mapPopup'});marker.on('click',()=>{renderDetailCard(buildBairroDetail(item.nome));highlightPolygon(item.nome);highlightMarker(item.nome);});return marker;})).addTo(map);if(usable.length){setTimeout(()=>fitMapViewport(),100);}addLegend(records);if(selectedBairro){highlightPolygon(selectedBairro);highlightMarker(selectedBairro);}}
-function enrichFeature(feature){const raw=feature.properties.nome;const rec=getSummary().bairros.find(b=>norm(b.nome)===norm(raw));return{nome:rec?.nome||raw,v2025:rec?.v2025||0,v2026:rec?.v2026||0,dif:rec?.dif||0,var:rec?.var,ap:feature.properties.area_plane?`AP${String(feature.properties.area_plane).trim()}`:'—',gerencia:feature.properties.gerdlu||'—',regiao:feature.properties.rp||feature.properties.regiao_adm?.trim()||'—'};}
+function enrichFeature(feature){const raw=feature.properties.nome;const rec=getSummary().bairros.find(b=>norm(b.nome)===norm(raw));return{nome:rec?.nome||raw,v2025:rec?.v2025||0,v2026:rec?.v2026||0,dif:rec?.dif||0,var:rec?.var,ap:feature.properties.area_plane?`AP${String(feature.properties.area_plane).trim()}`:'Não informado',gerencia:feature.properties.gerdlu||'Não informado',regiao:feature.properties.rp||feature.properties.regiao_adm?.trim()||'Não informado'};}
 function popupHTML(i){return `<div class="mapPopup"><b>${i.nome}</b><div>${i.ap} • Gerência ${i.gerencia}</div><div>Filtro: <b>${short(contextLabel(),42)}</b></div><div>2025: <b>${fmt(i.v2025)}</b></div><div>2026: <b>${fmt(i.v2026)}</b></div><div>Diferença entre ${previousPeriodShort()} e ${currentPeriodShort()}: <b class="${cssClass(i.dif)}">${signed(i.dif)}</b></div><div>Variação de ${currentPeriodShort()} em relação a ${previousPeriodShort()}: <b class="${cssClass(i.var||0)}">${pctSigned(i.var)}</b></div></div>`;}
 function valueForMetric(i){return mapMetric==='dif'?i.dif:mapMetric==='var'?(i.var||0):i.v2026;}
 function markerSize(i){const vals=getSummary().bairros.map(b=>Math.max(0,valueForMetric(b))).filter(isFinite);const max=Math.max(...vals,1),v=Math.max(0,valueForMetric(i));return 10+Math.sqrt(v/max)*20;}

@@ -1102,6 +1102,10 @@ h2 {
 .drillTable .up{color:#ef8a80}.drillTable .down{color:#8fc0b9}
 @media(max-width:900px){.analyticMetaHint{flex-basis:100%;margin-left:0}.premiumTableWrap{padding:0 10px 12px}.execLead h2{font-size:18px}}
 
+
+    .hub-dark-tiles{filter:grayscale(1) invert(.92) brightness(.42) contrast(1.15) saturate(.55);}
+    .leaflet-control-attribution{background:rgba(5,18,33,.78)!important;color:#8fa6bd!important;font-size:9px!important;}
+    .leaflet-control-attribution a{color:#9fc6e8!important;}
 </style>
 </head>
 <body>
@@ -2060,8 +2064,8 @@ HUB.loading = {
 };
 
 </script>
-<script src="../assets/data/ouvidoria/ouvidoria_data.js"></script>
-<script src="../assets/data/ouvidoria/ouvidoria_cube.js"></script>
+<script src="./ouvidoria_data.js?v=20260904"></script>
+<script src="./ouvidoria_cube.js?v=20260904"></script>
 <script>
 const D = window.OUVIDORIA_DATA;
 const CUBE = window.OUVIDORIA_CUBE;
@@ -2408,7 +2412,7 @@ function fitMapViewport(){
   setTimeout(()=>{if(polygonLayer){const b=polygonLayer.getBounds();if(b&&b.isValid())map.fitBounds(b,{padding:[18,18],maxZoom:13});}map.invalidateSize(true);},80);
 }
 
-function initMap(){map=L.map('map',{zoomControl:true,attributionControl:false});L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(map);}
+function initMap(){map=L.map('map',{zoomControl:true,attributionControl:true});L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors',className:'hub-dark-tiles'}).addTo(map);}
 function drawMap(){if(!map)return;const records=getSummary().bairros;const recordMap=new Map(records.map(d=>[norm(d.nome),d]));const usable=D.geojson.features.filter(f=>f.properties?.nome&&recordMap.has(norm(f.properties.nome)));if(polygonLayer)map.removeLayer(polygonLayer);if(markerLayer)map.removeLayer(markerLayer);polygonLayer=L.geoJSON({type:'FeatureCollection',features:usable},{style:featureStyle,onEachFeature:(feature,layer)=>{const item=enrichFeature(feature);layer.bindPopup(popupHTML(item),{className:'mapPopup'});layer.on('click',()=>{renderDetailCard(buildBairroDetail(item.nome));polygonLayer.setStyle(featureStyle);layer.setStyle({weight:2.2,color:'#fff',fillOpacity:.92});highlightMarker(item.nome);});}}).addTo(map);const markerItems=usable.map(feature=>{const temp=L.geoJSON(feature);return{center:temp.getBounds().getCenter(),item:enrichFeature(feature)}});markerLayer=L.layerGroup(markerItems.map(({center,item})=>{const size=markerSize(item);const icon=L.divIcon({className:'',html:`<div class="pulseMarker" data-bairro="${norm(item.nome)}" style="--pulse-size:${size}px;--pulse-color:${metricColor(item)}"></div>`,iconSize:[size+14,size+14],iconAnchor:[(size+14)/2,(size+14)/2]});const marker=L.marker(center,{icon,keyboard:false});marker.bindPopup(popupHTML(item),{className:'mapPopup'});marker.on('click',()=>{renderDetailCard(buildBairroDetail(item.nome));highlightPolygon(item.nome);highlightMarker(item.nome);});return marker;})).addTo(map);if(usable.length){setTimeout(()=>fitMapViewport(),100);}addLegend(records);if(selectedBairro){highlightPolygon(selectedBairro);highlightMarker(selectedBairro);}}
 function enrichFeature(feature){const raw=feature.properties.nome;const rec=getSummary().bairros.find(b=>norm(b.nome)===norm(raw));return{nome:rec?.nome||raw,v2025:rec?.v2025||0,v2026:rec?.v2026||0,dif:rec?.dif||0,var:rec?.var,ap:feature.properties.area_plane?`AP${String(feature.properties.area_plane).trim()}`:'Não informado',gerencia:feature.properties.gerdlu||'Não informado',regiao:feature.properties.rp||feature.properties.regiao_adm?.trim()||'Não informado'};}
 function popupHTML(i){return `<div class="mapPopup"><b>${i.nome}</b><div>${i.ap} • Gerência ${i.gerencia}</div><div>Filtro: <b>${short(contextLabel(),42)}</b></div><div>2025: <b>${fmt(i.v2025)}</b></div><div>2026: <b>${fmt(i.v2026)}</b></div><div>Diferença entre ${previousPeriodShort()} e ${currentPeriodShort()}: <b class="${cssClass(i.dif)}">${signed(i.dif)}</b></div><div>Variação de ${currentPeriodShort()} em relação a ${previousPeriodShort()}: <b class="${cssClass(i.var||0)}">${pctSigned(i.var)}</b></div></div>`;}

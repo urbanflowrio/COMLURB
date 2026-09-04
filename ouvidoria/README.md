@@ -5,7 +5,7 @@ Painel executivo interativo das ouvidorias operacionais da COMLURB.
 ## Escopo
 
 - Comparação jan–jul/2026 x jan–jul/2025
-- Recorte julho/2026 x julho/2025
+- Recorte agosto/2026 x agosto/2025
 - Análise restrita às ouvidorias operacionais
 - Exclusão dos registros tratados internamente pela PCO
 - Visão executiva, territorial e analítica

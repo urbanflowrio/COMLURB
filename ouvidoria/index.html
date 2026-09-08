@@ -2108,6 +2108,22 @@ function previousPeriodText(){return period==='acumulado'?'jan a ago/2025':'agos
 function currentPeriodShort(){return period==='acumulado'?'jan a ago/2026':'ago/2026';}
 function previousPeriodShort(){return period==='acumulado'?'jan a ago/2025':'ago/2025';}
 
+function monthlyPulse(x){
+  const months=getSummary('acumulado').mensal||[];
+  const current=months.find(d=>norm(d.mes)==='AGOSTO');
+  const previous=months.find(d=>norm(d.mes)==='JULHO');
+  if(!current||!previous||!previous.v2026)return null;
+  const dif=current.v2026-previous.v2026;
+  return{current:current.v2026,previous:previous.v2026,dif,var:dif/previous.v2026};
+}
+function mainDrivers(x){
+  const direction=x.dif>=0?1:-1;
+  return[...(x.children||[])]
+    .filter(d=>d.dif!==0&&Math.sign(d.dif)===direction)
+    .sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif));
+}
+function shareOfMovement(value,total){return total?Math.abs(value/total):0;}
+
 function init(){
   HUB.header.render('header',{systemLabel:'CANAIS DO CIDADÃO',title:'Ouvidoria',subtitle:'Leitura executiva das ouvidorias operacionais, evolução temporal e concentração territorial',navigation:[
     {id:'screenExecutiva',label:'Visão Executiva',onActivate:()=>setTimeout(()=>{resizeCharts();window.scrollTo({top:0,behavior:'smooth'});},60)},
@@ -2154,12 +2170,19 @@ function renderLead(x){
   let headline='',detail='';
 
   if(!filterType){
-    if(same.length){
-      const a=same[0], b=same[1];
-      headline=`${currentPeriodText().replace(/^./,c=>c.toLocaleUpperCase('pt-BR'))}, <b>${prettyTypeLabel(a.nome)}</b> registrou o maior ${direction>0?'aumento':'recuo'} (${signed(a.dif)} registros)${b?`, seguido por <b>${prettyTypeLabel(b.nome)}</b> (${signed(b.dif)})`:''}.`;
-      if(opposite[0]) detail=`Em sentido contrário, <b>${prettyTypeLabel(opposite[0].nome)}</b> variou ${signed(opposite[0].dif)} registros. `;
-    }else headline=`${currentPeriodText().replace(/^./,c=>c.toLocaleUpperCase('pt-BR'))}, a variação ficou distribuída entre diferentes tipos de serviço.`;
-    if(topBairro) detail+=`No território, <b>${prettyPlace(topBairro.nome)}</b> concentrou o maior volume ${currentPeriodText()}, com ${fmt(topBairro.v2026)} registros.`;
+    const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
+    if(period==='agosto'){
+      headline=`Agosto fechou com <b>${fmt(x.total2026)} ouvidorias operacionais</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> sobre agosto de 2025${pulse?` e ${pulse.dif>=0?'avanço':'recuo'} de <b>${pctSigned(pulse.var)}</b> frente a julho`:''}.`;
+      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> explicou ${pct(shareOfMovement(a.dif,x.dif))} da ${direction>0?'alta':'redução'} anual do mês`;
+      if(b)detail+=`, seguido por <b>${prettyTypeLabel(b.nome)}</b>, com ${pct(shareOfMovement(b.dif,x.dif))}`;
+      detail+='.';
+    }else{
+      headline=`De janeiro a agosto, o volume chegou a <b>${fmt(x.total2026)} ouvidorias operacionais</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> em relação a 2025.`;
+      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> respondeu por ${pct(shareOfMovement(a.dif,x.dif))} da variação acumulada`;
+      if(pulse)detail+=`. No mês mais recente, agosto ficou <b>${pctSigned(pulse.var)}</b> em relação a julho`;
+      detail+='.';
+    }
+    if(topBairro)detail+=` <b>${prettyPlace(topBairro.nome)}</b> manteve o maior volume territorial, com ${fmt(topBairro.v2026)} registros ${currentPeriodText()}.`;
   }else if(!filterSubtype){
     if(same.length){
       const a=same[0];
@@ -2334,6 +2357,7 @@ function renderStructure(x){
 
 function renderInsights(x){
   const comp=componentsFor(x);if(!comp.length){document.getElementById('insights').innerHTML='';return;}
+  const direction=x.dif>=0?1:-1;
   const vol=[...comp].sort((a,b)=>b.v2026-a.v2026)[0];
   const movement=[...comp].sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif))[0];
   const relevant=relevantForRate(comp,x.total2026);
@@ -2345,6 +2369,16 @@ function renderInsights(x){
   const moveText=movement.dif>=0?`${signed(movement.dif)} registros a mais`:`${fmt(Math.abs(movement.dif))} registros a menos`;
   const rateTag=rateTop?(rateTop.var>=0?'Maior variação percentual positiva':'Maior variação percentual negativa'):'Variação percentual';
   const rateText=rateTop?`${pctSigned(rateTop.var)} frente a 2025.`:'Sem categoria elegível para destaque.';
+  if(!filterType){
+    const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
+    const combined=(a&&b)?shareOfMovement(a.dif+b.dif,x.dif):(a?shareOfMovement(a.dif,x.dif):0);
+    if(period==='agosto'){
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Ritmo recente</div><b>${pulse&&Math.abs(pulse.var)<.02?'Agosto manteve o patamar':pulse&&pulse.dif>=0?'Agosto acelerou':'Agosto perdeu ritmo'}</b><p>${pulse?`O volume passou de <strong>${fmt(pulse.previous)}</strong> em julho para <strong>${fmt(pulse.current)}</strong> em agosto, variação de <strong>${pctSigned(pulse.var)}</strong>.`:'Comparação mensal indisponível.'}</p></div><div class="insightCard"><div class="tag">Principal motor da mudança</div><b>${a?.nome||'Não informado'}</b><p>${a?`Respondeu por <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da ${direction>0?'alta':'redução'} anual de agosto, com <strong>${signed(a.dif)}</strong> registros.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Concentração da variação</div><b>${a?.nome||''}${b?` + ${b.nome}`:''}</b><p>Os dois principais fatores explicam <strong>${pct(combined)}</strong> da ${direction>0?'alta':'redução'} do mês frente a agosto de 2025.</p></div>`;
+    }else{
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado acumulado</div><b>${fmt(x.total2026)} registros</b><p>Entre janeiro e agosto, as ouvidorias operacionais ficaram <strong>${pctSigned(x.var)}</strong> em relação ao mesmo período de 2025.</p></div><div class="insightCard"><div class="tag">Principal contribuição</div><b>${a?.nome||'Não informado'}</b><p>${a?`Explicou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação acumulada, com <strong>${signed(a.dif)}</strong> registros.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Sinal mais recente</div><b>${pulse&&Math.abs(pulse.var)<.02?'Estabilidade em nível elevado':pulse&&pulse.dif>=0?'Agosto acima de julho':'Agosto abaixo de julho'}</b><p>${pulse?`O mês mais recente variou <strong>${pctSigned(pulse.var)}</strong>, de ${fmt(pulse.previous)} para ${fmt(pulse.current)} registros.`:'Comparação mensal indisponível.'}</p></div>`;
+    }
+    return;
+  }
   document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> registros ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume operacional do recorte.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'Não informado'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
 }
 function renderBairroRankings(x){const bairros=[...x.bairros].filter(b=>b.v2026>0);const topVol=bairros.slice().sort((a,b)=>b.v2026-a.v2026).slice(0,5);const topGrowth=bairros.slice().sort((a,b)=>b.dif-a.dif).slice(0,5);document.getElementById('rankVolume').innerHTML=buildRank(topVol,'v2026',topVol[0]?.v2026||1);document.getElementById('rankGrowth').innerHTML=buildRank(topGrowth,'dif',topGrowth[0]?.dif||1);}

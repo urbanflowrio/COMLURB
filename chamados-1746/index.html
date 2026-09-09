@@ -2379,6 +2379,12 @@ function renderInsights(x){
     }
     return;
   }
+  if(level()==='tipo'&&vol.part>=.9){
+    const topTerritory=[...(x.bairros||[])].filter(d=>d.v2026>0).sort((a,b)=>b.dif-a.dif)[0];
+    const movementLabel=x.dif>=0?'aumento':'redução';
+    document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado do tipo</div><b>${filterType}</b><p>O volume passou de <strong>${fmt(x.total2025)}</strong> para <strong>${fmt(x.total2026)}</strong> chamados, ${movementLabel} de <strong>${fmt(Math.abs(x.dif))}</strong> (${pctSigned(x.var)}).</p></div><div class="insightCard"><div class="tag">Concentração interna</div><b>${vol.nome}</b><p>O subtipo concentra <strong>${pct(vol.part)}</strong> dos chamados de ${prettyTypeLabel(filterType)} ${currentPeriodText()}. Os demais subtipos têm participação residual.</p></div><div class="insightCard"><div class="tag">Principal destaque territorial</div><b>${topTerritory?.nome||'Não informado'}</b><p>${topTerritory?`Registrou a maior contribuição territorial para a variação, com <strong>${signed(topTerritory.dif)}</strong> chamados frente a ${previousPeriodShort()}.`:'Não há território elegível para destaque neste filtro.'}</p></div>`;
+    return;
+  }
   document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> chamados ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume do recorte.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'Não informado'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
 }
 function renderBairroRankings(x){const bairros=[...x.bairros].filter(b=>b.v2026>0);const topVol=bairros.slice().sort((a,b)=>b.v2026-a.v2026).slice(0,5);const topGrowth=bairros.slice().sort((a,b)=>b.dif-a.dif).slice(0,5);document.getElementById('rankVolume').innerHTML=buildRank(topVol,'v2026',topVol[0]?.v2026||1);document.getElementById('rankGrowth').innerHTML=buildRank(topGrowth,'dif',topGrowth[0]?.dif||1);}

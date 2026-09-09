@@ -259,6 +259,25 @@
 @media(max-width:1100px){.dteExecutiveTop,.dteExecutiveGrid{grid-template-columns:1fr}.dtePulseGrid{grid-template-columns:repeat(2,1fr)}.dteGuideStrip{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.dtePulseBlock{padding:17px 15px}.dtePulseGrid{grid-template-columns:1fr 1fr}.dtePulseCard .v{font-size:20px}.dteGuideStrip{grid-template-columns:1fr}.dteSectionTitle{font-size:21px}}
 
+/* ENG-OP v4 · competência visível, fluxo operacional como âncora, aprofundamento hierarquizado */
+.dtePulseHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.dteCompBadge{flex-shrink:0;font-size:11px;font-weight:850;letter-spacing:.02em;color:var(--texto);background:rgba(91,147,232,.14);border:1px solid rgba(91,147,232,.42);border-radius:999px;padding:7px 14px;white-space:nowrap;}
+.dteFlowPanel{margin:16px 0;}
+.dteFlowPanel .flowRow{margin-top:2px;}
+.dteFlowPanel .flowNode{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.005)),var(--painel2);}
+.dteDeepenEyebrow{font-size:9.5px;font-weight:900;letter-spacing:.14em;color:var(--silenciado);margin:4px 2px 9px;}
+.dteDeepen{margin:16px 0 0;border:1px solid var(--linha);border-radius:16px;background:var(--painel);overflow:hidden;}
+.dteDeepen>summary{list-style:none;cursor:pointer;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12.5px;font-weight:800;color:var(--texto);}
+.dteDeepen>summary::-webkit-details-marker{display:none;}
+.dteDeepen>summary::after{content:"Expandir";flex-shrink:0;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--azul2,var(--azul));border:1px solid rgba(91,147,232,.42);border-radius:8px;padding:5px 10px;}
+.dteDeepen[open]>summary::after{content:"Recolher";}
+.dteDeepen>summary .sub{font-weight:600;color:var(--silenciado);font-size:11px;margin-top:3px;}
+.dteDeepen>.dteDeepenBody{padding:0 18px 18px;border-top:1px solid var(--linha);padding-top:16px;}
+.dteAbsenceNote{font-size:11.5px;color:var(--silenciado);line-height:1.55;padding:13px 15px;border:1px dashed var(--linha);border-radius:13px;background:var(--painel2);margin-top:12px;}
+.dteAbsenceNote b{color:var(--texto);}
+.reciclagemGrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.875fr) minmax(0,.875fr);gap:14px;}
+@media (max-width:1050px){.reciclagemGrid{grid-template-columns:1fr}}
+
 </style>
 </head>
 
@@ -272,9 +291,14 @@
   <section class="screen active" id="screenVisao">
     <div class="dteExecutiveTop">
       <div class="dtePulseBlock">
-        <div class="dteSectionEyebrow">LEITURA EXECUTIVA</div>
-        <div class="dteSectionTitle">Pulso operacional</div>
-        <div class="dteSectionSub">Competência mais recente disponível · visão consolidada da operação técnica</div>
+        <div class="dtePulseHead">
+          <div>
+            <div class="dteSectionEyebrow">LEITURA EXECUTIVA</div>
+            <div class="dteSectionTitle">Pulso operacional</div>
+            <div class="dteSectionSub">Visão consolidada da operação técnica</div>
+          </div>
+          <div class="dteCompBadge" id="dteCompBadge">carregando competência…</div>
+        </div>
         <div class="dtePulseGrid" id="kpisVisao"></div>
       </div>
       <div class="panel dteAttentionPanel">
@@ -287,18 +311,26 @@
 
     <div class="drillSlot" data-drill-slot></div>
 
+    <div class="panel dteFlowPanel">
+      <div class="panelHead">
+        <div><h2>Fluxo da operação</h2><div class="hint">Do recebimento nas ETRs à coleta seletiva · competência mais recente com badge de referência frente à série</div></div>
+      </div>
+      <div class="body"><div class="flowRow" id="fluxoOperacional"></div></div>
+    </div>
+
+    <div class="dteDeepenEyebrow">APROFUNDAMENTO IMEDIATO</div>
     <div class="dteExecutiveGrid">
       <div class="panel dteChartPanel">
         <div class="panelHead">
-          <div><h2>Distribuição do recebimento</h2><div class="hint">Participação das ETRs no volume da competência mais recente</div></div>
+          <div><h2>Distribuição do recebimento</h2><div class="hint">Participação das ETRs no volume da competência mais recente · clique numa ETR para o histórico</div></div>
         </div>
-        <div class="body"><div class="chartWrap" style="height:285px"><canvas id="chartEtrUnidade"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:250px"><canvas id="chartEtrUnidade"></canvas></div></div>
       </div>
       <div class="panel dteChartPanel">
         <div class="panelHead">
           <div><h2>Coleta seletiva</h2><div class="hint">Trajetória anual · leitura de escala, não de meta</div></div>
         </div>
-        <div class="body"><div class="chartWrap" style="height:285px"><canvas id="chartSeletivaAnual"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:250px"><canvas id="chartSeletivaAnual"></canvas></div></div>
       </div>
     </div>
 
@@ -306,7 +338,7 @@
       <div><b>Destinação e Biogás</b><span>ETRs, biogás e comportamento do chorume</span></div>
       <div><b>Coleta Seletiva</b><span>captura, origem e distribuição regional</span></div>
       <div><b>Utilização da Frota</b><span>capacidade, disponibilidade, sobrecarga e recortes operacionais</span></div>
-      <div><b>Equipamentos e Infraestrutura</b><span>equipamentos, poda mecanizada e manutenção predial</span></div>
+      <div><b>Equipamentos e Infraestrutura</b><span>equipamentos e manutenção predial</span></div>
     </div>
   </section>
 
@@ -359,22 +391,22 @@
       </div>
       <div class="body"><div class="chartWrap"><canvas id="chartComposicao"></canvas></div></div>
     </div>
-    <div class="grid">
+    <div class="reciclagemGrid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente</div></div>
+          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente · indicador de referência da aba</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Coleta seletiva por regional</h2><div class="hint">UDS-S / UDS-N / UDS-O · ano corrente (t)</div></div>
+          <div><h2>Por regional</h2><div class="hint">UDS-S / UDS-N / UDS-O · ano corrente (t)</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartRegional"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Origem do peso coletado</h2><div class="hint">Frota Comlurb em relação a cooperativas/não cadastrados</div></div>
+          <div><h2>Origem do peso</h2><div class="hint">Frota Comlurb × cooperativas/não cadastrados</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartOrigem"></canvas></div></div>
       </div>
@@ -433,71 +465,72 @@
       </div>
     </div>
 
-    <div class="fleetServiceCards" id="fleetTabs">
-      <button class="fleetServiceCard active" data-fleet="domiciliar">
-        <div class="serviceName">Coleta Domiciliar</div><div class="serviceValue" id="fleetTabValDomiciliar">n/d</div><div class="serviceMeta">utilização · competência vigente</div>
-      </button>
-      <button class="fleetServiceCard" data-fleet="seletiva">
-        <div class="serviceName">Coleta Seletiva</div><div class="serviceValue" id="fleetTabValSeletiva">n/d</div><div class="serviceMeta">utilização · competência vigente</div>
-      </button>
-      <button class="fleetServiceCard" data-fleet="lixo">
-        <div class="serviceName">Lixo Público</div><div class="serviceValue" id="fleetTabValLixo">n/d</div><div class="serviceMeta">utilização · base detalhada</div>
-      </button>
-    </div>
-
-    <div class="panel fleetWorkspace">
-      <div class="panelHead">
-        <div><h2>Capacidade utilizada</h2><div class="hint">Peso transportado ÷ capacidade estimada · detalhamento por unidade e veículo</div></div>
-        <div class="fleetStatus" id="fleetSourceStatus">carregando base detalhada…</div>
-      </div>
-      <div class="body">
-        <div class="fleetFilters">
-          <div class="fleetFilter"><label for="fleetPeriodo">Competência</label><select id="fleetPeriodo"></select></div>
-          <div class="fleetFilter"><label for="fleetSuper">Superintendência</label><select id="fleetSuper"></select></div>
-          <div class="fleetFilter"><label for="fleetGerencia">Gerência</label><select id="fleetGerencia"></select></div>
-          <div class="fleetFilter"><label for="fleetVeiculo">Veículo / equipamento</label><select id="fleetVeiculo"></select></div>
+    <details class="dteDeepen" id="fleetDeepen">
+      <summary>
+        <div><div>Detalhamento por serviço, unidade e veículo</div><div class="sub">Coleta Domiciliar, Coleta Seletiva e Lixo Público · filtros por competência, superintendência, gerência e veículo</div></div>
+      </summary>
+      <div class="dteDeepenBody">
+        <div class="fleetServiceCards" id="fleetTabs">
+          <button class="fleetServiceCard active" data-fleet="domiciliar">
+            <div class="serviceName">Coleta Domiciliar</div><div class="serviceValue" id="fleetTabValDomiciliar">n/d</div><div class="serviceMeta">utilização · competência vigente</div>
+          </button>
+          <button class="fleetServiceCard" data-fleet="seletiva">
+            <div class="serviceName">Coleta Seletiva</div><div class="serviceValue" id="fleetTabValSeletiva">n/d</div><div class="serviceMeta">utilização · competência vigente</div>
+          </button>
+          <button class="fleetServiceCard" data-fleet="lixo">
+            <div class="serviceName">Lixo Público</div><div class="serviceValue" id="fleetTabValLixo">n/d</div><div class="serviceMeta">utilização · base detalhada</div>
+          </button>
         </div>
-        <div class="fleetSummary" id="fleetSummary"></div>
-        <div class="fleetMicroNote">O indicador executivo continua sendo o publicado no Relatório Mensal DTE. O detalhamento abaixo serve para localizar a distribuição por unidade e tipo de veículo.</div>
-      </div>
-    </div>
 
-    <div class="fleetAnalysisTop">
-      <div class="panel">
-        <div class="panelHead"><div><h2>Evolução mensal</h2><div class="hint" id="fleetTrendHint">Utilização no recorte selecionado</div></div></div>
-        <div class="body"><div class="chartWrap" style="height:270px"><canvas id="chartFleetTrend"></canvas></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead"><div><h2>Por tipo de veículo</h2><div class="hint">Tipos consolidados · menor utilização primeiro</div></div></div>
-        <div class="body fleetRankBody" id="fleetVehicleRanking"></div>
-      </div>
-    </div>
+        <div class="panel fleetWorkspace">
+          <div class="panelHead">
+            <div><h2>Capacidade utilizada</h2><div class="hint">Peso transportado ÷ capacidade estimada · detalhamento por unidade e veículo</div></div>
+            <div class="fleetStatus" id="fleetSourceStatus">carregando base detalhada…</div>
+          </div>
+          <div class="body">
+            <div class="fleetFilters">
+              <div class="fleetFilter"><label for="fleetPeriodo">Competência</label><select id="fleetPeriodo"></select></div>
+              <div class="fleetFilter"><label for="fleetSuper">Superintendência</label><select id="fleetSuper"></select></div>
+              <div class="fleetFilter"><label for="fleetGerencia">Gerência</label><select id="fleetGerencia"></select></div>
+              <div class="fleetFilter"><label for="fleetVeiculo">Veículo / equipamento</label><select id="fleetVeiculo"></select></div>
+            </div>
+            <div class="fleetSummary" id="fleetSummary"></div>
+            <div class="fleetMicroNote">O indicador executivo continua sendo o publicado no Relatório Mensal DTE. O detalhamento abaixo serve para localizar a distribuição por unidade e tipo de veículo.</div>
+          </div>
+        </div>
 
-    <div class="fleetAnalysisBottom">
-      <div class="panel">
-        <div class="panelHead"><div><h2>Gerências do recorte</h2><div class="hint">Peso, capacidade e utilização · menor utilização primeiro</div></div></div>
-        <div class="body fleetRankBody" id="fleetGerRanking"></div>
+        <div class="fleetAnalysisTop">
+          <div class="panel">
+            <div class="panelHead"><div><h2>Evolução mensal</h2><div class="hint" id="fleetTrendHint">Utilização no recorte selecionado</div></div></div>
+            <div class="body"><div class="chartWrap" style="height:270px"><canvas id="chartFleetTrend"></canvas></div></div>
+          </div>
+          <div class="panel">
+            <div class="panelHead"><div><h2>Por tipo de veículo</h2><div class="hint">Tipos consolidados · menor utilização primeiro</div></div></div>
+            <div class="body fleetRankBody" id="fleetVehicleRanking"></div>
+          </div>
+        </div>
+
+        <div class="fleetAnalysisBottom">
+          <div class="panel">
+            <div class="panelHead"><div><h2>Gerências do recorte</h2><div class="hint">Peso, capacidade e utilização · menor utilização primeiro</div></div></div>
+            <div class="body fleetRankBody" id="fleetGerRanking"></div>
+          </div>
+          <div class="panel">
+            <div class="panelHead"><div><h2>Sinais do recorte</h2><div class="hint">Concentrações e desvios no recorte selecionado</div></div></div>
+            <div class="body"><div class="leituraChips" id="fleetInsights"></div></div>
+          </div>
+        </div>
       </div>
-      <div class="panel">
-        <div class="panelHead"><div><h2>Sinais do recorte</h2><div class="hint">Concentrações e desvios no recorte selecionado</div></div></div>
-        <div class="body"><div class="leituraChips" id="fleetInsights"></div></div>
-      </div>
-    </div>
+    </details>
   </section>
 
   <!-- ===================== EQUIPAMENTOS & INFRAESTRUTURA ===================== -->
   <section class="screen" id="screenInfra">
-    <div class="infraTopGrid">
-      <div class="panel">
-        <div class="panelHead"><div><h2>Equipamentos do mês</h2><div class="hint">Utilização na competência mais recente</div></div></div>
-        <div class="body"><div class="infraEquipList" id="infraEquipList"></div></div>
-      </div>
-      <div class="panel">
-        <div class="panelHead"><div><h2>Poda mecanizada</h2><div class="hint">Leitura operacional complementar com base nos registros disponíveis</div></div></div>
-        <div class="body">
-          <div class="infraMiniCards" id="podaCards"></div>
-          <div class="infraAssistText">Os registros disponíveis nesta base permitem acompanhar <b>KM por manejo</b> e <b>manejos por apresentação</b>. Selecione um dos dois para ver a janela móvel abaixo.</div>
-        </div>
+    <div class="panel">
+      <div class="panelHead"><div><h2>Equipamentos do mês</h2><div class="hint">Utilização na competência mais recente · clique num equipamento para o histórico</div></div></div>
+      <div class="body">
+        <div class="infraEquipList" id="infraEquipList"></div>
+        <div class="dteAbsenceNote" id="podaAbsenceNote"></div>
       </div>
     </div>
 
@@ -1024,6 +1057,12 @@ function renderVisaoGeral() {
 
   const iAtual = lastValidIndex(etrTotal);
   const iChorume = lastValidIndex(chorume);
+
+  const compBadge = document.getElementById("dteCompBadge");
+  if (compBadge) {
+    const iRef = iAtual >= 0 ? iAtual : lastValidIndex(chorume);
+    compBadge.textContent = iRef >= 0 ? "Competência " + prettyRef(meses[iRef]) : "Competência não identificada na fonte";
+  }
 
   // Pulso operacional: poucos sinais, todos apoiados em fontes existentes.
   const idx2026SelTop = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
@@ -2023,8 +2062,6 @@ function renderInfra(){
   const pas123=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 1/2/3","Total P20, P23, P23A",nTodos)).map(v=>v>1?v:v*100);
   const pas45=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 4/5","Total P20, P23, P23A",nTodos)).map(v=>v>1?v:v*100);
 
-  const podaKm=corta13(serieAposTitulo(RAW.relatorio,"Indicador de Poda: KM/Manejo","KM / Manejo",nTodos));
-  const podaMan=corta13(serieAposTitulo(RAW.relatorio,"Indicador de Poda: Manejo/Apresentação","Manejo/Apresentação",nTodos));
   const predial=corta13(relatorioSerie(RAW.relatorio,"QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS",nTodos));
   const refrig=corta13(relatorioSerie(RAW.relatorio,"REFRIGERACAO",nTodos));
   const eco=corta13(relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPOINTOS",nTodos));
@@ -2052,8 +2089,6 @@ function renderInfra(){
     "Trator de corte":{grupo:'equip',title:'Trator de corte',hint:'Utilização do equipamento · janela móvel de 13 meses',serie:trCorte,color:'rgba(102,160,245,.95)',fmt:v=>fmtPct(v),rowLabel:'Trator de corte'},
     "Pás AP1/2/3":{grupo:'equip',title:'Pás AP1/2/3',hint:'Utilização do equipamento · janela móvel de 13 meses',serie:pas123,color:'rgba(102,160,245,.95)',fmt:v=>fmtPct(v),rowLabel:'Pás AP1/2/3'},
     "Pás AP4/5":{grupo:'equip',title:'Pás AP4/5',hint:'Utilização do equipamento · janela móvel de 13 meses',serie:pas45,color:'rgba(102,160,245,.95)',fmt:v=>fmtPct(v),rowLabel:'Pás AP4/5'},
-    "KM por manejo":{grupo:'poda',title:'Poda mecanizada · KM por manejo',hint:'Indicador operacional complementar · janela móvel de 13 meses',serie:podaKm,color:'rgba(102,160,245,.95)',fmt:v=>fmtDec(v)+' km',rowLabel:'KM por manejo'},
-    "Manejos por apresentação":{grupo:'poda',title:'Poda mecanizada · Manejos por apresentação',hint:'Indicador operacional complementar · janela móvel de 13 meses',serie:podaMan,color:'rgba(239,140,86,.95)',fmt:v=>fmtDec(v),rowLabel:'Manejos por apresentação'},
     "Intervenções":{grupo:'predial',title:'Manutenção predial · Intervenções',hint:'Registros disponíveis · janela móvel de 13 meses',serie:predial,color:'rgba(102,160,245,.95)',fmt:v=>fmtNum(v),rowLabel:'Intervenções'},
     "Refrigeração":{grupo:'predial',title:'Manutenção predial · Refrigeração',hint:'Registros disponíveis · janela móvel de 13 meses',serie:refrig,color:'rgba(239,140,86,.95)',fmt:v=>fmtNum(v),rowLabel:'Refrigeração'},
     "Ecopontos":{grupo:'predial',title:'Manutenção predial · Ecopontos',hint:'Registros disponíveis · janela móvel de 13 meses',serie:eco,color:'rgba(160,124,255,.95)',fmt:v=>fmtNum(v),rowLabel:'Ecopontos'}
@@ -2080,14 +2115,15 @@ function renderInfra(){
     });
   }
 
-  const podaCards=document.getElementById('podaCards');
-  if(podaCards){
-    const podaItems=[
-      {key:'Manejos por apresentação',label:'Manejos por apresentação',serie:podaMan,fmt:v=>fmtDec(v)},
-      {key:'KM por manejo',label:'KM por manejo',serie:podaKm,fmt:v=>fmtDec(v)+' km'}
-    ];
-    podaCards.innerHTML=podaItems.map(it=>{const info=lastInfo(it.serie); return `<div class="infraMiniCard ${DTE_DRILL.infraFocus===it.key?'active':''}" data-focus="${HUB.format.esc(it.key)}" role="button" tabindex="0"><div class="k">${it.label}</div><div class="v">${info.v==null?'n/d':it.fmt(info.v)}</div><div class="s">${comparacao(it.serie, v=>it.label==='KM por manejo'?fmtDec(v)+' km':fmtDec(v))}</div></div>`;}).join('');
-    podaCards.querySelectorAll('[data-focus]').forEach(el=>{const open=()=>{DTE_DRILL.infraFocus=el.getAttribute('data-focus'); renderInfra();}; el.addEventListener('click',open); el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open();}});});
+  // Poda mecanizada: por regra obrigatória, o indicador acompanhado deve falar
+  // apenas de manejos realizados (volume absoluto). A base atual só publica
+  // relações derivadas (km/manejo, manejo/apresentação), que não substituem o
+  // indicador oficial e não têm dado real de manejos absolutos por trás — por
+  // isso não aparecem como card executivo nem entram na rotação de foco.
+  // A lacuna é sinalizada tecnicamente abaixo, fora da visão executiva.
+  const podaNote=document.getElementById('podaAbsenceNote');
+  if(podaNote){
+    podaNote.innerHTML='<b>Poda mecanizada · lacuna registrada.</b> A fonte oficial não publica o volume absoluto de manejos realizados. Os indicadores hoje disponíveis nesta base (km/manejo e manejo/apresentação) são relações derivadas, não substituem o indicador oficial e por isso não são exibidos como métrica executiva. Painel será atualizado quando a série de manejos realizados estiver disponível.';
   }
 
   const predialCards=document.getElementById('predialCards');

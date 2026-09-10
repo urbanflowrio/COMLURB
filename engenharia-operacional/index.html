@@ -695,9 +695,9 @@ const CONFIG = {
     coletaSeletiva: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1599396593&single=true&output=csv",
     lixoPublico: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQck5g3cWZN-in8I9ogYmytl8X_IbDd4ENxJvIhDv7va2viE2GCh9GA5sxzJC9fqeSk2jS7uBGP571u/pub?gid=1210816191&single=true&output=csv"
   },
-  panelName: "Inteligência Operacional DTE",
+  panelName: "Engenharia e Operações",
   systemLabel: "DIRETORIA TÉCNICA E DE ENGENHARIA",
-  subtitle: "Destinação, biogás, coleta seletiva e eficiência de frota · Fonte oficial DTE"
+  subtitle: "Destinação, biogás, coleta seletiva, frota e infraestrutura"
 };
 
 // Anos fechados (2022 a 2024): não mudam mais, fonte Tabela 1493 histórica.
@@ -2138,7 +2138,7 @@ function renderFleetDetail(){
   if(status){
     const mode=FLEET_SOURCE_MODE[FLEET_STATE.tipo]||"error";
     status.className="fleetStatus "+(mode==="snapshot"?"snapshot":mode==="error"?"error":"");
-    status.textContent=mode==="live"?"Fonte oficial DTE · atualização automática":mode==="snapshot"?"base de contingência · dados até jul/26":"base detalhada indisponível";
+    status.textContent=mode==="live"?"Atualização automática":mode==="snapshot"?"base de contingência · dados até jul/26":"base detalhada indisponível";
   }
   const summary=document.getElementById("fleetSummary");
   const gerCount=new Set(current.map(r=>r.gerencia)).size;

@@ -3,709 +3,105 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#030d19">
 <title>HUB COMLURB · Centro de Inteligência e Gestão Estratégica Operacional</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#030d19;
-  --panel:#071a2c;
-  --line:#203a55;
-  --line2:#315a7c;
-  --text:#f7f9ff;
-  --soft:#c8d8eb;
-  --muted:#8ba4bf;
-  --blue:#5b9bd5;
-  --blue2:#8ec5f3;
-  --green:#78aaa3;
-  --orange:#e87535;
-  --red:#ef6a5d;
-}
-
+:root{--bg:#030d19;--surface:#071a2c;--surface-hover:#0a2137;--line:#203a55;--line-strong:#315a7c;--text:#f7f9ff;--soft:#c8d8eb;--muted:#8ba4bf;--blue:#5b9bd5;--blue-light:#8ec5f3;--teal:#78aaa3;--radius:18px}
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  min-height:100%;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-}
-
-body{
-  overflow-x:hidden;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-3;
-  background:
-    radial-gradient(circle at 78% 12%, rgba(91,155,213,.17), transparent 31%),
-    radial-gradient(circle at 12% 88%, rgba(120,170,163,.08), transparent 31%),
-    linear-gradient(180deg,#04101d 0%,#061524 48%,#030a14 100%);
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  opacity:.45;
-  background-image:
-    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
-  background-size:88px 88px;
-  mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.18));
-}
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-.shell{
-  width:min(1480px,94vw);
-  min-height:100vh;
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  padding:30px 0 28px;
-}
-
-/* HEADER */
-.header{
-  height:104px;
-  display:grid;
-  grid-template-columns:340px 1fr;
-  align-items:center;
-  gap:32px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.logoBlock{
-  height:72px;
-  display:flex;
-  align-items:center;
-  padding-right:30px;
-  border-right:1px solid rgba(255,255,255,.23);
-}
-
-.logoBlock img{
-  width:310px;
-  max-width:100%;
-  display:block;
-}
-
-.brand h1{
-  margin:0;
-  font-size:34px;
-  line-height:1;
-  letter-spacing:-.7px;
-  font-weight:900;
-}
-
-.brand p{
-  margin:8px 0 0;
-  color:var(--blue);
-  font-size:15px;
-  font-weight:600;
-  letter-spacing:.18px;
-}
-
-/* HERO */
-.hero{
-  display:grid;
-  grid-template-columns:.95fr 1.05fr;
-  gap:64px;
-  align-items:stretch;
-  padding:66px 0 48px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.heroMark{
-  color:var(--blue);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:3.4px;
-  text-transform:uppercase;
-  margin-bottom:28px;
-}
-
-.heroTitle{
-  margin:0;
-  max-width:760px;
-  font-size:clamp(58px,7.4vw,106px);
-  line-height:.89;
-  letter-spacing:-6.1px;
-  font-weight:900;
-}
-
-.heroSub{
-  margin:30px 0 0;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.heroSub span{
-  border:1px solid rgba(91,155,213,.34);
-  background:rgba(7,26,44,.42);
-  color:#e9f3ff;
-  border-radius:999px;
-  padding:10px 14px;
-  font-size:13px;
-  font-weight:800;
-}
-
-/* SÍNTESE EXECUTIVA */
-.sintesePanel{
-  border:1px solid rgba(49,90,124,.68);
-  border-radius:24px;
-  background:linear-gradient(180deg,rgba(7,26,44,.72),rgba(5,18,31,.48));
-  padding:26px;
-  display:flex;
-  flex-direction:column;
-}
-
-.sinteseTop{
-  display:flex;
-  justify-content:space-between;
-  gap:18px;
-  align-items:flex-start;
-  padding-bottom:20px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.sinteseTop small{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:2px;
-  text-transform:uppercase;
-}
-
-.sinteseTop strong{
-  display:block;
-  margin-top:8px;
-  font-size:34px;
-  line-height:1;
-  letter-spacing:-1.2px;
-  font-weight:900;
-}
-
-.sinteseTop .atualizado{
-  display:block;
-  margin-top:8px;
-  color:var(--muted);
-  font-size:12px;
-  font-weight:600;
-}
-
-.sinteseTag{
-  color:#06111f;
-  background:var(--blue2);
-  border-radius:999px;
-  padding:8px 11px;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
-
-.insightList{
-  display:grid;
-  gap:14px;
-  margin-top:20px;
-}
-
-.insight{
-  display:grid;
-  grid-template-columns:6px 1fr;
-  gap:16px;
-  align-items:start;
-}
-
-.bar{
-  width:6px;
-  height:100%;
-  min-height:62px;
-  border-radius:99px;
-  background:var(--blue);
-}
-
-.insight.warn .bar{background:var(--orange)}
-.insight.good .bar{background:var(--green)}
-
-.insight h3{
-  margin:0;
-  color:var(--soft);
-  font-size:16px;
-  line-height:1.25;
-  letter-spacing:-.25px;
-  font-weight:850;
-}
-
-.insight p{
-  margin:6px 0 0;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.42;
-}
-
-.mockNote{
-  margin-top:18px;
-  padding-top:14px;
-  border-top:1px dashed rgba(255,255,255,.12);
-  color:var(--muted);
-  font-size:11px;
-  letter-spacing:.4px;
-}
-
-/* FAIXA DE LEITURA RÁPIDA */
-.quickRead{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:0;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.quick{
-  padding:30px 28px 28px 0;
-  border-right:1px solid rgba(255,255,255,.08);
-}
-
-.quick:last-child{border-right:0}
-
-.quick b{
-  display:block;
-  font-size:40px;
-  line-height:.9;
-  letter-spacing:-2px;
-  font-weight:900;
-  color:var(--muted);
-}
-
-.quick span{
-  display:block;
-  margin-top:11px;
-  color:var(--soft);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:1.1px;
-  text-transform:uppercase;
-}
-
-/* GRADE DE MÓDULOS */
-.command{
-  flex:1;
-  padding:46px 0 42px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.sectionLabel{
-  margin:0 0 24px;
-  color:var(--blue);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:3.2px;
-  text-transform:uppercase;
-}
-
-.commandGrid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:22px;
-}
-
-.column{
-  border:1px solid rgba(49,90,124,.58);
-  border-radius:22px;
-  background:linear-gradient(180deg,rgba(7,26,44,.62),rgba(5,18,31,.40));
-  overflow:hidden;
-}
-
-.columnHead{
-  padding:25px 25px 22px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.columnHead small{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:2.2px;
-  text-transform:uppercase;
-  margin-bottom:10px;
-}
-
-.columnHead h3{
-  margin:0;
-  font-size:24px;
-  line-height:1.05;
-  letter-spacing:-.9px;
-  font-weight:900;
-}
-
-.links{
-  padding:8px 25px 20px;
-}
-
-.module{
-  display:grid;
-  grid-template-columns:1fr 30px;
-  gap:18px;
-  align-items:center;
-  min-height:88px;
-  padding:17px 0;
-  border-bottom:1px solid rgba(255,255,255,.075);
-  transition:.16s ease;
-}
-
-.module:hover{
-  transform:translateX(5px);
-}
-
-.module:last-child{
-  border-bottom:0;
-}
-
-.module strong{
-  display:block;
-  font-size:18px;
-  line-height:1.08;
-  letter-spacing:-.35px;
-  font-weight:850;
-}
-
-.module span{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:10px;
-}
-
-.module em{
-  font-style:normal;
-  color:#b8d9d5;
-  border:1px solid rgba(120,170,163,.22);
-  background:rgba(120,170,163,.06);
-  border-radius:999px;
-  padding:5px 8px;
-  font-size:10px;
-  line-height:1;
-  font-weight:700;
-}
-
-.arrow{
-  color:var(--blue);
-  font-size:29px;
-  font-weight:300;
-  text-align:right;
-}
-
-/* FOOTER */
-.footer{
-  padding:22px 0 0;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.55;
-}
-
-.footer strong{
-  display:block;
-  color:var(--soft);
-  font-weight:800;
-  margin-bottom:2px;
-}
-
-@media(max-width:1180px){
-  .header{
-    height:auto;
-    grid-template-columns:1fr;
-    gap:18px;
-    padding-bottom:26px;
-  }
-
-  .logoBlock{
-    height:auto;
-    padding-right:0;
-    border-right:0;
-  }
-
-  .hero{
-    grid-template-columns:1fr;
-    gap:34px;
-  }
-
-  .quickRead{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .quick{
-    border-bottom:1px solid rgba(255,255,255,.08);
-  }
-
-  .commandGrid{
-    grid-template-columns:1fr;
-  }
-}
-
-@media(max-width:720px){
-  .shell{
-    width:92vw;
-    padding-top:22px;
-  }
-
-  .logoBlock img{
-    width:282px;
-  }
-
-  .hero{
-    padding:52px 0 40px;
-  }
-
-  .heroTitle{
-    font-size:56px;
-    letter-spacing:-3.2px;
-  }
-
-  .sinteseTop{
-    flex-direction:column;
-  }
-
-  .quickRead{
-    grid-template-columns:1fr;
-  }
-
-  .quick{
-    border-right:0;
-  }
-}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;overflow-x:hidden;background:radial-gradient(circle at 83% 4%,rgba(91,155,213,.12),transparent 28%),linear-gradient(180deg,#04111f 0%,var(--bg) 54%,#020912 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.24;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:96px 96px;mask-image:linear-gradient(180deg,#000,transparent 78%)}
+a{color:inherit;text-decoration:none}
+.shell{width:min(1240px,calc(100% - 64px));margin:0 auto;padding:26px 0 24px}
+.header{min-height:78px;display:flex;align-items:center;gap:26px;padding-bottom:20px;border-bottom:1px solid rgba(139,164,191,.22)}
+.logo{width:286px;flex:0 0 auto;display:block}
+.brand{min-height:48px;display:flex;flex-direction:column;justify-content:center;padding-left:26px;border-left:1px solid rgba(200,216,235,.27)}
+.brand strong{font-size:22px;line-height:1.05;letter-spacing:-.45px;font-weight:800}
+.brand span{margin-top:6px;color:var(--blue);font-size:13px;line-height:1.25;font-weight:600}
+.intro{max-width:920px;padding:38px 0 34px}
+.eyebrow,.section-label,.axis-code{display:block;color:var(--blue);font-size:11px;line-height:1;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.intro h1{margin:13px 0 0;font-size:clamp(36px,4.2vw,52px);line-height:1.02;letter-spacing:-2.1px;font-weight:800}
+.intro p{max-width:880px;margin:15px 0 0;color:var(--soft);font-size:15px;line-height:1.58}
+.intro small{display:block;margin-top:11px;color:var(--muted);font-size:12px;line-height:1.45;font-weight:500}
+.portfolio{padding-bottom:34px}
+.section-label{margin:0 0 18px}
+.axis-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+.axis{grid-column:span 6;min-width:0;display:flex;flex-direction:column;padding:22px;overflow:hidden;border:1px solid rgba(49,90,124,.66);border-radius:var(--radius);background:linear-gradient(180deg,rgba(7,26,44,.90),rgba(5,19,33,.78));box-shadow:0 18px 44px rgba(0,0,0,.13)}
+.axis.compact{grid-column:span 4}
+.axis-head{min-height:58px;padding-bottom:16px;border-bottom:1px solid rgba(139,164,191,.14)}
+.axis-code{font-size:10px;letter-spacing:1.7px}
+.axis h2{margin:9px 0 0;font-size:21px;line-height:1.18;letter-spacing:-.55px;font-weight:800}
+.module-list{display:grid;gap:10px;padding-top:12px}
+.module{min-height:74px;display:grid;grid-template-columns:minmax(0,1fr) 26px;align-items:center;gap:14px;padding:13px 14px 13px 16px;border:1px solid rgba(49,90,124,.62);border-radius:12px;background:rgba(3,13,25,.22);transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease}
+.module:hover{border-color:rgba(142,197,243,.72);background:rgba(10,33,55,.76);box-shadow:inset 3px 0 0 rgba(91,155,213,.78)}
+.module:focus-visible{outline:2px solid var(--blue-light);outline-offset:3px;border-color:var(--blue-light)}
+.module:active{background:rgba(14,43,70,.88);border-color:var(--blue)}
+.module strong{display:block;font-size:15px;line-height:1.3;letter-spacing:-.15px;font-weight:700}
+.module span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.42}
+.arrow{color:var(--blue);font-size:22px;line-height:1;text-align:center;transition:transform .16s ease,color .16s ease}
+.module:hover .arrow{color:var(--blue-light);transform:translateX(2px)}
+.footer{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding-top:20px;border-top:1px solid rgba(139,164,191,.22);color:var(--muted);font-size:11px;line-height:1.5}
+.footer strong{display:block;color:var(--soft);font-size:12px}
+@media(max-width:1040px){.shell{width:min(920px,calc(100% - 48px))}.axis,.axis.compact{grid-column:span 6}.axis:last-child{grid-column:1/-1}}
+@media(max-width:720px){.shell{width:calc(100% - 32px);padding-top:18px}.header{align-items:flex-start;flex-direction:column;gap:15px;padding-bottom:18px}.logo{width:min(268px,86vw)}.brand{min-height:auto;padding:0;border-left:0}.brand strong{font-size:19px}.brand span{max-width:340px;font-size:12px;line-height:1.4}.intro{padding:28px 0 26px}.intro h1{font-size:36px;letter-spacing:-1.5px}.intro p{font-size:14px;line-height:1.55}.axis-grid{display:block}.axis{margin-bottom:14px;padding:18px;border-radius:15px}.axis h2{font-size:19px}.axis-head{min-height:auto;padding-bottom:14px}.module{min-height:82px;padding:13px 12px 13px 14px}.module strong{font-size:15px}.module span{font-size:12px}.footer{flex-direction:column;gap:8px;padding-bottom:8px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 </style>
 </head>
-
 <body>
 <main class="shell">
-
   <header class="header">
-    <div class="logoBlock">
-      <img src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio | COMLURB">
-    </div>
-
-    <div class="brand">
-      <h1>HUB COMLURB</h1>
-      <p>Centro de Inteligência e Gestão Estratégica Operacional</p>
-    </div>
+    <img class="logo" src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio e COMLURB">
+    <div class="brand"><strong>HUB COMLURB</strong><span>Centro de Inteligência e Gestão Estratégica Operacional</span></div>
   </header>
-
-  <section class="hero" aria-label="Panorama Corporativo">
-    <div>
-      <div class="heroMark">Inteligência corporativa para alta gestão</div>
-      <h2 class="heroTitle">Inteligência para Decisão.<br>Governança para Resultado.</h2>
-
-      <div class="heroSub">
-        <span>Visão Presidência</span>
-        <span>Desempenho Institucional</span>
-        <span>Operação e Território</span>
-        <span>Recursos Corporativos</span>
-      </div>
-    </div>
-
-    <aside class="sintesePanel" aria-label="Visão Executiva do Portfólio">
-      <div class="sinteseTop">
-        <div>
-          <small>Visão Executiva do Portfólio</small>
-          <strong>9 PAINÉIS ATIVOS</strong>
-          <span class="atualizado">Acesso integrado aos principais instrumentos de gestão da COMLURB</span>
-        </div>
-        <div class="sinteseTag">Alta Gestão</div>
-      </div>
-
-      <div class="insightList">
-        <article class="insight">
-          <div class="bar"></div>
-          <div>
-            <h3>Governança e resultados institucionais.</h3>
-            <p>Monitoramento consolidado de indicadores corporativos, metas pactuadas e desempenho das áreas.</p>
-          </div>
-        </article>
-
-        <article class="insight good">
-          <div class="bar"></div>
-          <div>
-            <h3>Operação urbana orientada por território.</h3>
-            <p>Leitura integrada da engenharia operacional, do padrão de limpeza e da organização territorial dos serviços.</p>
-          </div>
-        </article>
-
-        <article class="insight">
-          <div class="bar"></div>
-          <div>
-            <h3>Pessoas e resultado financeiro sob visão executiva.</h3>
-            <p>Acompanhamento da força de trabalho e da performance dos contratos de receita.</p>
-          </div>
-        </article>
-      </div>
-    </aside>
+  <section class="intro" aria-labelledby="page-title">
+    <span class="eyebrow">Portal Executivo</span>
+    <h1 id="page-title">Inteligência para decisão</h1>
+    <p>Acesso integrado aos painéis de governança, operação, território, pessoas, receitas e relacionamento com o cidadão.</p>
+    <small>Selecione um painel para acessar a análise executiva.</small>
   </section>
-
-  <section class="quickRead" aria-label="Leitura Rápida">
-    <article class="quick">
-      <b>9</b>
-      <span>Painéis Ativos</span>
-    </article>
-
-    <article class="quick">
-      <b>5</b>
-      <span>Eixos Estratégicos</span>
-    </article>
-
-    <article class="quick">
-      <b>1</b>
-      <span>Portal Executivo Integrado</span>
-    </article>
-
-  </section>
-
-  <section class="command" aria-label="Portfólio Executivo">
-    <h3 class="sectionLabel">Portfólio Executivo</h3>
-
-    <div class="commandGrid">
-
-      <article class="column">
-        <div class="columnHead">
-          <small>Eixo 01</small>
-          <h3>Governança e Resultados</h3>
-        </div>
-
-        <div class="links">
-          <a class="module" href="indicadores-gerais/">
-            <div>
-              <strong>Governança Corporativa</strong>
-              <span><em>indicadores institucionais</em><em>desempenho</em><em>gestão</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-
-          <a class="module" href="ar/">
-            <div>
-              <strong>Acordo de Resultados</strong>
-              <span><em>metas pactuadas</em><em>evolução</em><em>resultado</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-        </div>
+  <section class="portfolio" aria-labelledby="portfolio-title">
+    <h2 class="section-label" id="portfolio-title">Portfólio Executivo</h2>
+    <div class="axis-grid">
+      <article class="axis">
+        <header class="axis-head"><span class="axis-code">Eixo 01</span><h2>Governança e Resultados</h2></header>
+        <nav class="module-list" aria-label="Painéis de Governança e Resultados">
+          <a class="module" href="indicadores-gerais/"><div><strong>Governança Corporativa</strong><span>Indicadores institucionais e desempenho das áreas.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="ar/"><div><strong>Acordo de Resultados</strong><span>Metas pactuadas, evolução e resultados alcançados.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
       </article>
-
-      <article class="column">
-        <div class="columnHead">
-          <small>Eixo 02</small>
-          <h3>Operação e Território</h3>
-        </div>
-
-        <div class="links">
-          <a class="module" href="engenharia-operacional/">
-            <div>
-              <strong>Desempenho da Operação Urbana</strong>
-              <span><em>engenharia</em><em>eficiência operacional</em><em>indicadores técnicos</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-
-          <a class="module" href="ipl/">
-            <div>
-              <strong>Inteligência Territorial da Limpeza Urbana</strong>
-              <span><em>IPL</em><em>padrão de limpeza</em><em>análise territorial</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-
-          <a class="module" href="territorial/">
-            <div>
-              <strong>Território Operacional</strong>
-              <span><em>estrutura territorial</em><em>áreas de atuação</em><em>serviços</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-        </div>
+      <article class="axis">
+        <header class="axis-head"><span class="axis-code">Eixo 02</span><h2>Operação e Território</h2></header>
+        <nav class="module-list" aria-label="Painéis de Operação e Território">
+          <a class="module" href="engenharia-operacional/"><div><strong>Desempenho da Operação Urbana</strong><span>Indicadores técnicos e eficiência da operação.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="ipl/"><div><strong>Inteligência Territorial da Limpeza Urbana</strong><span>Padrão de limpeza e análise territorial.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="territorial/"><div><strong>Território Operacional</strong><span>Estrutura territorial, áreas de atuação e serviços.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
       </article>
-
-      <article class="column">
-        <div class="columnHead">
-          <small>Eixo 03</small>
-          <h3>Pessoas e Capacidade Organizacional</h3>
-        </div>
-
-        <div class="links">
-          <a class="module" href="pessoas/">
-            <div>
-              <strong>Gestão Estratégica de Pessoas</strong>
-              <span><em>força de trabalho</em><em>disponibilidade</em><em>distribuição</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-        </div>
+      <article class="axis compact">
+        <header class="axis-head"><span class="axis-code">Eixo 03</span><h2>Pessoas e Capacidade Organizacional</h2></header>
+        <nav class="module-list" aria-label="Painéis de Pessoas e Capacidade Organizacional">
+          <a class="module" href="pessoas/"><div><strong>Gestão Estratégica de Pessoas</strong><span>Força de trabalho, disponibilidade e distribuição.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
       </article>
-
-      <article class="column">
-        <div class="columnHead">
-          <small>Eixo 04</small>
-          <h3>Receita e Sustentabilidade Financeira</h3>
-        </div>
-
-        <div class="links">
-          <a class="module" href="balanco-receita/">
-            <div>
-              <strong>Performance dos Contratos de Receita</strong>
-              <span><em>faturamento</em><em>recebimento</em><em>débitos</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-
-        </div>
+      <article class="axis compact">
+        <header class="axis-head"><span class="axis-code">Eixo 04</span><h2>Receita e Sustentabilidade Financeira</h2></header>
+        <nav class="module-list" aria-label="Painéis de Receita e Sustentabilidade Financeira">
+          <a class="module" href="balanco-receita/"><div><strong>Performance dos Contratos de Receita</strong><span>Faturamento, recebimentos e débitos em aberto.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
       </article>
-
-      <article class="column">
-        <div class="columnHead">
-          <small>Eixo 05</small>
-          <h3>Relacionamento com o Cidadão · 1746</h3>
-        </div>
-
-        <div class="links">
-          <a class="module" href="chamados-1746/">
-            <div>
-              <strong>Chamados</strong>
-              <span><em>demanda operacional</em><em>prazos</em><em>território</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-
-          <a class="module" href="ouvidoria/">
-            <div>
-              <strong>Ouvidorias</strong>
-              <span><em>manifestações</em><em>evolução</em><em>concentração territorial</em></span>
-            </div>
-            <div class="arrow">›</div>
-          </a>
-        </div>
+      <article class="axis compact">
+        <header class="axis-head"><span class="axis-code">Eixo 05</span><h2>Relacionamento com o Cidadão · 1746</h2></header>
+        <nav class="module-list" aria-label="Painéis de Relacionamento com o Cidadão">
+          <a class="module" href="chamados-1746/"><div><strong>Chamados</strong><span>Demandas operacionais, prazos e distribuição territorial.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="ouvidoria/"><div><strong>Ouvidorias</strong><span>Manifestações, evolução e concentração territorial.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
       </article>
-
     </div>
   </section>
-
-  <footer class="footer">
-    <strong>HUB COMLURB</strong>
-    Núcleo de Inteligência e Gestão Estratégica Operacional
-  </footer>
-
+  <footer class="footer"><div><strong>HUB COMLURB</strong>Núcleo de Inteligência e Gestão Estratégica Operacional</div><span>COMLURB · Monitoramento Estratégico</span></footer>
 </main>
 </body>
 </html>

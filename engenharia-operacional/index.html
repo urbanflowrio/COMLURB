@@ -278,6 +278,61 @@
 .reciclagemGrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.875fr) minmax(0,.875fr);gap:14px;}
 @media (max-width:1050px){.reciclagemGrid{grid-template-columns:1fr}}
 
+/* ===================== RELATÓRIO EXECUTIVO ===================== */
+.execCover{padding:6px 2px 8px;}
+.execContext{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--linha);}
+.execContextLabel{font-size:9.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--silenciado);}
+.execCompetencia{font-size:12px;font-weight:850;color:var(--texto);}
+.execDefasagens{font-size:10.5px;color:var(--amarelo);text-align:right;line-height:1.45;}
+.execHeadline{font-size:25px;font-weight:800;line-height:1.32;letter-spacing:-.01em;color:var(--texto);max-width:56ch;}
+.execSub{margin-top:9px;font-size:13.5px;line-height:1.55;color:var(--silenciado);max-width:66ch;}
+.execBody{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:30px;margin-top:24px;align-items:start;}
+.execViz{min-width:0;}
+.execVizCaption{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--silenciado);margin-bottom:10px;}
+.execPanelStack{display:flex;flex-direction:column;gap:12px;}
+.execPanel{border-bottom:1px solid var(--linha);padding-bottom:6px;}
+.execPanel .execPanelTop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;}
+.execPanel .execPanelName{font-size:11.5px;font-weight:800;color:var(--texto);}
+.execPanel .execPanelStats{font-size:10.5px;color:var(--silenciado);}
+.execPanel .execPanelStats b{color:var(--texto);font-weight:800;}
+.execChartWrap{height:120px;position:relative;}
+.execPanelStack.execSingle .execChartWrap{height:230px;}
+.execEmpty{height:170px;display:flex;align-items:center;justify-content:center;color:#7c8ea6;font-size:12.5px;text-align:center;padding:0 20px;border-bottom:1px solid var(--linha);}
+.execEditorial{min-width:0;padding-left:2px;}
+.execEditorial .execBlk{margin-bottom:20px;}
+.execEditorial .execBlk:last-child{margin-bottom:0;}
+.execEditorial h3{font-size:10.5px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#8fb3d9;margin:0 0 7px;}
+.execEditorial p{margin:0;font-size:13.5px;line-height:1.55;color:var(--texto);}
+.execEditorial p+p{margin-top:8px;}
+.execNavDesktop{margin-top:28px;padding-top:14px;border-top:1px solid var(--linha);display:flex;flex-wrap:wrap;gap:0;font-size:13px;}
+.execNavDesktop button{appearance:none;border:0;background:none;color:var(--silenciado);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:6px 0;margin-right:22px;position:relative;}
+.execNavDesktop button::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:transparent;}
+.execNavDesktop button.isActive{color:var(--texto);}
+.execNavDesktop button.isActive::after{background:var(--azul2);}
+.execNavDesktop button:hover{color:var(--texto);}
+.execNavMobile{display:none;margin-top:20px;padding-top:14px;border-top:1px solid var(--linha);position:relative;}
+.execSelectBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;appearance:none;border:1px solid var(--linha);background:var(--painel2);color:var(--texto);font:inherit;font-size:13px;font-weight:700;padding:11px 13px;border-radius:11px;cursor:pointer;}
+.execSelectBtn small{color:var(--silenciado);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
+.execSelectBtn .execChev{color:var(--silenciado);font-size:11px;transition:transform .15s ease;}
+.execSelectBtn.isOpen .execChev{transform:rotate(180deg);}
+.execDropdown{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:4;border:1px solid var(--linha);border-radius:11px;background:var(--painel2);overflow:hidden;box-shadow:0 16px 34px rgba(0,0,0,.4);}
+.execDropdown.isOpen{display:block;}
+.execDropdown button{width:100%;text-align:left;appearance:none;border:0;border-bottom:1px solid var(--linha);background:none;color:var(--texto);font:inherit;font-size:12.5px;font-weight:650;padding:11px 13px;cursor:pointer;}
+.execDropdown button:last-child{border-bottom:0;}
+.execDropdown button:hover,.execDropdown button.isActive{background:rgba(91,147,232,.12);}
+.execFoldDivider{display:flex;align-items:center;gap:10px;margin:30px 0 18px;}
+.execFoldLine{flex:1;height:1px;background:var(--linha);}
+.execFoldTxt{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#7c8ea6;white-space:nowrap;}
+.execIndex{border-top:1px solid var(--linha);}
+.execIndexRow{display:flex;gap:18px;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--linha);cursor:pointer;}
+.execIndexRow:hover .execIndexTitle{color:var(--azul2);}
+.execIndexNum{flex-shrink:0;font-size:12px;font-weight:800;color:#7c8ea6;font-variant-numeric:tabular-nums;width:26px;}
+.execIndexBody{min-width:0;}
+.execIndexTitle{font-size:14.5px;font-weight:800;color:var(--texto);transition:color .15s ease;}
+.execIndexText{font-size:12.5px;color:var(--silenciado);margin-top:4px;line-height:1.5;}
+.execIndexRow.isSelected .execIndexTitle{color:var(--azul2);}
+@media (max-width:1000px){.execBody{grid-template-columns:1fr;gap:20px;}.execNavDesktop{display:none;}.execNavMobile{display:block;}}
+@media (max-width:620px){.execHeadline{font-size:19px;}.execSub{font-size:12.5px;}.execEditorial p{font-size:12.5px;}.execChartWrap{height:96px;}.execPanelStack.execSingle .execChartWrap{height:170px;}}
 </style>
 </head>
 
@@ -287,8 +342,35 @@
   <div id="header"></div>
 
   
+  <!-- ===================== RELATÓRIO EXECUTIVO ===================== -->
+  <section class="screen active" id="screenExecutivo">
+    <div class="execCover">
+      <div class="execContext"><div><div class="execContextLabel">Relatório executivo</div><div class="execCompetencia" data-exec-competencia>Competência em carregamento</div></div><div class="execDefasagens" data-exec-defasagens></div></div>
+      <div class="execHeadline" data-exec-headline></div>
+      <div class="execSub" data-exec-sub></div>
+
+      <div class="execBody">
+        <div class="execViz">
+          <div class="execVizCaption" data-exec-viz-caption></div>
+          <div data-exec-viz-mount></div>
+        </div>
+        <div class="execEditorial">
+          <div class="execBlk"><h3>O que mudou</h3><p data-exec-mudou></p></div>
+          <div class="execBlk"><h3>Onde</h3><div data-exec-onde></div></div>
+          <div class="execBlk"><h3>O que observar</h3><p data-exec-observar></p></div>
+        </div>
+      </div>
+
+      <nav class="execNavDesktop" data-exec-nav-desktop></nav>
+      <div class="execNavMobile" data-exec-nav-mobile></div>
+    </div>
+
+    <div class="execFoldDivider"><div class="execFoldLine"></div><div class="execFoldTxt">demais assuntos da competência</div><div class="execFoldLine"></div></div>
+    <div class="execIndex" data-exec-index></div>
+  </section>
+
   <!-- ===================== VISÃO GERAL ===================== -->
-  <section class="screen active" id="screenVisao">
+  <section class="screen" id="screenVisao">
     <div class="dteExecutiveTop">
       <div class="dtePulseBlock">
         <div class="dtePulseHead">
@@ -766,6 +848,87 @@ function ind1493Serie(rows, label) {
   return { total, meses };
 }
 
+// Leitura auditável usada pelo Relatório Executivo. Diferencia zero publicado
+// de célula ausente; os parsers legados permanecem intactos nas demais abas.
+function parseNumBRNullable(v) {
+  if (v === undefined || v === null) return null;
+  const raw = String(v).trim();
+  if (raw === "" || raw === "-" || norm(raw) === "N/D") return null;
+  let s = raw.replace("R$", "").trim().replace("%", "").trim();
+  s = s.replace(/\./g, "").replace(",", ".");
+  const n = Number.parseFloat(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function execLabelToKey(label) {
+  const m = String(label || "").toLowerCase().match(/^([a-z]{3})\/(\d{2})$/);
+  if (!m || !MESES_ABREV.includes(m[1])) return null;
+  return `20${m[2]}-${String(MESES_ABREV.indexOf(m[1]) + 1).padStart(2, "0")}`;
+}
+
+function execKeyToLabel(key) {
+  const m = String(key || "").match(/^(\d{4})-(\d{2})$/);
+  if (!m) return String(key || "");
+  const idx = Number(m[2]) - 1;
+  return `${(MESES_ABREV[idx] || "?").replace(/^./, c => c.toUpperCase())}/${m[1].slice(2)}`;
+}
+
+function execWindowKeys(endKey, count = 13) {
+  const m = String(endKey || "").match(/^(\d{4})-(\d{2})$/);
+  if (!m) return [];
+  const end = new Date(Number(m[1]), Number(m[2]) - 1, 1);
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(end.getFullYear(), end.getMonth() - (count - 1 - i), 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+}
+
+function execRelatorioMap(rows, label) {
+  const header = findDateHeaderRow(rows);
+  const row = findRow(rows, label);
+  if (!header || !row) return new Map();
+  const dates = header.filter(isDateCell).map(parseDateLabel);
+  const idx = firstNonEmptyIdx(row);
+  const values = row.slice(idx + 1, idx + 1 + dates.length).map(parseNumBRNullable);
+  return new Map(dates.map((d, i) => [execLabelToKey(d), values[i] ?? null]).filter(([k]) => k));
+}
+
+function execSerieAposTituloMap(rows, title, metric) {
+  const target = norm(title), metricTarget = norm(metric);
+  const header = findDateHeaderRow(rows);
+  const dates = header ? header.filter(isDateCell).map(parseDateLabel) : [];
+  for (let i = 0; i < rows.length; i++) {
+    if (norm(rows[i]?.[0]) === target || norm(rows[i]?.[0]).includes(target)) {
+      for (let j = i + 1; j < Math.min(rows.length, i + 10); j++) {
+        if (!norm(rows[j]?.[0]).includes(metricTarget)) continue;
+        let row = rows[j];
+        const idx = firstNonEmptyIdx(row);
+        const cells = row.slice(idx + 1, idx + 1 + dates.length);
+        if (cells.filter(isDateCell).length >= Math.min(3, Math.max(1, Math.floor(dates.length / 3))) && rows[j + 1]) row = rows[j + 1];
+        const idx2 = firstNonEmptyIdx(row);
+        const values = row.slice(idx2 + 1, idx2 + 1 + dates.length).map(parseNumBRNullable);
+        return new Map(dates.map((d, k) => [execLabelToKey(d), values[k] ?? null]).filter(([key]) => key));
+      }
+    }
+  }
+  return new Map();
+}
+
+function execTabela1493Map(label2025, label2026 = label2025) {
+  const out = new Map();
+  [[2025, RAW.ind2025, label2025], [2026, RAW.ind2026, label2026]].forEach(([year, rows, label]) => {
+    const row = findRow(rows, label);
+    if (!row) return;
+    const idx = firstNonEmptyIdx(row);
+    row.slice(idx + 2, idx + 14).forEach((v, monthIdx) => {
+      out.set(`${year}-${String(monthIdx + 1).padStart(2, "0")}`, parseNumBRNullable(v));
+    });
+  });
+  return out;
+}
+
+function execSeriesFromMap(map, keys) { return keys.map(k => map.has(k) ? map.get(k) : null); }
+
 function lastValidIndex(arr) {
   for (let i = arr.length - 1; i >= 0; i--) if (arr[i] > 0) return i;
   return -1;
@@ -1006,15 +1169,15 @@ async function init() {
     title: CONFIG.panelName,
     subtitle: CONFIG.subtitle,
     navigation: [
-      { id: "screenVisao", label: "Visão Geral" },
+      { id: "screenExecutivo", label: "Relatório Executivo" },
       { id: "screenDestinacao", label: "Destinação e Biogás" },
       { id: "screenReciclagem", label: "Coleta Seletiva" },
       { id: "screenFrota", label: "Utilização da Frota" },
       { id: "screenInfra", label: "Equipamentos e Infraestrutura" }
     ]
   });
-
-  HUB.loading.showMultiple(["kpisVisao","chartEtrUnidade","chartSeletivaAnual"]);
+  // A nova leitura editorial substitui integralmente a antiga Visão Geral.
+  document.getElementById("screenVisao")?.remove();
 
   const [relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub] = await Promise.all([
     loadRawCSV(CONFIG.urls.relatorio, "relatorio"),
@@ -1027,8 +1190,7 @@ async function init() {
   RAW = { relatorio, ind2025, ind2026, coletaDom, coletaSel, lixoPub };
   RAW.secoes = parseSecoes(relatorio);
 
-  renderVisaoGeral();
-  renderLeituraMes();
+  renderExecutivo();
   renderDestinacao();
   renderReciclagem();
   renderFrota();
@@ -1443,12 +1605,11 @@ async function renderClimaChorume(meses, chorume){
 // ============================================
 function renderReciclagem() {
   const mesesJanDez = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-  const labels13 = ["Jul/25","Ago/25","Set/25","Out/25","Nov/25","Dez/25","Jan/26","Fev/26","Mar/26","Abr/26","Mai/26","Jun/26","Jul/26"];
+  const recContext = execGlobalContext();
+  const labels13 = recContext.meses;
 
   function rolling13(label2025, label2026) {
-    const s25 = ind1493Serie(RAW.ind2025, label2025 || label2026).meses;
-    const s26 = ind1493Serie(RAW.ind2026, label2026 || label2025).meses;
-    return s25.slice(6,12).concat(s26.slice(0,7)).map(v => v > 0 ? v : null);
+    return execRolling13(label2025 || label2026, label2026 || label2025, recContext);
   }
   function lastDataIndex(arr){ for(let i=arr.length-1;i>=0;i--) if(Number.isFinite(arr[i]) && arr[i]>0) return i; return -1; }
 
@@ -1474,12 +1635,8 @@ function renderReciclagem() {
     }
   }
 
-  const frota25 = ind1493Serie(RAW.ind2025, "COLETA SELETIVA - FROTA COMLURB").meses;
-  const frota26 = ind1493Serie(RAW.ind2026, "COLETA SELETIVA - FROTA COMLURB").meses;
-  const nao25 = ind1493Serie(RAW.ind2025, "NAO CADASTRADOS").meses;
-  const nao26 = ind1493Serie(RAW.ind2026, "NAO CADASTRADOS").meses;
-  const frotaRolling = frota25.slice(6,12).concat(frota26.slice(0,7)).map(v=>v>0?v:null);
-  const naoRolling = nao25.slice(6,12).concat(nao26.slice(0,7)).map(v=>v>0?v:null);
+  const frotaRolling = rolling13("COLETA SELETIVA - FROTA COMLURB", "COLETA SELETIVA - FROTA COMLURB");
+  const naoRolling = rolling13("NAO CADASTRADOS", "NAO CADASTRADOS");
   const compHas = frotaRolling.map((v,i)=>(v||0)+(naoRolling[i]||0));
   chartOuVazio("chartComposicao", compHas, () => {
     const canvas=document.getElementById("chartComposicao"); if(!canvas)return;
@@ -1515,7 +1672,7 @@ function renderReciclagem() {
       const mult=(naoRolling[iUlt]||0)/baseNao;
       const vf=baseF>0?((frotaRolling[iUlt]||0)-baseF)/baseF*100:0;
       bannerEl.innerHTML=`<b>Leitura da composição:</b> em ${labels13[iUlt]}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoRolling[iUlt]||0))} t · ${mult.toFixed(1).replace(".", ",")}x a média anterior. A frota Comlurb variou ${vf>=0?"+":""}${vf.toFixed(1).replace(".", ",")}% frente à própria média.`;
-    } else bannerEl.textContent='A leitura considera apenas os meses com dados publicados na janela Jul/25-Jul/26.';
+    } else bannerEl.textContent=`A leitura considera apenas os meses com dados publicados na janela ${labels13[0]}–${labels13.at(-1)}.`;
   }
 
   // Regional: usa o ano corrente acumulado publicado; não inventa meses sem dado.
@@ -1533,7 +1690,7 @@ function renderReciclagem() {
           const idx=dteClickIndex(items); if(idx<0)return;
           const label=paresRegional[idx].label;
           DTE_DRILL.reciclagemRegional=label;
-          dteShowDrillReal("Coleta seletiva · "+label,"Evolução mensal, Jul/25–Jul/26 (Tabela 1493).");
+          dteShowDrillReal("Coleta seletiva · "+label,`Evolução mensal, ${labels13[0]}–${labels13.at(-1)} (Tabela 1493).`);
           renderReciclagem();
         },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>HUB.format.int(Math.round(v))+" t"}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)"},border:{display:false}}}}});
       });
@@ -2123,7 +2280,7 @@ function renderInfra(){
   // A lacuna é sinalizada tecnicamente abaixo, fora da visão executiva.
   const podaNote=document.getElementById('podaAbsenceNote');
   if(podaNote){
-    podaNote.innerHTML='<b>Poda mecanizada · lacuna registrada.</b> A fonte oficial não publica o volume absoluto de manejos realizados. Os indicadores hoje disponíveis nesta base (km/manejo e manejo/apresentação) são relações derivadas, não substituem o indicador oficial e por isso não são exibidos como métrica executiva. Painel será atualizado quando a série de manejos realizados estiver disponível.';
+    podaNote.innerHTML='<b>Poda mecanizada.</b> A série oficial de manejos realizados ainda não está disponível; por isso, o indicador não é exibido.';
   }
 
   const predialCards=document.getElementById('predialCards');
@@ -2195,6 +2352,685 @@ function renderInfra(){
     });
   });
 }
+
+
+// ============================================
+// RELATÓRIO EXECUTIVO · janela editorial de abertura do módulo
+// Reaproveita exclusivamente séries já oficiais do próprio módulo DTE
+// (relatorioSerie / findSecao / ind1493Serie), sem nova origem de dado,
+// sem nova chamada de rede e sem alterar as demais abas.
+//
+// Regras obrigatórias desta seção (não remover sem nova instrução):
+// - Disponibilidade permanece consolidada; nunca é decomposta por gerência.
+// - Utilização por gerência (base detalhada) pode aparecer em "Onde", mas
+//   nunca como explicação da disponibilidade consolidada.
+// - Captura EGP-RIO nunca é atribuída a uma regional pela tonelagem;
+//   a leitura por regional mostra apenas volume, nunca causalidade.
+// - Equipamentos permanecem em séries individuais; nenhuma média geral.
+// - Poda mecanizada (km/manejo, manejo/apresentação) não entra como
+//   candidato: são relações derivadas, sem série oficial de manejos
+//   absolutos por trás (mesma regra já aplicada em renderInfra).
+// - Nenhuma decomposição é inventada além do que a fonte publica.
+// ============================================
+
+const EXEC_ORDER = ["destinacao", "seletiva", "frota", "equipamentos", "manutencao"];
+
+function execGlobalContext() {
+  const reportLabels = relatorioMeses(RAW.relatorio);
+  const reportKeys = reportLabels.map(execLabelToKey).filter(Boolean);
+  const maps = [
+    execTabela1493Map("INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL"),
+    execTabela1493Map("COLETA SELETIVA - FROTA COMLURB")
+  ];
+  const published1493 = maps.flatMap(m => [...m.entries()].filter(([,v]) => v !== null).map(([k]) => k));
+  // A competência global é a mais recente anunciada pelo relatório ou já
+  // publicada na Tabela 1493. Fontes que ainda não chegaram a esse mês são
+  // marcadas como defasadas, nunca silenciosamente recuadas.
+  const competenciaKey = reportKeys.concat(published1493).filter(Boolean).sort().at(-1) || null;
+  const keys = execWindowKeys(competenciaKey, 13);
+  return { competenciaKey, competenciaLabel: execKeyToLabel(competenciaKey), keys, meses: keys.map(execKeyToLabel), n: keys.length };
+}
+
+function execRolling13(label2025, label2026 = label2025, context = execGlobalContext()) {
+  return execSeriesFromMap(execTabela1493Map(label2025, label2026), context.keys);
+}
+
+// Critérios internos de priorização narrativa. Não representam meta, limite
+// operacional ou classificação institucional.
+const EXEC_EDITORIAL_THRESHOLDS = Object.freeze({
+  pontosPercentuais: { alta: 3, moderada: 1.5 },
+  captura: { alta: 0.8, moderada: 0.4 },
+  volumePercentual: { alta: 5, moderada: 2 },
+  contagemPercentual: { alta: 30, moderada: 15 },
+  estabilidadePP: 0.05,
+  estabilidadePct: 0.05
+});
+
+// --- classificação de relevância: uma regra por indicador, nunca cross-unit ---
+function execRelevanciaPP(deltaAbs) {
+  if (deltaAbs == null || !Number.isFinite(deltaAbs)) return null;
+  if (deltaAbs >= EXEC_EDITORIAL_THRESHOLDS.pontosPercentuais.alta) return "alta";
+  if (deltaAbs >= EXEC_EDITORIAL_THRESHOLDS.pontosPercentuais.moderada) return "moderada";
+  return "baixa";
+}
+function execRelevanciaCaptura(deltaAbs) {
+  if (deltaAbs == null || !Number.isFinite(deltaAbs)) return null;
+  if (deltaAbs >= EXEC_EDITORIAL_THRESHOLDS.captura.alta) return "alta";
+  if (deltaAbs >= EXEC_EDITORIAL_THRESHOLDS.captura.moderada) return "moderada";
+  return "baixa";
+}
+function execRelevanciaVolumePct(deltaPctAbs) {
+  if (deltaPctAbs == null || !Number.isFinite(deltaPctAbs)) return null;
+  if (deltaPctAbs >= EXEC_EDITORIAL_THRESHOLDS.volumePercentual.alta) return "alta";
+  if (deltaPctAbs >= EXEC_EDITORIAL_THRESHOLDS.volumePercentual.moderada) return "moderada";
+  return "baixa";
+}
+function execRelevanciaContagem(deltaAbs, base) {
+  if (deltaAbs == null || !Number.isFinite(deltaAbs)) return null;
+  if (!(base > 0)) return "baixa";
+  const deltaPct = Math.abs(deltaAbs) / base * 100;
+  if (deltaPct >= EXEC_EDITORIAL_THRESHOLDS.contagemPercentual.alta) return "alta";
+  if (deltaPct >= EXEC_EDITORIAL_THRESHOLDS.contagemPercentual.moderada) return "moderada";
+  return "baixa";
+}
+
+// Persistência: nº de competências consecutivas (terminando na mais recente
+// com dado) em que a variação mês a mês manteve a mesma direção do último
+// movimento. Direção institucional (favorável/desfavorável) é definida por
+// indicador via direcaoFn; indicadores sem meta institucional usam sempre
+// "neutra" e por isso não acumulam persistência direcional.
+function execPersistencia(serie, iAtual, direcaoFn) {
+  if (iAtual == null || iAtual < 1) return iAtual != null && iAtual >= 0 ? 1 : 0;
+  let count = 0, dirRef = null;
+  for (let i = iAtual; i >= 1; i--) {
+    const a = serie[i], b = serie[i - 1];
+    if (a == null || b == null || !Number.isFinite(a) || !Number.isFinite(b)) break;
+    const d = direcaoFn(a - b);
+    if (d === "estavel" || d === "neutra") break;
+    if (dirRef === null) { dirRef = d; count = 1; continue; }
+    if (d !== dirRef) break;
+    count++;
+  }
+  return Math.max(count, iAtual >= 0 ? 1 : 0);
+}
+
+function execLastIdx(serie) {
+  for (let i = serie.length - 1; i >= 0; i--) {
+    if (serie[i] != null && Number.isFinite(serie[i]) && serie[i] !== 0) return i;
+  }
+  return -1;
+}
+
+function execLastPublishedIndex(serie) {
+  for (let i = serie.length - 1; i >= 0; i--) if (serie[i] !== null && Number.isFinite(serie[i])) return i;
+  return -1;
+}
+
+// ============================================
+// COMPUTA OS 5 ASSUNTOS + SINAIS-CANDIDATOS
+// ============================================
+function computeExecutiveData() {
+  const j = execGlobalContext();
+  const secFrota = findSecao(RAW.secoes, "MANUTENCAO FROTA PROPRIA");
+  const frotaTotal = secFrota ? execSeriesFromMap(execRelatorioMap(secFrota.rows, "FROTA TOTAL"), j.keys) : Array(j.n).fill(null);
+  const frotaOp = secFrota ? execSeriesFromMap(execRelatorioMap(secFrota.rows, "TOTAL EM OPERACAO"), j.keys) : Array(j.n).fill(null);
+  const disponibilidade = frotaTotal.map((v,i) => v !== null && frotaOp[i] !== null && v !== 0 ? (frotaOp[i]/v*100) : null);
+  const sobrecargaRaw = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL"), j.keys);
+  const sobrecarga = sobrecargaRaw.map(v => v === null ? null : (v > 1 ? v : v * 100));
+
+  const capturaSerie = execRolling13("INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL", "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL", j);
+
+  const etrTotal = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "ETR TOTAL"), j.keys);
+
+  const secInfra = null; // equipamentos vêm direto do relatório principal, sem seção própria
+  const pctSerie = (label) => execSeriesFromMap(execRelatorioMap(RAW.relatorio, label), j.keys).map(v => v === null ? null : (v > 1 ? v : v * 100));
+  const trComun   = pctSerie("P15A - TRATOR DE COMUNIDADE");
+  const trPraia12 = pctSerie("P16A - TRATOR DE PRAIA");
+  const nestedPct = (title, metric) => execSeriesFromMap(execSerieAposTituloMap(RAW.relatorio, title, metric), j.keys).map(v => v === null ? null : (v > 1 ? v : v * 100));
+  const trPraia345 = nestedPct("Utilização de Tratores Limp. Praia - AP3/4/5", "P16A - Trator de Praia");
+  const trCorte = nestedPct("Utilização Tratores de Corte Vegetação", "Total P21, P22, P22A");
+  const pas123 = nestedPct("Utilização Pás Carregadeiras AP 1/2/3", "Total P20, P23, P23A");
+  const pas45 = nestedPct("Utilização Pás Carregadeiras AP 4/5", "Total P20, P23, P23A");
+  const equipamentos = [
+    { nome: "Trator comunidade", serie: trComun },
+    { nome: "Trator praia AP1/2", serie: trPraia12 },
+    { nome: "Trator praia AP3/4/5", serie: trPraia345 },
+    { nome: "Trator de corte", serie: trCorte },
+    { nome: "Pás AP1/2/3", serie: pas123 },
+    { nome: "Pás AP4/5", serie: pas45 }
+  ];
+
+  const predial = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS"), j.keys);
+  const refrig = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "REFRIGERACAO"), j.keys);
+  const eco = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "MANUTENCAO DE ECOPOINTOS"), j.keys);
+  const predialItens = [
+    { nome: "Intervenções", serie: predial },
+    { nome: "Refrigeração", serie: refrig },
+    { nome: "Ecopontos", serie: eco }
+  ];
+
+  const candidatos = [];
+
+  // --- Frota: disponibilidade (favorável=sobe, desfavorável=desce) ---
+  const iDisp = disponibilidade.at(-1) === null ? -1 : disponibilidade.length - 1;
+  if (iDisp < 0) {
+    candidatos.push({ subject:"frota", dimension:"Frota", indicador:"Disponibilidade da frota própria", direcao:"ausencia", essencial:true, magnitude:null, tipo:"pontos percentuais", relevancia:null, persistenciaMeses:0 });
+  } else {
+    const iDispAnt = iDisp - 1;
+    const deltaDisp = iDispAnt >= 0 ? disponibilidade[iDisp] - disponibilidade[iDispAnt] : null;
+    const dirDisp = deltaDisp == null ? "neutra" : (deltaDisp >= 0 ? "favoravel" : "desfavoravel");
+    candidatos.push({
+      subject:"frota", dimension:"Frota", indicador:"Disponibilidade da frota própria",
+      direcao: dirDisp, essencial:true, magnitude: deltaDisp, tipo:"pontos percentuais",
+      relevancia: execRelevanciaPP(deltaDisp == null ? null : Math.abs(deltaDisp)),
+      persistenciaMeses: execPersistencia(disponibilidade, iDisp, d => Math.abs(d) < EXEC_EDITORIAL_THRESHOLDS.estabilidadePP ? "estavel" : (d > 0 ? "favoravel" : "desfavoravel"))
+    });
+  }
+
+  // --- Frota: sobrecarga >10% PBT (favorável=desce, desfavorável=sobe) ---
+  const iSO = sobrecarga.at(-1) === null ? -1 : sobrecarga.length - 1;
+  if (iSO < 0) {
+    candidatos.push({ subject:"frota", dimension:"Frota", indicador:"Sobrecarga >10% PBT", direcao:"ausencia", essencial:true, magnitude:null, tipo:"pontos percentuais", relevancia:null, persistenciaMeses:0 });
+  } else {
+    const iSOAnt = iSO - 1;
+    const deltaSO = iSOAnt >= 0 ? sobrecarga[iSO] - sobrecarga[iSOAnt] : null;
+    const dirSO = deltaSO == null ? "neutra" : (deltaSO <= 0 ? "favoravel" : "desfavoravel");
+    candidatos.push({
+      subject:"frota", dimension:"Frota", indicador:"Sobrecarga >10% PBT",
+      direcao: dirSO, essencial:true, magnitude: deltaSO, tipo:"pontos percentuais",
+      relevancia: execRelevanciaPP(deltaSO == null ? null : Math.abs(deltaSO)),
+      persistenciaMeses: execPersistencia(sobrecarga, iSO, d => Math.abs(d) < EXEC_EDITORIAL_THRESHOLDS.estabilidadePP ? "estavel" : (d < 0 ? "favoravel" : "desfavoravel"))
+    });
+  }
+
+  // --- Coleta Seletiva: captura EGP-RIO (favorável=sobe, desfavorável=desce) ---
+  const iCap = capturaSerie.at(-1) === null ? -1 : capturaSerie.length - 1;
+  if (iCap < 0) {
+    candidatos.push({ subject:"seletiva", dimension:"Coleta Seletiva", indicador:"Índice de captura EGP-RIO", direcao:"ausencia", essencial:true, magnitude:null, tipo:"pontos percentuais", relevancia:null, persistenciaMeses:0 });
+  } else {
+    const iCapAnt = iCap - 1;
+    const deltaCap = iCapAnt >= 0 && capturaSerie[iCapAnt] != null ? capturaSerie[iCap] - capturaSerie[iCapAnt] : null;
+    const dirCap = deltaCap == null ? "neutra" : (deltaCap >= 0 ? "favoravel" : "desfavoravel");
+    candidatos.push({
+      subject:"seletiva", dimension:"Coleta Seletiva", indicador:"Índice de captura EGP-RIO",
+      direcao: dirCap, essencial:true, magnitude: deltaCap, tipo:"pontos percentuais",
+      relevancia: execRelevanciaCaptura(deltaCap == null ? null : Math.abs(deltaCap)),
+      persistenciaMeses: execPersistencia(capturaSerie, iCap, d => Math.abs(d) < EXEC_EDITORIAL_THRESHOLDS.estabilidadePP ? "estavel" : (d > 0 ? "favoravel" : "desfavoravel"))
+    });
+  }
+
+  // --- Destinação: ETR total (sem meta institucional -> sempre neutra) ---
+  const iEtr = etrTotal.at(-1) === null ? -1 : etrTotal.length - 1;
+  if (iEtr < 0) {
+    candidatos.push({ subject:"destinacao", dimension:"Destinação", indicador:"Recebimento total nas ETRs", direcao:"ausencia", essencial:true, magnitude:null, tipo:"percentual", relevancia:null, persistenciaMeses:0 });
+  } else {
+    const iEtrAnt = iEtr - 1;
+    const deltaPct = iEtrAnt >= 0 && etrTotal[iEtrAnt] > 0 ? (etrTotal[iEtr]-etrTotal[iEtrAnt])/etrTotal[iEtrAnt]*100 : null;
+    candidatos.push({
+      subject:"destinacao", dimension:"Destinação", indicador:"Recebimento total nas ETRs",
+      direcao:"neutra", essencial:true, magnitude: deltaPct, tipo:"percentual",
+      relevancia: execRelevanciaVolumePct(deltaPct == null ? null : Math.abs(deltaPct)),
+      persistenciaMeses: iEtr >= 0 ? 1 : 0
+    });
+  }
+
+  // --- Equipamentos: séries individuais, sem média geral; candidato = maior |Δ MoM| entre as 6 ---
+  const equipComDado = equipamentos.map(e => ({ ...e, i: e.serie.at(-1) === null ? -1 : e.serie.length - 1 })).filter(e => e.i >= 0);
+  if (!equipComDado.length) {
+    candidatos.push({ subject:"equipamentos", dimension:"Equipamentos", indicador:"Utilização de equipamentos", direcao:"ausencia", essencial:false, magnitude:null, tipo:"pontos percentuais", relevancia:null, persistenciaMeses:0 });
+  } else {
+    let melhor = null;
+    equipComDado.forEach(e => {
+      const iAnt = e.i - 1;
+      const delta = iAnt >= 0 ? e.serie[e.i] - e.serie[iAnt] : null;
+      if (delta != null && (melhor == null || Math.abs(delta) > Math.abs(melhor.delta))) melhor = { ...e, delta };
+    });
+    if (melhor) {
+      candidatos.push({
+        subject:"equipamentos", dimension:"Equipamentos", indicador:melhor.nome + " (utilização)",
+        direcao:"neutra", essencial:false, magnitude: melhor.delta, tipo:"pontos percentuais",
+        relevancia: execRelevanciaPP(Math.abs(melhor.delta)),
+        persistenciaMeses: 1
+      });
+    }
+  }
+
+  // --- Manutenção predial: 3 séries de contagem; ausência complementar quando todas vazias ---
+  const predialComDado = predialItens.map(it => ({ ...it, i: it.serie.at(-1) === null ? -1 : it.serie.length - 1 })).filter(it => it.i >= 0);
+  if (!predialComDado.length) {
+    candidatos.push({ subject:"manutencao", dimension:"Manutenção", indicador:"Registros de manutenção predial", direcao:"ausencia", essencial:false, magnitude:null, tipo:"contagem", relevancia:null, persistenciaMeses:0 });
+  } else {
+    let melhor = null;
+    predialComDado.forEach(it => {
+      const iAnt = it.i - 1;
+      const delta = iAnt >= 0 ? it.serie[it.i] - it.serie[iAnt] : null;
+      const base = it.serie[it.i - 1] || 0;
+      if (delta != null) {
+        const rel = execRelevanciaContagem(delta, base);
+        if (melhor == null || (rel === "alta" && melhor.rel !== "alta")) melhor = { ...it, delta, rel };
+      }
+    });
+    if (melhor) {
+      candidatos.push({
+        subject:"manutencao", dimension:"Manutenção", indicador:melhor.nome + " (manutenção predial)",
+        direcao:"neutra", essencial:false, magnitude: melhor.delta, tipo:"contagem",
+        relevancia: melhor.rel, persistenciaMeses: 1
+      });
+    }
+  }
+
+  const defasagens = [
+    ["Disponibilidade", disponibilidade], ["Sobrecarga", sobrecarga],
+    ["Captura EGP-RIO", capturaSerie], ["Recebimento nas ETRs", etrTotal]
+  ].map(([nome, serie]) => {
+    const i = execLastPublishedIndex(serie);
+    return { nome, ultimaCompetencia: i >= 0 ? j.meses[i] : null, defasagemMeses: i >= 0 ? (j.n - 1 - i) : null, status: i === j.n - 1 ? "atual" : (i >= 0 ? "defasado" : "ausente") };
+  });
+
+  return {
+    janela: j, disponibilidade, sobrecarga, capturaSerie, etrTotal, equipamentos, predialItens,
+    candidatos, defasagens
+  };
+}
+
+// ============================================
+// MOTOR DE SELEÇÃO AUTOMÁTICA (corrigido)
+// Ordem: natureza do sinal -> persistência -> relevância classificada.
+// Magnitude numérica só desempata dentro da mesma unidade/tipo de comparação.
+// Ausência complementar nunca compete nesta seleção; ela é sinalizada
+// apenas dentro do próprio assunto quando o usuário navega até ele.
+// ============================================
+function execCompareCandidatos(a, b) {
+  if ((b.persistenciaMeses||0) !== (a.persistenciaMeses||0)) return (b.persistenciaMeses||0) - (a.persistenciaMeses||0);
+  const rank = { alta:3, moderada:2, baixa:1 };
+  const ra = rank[a.relevancia] || 0, rb = rank[b.relevancia] || 0;
+  if (rb !== ra) return rb - ra;
+  if (a.tipo === b.tipo) return Math.abs(b.magnitude||0) - Math.abs(a.magnitude||0);
+  return 0;
+}
+function execSelectPrimarySubject(candidatos) {
+  const relevantes = candidatos.filter(c => c.direcao === "ausencia" ? true : (c.relevancia === "alta" || c.relevancia === "moderada"));
+  const tiers = [
+    { nome:"ausência de dado essencial", filtro:c => c.direcao === "ausencia" && c.essencial },
+    { nome:"mudança desfavorável persistente", filtro:c => c.direcao === "desfavoravel" && c.persistenciaMeses >= 3 },
+    { nome:"mudança desfavorável recente", filtro:c => c.direcao === "desfavoravel" && c.persistenciaMeses < 3 },
+    { nome:"mudança favorável persistente", filtro:c => c.direcao === "favoravel" && c.persistenciaMeses >= 3 },
+    { nome:"maior mudança neutra classificada", filtro:c => c.direcao === "neutra" }
+  ];
+  for (const tier of tiers) {
+    const grupo = relevantes.filter(tier.filtro).sort(execCompareCandidatos);
+    if (grupo.length) {
+      const escolhido = grupo[0];
+      return {
+        subject: escolhido.subject,
+        criterio: tier.nome,
+        justificativa: `[seleção] critério: ${tier.nome} · candidato: ${escolhido.dimension} / ${escolhido.indicador} · magnitude: ${escolhido.magnitude==null?"n/a":escolhido.magnitude.toFixed(2)} (${escolhido.tipo}) · relevância: ${escolhido.relevancia||"n/a"} · persistência: ${escolhido.persistenciaMeses} competência(s)`
+      };
+    }
+  }
+  return { subject:"estavel", criterio:"nenhum candidato relevante", justificativa:"[seleção] nenhum candidato ultrapassou o critério de relevância — abertura em Visão da competência, sem forçar anormalidade." };
+}
+
+// ============================================
+// TEXTOS EDITORIAIS POR ASSUNTO (gerados a partir de dado real)
+// ============================================
+function execFmtPP(v){ return v==null || !Number.isFinite(v) ? "n/d" : v.toFixed(1).replace(".",",")+" p.p."; }
+function execFmtPct1(v){ return v==null || !Number.isFinite(v) ? "n/d" : v.toFixed(1).replace(".",","); }
+function execSinal(v){ return v>=0?"+":""; }
+
+function execBuildSubjects(data, primary) {
+  const { janela, disponibilidade, sobrecarga, capturaSerie, etrTotal, equipamentos, predialItens } = data;
+  const subjects = {};
+
+  // ---------- FROTA ----------
+  {
+    const iDisp = execLastPublishedIndex(disponibilidade), iSO = execLastPublishedIndex(sobrecarga);
+    const meses = janela.meses;
+    const currentIdx = janela.n - 1;
+    let headline, sub, mudou, indexText;
+    if (iDisp !== currentIdx && iSO !== currentIdx) {
+      headline = "Os indicadores de frota não foram publicados para esta competência.";
+      sub = `Competência do painel: ${janela.competenciaLabel}. Nenhum valor anterior foi usado como se pertencesse a esse mês.`;
+      mudou = [iDisp>=0?`Disponibilidade: último dado em ${meses[iDisp]}.`:"Disponibilidade sem dado na janela.",iSO>=0?`Sobrecarga: último dado em ${meses[iSO]}.`:"Sobrecarga sem dado na janela."].join(" ");
+      indexText = `Sem publicação de frota em ${janela.competenciaLabel}.`;
+    } else {
+      const deltaDisp = iDisp >= 1 ? disponibilidade[iDisp]-disponibilidade[iDisp-1] : null;
+      const deltaSO = iSO >= 1 ? sobrecarga[iSO]-sobrecarga[iSO-1] : null;
+      headline = iDisp >= 0
+        ? `A disponibilidade da frota está em ${execFmtPct1(disponibilidade[iDisp])}% em ${meses[iDisp]}${deltaDisp!=null?`, ${deltaDisp>=0?"alta":"queda"} de ${execFmtPP(Math.abs(deltaDisp))} frente ao mês anterior`:""}.`
+        : "Disponibilidade da frota sem dado publicado nesta competência.";
+      sub = iDisp===currentIdx && iSO===currentIdx ? "As variações de disponibilidade e sobrecarga ocorrem no mesmo período; a base não permite atribuir uma variação à outra." : `Há indicador de frota defasado em relação a ${janela.competenciaLabel}; a comparação conjunta foi suspensa.`;
+      const mudouPartes = [];
+      if (iDisp >= 0) mudouPartes.push(`Disponibilidade da frota própria em ${execFmtPct1(disponibilidade[iDisp])}%${deltaDisp!=null?`, ${execSinal(deltaDisp)}${execFmtPP(deltaDisp)} frente ao mês anterior`:""}.`);
+      if (iSO >= 0) mudouPartes.push(`Sobrecarga acima de 10% do PBT em ${execFmtPct1(sobrecarga[iSO])}%${deltaSO!=null?`, ${execSinal(deltaSO)}${execFmtPP(deltaSO)} frente ao mês anterior`:""}.`);
+      mudou = mudouPartes.join(" ");
+      indexText = deltaDisp != null ? `Disponibilidade variou ${execSinal(deltaDisp)}${execFmtPP(deltaDisp)} frente ao mês anterior.` : "Ver detalhamento na aba Utilização da Frota.";
+    }
+    const onde = [];
+    onde.push("O dado oficial de disponibilidade é consolidado e não permite localizar a variação por gerência.");
+    try {
+      const rows = fleetRowsForType("domiciliar");
+      const periodos = [...new Set(rows.map(r=>r.periodo))].sort();
+      const ultimoPeriodo = periodos.at(-1);
+      if (ultimoPeriodo) {
+        const grupos = fleetGroup(rows.filter(r=>r.periodo===ultimoPeriodo), "gerencia").filter(g=>g.pct!=null);
+        if (grupos.length) {
+          const menor = grupos.reduce((a,b)=> (b.pct<a.pct?b:a));
+          onde.push(`Na base detalhada de utilização (${fleetPrettyMonth(ultimoPeriodo)}), a menor utilização da competência ocorreu na ${menor.name}, sem atribuir a ela a variação de disponibilidade consolidada.`);
+        }
+      }
+    } catch(e) { console.warn("execFrota onde:", e); }
+    subjects.frota = {
+      label:"Frota", headline, sub,
+      vizCaption:"Disponibilidade e sobrecarga · duas faixas sincronizadas, janela móvel de 13 meses, escalas independentes",
+      mudou, ondeParas: onde,
+      observar: iDisp===currentIdx && execPersistencia(disponibilidade, iDisp, d=>Math.abs(d)<EXEC_EDITORIAL_THRESHOLDS.estabilidadePP?"estavel":(d>0?"favoravel":"desfavoravel"))>=2 && disponibilidade[iDisp]-disponibilidade[iDisp-1]<0
+        ? "A queda de disponibilidade completou mais de uma competência na mesma direção; verificar se a próxima competência confirma a variação."
+        : "Acompanhamento de rotina; sem verificação prioritária adicional nesta competência.",
+      indexText,
+      panels: [
+        iDisp>=0 ? { name:"Disponibilidade", unit:"%", color: HUB.charts.colors.blue, meses, data: disponibilidade.map((v,i)=>i<=iDisp?v:null), iAtual:iDisp } : null,
+        iSO>=0 ? { name:"Sobrecarga >10% PBT", unit:"%", color: HUB.charts.colors.red, meses, data: sobrecarga.map((v,i)=>i<=iSO?v:null), iAtual:iSO } : null
+      ].filter(Boolean)
+    };
+  }
+
+  // ---------- COLETA SELETIVA ----------
+  {
+    const meses = janela.meses;
+    const iCap = execLastPublishedIndex(capturaSerie);
+    const currentIdx = janela.n - 1;
+    let headline, sub, mudou, onde, observar, indexText;
+    if (iCap !== currentIdx) {
+      headline = "O índice de captura EGP-RIO não foi publicado para esta competência.";
+      sub = `Competência do painel: ${janela.competenciaLabel}. Nenhum valor anterior foi usado como se pertencesse a esse mês.`;
+      mudou = iCap>=0 ? `Último dado disponível: ${meses[iCap]}, ${execFmtPct1(capturaSerie[iCap])}%.` : "Sem dado publicado na janela móvel.";
+      onde = ["Não aplicável."];
+      observar = "Verificar publicação da fonte na próxima atualização.";
+      indexText = iCap>=0 ? `Sem dado em ${janela.competenciaLabel}; último publicado em ${meses[iCap]}.` : `Sem dado em ${janela.competenciaLabel}.`;
+    } else {
+      const deltaCap = iCap>=1 && capturaSerie[iCap-1]!=null ? capturaSerie[iCap]-capturaSerie[iCap-1] : null;
+      const persist = execPersistencia(capturaSerie, iCap, d=>Math.abs(d)<EXEC_EDITORIAL_THRESHOLDS.estabilidadePP?"estavel":(d>0?"favoravel":"desfavoravel"));
+      headline = `O índice de captura EGP-RIO está em ${execFmtPct1(capturaSerie[iCap])}% em ${meses[iCap]}${deltaCap!=null?`, ${deltaCap>=0?"alta":"queda"} de ${execFmtPP(Math.abs(deltaCap))} frente ao mês anterior`:""}.`;
+      sub = persist>=3 ? `O movimento completou ${persist} competências seguidas na mesma direção.` : "Leitura da competência mais recente com dado publicado.";
+      mudou = `Índice de captura EGP-RIO chegou a ${execFmtPct1(capturaSerie[iCap])}%${deltaCap!=null?`, ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior`:""}.`;
+      onde = ["A distribuição por regional (UDS-S / UDS-N / UDS-O) mostra volume coletado, não a variação do índice de captura; a base não permite atribuir a variação do índice a uma regional específica."];
+      observar = persist>=3 ? "Acompanhar se a próxima competência confirma a mesma direção." : "Sem verificação prioritária adicional nesta competência.";
+      indexText = deltaCap!=null ? `Captura variou ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior.` : "Ver detalhamento na aba Coleta Seletiva.";
+    }
+    subjects.seletiva = {
+      label:"Coleta seletiva", headline, sub,
+      vizCaption:`Índice de captura EGP-RIO (%) · janela ${meses[0]}–${meses.at(-1)} (Tabela 1493)`,
+      mudou, ondeParas: onde, observar, indexText,
+      panels: iCap>=0 ? [{ name:"Índice de captura EGP-RIO", unit:"%", color: HUB.charts.colors.green, meses, data: capturaSerie, iAtual:iCap }] : []
+    };
+  }
+
+  // ---------- DESTINAÇÃO ----------
+  {
+    const meses = janela.meses;
+    const iEtr = execLastPublishedIndex(etrTotal);
+    const currentIdx = janela.n - 1;
+    let headline, sub, mudou, onde, observar, indexText;
+    if (iEtr !== currentIdx) {
+      headline = "O recebimento nas ETRs não foi publicado para esta competência.";
+      sub = `Competência do painel: ${janela.competenciaLabel}. Nenhum valor anterior foi usado como se pertencesse a esse mês.`;
+      mudou = iEtr>=0 ? `Último dado disponível: ${meses[iEtr]}, ${HUB.format.int(Math.round(etrTotal[iEtr]))} t.` : "Sem dado publicado na janela móvel.";
+      onde = ["Não aplicável."];
+      observar = "Verificar publicação da fonte na próxima atualização.";
+      indexText = iEtr>=0 ? `Sem dado em ${janela.competenciaLabel}; último publicado em ${meses[iEtr]}.` : `Sem dado em ${janela.competenciaLabel}.`;
+    } else {
+      const deltaPct = iEtr>=1 && etrTotal[iEtr-1]>0 ? (etrTotal[iEtr]-etrTotal[iEtr-1])/etrTotal[iEtr-1]*100 : null;
+      headline = `O recebimento total nas ETRs ficou em ${HUB.format.int(Math.round(etrTotal[iEtr]))} t em ${meses[iEtr]}${deltaPct!=null?`, variação de ${execSinal(deltaPct)}${execFmtPct1(deltaPct)}% frente ao mês anterior`:""}.`;
+      sub = "Leitura descritiva do volume recebido; o recebimento nas ETRs não tem meta institucional definida nesta base.";
+      mudou = headline;
+      const unidades = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
+      const contrib = unidades.map(nome=>{
+        const serie=execSeriesFromMap(execRelatorioMap(RAW.relatorio,nome),janela.keys);
+        const atual=serie[currentIdx], anterior=serie[currentIdx-1];
+        return atual!==null&&anterior!==null?{nome:nome.replace("ETR ",""),delta:atual-anterior}:null;
+      }).filter(Boolean);
+      const deltaTotal=etrTotal[currentIdx]-etrTotal[currentIdx-1];
+      const mesmoSinal=contrib.filter(x=>Math.sign(x.delta)===Math.sign(deltaTotal)&&x.delta!==0);
+      const somaAbs=mesmoSinal.reduce((a,x)=>a+Math.abs(x.delta),0);
+      const lider=mesmoSinal.sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta))[0];
+      const parcela=lider&&somaAbs>0?Math.abs(lider.delta)/somaAbs:0;
+      onde = parcela>=0.5 ? [`ETR ${lider.nome} respondeu por ${(parcela*100).toFixed(0)}% da variação no mesmo sentido entre as unidades comparáveis.`] : ["A variação foi distribuída entre as ETRs, sem concentração suficiente para atribuição a uma única unidade."];
+      observar = "Sem verificação prioritária identificada; acompanhamento de rotina.";
+      indexText = deltaPct!=null ? `Recebimento variou ${execSinal(deltaPct)}${execFmtPct1(deltaPct)}% frente ao mês anterior.` : "Ver detalhamento na aba Destinação e Biogás.";
+    }
+    subjects.destinacao = {
+      label:"Destinação", headline, sub,
+      vizCaption:"Recebimento total nas ETRs (t) · janela móvel de 13 meses",
+      mudou, ondeParas: onde, observar, indexText,
+      panels: iEtr>=0 ? [{ name:"Recebimento total", unit:" t", color: HUB.charts.colors.blue, meses, data: etrTotal, iAtual:iEtr }] : []
+    };
+  }
+
+  // ---------- EQUIPAMENTOS ----------
+  {
+    const meses = janela.meses;
+    const currentIdx = janela.n - 1;
+    const comDado = equipamentos.map(e=>({...e, i:e.serie.at(-1)===null?-1:currentIdx})).filter(e=>e.i>=0);
+    let headline, sub, mudou, onde, observar, indexText, panels=[];
+    if (!comDado.length) {
+      headline = "Os equipamentos acompanhados não foram publicados para esta competência.";
+      sub = "A lacuna é sinalizada tecnicamente; nenhum valor foi estimado para substituí-la.";
+      mudou = "Sem dado publicado para a competência atual.";
+      onde = ["Não aplicável."];
+      observar = "Verificar publicação da fonte na próxima atualização.";
+      indexText = "Sem dado publicado para a competência atual.";
+    } else {
+      let melhor=null;
+      comDado.forEach(e=>{
+        const iAnt=e.i-1;
+        const delta = iAnt>=0 ? e.serie[e.i]-e.serie[iAnt] : null;
+        if (delta!=null && (melhor==null || Math.abs(delta)>Math.abs(melhor.delta))) melhor={...e,delta};
+      });
+      if (melhor) {
+        headline = `A utilização de ${melhor.nome} teve a maior variação entre os equipamentos acompanhados: ${execFmtPct1(melhor.serie[melhor.i])}%, ${melhor.delta>=0?"alta":"queda"} de ${execFmtPP(Math.abs(melhor.delta))} frente ao mês anterior.`;
+        sub = "Leitura individual da série com maior variação; nenhuma média geral de equipamentos foi calculada.";
+        mudou = headline;
+        onde = [`Entre as ${comDado.length} séries disponíveis, ${melhor.nome} apresentou a maior variação da competência.`];
+        observar = "Nenhuma verificação adicional recomendada para esta competência.";
+        indexText = `${melhor.nome} variou ${execSinal(melhor.delta)}${execFmtPP(melhor.delta)} frente ao mês anterior.`;
+        panels = [{ name:melhor.nome, unit:"%", color: HUB.charts.colors.purple, meses, data: melhor.serie, iAtual: melhor.i }];
+      }
+    }
+    subjects.equipamentos = { label:"Equipamentos", headline, sub, vizCaption:"Utilização do equipamento em maior variação · janela móvel de 13 meses", mudou, ondeParas:onde, observar, indexText, panels };
+  }
+
+  // ---------- MANUTENÇÃO (predial) ----------
+  {
+    const meses = janela.meses;
+    const currentIdx = janela.n - 1;
+    const comDado = predialItens.map(it=>({...it, i:it.serie.at(-1)===null?-1:currentIdx})).filter(it=>it.i>=0);
+    let headline, sub, mudou, onde, observar, indexText, panels=[];
+    if (!comDado.length) {
+      headline = "Os registros de manutenção predial não foram publicados para esta competência.";
+      sub = "A lacuna é sinalizada tecnicamente; nenhum valor foi estimado para substituí-la.";
+      mudou = "Sem dado publicado para a competência atual.";
+      onde = ["Não aplicável."];
+      observar = "Verificar publicação da fonte na próxima atualização do relatório.";
+      indexText = "Sem dado publicado para a competência atual.";
+    } else {
+      const item = comDado[0];
+      headline = `${item.nome} registrou ${HUB.format.int(Math.round(item.serie[item.i]))} ocorrências em ${meses[item.i]}.`;
+      sub = "Leitura descritiva; manutenção predial não tem meta institucional definida nesta base.";
+      mudou = headline;
+      onde = ["Detalhamento completo (Intervenções, Refrigeração, Ecopontos) disponível na aba Equipamentos e Infraestrutura."];
+      observar = "Sem verificação prioritária identificada; acompanhamento de rotina.";
+      indexText = "Ver detalhamento na aba Equipamentos e Infraestrutura.";
+      panels = [{ name:item.nome, unit:"", color: HUB.charts.colors.orange, meses, data: item.serie, iAtual: item.i }];
+    }
+    subjects.manutencao = { label:"Manutenção", headline, sub, vizCaption:"Manutenção predial · janela móvel de 13 meses", mudou, ondeParas:onde, observar, indexText, panels };
+  }
+
+  // ---------- ESTÁVEL (Visão da competência) ----------
+  {
+    const meses = janela.meses;
+    const iEtr = execLastPublishedIndex(etrTotal);
+    subjects.estavel = {
+      label:"Visão da competência",
+      headline:"A operação permaneceu estável nos indicadores acompanhados nesta competência.",
+      sub:"Nenhuma variação ultrapassou os critérios de relevância definidos para esta leitura.",
+      vizCaption:"Recebimento total nas ETRs (t) · referência neutra da competência · janela móvel de 13 meses",
+      mudou: iEtr>=0 ? `Recebimento total nas ETRs ficou em ${HUB.format.int(Math.round(etrTotal[iEtr]))} t em ${meses[iEtr]}, dentro da faixa de relevância definida para o indicador.` : "Sem dado publicado para a competência atual.",
+      ondeParas: ["Nenhuma mudança temporal relevante foi identificada entre os indicadores avaliados."],
+      observar:"Sem verificação prioritária nesta competência; navegue pelos assuntos abaixo para o detalhamento por dimensão.",
+      indexText:"",
+      panels: iEtr>=0 ? [{ name:"Recebimento total", unit:" t", color: HUB.charts.colors.blue, meses, data: etrTotal, iAtual: iEtr }] : []
+    };
+  }
+
+  return subjects;
+}
+
+// ============================================
+// PAINÉIS CHART.JS · janela móvel de 13 meses, destaque atual/YoY,
+// tooltip, rótulos legíveis com redução no celular.
+// ============================================
+let EXEC_CHARTS = [];
+function execDestroyCharts(){ EXEC_CHARTS.forEach(c=>{ try{c.destroy();}catch(e){} }); EXEC_CHARTS=[]; }
+
+function execBuildPanelChart(canvas, panel, isMobile) {
+  const iAtual = panel.iAtual;
+  const iYoY = iAtual - 12;
+  const pointRadius = panel.data.map((_,i)=> (i===iAtual||i===iYoY) ? 4 : 0);
+  const pointColor = panel.data.map((_,i)=> i===iAtual ? panel.color : (i===iYoY ? "rgba(200,210,222,.75)" : panel.color));
+  const chart = new Chart(canvas.getContext("2d"), {
+    type:"line",
+    data:{ labels: panel.meses, datasets:[{
+      data: panel.data, borderColor: panel.color, backgroundColor:"transparent",
+      borderWidth:2.2, tension:.25, spanGaps:true,
+      pointRadius, pointHoverRadius:5, pointBackgroundColor: pointColor
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          backgroundColor:"rgba(13,31,54,0.95)", titleColor:"#f7f9ff", bodyColor:"#b8c9de",
+          borderColor:"#294866", borderWidth:1, padding:10,
+          callbacks:{ label: ctx => `${panel.name}: ${ctx.raw==null?"sem dado":Number(ctx.raw).toFixed(1).replace(".",",")+panel.unit}` }
+        }
+      },
+      scales:{
+        x:{ grid:{display:false}, border:{display:false}, ticks:{ color:"#7c8ea6", font:{size:isMobile?8.5:9.5}, maxRotation:isMobile?0:38, minRotation:isMobile?0:38, autoSkip:true, maxTicksLimit:isMobile?4:13 } },
+        y:{ display:false }
+      }
+    }
+  });
+  EXEC_CHARTS.push(chart);
+  return chart;
+}
+
+function execBuildViz(root, subject, isMobile) {
+  const s = EXEC_STATE.subjects[subject];
+  const mount = root.querySelector("[data-exec-viz-mount]");
+  if (!s.panels.length) {
+    mount.innerHTML = `<div class="execEmpty">Sem dado publicado nesta competência</div>`;
+    return;
+  }
+  const cls = s.panels.length > 1 ? "execPanelStack" : "execPanelStack execSingle";
+  mount.innerHTML = `<div class="${cls}">` + s.panels.map((p,i)=>{
+    const atual = p.iAtual>=0 ? p.data[p.iAtual] : null;
+    const iYoY = p.iAtual-12;
+    const yoy = iYoY>=0 ? p.data[iYoY] : null;
+    return `<div class="execPanel">
+      <div class="execPanelTop">
+        <div class="execPanelName">${HUB.format.esc(p.name)}</div>
+        <div class="execPanelStats">atual <b>${atual==null?"n/d":atual.toFixed(1).replace(".",",")+p.unit}</b> · mesmo mês ano anterior <b>${yoy==null?"n/d":yoy.toFixed(1).replace(".",",")+p.unit}</b></div>
+      </div>
+      <div class="execChartWrap"><canvas id="execChart_${root.id}_${i}"></canvas></div>
+    </div>`;
+  }).join("") + `</div>`;
+  s.panels.forEach((p,i)=>{
+    const canvas = document.getElementById(`execChart_${root.id}_${i}`);
+    if (canvas) execBuildPanelChart(canvas, p, isMobile);
+  });
+}
+
+// ============================================
+// RENDER / NAVEGAÇÃO ENTRE ASSUNTOS
+// "Visão da competência" permanece acessível após navegar para outro
+// assunto sempre que a abertura automática tiver sido estável.
+// ============================================
+const EXEC_STATE = { subjects:null, stableOpening:false, current:{} };
+
+function execRender(root, subject, isMobile) {
+  EXEC_STATE.current[root.id] = subject;
+  const s = EXEC_STATE.subjects[subject];
+  root.querySelector("[data-exec-headline]").textContent = s.headline;
+  root.querySelector("[data-exec-sub]").textContent = s.sub;
+  root.querySelector("[data-exec-viz-caption]").textContent = s.vizCaption;
+  root.querySelector("[data-exec-mudou]").textContent = s.mudou;
+  root.querySelector("[data-exec-onde]").innerHTML = s.ondeParas.map(t=>`<p>${HUB.format.esc(t)}</p>`).join("");
+  root.querySelector("[data-exec-observar]").textContent = s.observar;
+  execDestroyCharts();
+  execBuildViz(root, subject, isMobile);
+
+  const order = EXEC_STATE.stableOpening ? EXEC_ORDER.concat(["estavel"]) : EXEC_ORDER;
+
+  const navD = root.querySelector("[data-exec-nav-desktop]");
+  if (navD) {
+    navD.innerHTML = order.map(k=>`<button data-subject="${k}" class="${k===subject?"isActive":""}">${EXEC_STATE.subjects[k].label}</button>`).join("");
+    navD.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>execRender(root, b.getAttribute("data-subject"), isMobile)));
+  }
+
+  const navM = root.querySelector("[data-exec-nav-mobile]");
+  if (navM) {
+    const outros = order.filter(k=>k!==subject);
+    navM.innerHTML = `
+      <button class="execSelectBtn" data-toggle><span><small>Assunto</small>${EXEC_STATE.subjects[subject].label}</span><span class="execChev">▾</span></button>
+      <div class="execDropdown">${outros.map(k=>`<button data-subject="${k}">${EXEC_STATE.subjects[k].label}</button>`).join("")}</div>`;
+    const btn = navM.querySelector("[data-toggle]");
+    const dd = navM.querySelector(".execDropdown");
+    btn.addEventListener("click",()=>{ btn.classList.toggle("isOpen"); dd.classList.toggle("isOpen"); });
+    dd.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+      dd.classList.remove("isOpen"); btn.classList.remove("isOpen");
+      execRender(root, b.getAttribute("data-subject"), isMobile);
+    }));
+  }
+
+  const idx = root.querySelector("[data-exec-index]");
+  if (idx) {
+    const outrosIdx = EXEC_ORDER.filter(k=>k!==subject);
+    idx.innerHTML = outrosIdx.map((k,i)=>`
+      <div class="execIndexRow" data-subject="${k}">
+        <div class="execIndexNum">${String(i+1).padStart(2,"0")}</div>
+        <div class="execIndexBody">
+          <div class="execIndexTitle">${HUB.format.esc(EXEC_STATE.subjects[k].label)}</div>
+          <div class="execIndexText">${HUB.format.esc(EXEC_STATE.subjects[k].indexText)}</div>
+        </div>
+      </div>`).join("");
+    idx.querySelectorAll("[data-subject]").forEach(row=>row.addEventListener("click",()=>{
+      execRender(root, row.getAttribute("data-subject"), isMobile);
+      root.querySelector(".execCover").scrollIntoView({behavior:"smooth", block:"start"});
+    }));
+  }
+}
+
+function renderExecutivo() {
+  const data = computeExecutiveData();
+  const selecao = execSelectPrimarySubject(data.candidatos);
+  EXEC_STATE.subjects = execBuildSubjects(data, selecao.subject);
+  EXEC_STATE.stableOpening = selecao.subject === "estavel";
+  console.log(selecao.justificativa);
+
+  const root = document.getElementById("screenExecutivo");
+  if (!root) return;
+  const compEl = root.querySelector("[data-exec-competencia]");
+  if (compEl) compEl.textContent = `Competência do painel: ${data.janela.competenciaLabel || "não identificada"}`;
+  const lagEl = root.querySelector("[data-exec-defasagens]");
+  if (lagEl) {
+    const lags = data.defasagens.filter(x=>x.status!=="atual");
+    lagEl.innerHTML = lags.map(x=>x.status==="defasado"?`${HUB.format.esc(x.nome)}: último dado ${HUB.format.esc(x.ultimaCompetencia)}`:`${HUB.format.esc(x.nome)}: sem dado`).join("<br>");
+  }
+  const isMobile = window.matchMedia("(max-width: 1000px)").matches;
+  execRender(root, selecao.subject, isMobile);
+}
+
 
 // ============================================
 // LEITURA DO MÊS · calculada, não fixa

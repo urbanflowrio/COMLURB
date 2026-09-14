@@ -697,8 +697,11 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
   grupo("Fase 7B · integridade — nenhum arquivo de produção ou do piloto da Fase 4 foi alterado");
 
   var HASHES_ESPERADOS = {
-    "ar/index.html": "68ba4c09ac2fa8f25013417c4cfadc85df2cd7b1726bb9affee8756f63fb29a3",
-    "ar/ar.js": "1a12d3aab2e59dfa955b0cd07f657cc4fe1c73846189ecc259eed2f733fc6d80",
+    // Baseline de manutenção 14/09/2026: index vigente no pacote v57 e
+    // ar.js saneado como arquivo de compatibilidade JavaScript, sem a cópia
+    // indevida do documento HTML completo.
+    "ar/index.html": "729851e69197d0095421c4769e9a0d75f2f0153a913044ddb4a0dde25672d0b1",
+    "ar/ar.js": "9a8defb4c5046b5db1d69bcc68ea8cda5769cd83b0461412691bd78a3a0fbfa7",
     "ar/ar-config.js": "467fef0c23615b4b1eb0b184c33768686dd607fc12faaf6583b41de10764c230",
     "ar/piloto/index.html": "31dd0475e401a1763e87691f88e782279d547541a376f5e3e43bc975afa349da",
     "ar/piloto/harness.js": "2d99d20cdd5673630da0a4d505c636c58f3c9326497db2cd1cd53f2ca50621ef",

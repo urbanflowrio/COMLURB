@@ -1,0 +1,7 @@
+{
+  "modulo": "ouvidoria",
+  "competencia_mais_recente": "2026-08",
+  "data_corte": "2026-09-04",
+  "historico_congelado_ate": "2026-07",
+  "regra": "Acrescentar a nova competência sem reprocessar silenciosamente as competências já fechadas. Retificações devem ser documentadas separadamente."
+}

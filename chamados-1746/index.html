@@ -151,6 +151,14 @@ h1 {
   flex-wrap: wrap;
 }
 
+.hubHomeButton{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:0 16px;border:1px solid rgba(112,178,255,.38);
+  border-radius:999px;color:#f7f9ff;background:rgba(255,255,255,.04);
+  font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
+}
+.hubHomeButton:hover,.hubHomeButton:focus-visible{border-color:#70b2ff;background:rgba(112,178,255,.12)}
+
 .tabBtn {
   border: 1px solid var(--linha);
   background: #0a1b31;
@@ -1767,7 +1775,8 @@ HUB.header = {
       title = "",
       subtitle = "",
       status = null,
-      navigation = []
+      navigation = [],
+      homeHref = "../index.html"
     } = config;
 
     const container = HUB.dom.$(containerId);
@@ -1825,6 +1834,7 @@ HUB.header = {
           ${subtitle ? `<div class="subtitle">${HUB.format.esc(subtitle)}</div>` : ""}
         </div>
 
+        <a class="hubHomeButton" href="${HUB.format.esc(homeHref)}" aria-label="Voltar para a Home">Home</a>
         ${statusHTML}
       </header>
 

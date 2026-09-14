@@ -40,11 +40,12 @@
   .muted{color:var(--muted)}
   code{background:var(--painel);padding:1px 5px;border-radius:4px}
   .note{font-size:11px;color:var(--muted);margin-top:6px}
+  .topline{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:4px}.homeBtn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 15px;border:1px solid rgba(142,197,243,.42);border-radius:10px;background:var(--painel);color:var(--texto);font-weight:700;text-decoration:none;white-space:nowrap}@media(max-width:620px){.topline{flex-direction:column}.homeBtn{width:100%}}
 </style>
 </head>
 <body>
 
-<h1>Validador Oficial — Balanço de Receita</h1>
+<div class="topline"><h1>Validador Oficial: Balanço de Receita</h1><a class="homeBtn" href="../../index.html">Home</a></div>
 <p class="lead">
   O <strong>Google Sheets publicado é a fonte oficial</strong>. Este validador é independente do módulo <code>balanco-receita/</code> e não altera o painel publicado. A cada carregamento, ele lê os mesmos endpoints CSV, calcula os indicadores diretamente da fonte e executa separadamente uma réplica da lógica do painel. Nenhum resultado anterior é reutilizado quando a fonte falha.
 </p>
@@ -61,17 +62,17 @@
   <div class="source-card"><strong>Valores Faturados 2026</strong><span class="muted">Aguardando leitura</span><small></small></div>
 </div>
 <div class="kpis" id="liveKpis">
-  <div class="kpi"><span class="muted">Faturamento Bruto</span><b>—</b></div>
-  <div class="kpi"><span class="muted">Débito Líquido</span><b>—</b></div>
-  <div class="kpi"><span class="muted">Grupos com dados</span><b>—</b></div>
-  <div class="kpi"><span class="muted">Divergências</span><b>—</b></div>
+  <div class="kpi"><span class="muted">Faturamento Bruto</span><b>N/D</b></div>
+  <div class="kpi"><span class="muted">Débito Líquido</span><b>N/D</b></div>
+  <div class="kpi"><span class="muted">Grupos com dados</span><b>N/D</b></div>
+  <div class="kpi"><span class="muted">Divergências</span><b>N/D</b></div>
 </div>
 
-<h2>1. Tabela de conciliação — Serviço + Secretaria + Período</h2>
+<h2>1. Tabela de conciliação: Serviço + Secretaria + Período</h2>
 <div class="scroll"><table id="tblConciliacao"><thead><tr>
   <th>Período</th><th>Serviço</th><th>Secretaria (fonte)</th><th>Secretaria (padronizada)</th>
-  <th>Fat. Bruto — fonte oficial</th><th>Fat. Bruto — réplica</th><th>Valor Líquido Pago</th>
-  <th>Débito Líquido — fonte oficial</th><th>Débito Líquido — réplica</th><th>Diferença</th>
+  <th>Fat. Bruto (fonte oficial)</th><th>Fat. Bruto (réplica)</th><th>Valor Líquido Pago</th>
+  <th>Débito Líquido (fonte oficial)</th><th>Débito Líquido (réplica)</th><th>Diferença</th>
   <th>Situação</th>
 </tr></thead><tbody></tbody></table></div>
 
@@ -83,7 +84,7 @@
 <div class="scroll"><table id="tblSecretarias"><thead><tr>
   <th>Valor bruto na coluna A</th><th>Ocorrências (linhas)</th><th>Corresponde a SME/SMS/SMPDA?</th>
 </tr></thead><tbody></tbody></table></div>
-<p class="note">Esta lista mostra exatamente o que existe na coluna A de <code>Base_Padronizada</code>, sem normalização. O mapa <code>SERVICE_SECRETARY</code> do painel só é aplicado a <code>Valores Faturados 2026</code> — se os nomes aqui não forem idênticos a "SME", "SMS" ou "SMPDA", a junção entre débito e faturamento por unidade falha silenciosamente no painel oficial (achado §2.2 da auditoria estrutural).</p>
+<p class="note">Esta lista mostra exatamente o que existe na coluna A de <code>Base_Padronizada</code>, sem normalização. O mapa <code>SERVICE_SECRETARY</code> do painel só é aplicado a <code>Valores Faturados 2026</code>. Se os nomes aqui não forem idênticos a "SME", "SMS" ou "SMPDA", a junção entre débito e faturamento por unidade falha silenciosamente no painel oficial (achado §2.2 da auditoria estrutural).</p>
 
 <h2>4. Serviços sem mapeamento em <code>SERVICE_SECRETARY</code> (fonte: Valores Faturados 2026)</h2>
 <div id="semMapeamento"></div>
@@ -98,7 +99,7 @@
 <h2>7. Fechamento mensal vs. acumulado (2026, faturamento)</h2>
 <div id="mensalAcumulado"></div>
 
-<h2>8. Fechamento específico — APA, janeiro a julho de 2026</h2>
+<h2>8. Fechamento específico: APA, janeiro a julho de 2026</h2>
 <div id="apaFechamento"></div>
 
 <script>
@@ -224,7 +225,7 @@ function parseBilled2026_FONTE(text){
   return {rows,unmapped,totalRowsFound};
 }
 
-function money(v){return v==null?"—":new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:2}).format(v);}
+function money(v){return v==null?"N/D":new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:2}).format(v);}
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 function csvEscape(v){const s=String(v??"");return /[",\n;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function csvNumber(v){return typeof v==="number"&&Number.isFinite(v)?v.toFixed(2):v;}
@@ -238,7 +239,7 @@ async function fetchOfficial(url,label){
 function renderSourceCards(items){const cards=document.querySelectorAll("#sourceGrid .source-card");items.forEach((x,i)=>{cards[i].querySelector("span").textContent="Disponível · HTTP "+x.status+" · "+x.ms+" ms";cards[i].querySelector("small").textContent=x.url+" · assinatura "+x.hash;});}
 function renderLiveKpis(){const cards=document.querySelectorAll("#liveKpis .kpi b"),fat=ultimaConciliacao.reduce((s,x)=>s+x.fatBrutoFonte,0),deb=ultimaConciliacao.reduce((s,x)=>s+x.debitoFonte,0),div=ultimaConciliacao.filter(x=>x.situacao==="diverge").length,expected=Object.keys(SERVICE_SECRETARY).length*2,missing=Math.max(0,expected-ultimaConciliacao.length);cards[0].textContent=money(fat);cards[1].textContent=money(deb);cards[2].textContent=(ultimaConciliacao.length-div)+" conciliados"+(missing?" · "+missing+" sem dados":"");cards[3].textContent=String(div);}
 function renderVlpCoverage(rows){const periods=[["2026",r=>r.year===2026],["Anteriores a 2026",r=>r.year<2026]];document.getElementById("vlpCoverage").innerHTML='<table><thead><tr><th>Período</th><th>Linhas válidas</th><th>Com informação</th><th>Sem informação</th><th>Cobertura</th><th>Valor apurado nas linhas disponíveis</th><th>Leitura correta</th></tr></thead><tbody>'+periods.map(([label,fn])=>{const a=rows.filter(fn),ok=a.filter(r=>r.paidProvided),sum=ok.reduce((s,r)=>s+r.paid,0),coverage=a.length?ok.length/a.length:0;return '<tr><td>'+label+'</td><td>'+a.length+'</td><td>'+ok.length+'</td><td>'+(a.length-ok.length)+'</td><td>'+(coverage*100).toFixed(1).replace('.',',')+'%</td><td>'+(ok.length?money(sum):'sem informação disponível')+'</td><td>'+(coverage===1?'cobertura completa':coverage===0?'não apresentar como R$ 0,00':'valor parcial; não representa o total do período')+'</td></tr>'}).join('')+'</tbody></table>';}
-function clearLiveOutputs(){ultimaConciliacao=[];document.querySelectorAll("#liveKpis .kpi b").forEach(x=>x.textContent="—");document.querySelectorAll("#sourceGrid .source-card").forEach(x=>{x.querySelector("span").textContent="Fonte indisponível";x.querySelector("small").textContent="Nenhum dado anterior foi reutilizado."});document.getElementById("vlpCoverage").innerHTML='<p class="muted">fonte indisponível</p>';}
+function clearLiveOutputs(){ultimaConciliacao=[];document.querySelectorAll("#liveKpis .kpi b").forEach(x=>x.textContent="N/D");document.querySelectorAll("#sourceGrid .source-card").forEach(x=>{x.querySelector("span").textContent="Fonte indisponível";x.querySelector("small").textContent="Nenhum dado anterior foi reutilizado."});document.getElementById("vlpCoverage").innerHTML='<p class="muted">fonte indisponível</p>';}
 
 async function carregar(){
   const status=document.getElementById("status"),alertBox=document.getElementById("loadAlert");
@@ -252,7 +253,7 @@ async function carregar(){
   if(erro||!baseText||!billedText){
     status.textContent="Falha ao carregar as fontes.";
     alertBox.innerHTML=`<div class="err"><b>Não foi possível ler as planilhas neste carregamento.</b><br>Erro: ${esc(erro?erro.message:"resposta vazia")}.<br>
-    Nenhum valor foi inventado — todas as tabelas abaixo serão marcadas como <span class="tag semfonte">sem fonte</span> até que esta página consiga acessar <code>Base_Padronizada</code> e <code>Valores Faturados 2026</code> a partir do navegador em que ela está aberta (verifique se o link de compartilhamento do Google Sheets ainda está público/"qualquer pessoa com o link").</div>`;
+    Nenhum valor foi inventado. Todas as tabelas abaixo serão marcadas como <span class="tag semfonte">sem fonte</span> até que esta página consiga acessar <code>Base_Padronizada</code> e <code>Valores Faturados 2026</code> a partir do navegador em que ela está aberta (verifique se o link de compartilhamento do Google Sheets ainda está público/"qualquer pessoa com o link").</div>`;
     clearLiveOutputs();
     renderSemFonte();
     return;
@@ -306,7 +307,7 @@ function renderConciliacao(painelDebt,painelBilledRows,fonteDebt,fonteBilledRows
     const [secretaria,service]=k.split("|||");
     const p=gruposPainel2026.get(k)||{billed:0,debt:0,linhas:0};
     const f=gruposFonte2026.get(k)||{secretariaRaw:new Set(),billed:0,debt:0,linhas:0};
-    const secretariaFonteTxt=f.secretariaRaw&&f.secretariaRaw.size?[...f.secretariaRaw].join(" / "):"—";
+    const secretariaFonteTxt=f.secretariaRaw&&f.secretariaRaw.size?[...f.secretariaRaw].join(" / "):"N/D";
     const difBilled=f.billed-p.billed,difDebt=f.debt-p.debt;
     const tol=0.01;
     const confereBilled=Math.abs(difBilled)<=tol,confereDebt=Math.abs(difDebt)<=tol;
@@ -315,7 +316,7 @@ function renderConciliacao(painelDebt,painelBilledRows,fonteDebt,fonteBilledRows
       periodo:"2026",servico:service,secretariaFonte:secretariaFonteTxt,secretariaPadronizada:secretaria,
       fatBrutoFonte:f.billed,fatBrutoPainel:p.billed,valorLiquidoPago:"sem fonte disponível",
       debitoFonte:f.debt,debitoPainel:p.debt,diferenca:difDebt,
-      qtdLinhas:(p.linhas||0)+(f.linhas||0),totalNaOrigem:"—",situacao
+      qtdLinhas:(p.linhas||0)+(f.linhas||0),totalNaOrigem:"N/D",situacao
     });
   });
 
@@ -342,7 +343,7 @@ function renderConciliacao(painelDebt,painelBilledRows,fonteDebt,fonteBilledRows
       fatBrutoFonte:f.billed,fatBrutoPainel:p.billed,
       valorLiquidoPago:p.paidProvided?p.paid:"sem fonte disponível",
       debitoFonte:f.debt,debitoPainel:p.debt,diferenca:difDebt,
-      qtdLinhas:p.linhas,totalNaOrigem:"—",situacao
+      qtdLinhas:p.linhas,totalNaOrigem:"N/D",situacao
     });
   });
 
@@ -357,7 +358,7 @@ function renderConciliacao(painelDebt,painelBilledRows,fonteDebt,fonteBilledRows
 }
 
 function renderSemFonte(){
-  document.querySelector("#tblConciliacao tbody").innerHTML=`<tr class="semfonte"><td colspan="11">sem fonte disponível — falha ao carregar as planilhas neste carregamento</td></tr>`;
+  document.querySelector("#tblConciliacao tbody").innerHTML=`<tr class="semfonte"><td colspan="11">sem fonte disponível: falha ao carregar as planilhas neste carregamento</td></tr>`;
   document.querySelector("#tblSecretarias tbody").innerHTML=`<tr><td colspan="3" class="muted">sem fonte disponível</td></tr>`;
   document.getElementById("semMapeamento").innerHTML=`<p class="muted">sem fonte disponível</p>`;
   document.getElementById("secretariaVazia").innerHTML=`<p class="muted">sem fonte disponível</p>`;
@@ -399,7 +400,7 @@ function renderTotais(debtTotais,billedTotais){
   if(debtTotais.length){
     html+=`<h3 style="font-size:12.5px;color:var(--muted);margin:14px 0 4px">Base_Padronizada</h3>
     <table><thead><tr><th>Linha</th><th>Secretaria</th><th>Serviço</th><th>Unidade</th><th>Faturado</th><th>Débito</th><th>Passou pelo filtro oficial?</th></tr></thead><tbody>
-    ${debtTotais.map(t=>`<tr class="${t.passouFiltroOficial?'diverge':''}"><td>${t.linha}</td><td>${esc(t.secretaria)}</td><td>${esc(t.service)}</td><td>${esc(t.unit)}</td><td>${money(t.billed)}</td><td>${money(t.debt)}</td><td>${t.passouFiltroOficial?'<span class="tag diverge">sim — contada indevidamente</span>':'<span class="tag confere">não, foi excluída</span>'}</td></tr>`).join("")}
+    ${debtTotais.map(t=>`<tr class="${t.passouFiltroOficial?'diverge':''}"><td>${t.linha}</td><td>${esc(t.secretaria)}</td><td>${esc(t.service)}</td><td>${esc(t.unit)}</td><td>${money(t.billed)}</td><td>${money(t.debt)}</td><td>${t.passouFiltroOficial?'<span class="tag diverge">sim, contada indevidamente</span>':'<span class="tag confere">não, foi excluída</span>'}</td></tr>`).join("")}
     </tbody></table>`;
   }
   if(billedTotais.length){
@@ -424,7 +425,7 @@ function renderMensalAcumulado(painelBilledRows){
     <tr style="font-weight:700"><td>Acumulado (todas as linhas, sem filtro de mês)</td><td>${money(acumulado)}</td></tr>
     <tr><td>Diferença</td><td>${money(dif)}</td></tr>
   </tbody></table>
-  <p class="note">Soma dos meses e acumulado vêm do mesmo array (<code>billed2026Rows</code>) somado de duas formas distintas — isto testa a <strong>consistência interna</strong> do parsing, não substitui uma comparação com um valor acumulado publicado separadamente pela planilha (que não existe como campo independente em <code>Valores Faturados 2026</code>).</p>`;
+  <p class="note">Soma dos meses e acumulado vêm do mesmo array (<code>billed2026Rows</code>) somado de duas formas distintas. Isso testa a <strong>consistência interna</strong> do parsing, não substitui uma comparação com um valor acumulado publicado separadamente pela planilha (que não existe como campo independente em <code>Valores Faturados 2026</code>).</p>`;
 }
 
 function renderAPA(painelBilledRows){
@@ -435,7 +436,7 @@ function renderAPA(painelBilledRows){
   const dif=soma-citadoNoReadme;
   const situacao=Math.abs(dif)<=0.01?"confere":"diverge";
   el.innerHTML=`<table><thead><tr><th>Item</th><th>Valor</th></tr></thead><tbody>
-    <tr><td>Soma calculada (réplica, APA, jan–jul/2026)</td><td>${money(soma)}</td></tr>
+    <tr><td>Soma calculada (réplica, APA, janeiro a julho de 2026)</td><td>${money(soma)}</td></tr>
     <tr><td>Valor citado no README do módulo</td><td>${money(citadoNoReadme)}</td></tr>
     <tr><td>Diferença</td><td>${money(dif)}</td></tr>
     <tr><td>Situação</td><td><span class="tag ${situacao}">${situacao}</span></td></tr>

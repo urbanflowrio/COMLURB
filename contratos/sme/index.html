@@ -22,7 +22,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,A
 h1{margin:4px 0;font-size:clamp(25px,2vw,38px);line-height:1.05;color:white}
 .sub{color:#c5d5e8;font-size:14px}
 .nav{margin-left:auto;display:flex;gap:8px}
-.nav button{color:#dbe8ff;border:1px solid rgba(255,255,255,.22);padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);font-weight:850;cursor:pointer}
+.nav button,.nav a{display:inline-flex;align-items:center;justify-content:center;color:#dbe8ff;border:1px solid rgba(255,255,255,.22);padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);font-weight:850;cursor:pointer;text-decoration:none}
 .nav button.active{border-color:var(--orange);background:rgba(232,117,53,.18);color:#fff}
 
 /* ── STATUS ── */
@@ -156,6 +156,7 @@ tr:hover td{background:#102946}
       <div class="sub" id="pageSub">Acompanhamento estratégico da distribuição territorial e financeira do contrato</div>
     </div>
     <nav class="nav">
+      <a href="../../index.html">Home</a>
       <button id="btnExec" class="active" type="button">Executivo</button>
       <button id="btnAnalitico" type="button">Analítico</button>
     </nav>
@@ -176,12 +177,12 @@ tr:hover td{background:#102946}
 
   <!-- KPIs -->
   <section class="kpis">
-    <div class="kpi"><span>Contrato total</span><strong id="kContrato">—</strong><small>vencimento dez/2026</small></div>
-    <div class="kpi orange"><span>Valor filtrado</span><strong id="kValor">—</strong><small id="kPct">—</small></div>
-    <div class="kpi"><span>Escolas</span><strong id="kEscolas">—</strong><small>unidades no filtro</small></div>
-    <div class="kpi"><span>Postos</span><strong id="kPostos">—</strong><small>R$ 6.933,78 por posto/mês</small></div>
-    <div class="kpi green"><span>Área total</span><strong id="kArea">—</strong><small>área atendida</small></div>
-    <div class="kpi"><span>CREs</span><strong id="kCres">—</strong><small>coordenadorias</small></div>
+    <div class="kpi"><span>Contrato total</span><strong id="kContrato">N/D</strong><small>vencimento dez/2026</small></div>
+    <div class="kpi orange"><span>Valor filtrado</span><strong id="kValor">N/D</strong><small id="kPct">N/D</small></div>
+    <div class="kpi"><span>Escolas</span><strong id="kEscolas">N/D</strong><small>unidades no filtro</small></div>
+    <div class="kpi"><span>Postos</span><strong id="kPostos">N/D</strong><small>R$ 6.933,78 por posto/mês</small></div>
+    <div class="kpi green"><span>Área total</span><strong id="kArea">N/D</strong><small>área atendida</small></div>
+    <div class="kpi"><span>CREs</span><strong id="kCres">N/D</strong><small>coordenadorias</small></div>
   </section>
 
   <!-- VIEW EXECUTIVO -->
@@ -218,7 +219,7 @@ tr:hover td{background:#102946}
       <div class="panelHead">
         <div><h2>Base analítica de escolas</h2><div class="hint">Detalhamento operacional por escola, CRE, bairro, postos, área e valor estimado.</div></div>
         <div class="tableTools">
-          <span class="badge" id="tableCount">—</span>
+          <span class="badge" id="tableCount">N/D</span>
           <div class="search" style="min-width:280px"><label>Busca</label><input id="search" placeholder="Buscar escola, bairro, CRE ou endereço"></div>
           <button class="btn" id="exportCsv">Exportar CSV</button>
         </div>

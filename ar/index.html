@@ -241,7 +241,7 @@ const CASADOS = [
     id: "par-02",
     label: "Meta dupla: Recuperação de Resíduos + Ranking Nacional",
     membros: ["E02","E03"],
-    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação. O ranking nacional é apurado pela SINISA com dados do ano anterior — o resultado de 2026 só será publicado em 2027."
+    bonusNote: "Os dois precisam ser atingidos para que este par conte como uma meta na bonificação. O ranking nacional é apurado pela SINISA com dados do ano anterior. O resultado de 2026 só será publicado em 2027."
   },
   {
     id: "par-03",
@@ -333,14 +333,14 @@ function num(v){
 function isPercent(unidade){const u=norm(unidade);return u.includes("percent")||u==="%";}
 function calcValue(v,unidade){let n=num(v);if(n===null)return null;if(isPercent(unidade)&&n>1.5)n=n/100;return n;}
 function fmtValor(v,unidade){
-  if(v===null||v===undefined||v==="")return "—";
-  let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "—";
+  if(v===null||v===undefined||v==="")return "N/D";
+  let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "N/D";
   if(isPercent(unidade)){if(n<=1.5)n=n*100;return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
   if(norm(unidade).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";
   if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
   return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
 }
-function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "—";return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
+function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "N/D";return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
 function maiorMelhor(sentido){const s=norm(sentido);return s.includes("maior")||s.includes("↑")||s==="";}
 
 /* ═══════════════════════════════════════════════════════════
@@ -544,7 +544,7 @@ function showE06History(index){
   E06_CHART=new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
     {label:s.nome,data:s.vals,borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5},
     {label:'Meta 85%',data:MESES.map(()=>85),borderWidth:1.2,borderDash:[5,5],pointRadius:0,tension:0}
-  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: ${c.parsed.y==null?'—':c.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})+'%'}`}}},scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{min:50,max:100,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:v=>v+'%'}}}}});
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':c.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})+'%'}`}}},scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{min:50,max:100,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:v=>v+'%'}}}}});
 }
 function bindE06Drill(){
   const row=document.querySelector('[data-indicator-code="E06"]');if(row)row.addEventListener('click',toggleE06);
@@ -755,7 +755,7 @@ function renderResumo(){
     ?'<span class="pcStatus pcStatusOk">Todas favoráveis</span>'
     :`<span class="pcStatus pcStatusAtt">${b.metasEstrategicasAtingidas} de 5 favoráveis</span>`;
 
-  const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"—";
+  const condVal=b.condicionalAtiva?String(b.metasCondicionadasAtingidas):"N/D";
   const condSub=b.condicionalAtiva?" / 3":"";
   const condStatus=!b.condicionalAtiva
     ?'<span class="pcStatus pcStatusBloq">Requer 3 estratégicas</span>'
@@ -769,7 +769,7 @@ function renderResumo(){
     :"São consideradas a partir de 3 metas estratégicas favoráveis. Faltam "+(3-b.metasEstrategicasAtingidas)+".";
 
   const p01=DATA.find(d=>d.codigo==="P01");
-  const perfVal="—";
+  const perfVal="N/D";
   const perfSub="";
   const perfStatus='<span class="pcStatus pcStatusBloq">Em avaliação</span>';
   const perfDesc="Apuração conjunta da CVL, GBP e SMIT ao final do exercício de 2026.";
@@ -850,7 +850,7 @@ function renderBonus(){
 
   var condTotal=[...["C03","C04"].filter(function(c){return DATA.some(function(d){return d.codigo===c;});}),...CASADOS.filter(function(p){return p.membros.some(function(m){return DATA.some(function(d){return d.codigo===m&&d.grupo.toLowerCase().includes("condicion");});});})].length;
   var condDetalhe=b.condicionalAtiva
-    ?"Ponto adicional no cenário atual: "+b.regC.ponto+" — "+b.regC.pct+"% adicional"
+    ?"Ponto adicional no cenário atual: "+b.regC.ponto+"; "+b.regC.pct+"% adicional"
     :"Estas metas só são consideradas a partir de 3 estratégicas favoráveis no cenário atual";
   var condCls=b.condicionalAtiva?"ok":"nd";
   var condStyle=b.condicionalAtiva?"":"opacity:.6";

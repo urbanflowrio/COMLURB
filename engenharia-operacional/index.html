@@ -1713,7 +1713,7 @@ function renderReciclagem() {
       const mult=(naoRolling[iUlt]||0)/baseNao;
       const vf=baseF>0?((frotaRolling[iUlt]||0)-baseF)/baseF*100:0;
       bannerEl.innerHTML=`<b>Leitura da composição:</b> em ${labels13[iUlt]}, cooperativas/não cadastrados coletaram ${HUB.format.int(Math.round(naoRolling[iUlt]||0))} t · ${mult.toFixed(1).replace(".", ",")}x a média anterior. A frota Comlurb variou ${vf>=0?"+":""}${vf.toFixed(1).replace(".", ",")}% frente à própria média.`;
-    } else bannerEl.textContent=`A leitura considera apenas os meses com dados publicados na janela ${labels13[0]}–${labels13.at(-1)}.`;
+    } else bannerEl.textContent=`A leitura considera apenas os meses com dados publicados na janela de ${labels13[0]} a ${labels13.at(-1)}.`;
   }
 
   // Regional: usa o ano corrente acumulado publicado; não inventa meses sem dado.
@@ -1731,7 +1731,7 @@ function renderReciclagem() {
           const idx=dteClickIndex(items); if(idx<0)return;
           const label=paresRegional[idx].label;
           DTE_DRILL.reciclagemRegional=label;
-          dteShowDrillReal("Coleta seletiva · "+label,`Evolução mensal, ${labels13[0]}–${labels13.at(-1)} (Tabela 1493).`);
+          dteShowDrillReal("Coleta seletiva · "+label,`Evolução mensal, de ${labels13[0]} a ${labels13.at(-1)} (Tabela 1493).`);
           renderReciclagem();
         },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,offset:8,formatter:v=>HUB.format.int(Math.round(v))+" t"}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)"},border:{display:false}}}}});
       });
@@ -2712,7 +2712,7 @@ function execSelectPrimarySubject(candidatos) {
       };
     }
   }
-  return { subject:"estavel", criterio:"nenhum candidato relevante", justificativa:"[seleção] nenhum candidato ultrapassou o critério de relevância — abertura em Visão da competência, sem forçar anormalidade." };
+  return { subject:"estavel", criterio:"nenhum candidato relevante", justificativa:"[seleção] nenhum candidato ultrapassou o critério de relevância. Abertura em Visão da competência, sem forçar anormalidade." };
 }
 
 // ============================================
@@ -2804,7 +2804,7 @@ function execBuildSubjects(data, primary) {
     }
     subjects.seletiva = {
       label:"Coleta seletiva", headline, sub,
-      vizCaption:`Índice de captura EGP-RIO (%) · janela ${meses[0]}–${meses.at(-1)} (Tabela 1493)`,
+      vizCaption:`Índice de captura EGP-RIO (%) · janela de ${meses[0]} a ${meses.at(-1)} (Tabela 1493)`,
       mudou, ondeParas: onde, observar, indexText,
       panels: iCap>=0 ? [{ name:"Índice de captura EGP-RIO", unit:"%", color: HUB.charts.colors.green, meses, data: capturaSerie, iAtual:iCap }] : []
     };
@@ -3133,7 +3133,7 @@ function renderLeituraMes() {
 
   const shown = items.slice(0,3);
   if (!shown.length) {
-    el.innerHTML = '<div class="dteAttentionItem"><div class="top"><div class="label">Sem exceção relevante</div><div class="value">—</div></div><div class="text">Os sinais consolidados não ultrapassaram os critérios de destaque desta visão.</div></div>';
+    el.innerHTML = '<div class="dteAttentionItem"><div class="top"><div class="label">Sem exceção relevante</div><div class="value">N/D</div></div><div class="text">Os sinais consolidados não ultrapassaram os critérios de destaque desta visão.</div></div>';
     return;
   }
   el.innerHTML = shown.map(it=>`<div class="dteAttentionItem ${it.tone||""}"><div class="top"><div class="label">${it.label}</div><div class="value">${it.value}</div></div><div class="text">${it.text}</div></div>`).join("");

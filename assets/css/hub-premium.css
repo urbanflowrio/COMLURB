@@ -93,6 +93,34 @@ textarea {
   min-width: 0;
 }
 
+.hubHomeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 17px;
+  border: 1px solid rgba(142, 197, 243, 0.42);
+  border-radius: 13px;
+  background: rgba(10, 27, 49, 0.78);
+  color: #dcecff;
+  font-size: 12px;
+  font-weight: 850;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+}
+
+.hubHomeButton:hover {
+  border-color: var(--azul);
+  background: rgba(25, 57, 88, 0.82);
+  transform: translateY(-1px);
+}
+
+.hubHomeButton:focus-visible {
+  outline: 2px solid #8ec5f3;
+  outline-offset: 3px;
+}
+
 .systemLabel {
   font-size: 12px;
   font-weight: 900;
@@ -957,6 +985,9 @@ h2 {
   .header {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .hubHomeButton {
+    width: 100%;
   }
   .logoImg {
     width: 220px;

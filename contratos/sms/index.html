@@ -22,7 +22,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,A
 h1{margin:4px 0;font-size:clamp(25px,2vw,38px);line-height:1.05;color:white}
 .sub{color:#c5d5e8;font-size:14px}
 .nav{margin-left:auto;display:flex;gap:8px}
-.nav button{color:#dbe8ff;border:1px solid rgba(255,255,255,.22);padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);font-weight:850;cursor:pointer}
+.nav button,.nav a{display:inline-flex;align-items:center;justify-content:center;color:#dbe8ff;border:1px solid rgba(255,255,255,.22);padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);font-weight:850;cursor:pointer;text-decoration:none}
 .nav button.active{border-color:var(--orange);background:rgba(232,117,53,.18);color:#fff}
 
 /* ── STATUS ── */
@@ -125,6 +125,7 @@ tr:hover{background:rgba(109,165,216,.05)}
     <div class="sub" id="pageSub">Acompanhamento estratégico da distribuição territorial e financeira dos contratos SMS</div>
   </div>
   <nav class="nav">
+    <a href="../../index.html">Home</a>
     <button id="btnExec" class="active">🏥 Executivo</button>
     <button id="btnAnalitico">📊 Analítico</button>
   </nav>

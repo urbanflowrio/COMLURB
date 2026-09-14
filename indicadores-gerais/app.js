@@ -324,7 +324,7 @@
   }
 
   function formatValor(v, unidade) {
-    if (v === null || v === undefined || Number.isNaN(v)) return '—';
+    if (v === null || v === undefined || Number.isNaN(v)) return 'N/D';
     const opts = Math.abs(v) >= 1000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 1 };
     const numero = Number(v).toLocaleString('pt-BR', opts);
     const u = unidadeVisual(unidade);
@@ -351,7 +351,7 @@
   }
 
   function formatDiferenca(v, unidade) {
-    if (v === null || v === undefined || Number.isNaN(v)) return '—';
+    if (v === null || v === undefined || Number.isNaN(v)) return 'N/D';
     const abs = Math.abs(v);
     const num = abs.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
     const u = unidadeVisual(unidade);
@@ -940,7 +940,7 @@
     const tag = statusTag(k);
     const resultClass = k.status.cor === 'red' ? 'result-critical' : k.status.cor === 'green' ? 'result-positive' : k.status.cor === 'orange' ? 'result-warning' : '';
     const unidadeBox = indicadorCTR(k) ? `<div class="detailBox"><small>Unidade de medida</small><b>${esc(unidadeDescritiva(k.unidade))}</b></div>` : '';
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado ${esc(anoPrincipal())}</small><b class="${resultClass}">${esc(formatValorIndicador(k, k.acumulado))}</b></div><div class="detailBox"><small>${esc(rotuloMetaReferencia(k))}</small><b>${esc(formatValorIndicador(k, k.meta))}</b></div>${k.referenciaMeta && k.referenciaMeta.tipo === 'proporcional' ? `<div class="detailBox"><small>Meta anual</small><b>${esc(formatValorIndicador(k, k.metaAnual))}</b></div>` : ''}<div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : '—')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div>${unidadeBox}<div class="detailBox detailBoxWide"><small>Como interpretar</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
+    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado ${esc(anoPrincipal())}</small><b class="${resultClass}">${esc(formatValorIndicador(k, k.acumulado))}</b></div><div class="detailBox"><small>${esc(rotuloMetaReferencia(k))}</small><b>${esc(formatValorIndicador(k, k.meta))}</b></div>${k.referenciaMeta && k.referenciaMeta.tipo === 'proporcional' ? `<div class="detailBox"><small>Meta anual</small><b>${esc(formatValorIndicador(k, k.metaAnual))}</b></div>` : ''}<div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : 'N/D')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div>${unidadeBox}<div class="detailBox detailBoxWide"><small>Como interpretar</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
     document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
   }

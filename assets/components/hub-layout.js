@@ -20,7 +20,9 @@ HUB.header = {
       title = "",
       subtitle = "",
       status = null,
-      navigation = []
+      navigation = [],
+      homeHref = "../index.html",
+      homeLabel = "Home"
     } = config;
 
     const container = HUB.dom.$(containerId);
@@ -77,6 +79,10 @@ HUB.header = {
           ${title ? `<h1 class="mainTitle">${HUB.format.esc(title)}</h1>` : ""}
           ${subtitle ? `<div class="subtitle">${HUB.format.esc(subtitle)}</div>` : ""}
         </div>
+
+        <a class="hubHomeButton" href="${HUB.format.esc(homeHref)}" aria-label="Voltar para a Home">
+          ${HUB.format.esc(homeLabel)}
+        </a>
 
         ${statusHTML}
       </header>

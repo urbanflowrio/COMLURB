@@ -66,6 +66,7 @@ body{
 h1{margin:0;font-size:34px;line-height:1.05}
 .subtitle{margin:7px 0 0;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1.8px}
 .badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.homeBtn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 17px;border:1px solid rgba(142,197,243,.42);border-radius:13px;background:rgba(10,27,49,.78);color:#dcecff;font-size:12px;font-weight:850;text-decoration:none;white-space:nowrap}
 .badge{
   padding:10px 14px;
   border-radius:999px;
@@ -358,11 +359,12 @@ td strong{color:white}
         <div class="subtitle">Faturamento · Glosa · Faltas · Análise operacional</div>
       </div>
     </div>
+    <a class="homeBtn" href="../index.html">Home</a>
     <div class="badges">
-      <div class="badge">Ano: <strong id="bAno">—</strong></div>
-      <div class="badge">Mês: <strong id="bMes">—</strong></div>
+      <div class="badge">Ano: <strong id="bAno">N/D</strong></div>
+      <div class="badge">Mês: <strong id="bMes">N/D</strong></div>
       <div class="badge">Tolerância: <strong id="bTol">3,0%</strong></div>
-      <div class="badge">Registros: <strong id="bRegs">—</strong></div>
+      <div class="badge">Registros: <strong id="bRegs">N/D</strong></div>
     </div>
   </header>
 
@@ -410,33 +412,33 @@ td strong{color:white}
     <section class="cards">
       <div class="card green">
         <label>Faturamento operacional</label>
-        <div class="value" id="kFat">—</div>
+        <div class="value" id="kFat">N/D</div>
         <div class="small">Base do período selecionado</div>
       </div>
       <div class="card orange">
         <label>Glosa operacional</label>
-        <div class="value" id="kGlosa">—</div>
-        <div class="small">Percentual: <strong id="kGlosaPct">—</strong></div>
+        <div class="value" id="kGlosa">N/D</div>
+        <div class="small">Percentual: <strong id="kGlosaPct">N/D</strong></div>
       </div>
       <div class="card">
         <label>Média de faltas</label>
-        <div class="value" id="kFaltasMedia">—</div>
+        <div class="value" id="kFaltasMedia">N/D</div>
         <div class="small">Média das faltas no recorte filtrado</div>
       </div>
       <div class="card">
         <label>Valor dia contratual</label>
-        <div class="value" id="kValorDia">—</div>
+        <div class="value" id="kValorDia">N/D</div>
         <div class="small">Média do campo contratual informado</div>
       </div>
       <div class="card">
         <label>Faturamento YTD</label>
-        <div class="value" id="kFatYtd">—</div>
+        <div class="value" id="kFatYtd">N/D</div>
         <div class="small">Acumulado no ano até o mês</div>
       </div>
       <div class="card red">
         <label>Glosa YTD</label>
-        <div class="value" id="kGlosaYtd">—</div>
-        <div class="small">Percentual YTD: <strong id="kGlosaYtdPct">—</strong></div>
+        <div class="value" id="kGlosaYtd">N/D</div>
+        <div class="small">Percentual YTD: <strong id="kGlosaYtdPct">N/D</strong></div>
       </div>
     </section>
 
@@ -444,7 +446,7 @@ td strong{color:white}
       <div class="icon">!</div>
       <div>
         <h3>Leitura executiva</h3>
-        <p id="leitura">—</p>
+        <p id="leitura">N/D</p>
       </div>
     </section>
 
@@ -461,18 +463,18 @@ td strong{color:white}
         <h2>Comparativos</h2>
         <table>
           <tbody>
-            <tr><th>Fat. mês anterior</th><td id="cFatAnt">—</td></tr>
-            <tr><th>Variação mensal</th><td id="cVar">—</td></tr>
-            <tr><th>Fat. mesmo mês ano anterior</th><td id="cFatYoy">—</td></tr>
-            <tr><th>Status tolerância</th><td><span class="pill" id="cStatus">—</span></td></tr>
-            <tr><th>Linhas no filtro</th><td id="cLinhas">—</td></tr>
+            <tr><th>Fat. mês anterior</th><td id="cFatAnt">N/D</td></tr>
+            <tr><th>Variação mensal</th><td id="cVar">N/D</td></tr>
+            <tr><th>Fat. mesmo mês ano anterior</th><td id="cFatYoy">N/D</td></tr>
+            <tr><th>Status tolerância</th><td><span class="pill" id="cStatus">N/D</span></td></tr>
+            <tr><th>Linhas no filtro</th><td id="cLinhas">N/D</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="panel">
         <h2>Resumo para reunião</h2>
-        <div class="note" id="resumo">—</div>
+        <div class="note" id="resumo">N/D</div>
       </div>
     </section>
 
@@ -513,7 +515,7 @@ td strong{color:white}
     </section>
 
     <section class="panel" style="margin-top:16px">
-      <h2>Mapa de calor mensal por unidade — % glosa</h2>
+      <h2>Mapa de calor mensal por unidade: % de glosa</h2>
       <div class="heatwrap">
         <table class="heatmap" id="heatmap"></table>
       </div>
@@ -738,7 +740,7 @@ function aplicar(){
   const [st, cls] = status(k.glosaPct);
 
   $("bAno").textContent = ano;
-  $("bMes").textContent = MESES[mes] || "—";
+  $("bMes").textContent = MESES[mes] || "N/D";
   $("bTol").textContent = pct(TOLERANCIA);
   $("bRegs").textContent = dados.length;
 
@@ -746,7 +748,7 @@ function aplicar(){
   $("kGlosa").textContent = brl(k.glosa);
   $("kGlosaPct").textContent = pct(k.glosaPct);
   $("kFaltasMedia").textContent = num(k.faltasMedia);
-  $("kValorDia").textContent = k.valorDia ? brl2(k.valorDia) : "—";
+  $("kValorDia").textContent = k.valorDia ? brl2(k.valorDia) : "N/D";
   $("kFatYtd").textContent = brl(k.fatYtd);
   $("kGlosaYtd").textContent = brl(k.glosaYtd);
   $("kGlosaYtdPct").textContent = pct(k.glosaYtdPct);
@@ -874,7 +876,7 @@ function renderHeatmap(ano, unidadeFiltro){
       const g = soma(rows, glosa);
       const p = f ? g/f : 0;
       const bg = p > ALERTA ? "rgba(255,92,92,.42)" : p > TOLERANCIA ? "rgba(255,159,67,.35)" : "rgba(50,213,131,.22)";
-      return `<td style="background:${bg}">${f ? pct(p) : "—"}</td>`;
+      return `<td style="background:${bg}">${f ? pct(p) : "N/D"}</td>`;
     }).join("") + `</tr>`;
   }).join("");
 

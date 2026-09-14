@@ -63,6 +63,7 @@ h1{font-size:28px;line-height:1.1}
   background:rgba(255,255,255,.03);
   white-space:nowrap;
 }
+.headerActions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 
 .landing{display:flex;flex-direction:column;gap:18px}
 .hero{padding:26px;display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:center}

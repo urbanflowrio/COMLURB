@@ -10,7 +10,7 @@ Esta baseline organiza o estado recebido no pacote 60. Ela não transforma autom
 |---|---|---|---|
 | UrbanFlow Core | Baseline V1 | `CORE_BASELINE_V1.md` e regressão de 604 casos | Baseline técnica existente |
 | Balanço de Receita | Regras financeiras e validador | Validador independente, última conciliação conhecida sem divergência, 9 verificações financeiras isoladas e regressão geral aprovada | Homologação técnica aprovada em 15/09/2026. Validação visual publicada pendente |
-| Chamados 1746 | Fechamento até ago/2026 | `chamados-1746/data-cutoff.json` | Fechamento documentado |
+| Chamados 1746 | Fechamento até ago/2026 | `chamados-1746/HOMOLOGACAO_TECNICA.md` e `chamados-1746/data-cutoff.json` | Homologação técnica aprovada com ressalva de AP. Validação visual publicada pendente |
 | Ouvidoria | Fechamento até ago/2026 | `ouvidoria/data-cutoff.json` | Fechamento documentado |
 | Engenharia Operacional | Estado recebido no pacote 60 | Testes e snapshot parciais | Em revisão, não homologado |
 | Demais módulos | Estado recebido no pacote 60 | Sem termo formal localizado | Homologação não comprovada |
@@ -28,6 +28,7 @@ Copiar e preencher uma linha somente depois da aprovação:
 | Data | Módulo | Identificação | Competência | Verificações | Responsável técnico | Resultado |
 |---|---|---|---|---|---|---|
 | 15/09/2026 | Balanço de Receita | `BAL-2026-09-15-TEC-01` | Conforme Google Sheets. Competência atual não reconsultada nesta execução | Sintaxe, referências HTML, filtros, drill-down anual, retorno, padronização, 9 testes isolados e regressão de 604 casos | Greicy Moreira | Técnica aprovada. Visual publicada pendente |
+| 15/09/2026 | Chamados 1746 | `CHA-2026-09-15-TEC-01` | Ago/2026. Corte em 04/09/2026 | Totais, séries, tipos, subtipos, gerências, bairros, referências, sintaxe, acessibilidade estática e regressão geral | Greicy Moreira | Técnica aprovada com ressalva de cobertura de AP em agosto. Visual publicada pendente |
 
 ## Controle de publicação
 

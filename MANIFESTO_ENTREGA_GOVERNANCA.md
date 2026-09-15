@@ -49,3 +49,19 @@ Os arquivos canônicos de Chamados e Ouvidoria permanecem dentro das pastas dos 
 ## Aplicação confirmada no pacote 61
 
 Em 15 de setembro de 2026, os nove arquivos listados para exclusão ainda estavam presentes no pacote 61. Eles foram retirados desta versão de trabalho. A homologação técnica do Balanço de Receita foi registrada em `balanco-receita/HOMOLOGACAO_TECNICA.md`.
+
+## Aplicação confirmada no pacote 62
+
+Os nove arquivos listados para exclusão reapareceram no pacote 62 e foram retirados novamente desta versão de trabalho. O módulo Chamados 1746 teve sua fonte analítica separada do GeoJSON, sem alteração dos totais. A homologação técnica e a ressalva de cobertura das áreas de planejamento foram registradas em `chamados-1746/HOMOLOGACAO_TECNICA.md` e `chamados-1746/data-cutoff.json`.
+
+### Arquivos modificados na homologação de Chamados
+
+- `BASELINE_HOMOLOGACAO.md`
+- `MANIFESTO_ENTREGA_GOVERNANCA.md`
+- `MATRIZ_OFICIAL_MODULOS.md`
+- `MODULE_CATALOG.md`
+- `chamados-1746/HOMOLOGACAO_TECNICA.md`
+- `chamados-1746/README.md`
+- `chamados-1746/chamados_data.js`
+- `chamados-1746/data-cutoff.json`
+- `chamados-1746/index.html`

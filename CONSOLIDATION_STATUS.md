@@ -1,4 +1,4 @@
-# HUB COMLURB — Rodada de consolidação
+# HUB COMLURB | Histórico da rodada de consolidação
 
 Data: 12 de agosto de 2026.
 
@@ -10,8 +10,12 @@ Data: 12 de agosto de 2026.
 - dados incorporados de Ouvidoria e Chamados 1746 separados do HTML;
 - imagens Base64 dos dois painéis movidas para `assets/media/`;
 - fontes operacionais compartilhadas de AR e do relatório DTE consumidas pelo registro central;
-- módulos oficiais de Ouvidoria, Chamados 1746 e Contratos incluídos na Home;
+- módulos de Ouvidoria, Chamados 1746 e Contratos foram incluídos na Home naquela rodada;
 - catálogo formal de módulos oficiais e pilotos criado em `MODULE_CATALOG.md`.
+
+## Situação posterior
+
+Este arquivo registra uma rodada histórica e não define o estado atual do portal. Em 15 de setembro de 2026, Contratos de Prestação de Serviços foi classificado como acesso direto e mantido fora da Home. A referência vigente é `MODULE_CATALOG.md`.
 
 ## Baseline esperada
 

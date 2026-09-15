@@ -694,14 +694,13 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
   /* ================================================================
      N — NENHUM ARQUIVO DE PRODUÇÃO / PILOTO DA FASE 4 ALTERADO
      ================================================================ */
-  grupo("Fase 7B · integridade — nenhum arquivo de produção ou do piloto da Fase 4 foi alterado");
+  grupo("Fase 7B · integridade dos arquivos protegidos pela baseline vigente");
 
   var HASHES_ESPERADOS = {
-    // Baseline de manutenção 14/09/2026: index vigente no pacote v57,
-    // com padronização editorial sem travessões visíveis e acesso Home, e
-    // ar.js saneado como arquivo de compatibilidade JavaScript, sem a cópia
-    // indevida do documento HTML completo.
-    "ar/index.html": "92431a3e08c6bf4a2e911590ab28441a93d11f0e05720534d65d3d55f17db696",
+    // Baseline HUB-2026-09-15-GOV-01. O index do AR preserva o painel
+    // anterior e fixa Chart.js 4.4.7. Os demais arquivos abaixo continuam
+    // protegidos contra mudanças não registradas.
+    "ar/index.html": "991e96f45cd4c385ea6f1c4c25ae8502115a57e5eb1c348bf837339d3f96de80",
     "ar/ar.js": "9a8defb4c5046b5db1d69bcc68ea8cda5769cd83b0461412691bd78a3a0fbfa7",
     "ar/ar-config.js": "467fef0c23615b4b1eb0b184c33768686dd607fc12faaf6583b41de10764c230",
     "ar/piloto/index.html": "31dd0475e401a1763e87691f88e782279d547541a376f5e3e43bc975afa349da",
@@ -716,8 +715,8 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
     "assets/components/hub-snapshot-reader.js": "543994fd9fc99f91176bc3676509d123ed9430a29b54ab3a287834f85ca26104",
     "assets/components/hub-data-source.js": "1f9ebe28dbf978cdcc6574e93b679f8a11118bbf2ef5d5e1103ac5b7fdda7f80",
     "assets/components/hub-utils.js": "4037b280e5240c942c4339fbec1e165392f78fe89ca3331a9e638dcc59024f52",
-    // Baseline atualizado na Fase 8 após inclusão da regressão oficial no package.json.
-    "package.json": "77964a26800f4b9bc4132836aa0309f91298faf82b7aaa4a62ab3246af688620"
+    // Dependência Papa Parse fixada em 5.4.1 na baseline de governança.
+    "package.json": "cc95db695f37b76412c7e498a3792439ad94141fe9c8053e77391babd68bfde6"
   };
   Object.keys(HASHES_ESPERADOS).forEach(function (rel) {
     var abs = path.join(raiz, rel);
@@ -726,7 +725,7 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
       return;
     }
     var hashAtual = crypto.createHash("sha256").update(fs.readFileSync(abs)).digest("hex");
-    caso("Arquivo intocado (hash SHA-256 idêntico ao baseline pré-Fase-7B): " + rel, hashAtual, HASHES_ESPERADOS[rel]);
+    caso("Arquivo protegido com hash SHA-256 idêntico à baseline vigente: " + rel, hashAtual, HASHES_ESPERADOS[rel]);
   });
 
   /* ================================================================

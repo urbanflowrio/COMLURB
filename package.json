@@ -18,6 +18,6 @@
     "snapshot:retencao-info": "node snapshot/run.js retencao-info"
   },
   "dependencies": {
-    "papaparse": "^5.4.1"
+    "papaparse": "5.4.1"
   }
 }

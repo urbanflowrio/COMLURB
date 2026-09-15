@@ -206,7 +206,7 @@ tr:hover td{background:#102946}
       <aside class="side">
         <section class="panel insight"><h3>Leitura executiva</h3><p id="insightText">Carregando análise...</p></section>
         <section class="panel"><div class="panelHead"><h2>Destaques do filtro</h2><span class="badge">Análise rápida</span></div><div class="highlightGrid" id="execHighlights"></div></section>
-        <section class="panel"><div class="panelHead"><h2>Principais focos operacionais</h2><span class="badge">Top 5 bairros</span></div><div class="ranking" id="ranking"></div></section>
+        <section class="panel"><div class="panelHead"><h2>Principais focos operacionais</h2><span class="badge">Cinco bairros com maior valor</span></div><div class="ranking" id="ranking"></div></section>
         <section class="panel"><div class="panelHead"><h2>Resumo financeiro</h2></div><div class="ranking" id="finance"></div></section>
       </aside>
     </section>
@@ -382,7 +382,7 @@ function renderSide(rows,t){
   const top=Object.values(byB).sort((a,b)=>b.valor-a.valor).slice(0,5);
   $('ranking').innerHTML=top.map(x=>`<div class="rank" data-filter="bairro" data-value="${escHtml(x.nome)}" title="Filtrar bairro ${escHtml(x.nome)}"><div><b title="${escHtml(x.nome)}">${escHtml(x.nome)}</b><br><small>${int(x.escolas)} escolas · ${int(x.postos)} postos</small></div><b>${moneyShort(x.valor)}</b></div>`).join('')||'<small>Sem dados no filtro.</small>';
   const maior=top[0], pctTop=maior&&t.valor?((maior.valor/t.valor)*100):0;
-  $('insightText').innerHTML=maior?`O principal foco territorial do filtro é <b>${escHtml(maior.nome)}</b>, representando <b>${pctTop.toLocaleString('pt-BR',{maximumFractionDigits:1})}%</b> do valor estimado filtrado.<div class="actionRow"><button class="chipBtn" data-filter="bairro" data-value="${escHtml(maior.nome)}">Filtrar foco</button><button class="chipBtn" onclick="setView('analitico')">Abrir analítico</button><button class="chipBtn" id="exportCsvInline">Exportar recorte</button></div>`:'Sem registros para análise.';
+  $('insightText').innerHTML=maior?`O principal foco territorial do filtro é <b>${escHtml(maior.nome)}</b>, representando <b>${pctTop.toLocaleString('pt-BR',{maximumFractionDigits:1})}%</b> do valor estimado filtrado.<div class="actionRow"><button class="chipBtn" data-filter="bairro" data-value="${escHtml(maior.nome)}">Filtrar foco</button><button class="chipBtn" onclick="setView('analitico')">Abrir analítico</button><button class="chipBtn" id="exportCsvInline">Exportar dados filtrados</button></div>`:'Sem registros para análise.';
   const topEscola=[...rows].sort((a,b)=>b.valor_mensal-a.valor_mensal)[0];
   const topArea=[...rows].sort((a,b)=>b.area-a.area)[0];
   const topPostos=[...rows].sort((a,b)=>b.postos-a.postos)[0];

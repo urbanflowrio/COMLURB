@@ -1240,7 +1240,7 @@ h2 {
           </div>
           <div class="body">
             <div class="chartBox short" id="apChartWrap"><canvas id="chartAP"></canvas></div>
-            <div class="emptyState" id="apEmpty" style="display:none;">A leitura por AP não foi exibida em agosto. O mapa, o ranking e o detalhamento territorial permanecem no recorte mensal correto.</div>
+            <div class="emptyState" id="apEmpty" style="display:none;">A leitura por AP não foi exibida em agosto. O mapa, a lista e o detalhamento territorial permanecem no período mensal correto.</div>
           </div>
         </div>
       </div>
@@ -1995,7 +1995,7 @@ HUB.drillBanner = {
         </div>
 
         <button class="actionBtn primary" onclick="${onClear}">
-          Fechar drill down
+          Fechar detalhamento
         </button>
       </div>
     `;
@@ -2196,7 +2196,7 @@ function renderLead(x){
   }else if(!filterSubtype){
     if(same.length){
       const a=same[0];
-      headline=`Em <b>${prettyTypeLabel(filterType)}</b>, <b>${prettyTypeLabel(a.nome)}</b> teve o maior ${direction>0?'aumento':'recuo'} no recorte: ${signed(a.dif)} registros (${pctSigned(a.var)}).`;
+      headline=`Em <b>${prettyTypeLabel(filterType)}</b>, <b>${prettyTypeLabel(a.nome)}</b> teve o maior ${direction>0?'aumento':'recuo'} no período: ${signed(a.dif)} registros (${pctSigned(a.var)}).`;
       if(opposite[0]) detail=`<b>${prettyTypeLabel(opposite[0].nome)}</b> apresentou movimento contrário, com ${signed(opposite[0].dif)} registros. `;
     }else headline=`A análise está concentrada em <b>${prettyTypeLabel(filterType)}</b> ${currentPeriodText()}.`;
     if(topBairro) detail+=`No território, <b>${prettyPlace(topBairro.nome)}</b> teve o maior volume, com ${fmt(topBairro.v2026)} registros ${currentPeriodText()}.`;
@@ -2324,8 +2324,8 @@ function renderStructure(x){
   if(arr.length>cap)arr=arr.slice(0,cap);
   const c=chartBase();
   const isLeaf=!x.children?.length;
-  document.getElementById('structureTitle').textContent=isLeaf?'Concentração territorial do recorte':level()==='all'?'Composição das ouvidorias':`Subtipos de ${filterType}`;
-  document.getElementById('structureHint').textContent=isLeaf?'Principais bairros por volume • 2025 × 2026':`2025 × 2026 • ${canDrill()?'clique em uma barra para aprofundar':'recorte selecionado'}${level()==='all'?' • demais tipos permanecem disponíveis no Analítico':''}`;
+  document.getElementById('structureTitle').textContent=isLeaf?'Concentração territorial do período':level()==='all'?'Composição das ouvidorias':`Subtipos de ${filterType}`;
+  document.getElementById('structureHint').textContent=isLeaf?'Principais bairros por volume • 2025 × 2026':`2025 × 2026 • ${canDrill()?'clique em uma barra para aprofundar':'filtros selecionados'}${level()==='all'?' • demais tipos permanecem disponíveis no Analítico':''}`;
   const labels=arr.map(d=>wrapLabel(d.nome,24));
   const box=document.getElementById('chartStructure').parentElement;
   box.style.height=`${Math.max(440,arr.length*58+100)}px`;
@@ -2395,7 +2395,7 @@ function renderInsights(x){
     document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado do tipo</div><b>${filterType}</b><p>O volume passou de <strong>${fmt(x.total2025)}</strong> para <strong>${fmt(x.total2026)}</strong> registros, ${movementLabel} de <strong>${fmt(Math.abs(x.dif))}</strong> (${pctSigned(x.var)}).</p></div><div class="insightCard"><div class="tag">Concentração interna</div><b>${vol.nome}</b><p>O subtipo concentra <strong>${pct(vol.part)}</strong> das manifestações de ${prettyTypeLabel(filterType)} ${currentPeriodText()}. Os demais subtipos têm participação residual.</p></div><div class="insightCard"><div class="tag">Principal destaque territorial</div><b>${topTerritory?.nome||'Não informado'}</b><p>${topTerritory?`Registrou a maior contribuição territorial para a variação, com <strong>${signed(topTerritory.dif)}</strong> registros frente a ${previousPeriodShort()}.`:'Não há território elegível para destaque neste filtro.'}</p></div>`;
     return;
   }
-  document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> registros ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume operacional do recorte.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'Não informado'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
+  document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> registros ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume operacional filtrado.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'Não informado'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
 }
 function renderBairroRankings(x){const bairros=[...x.bairros].filter(b=>b.v2026>0);const topVol=bairros.slice().sort((a,b)=>b.v2026-a.v2026).slice(0,5);const topGrowth=bairros.slice().sort((a,b)=>b.dif-a.dif).slice(0,5);document.getElementById('rankVolume').innerHTML=buildRank(topVol,'v2026',topVol[0]?.v2026||1);document.getElementById('rankGrowth').innerHTML=buildRank(topGrowth,'dif',topGrowth[0]?.dif||1);}
 function buildRank(arr,metric,maxValue){return arr.map((d,i)=>{const main=metric==='v2026'?fmt(d.v2026):signed(d.dif);const width=Math.max(6,(Math.abs(metric==='v2026'?d.v2026:d.dif)/Math.abs(maxValue||1))*100);return `<div class="rankItem"><div class="rankPos">${i+1}</div><div class="rankName" title="${d.nome}">${d.nome}</div><div class="rankValue">${main}</div><div class="rankDelta ${cssClass(d.dif)}">${pctSigned(d.var)}</div><div class="rankBar"><i style="width:${width}%"></i></div></div>`}).join('');}
@@ -2446,7 +2446,7 @@ function renderTable(){
   const meta=document.getElementById('analyticMeta');
   if(meta){
     const nivel=!filterType?'Tipos agregados':filterSubtype?'Subtipos • filtro ativo':'Subtipos';
-    meta.innerHTML=`<span class="analyticMetaChip">Recorte <strong>${currentPeriodShort()}</strong></span><span class="analyticMetaChip">Nível <strong>${nivel}</strong></span><span class="analyticMetaChip">Itens <strong>${sorted.length}</strong></span><span class="analyticMetaHint">Clique em uma linha para aprofundar a análise</span>`;
+    meta.innerHTML=`<span class="analyticMetaChip">Período <strong>${currentPeriodShort()}</strong></span><span class="analyticMetaChip">Nível <strong>${nivel}</strong></span><span class="analyticMetaChip">Itens <strong>${sorted.length}</strong></span><span class="analyticMetaHint">Clique em uma linha para aprofundar a análise</span>`;
   }
   document.getElementById('tableTipos').innerHTML=sorted.map(d=>{
     const selected=filterSubtype&&norm(d.nome)===norm(filterSubtype);

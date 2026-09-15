@@ -251,7 +251,7 @@ HUB.drillBanner = {
         </div>
 
         <button class="actionBtn primary" onclick="${onClear}">
-          Fechar drill down
+          Fechar detalhamento
         </button>
       </div>
     `;

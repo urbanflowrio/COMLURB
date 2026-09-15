@@ -797,7 +797,7 @@ function renderResumo(){
       condStatus+
     '</div>'+
     '<div class="placarCard perf">'+
-      '<div class="pcLabel">Meta de performance</div>'+
+      '<div class="pcLabel">Meta de desempenho</div>'+
       '<div class="pcPlacar">'+perfVal+'<span>'+perfSub+'</span></div>'+
       '<div class="pcDesc">'+perfDesc+'</div>'+
       perfStatus+
@@ -889,7 +889,7 @@ function renderBonus(){
 function renderIndicadores(){
   const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
   if(!FILTRADOS.length){
-    $("indicadoresContainer").innerHTML=`<div class="emptyBlock">Nenhum indicador encontrado no recorte selecionado.</div>`;
+    $("indicadoresContainer").innerHTML=`<div class="emptyBlock">Nenhum indicador encontrado nos filtros selecionados.</div>`;
     return;
   }
   $("indicadoresContainer").innerHTML=grupos.map(grupo=>{

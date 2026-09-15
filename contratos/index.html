@@ -423,7 +423,7 @@ td strong{color:white}
       <div class="card">
         <label>Média de faltas</label>
         <div class="value" id="kFaltasMedia">N/D</div>
-        <div class="small">Média das faltas no recorte filtrado</div>
+        <div class="small">Média das faltas no período selecionado</div>
       </div>
       <div class="card">
         <label>Valor dia contratual</label>
@@ -431,14 +431,14 @@ td strong{color:white}
         <div class="small">Média do campo contratual informado</div>
       </div>
       <div class="card">
-        <label>Faturamento YTD</label>
+        <label>Faturamento acumulado no ano</label>
         <div class="value" id="kFatYtd">N/D</div>
         <div class="small">Acumulado no ano até o mês</div>
       </div>
       <div class="card red">
-        <label>Glosa YTD</label>
+        <label>Glosa acumulada no ano</label>
         <div class="value" id="kGlosaYtd">N/D</div>
-        <div class="small">Percentual YTD: <strong id="kGlosaYtdPct">N/D</strong></div>
+        <div class="small">Percentual acumulado: <strong id="kGlosaYtdPct">N/D</strong></div>
       </div>
     </section>
 
@@ -452,7 +452,7 @@ td strong{color:white}
 
     <section class="grid">
       <div class="panel">
-        <h2>Top 3 unidades com maior glosa</h2>
+        <h2>Três unidades com maior glosa</h2>
         <table>
           <thead><tr><th>#</th><th>Unidade</th><th>Glosa</th><th>Part.</th></tr></thead>
           <tbody id="top3"></tbody>
@@ -761,7 +761,7 @@ function aplicar(){
   $("cStatus").className = "pill " + cls;
 
   $("leitura").textContent =
-    `No recorte selecionado, o faturamento operacional foi de ${brl(k.fat)}, com glosa de ${brl(k.glosa)} (${pct(k.glosaPct)}). ` +
+    `No período selecionado, o faturamento operacional foi de ${brl(k.fat)}, com glosa de ${brl(k.glosa)} (${pct(k.glosaPct)}). ` +
     `A média de faltas foi ${num(k.faltasMedia)} e o status frente à tolerância de ${pct(TOLERANCIA)} é: ${st}.`;
 
   renderTop3(k);
@@ -806,7 +806,7 @@ function renderResumo(k, st){
     `• <strong>Status:</strong> ${st}.<br>` +
     `• <strong>Glosa do mês:</strong> ${pct(k.glosaPct)} sobre o faturamento operacional.<br>` +
     `• <strong>Maior concentração:</strong> ${top ? top.unidade + " com " + brl(top.glosa) : "sem dados"}.<br>` +
-    `• <strong>Acumulado anual:</strong> ${brl(k.glosaYtd)} de glosa, equivalente a ${pct(k.glosaYtdPct)} do faturamento YTD.`;
+    `• <strong>Acumulado anual:</strong> ${brl(k.glosaYtd)} de glosa, equivalente a ${pct(k.glosaYtdPct)} do faturamento acumulado no ano.`;
 }
 
 function renderMensal(ano, unidade){
@@ -833,7 +833,7 @@ function renderRadar(k, st){
   $("radar").innerHTML =
     `<tr><th>Status geral</th><td>${st}</td></tr>
      <tr><th>% glosa mês</th><td>${pct(k.glosaPct)}</td></tr>
-     <tr><th>% glosa YTD</th><td>${pct(k.glosaYtdPct)}</td></tr>
+     <tr><th>% de glosa acumulada no ano</th><td>${pct(k.glosaYtdPct)}</td></tr>
      <tr><th>Média faltas</th><td>${num(k.faltasMedia)}</td></tr>
      <tr><th>Ação sugerida</th><td>${k.glosaPct > ALERTA ? "Priorizar unidades críticas e validar causas da glosa." : "Manter acompanhamento mensal."}</td></tr>`;
 }

@@ -701,7 +701,7 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
     // com padronização editorial sem travessões visíveis e acesso Home, e
     // ar.js saneado como arquivo de compatibilidade JavaScript, sem a cópia
     // indevida do documento HTML completo.
-    "ar/index.html": "88889d612ff513eb44ef96be3aefe609d5ad82306e6274b629e817910de94fb1",
+    "ar/index.html": "92431a3e08c6bf4a2e911590ab28441a93d11f0e05720534d65d3d55f17db696",
     "ar/ar.js": "9a8defb4c5046b5db1d69bcc68ea8cda5769cd83b0461412691bd78a3a0fbfa7",
     "ar/ar-config.js": "467fef0c23615b4b1eb0b184c33768686dd607fc12faaf6583b41de10764c230",
     "ar/piloto/index.html": "31dd0475e401a1763e87691f88e782279d547541a376f5e3e43bc975afa349da",

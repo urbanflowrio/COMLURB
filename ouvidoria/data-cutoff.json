@@ -3,5 +3,25 @@
   "competencia_mais_recente": "2026-08",
   "data_corte": "2026-09-04",
   "historico_congelado_ate": "2026-07",
+  "fonte_analitica": "ouvidoria_cube.js",
+  "fonte_geografica": "ouvidoria_data.js",
+  "situacao_tecnica": "validado_com_ressalvas",
+  "qualidade": {
+    "conciliacao_interna": "sem_divergencia",
+    "exclusao_pco": "declarada_na_base_agregada_sem_evidencia_bruta_para_reexecucao",
+    "area_planejamento_agosto_2025": {
+      "total": 2005,
+      "classificados": 1931,
+      "sem_classificacao": 74,
+      "cobertura_percentual": 96.31
+    },
+    "area_planejamento_agosto_2026": {
+      "total": 3254,
+      "classificados": 3138,
+      "sem_classificacao": 116,
+      "cobertura_percentual": 96.44
+    },
+    "tratamento_interface": "O ranking mensal por área de planejamento é ocultado em agosto para não apresentar distribuição incompleta."
+  },
   "regra": "Acrescentar a nova competência sem reprocessar silenciosamente as competências já fechadas. Retificações devem ser documentadas separadamente."
 }

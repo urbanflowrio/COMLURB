@@ -16,7 +16,7 @@ Este documento é a referência vigente para decidir quais módulos integram a H
 | Gestão Estratégica de Pessoas | `pessoas/` | Suspenso por LGPD | Página institucional sem dados |
 | Performance dos Contratos de Receita | `balanco-receita/` | Oficial | Legado controlado |
 | Chamados 1746 | `chamados-1746/` | Oficial | HTML + cubo analítico local + GeoJSON local |
-| Ouvidoria Operacional | `ouvidoria/` | Oficial | HTML leve + dados externos locais |
+| Ouvidoria Operacional | `ouvidoria/` | Oficial | HTML + cubo analítico local + GeoJSON local |
 
 ## Módulos fora da Home
 

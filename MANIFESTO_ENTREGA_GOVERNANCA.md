@@ -25,7 +25,7 @@ Corrigir a governança do catálogo, registrar módulos e fontes, fixar dependê
 - `territorial/index.html`
 - `testes/testar-fase7b.js`
 
-## Arquivos que devem ser excluídos do repositório
+## Arquivos legados mantidos por segurança
 
 - `app.js`
 - `data.js`
@@ -37,7 +37,7 @@ Corrigir a governança do catálogo, registrar módulos e fontes, fixar dependê
 - `assets/data/ouvidoria/ouvidoria_cube.js`
 - `territorial/unidades_comlurb (1).csv`
 
-Os arquivos canônicos de Chamados e Ouvidoria permanecem dentro das pastas dos próprios módulos. A suíte oficial da Fase 7B permanece em `testes/testar-fase7b.js`. O cadastro territorial permanece em `territorial/data/unidades_comlurb.csv`.
+Esses arquivos não devem ser utilizados nem atualizados. Sua exclusão fica adiada até a homologação final dos módulos. Os arquivos canônicos de Chamados e Ouvidoria permanecem dentro das pastas dos próprios módulos. A suíte oficial da Fase 7B permanece em `testes/testar-fase7b.js`. O cadastro territorial permanece em `territorial/data/unidades_comlurb.csv`.
 
 ## Validação
 
@@ -52,7 +52,22 @@ Em 15 de setembro de 2026, os nove arquivos listados para exclusão ainda estava
 
 ## Aplicação confirmada no pacote 62
 
-Os nove arquivos listados para exclusão reapareceram no pacote 62 e foram retirados novamente desta versão de trabalho. O módulo Chamados 1746 teve sua fonte analítica separada do GeoJSON, sem alteração dos totais. A homologação técnica e a ressalva de cobertura das áreas de planejamento foram registradas em `chamados-1746/HOMOLOGACAO_TECNICA.md` e `chamados-1746/data-cutoff.json`.
+Os nove arquivos legados permaneceram no pacote 62. Por decisão de segurança, não serão excluídos antes da homologação final. O módulo Chamados 1746 teve sua fonte analítica separada do GeoJSON, sem alteração dos totais. A homologação técnica e a ressalva de cobertura das áreas de planejamento foram registradas em `chamados-1746/HOMOLOGACAO_TECNICA.md` e `chamados-1746/data-cutoff.json`.
+
+## Homologação da Ouvidoria no pacote 63
+
+O módulo Ouvidoria teve 1.126 verificações internas aprovadas, sem alteração dos totais. Foram registrados dois limites: cobertura parcial de AP em agosto e ausência da base bruta necessária para reexecutar a exclusão dos registros da PCO. Os arquivos legados foram mantidos por segurança.
+
+### Arquivos modificados na homologação da Ouvidoria
+
+- `BASELINE_HOMOLOGACAO.md`
+- `MANIFESTO_ENTREGA_GOVERNANCA.md`
+- `MATRIZ_OFICIAL_MODULOS.md`
+- `MODULE_CATALOG.md`
+- `ouvidoria/HOMOLOGACAO_TECNICA.md`
+- `ouvidoria/README.md`
+- `ouvidoria/data-cutoff.json`
+- `ouvidoria/index.html`
 
 ### Arquivos modificados na homologação de Chamados
 

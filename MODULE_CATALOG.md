@@ -10,7 +10,7 @@ Este documento é a referência vigente para decidir quais módulos integram a H
 |---|---|---|---|
 | Governança Corporativa | `indicadores-gerais/` | Oficial | Componentes compartilhados |
 | Acordo de Resultados | `ar/` | Oficial | Componentes compartilhados + fontes centralizadas |
-| Desempenho da Operação Urbana | `engenharia-operacional/` | Oficial | Componentes compartilhados + fonte DTE centralizada |
+| Engenharia e Operações | `engenharia-operacional/` | Oficial | Componentes compartilhados + fonte DTE centralizada + fontes complementares declaradas no módulo |
 | IPL | `ipl/` | Oficial | Legado controlado |
 | Território Operacional | `territorial/` | Oficial | Aplicação modular própria |
 | Gestão Estratégica de Pessoas | `pessoas/` | Suspenso por LGPD | Página institucional sem dados |

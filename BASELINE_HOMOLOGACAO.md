@@ -12,7 +12,7 @@ Esta baseline organiza o estado recebido no pacote 60. Ela não transforma autom
 | Balanço de Receita | Regras financeiras e validador | Validador independente, última conciliação conhecida sem divergência, 9 verificações financeiras isoladas e regressão geral aprovada | Homologação técnica aprovada em 15/09/2026. Validação visual publicada pendente |
 | Chamados 1746 | Fechamento até ago/2026 | `chamados-1746/HOMOLOGACAO_TECNICA.md` e `chamados-1746/data-cutoff.json` | Homologação técnica aprovada com ressalva de AP. Validação visual publicada pendente |
 | Ouvidoria | Fechamento até ago/2026 | `ouvidoria/HOMOLOGACAO_TECNICA.md` e `ouvidoria/data-cutoff.json` | Homologação técnica aprovada com ressalvas. Validação visual publicada pendente |
-| Engenharia Operacional | Estado recebido no pacote 60 | Testes e snapshot parciais | Em revisão, não homologado |
+| Engenharia e Operações | Estrutura revisada em 15/09/2026 | `engenharia-operacional/REVISAO_TECNICA.md`, testes e snapshot local de frota | Revisão técnica estrutural aprovada. Conciliação externa e validação visual publicada pendentes |
 | Demais módulos | Estado recebido no pacote 60 | Sem termo formal localizado | Homologação não comprovada |
 
 ## Registro obrigatório de homologação
@@ -30,6 +30,7 @@ Copiar e preencher uma linha somente depois da aprovação:
 | 15/09/2026 | Balanço de Receita | `BAL-2026-09-15-TEC-01` | Conforme Google Sheets. Competência atual não reconsultada nesta execução | Sintaxe, referências HTML, filtros, drill-down anual, retorno, padronização, 9 testes isolados e regressão de 604 casos | Greicy Moreira | Técnica aprovada. Visual publicada pendente |
 | 15/09/2026 | Chamados 1746 | `CHA-2026-09-15-TEC-01` | Ago/2026. Corte em 04/09/2026 | Totais, séries, tipos, subtipos, gerências, bairros, referências, sintaxe, acessibilidade estática e regressão geral | Greicy Moreira | Técnica aprovada com ressalva de cobertura de AP em agosto. Visual publicada pendente |
 | 15/09/2026 | Ouvidoria | `OUV-2026-09-15-TEC-01` | Ago/2026. Corte em 04/09/2026 | Totais, séries, tipos, subtipos, gerências, bairros, referências, sintaxe, acessibilidade estática e regressão geral | Greicy Moreira | Técnica aprovada com ressalvas de AP e da comprovação da exclusão da PCO. Visual publicada pendente |
+| 15/09/2026 | Engenharia e Operações | `DTE-2026-09-15-REV-01` | Fontes dinâmicas; contingência local de frota até jul/2026 | Sintaxe, acessibilidade estática, navegação, séries nulas, janela móvel, períodos do snapshot e regressão geral | Greicy Moreira | Estrutura técnica aprovada. Conciliação com as fontes publicadas e validação visual pendentes |
 
 ## Controle de publicação
 

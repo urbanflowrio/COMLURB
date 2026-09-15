@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DTE - Diretoria Técnica e de Engenharia | HUB COMLURB</title>
+<title>Engenharia e Operações | HUB COMLURB</title>
 
 <!-- CSS do HUB -->
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
@@ -19,7 +19,7 @@
 .insightList li.flag::before{content:"!";color:var(--vermelho);font-weight:900;}
 .readAutoBadge{font-size:11px;color:var(--silenciado);letter-spacing:.02em;white-space:nowrap;}
 /* Drill DTE local: não depende da API do hub-layout para abrir/fechar */
-.dteDrillBanner{margin:0 0 16px;padding:14px 16px;border:1px solid rgba(91,147,232,.42);border-radius:14px;background:linear-gradient(180deg,rgba(91,147,232,.10),rgba(91,147,232,.035)),var(--painel2);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;box-shadow:0 10px 28px rgba(0,0,0,.14);}
+.dteDrillBanner{margin:0 0 16px;padding:14px 16px;border:1px solid rgba(91,147,232,.42);border-radius:14px;background:rgba(36,68,105,.35);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;box-shadow:0 10px 28px rgba(0,0,0,.14);}
 .dteDrillBanner .dteDrillText{min-width:0;}
 .dteDrillBanner .dteDrillKind{font-size:9.5px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:var(--azul2,var(--azul));margin-bottom:5px;}
 .dteDrillBanner .dteDrillTitle{font-size:14px;font-weight:850;color:var(--texto);line-height:1.3;}
@@ -86,7 +86,7 @@
 .infraEquipRow.active{border-color:rgba(91,147,232,.62);box-shadow:inset 0 0 0 1px rgba(91,147,232,.14),0 10px 24px rgba(0,0,0,.10);}
 .infraEquipName{font-size:12.5px;font-weight:780;color:var(--texto);line-height:1.35;}
 .infraEquipTrack{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;position:relative;}
-.infraEquipFill{height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(91,147,232,.82),rgba(123,171,255,.96));}
+.infraEquipFill{height:100%;border-radius:999px;background:rgba(91,147,232,.96);}
 .infraEquipMeta{font-size:10.5px;color:var(--silenciado);margin-top:6px;}
 .infraEquipValue{font-size:22px;font-weight:900;color:var(--texto);text-align:right;white-space:nowrap;}
 .infraMiniCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
@@ -113,7 +113,7 @@
 .podaChartCard{border:1px solid var(--linha);border-radius:14px;background:var(--painel2);padding:12px 14px 10px;}
 .podaChartCard .h{font-size:11px;font-weight:800;color:var(--texto);margin-bottom:4px;}
 .podaChartCard .sub{font-size:10.5px;color:var(--silenciado);margin-bottom:10px;}
-.podaChartCard.soft{background:linear-gradient(180deg,rgba(255,255,255,.012),rgba(255,255,255,.004)),var(--painel2);}
+.podaChartCard.soft{background:var(--painel2);}
 @media (max-width:900px){.podaSummary,.podaCharts{grid-template-columns:1fr;}}
 @media (max-width:900px){.infraSecondaryKpis{grid-template-columns:1fr;}}
 .fleetInsights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0;}
@@ -145,7 +145,7 @@
 .flowLabel{font-size:10.5px;color:var(--silenciado);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;line-height:1.3;}
 .flowValue{font-size:19px;font-weight:800;color:var(--texto);}
 .flowArrow{display:flex;align-items:center;justify-content:center;color:var(--silenciado);font-size:16px;padding:0 2px;position:relative;}
-.flowArrow::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg, var(--linha), var(--azul2, var(--azul)), var(--linha));z-index:0;}
+.flowArrow::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--linha);z-index:0;}
 .flowArrow span{position:relative;background:var(--bg);z-index:1;padding:0 4px;border-radius:50%;}
 .flowBadge{margin-top:7px;font-size:10px;padding:2px 9px;border-radius:20px;display:inline-block;background:var(--linha);color:var(--silenciado);}
 .flowBadge.recorde{background:rgba(239,106,93,.18);color:var(--vermelho);}
@@ -201,9 +201,9 @@
 
 /* Frota v2 · workspace executivo */
 .fleetServiceCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px;}
-.fleetServiceCard{appearance:none;text-align:left;border:1px solid var(--linha);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006)),var(--painel2);border-radius:15px;padding:15px 16px;color:var(--texto);cursor:pointer;transition:.18s ease;min-height:92px;}
+.fleetServiceCard{appearance:none;text-align:left;border:1px solid var(--linha);background:var(--painel2);border-radius:15px;padding:15px 16px;color:var(--texto);cursor:pointer;transition:.18s ease;min-height:92px;}
 .fleetServiceCard:hover{transform:translateY(-1px);border-color:#3c4b58;}
-.fleetServiceCard.active{border-color:rgba(91,147,232,.62);box-shadow:inset 0 0 0 1px rgba(91,147,232,.12),0 8px 28px rgba(0,0,0,.12);background:linear-gradient(180deg,rgba(91,147,232,.10),rgba(91,147,232,.025)),var(--painel2);}
+.fleetServiceCard.active{border-color:rgba(91,147,232,.62);box-shadow:inset 0 0 0 1px rgba(91,147,232,.12),0 8px 28px rgba(0,0,0,.12);background:rgba(36,68,105,.42);}
 .fleetServiceCard .serviceName{font-size:11px;font-weight:800;color:var(--silenciado);letter-spacing:.015em;}
 .fleetServiceCard .serviceValue{font-size:25px;font-weight:900;letter-spacing:-.025em;margin-top:7px;line-height:1;}
 .fleetServiceCard .serviceMeta{font-size:10.5px;color:var(--silenciado);margin-top:7px;}
@@ -215,7 +215,7 @@
 .fleetWorkspace .fleetFilters{grid-template-columns:.75fr 1fr 1fr 1.25fr;margin:0 0 12px;}
 .fleetWorkspace .fleetSummary{margin:0;}
 .fleetSummaryCard{position:relative;overflow:hidden;min-height:89px;}
-.fleetSummaryCard:first-child::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:2px;background:linear-gradient(90deg,var(--azul2,var(--azul)),transparent);}
+.fleetSummaryCard:first-child::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:2px;background:var(--azul2,var(--azul));}
 .fleetAnalysisTop{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(330px,.65fr);gap:14px;margin-top:14px;}
 .fleetAnalysisBottom{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:14px;margin-top:14px;}
 .fleetAnalysisTop .panel,.fleetAnalysisBottom .panel{margin:0;}
@@ -229,7 +229,7 @@
 
 /* ENG-OP v3 · visão executiva */
 .dteExecutiveTop{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr);gap:16px;margin-bottom:16px;align-items:stretch;}
-.dtePulseBlock{padding:22px 22px 20px;border:1px solid var(--linha);border-radius:18px;background:linear-gradient(140deg,rgba(91,147,232,.085),rgba(91,147,232,.018) 45%,rgba(255,255,255,.008)),var(--painel);box-shadow:0 14px 38px rgba(0,0,0,.13);}
+.dtePulseBlock{padding:22px 22px 20px;border:1px solid var(--linha);border-radius:18px;background:var(--painel);box-shadow:0 14px 38px rgba(0,0,0,.13);}
 .dteSectionEyebrow{font-size:9px;font-weight:900;letter-spacing:.14em;color:var(--azul2,var(--azul));margin-bottom:7px;}
 .dteSectionTitle{font-size:23px;font-weight:900;letter-spacing:-.025em;color:var(--texto);}
 .dteSectionSub{font-size:11.5px;color:var(--silenciado);margin-top:5px;line-height:1.5;}
@@ -264,7 +264,7 @@
 .dteCompBadge{flex-shrink:0;font-size:11px;font-weight:850;letter-spacing:.02em;color:var(--texto);background:rgba(91,147,232,.14);border:1px solid rgba(91,147,232,.42);border-radius:999px;padding:7px 14px;white-space:nowrap;}
 .dteFlowPanel{margin:16px 0;}
 .dteFlowPanel .flowRow{margin-top:2px;}
-.dteFlowPanel .flowNode{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.005)),var(--painel2);}
+.dteFlowPanel .flowNode{background:var(--painel2);}
 .dteDeepenEyebrow{font-size:9.5px;font-weight:900;letter-spacing:.14em;color:var(--silenciado);margin:4px 2px 9px;}
 .dteDeepen{margin:16px 0 0;border:1px solid var(--linha);border-radius:16px;background:var(--painel);overflow:hidden;}
 .dteDeepen>summary{list-style:none;cursor:pointer;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12.5px;font-weight:800;color:var(--texto);}
@@ -361,6 +361,16 @@
   .execPanel .execPanelStats{margin-top:4px;}
 }
 </style>
+<style>
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -433,20 +443,20 @@
         <div class="panelHead">
           <div><h2>Distribuição do recebimento</h2><div class="hint">Participação das ETRs no volume da competência mais recente · clique numa ETR para o histórico</div></div>
         </div>
-        <div class="body"><div class="chartWrap" style="height:250px"><canvas id="chartEtrUnidade"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:250px"><canvas id="chartEtrUnidade" role="img" aria-label="Distribuição do recebimento por estação de transferência"></canvas></div></div>
       </div>
       <div class="panel dteChartPanel">
         <div class="panelHead">
           <div><h2>Coleta seletiva</h2><div class="hint">Trajetória anual · leitura de escala, não de meta</div></div>
         </div>
-        <div class="body"><div class="chartWrap" style="height:250px"><canvas id="chartSeletivaAnual"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:250px"><canvas id="chartSeletivaAnual" role="img" aria-label="Evolução anual da coleta seletiva"></canvas></div></div>
       </div>
     </div>
 
     <div class="dteGuideStrip">
       <div><b>Destinação e Biogás</b><span>ETRs, biogás e comportamento do chorume</span></div>
       <div><b>Coleta Seletiva</b><span>captura, origem e distribuição regional</span></div>
-      <div><b>Utilização da Frota</b><span>capacidade, disponibilidade, sobrecarga e recortes operacionais</span></div>
+      <div><b>Utilização da Frota</b><span>capacidade, disponibilidade, sobrecarga e detalhamento operacional</span></div>
       <div><b>Equipamentos e Infraestrutura</b><span>equipamentos e manutenção predial</span></div>
     </div>
   </section>
@@ -459,13 +469,13 @@
         <div class="panelHead">
           <div><h2>ETR Total</h2><div class="hint">Recebimento mensal (t)</div></div>
         </div>
-        <div class="body"><div class="chartWrap small"><canvas id="chartEtrTotal"></canvas></div></div>
+        <div class="body"><div class="chartWrap small"><canvas id="chartEtrTotal" role="img" aria-label="Recebimento mensal total nas estações de transferência"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead">
           <div><h2>Biogás · CTR Seropédica</h2><div class="hint">Geração mensal (Nm³)</div></div>
         </div>
-        <div class="body"><div class="chartWrap small"><canvas id="chartBiogas"></canvas></div></div>
+        <div class="body"><div class="chartWrap small"><canvas id="chartBiogas" role="img" aria-label="Geração mensal de biogás na CTR Seropédica"></canvas></div></div>
       </div>
     </div>
     <!-- Chorume isolado removido: redundante com o bloco principal abaixo,
@@ -477,7 +487,7 @@
         <div class="readAutoBadge" id="climaStatus">carregando chuva…</div>
       </div>
       <div class="body">
-        <div class="chartWrap" style="height:320px;"><canvas id="chartChorumeChuva"></canvas></div>
+        <div class="chartWrap" style="height:320px;"><canvas id="chartChorumeChuva" role="img" aria-label="Comparação entre volume de chorume e precipitação"></canvas></div>
         <div class="climateReadInline" id="climaChorumeLeitura"><div class="loading">Aguardando dados meteorológicos…</div></div>
       </div>
     </div>
@@ -498,26 +508,26 @@
       <div class="panelHead">
         <div><h2>Composição da coleta seletiva</h2><div class="hint">Participação mensal por origem · cada coluna representa 100% do peso coletado</div></div>
       </div>
-      <div class="body"><div class="chartWrap"><canvas id="chartComposicao"></canvas></div></div>
+      <div class="body"><div class="chartWrap"><canvas id="chartComposicao" role="img" aria-label="Composição mensal da coleta seletiva por origem"></canvas></div></div>
     </div>
     <div class="reciclagemGrid">
       <div class="panel">
         <div class="panelHead">
           <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente · indicador de referência da aba</div></div>
         </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal"></canvas></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal" role="img" aria-label="Índice mensal de captura EGP-RIO"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead">
           <div><h2>Por regional</h2><div class="hint">UDS-S / UDS-N / UDS-O · ano corrente (t)</div></div>
         </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartRegional"></canvas></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartRegional" role="img" aria-label="Coleta seletiva por regional"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead">
           <div><h2>Participação por origem</h2><div class="hint">Distribuição do peso acumulado no ano corrente</div></div>
         </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartOrigem"></canvas></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartOrigem" role="img" aria-label="Participação da coleta seletiva por origem"></canvas></div></div>
       </div>
     </div>
   </section>
@@ -541,9 +551,9 @@
     <div class="frotaMainRow" style="margin-bottom:16px;">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Evolução da Utilização</h2><div class="hint" id="utilOficialHint">Série oficial DTE</div></div>
+          <div><h2>Evolução da utilização</h2><div class="hint" id="utilOficialHint">Série consolidada DTE</div></div>
         </div>
-        <div class="body"><div class="chartWrap" style="height:270px;"><canvas id="chartUtilizacaoOficial"></canvas></div></div>
+        <div class="body"><div class="chartWrap" style="height:270px;"><canvas id="chartUtilizacaoOficial" role="img" aria-label="Evolução da utilização da frota"></canvas></div></div>
       </div>
       <div class="panel">
         <div class="panelHead">
@@ -551,7 +561,7 @@
         </div>
         <div class="body">
           <div class="fleetAvailMain" id="fleetAvailMain"></div>
-          <div class="fleetAvailSpark" style="height:56px;"><canvas id="chartFrotaDisponibilidade"></canvas></div>
+          <div class="fleetAvailSpark" style="height:56px;"><canvas id="chartFrotaDisponibilidade" role="img" aria-label="Evolução da disponibilidade da frota"></canvas></div>
         </div>
       </div>
     </div>
@@ -559,17 +569,17 @@
     <!-- LINHA 4 · sobrecarga e horas extras, mesma altura -->
     <div class="grid2" style="margin-bottom:16px;">
       <div class="panel">
-        <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">% de pesagens acima do limite, consolidado oficial DTE</div></div></div>
+        <div class="panelHead"><div><h2>Sobrecarga &gt;10% PBT</h2><div class="hint">Percentual de pesagens acima do limite, consolidado DTE</div></div></div>
         <div class="body">
           <div class="chartInsight" id="insightSobrecarga"></div>
-          <div class="chartWrap"><canvas id="chartSobrecarga"></canvas></div>
+          <div class="chartWrap"><canvas id="chartSobrecarga" role="img" aria-label="Percentual de pesagens com sobrecarga acima de dez por cento do PBT"></canvas></div>
         </div>
       </div>
       <div class="panel">
-        <div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal (R$), consolidado oficial DTE</div></div></div>
+        <div class="panelHead"><div><h2>Horas extras</h2><div class="hint">Valor mensal (R$), consolidado DTE</div></div></div>
         <div class="body">
           <div class="chartInsight" id="insightHorasExtras"></div>
-          <div class="chartWrap"><canvas id="chartHorasExtras"></canvas></div>
+          <div class="chartWrap"><canvas id="chartHorasExtras" role="img" aria-label="Evolução mensal do valor de horas extras"></canvas></div>
         </div>
       </div>
     </div>
@@ -580,13 +590,13 @@
       </summary>
       <div class="dteDeepenBody">
         <div class="fleetServiceCards" id="fleetTabs">
-          <button class="fleetServiceCard active" data-fleet="domiciliar">
+          <button class="fleetServiceCard active" type="button" data-fleet="domiciliar">
             <div class="serviceName">Coleta Domiciliar</div><div class="serviceValue" id="fleetTabValDomiciliar">n/d</div><div class="serviceMeta">utilização · competência vigente</div>
           </button>
-          <button class="fleetServiceCard" data-fleet="seletiva">
+          <button class="fleetServiceCard" type="button" data-fleet="seletiva">
             <div class="serviceName">Coleta Seletiva</div><div class="serviceValue" id="fleetTabValSeletiva">n/d</div><div class="serviceMeta">utilização · competência vigente</div>
           </button>
-          <button class="fleetServiceCard" data-fleet="lixo">
+          <button class="fleetServiceCard" type="button" data-fleet="lixo">
             <div class="serviceName">Lixo Público</div><div class="serviceValue" id="fleetTabValLixo">n/d</div><div class="serviceMeta">utilização · base detalhada</div>
           </button>
         </div>
@@ -610,8 +620,8 @@
 
         <div class="fleetAnalysisTop">
           <div class="panel">
-            <div class="panelHead"><div><h2>Evolução mensal</h2><div class="hint" id="fleetTrendHint">Utilização no recorte selecionado</div></div></div>
-            <div class="body"><div class="chartWrap" style="height:270px"><canvas id="chartFleetTrend"></canvas></div></div>
+            <div class="panelHead"><div><h2>Evolução mensal</h2><div class="hint" id="fleetTrendHint">Utilização conforme os filtros selecionados</div></div></div>
+            <div class="body"><div class="chartWrap" style="height:270px"><canvas id="chartFleetTrend" role="img" aria-label="Evolução mensal da utilização conforme os filtros selecionados"></canvas></div></div>
           </div>
           <div class="panel">
             <div class="panelHead"><div><h2>Por tipo de veículo</h2><div class="hint">Tipos consolidados · menor utilização primeiro</div></div></div>
@@ -621,11 +631,11 @@
 
         <div class="fleetAnalysisBottom">
           <div class="panel">
-            <div class="panelHead"><div><h2>Gerências do recorte</h2><div class="hint">Peso, capacidade e utilização · menor utilização primeiro</div></div></div>
+            <div class="panelHead"><div><h2>Gerências selecionadas</h2><div class="hint">Peso, capacidade e utilização · menor utilização primeiro</div></div></div>
             <div class="body fleetRankBody" id="fleetGerRanking"></div>
           </div>
           <div class="panel">
-            <div class="panelHead"><div><h2>Sinais do recorte</h2><div class="hint">Concentrações e desvios no recorte selecionado</div></div></div>
+            <div class="panelHead"><div><h2>Sinais da seleção</h2><div class="hint">Concentrações e desvios conforme os filtros selecionados</div></div></div>
             <div class="body"><div class="leituraChips" id="fleetInsights"></div></div>
           </div>
         </div>
@@ -652,7 +662,7 @@
       <div class="panelHead"><div><h2 id="infraFocusTitle">Histórico do item selecionado</h2><div class="hint" id="infraFocusHint">Janela móvel de 13 meses</div></div></div>
       <div class="body">
         <div class="infraFocusStats" id="infraFocusStats"></div>
-        <div class="chartWrap" style="height:290px"><canvas id="chartInfraFocus"></canvas></div>
+        <div class="chartWrap" style="height:290px"><canvas id="chartInfraFocus" role="img" aria-label="Histórico do equipamento ou item de infraestrutura selecionado"></canvas></div>
         <div class="infraPointDetail" id="infraPointDetail"></div>
       </div>
     </div>
@@ -744,13 +754,13 @@ function norm(v) {
 }
 
 function parseNumBR(v) {
-  if (v === undefined || v === null) return 0;
+  if (v === undefined || v === null) return null;
   let s = String(v).trim();
-  if (s === "" || s === "-" || s === "n/d") return 0;
+  if (s === "" || s === "-" || norm(s) === "N/D") return null;
   s = s.replace("R$", "").trim().replace("%", "").trim();
   s = s.replace(/\./g, "").replace(",", ".");
   const n = parseFloat(s);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : null;
 }
 
 const MESES_ABREV = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
@@ -861,7 +871,7 @@ function relatorioMeses(rows) {
 
 function relatorioSerie(rows, label, n) {
   const row = findRow(rows, label);
-  if (!row) { console.warn("relatorioSerie: rótulo não encontrado ->", label); return Array(n).fill(0); }
+  if (!row) { console.warn("relatorioSerie: rótulo não encontrado ->", label); return Array(n).fill(null); }
   const idx = firstNonEmptyIdx(row);
   return row.slice(idx + 1, idx + 1 + n).map(parseNumBR);
 }
@@ -869,7 +879,7 @@ function relatorioSerie(rows, label, n) {
 // --- Tabela 1493 (formato largo: Label | Total | Jan..Dez) ---
 function ind1493Serie(rows, label) {
   const row = findRow(rows, label);
-  if (!row) { console.warn("ind1493Serie: rótulo não encontrado ->", label); return { total: 0, meses: Array(12).fill(0) }; }
+  if (!row) { console.warn("ind1493Serie: rótulo não encontrado ->", label); return { total: null, meses: Array(12).fill(null) }; }
   const idx = firstNonEmptyIdx(row);
   const total = parseNumBR(row[idx + 1]);
   const meses = row.slice(idx + 2, idx + 14).map(parseNumBR);
@@ -1013,7 +1023,7 @@ function chartOuVazio(canvasId, values, drawFn) {
 // DRILL DOWN / DETALHE DA COMPETÊNCIA
 // Infraestrutura compartilhada por todas as abas do DTE.
 // Dois comportamentos distintos, nunca confundidos na interface:
-//  - dteShowDrillReal: dimensão real existente na fonte (recorte, muda o gráfico)
+//  - dteShowDrillReal: dimensão real existente na fonte (filtro, muda o gráfico)
 //  - dteShowDetalheCompetencia: série mensal única, sem dimensão inferior
 //    (não muda o gráfico, só abre o valor exato do mês clicado)
 // ============================================
@@ -1078,11 +1088,11 @@ function dteCloseDrill() {
   if (typeof renderInfra === "function" && RAW.relatorio.length) renderInfra();
 }
 
-// Recorte real: existe dimensão inferior na fonte, o clique muda o gráfico.
+// Filtro real: existe dimensão inferior na fonte, o clique muda o gráfico.
 function dteShowDrillReal(titulo, descricao) {
   dteBannerShow({
     kind: "Drill down",
-    title: "Recorte · " + titulo,
+    title: "Análise: " + titulo,
     description: descricao
   });
 }
@@ -1243,7 +1253,7 @@ function renderVisaoGeral() {
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
 
   const secBiogas = findSecao(RAW.secoes, "GERACAO BIOGAS");
-  const biogas = secBiogas ? relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", n) : Array(n).fill(0);
+  const biogas = secBiogas ? relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", n) : Array(n).fill(null);
 
   const iAtual = lastValidIndex(etrTotal);
   const iChorume = lastValidIndex(chorume);
@@ -1283,7 +1293,7 @@ function renderVisaoGeral() {
     const cards = [
       {k:"Recebimento nas ETRs",v:iAtual>=0?HUB.format.int(Math.round(etrTotal[iAtual]))+" t":"n/d",s:iAtual>=0?deltaTxt(etrTotal,iAtual):"sem dado",tone:""},
       {k:"Frota própria disponível",v:dispTop!=null?dispTop.toFixed(1).replace(".",",")+"%":"n/d",s:dispDelta==null?"competência mais recente":`${dispDelta>=0?"+":""}${dispDelta.toFixed(1).replace(".",",")} p.p. em relação a mês anterior`,tone:dispDelta!=null?(dispDelta<0?"bad":"good"):""},
-      {k:"Utilização · domiciliar",v:utilDomicTop!=null?utilDomicTop.toFixed(1).replace(".",",")+"%":"n/d",s:iDomicTop>=0?(prettyRef(mesesTodosTop[iDomicTop])||"série oficial DTE"):"sem dado",tone:utilDomicTop!=null&&utilDomicTop>100?"warn":""},
+      {k:"Utilização · domiciliar",v:utilDomicTop!=null?utilDomicTop.toFixed(1).replace(".",",")+"%":"n/d",s:iDomicTop>=0?(prettyRef(mesesTodosTop[iDomicTop])||"série consolidada DTE"):"sem dado",tone:utilDomicTop!=null&&utilDomicTop>100?"warn":""},
       {k:"Coleta seletiva · mês",v:seletivaMesTop!=null?HUB.format.int(Math.round(seletivaMesTop))+" t":"n/d",s:iSelTop>=0?"Tabela 1493 · competência vigente":"sem dado",tone:""}
     ];
     pulse.innerHTML = cards.map(c=>`<div class="dtePulseCard"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s ${c.tone}">${c.s}</div></div>`).join("");
@@ -1463,7 +1473,7 @@ function renderDestinacao() {
 
   const etrTotal = corta13(relatorioSerie(RAW.relatorio, "ETR TOTAL", nTodos));
   const secBiogas = findSecao(RAW.secoes, "GERACAO BIOGAS");
-  const biogas = secBiogas ? corta13(relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", nTodos)) : Array(n).fill(0);
+  const biogas = secBiogas ? corta13(relatorioSerie(secBiogas.rows, "CTR SERIOPEDICA", nTodos)) : Array(n).fill(null);
   const chorume = corta13(relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", nTodos));
 
   const eixoXCalmo = { ...HUB.charts.baseConfig.scales.x, grid: { display:false }, ticks:{ ...HUB.charts.baseConfig.scales.x.ticks, maxRotation:45, minRotation:45 } };
@@ -1642,7 +1652,7 @@ function renderReciclagem() {
   function lastDataIndex(arr){ for(let i=arr.length-1;i>=0;i--) if(Number.isFinite(arr[i]) && arr[i]>0) return i; return -1; }
 
   const serieIdx = rolling13("INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL", "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  renderTendenciaAnualChart("chartIndiceMensal", labels13, serieIdx.map(v=>v||0), HUB.charts.colors.green, "%", { titulo: "Índice de captura EGP-RIO", fonte: "Tabela 1493 · Índice do coletado em relação ao potencial reciclável" });
+  renderTendenciaAnualChart("chartIndiceMensal", labels13, serieIdx, HUB.charts.colors.green, "%", { titulo: "Índice de captura EGP-RIO", fonte: "Tabela 1493 · Índice do coletado em relação ao potencial reciclável" });
 
   const bannerTitleEl = document.getElementById("bannerTitle");
   const bannerEl2 = document.getElementById("bannerIndice");
@@ -1717,7 +1727,7 @@ function renderReciclagem() {
   }
 
   // Regional: usa o ano corrente acumulado publicado; não inventa meses sem dado.
-  // A Tabela 1493 tem os 12 meses por trás de cada regional — dimensão real, não snapshot.
+// A Tabela 1493 tem os 12 meses por trás de cada regional, dimensão real e não snapshot.
   const regionais=["UDS-S","UDS-N","UDS-O (AP-4)","UDS-O (AP-5)"];
   const eixoXRec={...HUB.charts.baseConfig.scales.x,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,maxRotation:38,minRotation:38,autoSkip:false}};
   const eixoYRec={...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(41,72,102,.16)",drawTicks:false},border:{display:false}};
@@ -1739,7 +1749,7 @@ function renderReciclagem() {
       const label=DTE_DRILL.reciclagemRegional;
       const serieReg=rolling13(label,label);
       const iUlt=lastDataIndex(serieReg);
-      chartOuVazio("chartRegional",serieReg.map(v=>v||0),()=>{
+      chartOuVazio("chartRegional",serieReg,()=>{
         new Chart(regEl.getContext("2d"),{type:"bar",data:{labels:labels13,datasets:[{label,data:serieReg,backgroundColor:serieReg.map((_,i)=>i===iUlt?"rgba(120,170,163,.92)":"rgba(120,170,163,.38)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:34}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
           const idx=dteClickIndex(items); if(idx<0)return;
           dteShowDetalheCompetencia({titulo:"Coleta seletiva · "+label,meses:labels13,serie:serieReg,idx,fonte:"Tabela 1493 · "+label,fmt:v=>HUB.format.int(Math.round(v))+" t"});
@@ -1779,7 +1789,7 @@ function renderReciclagem() {
       const label=DTE_DRILL.reciclagemOrigem;
       const serieOrig=rolling13(origemLabels[label],origemLabels[label]);
       const iUlt=lastDataIndex(serieOrig);
-      chartOuVazio("chartOrigem",serieOrig.map(v=>v||0),()=>{
+      chartOuVazio("chartOrigem",serieOrig,()=>{
         new Chart(origEl.getContext("2d"),{type:"bar",data:{labels:labels13,datasets:[{label,data:serieOrig,backgroundColor:serieOrig.map((_,i)=>i===iUlt?origemCores[label]:origemCores[label]+"66"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:34}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
           const idx=dteClickIndex(items); if(idx<0)return;
           dteShowDetalheCompetencia({titulo:"Origem do peso · "+label,meses:labels13,serie:serieOrig,idx,fonte:"Tabela 1493 · "+origemLabels[label],fmt:v=>HUB.format.int(Math.round(v))+" t"});
@@ -1842,7 +1852,14 @@ function fleetLabel(code){
 function fleetDateKey(v){
   const s=String(v??"").trim();
   let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if(m) return `${m[3]}-${String(m[2]).padStart(2,"0")}`;
+  if(m){
+    const first=Number(m[1]);
+    const month=String(m[2]).padStart(2,"0");
+    // A planilha mensal codifica o ano de referência no primeiro campo
+    // e mantém 2026 no último campo: 21/01/2026 significa jan/2021.
+    if(m[3]==="2026" && first>=21 && first<=26) return `20${m[1]}-${month}`;
+    return `${m[3]}-${month}`;
+  }
   m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   if(m) return `${m[1]}-${String(m[2]).padStart(2,"0")}`;
   m=s.match(/^(\d{1,2})\/(\d{4})$/);
@@ -1933,7 +1950,7 @@ function serieAposTitulo(rows,title,metric,n){
       }
     }
   }
-  return Array(n).fill(0);
+  return Array(n).fill(null);
 }
 
 const FLEET_SERVICE_LABEL={domiciliar:"Coleta Domiciliar",seletiva:"Coleta Seletiva",lixo:"Lixo Público"};
@@ -1953,7 +1970,7 @@ function wrapAxisLabel(label,maxLen=12){
 
 // Gráfico de tendência anual reutilizável: marca e rotula apenas o mês atual
 // e o mesmo mês do ano anterior, mantendo o restante da série limpo.
-// detalhe: {titulo, fonte} — quando presente, clicar num ponto abre Detalhe da Competência
+// detalhe: {titulo, fonte}. Quando presente, clicar num ponto abre Detalhe da Competência.
 // (série mensal única, sem dimensão inferior; nunca chamado de "drill down" na interface).
 function renderTendenciaAnualChart(canvasId,meses,serie,cor,sufixo,detalhe){
   chartOuVazio(canvasId,serie,()=>{
@@ -1977,11 +1994,11 @@ function renderFrota() {
   const horasExtras=corta13(relatorioSerie(RAW.relatorio,"VALOR TOTAL DE HORAS EXTRAS",nTodos));
   const sobrecarga=corta13(relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",nTodos)).map(v=>v>1?v:v*100);
   const secFrota=findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
-  const frotaTotal=secFrota?corta13(relatorioSerie(secFrota.rows,"FROTA TOTAL",nTodos)):Array(meses.length).fill(0);
-  const frotaOp=secFrota?corta13(relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",nTodos)):Array(meses.length).fill(0);
+  const frotaTotal=secFrota?corta13(relatorioSerie(secFrota.rows,"FROTA TOTAL",nTodos)):Array(meses.length).fill(null);
+  const frotaOp=secFrota?corta13(relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",nTodos)):Array(meses.length).fill(null);
   const domicOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Domiciliar e Comunidade","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v>1?v:v*100);
   const seletivaOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Seletiva","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v>1?v:v*100);
-  const lixoOf=Array(meses.length).fill(0); // sem série oficial publicada por mês na fonte atual
+  const lixoOf=Array(meses.length).fill(null); // sem série consolidada publicada por mês na fonte atual
 
   const officialUtilFor=tipo=>tipo==="seletiva"?seletivaOf:tipo==="lixo"?lixoOf:domicOf;
 
@@ -2002,8 +2019,7 @@ function renderFrota() {
   chartOuVazio("chartHorasExtras",horasExtras,()=>{
     const c=document.getElementById("chartHorasExtras"); if(!c)return;
     const ctx=c.getContext("2d");
-    const grad=ctx.createLinearGradient(0,0,0,260); grad.addColorStop(0,"rgba(232,117,53,.92)"); grad.addColorStop(1,"rgba(232,117,53,.42)");
-    new Chart(ctx,{type:"bar",data:{labels:meses,datasets:[{label:"Horas extras",data:horasExtras,backgroundColor:horasExtras.map((_,i)=>i===ultimo(horasExtras)?grad:"rgba(91,147,232,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:26}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+    new Chart(ctx,{type:"bar",data:{labels:meses,datasets:[{label:"Horas extras",data:horasExtras,backgroundColor:horasExtras.map((_,i)=>i===ultimo(horasExtras)?"rgba(232,117,53,.92)":"rgba(91,147,232,.32)"),borderWidth:0,borderRadius:7,borderSkipped:false,maxBarThickness:26}]},options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
       const idx=dteClickIndex(items); if(idx<0)return;
       dteShowDetalheCompetencia({titulo:"Horas extras",meses,serie:horasExtras,idx,fonte:"Relatório Mensal DTE · VALOR TOTAL DE HORAS EXTRAS",fmt:v=>"R$ "+HUB.format.int(Math.round(v))});
     },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false}},scales:{x:eixoX,y:eixoY}}});
@@ -2044,7 +2060,7 @@ function renderFrota() {
     const dispAtual=iDisp>=0?disponibilidade[iDisp]:null;
     const deltaYoY=temYoYDisp?(disponibilidade[iDisp]-disponibilidade[iDispYoY]):null;
     const yoyTxt=deltaYoY==null?"sem comparação com "+ (iDispYoY>=0?meses[iDispYoY]:"o ano anterior")+" disponível":`${deltaYoY>=0?"+":""}${deltaYoY.toFixed(1).replace(".",",")} p.p. frente a ${meses[iDispYoY]}`;
-    availMain.innerHTML=`<div class="label">${iDisp>=0?meses[iDisp]+" · oficial DTE":"sem dado na janela"}</div><div class="v">${dispAtual==null?"n/d":dispAtual.toFixed(1).replace(".",",")+"%"}</div><div class="yoy ${deltaYoY==null?"":(deltaYoY>=0?"up":"down")}">${yoyTxt}</div>`;
+    availMain.innerHTML=`<div class="label">${iDisp>=0?meses[iDisp]+" · consolidado DTE":"sem dado na janela"}</div><div class="v">${dispAtual==null?"n/d":dispAtual.toFixed(1).replace(".",",")+"%"}</div><div class="yoy ${deltaYoY==null?"":(deltaYoY>=0?"up":"down")}">${yoyTxt}</div>`;
   }
   chartOuVazio("chartFrotaDisponibilidade",disponibilidade,()=>{
     const c=document.getElementById("chartFrotaDisponibilidade"); if(!c)return;
@@ -2067,10 +2083,10 @@ function renderFrota() {
     const utilSerie=officialUtilFor(tipo);
     const iUtil=lastValidIndex(utilSerie);
     const cards=[
-      {k:"Utilização · "+FLEET_SERVICE_LABEL[tipo],v:iUtil>=0?utilSerie[iUtil].toFixed(1).replace(".",",")+"%":"n/d",s:iUtil>=0?meses[iUtil]+" · oficial DTE":"sem série oficial nesta janela"},
+      {k:"Utilização · "+FLEET_SERVICE_LABEL[tipo],v:iUtil>=0?utilSerie[iUtil].toFixed(1).replace(".",",")+"%":"n/d",s:iUtil>=0?meses[iUtil]+" · consolidado DTE":"sem série consolidada nesta janela"},
       {k:"Disponibilidade",v:iDisp>=0?disponibilidade[iDisp].toFixed(1).replace(".",",")+"%":"n/d",s:iDisp>=0?meses[iDisp]+" · frota total":""},
       {k:"Veículos indisponíveis",v:indisponiveisAtual==null?"n/d":HUB.format.int(indisponiveisAtual)+" veíc.",s:iDisp>=0?meses[iDisp]:""},
-      {k:"Sobrecarga >10% PBT",v:iSO>=0?sobrecarga[iSO].toFixed(1).replace(".",",")+"%":"n/d",s:iSO>=0?meses[iSO]+" · oficial DTE":""}
+      {k:"Sobrecarga >10% PBT",v:iSO>=0?sobrecarga[iSO].toFixed(1).replace(".",",")+"%":"n/d",s:iSO>=0?meses[iSO]+" · consolidado DTE":""}
     ];
     kpis.innerHTML=cards.map(c=>`<div class="fleetKpi"><div class="k">${c.k}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join("");
   }
@@ -2079,7 +2095,7 @@ function renderFrota() {
   function renderEvolucaoOficial(){
     const tipo=FLEET_STATE.tipo||"domiciliar";
     const hint=document.getElementById("utilOficialHint");
-    if(hint) hint.textContent=`Série oficial DTE · ${FLEET_SERVICE_LABEL[tipo]}`;
+    if(hint) hint.textContent=`Série consolidada DTE · ${FLEET_SERVICE_LABEL[tipo]}`;
     renderTendenciaAnualChart("chartUtilizacaoOficial",meses,officialUtilFor(tipo),HUB.charts.colors.blue,"%",{titulo:"Utilização · "+FLEET_SERVICE_LABEL[tipo],fonte:"Relatório Mensal DTE · Peso Coletado / Capacidade Estimada"});
   }
 
@@ -2212,7 +2228,7 @@ function renderFleetDetail(){
     const filtroAtivo=[FLEET_STATE.gerencia||"",FLEET_STATE.veiculo?fleetLabel(FLEET_STATE.veiculo):""].filter(Boolean).join(" · ")||"sem filtro adicional";
     fleetTrendChart=new Chart(c.getContext("2d"),{type:"line",data:{labels:trendLabels,datasets:[{label:"Utilização",data:vals,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2.5,tension:.28,pointRadius:vals.map((_,i)=>(i===iUlt||i===iYoYTrend)?4:0),pointHoverRadius:5,pointBorderWidth:1.5}]},options:{...HUB.charts.baseConfig,layout:{padding:{top:22}},onClick:(evt,items)=>{
       const idx=dteClickIndex(items); if(idx<0)return;
-      dteShowDetalheCompetencia({titulo:"Evolução mensal · "+serviceName,meses:trendLabels,serie:vals,idx,fonte:"Base detalhada DTE · peso ÷ capacidade estimada",fmt:v=>v.toFixed(1).replace(".",",")+"%",extraLinhas:["Recorte de filtro ativo: "+filtroAtivo]});
+      dteShowDetalheCompetencia({titulo:"Evolução mensal · "+serviceName,meses:trendLabels,serie:vals,idx,fonte:"Base detalhada DTE · peso ÷ capacidade estimada",fmt:v=>v.toFixed(1).replace(".",",")+"%",extraLinhas:["Filtros ativos: "+filtroAtivo]});
     },plugins:{...HUB.charts.baseConfig.plugins,legend:{display:false},dteValueLabels:{display:true,fontSize:11,color:"#d5e1ee",offset:8,formatter:(v,i)=>(i===iUlt||i===iYoYTrend)?v.toFixed(1).replace(".",",")+"%":""},tooltip:{callbacks:{label:ctx=>`Utilização: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{...HUB.charts.baseConfig.scales.x,grid:{display:false}},y:{...HUB.charts.baseConfig.scales.y,grid:{color:"rgba(120,150,180,.08)"},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:6,callback:v=>v+"%"}}}}});
   }
   const hint=document.getElementById("fleetTrendHint");
@@ -2232,17 +2248,17 @@ function renderFleetDetail(){
   const insights=document.getElementById("fleetInsights");
   if(insights){
     const arr=[];
-    if(agg.pct!=null) arr.push(`${serviceName} opera a ${agg.pct.toFixed(1).replace(".",",")}% da capacidade estimada no recorte selecionado.`);
-    if(gers.length) arr.push(`${gers[0].name} apresenta a menor utilização entre as gerências comparáveis do recorte: ${gers[0].pct.toFixed(1).replace(".",",")}%.`);
+    if(agg.pct!=null) arr.push(`${serviceName} opera a ${agg.pct.toFixed(1).replace(".",",")}% da capacidade estimada conforme os filtros selecionados.`);
+    if(gers.length) arr.push(`${gers[0].name} apresenta a menor utilização entre as gerências comparáveis da seleção: ${gers[0].pct.toFixed(1).replace(".",",")}%.`);
     if(vehicles.length) arr.push(`${fleetLabel(vehicles[0].name)} registra a menor utilização entre os tipos disponíveis: ${vehicles[0].pct.toFixed(1).replace(".",",")}%.`);
     const over=[...gers,...vehicles].filter(x=>x.pct>100).sort((a,b)=>b.pct-a.pct);
     if(over.length) arr.push(`Há ${over.length} resultado${over.length===1?"":"s"} acima de 100% da capacidade de referência. O maior é ${over[0].name in FLEET_LABELS?fleetLabel(over[0].name):over[0].name}, com ${over[0].pct.toFixed(1).replace(".",",")}%.`);
-    insights.innerHTML=(arr.length?arr:["Sem dados suficientes para gerar leitura do recorte."]).map(t=>`<div class="leituraChip"><div class="dot"></div><span>${HUB.format.esc(t)}</span></div>`).join("");
+    insights.innerHTML=(arr.length?arr:["Sem dados suficientes para gerar a leitura selecionada."]).map(t=>`<div class="leituraChip"><div class="dot"></div><span>${HUB.format.esc(t)}</span></div>`).join("");
   }
 }
 function renderFleetTable(id,rows,isVehicle){
   const el=document.getElementById(id); if(!el)return;
-  if(!rows.length){el.innerHTML='<div class="fleetEmpty">Sem dados para o recorte selecionado.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="fleetEmpty">Sem dados para os filtros selecionados.</div>';return;}
   const max=Math.max(100,...rows.map(r=>r.pct||0));
   el.innerHTML=`<table class="fleetTable"><thead><tr><th>${isVehicle?"Veículo / equipamento":"Gerência"}</th><th>Utilização</th><th class="num">Peso</th><th class="num">Capacidade</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${HUB.format.esc(isVehicle?fleetLabel(r.name):r.name)}</td><td><div style="display:grid;grid-template-columns:1fr 48px;gap:8px;align-items:center;"><div class="fleetBar"><span class="${r.pct>100?"over":""}" style="width:${Math.min(100,(r.pct/max)*100)}%"></span></div><strong>${r.pct.toFixed(1).replace(".",",")}%</strong></div></td><td class="num">${HUB.format.int(Math.round(r.peso))} t</td><td class="num">${HUB.format.int(Math.round(r.capacidade))} t</td></tr>`).join("")}</tbody></table><div class="fleetMetaLine"><span>Percentual ponderado pelo total de capacidade.</span><span>${rows.length} item${rows.length===1?"":"s"} exibido${rows.length===1?"":"s"}</span></div>`;
 }
@@ -2319,7 +2335,7 @@ function renderInfra(){
   // Poda mecanizada: por regra obrigatória, o indicador acompanhado deve falar
   // apenas de manejos realizados (volume absoluto). A base atual só publica
   // relações derivadas (km/manejo, manejo/apresentação), que não substituem o
-  // indicador oficial e não têm dado real de manejos absolutos por trás — por
+  // indicador oficial e não têm dado real de manejos absolutos por trás. Por
   // isso não aparecem como card executivo nem entram na rotação de foco.
   // A lacuna é sinalizada tecnicamente abaixo, fora da visão executiva.
   const podaNote=document.getElementById('podaAbsenceNote');
@@ -2994,7 +3010,7 @@ function execBuildViz(root, subject, isMobile) {
         <div class="execPanelName">${HUB.format.esc(p.name)}</div>
         <div class="execPanelStats">Atual: <b>${execFormatPanelValue(atual,p.unit)}</b> · Mesmo mês do ano anterior: <b>${execFormatPanelValue(yoy,p.unit)}</b></div>
       </div>
-      <div class="execChartWrap"><canvas id="execChart_${root.id}_${i}"></canvas></div>
+      <div class="execChartWrap"><canvas id="execChart_${root.id}_${i}" role="img" aria-label="${HUB.format.esc(p.title || p.label || 'Indicador operacional')}"></canvas></div>
     </div>`;
   }).join("") + `</div>`;
   s.panels.forEach((p,i)=>{
@@ -3026,7 +3042,7 @@ function execRender(root, subject, isMobile) {
 
   const navD = root.querySelector("[data-exec-nav-desktop]");
   if (navD) {
-    navD.innerHTML = order.map(k=>`<button data-subject="${k}" class="${k===subject?"isActive":""}">${EXEC_STATE.subjects[k].label}</button>`).join("");
+    navD.innerHTML = order.map(k=>`<button type="button" data-subject="${k}" class="${k===subject?"isActive":""}">${EXEC_STATE.subjects[k].label}</button>`).join("");
     navD.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>execRender(root, b.getAttribute("data-subject"), isMobile)));
   }
 
@@ -3034,8 +3050,8 @@ function execRender(root, subject, isMobile) {
   if (navM) {
     const outros = order.filter(k=>k!==subject);
     navM.innerHTML = `
-      <button class="execSelectBtn" data-toggle><span><small>Assunto</small>${EXEC_STATE.subjects[subject].label}</span><span class="execChev">▾</span></button>
-      <div class="execDropdown">${outros.map(k=>`<button data-subject="${k}">${EXEC_STATE.subjects[k].label}</button>`).join("")}</div>`;
+      <button class="execSelectBtn" type="button" data-toggle><span><small>Assunto</small>${EXEC_STATE.subjects[subject].label}</span><span class="execChev">▾</span></button>
+      <div class="execDropdown">${outros.map(k=>`<button type="button" data-subject="${k}">${EXEC_STATE.subjects[k].label}</button>`).join("")}</div>`;
     const btn = navM.querySelector("[data-toggle]");
     const dd = navM.querySelector(".execDropdown");
     btn.addEventListener("click",()=>{ btn.classList.toggle("isOpen"); dd.classList.toggle("isOpen"); });

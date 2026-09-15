@@ -9,7 +9,7 @@ Esta baseline organiza o estado recebido no pacote 60. Ela não transforma autom
 | Componente | Estado protegido | Evidência disponível | Situação |
 |---|---|---|---|
 | UrbanFlow Core | Baseline V1 | `CORE_BASELINE_V1.md` e regressão de 604 casos | Baseline técnica existente |
-| Balanço de Receita | Regras financeiras e validador | Validador independente e última conciliação conhecida sem divergência | Dados conciliados. Interface pendente de termo formal |
+| Balanço de Receita | Regras financeiras e validador | Validador independente, última conciliação conhecida sem divergência, 9 verificações financeiras isoladas e regressão geral aprovada | Homologação técnica aprovada em 15/09/2026. Validação visual publicada pendente |
 | Chamados 1746 | Fechamento até ago/2026 | `chamados-1746/data-cutoff.json` | Fechamento documentado |
 | Ouvidoria | Fechamento até ago/2026 | `ouvidoria/data-cutoff.json` | Fechamento documentado |
 | Engenharia Operacional | Estado recebido no pacote 60 | Testes e snapshot parciais | Em revisão, não homologado |
@@ -22,6 +22,12 @@ Copiar e preencher uma linha somente depois da aprovação:
 | Data | Módulo | Versão | Competência | Testes executados | Responsável funcional | Aprovador | Resultado |
 |---|---|---|---|---|---|---|---|
 | A preencher | A preencher | A preencher | A preencher | Totais, filtros, drill-down, desktop e celular | A preencher | A preencher | Aprovado ou rejeitado |
+
+## Homologações técnicas registradas
+
+| Data | Módulo | Identificação | Competência | Verificações | Responsável técnico | Resultado |
+|---|---|---|---|---|---|---|
+| 15/09/2026 | Balanço de Receita | `BAL-2026-09-15-TEC-01` | Conforme Google Sheets. Competência atual não reconsultada nesta execução | Sintaxe, referências HTML, filtros, drill-down anual, retorno, padronização, 9 testes isolados e regressão de 604 casos | Greicy Moreira | Técnica aprovada. Visual publicada pendente |
 
 ## Controle de publicação
 

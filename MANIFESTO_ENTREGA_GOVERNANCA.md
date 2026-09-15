@@ -45,3 +45,7 @@ Os arquivos canônicos de Chamados e Ouvidoria permanecem dentro das pastas dos 
 - Dependências externas conferidas com versão explícita.
 - Referências aos arquivos excluídos verificadas antes da retirada.
 - Regressão integral executada com 604 aprovações e nenhuma reprovação.
+
+## Aplicação confirmada no pacote 61
+
+Em 15 de setembro de 2026, os nove arquivos listados para exclusão ainda estavam presentes no pacote 61. Eles foram retirados desta versão de trabalho. A homologação técnica do Balanço de Receita foi registrada em `balanco-receita/HOMOLOGACAO_TECNICA.md`.

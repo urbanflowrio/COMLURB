@@ -115,7 +115,7 @@
   box-shadow:none!important;
 }
 #kpis .kpi.feature{
-  background:linear-gradient(135deg,rgba(18,54,92,.72),rgba(10,27,49,.78))!important;
+  background:rgba(18,54,92,.72)!important;
 }
 #kpis .kpi .label{
   min-height:auto!important;
@@ -295,8 +295,8 @@
   white-space:nowrap;
 }
 .chartWrap{
-  height:150px;
-  flex:0 0 150px;
+  height:210px;
+  flex:0 0 210px;
   position:relative;
   margin:0 0 10px;
 }
@@ -336,14 +336,14 @@
 .territorialName{
   grid-area:name;
   min-width:0;
-  font-size:10px!important;
+  font-size:11px!important;
   font-weight:750!important;
   color:#dce8f4!important;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap
 }
-.territorialNum{grid-area:num;font-size:10px!important;font-weight:850!important;color:#f4f8fd!important}
+.territorialNum{grid-area:num;font-size:11px!important;font-weight:850!important;color:#f4f8fd!important}
 .territorialTrack{
   grid-area:track;
   height:4px!important;
@@ -354,9 +354,32 @@
 .territorialFill{
   height:100%;
   border-radius:999px!important;
-  background:linear-gradient(90deg,#3976ad,#6aa7df)!important
+  background:#5b9bd5!important
 }
-.territorialPct{grid-area:pct;font-size:9px!important;color:#7690aa!important;text-align:right!important}
+.territorialPct{grid-area:pct;font-size:10px!important;color:#8fa8c1!important;text-align:right!important}
+
+.layerTabs{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+  margin:0 0 12px;
+  padding:5px;
+  border:1px solid var(--territorial-line);
+  border-radius:13px;
+  background:rgba(6,17,31,.42);
+}
+.layerTab{
+  min-height:38px;
+  border:1px solid transparent;
+  border-radius:9px;
+  background:transparent;
+  color:#91abc5;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+.layerTab:hover,.layerTab:focus-visible{color:#fff;border-color:rgba(106,167,223,.32)}
+.layerTab.active{color:#fff;background:#173a60;border-color:#4f8fc6}
 
 /* ===== Responsive ===== */
 @media (max-width:1180px){
@@ -374,8 +397,8 @@
   #map{height:500px}
   #kpis.kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .chartWrap{
-    height:190px;
-    flex:0 0 190px;
+    height:220px;
+    flex:0 0 220px;
   }
   .territorialRank{
     overflow:visible;
@@ -406,16 +429,21 @@
   .executivePanel .panelHead{padding:12px!important}
   .executivePanel .body{padding:12px!important}
   .chartWrap{
-    height:175px;
-    flex:0 0 175px;
+    height:215px;
+    flex:0 0 215px;
   }
   .breadcrumbBar{gap:3px}
   .crumbBtn{font-size:10px}
+  .layerTabs{grid-template-columns:1fr;padding:4px}
+  .layerTab{min-height:36px;text-align:left;padding:0 12px}
 }
 @media (max-width:390px){
   .app{padding:8px!important}
   #map{height:360px}
   #kpis.kpis{grid-template-columns:1fr 1fr!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 </style>
 
@@ -454,7 +482,7 @@
 
     <div class="filterGroup" id="secondaryFilters">
       <div class="filterGroupHead">
-        <div class="filterGroupTitle">Recortes complementares</div>
+        <div class="filterGroupTitle">Filtros complementares</div>
       </div>
       <div class="filterGrid secondary">
         <div class="field">
@@ -482,6 +510,8 @@
 
   <div class="breadcrumbBar" id="breadcrumbBar"></div>
   <div class="contextStrip" id="contextStrip" style="display:none"></div>
+
+  <nav class="layerTabs" id="layerTabs" aria-label="Camadas do território"></nav>
 
   <div class="kpis" id="kpis"></div>
 
@@ -512,7 +542,7 @@
           <div class="drillPill" id="drillPill">Clique para explorar</div>
         </div>
         <div class="chartWrap">
-          <canvas id="donutChart"></canvas>
+          <canvas id="distributionChart" role="img" aria-label="Distribuição das unidades conforme a dimensão selecionada"></canvas>
           <div class="emptyChart" id="emptyChart" style="display:none">Sem dados para exibir.</div>
         </div>
 
@@ -542,7 +572,7 @@
 const CONFIG = {
   panelName: "Território Operacional",
   systemLabel: "HUB COMLURB",
-  subtitle: "Leitura territorial da estrutura operacional, com navegação integrada entre mapa, hierarquia e recortes de gestão."
+  subtitle: "Leitura territorial da estrutura operacional, com navegação integrada entre mapa, hierarquia e filtros de gestão."
 };
 
 const GEO_META = {
@@ -603,12 +633,13 @@ const HIERARCHY = [
 let map = null;
 let activeGeoLayer = null;
 let unitLayer = null;
-let donutInstance = null;
+let distributionInstance = null;
 let currentLayer = "unidades";
 let ALL_ROWS = [];
 let UNIDADES = [];
 let FILTERED = [];
 let SETOR_MAP = {};
+const REDUCED_MOTION=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches===true;
 let STATE = {
   drill: {},
   lastSource: null,
@@ -658,16 +689,42 @@ function clearMapLayers(){
   if(unitLayer){map.removeLayer(unitLayer);unitLayer=null}
 }
 
-function renderLayerTabs(){}
+function renderLayerTabs(){
+  const el=document.getElementById("layerTabs");
+  if(!el) return;
+  const tabs=[
+    {key:"unidades",label:"Unidades COMLURB"},
+    {key:"dsu",label:GEO_META.dsu.label},
+    {key:"dlu",label:GEO_META.dlu.label}
+  ];
+  el.innerHTML=tabs.map(tab=>
+    `<button class="layerTab ${currentLayer===tab.key?"active":""}" type="button" data-layer="${tab.key}" aria-pressed="${currentLayer===tab.key}">${esc(tab.label)}</button>`
+  ).join("");
+  el.querySelectorAll("[data-layer]").forEach(btn=>{
+    btn.addEventListener("click",()=>switchLayer(btn.dataset.layer));
+  });
+}
 
 function switchLayer(key){
-  currentLayer="unidades";
+  if(key!=="unidades" && !GEO_META[key]) return;
+  currentLayer=key;
   STATE.drill={};
-  document.getElementById("filtrosUnidades").classList.add("active");
-  renderUnidades();
+  renderLayerTabs();
+  const filters=document.getElementById("filtrosUnidades");
+  if(key==="unidades"){
+    filters.classList.add("active");
+    document.getElementById("explorerModes").style.display="flex";
+    renderUnidades();
+  }else{
+    filters.classList.remove("active");
+    document.getElementById("explorerModes").style.display="none";
+    document.getElementById("breadcrumbBar").innerHTML="";
+    document.getElementById("contextStrip").style.display="none";
+    loadGeo(key);
+  }
   setTimeout(()=>{
     map.invalidateSize();
-    if(donutInstance) donutInstance.resize();
+    if(distributionInstance) distributionInstance.resize();
   },80);
 }
 
@@ -693,19 +750,23 @@ function prop(o,keys){
   return "";
 }
 function nomeGeo(p){
-  return prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA","BAIRRO","Bairro","NM_BAIRRO","NOME","Nome","name"])||"Território";
+  return prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA","BAIRRO","Bairro","NM_BAIRRO","FIRST_SUPERDLU","first_superdlu","NOME","Nome","name"])||"Território";
 }
 function popupGeo(p,key){
   const nome=nomeGeo(p);
   const ger=prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA"]);
   const bairro=prop(p,["BAIRRO","Bairro","NM_BAIRRO"]);
+  const estrutura=prop(p,["FIRST_SUPERDLU","first_superdlu"]);
   let html=`<div class="popupTitle">${esc(nome)}</div>`+
     (ger?`<div class="popupLine"><b>Gerência:</b> ${esc(ger)}</div>`:"")+
-    (bairro?`<div class="popupLine"><b>Bairro:</b> ${esc(bairro)}</div>`:"");
+    (bairro?`<div class="popupLine"><b>Bairro:</b> ${esc(bairro)}</div>`:"")+
+    (estrutura?`<div class="popupLine"><b>Superintendência DLU:</b> ${esc(estrutura)}</div>`:"");
   if(ger){
-    html+=`<button class="popupAction" data-geo-gerencia="${esc(ger)}">Ver estrutura relacionada</button>`;
+    html+=`<button class="popupAction" type="button" data-geo-gerencia="${esc(ger)}">Ver estrutura relacionada</button>`;
   }else if(bairro){
-    html+=`<button class="popupAction" data-geo-bairro="${esc(bairro)}">Ver unidades no bairro</button>`;
+    html+=`<button class="popupAction" type="button" data-geo-bairro="${esc(bairro)}">Ver unidades no bairro</button>`;
+  }else if(estrutura){
+    html+=`<button class="popupAction" type="button" data-geo-estrutura="${esc(estrutura)}">Ver estrutura relacionada</button>`;
   }
   return html;
 }
@@ -729,17 +790,18 @@ async function loadGeo(key){
         layer.on({
           mouseover:e=>e.target.setStyle({weight:3,fillOpacity:.34}),
           mouseout:e=>activeGeoLayer.resetStyle(e.target),
-          click:()=>{
+          popupopen:()=>{
             const ger=prop(p,["GERENCIA","Gerencia","GERÊNCIA","NM_GERENCIA"]);
             const bairro=prop(p,["BAIRRO","Bairro","NM_BAIRRO"]);
-            layer.once("popupopen",()=>{
-              const popupEl=layer.getPopup().getElement();
-              if(!popupEl) return;
-              const bGer=popupEl.querySelector("[data-geo-gerencia]");
-              const bBairro=popupEl.querySelector("[data-geo-bairro]");
-              if(bGer) bGer.addEventListener("click",()=>openUnitsFromGeo("gerencia",ger));
-              if(bBairro) bBairro.addEventListener("click",()=>openUnitsFromGeo("bairro",bairro));
-            });
+            const estrutura=prop(p,["FIRST_SUPERDLU","first_superdlu"]);
+            const popupEl=layer.getPopup().getElement();
+            if(!popupEl) return;
+            const bGer=popupEl.querySelector("[data-geo-gerencia]");
+            const bBairro=popupEl.querySelector("[data-geo-bairro]");
+            const bEstrutura=popupEl.querySelector("[data-geo-estrutura]");
+            if(bGer) bGer.addEventListener("click",()=>openUnitsFromGeo("gerencia",ger),{once:true});
+            if(bBairro) bBairro.addEventListener("click",()=>openUnitsFromGeo("bairro",bairro),{once:true});
+            if(bEstrutura) bEstrutura.addEventListener("click",()=>openUnitsFromGeo("estrutura",estrutura),{once:true});
           }
         });
       }
@@ -765,7 +827,7 @@ async function loadGeo(key){
     ]);
 
     renderMapLegend([]);
-    renderDonut(entries.slice(0,7),null,meta.color);
+    renderDistributionChart(entries.slice(0,7),null,meta.color);
     renderRankBars(entries.slice(0,10),features.length,null);
     document.getElementById("insightText").innerHTML=
       meta.insight+" Foram carregadas <b>"+HUB.format.int(features.length)+"</b> feições, agrupadas em <b>"+HUB.format.int(entries.length)+"</b> conjuntos territoriais distintos.";
@@ -786,13 +848,18 @@ function openUnitsFromGeo(field,value){
   if(target){
     setSelectValueIfExists(target,value);
   }else{
-    const match=UNIDADES.find(d=>sameText(d.gerencia,value));
-    if(match && match.gerencia){
+    const node=SETOR_MAP[value];
+    const display=node ? (node.nome_setor||node.setor) : value;
+    const match=UNIDADES.find(d=>
+      sameText(d[field],display) ||
+      (Array.isArray(d.path) && d.path.some(p=>sameText(p.setor,value)))
+    );
+    if(match){
       setSelectValueIfExists(document.getElementById("fDiretoria"),match.diretoria);
       refreshCascadeOptions("fDiretoria");
       setSelectValueIfExists(document.getElementById("fEstrutura"),match.estrutura);
       refreshCascadeOptions("fEstrutura");
-      setSelectValueIfExists(document.getElementById("fGerencia"),match.gerencia);
+      if(field==="gerencia") setSelectValueIfExists(document.getElementById("fGerencia"),match.gerencia);
     }
   }
   refreshCascadeOptions();
@@ -1015,10 +1082,10 @@ function renderBreadcrumb(){
   }
 
   let html=`<span class="crumbLabel">Navegação</span>
-    <button class="crumbBtn" data-clear-depth="-1">COMLURB</button>`;
+    <button class="crumbBtn" type="button" data-clear-depth="-1">COMLURB</button>`;
   path.forEach((item,idx)=>{
     html+=`<span class="crumbSep">›</span>
-      <button class="crumbBtn ${idx===path.length-1?"crumbCurrent":""}" data-clear-depth="${idx}">${esc(item.value)}</button>`;
+      <button class="crumbBtn ${idx===path.length-1?"crumbCurrent":""}" type="button" data-clear-depth="${idx}">${esc(item.value)}</button>`;
   });
   el.innerHTML=html;
 
@@ -1059,7 +1126,7 @@ function renderContextStrip(){
     return;
   }
 
-  const title=path.length ? path.map(p=>p.value).join(" › ") : "Recorte filtrado";
+  const title=path.length ? path.map(p=>p.value).join(" › ") : "Seleção filtrada";
   const sub=[
     extra.length?extra.join(" · "):"",
     clean(document.getElementById("fBusca").value) ? `Busca: ${clean(document.getElementById("fBusca").value)}` : ""
@@ -1071,7 +1138,7 @@ function renderContextStrip(){
       <div class="contextTitle">${esc(title)}</div>
       <div class="contextSub">${esc(sub || "Hierarquia ativa")}</div>
     </div>
-    <button class="contextReset" id="contextReset" type="button">Limpar recorte</button>
+    <button class="contextReset" id="contextReset" type="button">Limpar seleção</button>
   `;
   document.getElementById("contextReset").addEventListener("click",()=>clearAll());
 }
@@ -1087,7 +1154,7 @@ function popupUnidade(d){
     `<div class="popupLine"><b>Categoria:</b> ${esc(d.categoria_hub)}</div>`+
     `<div class="popupLine"><b>Bairro:</b> ${esc(d.bairro)}</div>`+
     (d.endereco?`<div class="popupLine"><b>Endereço:</b> ${esc(d.endereco)}</div>`:"")+
-    `<button class="popupAction" data-unit-setor="${esc(d.setor)}">Ver estrutura</button>`+
+    `<button class="popupAction" type="button" data-unit-setor="${esc(d.setor)}">Ver estrutura</button>`+
     (d.street_view?`<div class="popupLine" style="margin-top:8px"><a href="${esc(d.street_view)}" target="_blank" rel="noopener">Street View →</a></div>`:"");
 }
 
@@ -1173,7 +1240,7 @@ function renderRankBars(entries,total,field){
       <div class="territorialNum">${HUB.format.int(val)}</div>
       <div class="territorialPct">${HUB.format.pct(HUB.format.calcPct(val,total))}</div>
     </div>
-  `).join("") || `<div class="empty">Sem registros no recorte.</div>`;
+  `).join("") || `<div class="empty">Sem registros para os filtros selecionados.</div>`;
 
   if(clickable){
     box.querySelectorAll("[data-rank-value]").forEach(row=>{
@@ -1254,10 +1321,10 @@ function applyExplorerSelection(field,value){
   }
 }
 
-function renderDonut(entries,field,singleColor){
-  const canvas=document.getElementById("donutChart");
+function renderDistributionChart(entries,field,singleColor){
+  const canvas=document.getElementById("distributionChart");
   const empty=document.getElementById("emptyChart");
-  if(donutInstance){donutInstance.destroy();donutInstance=null}
+  if(distributionInstance){distributionInstance.destroy();distributionInstance=null}
 
   if(!entries.length){
     canvas.style.display="none";
@@ -1275,28 +1342,29 @@ function renderDonut(entries,field,singleColor){
     return colors[i%colors.length];
   });
 
-  donutInstance=new Chart(canvas,{
-    type:"doughnut",
+  distributionInstance=new Chart(canvas,{
+    type:"bar",
     data:{
       labels,
       datasets:[{
         data:values,
         backgroundColor:palette,
-        borderColor:"rgba(6,17,31,.92)",
-        borderWidth:3,
-        hoverOffset:3
+        borderWidth:0,
+        borderRadius:6,
+        borderSkipped:false,
+        maxBarThickness:20
       }]
     },
     options:{
       responsive:true,
       maintainAspectRatio:false,
-      cutout:"70%",
-      animation:{duration:260},
+      indexAxis:"y",
+      animation:{duration:REDUCED_MOTION?0:260},
       onHover:(evt,els)=>{
-        canvas.style.cursor=els.length?"pointer":"default";
+        canvas.style.cursor=field && els.length?"pointer":"default";
       },
       onClick:(evt,els)=>{
-        if(!els.length) return;
+        if(!field || !els.length) return;
         const idx=els[0].index;
         applyExplorerSelection(field,labels[idx]);
       },
@@ -1308,10 +1376,14 @@ function renderDonut(entries,field,singleColor){
             label:(ctx)=>{
               const total=values.reduce((a,b)=>a+b,0)||1;
               const pct=(ctx.raw/total*100).toFixed(1).replace(".",",");
-              return `${ctx.label}: ${HUB.format.int(ctx.raw)} · ${pct}%`;
+              return `${ctx.label}: ${HUB.format.int(ctx.raw)} | ${pct}%`;
             }
           }
         }
+      },
+      scales:{
+        x:{beginAtZero:true,grid:{color:"rgba(151,184,216,.08)"},ticks:{color:"#7894af",precision:0}},
+        y:{grid:{display:false},ticks:{color:"#b5c8da",font:{size:10,weight:"700"}}}
       }
     }
   });
@@ -1332,8 +1404,8 @@ function renderUnidades(){
   const path=activePath();
 
   HUB.cards.render("kpis",[
-    {label:"Unidades no recorte",value:total,note:path.length?"Hierarquia ativa":"Total mapeado",feature:true,onclick:"clearAll()"},
-    {label:"Operacional",value:operacional,note:HUB.format.pct(HUB.format.calcPct(operacional,total))+" do recorte",color:"blue"},
+    {label:"Unidades selecionadas",value:total,note:path.length?"Hierarquia ativa":"Total mapeado",feature:true,onclick:"clearAll()"},
+    {label:"Operacional",value:operacional,note:HUB.format.pct(HUB.format.calcPct(operacional,total))+" da seleção",color:"blue"},
     {label:"Diretorias",value:diretorias,note:"Diretorias representadas",color:"green"},
     {label:"Bairros",value:bairros,note:"Bairros com presença mapeada",color:"purple"}
   ]);
@@ -1355,10 +1427,10 @@ function renderUnidades(){
     canDrill
       ? (HIERARCHY.some(h=>h.field===axis.field)
           ? "Selecione um item para aprofundar a estrutura."
-          : `Selecione um ${axis.singular} para aplicar o recorte.`)
-      : "Não há registros no recorte atual.";
+          : `Selecione um ${axis.singular} para filtrar o painel.`)
+      : "Não há registros para os filtros atuais.";
 
-  renderDonut(entries,clickableField);
+  renderDistributionChart(entries,clickableField);
   renderRankBars(entries.slice(0,7),total,clickableField);
 
   const top=entries[0]||["-",0];
@@ -1373,7 +1445,7 @@ function renderUnidades(){
       : "";
   }else if(STATE.explorerMode==="categoria"){
     modeText=entries.length
-      ? ` Na classificação, <b>${esc(top[0])}</b> é a categoria mais representativa, com ${HUB.format.pct(HUB.format.calcPct(top[1],total))} do recorte.`
+      ? ` Na classificação, <b>${esc(top[0])}</b> é a categoria mais representativa, com ${HUB.format.pct(HUB.format.calcPct(top[1],total))} da seleção.`
       : "";
   }else{
     modeText=entries.length
@@ -1385,10 +1457,10 @@ function renderUnidades(){
   document.getElementById("sideHeadHint").textContent=
     STATE.explorerMode==="hierarquia"
       ? "Navegue pela estrutura sem sair da leitura executiva."
-      : "Clique para aplicar o recorte ao painel inteiro.";
+      : "Clique para filtrar o painel inteiro.";
   document.getElementById("insightText").innerHTML=
     hierarchyText+
-    ` O recorte reúne <b>${HUB.format.int(total)}</b> unidades em <b>${HUB.format.int(bairros)}</b> bairros.`+
+    ` A seleção reúne <b>${HUB.format.int(total)}</b> unidades em <b>${HUB.format.int(bairros)}</b> bairros.`+
     modeText;
 }
 
@@ -1478,7 +1550,7 @@ async function init(){
   HUB.footer.render("footer");
   window.addEventListener("resize",()=>{
     if(map) map.invalidateSize();
-    if(donutInstance) donutInstance.resize();
+    if(distributionInstance) distributionInstance.resize();
   });
 }
 

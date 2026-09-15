@@ -98,3 +98,21 @@ Esta etapa aprova a estrutura técnica. A homologação final depende de nova co
 - `engenharia-operacional/README.md`
 - `engenharia-operacional/REVISAO_TECNICA.md`
 - `engenharia-operacional/index.html`
+
+## Revisão técnica do Território Operacional
+
+A navegação entre Unidades COMLURB, Gerências DSU e Bairros DLU foi restaurada. A função que construía essas opções estava vazia, embora os arquivos GeoJSON existissem no repositório. Também foi corrigida a associação da camada DLU, que identifica as áreas pelo campo de Superintendência DLU.
+
+O gráfico de rosca foi substituído por barras horizontais clicáveis. Foram retirados gradientes e a expressão “recorte”. Botões, descrição do gráfico, redução de movimento e responsividade receberam padronização técnica. O acesso à Home permanece fornecido pelo componente compartilhado.
+
+A base territorial não foi alterada. Os arquivos antigos foram preservados por segurança.
+
+### Arquivos modificados nesta revisão territorial
+
+- `BASELINE_HOMOLOGACAO.md`
+- `MANIFESTO_ENTREGA_GOVERNANCA.md`
+- `MATRIZ_OFICIAL_MODULOS.md`
+- `territorial/README.md`
+- `territorial/REVISAO_TECNICA.md`
+- `territorial/index.html`
+- `territorial/unidades.css`

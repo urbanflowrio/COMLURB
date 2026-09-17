@@ -87,12 +87,16 @@ canvas{width:100%!important;height:100%!important}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
+// META (80%) é EXCLUSIVAMENTE a referência territorial do diagnóstico calculado pelo HUB
+// (usada em: cor/threshold do mapa, "trechos abaixo da referência", reincidência, ranking de prioridade).
+// NÃO é, e não deve voltar a ser, um fallback para "meta oficial" da SARC. A meta oficial de cada
+// unidade vem exclusivamente de metaOficialEntry(), que retorna null (exibido como "N/D") quando a
+// SARC não traz meta cadastrada para aquela unidade — nunca substituída por este valor.
 const IPL_CONFIG=Object.freeze({meta:80,metodologia:'IPL institucional COMLURB'});
 const META=IPL_CONFIG.meta;
 const URL_IPL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv';
 const URL_SARC='https://docs.google.com/spreadsheets/d/1UY51_jeu1as503ckKOsi_tqHgaBu9innbcMBXKjA_mQ/gviz/tq?tqx=out:csv&gid=1044100274';
 const URL_GEO_DLU='../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson';
-const URL_COORDS='../territorial/data/coordenadas_bairros_rio.csv';
 const PESOS={LB:30,CD:20,Bens:6,Ralo:6,PapCheia:6,PapSuja:6,PapQuebrada:6,Fezes:3,Perfuro:3,Propaganda:2,Galhada:2,Capina:2,AreaVerde:2,Animal:1,MorRua:1,Lama:1,CxMet:1,PosSvc:1,PtoCrit:1};
 const ITEM_LABELS={LB:'Lixo Branco',CD:'Coleta domiciliar',Bens:'Bens, entulho, material de obra e pneus',Ralo:'Ralo',PapCheia:'Papeleira cheia',PapSuja:'Papeleira suja',PapQuebrada:'Papeleira quebrada',Fezes:'Fezes',Perfuro:'Lixo crítico',Propaganda:'Propaganda irregular',Galhada:'Galhada',Capina:'Capina',AreaVerde:'Áreas verdes',Animal:'Animal morto',MorRua:'Resíduo de morador de rua',Lama:'Lama e areia',CxMet:'Caixa metálica',PosSvc:'Resíduo pós-serviço',PtoCrit:'Ponto crítico'};
 const COL_BIN={'Lixo Crítico':'Perfuro','Lixo Critico':'Perfuro','Lixo Crítico - Fezes':'Fezes','Lixo Critico - Fezes':'Fezes','Áreas verdes avaliação':'AreaVerde','Areas verdes avaliacao':'AreaVerde','Caixa metálica avaliação':'CxMet','Caixa metalica avaliacao':'CxMet','Resíduo pós servico':'PosSvc','Residuo pos servico':'PosSvc','Ponto crítico':'PtoCrit','Ponto critico':'PtoCrit','Ralo':'Ralo','Propaganda':'Propaganda','Galhada':'Galhada','Capina':'Capina','Animal morto':'Animal','Resíduo morador de rua':'MorRua','Residuo morador de rua':'MorRua','Lama/Areia':'Lama','Papeleira/contêiner – Cheia':'PapCheia','Papeleira/conteiner - Cheia':'PapCheia','Papeleira/contêiner – Suja':'PapSuja','Papeleira/conteiner - Suja':'PapSuja','Papeleira/contêiner – Quebrada':'PapQuebrada','Papeleira/conteiner - Quebrada':'PapQuebrada'};
@@ -101,16 +105,24 @@ const MESES_SARC=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','N
 const MES_SARC_COL={'jan./26':'Jan','fev./26':'Fev','mar./26':'Mar','abr./26':'Abr','mai./26':'Mai','jun./26':'Jun','jul./26':'Jul','ago./26':'Ago','set./26':'Set','out./26':'Out','nov./26':'Nov','dez./26':'Dez'};
 const ORDEM_MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const GEO_CENTROIDS={"PECHINCHA":[-22.932254,-43.354924],"CURICICA":[-22.949681,-43.385242],"CIDADE DE DEUS":[-22.947942,-43.361856],"ANIL":[-22.958493,-43.338646],"GARDENIA AZUL":[-22.958105,-43.351751],"TAQUARA":[-22.941898,-43.369768],"FREGUESIA (JACAREPAGUA)":[-22.939838,-43.343677],"JACAREPAGUA":[-22.965371,-43.337011],"BARRA DA TIJUCA":[-22.996644,-43.362730],"RECREIO DOS BANDEIRANTES":[-23.026454,-43.481533],"PENHA":[-22.831306,-43.264468],"DEL CASTILHO":[-22.879640,-43.272273],"MADUREIRA":[-22.873521,-43.336627],"CAMPO GRANDE":[-22.926512,-43.554290],"SANTA CRUZ":[-22.916679,-43.715767],"BANGU":[-22.861617,-43.487624],"REALENGO":[-22.876264,-43.430749],"CENTRO":[-22.907340,-43.171895],"COPACABANA":[-22.975220,-43.183350],"IPANEMA":[-22.987408,-43.198434],"TIJUCA":[-22.938773,-43.236418],"MEIER":[-22.901548,-43.281086],"BONSUCESSO":[-22.867346,-43.254837],"ROCINHA":[-22.989189,-43.248375],"PAVUNA":[-22.812851,-43.362865],"GUADALUPE":[-22.838493,-43.377453],"GUARATIBA":[-23.014443,-43.609302],"SEPETIBA":[-22.977347,-43.699608],"COSMOS":[-22.920384,-43.614954],"PADRE MIGUEL":[-22.874568,-43.450137],"RAMOS":[-22.855044,-43.258169],"OLARIA":[-22.849726,-43.274800],"ENGENHO NOVO":[-22.907987,-43.268098],"VILA ISABEL":[-22.916441,-43.246413],"BOTAFOGO":[-22.947809,-43.183621],"FLAMENGO":[-22.935551,-43.171468],"LAGOA":[-22.971730,-43.209435],"GAVEA":[-22.977772,-43.238677],"LARANJEIRAS":[-22.937579,-43.191428],"GLORIA":[-22.918728,-43.170578],"SAO CRISTOVAO":[-22.898797,-43.226668],"MANGUINHOS":[-22.879767,-43.245286],"COMPLEXO DO ALEMAO":[-22.859594,-43.274689],"INHAUMA":[-22.869901,-43.282228],"CACHAMBI":[-22.890510,-43.272345],"PIEDADE":[-22.891828,-43.312155],"ANCHIETA":[-22.824898,-43.400315],"ACARI":[-22.819699,-43.338860],"VIGARIO GERAL":[-22.808449,-43.308525],"MARE":[-22.848964,-43.244749],"PENHA CIRCULAR":[-22.829693,-43.284066],"IRAJA":[-22.835338,-43.326443],"VILA DA PENHA":[-22.843855,-43.310848],"MARECHAL HERMES":[-22.858389,-43.371281],"CASCADURA":[-22.885068,-43.327837],"CAMPINHO":[-22.882559,-43.349449],"VILA KENNEDY":[-22.857827,-43.485787],"SENADOR CAMARA":[-22.881181,-43.493560],"PACIENCIA":[-22.893644,-43.642949],"INHOAIBA":[-22.922457,-43.594419],"SENADOR VASCONCELOS":[-22.895885,-43.531750],"SANTISSIMO":[-22.884639,-43.513845],"PEDRA DE GUARATIBA":[-23.000754,-43.640748],"ILHA DE GUARATIBA":[-22.994142,-43.571243],"ALTO DA BOA VISTA":[-22.960494,-43.236534],"ANDARAI":[-22.929171,-43.252813],"GRAJAU":[-22.929842,-43.270173],"JARDIM BOTANICO":[-22.963721,-43.226412],"LEBLON":[-22.985841,-43.224307],"SAO CONRADO":[-22.998051,-43.263401],"VIDIGAL":[-22.995215,-43.236113]};
-let DATA=[],FILTERED=[],SARC_DATA={dir:[],sup:[],ger:[]},SARC_WARNINGS=[],COORDS={},GEO_DLU=null,map,territoryLayer,geoLayer,highlightLayer,trendChart;
+let DATA=[],RAW_DATA=[],RAW_PARSE_ERRORS=[],RAW_DISCARDS=[],FILTERED=[],SARC_DATA={dir:[],sup:[],ger:[]},SARC_WARNINGS=[],GEO_DLU=null,map,territoryLayer,geoLayer,highlightLayer,trendChart;
 let MAP_DRILL_GER='',MAP_DRILL_BAIRRO='',BAIRRO_LAYERS={},TERRITORIO_DLU={};
 const RIO_CENTER=[-22.91,-43.38];
 const RIO_VIEW_BOUNDS=[[-23.08,-43.80],[-22.74,-43.06]];
 const RIO_MAX_BOUNDS=[[-23.14,-43.88],[-22.69,-42.98]];
-const $=id=>document.getElementById(id);const normaliza=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,' ').replace(/\s+/g,' ').trim();const fmt=(n,d=1)=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});const parseNumeroBR=v=>{let t=String(v??'').trim();if(!t)return null;t=t.replace('%','').trim();if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');const n=Number(t);return Number.isFinite(n)?n:null};const parsePercentual=v=>{const n=parseNumeroBR(v);return n!==null&&n>=0&&n<=100?n:null};const csv=url=>new Promise((res,rej)=>{const sep=url.includes('?')?'&':'?';const urlSemCache=`${url}${sep}_=${Date.now()}`;Papa.parse(urlSemCache,{download:true,header:true,skipEmptyLines:true,complete:r=>{if(r.errors?.length)console.warn('Avisos na leitura CSV:',r.errors);res(r.data)},error:rej})});const campo=(row,nomes)=>{for(const n of nomes){if(row[n]!==undefined)return row[n]}return''};const num=v=>parseNumeroBR(v);const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
+const $=id=>document.getElementById(id);const normaliza=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,' ').replace(/\s+/g,' ').trim();const fmt=(n,d=1)=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});const parseNumeroBR=v=>{let t=String(v??'').trim();if(!t)return null;t=t.replace('%','').trim();if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');const n=Number(t);return Number.isFinite(n)?n:null};const parsePercentual=v=>{const n=parseNumeroBR(v);return n!==null&&n>=0&&n<=100?n:null};const csv=url=>new Promise((res,rej)=>{const sep=url.includes('?')?'&':'?';const urlSemCache=`${url}${sep}_=${Date.now()}`;Papa.parse(urlSemCache,{download:true,header:true,skipEmptyLines:true,complete:r=>{if(r.errors?.length)console.warn('Avisos na leitura CSV:',r.errors);Object.defineProperty(r.data,'__parseErrors',{value:r.errors||[],enumerable:false,configurable:true});res(r.data)},error:rej})});const campo=(row,nomes)=>{for(const n of nomes){if(row[n]!==undefined)return row[n]}return''};const num=v=>parseNumeroBR(v);const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
 function itemLabel(k){return ITEM_LABELS[k]||k}
 function ordemMes(v){const s=String(v||'').toLowerCase().trim();const idx=ORDEM_MESES.findIndex(m=>s.startsWith(m));return idx>=0?idx:99}
 function mesSarcAtual(){return MES_SARC_COL[$('fMes').value]||null}
 function mesesAteSelecionado(){const m=mesSarcAtual();if(!m)return MESES_SARC;const idx=MESES_SARC.indexOf(m);return idx>=0?MESES_SARC.slice(0,idx+1):MESES_SARC}
+// Semântica dos valores brutos por grupo de coluna (confirmada com amostra real do URL_IPL publicado):
+// - Lixo Branco TC1..4 - P/G: numéricos (podem faltar/vir vazios; tratados como 0 via parseNumeroBR).
+// - Coleta domiciliar: numérico (contagem); vazio ou 'N/A' => item não avaliado (itens.CD=null).
+// - Entulho/Bens inservíveis/Material de Obra/Pneus: texto 'OK'/'NOK'/'N/A'/vazio; item Bens só é
+//   null quando os 4 são 'N/A' ou vazio — qualquer 'NOK' entre eles zera o item.
+// - Demais itens do COL_BIN: texto 'OK' => 100, 'NOK' => 0, qualquer outro valor (inclusive 'N/A' e
+//   vazio/ausente) => null (não avaliado). 'N/A' e ausência têm o mesmo efeito: excluir o item do
+//   cálculo e redistribuir seu peso — nenhum dos dois deve ser tratado como avaliação com nota zero.
 function calcIPL(row){const itens={};let somaLB=0;for(let i=1;i<=4;i++){const p=parseNumeroBR(row[`Lixo Branco TC${i} - P`])||0,g=parseNumeroBR(row[`Lixo Branco TC${i} - G`])||0,tc=(p/2)+g;somaLB+=tc<=5?100:tc<=15?80:tc<=25?50:tc<=33?20:0}itens.LB=somaLB/4;const cdRaw=(row['Coleta domiciliar']||'').toString().trim();if(cdRaw===''||cdRaw==='N/A')itens.CD=null;else{const n=parseInt(cdRaw);itens.CD=n===0?100:n<=3?80:n<=7?40:20}const bv=[row['Entulho'],row['Bens inservíveis']||row['Bens inserviveis'],row['Material de Obra']||row['Material de obra'],row['Pneus']].map(v=>(v||'').trim().toUpperCase());if(bv.some(v=>v==='NOK'))itens.Bens=0;else if(bv.every(v=>v==='N/A'||v===''))itens.Bens=null;else itens.Bens=100;Object.entries(COL_BIN).forEach(([col,key])=>{if(row[col]!==undefined&&itens[key]===undefined){const v=(row[col]||'').trim().toUpperCase();itens[key]=v==='OK'?100:v==='NOK'?0:null}});Object.keys(PESOS).forEach(k=>{if(itens[k]===undefined)itens[k]=null});const somaNA=Object.entries(itens).filter(([,v])=>v===null).reduce((s,[k])=>s+PESOS[k],0);const qtdVal=Object.values(itens).filter(v=>v!==null).length;if(!qtdVal)return null;let nota=0;const perdaPorItem={},itensNok=[];Object.entries(itens).forEach(([k,v])=>{if(v===null)return;const pa=PESOS[k]+(somaNA/qtdVal);nota+=(v/100)*pa;const perda=pa-(v/100)*pa;perdaPorItem[k]=perda;if(v<100)itensNok.push(k)});return{nota:Math.round(nota*100)/100,perdaPorItem,itensNok}}
 function parseSARC(rows){
   const s={dir:[],sup:[],ger:[]};
@@ -145,6 +157,18 @@ function parseSARC(rows){
   return s;
 }
 function notaCor(n){return n>=85?'#78aaa3':n>=META?'#6da5d8':n>=70?'#e87535':'#e84855'}function corNota(n){return notaCor(n)}
+function validarCorrespondenciaGerencias(){
+  // Matching robusto (trim + caixa + espaços + acentuação via normaliza()) entre os códigos de gerência
+  // da SARC e os códigos "gerdlu" da camada territorial. Sem fuzzy matching: código institucional não
+  // é aproximado por distância de edição — ou casa exatamente após normalizar, ou vira aviso.
+  const gersTerritorio=new Set();
+  Object.values(TERRITORIO_DLU).forEach(info=>info.candidatos.forEach(c=>{if(c.ger)gersTerritorio.add(normaliza(c.ger))}));
+  const gersSarc=new Set(SARC_DATA.ger.map(e=>normaliza(e.ger)).filter(Boolean));
+  // Sentido 1: gerência territorial sem correspondência na SARC (ex.: painel "Desempenho por gerência" ficaria mudo para ela).
+  gersTerritorio.forEach(g=>{if(!gersSarc.has(g))SARC_WARNINGS.push({linha:null,unidade:g,campo:'Gerência',valor:'gerência territorial sem correspondência na SARC (DLU)'})});
+  // Sentido 2: gerência da SARC sem correspondência territorial (ex.: filtro/drill nunca alcançaria essa unidade).
+  gersSarc.forEach(g=>{if(!gersTerritorio.has(g))SARC_WARNINGS.push({linha:null,unidade:g,campo:'Gerência',valor:'gerência da SARC sem correspondência na camada territorial'})});
+}
 
 function pontoNoAnel(lon,lat,ring){
   let inside=false;
@@ -198,7 +222,6 @@ function resolverTerritorioDlu(bairro,gerBase,supBase){
   // Bairro compartilhado + gerência de origem incompatível: não inventar atribuição.
   return{ger:'',sup:info.candidatos[0]?.sup||supBase,corrigido:false,compartilhado:true,status:'compartilhado_indefinido',candidatos:info.candidatos};
 }
-function prepararCoords(rows){const out={};rows.forEach(r=>{const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']),lat=num(campo(r,['lat','Lat','LAT','latitude','LATITUDE'])),lon=num(campo(r,['lon','Lon','LON','lng','longitude','LONGITUDE']));if(b&&Number.isFinite(lat)&&Number.isFinite(lon))out[normaliza(b)]={lat,lon}});return out}
 function pontosGeometria(g,out=[]){if(!g||!Array.isArray(g.coordinates))return out;const walk=x=>{if(!Array.isArray(x))return;if(x.length>=2&&typeof x[0]==='number'&&typeof x[1]==='number'){if(Number.isFinite(x[0])&&Number.isFinite(x[1]))out.push([x[1],x[0]]);return}x.forEach(walk)};walk(g.coordinates);return out}
 function pontoRepresentativoBairro(nome){
   const info=TERRITORIO_DLU[normaliza(nome)];
@@ -206,7 +229,26 @@ function pontoRepresentativoBairro(nome){
   const fb=GEO_CENTROIDS[normaliza(nome)];return fb?{lat:fb[0],lon:fb[1]}:null;
 }
 function construirCentroidesGeo(){const out={};Object.values(TERRITORIO_DLU).forEach(info=>{const c=pontoRepresentativoBairro(info.nome);if(c)out[normaliza(info.nome)]=c});return out}
-async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,coords,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);COORDS=prepararCoords(coords);GEO_DLU=geoDlu;TERRITORIO_DLU=construirTerritorioDlu();SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairroOriginal=campo(r,['Bairro','BAIRRO']);const bairro=canonicalizarBairro(bairroOriginal);const gerBase=campo(r,['Gerência','Gerencia']),supBase=campo(r,['Superintendência','Superintendencia']);const terr=resolverTerritorioDlu(bairro,gerBase,supBase);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:terr.sup,ger:terr.ger,gerOriginal:gerBase,gerCorrigida:terr.corrigido,bairro,bairroOriginal,bairroCompartilhado:terr.compartilhado,territorioStatus:terr.status,gerenciasTerritoriais:(terr.candidatos||[]).map(x=>x.ger),logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);const naoResolvidos=DATA.filter(r=>r.territorioStatus==='compartilhado_indefinido'||r.territorioStatus==='sem_camada');if(naoResolvidos.length)console.warn('IPL · registros territoriais sem atribuição gerencial forçada:',naoResolvidos.length);populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
+async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);GEO_DLU=geoDlu;TERRITORIO_DLU=construirTerritorioDlu();SARC_DATA=parseSARC(sarcRows);validarCorrespondenciaGerencias();
+  // Instrumentação de auditoria: preserva exatamente as linhas que o PapaParse entregou ao IPL antes
+  // de qualquer cálculo/filtro. Não interfere na lógica do painel; serve apenas para reconciliar perdas
+  // entre a entrada bruta recebida e DATA. Avisos de parsing são guardados separadamente porque um
+  // aviso do PapaParse não significa necessariamente que a linha tenha sido descartada.
+  RAW_DATA=base.slice();RAW_PARSE_ERRORS=Array.isArray(base.__parseErrors)?base.__parseErrors.slice():[];RAW_DISCARDS=[];
+  DATA=[];
+  base.forEach((r,idx)=>{
+    try{
+      const c=calcIPL(r);
+      if(!c){RAW_DISCARDS.push({indice_bruto:idx+1,motivo:'sem_itens_avaliaveis',bairro_original:campo(r,['Bairro','BAIRRO']),gerencia_original:campo(r,['Gerência','Gerencia'])});return;}
+      const bairroOriginal=campo(r,['Bairro','BAIRRO']);
+      const bairro=canonicalizarBairro(bairroOriginal);
+      if(!bairro){RAW_DISCARDS.push({indice_bruto:idx+1,motivo:'sem_bairro',bairro_original:bairroOriginal,gerencia_original:campo(r,['Gerência','Gerencia'])});return;}
+      const gerBase=campo(r,['Gerência','Gerencia']),supBase=campo(r,['Superintendência','Superintendencia']);
+      const terr=resolverTerritorioDlu(bairro,gerBase,supBase);
+      DATA.push({mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:terr.sup,ger:terr.ger,gerOriginal:gerBase,gerCorrigida:terr.corrigido,bairro,bairroOriginal,bairroCompartilhado:terr.compartilhado,territorioStatus:terr.status,gerenciasTerritoriais:(terr.candidatos||[]).map(x=>x.ger),logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem,indiceBruto:idx+1});
+    }catch(err){RAW_DISCARDS.push({indice_bruto:idx+1,motivo:'erro_processamento',erro:String(err?.message||err),bairro_original:campo(r,['Bairro','BAIRRO']),gerencia_original:campo(r,['Gerência','Gerencia'])});}
+  });
+  const naoResolvidos=DATA.filter(r=>r.territorioStatus==='compartilhado_indefinido'||r.territorioStatus==='sem_camada');if(naoResolvidos.length)console.warn('IPL · registros territoriais sem atribuição gerencial forçada:',naoResolvidos.length);populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
 function baseSup(){const m=$('fMes').value;return DATA.filter(r=>!m||r.mes===m)}function baseGer(){const m=$('fMes').value,s=$('fSup').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s))}function baseBairro(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g))}
 function preencherSelect(id,campo,label,base,preservar=true){const atual=preservar?$(id).value:'';const vals=[...new Set(base.map(r=>r[campo]).filter(Boolean))];if(campo==='mes')vals.sort((a,b)=>ordemMes(a)-ordemMes(b)||String(a).localeCompare(String(b),'pt-BR'));else vals.sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));$(id).innerHTML=`<option value="">${label}</option>`;vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o)});if(preservar&&vals.includes(atual))$(id).value=atual}
 function populateAll(){preencherSelect('fMes','mes','Todos',DATA);preencherSelect('fSup','sup','Todas',baseSup());preencherSelect('fGer','ger','Todas',baseGer());preencherSelect('fBairro','bairro','Todos',baseBairro())}
@@ -216,29 +258,60 @@ function apply(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value,b=$
 function labelContexto(){return $('fMes').value || 'Acumulado'}
 function trechosAbaixoMeta(rows=FILTERED){const t=new Set();rows.filter(r=>r.nota<META).forEach(r=>t.add(chaveReincidencia(r)));return t.size}
 function group(field,rows=FILTERED){const o={};rows.forEach(r=>{const k=r[field]||'Não informado';if(!o[k])o[k]=[];o[k].push(r)});return Object.entries(o).map(([k,rows])=>{const media=rows.reduce((s,r)=>s+r.nota,0)/rows.length;const itensAcc={};rows.forEach(r=>r.itensNok.forEach(i=>{itensAcc[i]=(itensAcc[i]||0)+1}));const avaliacoesAbaixo=rows.filter(r=>r.nota<META).length;const trechosAbaixo=trechosAbaixoMeta(rows);return{k,rows,n:rows.length,media,avaliacoesAbaixo,trechosAbaixo,itens:itensAcc,reincidentes:contaReincidencia(rows)}})}
-function chaveReincidencia(r){return[normaliza(r.bairro),normaliza(r.logradouro),normaliza(r.trecho)].join('|')}function contaReincidencia(rows){const c={};rows.filter(r=>r.nota<META).forEach(r=>{const k=chaveReincidencia(r);c[k]=(c[k]||0)+1});return Object.values(c).filter(v=>v>=2).length}
+function statsSubset(rows){
+  if(!rows||!rows.length)return null;
+  const media=rows.reduce((s,r)=>s+r.nota,0)/rows.length;
+  // trechosUnicos = segmentos distintos (bairro+logradouro+trecho canônico) no recorte, independente da nota.
+  // Não é exibido na UI hoje (o painel só mostra "trechos abaixo da referência"), mas fica disponível
+  // já corretamente recortado por gerência para quem consumir esses dados (ex.: auditoria/testes).
+  const trechosUnicos=new Set(rows.map(r=>chaveReincidencia(r))).size;
+  return{n:rows.length,media,trechosUnicos,trechosAbaixo:trechosAbaixoMeta(rows),reincidentes:contaReincidencia(rows)};
+}
+function contextoGerBairro(x,ger){
+  // Recorta as estatísticas de um bairro (grupo já calculado por group('bairro')) apenas para os
+  // registros efetivamente atribuídos à gerência informada. Retorna null quando nenhum registro do
+  // bairro está atribuído com segurança a essa gerência (ex.: bairro compartilhado sem correspondência).
+  if(!ger)return null;
+  return statsSubset(x.rows.filter(r=>normaliza(r.ger)===normaliza(ger)));
+}
+function trechoCanonico(trecho){
+  // Torna a chave do trecho independente da ordem dos extremos quando o texto descreve claramente
+  // dois pontos separados por um conector comum (" - ", "/", " a ", " até "). A separação é feita no
+  // texto BRUTO (antes de normaliza()), pois normalizar primeiro apagaria os próprios separadores.
+  // Fora desse padrão, mantém o texto normalizado como está — não tenta adivinhar a estrutura do
+  // endereço além disso, para evitar regra arbitrária.
+  const raw=String(trecho||'').trim();
+  if(!raw)return '';
+  const partes=raw.split(/\s+-\s+|\s*\/\s*|\s+(?:a|até|ate)\s+/i).map(p=>normaliza(p)).filter(Boolean);
+  if(partes.length===2)return partes.slice().sort().join(' - ');
+  return normaliza(raw);
+}
+function chaveReincidencia(r){return[normaliza(r.bairro),normaliza(r.logradouro),trechoCanonico(r.trecho)].join('|')}function contaReincidencia(rows){const c={};rows.filter(r=>r.nota<META).forEach(r=>{const k=chaveReincidencia(r);c[k]=(c[k]||0)+1});return Object.values(c).filter(v=>v>=2).length}
 function valorOficialEntry(entry,mesCol=mesSarcAtual()){if(!entry)return null;if(mesCol){const v=entry.notas[mesCol];return v===undefined?null:v}return entry.acum!==null?entry.acum:null}
-function metaOficialEntry(entry){return entry?.meta!==null&&entry?.meta!==undefined?entry.meta:META}
+function metaOficialEntry(entry){return entry?.meta!==null&&entry?.meta!==undefined?entry.meta:null}
 function entryName(e){return e?.ger&&e.ger!=='-'?e.ger:e?.sup&&e.sup!=='-'?e.sup:e?.dir||'N/D'}
 function entradaOficialAtual(){
-  if($('fGer').value)return SARC_DATA.ger.find(e=>normaliza(e.dir)==='DLU'&&e.ger===$('fGer').value)||null;
-  if($('fSup').value)return SARC_DATA.sup.find(e=>normaliza(e.dir)==='DLU'&&e.sup===$('fSup').value)||null;
+  if($('fGer').value)return SARC_DATA.ger.find(e=>normaliza(e.dir)==='DLU'&&normaliza(e.ger)===normaliza($('fGer').value))||null;
+  if($('fSup').value)return SARC_DATA.sup.find(e=>normaliza(e.dir)==='DLU'&&normaliza(e.sup)===normaliza($('fSup').value))||null;
   return SARC_DATA.dir.find(e=>normaliza(e.dir)==='DLU')||SARC_DATA.dir.find(e=>normaliza(e.dir)==='COMLURB')||SARC_DATA.dir[0]||null;
 }
 function officialScore(){return valorOficialEntry(entradaOficialAtual())}
-function officialGerRank(){return SARC_DATA.ger.filter(e=>normaliza(e.dir)==='DLU'&&(!$('fSup').value||e.sup===$('fSup').value)&&(!$('fGer').value||e.ger===$('fGer').value)).map(e=>({k:e.ger,entry:e,media:valorOficialEntry(e),meta:metaOficialEntry(e)})).filter(x=>x.media!==null)}
+function officialGerRank(){return SARC_DATA.ger.filter(e=>normaliza(e.dir)==='DLU'&&(!$('fSup').value||normaliza(e.sup)===normaliza($('fSup').value))&&(!$('fGer').value||normaliza(e.ger)===normaliza($('fGer').value))).map(e=>({k:e.ger,entry:e,media:valorOficialEntry(e),meta:metaOficialEntry(e)})).filter(x=>x.media!==null)}
 function serieOficial(){const entry=entradaOficialAtual();if(!entry)return[];const mSel=mesSarcAtual();const limite=mSel?MESES_SARC.indexOf(mSel):MESES_SARC.length-1;return MESES_SARC.map((m,i)=>{if(i>limite)return null;const v=entry.notas[m];return v===undefined?null:{mes:m,media:v}}).filter(Boolean)}
 function itemDominante(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(i=>{itens[i]=(itens[i]||0)+1}));return Object.entries(itens).map(([item,n])=>({item:itemLabel(item),key:item,n})).sort((a,b)=>b.n-a.n)[0]||null}
 function render(){apply();renderContextBar();renderOfficialHero();renderConcentration();renderDesempenhoTerritorial();renderTrend();renderFactors();renderRanks();if(document.getElementById('page-territorial').classList.contains('active')) renderMap()}
 
 function contextoOficial(){return mesSarcAtual()?`Resultado de ${$('fMes').value}`:'Acumulado oficial SARC'}
-function renderContextBar(){const mes=$('fMes').value;const entry=entradaOficialAtual();const nivel=$('fGer').value?'Gerência':$('fSup').value?'Superintendência':'Diretoria';const territorio=mes||'todas as competências disponíveis';const warn=SARC_WARNINGS.length?`<span class="sourceTag warn" title="Valores fora da faixa 0–100 foram desconsiderados"><b>Validação SARC:</b> ${SARC_WARNINGS.length} valor(es) inválido(s) ignorado(s)</span>`:'';$('contextBar').innerHTML=`<span class="sourceTag"><b>SARC oficial:</b> ${entry?entryName(entry):'N/D'} · ${mes?'mês '+mes:'campo Acumulado'}</span><span class="sourceTag calc"><b>Diagnóstico territorial:</b> ${territorio} · referência ${META}%</span><span><b>Nível oficial:</b> ${nivel}</span><span><b>Avaliações no recorte:</b> ${FILTERED.length.toLocaleString('pt-BR')}</span>${warn}`}
+function renderContextBar(){const mes=$('fMes').value;const entry=entradaOficialAtual();const nivel=$('fGer').value?'Gerência':$('fSup').value?'Superintendência':'Diretoria';const territorio=mes||'todas as competências disponíveis';const warn=SARC_WARNINGS.length?`<span class="sourceTag warn" title="Valores fora da faixa 0–100 ou gerências sem correspondência entre SARC e camada territorial"><b>Validação SARC:</b> ${SARC_WARNINGS.length} alerta(s) de dado(s)</span>`:'';$('contextBar').innerHTML=`<span class="sourceTag"><b>SARC oficial:</b> ${entry?entryName(entry):'N/D'} · ${mes?'mês '+mes:'campo Acumulado'}</span><span class="sourceTag calc"><b>Diagnóstico territorial:</b> ${territorio} · referência ${META}%</span><span><b>Nível oficial:</b> ${nivel}</span><span><b>Avaliações no recorte:</b> ${FILTERED.length.toLocaleString('pt-BR')}</span>${warn}`}
 function renderOfficialHero(){
   const entry=entradaOficialAtual(),score=officialScore(),meta=metaOficialEntry(entry),serie=serieOficial();
   const last=serie[serie.length-1],prev=serie.length>=2?serie[serie.length-2]:null,first=serie[0];
-  const deltaPrev=(last&&prev)?last.media-prev.media:null,deltaMeta=score!==null?score-meta:null,deltaPeriodo=(last&&first)?last.media-first.media:null;
-  const situ=deltaMeta!==null?(deltaMeta>=0?'Meta atendida':'Abaixo da meta'):'Sem leitura';
-  $('officialHero').innerHTML=`<div class="officialScore"><div><div class="bigScore">${score!==null?fmt(score)+'%':'N/D'}</div><div class="scoreMeta"><span class="miniChip">Meta oficial ${fmt(meta)}%</span><span class="miniChip ${deltaMeta>=0?'good':'bad'}">${situ}</span><span class="miniChip">${contextoOficial()}</span></div></div><div class="scoreDetails"><div class="scoreBox"><span>Variação mensal</span><b class="${deltaPrev>=0?'good':'bad'}">${deltaPrev!==null?(deltaPrev>=0?'+':'')+fmt(deltaPrev)+' p.p.':'N/D'}</b><small>${prev?prev.mes+' → '+last.mes:''}</small></div><div class="scoreBox"><span>Distância da meta</span><b class="${deltaMeta>=0?'good':'bad'}">${deltaMeta!==null?(deltaMeta>=0?'+':'')+fmt(deltaMeta)+' p.p.':'N/D'}</b><small>Meta da unidade na SARC</small></div><div class="scoreBox"><span>Variação no período</span><b class="${deltaPeriodo>=0?'good':'bad'}">${deltaPeriodo!==null?(deltaPeriodo>=0?'+':'')+fmt(deltaPeriodo)+' p.p.':'N/D'}</b><small>${first&&last?first.mes+' → '+last.mes:''}</small></div></div></div>`;
+  const deltaPrev=(last&&prev)?last.media-prev.media:null;
+  const deltaMeta=(score!==null&&meta!==null)?score-meta:null;
+  const deltaPeriodo=(last&&first)?last.media-first.media:null;
+  const situ=meta===null?'Meta não cadastrada na SARC':(deltaMeta!==null?(deltaMeta>=0?'Meta atendida':'Abaixo da meta'):'Sem leitura');
+  const situClass=meta===null?'':( deltaMeta>=0?'good':'bad');
+  $('officialHero').innerHTML=`<div class="officialScore"><div><div class="bigScore">${score!==null?fmt(score)+'%':'N/D'}</div><div class="scoreMeta"><span class="miniChip">Meta oficial ${meta!==null?fmt(meta)+'%':'N/D'}</span><span class="miniChip ${situClass}">${situ}</span><span class="miniChip">${contextoOficial()}</span></div></div><div class="scoreDetails"><div class="scoreBox"><span>Variação mensal</span><b class="${deltaPrev>=0?'good':'bad'}">${deltaPrev!==null?(deltaPrev>=0?'+':'')+fmt(deltaPrev)+' p.p.':'N/D'}</b><small>${prev?prev.mes+' → '+last.mes:''}</small></div><div class="scoreBox"><span>Distância da meta</span><b class="${deltaMeta!==null?(deltaMeta>=0?'good':'bad'):''}">${deltaMeta!==null?(deltaMeta>=0?'+':'')+fmt(deltaMeta)+' p.p.':'N/D'}</b><small>${meta===null?'Meta não cadastrada na SARC para esta unidade':'Meta da unidade na SARC'}</small></div><div class="scoreBox"><span>Variação no período</span><b class="${deltaPeriodo>=0?'good':'bad'}">${deltaPeriodo!==null?(deltaPeriodo>=0?'+':'')+fmt(deltaPeriodo)+' p.p.':'N/D'}</b><small>${first&&last?first.mes+' → '+last.mes:''}</small></div></div></div>`;
 }
 function renderConcentration(){const totalTrechos=trechosAbaixoMeta(FILTERED);const bairros=group('bairro').sort((a,b)=>b.trechosAbaixo-a.trechosAbaixo||b.reincidentes-a.reincidentes||a.media-b.media);const top=bairros.filter(x=>x.trechosAbaixo>0).slice(0,3);const topTrechos=top.reduce((s,x)=>s+x.trechosAbaixo,0);const pct=totalTrechos?topTrechos/totalTrechos*100:0;const max=Math.max(...top.map(x=>x.trechosAbaixo),1);$('concentrationPanel').innerHTML=`<div class="concWrap"><div class="concNumber">${fmt(pct,0)}%<small>dos trechos com ocorrência abaixo da referência</small></div><div class="concList">${top.map((x,i)=>`<div class="concItem"><div><b>${x.k}</b><div class="bar"><i style="width:${Math.max(5,x.trechosAbaixo/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#f4b84a'}"></i></div></div><span class="val ${i===0?'bad':'att'}">${x.trechosAbaixo}</span></div>`).join('')||'<div class="status">Sem trechos abaixo da referência territorial.</div>'}</div></div>`}
 function totalNok(){let total=0;FILTERED.forEach(r=>total+=r.itensNok.length);return total}
@@ -254,14 +327,16 @@ function renderDesempenhoTerritorial(){
         : '<div class="status">Sem classificação oficial SARC para os filtros selecionados.</div>';
     }
     return arr.map((g,i)=>{
-      const cls = g.media>=g.meta ? 'good' : 'bad';
-      const cor = g.media>=g.meta ? '#78aaa3' : '#e84855';
-      const delta = g.media - g.meta;
+      const temMeta = g.meta!==null;
+      const cls = temMeta ? (g.media>=g.meta ? 'good' : 'bad') : '';
+      const cor = temMeta ? (g.media>=g.meta ? '#78aaa3' : '#e84855') : '#6da5d8';
+      const delta = temMeta ? g.media - g.meta : null;
+      const hint = temMeta ? `Meta ${fmt(g.meta)}% · ${delta>=0?'+':''}${fmt(delta)} p.p.` : 'Meta oficial N/D nesta unidade (SARC)';
       return `<div class="metricRow">
         <div class="pos">${i+1}</div>
         <div>
           <b>${g.k}</b>
-          <div class="hint">Meta ${fmt(g.meta)}% · ${delta>=0?'+':''}${fmt(delta)} p.p.</div>
+          <div class="hint">${hint}</div>
           <div class="bar"><i style="width:${Math.max(4,Math.min(100,g.media))}%;background:${cor}"></i></div>
         </div>
         <span class="val ${cls}">${fmt(g.media)}%</span>
@@ -276,7 +351,7 @@ function renderDesempenhoTerritorial(){
 
 
   const atencao = ranking
-    .filter(x=>x.media < x.meta)
+    .filter(x=>x.meta!==null && x.media < x.meta)
     .sort((a,b)=>(a.media-a.meta)-(b.media-b.meta))
     .slice(0,5);
 
@@ -288,37 +363,55 @@ function renderTrend(){
   const serie=serieOficial(),entry=entradaOficialAtual(),meta=metaOficialEntry(entry),canvas=$('trendChart');
   if(!serie.length){if(trendChart){trendChart.destroy();trendChart=null}$('trendFoot').innerHTML='<div class="status">Sem série oficial válida para o recorte.</div>';return}
   if(trendChart)trendChart.destroy();
-  const valores=serie.map(x=>x.media),minSerie=Math.min(...valores,meta),maxSerie=Math.max(...valores,meta);
+  const valores=serie.map(x=>x.media);
+  const refs=meta!==null?[...valores,meta]:valores;
+  const minSerie=Math.min(...refs),maxSerie=Math.max(...refs);
   const yMin=Math.max(0,Math.floor((minSerie-5)/5)*5),yMax=Math.min(100,Math.ceil((maxSerie+5)/5)*5);
-  trendChart=new Chart(canvas,{type:'line',data:{labels:serie.map(x=>x.mes),datasets:[{label:'IPL oficial SARC',data:valores,borderColor:'#6da5d8',backgroundColor:'rgba(109,165,216,.14)',tension:.28,fill:true,pointRadius:4,pointHoverRadius:6},{label:`Meta ${fmt(meta)}%`,data:serie.map(()=>meta),borderColor:'#e87535',borderDash:[7,6],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c5d5e8',boxWidth:11,font:{weight:'700'}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}%`}}},scales:{x:{ticks:{color:'#9fb0c7',font:{weight:'700'}},grid:{color:'rgba(255,255,255,.055)'}},y:{min:yMin,max:yMax,ticks:{color:'#9fb0c7',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.055)'}}}}});
+  const datasets=[{label:'IPL oficial SARC',data:valores,borderColor:'#6da5d8',backgroundColor:'rgba(109,165,216,.14)',tension:.28,fill:true,pointRadius:4,pointHoverRadius:6}];
+  if(meta!==null)datasets.push({label:`Meta ${fmt(meta)}%`,data:serie.map(()=>meta),borderColor:'#e87535',borderDash:[7,6],pointRadius:0});
+  trendChart=new Chart(canvas,{type:'line',data:{labels:serie.map(x=>x.mes),datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c5d5e8',boxWidth:11,font:{weight:'700'}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}%`}}},scales:{x:{ticks:{color:'#9fb0c7',font:{weight:'700'}},grid:{color:'rgba(255,255,255,.055)'}},y:{min:yMin,max:yMax,ticks:{color:'#9fb0c7',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.055)'}}}}});
   const first=serie[0],last=serie[serie.length-1],best=serie.slice().sort((a,b)=>b.media-a.media)[0],worst=serie.slice().sort((a,b)=>a.media-b.media)[0],delta=last.media-first.media;
-  $('trendFoot').innerHTML=`<div class="tf"><span>Δ período</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${fmt(delta)} p.p.</b></div><div class="tf"><span>Maior resultado</span><b>${best.mes} · ${fmt(best.media)}%</b></div><div class="tf"><span>Menor resultado</span><b>${worst.mes} · ${fmt(worst.media)}%</b></div><div class="tf"><span>Meta oficial</span><b>${fmt(meta)}%</b></div>`;
+  $('trendFoot').innerHTML=`<div class="tf"><span>Δ período</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${fmt(delta)} p.p.</b></div><div class="tf"><span>Maior resultado</span><b>${best.mes} · ${fmt(best.media)}%</b></div><div class="tf"><span>Menor resultado</span><b>${worst.mes} · ${fmt(worst.media)}%</b></div><div class="tf"><span>Meta oficial</span><b>${meta!==null?fmt(meta)+'%':'N/D'}</b></div>`;
 }
 function renderFactors(){
-  const perdas={};
-  FILTERED.forEach(r=>Object.entries(r.perdaPorItem||{}).forEach(([item,p])=>{perdas[item]=(perdas[item]||0)+Number(p||0)}));
-  const total=Object.values(perdas).reduce((a,b)=>a+Number(b||0),0),den=Math.max(FILTERED.length,1);
-  const ranking=Object.entries(perdas).map(([item,perda])=>({item:itemLabel(item),perda,impacto:perda/den})).filter(x=>x.perda>0).sort((a,b)=>b.perda-a.perda).slice(0,6);
+  const perdas={},avaliadoEm={};
+  FILTERED.forEach(r=>Object.entries(r.perdaPorItem||{}).forEach(([item,p])=>{perdas[item]=(perdas[item]||0)+Number(p||0);avaliadoEm[item]=(avaliadoEm[item]||0)+1}));
+  const total=Object.values(perdas).reduce((a,b)=>a+Number(b||0),0);
+  // Impacto médio = perda acumulada do item / nº de avaliações em que o item foi efetivamente avaliado (N/A não dilui).
+  const ranking=Object.entries(perdas).map(([item,perda])=>({item:itemLabel(item),perda,impacto:perda/Math.max(avaliadoEm[item]||0,1)})).filter(x=>x.perda>0).sort((a,b)=>b.perda-a.perda).slice(0,6);
   const max=Math.max(...ranking.map(x=>x.perda),1);
   $('factorsPanel').innerHTML=ranking.map((x,i)=>`<div class="factor"><div class="idx">${i+1}</div><div><b>${x.item}</b><small>${total?fmt(x.perda/total*100,0):0}% da perda estimada<div class="bar" style="margin-top:7px"><i style="width:${Math.max(4,x.perda/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#6da5d8'}"></i></div></small></div><div class="num">${fmt(x.impacto,1)} p.p.<small style="display:block">médios</small></div></div>`).join('')||'<div class="status">Sem perda de pontos no recorte.</div>';
 }
 function infoTerritorialBairro(bairro){return TERRITORIO_DLU[normaliza(bairro)]||null}
 function badgeTerritorial(bairro){const info=infoTerritorialBairro(bairro);if(!info)return'';return info.compartilhado?'COMPARTILHADO':(info.candidatos[0]?.ger||'')}
-function rankHTML(arr,field='bairro',gerContexto=''){
+function rankHTML(arr,gerContexto=''){
   return arr.map(x=>{
-    const info=field==='bairro'?infoTerritorialBairro(x.k):null;
+    const info=infoTerritorialBairro(x.k);
     const compartilhado=!!info?.compartilhado;
-    const badge=field==='bairro'?badgeTerritorial(x.k):'';
+    const badge=badgeTerritorial(x.k);
     const selected=MAP_DRILL_BAIRRO&&normaliza(MAP_DRILL_BAIRRO)===normaliza(x.k);
-    let hint=`${x.n} avaliações · ${x.trechosAbaixo} trechos abaixo da referência · ${x.reincidentes} reincidentes${x.trechosAbaixo?` · ${fmt(x.reincidentes/x.trechosAbaixo*100,0)}% persistentes`:''}`;
-    if(gerContexto&&compartilhado){const nGer=x.rows.filter(r=>normaliza(r.ger)===normaliza(gerContexto)).length;hint=`Bairro compartilhado · ${x.n} avaliações no bairro${nGer?` · ${nGer} atribuída${nGer===1?'':'s'} à ${gerContexto}`:` · sem atribuição exclusiva à ${gerContexto}`}`;}
+    // Em recorte por gerência, as estatísticas exibidas (nota, avaliações, trechos, reincidência)
+    // refletem SOMENTE os registros atribuídos a essa gerência — nunca o total do bairro inteiro.
+    const ctx=gerContexto?(x.ctx!==undefined?x.ctx:contextoGerBairro(x,gerContexto)):null;
+    const stats=gerContexto?ctx:{n:x.n,media:x.media,trechosAbaixo:x.trechosAbaixo,reincidentes:x.reincidentes};
+    let hint;
+    if(gerContexto){
+      hint=stats
+        ? `${stats.n} avaliaç${stats.n===1?'ão':'ões'} nesta gerência${compartilhado?` · ${x.n} avaliações no bairro (total)`:''} · ${stats.trechosAbaixo} trechos abaixo da referência · ${stats.reincidentes} reincidentes${stats.trechosAbaixo?` · ${fmt(stats.reincidentes/stats.trechosAbaixo*100,0)}% persistentes`:''}`
+        : `Bairro compartilhado · nenhum registro atribuído com segurança a esta gerência · ${x.n} avaliações no bairro (total)`;
+    }else{
+      hint=`${x.n} avaliações · ${x.trechosAbaixo} trechos abaixo da referência · ${x.reincidentes} reincidentes${x.trechosAbaixo?` · ${fmt(x.reincidentes/x.trechosAbaixo*100,0)}% persistentes`:''}`;
+    }
     const gerClick=compartilhado?'':(info?.candidatos?.[0]?.ger||x.rows.find(r=>r.ger)?.ger||'');
-    return`<div class="rank compact ${selected?'selected':''}" ${field==='bairro'?`onclick="selecionarPrioridade('${encodeURIComponent(x.k)}','${encodeURIComponent(gerClick)}')"`:''}>
+    const notaTxt=stats?`${fmt(stats.media)}%`:'—';
+    const cor=stats?corNota(stats.media):'#5b7391';
+    const barW=stats?Math.max(4,Math.min(100,stats.media)):0;
+    return`<div class="rank compact ${selected?'selected':''}" onclick="selecionarPrioridade('${encodeURIComponent(x.k)}','${encodeURIComponent(gerClick)}')">
       <div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}
         <div class="hint">${hint}</div>
-        <div class="bar"><i style="width:${Math.max(4,Math.min(100,x.media))}%;background:${corNota(x.media)}"></i></div>
+        <div class="bar"><i style="width:${barW}%;background:${cor}"></i></div>
       </div>
-      <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
+      <small style="color:${cor}">${notaTxt}</small>
     </div>`
   }).join('')||'<div class="status">Sem dados</div>'
 }
@@ -364,13 +457,26 @@ function renderReincidencias(){
 }
 
 function renderRanks(){
-  let bairros=group('bairro').sort((a,b)=>a.media-b.media||b.reincidentes-a.reincidentes||b.trechosAbaixo-a.trechosAbaixo);
+  let bairros=group('bairro');
   if(MAP_DRILL_GER){
-    bairros=bairros.filter(x=>{const info=infoTerritorialBairro(x.k);return info?.candidatos?.some(c=>normaliza(c.ger)===normaliza(MAP_DRILL_GER))||x.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER))});
-    const head=`<div class="priorityDrillBar"><div><b>Gerência ${MAP_DRILL_GER}</b><small>Bairros do território · menor nota primeiro · bairros compartilhados mostram o total do bairro</small></div><button class="backMini" type="button" onclick="voltarMunicipio()">← Voltar ao município</button></div>`;
-    $('rankBairros').innerHTML=head+rankHTML(bairros.slice(0,12),'bairro',MAP_DRILL_GER);
+    bairros=bairros
+      .filter(x=>{const info=infoTerritorialBairro(x.k);return info?.candidatos?.some(c=>normaliza(c.ger)===normaliza(MAP_DRILL_GER))||x.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER))})
+      .map(x=>({...x,ctx:contextoGerBairro(x,MAP_DRILL_GER)}))
+      // Ordenação usa a nota RECORTADA para esta gerência (não a nota agregada do bairro inteiro).
+      // Bairros sem nenhum registro atribuível a esta gerência vão para o final da lista.
+      .sort((a,b)=>{
+        const am=a.ctx?a.ctx.media:Infinity,bm=b.ctx?b.ctx.media:Infinity;
+        if(am!==bm)return am-bm;
+        const ar=a.ctx?a.ctx.reincidentes:-1,br=b.ctx?b.ctx.reincidentes:-1;
+        if(ar!==br)return br-ar;
+        const at=a.ctx?a.ctx.trechosAbaixo:-1,bt=b.ctx?b.ctx.trechosAbaixo:-1;
+        return bt-at;
+      });
+    const head=`<div class="priorityDrillBar"><div><b>Gerência ${MAP_DRILL_GER}</b><small>Bairros do território · menor nota nesta gerência primeiro · bairros compartilhados mostram apenas os registros atribuídos a esta gerência</small></div><button class="backMini" type="button" onclick="voltarMunicipio()">← Voltar ao município</button></div>`;
+    $('rankBairros').innerHTML=head+rankHTML(bairros.slice(0,12),MAP_DRILL_GER);
   }else{
-    $('rankBairros').innerHTML=rankHTML(bairros.slice(0,8),'bairro');
+    bairros=bairros.sort((a,b)=>a.media-b.media||b.reincidentes-a.reincidentes||b.trechosAbaixo-a.trechosAbaixo);
+    $('rankBairros').innerHTML=rankHTML(bairros.slice(0,8),'');
   }
 }
 
@@ -424,17 +530,31 @@ function renderMap(){
   if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}
   BAIRRO_LAYERS={};
   if(MAP_DRILL_GER){const gf=featureGerencia(MAP_DRILL_GER);if(gf)highlightLayer=L.geoJSON(gf,{interactive:false,style:{color:'#ff9a5b',weight:3,opacity:1,fillColor:'#e87535',fillOpacity:.09,dashArray:'8 5'}}).addTo(map);}
-  const bairros=group('bairro'),maxN=Math.max(...bairros.map(x=>x.n),1),layers=[];
+  let bairros=group('bairro');
+  if(MAP_DRILL_GER){
+    // No drill por gerência, cada bairro carrega também o recorte (ctx) de registros atribuídos
+    // exclusivamente a esta gerência — é isso que passa a comandar tamanho, cor e conteúdo do marcador.
+    bairros=bairros
+      .filter(x=>{const info=infoTerritorialBairro(x.k);return info?.candidatos?.some(c=>normaliza(c.ger)===normaliza(MAP_DRILL_GER))||x.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER))})
+      .map(x=>({...x,ctx:contextoGerBairro(x,MAP_DRILL_GER)}));
+  }
+  const maxN=Math.max(...bairros.map(x=>MAP_DRILL_GER?(x.ctx?x.ctx.n:0):x.n),1),layers=[];
   bairros.forEach(d=>{
     const info=infoTerritorialBairro(d.k),c=pontoRepresentativoBairro(d.k);if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
     const compartilhado=!!info?.compartilhado;
     const gerUnica=!compartilhado?(info?.candidatos?.[0]?.ger||d.rows.find(r=>r.ger)?.ger||''):'';
-    const pertenceGer=!MAP_DRILL_GER||info?.candidatos?.some(x=>normaliza(x.ger)===normaliza(MAP_DRILL_GER))||d.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER));
-    const selected=MAP_DRILL_BAIRRO&&normaliza(d.k)===normaliza(MAP_DRILL_BAIRRO),raio=(6+Math.sqrt(d.n/maxN)*12)+(selected?4:0),cor=corNota(d.media);
-    const layer=L.circleMarker([c.lat,c.lon],{radius:raio,color:selected?'#ffffff':compartilhado?'#ffd19b':'#dcecff',weight:selected?3:compartilhado?2:1.1,fillColor:cor,fillOpacity:pertenceGer?.92:.14,opacity:pertenceGer?.95:.2});
+    const stats=MAP_DRILL_GER?d.ctx:{n:d.n,media:d.media,trechosAbaixo:d.trechosAbaixo,reincidentes:d.reincidentes};
+    const semAtribuicao=!!(MAP_DRILL_GER&&!stats);
+    const selected=MAP_DRILL_BAIRRO&&normaliza(d.k)===normaliza(MAP_DRILL_BAIRRO);
+    const raio=(6+Math.sqrt((stats?stats.n:0)/maxN)*12)+(selected?4:0),cor=stats?corNota(stats.media):'#425873';
+    const layer=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,raio),color:selected?'#ffffff':compartilhado?'#ffd19b':'#dcecff',weight:selected?3:compartilhado?2:1.1,fillColor:cor,fillOpacity:semAtribuicao?.14:.92,opacity:semAtribuicao?.35:.95});
     const gerTxt=compartilhado?`Compartilhado: ${info.candidatos.map(x=>x.ger).join(' / ')}`:(gerUnica?`Gerência ${gerUnica}`:'');
-    layer.bindTooltip(`<b>${d.k}</b><br>${fmt(d.media)}% · ${d.n.toLocaleString('pt-BR')} avaliações${gerTxt?`<br>${gerTxt}`:''}`,{direction:'top',sticky:true,className:'bairro-popup'});
-    layer.bindPopup(`<b>${d.k}</b>${compartilhado?` <span class="mapDrillTag">COMPARTILHADO</span>`:gerUnica?` <span class="mapDrillTag">${gerUnica}</span>`:''}<br>Nota territorial do bairro: ${fmt(d.media)}%<br>Avaliações no bairro: ${d.n.toLocaleString('pt-BR')}<br>Trechos com ocorrência abaixo da referência: ${d.trechosAbaixo}<br>Trechos reincidentes: ${d.reincidentes}${compartilhado?`<br><small>Território compartilhado entre ${info.candidatos.map(x=>x.ger).join(' e ')}. O total acima não é artificialmente repartido.</small>`:''}`);
+    const tooltipTxt=stats?`${fmt(stats.media)}% · ${stats.n.toLocaleString('pt-BR')} avaliaç${stats.n===1?'ão':'ões'}${MAP_DRILL_GER?' nesta gerência':''}`:'Sem avaliação atribuída a esta gerência';
+    layer.bindTooltip(`<b>${d.k}</b><br>${tooltipTxt}${gerTxt?`<br>${gerTxt}`:''}`,{direction:'top',sticky:true,className:'bairro-popup'});
+    const corpoPopup=stats
+      ?`Nota${MAP_DRILL_GER?' nesta gerência':' territorial do bairro'}: ${fmt(stats.media)}%<br>Avaliações${MAP_DRILL_GER?' nesta gerência':' no bairro'}: ${stats.n.toLocaleString('pt-BR')}${MAP_DRILL_GER&&compartilhado?`<br>Avaliações no bairro (total): ${d.n.toLocaleString('pt-BR')}`:''}<br>Trechos com ocorrência abaixo da referência: ${stats.trechosAbaixo}<br>Trechos reincidentes: ${stats.reincidentes}`
+      :`Nenhuma avaliação com atribuição segura a esta gerência.<br>Avaliações no bairro (total, todas as gerências): ${d.n.toLocaleString('pt-BR')}`;
+    layer.bindPopup(`<b>${d.k}</b>${compartilhado?` <span class="mapDrillTag">COMPARTILHADO</span>`:gerUnica?` <span class="mapDrillTag">${gerUnica}</span>`:''}<br>${corpoPopup}${compartilhado?`<br><small>Território compartilhado entre ${info.candidatos.map(x=>x.ger).join(' e ')}. O total acima não é artificialmente repartido.</small>`:''}`);
     layer.on('click',()=>{MAP_DRILL_BAIRRO=d.k;if(!compartilhado&&gerUnica)MAP_DRILL_GER=gerUnica;renderRanks();renderMap();setTimeout(()=>{if(MAP_DRILL_GER)focarGerenciaNoMapa(MAP_DRILL_GER);else focarBairroNoMapa(d.k);BAIRRO_LAYERS[normaliza(d.k)]?.openPopup()},70)});
     BAIRRO_LAYERS[normaliza(d.k)]=layer;layers.push(layer);
   });
@@ -449,6 +569,134 @@ function focarBairroNoMapa(bairro){
   if(!map)return;const c=pontoRepresentativoBairro(bairro);if(c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon))map.setView([c.lat,c.lon],13);
 }
 function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'){setTimeout(()=>{if(!map)initMap();if(map){map.invalidateSize({pan:false});map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false});renderMap()}},120)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
+function auditoriaIPL(){
+  // Auditoria automatizada da base carregada em memória (DATA), sem depender de filtros da tela.
+  // Uso: abrir o console do navegador na página já carregada e chamar auditoriaIPL().
+  // Não altera nada na interface; serve para reconciliar números antes de confiar no painel.
+  const total=DATA.length;
+  const totalBruto=RAW_DATA.length;
+  const descartadosTotal=RAW_DISCARDS.length;
+  const descartadosPorMotivo=RAW_DISCARDS.reduce((acc,d)=>{const k=d.motivo||'nao_classificado';acc[k]=(acc[k]||0)+1;return acc},{});
+  const errosParsingReportados=RAW_PARSE_ERRORS.length;
+  const linhasComAvisoParsing=[...new Set(RAW_PARSE_ERRORS.map(e=>Number.isInteger(e?.row)?e.row+1:null).filter(Boolean))];
+
+  // --- Distribuição por mês (todo registro cai em seu mês ou no placeholder "(sem mês)") ---
+  const porMes={};
+  DATA.forEach(r=>{const m=r.mes||'(sem mês)';porMes[m]=(porMes[m]||0)+1});
+  const somaPorMes=Object.values(porMes).reduce((a,b)=>a+b,0);
+
+  // --- Distribuição por superintendência, separando explicitamente os "sem superintendência" ---
+  const porSup={};let semSuperintendencia=0;
+  DATA.forEach(r=>{if(r.sup)porSup[r.sup]=(porSup[r.sup]||0)+1;else semSuperintendencia++});
+  const somaPorSup=Object.values(porSup).reduce((a,b)=>a+b,0);
+
+  // --- Distribuição por gerência, separando explicitamente os "sem gerência atribuível" ---
+  const porGer={};let semGerAtribuivel=0;
+  DATA.forEach(r=>{if(r.ger)porGer[r.ger]=(porGer[r.ger]||0)+1;else semGerAtribuivel++});
+  const somaPorGer=Object.values(porGer).reduce((a,b)=>a+b,0);
+  const comGerAtribuida=total-semGerAtribuivel;
+
+  // --- Registros descartados antes de DATA por ausência de bairro ---
+  // Agora medido na instrumentação de init(), sobre a entrada bruta realmente recebida do PapaParse.
+  const semBairro=RAW_DISCARDS.filter(d=>d.motivo==='sem_bairro').length;
+
+  // --- Registros cujo bairro não tem correspondência alguma na camada territorial (GeoJSON) ---
+  const bairroNaoReconhecido=DATA.filter(r=>r.territorioStatus==='sem_camada').length;
+
+  const gruposBairro=group('bairro',DATA);
+  const somaPorBairro=gruposBairro.reduce((s,b)=>s+b.n,0);
+  const porBairro=gruposBairro.map(x=>({
+    bairro:x.k,
+    gerencias_territoriais:(infoTerritorialBairro(x.k)?.candidatos||[]).map(c=>c.ger),
+    compartilhado:!!infoTerritorialBairro(x.k)?.compartilhado,
+    avaliacoes:x.n,
+    nota_territorial:Number(x.media.toFixed(1)),
+    trechos_abaixo_referencia:x.trechosAbaixo,
+    reincidentes:x.reincidentes,
+    registros_sem_gerencia_atribuivel:x.rows.filter(r=>!r.ger).length,
+    remapeados_bairro:x.rows.filter(r=>r.bairro!==r.bairroOriginal).length,
+    gerencia_corrigida:x.rows.filter(r=>r.gerCorrigida).length
+  })).sort((a,b)=>b.avaliacoes-a.avaliacoes);
+
+  // --- Bairros compartilhados: decomposição por CADA gerência candidata, detectados dinamicamente
+  //     na camada territorial atual (não uma lista fixa) ---
+  const bairrosCompartilhadosInfo=Object.values(TERRITORIO_DLU).filter(i=>i.compartilhado);
+  const decomposicaoCompartilhados=bairrosCompartilhadosInfo.map(info=>{
+    const grupo=gruposBairro.find(x=>normaliza(x.k)===normaliza(info.nome));
+    const totalBairro=grupo?grupo.n:0;
+    const porGerencia={};
+    info.candidatos.forEach(c=>{porGerencia[c.ger]=grupo?grupo.rows.filter(r=>normaliza(r.ger)===normaliza(c.ger)).length:0});
+    const semAtribuicao=grupo?grupo.rows.filter(r=>!r.ger).length:0;
+    const somaDecomposta=Object.values(porGerencia).reduce((a,b)=>a+b,0)+semAtribuicao;
+    const gerenciasSemAvaliacaoNoPeriodo=info.candidatos.filter(c=>porGerencia[c.ger]===0).map(c=>c.ger);
+    return{bairro:info.nome,candidatos:info.candidatos.map(c=>c.ger),porGerencia,semAtribuicao,totalBairro,fecha:somaDecomposta===totalBairro,gerenciasSemAvaliacaoNoPeriodo};
+  });
+  const bairrosCompartilhadosComGerenciaVazia=decomposicaoCompartilhados.filter(d=>d.gerenciasSemAvaliacaoNoPeriodo.length>0);
+
+  const reconciliacao={
+    total_bruto:totalBruto,
+    total_data:total,
+    descartados_total:descartadosTotal,
+    descartados_por_motivo:descartadosPorMotivo,
+    fecha_bruto_vs_data_mais_descartes:(total+descartadosTotal)===totalBruto,
+    avisos_parsing_reportados:errosParsingReportados,
+    linhas_com_aviso_parsing:linhasComAvisoParsing.length,
+    total_base:total,
+    soma_por_mes:somaPorMes,
+    fecha_soma_por_mes:somaPorMes===total,
+    soma_por_superintendencia:somaPorSup,
+    sem_superintendencia:semSuperintendencia,
+    fecha_soma_por_superintendencia:(somaPorSup+semSuperintendencia)===total,
+    soma_por_gerencia:somaPorGer,
+    sem_gerencia:semGerAtribuivel,
+    fecha_soma_por_gerencia:(somaPorGer+semGerAtribuivel)===total,
+    soma_por_bairro:somaPorBairro,
+    fecha_soma_por_bairro:somaPorBairro===total,
+    registros_com_gerencia_atribuida:comGerAtribuida,
+    registros_sem_gerencia_atribuivel:semGerAtribuivel,
+    soma_atribuidos_mais_sem_atribuicao:comGerAtribuida+semGerAtribuivel,
+    fecha_atribuidos_mais_sem_atribuicao:(comGerAtribuida+semGerAtribuivel)===total,
+    registros_sem_bairro:semBairro,
+    registros_bairro_nao_reconhecido_pela_camada:bairroNaoReconhecido
+  };
+  const casosObrigatorios=['SENADOR VASCONCELOS','CAMPO GRANDE','COSMOS','INHOAIBA','SANTISSIMO','TAQUARA','JACAREPAGUA','CAMORIM','BARRA OLIMPICA','FREGUESIA (JACAREPAGUA)']
+    .map(nome=>porBairro.find(b=>normaliza(b.bairro)===normaliza(nome))||{bairro:nome,status:'NÃO ENCONTRADO NA BASE CARREGADA'});
+
+  console.log('=== Auditoria IPL · reconciliação ===');
+  console.table(reconciliacao);
+  console.log('=== Descartes antes de DATA · por motivo ===');
+  console.table(descartadosPorMotivo);
+  if(RAW_DISCARDS.length){console.log('=== Descartes antes de DATA · detalhe ===');console.table(RAW_DISCARDS)}
+  if(RAW_PARSE_ERRORS.length){console.log('=== Avisos de parsing do CSV bruto (não equivalem automaticamente a descarte) ===');console.table(RAW_PARSE_ERRORS)}
+  console.log('=== Bairros compartilhados · decomposição por gerência candidata ===');
+  decomposicaoCompartilhados.forEach(d=>{
+    console.log(d.bairro);
+    Object.entries(d.porGerencia).forEach(([g,n])=>console.log(`  ${g}: ${n}`));
+    console.log(`  Sem atribuição: ${d.semAtribuicao}`);
+    console.log(`  Total bairro: ${d.totalBairro}`);
+    console.log(`  Fecha: ${d.fecha}`);
+  });
+  console.log('=== Bairros compartilhados com gerência candidata sem avaliação no período ===');
+  console.table(bairrosCompartilhadosComGerenciaVazia.map(d=>({bairro:d.bairro,gerencias_sem_avaliacao:d.gerenciasSemAvaliacaoNoPeriodo.join(', ')})));
+  console.log('=== Bairros compartilhados (camada territorial atual) ===');
+  console.table(bairrosCompartilhadosInfo.map(i=>i.nome));
+  console.log('=== Casos obrigatórios de teste ===');
+  console.table(casosObrigatorios);
+  console.log('=== Distribuição por mês / gerência / superintendência ===');
+  console.table(porMes);console.table(porGer);console.table(porSup);
+  console.log('=== Alertas de validação (SARC + correspondência de gerências) ===');
+  console.table(SARC_WARNINGS);
+
+  return{
+    total,totalBruto,descartadosTotal,descartadosPorMotivo,RAW_DISCARDS:RAW_DISCARDS.slice(),
+    errosParsingReportados,linhasComAvisoParsing,RAW_PARSE_ERRORS:RAW_PARSE_ERRORS.slice(),
+    porMes,porGer,porSup,porBairro,reconciliacao,
+    decomposicaoCompartilhados,bairrosCompartilhadosComGerenciaVazia,
+    bairrosCompartilhados:bairrosCompartilhadosInfo.map(i=>i.nome),
+    casosObrigatorios,SARC_WARNINGS
+  };
+}
+window.auditoriaIPL=auditoriaIPL;
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>

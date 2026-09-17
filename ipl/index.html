@@ -31,7 +31,7 @@ canvas{width:100%!important;height:100%!important}
 .executiveCore{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.executiveMid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px}.panelHead.clean{background:#0b1a2e}.resultHero .body{min-height:245px}.officialScore{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}.bigScore{font-size:clamp(76px,7vw,118px);font-weight:950;letter-spacing:-.07em;line-height:.9;color:#6da5d8}.scoreMeta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.miniChip{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:#cfe0f5}.miniChip.good{color:#9fe2c3;background:rgba(120,170,163,.10)}.miniChip.bad{color:#ff9aa4;background:rgba(232,72,85,.10)}.scoreDetails{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scoreBox{border-left:1px solid rgba(255,255,255,.10);padding-left:18px}.scoreBox span{display:block;color:#9fb0c7;font-size:11px;text-transform:uppercase;letter-spacing:.11em;font-weight:950}.scoreBox b{display:block;font-size:28px;margin-top:8px}.scoreBox small{color:#9fb0c7}.concWrap{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center}.concNumber{font-size:58px;font-weight:950;letter-spacing:-.05em}.concNumber small{display:block;font-size:13px;color:#9fb0c7;letter-spacing:0;font-weight:700;margin-top:5px}.concList{display:grid;gap:12px}.concItem{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:12px;align-items:center}.concItem b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.agendaList{display:grid;gap:14px}.agendaItem{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;background:rgba(255,255,255,.025)}.agendaItem span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:950;margin-bottom:6px}.agendaItem.territorial span{color:#e87535}.agendaItem.gerencial span{color:#e84855}.agendaItem.operacional span{color:#78aaa3}.agendaItem b{font-size:16px}.agendaItem p{margin:6px 0 0;color:#c5d5e8;font-size:13px;line-height:1.4}.trendPanel{margin-bottom:14px}.chartBox.compact{height:280px}.trendFoot.compact{grid-template-columns:repeat(5,1fr);margin-top:0}.metricRow{grid-template-columns:30px minmax(0,1fr) 72px}.metricRow .bar{grid-column:2/3}.cta{margin:16px 0 2px}.cta button{width:100%;min-height:72px;border-radius:22px;background:linear-gradient(135deg,#e87535,#b94f12);border:1px solid #ff9b55;color:#fff;box-shadow:0 12px 30px rgba(232,117,53,.22);font-size:22px;font-weight:950;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
 
 .cleanTerritory{grid-template-columns:minmax(0,1.75fr) minmax(340px,.65fr)}
-.cleanTerritory .sideStack .body{max-height:300px;overflow:auto}
+.cleanTerritory .sideStack .body{max-height:520px;overflow:auto}
 .reincBadge{display:inline-block;margin-left:8px;padding:2px 7px;border:1px solid rgba(232,117,53,.45);background:rgba(232,117,53,.12);border-radius:999px;color:#ffb278;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
 .rank.compact{padding:9px 8px}
 .rank.compact .hint{font-size:11px}
@@ -77,8 +77,7 @@ canvas{width:100%!important;height:100%!important}
   <div class="territorialGrid cleanTerritory">
     <div class="panel"><div class="panelHead"><div><h2>Mapa territorial</h2><div class="hint">Camada territorial DLU do próprio HUB, com bairros avaliados posicionados pelas coordenadas internas. Cor indica a nota e o tamanho do círculo representa o volume de avaliações.</div></div></div><div id="map"></div></div>
     <div class="sideStack">
-      <div class="panel"><div class="panelHead"><div><h2>Prioridade territorial para análise</h2><div class="hint">Ordenação analítica do HUB por trechos abaixo da meta, reincidência e nota média. Não é indicador oficial.</div></div></div><div class="body" id="rankBairros"></div></div>
-      <div class="panel"><div class="panelHead"><div><h2>Reincidência territorial</h2><div class="hint">Bairros com maior quantidade de trechos que repetiram ocorrências abaixo da referência no período</div></div></div><div class="body" id="rankReincidencias"></div></div>
+      <div class="panel"><div class="panelHead"><div><h2>Prioridade territorial</h2><div class="hint">Ordenada da menor nota territorial para a maior. A reincidência aparece como atributo de persistência do problema. Não é indicador oficial.</div></div></div><div class="body" id="rankBairros"></div></div>
     </div>
   </div>
 </section>
@@ -251,7 +250,7 @@ function rankHTML(arr,field='bairro'){
     const selected=MAP_DRILL_BAIRRO&&normaliza(MAP_DRILL_BAIRRO)===normaliza(x.k);
     return`<div class="rank compact ${selected?'selected':''}" ${field==='bairro'?`onclick="selecionarPrioridade('${encodeURIComponent(x.k)}','${encodeURIComponent(badge)}')"`:''}>
       <div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}
-        <div class="hint">${x.n} avaliações · ${x.trechosAbaixo} trechos com ocorrência abaixo da referência · ${x.reincidentes} reincidentes</div>
+        <div class="hint">${x.n} avaliações · ${x.trechosAbaixo} trechos abaixo da referência · ${x.reincidentes} reincidentes${x.trechosAbaixo?` · ${fmt(x.reincidentes/x.trechosAbaixo*100,0)}% persistentes`:''}</div>
         <div class="bar"><i style="width:${Math.max(4,Math.min(100,x.media))}%;background:${corNota(x.media)}"></i></div>
       </div>
       <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
@@ -302,15 +301,14 @@ function renderReincidencias(){
 }
 
 function renderRanks(){
-  let bairros=group('bairro').sort((a,b)=>b.trechosAbaixo-a.trechosAbaixo||b.reincidentes-a.reincidentes||a.media-b.media);
+  let bairros=group('bairro').sort((a,b)=>a.media-b.media||b.reincidentes-a.reincidentes||b.trechosAbaixo-a.trechosAbaixo);
   if(MAP_DRILL_GER){
     bairros=bairros.filter(x=>x.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER)));
-    const head=`<div class="priorityDrillBar"><div><b>Gerência ${MAP_DRILL_GER}</b><small>Bairros da gerência · clique para detalhar no mapa</small></div><button class="backMini" type="button" onclick="voltarMunicipio()">← Voltar ao município</button></div>`;
+    const head=`<div class="priorityDrillBar"><div><b>Gerência ${MAP_DRILL_GER}</b><small>Bairros da gerência · menor nota primeiro · clique para destacar no mapa</small></div><button class="backMini" type="button" onclick="voltarMunicipio()">← Voltar ao município</button></div>`;
     $('rankBairros').innerHTML=head+rankHTML(bairros.slice(0,12),'bairro');
   }else{
     $('rankBairros').innerHTML=rankHTML(bairros.slice(0,8),'bairro');
   }
-  renderReincidencias();
 }
 
 function initMap(){

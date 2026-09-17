@@ -11,7 +11,7 @@ Este documento é a referência vigente para decidir quais módulos integram a H
 | Governança Corporativa | `indicadores-gerais/` | Oficial | Componentes compartilhados |
 | Acordo de Resultados | `ar/` | Oficial | Componentes compartilhados + fontes centralizadas |
 | Engenharia e Operações | `engenharia-operacional/` | Oficial | Componentes compartilhados + fonte DTE centralizada + fontes complementares declaradas no módulo |
-| IPL | `ipl/` | Oficial | Legado controlado |
+| IPL | `ipl/` | Oficial | Aplicação modular própria · revisão técnica registrada |
 | Território Operacional | `territorial/` | Oficial | Aplicação modular própria |
 | Gestão Estratégica de Pessoas | `pessoas/` | Suspenso por LGPD | Página institucional sem dados |
 | Performance dos Contratos de Receita | `balanco-receita/` | Oficial | Legado controlado |

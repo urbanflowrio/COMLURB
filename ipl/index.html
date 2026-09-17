@@ -146,7 +146,7 @@ function notaCor(n){return n>=85?'#78aaa3':n>=META?'#6da5d8':n>=70?'#e87535':'#e
 function prepararCoords(rows){const out={};rows.forEach(r=>{const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']),lat=num(campo(r,['lat','Lat','LAT','latitude','LATITUDE'])),lon=num(campo(r,['lon','Lon','LON','lng','longitude','LONGITUDE']));if(b&&lat&&lon)out[normaliza(b)]={lat,lon}});return out}
 function centroideFeature(feature){try{const geom=feature.geometry;let coords=[];if(geom.type==='Polygon')coords=geom.coordinates[0];else if(geom.type==='MultiPolygon'){let maior=0,idx=0;geom.coordinates.forEach((p,i)=>{if(p[0].length>maior){maior=p[0].length;idx=i}});coords=geom.coordinates[idx][0]}if(!coords.length)return null;let sLat=0,sLon=0;coords.forEach(c=>{sLon+=c[0];sLat+=c[1]});return{lat:sLat/coords.length,lon:sLon/coords.length}}catch(e){return null}}
 function construirCentroidesGeo(geo){const out={};if(!geo||!geo.features)return out;geo.features.forEach(f=>{const nome=nomeBairroGeo(f.properties);const c=nome?centroideFeature(f):null;if(c)out[normaliza(nome)]={lat:c.lat,lon:c.lon}});return out}
-async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,coords,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);COORDS=prepararCoords(coords);GEO_DLU=geoDlu;SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairro=campo(r,['Bairro','BAIRRO']);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:campo(r,['Superintendência','Superintendencia']),ger:campo(r,['Gerência','Gerencia']),bairro,logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);initMap();populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
+async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,coords,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);COORDS=prepararCoords(coords);GEO_DLU=geoDlu;SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairro=campo(r,['Bairro','BAIRRO']);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:campo(r,['Superintendência','Superintendencia']),ger:campo(r,['Gerência','Gerencia']),bairro,logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
 function baseSup(){const m=$('fMes').value;return DATA.filter(r=>!m||r.mes===m)}function baseGer(){const m=$('fMes').value,s=$('fSup').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s))}function baseBairro(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g))}
 function preencherSelect(id,campo,label,base,preservar=true){const atual=preservar?$(id).value:'';const vals=[...new Set(base.map(r=>r[campo]).filter(Boolean))];if(campo==='mes')vals.sort((a,b)=>ordemMes(a)-ordemMes(b)||String(a).localeCompare(String(b),'pt-BR'));else vals.sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));$(id).innerHTML=`<option value="">${label}</option>`;vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o)});if(preservar&&vals.includes(atual))$(id).value=atual}
 function populateAll(){preencherSelect('fMes','mes','Todos',DATA);preencherSelect('fSup','sup','Todas',baseSup());preencherSelect('fGer','ger','Todas',baseGer());preencherSelect('fBairro','bairro','Todos',baseBairro())}
@@ -286,22 +286,28 @@ function renderRanks(){
 }
 
 function initMap(){
-  map=L.map('map',{zoomControl:true,preferCanvas:true,minZoom:10,maxZoom:15,zoomSnap:.25,maxBounds:RIO_MAX_BOUNDS,maxBoundsViscosity:1,zoomAnimation:false,attributionControl:false}).setView(RIO_CENTER,10.75);
-  // Base cartográfica própria do HUB: vetor DLU, sem provedor externo de tiles.
+  if(map)return map;
+  const el=document.getElementById('map');
+  if(!el||!el.offsetWidth||!el.offsetHeight)return null;
+  // O mapa é criado somente com a aba territorial visível. SVG padrão evita renderer 0x0.
+  map=L.map('map',{zoomControl:true,minZoom:10,maxZoom:15,zoomSnap:.25,maxBounds:RIO_MAX_BOUNDS,maxBoundsViscosity:1,zoomAnimation:false,attributionControl:false}).setView(RIO_CENTER,10.75);
   if(GEO_DLU&&Array.isArray(GEO_DLU.features)){
     const valid={type:'FeatureCollection',features:GEO_DLU.features.filter(geometriaValida)};
-    territoryLayer=L.geoJSON(valid,{
-      interactive:false,
-      style:f=>{
-        const sup=normaliza(f?.properties?.first_superdlu);
-        const op=sup==='LRS'?.12:sup==='LRB'?.10:sup==='LRO'?.09:sup==='LRC'?.08:.07;
-        return{color:'#4f7398',weight:.65,opacity:.52,fillColor:'#17304a',fillOpacity:op};
-      }
-    }).addTo(map);
+    if(valid.features.length){
+      territoryLayer=L.geoJSON(valid,{
+        interactive:false,
+        style:f=>{
+          const sup=normaliza(f?.properties?.first_superdlu);
+          const op=sup==='LRS'?.12:sup==='LRB'?.10:sup==='LRO'?.09:sup==='LRC'?.08:.07;
+          return{color:'#4f7398',weight:.65,opacity:.58,fillColor:'#17304a',fillOpacity:op};
+        }
+      }).addTo(map);
+    }
   }
   const Legend=L.Control.extend({options:{position:'bottomleft'},onAdd:function(){const d=L.DomUtil.create('div','mapLegend');d.innerHTML=`<b>Nota territorial calculada</b><span><i style="background:#78aaa3"></i>≥ 85%</span><span><i style="background:#6da5d8"></i>${META}% a 84,9%</span><span><i style="background:#e87535"></i>70% a ${fmt(META-.1)}%</span><span><i style="background:#e84855"></i>&lt; 70%</span><small style="display:block;margin-top:6px;color:#9fb0c7">Tamanho do círculo = volume de avaliações</small>`;L.DomEvent.disableClickPropagation(d);return d}});
   map.addControl(new Legend());
-  setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false})},80);
+  map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false});
+  return map;
 }
 function geometriaValida(feature){
   try{
@@ -321,6 +327,7 @@ function geometriaValida(feature){
   }catch(e){return false}
 }
 function renderMap(){
+  if(!map&&document.getElementById('page-territorial')?.classList.contains('active'))initMap();
   if(!map)return;
   if(geoLayer)map.removeLayer(geoLayer);
   if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}
@@ -352,7 +359,7 @@ function focarBairroNoMapa(bairro){
   const c=COORDS[normaliza(bairro)]||(GEO_CENTROIDS[normaliza(bairro)]?{lat:GEO_CENTROIDS[normaliza(bairro)][0],lon:GEO_CENTROIDS[normaliza(bairro)][1]}:null);
   if(c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon))map.setView([c.lat,c.lon],13);
 }
-function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false});renderMap()},180)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
+function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'){setTimeout(()=>{if(!map)initMap();if(map){map.invalidateSize({pan:false});map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false});renderMap()}},120)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>

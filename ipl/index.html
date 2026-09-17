@@ -73,7 +73,7 @@ canvas{width:100%!important;height:100%!important}
 </section>
 <section id="page-territorial" class="page">
   <div class="territorialGrid cleanTerritory">
-    <div class="panel"><div class="panelHead"><div><h2>Mapa territorial</h2><div class="hint">Bairros avaliados no município do Rio. Cor indica a nota territorial e o tamanho do círculo representa o volume de avaliações.</div></div></div><div id="map"></div></div>
+    <div class="panel"><div class="panelHead"><div><h2>Mapa territorial</h2><div class="hint">Camada territorial DLU do próprio HUB, com bairros avaliados posicionados pelas coordenadas internas. Cor indica a nota e o tamanho do círculo representa o volume de avaliações.</div></div></div><div id="map"></div></div>
     <div class="sideStack">
       <div class="panel"><div class="panelHead"><div><h2>Prioridade territorial para análise</h2><div class="hint">Ordenação analítica do HUB por trechos abaixo da meta, reincidência e nota média. Não é indicador oficial.</div></div></div><div class="body" id="rankBairros"></div></div>
       <div class="panel"><div class="panelHead"><div><h2>Reincidência territorial</h2><div class="hint">Bairros com maior quantidade de trechos que repetiram ocorrências abaixo da referência no período</div></div></div><div class="body" id="rankReincidencias"></div></div>
@@ -90,6 +90,7 @@ const IPL_CONFIG=Object.freeze({meta:80,metodologia:'IPL institucional COMLURB'}
 const META=IPL_CONFIG.meta;
 const URL_IPL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv';
 const URL_SARC='https://docs.google.com/spreadsheets/d/1UY51_jeu1as503ckKOsi_tqHgaBu9innbcMBXKjA_mQ/gviz/tq?tqx=out:csv&gid=1044100274';
+const URL_GEO_DLU='../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson';
 const URL_COORDS='../territorial/data/coordenadas_bairros_rio.csv';
 const PESOS={LB:30,CD:20,Bens:6,Ralo:6,PapCheia:6,PapSuja:6,PapQuebrada:6,Fezes:3,Perfuro:3,Propaganda:2,Galhada:2,Capina:2,AreaVerde:2,Animal:1,MorRua:1,Lama:1,CxMet:1,PosSvc:1,PtoCrit:1};
 const ITEM_LABELS={LB:'Lixo Branco',CD:'Coleta domiciliar',Bens:'Bens, entulho, material de obra e pneus',Ralo:'Ralo',PapCheia:'Papeleira cheia',PapSuja:'Papeleira suja',PapQuebrada:'Papeleira quebrada',Fezes:'Fezes',Perfuro:'Lixo crítico',Propaganda:'Propaganda irregular',Galhada:'Galhada',Capina:'Capina',AreaVerde:'Áreas verdes',Animal:'Animal morto',MorRua:'Resíduo de morador de rua',Lama:'Lama e areia',CxMet:'Caixa metálica',PosSvc:'Resíduo pós-serviço',PtoCrit:'Ponto crítico'};
@@ -99,7 +100,7 @@ const MESES_SARC=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','N
 const MES_SARC_COL={'jan./26':'Jan','fev./26':'Fev','mar./26':'Mar','abr./26':'Abr','mai./26':'Mai','jun./26':'Jun','jul./26':'Jul','ago./26':'Ago','set./26':'Set','out./26':'Out','nov./26':'Nov','dez./26':'Dez'};
 const ORDEM_MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const GEO_CENTROIDS={"PECHINCHA":[-22.932254,-43.354924],"CURICICA":[-22.949681,-43.385242],"CIDADE DE DEUS":[-22.947942,-43.361856],"ANIL":[-22.958493,-43.338646],"GARDENIA AZUL":[-22.958105,-43.351751],"TAQUARA":[-22.941898,-43.369768],"FREGUESIA (JACAREPAGUA)":[-22.939838,-43.343677],"JACAREPAGUA":[-22.965371,-43.337011],"BARRA DA TIJUCA":[-22.996644,-43.362730],"RECREIO DOS BANDEIRANTES":[-23.026454,-43.481533],"PENHA":[-22.831306,-43.264468],"DEL CASTILHO":[-22.879640,-43.272273],"MADUREIRA":[-22.873521,-43.336627],"CAMPO GRANDE":[-22.926512,-43.554290],"SANTA CRUZ":[-22.916679,-43.715767],"BANGU":[-22.861617,-43.487624],"REALENGO":[-22.876264,-43.430749],"CENTRO":[-22.907340,-43.171895],"COPACABANA":[-22.975220,-43.183350],"IPANEMA":[-22.987408,-43.198434],"TIJUCA":[-22.938773,-43.236418],"MEIER":[-22.901548,-43.281086],"BONSUCESSO":[-22.867346,-43.254837],"ROCINHA":[-22.989189,-43.248375],"PAVUNA":[-22.812851,-43.362865],"GUADALUPE":[-22.838493,-43.377453],"GUARATIBA":[-23.014443,-43.609302],"SEPETIBA":[-22.977347,-43.699608],"COSMOS":[-22.920384,-43.614954],"PADRE MIGUEL":[-22.874568,-43.450137],"RAMOS":[-22.855044,-43.258169],"OLARIA":[-22.849726,-43.274800],"ENGENHO NOVO":[-22.907987,-43.268098],"VILA ISABEL":[-22.916441,-43.246413],"BOTAFOGO":[-22.947809,-43.183621],"FLAMENGO":[-22.935551,-43.171468],"LAGOA":[-22.971730,-43.209435],"GAVEA":[-22.977772,-43.238677],"LARANJEIRAS":[-22.937579,-43.191428],"GLORIA":[-22.918728,-43.170578],"SAO CRISTOVAO":[-22.898797,-43.226668],"MANGUINHOS":[-22.879767,-43.245286],"COMPLEXO DO ALEMAO":[-22.859594,-43.274689],"INHAUMA":[-22.869901,-43.282228],"CACHAMBI":[-22.890510,-43.272345],"PIEDADE":[-22.891828,-43.312155],"ANCHIETA":[-22.824898,-43.400315],"ACARI":[-22.819699,-43.338860],"VIGARIO GERAL":[-22.808449,-43.308525],"MARE":[-22.848964,-43.244749],"PENHA CIRCULAR":[-22.829693,-43.284066],"IRAJA":[-22.835338,-43.326443],"VILA DA PENHA":[-22.843855,-43.310848],"MARECHAL HERMES":[-22.858389,-43.371281],"CASCADURA":[-22.885068,-43.327837],"CAMPINHO":[-22.882559,-43.349449],"VILA KENNEDY":[-22.857827,-43.485787],"SENADOR CAMARA":[-22.881181,-43.493560],"PACIENCIA":[-22.893644,-43.642949],"INHOAIBA":[-22.922457,-43.594419],"SENADOR VASCONCELOS":[-22.895885,-43.531750],"SANTISSIMO":[-22.884639,-43.513845],"PEDRA DE GUARATIBA":[-23.000754,-43.640748],"ILHA DE GUARATIBA":[-22.994142,-43.571243],"ALTO DA BOA VISTA":[-22.960494,-43.236534],"ANDARAI":[-22.929171,-43.252813],"GRAJAU":[-22.929842,-43.270173],"JARDIM BOTANICO":[-22.963721,-43.226412],"LEBLON":[-22.985841,-43.224307],"SAO CONRADO":[-22.998051,-43.263401],"VIDIGAL":[-22.995215,-43.236113]};
-let DATA=[],FILTERED=[],SARC_DATA={dir:[],sup:[],ger:[]},SARC_WARNINGS=[],COORDS={},map,geoLayer,highlightLayer,trendChart;
+let DATA=[],FILTERED=[],SARC_DATA={dir:[],sup:[],ger:[]},SARC_WARNINGS=[],COORDS={},GEO_DLU=null,map,territoryLayer,geoLayer,highlightLayer,trendChart;
 const RIO_CENTER=[-22.91,-43.38];
 const RIO_VIEW_BOUNDS=[[-23.08,-43.80],[-22.74,-43.06]];
 const RIO_MAX_BOUNDS=[[-23.14,-43.88],[-22.69,-42.98]];
@@ -145,7 +146,7 @@ function notaCor(n){return n>=85?'#78aaa3':n>=META?'#6da5d8':n>=70?'#e87535':'#e
 function prepararCoords(rows){const out={};rows.forEach(r=>{const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']),lat=num(campo(r,['lat','Lat','LAT','latitude','LATITUDE'])),lon=num(campo(r,['lon','Lon','LON','lng','longitude','LONGITUDE']));if(b&&lat&&lon)out[normaliza(b)]={lat,lon}});return out}
 function centroideFeature(feature){try{const geom=feature.geometry;let coords=[];if(geom.type==='Polygon')coords=geom.coordinates[0];else if(geom.type==='MultiPolygon'){let maior=0,idx=0;geom.coordinates.forEach((p,i)=>{if(p[0].length>maior){maior=p[0].length;idx=i}});coords=geom.coordinates[idx][0]}if(!coords.length)return null;let sLat=0,sLon=0;coords.forEach(c=>{sLon+=c[0];sLat+=c[1]});return{lat:sLat/coords.length,lon:sLon/coords.length}}catch(e){return null}}
 function construirCentroidesGeo(geo){const out={};if(!geo||!geo.features)return out;geo.features.forEach(f=>{const nome=nomeBairroGeo(f.properties);const c=nome?centroideFeature(f):null;if(c)out[normaliza(nome)]={lat:c.lat,lon:c.lon}});return out}
-async function init(){try{$('status').textContent='Carregando base territorial, SARC atualizada e mapa estratégico…';const[base,sarcRows,coords]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[])]);COORDS=prepararCoords(coords);SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairro=campo(r,['Bairro','BAIRRO']);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:campo(r,['Superintendência','Superintendencia']),ger:campo(r,['Gerência','Gerencia']),bairro,logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);initMap();populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
+async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,coords,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);COORDS=prepararCoords(coords);GEO_DLU=geoDlu;SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairro=campo(r,['Bairro','BAIRRO']);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:campo(r,['Superintendência','Superintendencia']),ger:campo(r,['Gerência','Gerencia']),bairro,logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);initMap();populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
 function baseSup(){const m=$('fMes').value;return DATA.filter(r=>!m||r.mes===m)}function baseGer(){const m=$('fMes').value,s=$('fSup').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s))}function baseBairro(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g))}
 function preencherSelect(id,campo,label,base,preservar=true){const atual=preservar?$(id).value:'';const vals=[...new Set(base.map(r=>r[campo]).filter(Boolean))];if(campo==='mes')vals.sort((a,b)=>ordemMes(a)-ordemMes(b)||String(a).localeCompare(String(b),'pt-BR'));else vals.sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));$(id).innerHTML=`<option value="">${label}</option>`;vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o)});if(preservar&&vals.includes(atual))$(id).value=atual}
 function populateAll(){preencherSelect('fMes','mes','Todos',DATA);preencherSelect('fSup','sup','Todas',baseSup());preencherSelect('fGer','ger','Todas',baseGer());preencherSelect('fBairro','bairro','Todos',baseBairro())}
@@ -285,11 +286,22 @@ function renderRanks(){
 }
 
 function initMap(){
-  map=L.map('map',{zoomControl:true,preferCanvas:true,minZoom:10.5,maxZoom:15,zoomSnap:.25,maxBounds:RIO_MAX_BOUNDS,maxBoundsViscosity:1,zoomAnimation:false}).setView(RIO_CENTER,11);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
-  setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[8,8],animate:false})},60);
+  map=L.map('map',{zoomControl:true,preferCanvas:true,minZoom:10,maxZoom:15,zoomSnap:.25,maxBounds:RIO_MAX_BOUNDS,maxBoundsViscosity:1,zoomAnimation:false,attributionControl:false}).setView(RIO_CENTER,10.75);
+  // Base cartográfica própria do HUB: vetor DLU, sem provedor externo de tiles.
+  if(GEO_DLU&&Array.isArray(GEO_DLU.features)){
+    const valid={type:'FeatureCollection',features:GEO_DLU.features.filter(geometriaValida)};
+    territoryLayer=L.geoJSON(valid,{
+      interactive:false,
+      style:f=>{
+        const sup=normaliza(f?.properties?.first_superdlu);
+        const op=sup==='LRS'?.12:sup==='LRB'?.10:sup==='LRO'?.09:sup==='LRC'?.08:.07;
+        return{color:'#4f7398',weight:.65,opacity:.52,fillColor:'#17304a',fillOpacity:op};
+      }
+    }).addTo(map);
+  }
   const Legend=L.Control.extend({options:{position:'bottomleft'},onAdd:function(){const d=L.DomUtil.create('div','mapLegend');d.innerHTML=`<b>Nota territorial calculada</b><span><i style="background:#78aaa3"></i>≥ 85%</span><span><i style="background:#6da5d8"></i>${META}% a 84,9%</span><span><i style="background:#e87535"></i>70% a ${fmt(META-.1)}%</span><span><i style="background:#e84855"></i>&lt; 70%</span><small style="display:block;margin-top:6px;color:#9fb0c7">Tamanho do círculo = volume de avaliações</small>`;L.DomEvent.disableClickPropagation(d);return d}});
   map.addControl(new Legend());
+  setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false})},80);
 }
 function geometriaValida(feature){
   try{
@@ -316,30 +328,31 @@ function renderMap(){
   const maxN=Math.max(...bairros.map(x=>x.n),1);
   const layers=[];
   bairros.forEach(d=>{
-    const c=COORDS[normaliza(d.k)];
+    const c=COORDS[normaliza(d.k)]||(GEO_CENTROIDS[normaliza(d.k)]?{lat:GEO_CENTROIDS[normaliza(d.k)][0],lon:GEO_CENTROIDS[normaliza(d.k)][1]}:null);
     if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
-    const raio=7+Math.sqrt(d.n/maxN)*13;
+    const raio=6+Math.sqrt(d.n/maxN)*12;
     const cor=corNota(d.media);
-    const layer=L.circleMarker([c.lat,c.lon],{radius:raio,color:'#f7f9ff',weight:1.25,fillColor:cor,fillOpacity:.92,opacity:.88,pane:'overlayPane'});
+    const layer=L.circleMarker([c.lat,c.lon],{radius:raio,color:'#dcecff',weight:1.1,fillColor:cor,fillOpacity:.9,opacity:.92});
     layer.bindTooltip(`<b>${d.k}</b><br>${fmt(d.media)}% · ${d.n.toLocaleString('pt-BR')} avaliações`,{direction:'top',sticky:true,className:'bairro-popup'});
-    layer.on('click',()=>focarBairroNoMapa(d.k));
+    layer.bindPopup(`<b>${d.k}</b><br>Nota territorial: ${fmt(d.media)}%<br>Avaliações: ${d.n.toLocaleString('pt-BR')}<br>Trechos com ocorrência abaixo da referência: ${d.trechosAbaixo}<br>Trechos reincidentes: ${d.reincidentes}`);
+    layer.on('click',()=>{$('fBairro').value=d.k;render();map.setView([c.lat,c.lon],12.5)});
     layers.push(layer);
   });
   geoLayer=L.layerGroup(layers).addTo(map);
-  if(document.getElementById('page-territorial')?.classList.contains('active'))setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[8,8],animate:false})},80);
+  if(document.getElementById('page-territorial')?.classList.contains('active'))setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false})},80);
 }
 function focarGerenciaNoMapa(ger){
   if(!map)return;
   const rows=DATA.filter(r=>normaliza(r.ger)===normaliza(ger));
-  const coords=rows.map(r=>COORDS[normaliza(r.bairro)]).filter(c=>c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon));
+  const coords=rows.map(r=>COORDS[normaliza(r.bairro)]||(GEO_CENTROIDS[normaliza(r.bairro)]?{lat:GEO_CENTROIDS[normaliza(r.bairro)][0],lon:GEO_CENTROIDS[normaliza(r.bairro)][1]}:null)).filter(c=>c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon));
   if(coords.length){const lat=coords.reduce((s,c)=>s+c.lat,0)/coords.length,lon=coords.reduce((s,c)=>s+c.lon,0)/coords.length;map.setView([lat,lon],12)}
 }
 function focarBairroNoMapa(bairro){
   if(!map)return;
-  const c=COORDS[normaliza(bairro)];
+  const c=COORDS[normaliza(bairro)]||(GEO_CENTROIDS[normaliza(bairro)]?{lat:GEO_CENTROIDS[normaliza(bairro)][0],lon:GEO_CENTROIDS[normaliza(bairro)][1]}:null);
   if(c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon))map.setView([c.lat,c.lon],13);
 }
-function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[8,8],animate:false});renderMap()},180)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
+function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false});renderMap()},180)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>

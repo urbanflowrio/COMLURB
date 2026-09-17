@@ -101,7 +101,8 @@ const MES_SARC_COL={'jan./26':'Jan','fev./26':'Fev','mar./26':'Mar','abr./26':'A
 const ORDEM_MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const GEO_CENTROIDS={"PECHINCHA":[-22.932254,-43.354924],"CURICICA":[-22.949681,-43.385242],"CIDADE DE DEUS":[-22.947942,-43.361856],"ANIL":[-22.958493,-43.338646],"GARDENIA AZUL":[-22.958105,-43.351751],"TAQUARA":[-22.941898,-43.369768],"FREGUESIA (JACAREPAGUA)":[-22.939838,-43.343677],"JACAREPAGUA":[-22.965371,-43.337011],"BARRA DA TIJUCA":[-22.996644,-43.362730],"RECREIO DOS BANDEIRANTES":[-23.026454,-43.481533],"PENHA":[-22.831306,-43.264468],"DEL CASTILHO":[-22.879640,-43.272273],"MADUREIRA":[-22.873521,-43.336627],"CAMPO GRANDE":[-22.926512,-43.554290],"SANTA CRUZ":[-22.916679,-43.715767],"BANGU":[-22.861617,-43.487624],"REALENGO":[-22.876264,-43.430749],"CENTRO":[-22.907340,-43.171895],"COPACABANA":[-22.975220,-43.183350],"IPANEMA":[-22.987408,-43.198434],"TIJUCA":[-22.938773,-43.236418],"MEIER":[-22.901548,-43.281086],"BONSUCESSO":[-22.867346,-43.254837],"ROCINHA":[-22.989189,-43.248375],"PAVUNA":[-22.812851,-43.362865],"GUADALUPE":[-22.838493,-43.377453],"GUARATIBA":[-23.014443,-43.609302],"SEPETIBA":[-22.977347,-43.699608],"COSMOS":[-22.920384,-43.614954],"PADRE MIGUEL":[-22.874568,-43.450137],"RAMOS":[-22.855044,-43.258169],"OLARIA":[-22.849726,-43.274800],"ENGENHO NOVO":[-22.907987,-43.268098],"VILA ISABEL":[-22.916441,-43.246413],"BOTAFOGO":[-22.947809,-43.183621],"FLAMENGO":[-22.935551,-43.171468],"LAGOA":[-22.971730,-43.209435],"GAVEA":[-22.977772,-43.238677],"LARANJEIRAS":[-22.937579,-43.191428],"GLORIA":[-22.918728,-43.170578],"SAO CRISTOVAO":[-22.898797,-43.226668],"MANGUINHOS":[-22.879767,-43.245286],"COMPLEXO DO ALEMAO":[-22.859594,-43.274689],"INHAUMA":[-22.869901,-43.282228],"CACHAMBI":[-22.890510,-43.272345],"PIEDADE":[-22.891828,-43.312155],"ANCHIETA":[-22.824898,-43.400315],"ACARI":[-22.819699,-43.338860],"VIGARIO GERAL":[-22.808449,-43.308525],"MARE":[-22.848964,-43.244749],"PENHA CIRCULAR":[-22.829693,-43.284066],"IRAJA":[-22.835338,-43.326443],"VILA DA PENHA":[-22.843855,-43.310848],"MARECHAL HERMES":[-22.858389,-43.371281],"CASCADURA":[-22.885068,-43.327837],"CAMPINHO":[-22.882559,-43.349449],"VILA KENNEDY":[-22.857827,-43.485787],"SENADOR CAMARA":[-22.881181,-43.493560],"PACIENCIA":[-22.893644,-43.642949],"INHOAIBA":[-22.922457,-43.594419],"SENADOR VASCONCELOS":[-22.895885,-43.531750],"SANTISSIMO":[-22.884639,-43.513845],"PEDRA DE GUARATIBA":[-23.000754,-43.640748],"ILHA DE GUARATIBA":[-22.994142,-43.571243],"ALTO DA BOA VISTA":[-22.960494,-43.236534],"ANDARAI":[-22.929171,-43.252813],"GRAJAU":[-22.929842,-43.270173],"JARDIM BOTANICO":[-22.963721,-43.226412],"LEBLON":[-22.985841,-43.224307],"SAO CONRADO":[-22.998051,-43.263401],"VIDIGAL":[-22.995215,-43.236113]};
 let DATA=[],FILTERED=[],SARC_DATA={dir:[],sup:[],ger:[]},SARC_WARNINGS=[],GEO=null,COORDS={},map,geoLayer,highlightLayer,trendChart;
-const RIO_BOUNDS=L.latLngBounds([[-23.11,-43.82],[-22.74,-43.08]]);
+const RIO_CENTER=[-22.93,-43.43];
+const RIO_MAX_BOUNDS=[[-23.16,-43.90],[-22.68,-42.98]];
 const $=id=>document.getElementById(id);const normaliza=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();const fmt=(n,d=1)=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});const parseNumeroBR=v=>{let t=String(v??'').trim();if(!t)return null;t=t.replace('%','').trim();if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');const n=Number(t);return Number.isFinite(n)?n:null};const parsePercentual=v=>{const n=parseNumeroBR(v);return n!==null&&n>=0&&n<=100?n:null};const csv=url=>new Promise((res,rej)=>{const sep=url.includes('?')?'&':'?';const urlSemCache=`${url}${sep}_=${Date.now()}`;Papa.parse(urlSemCache,{download:true,header:true,skipEmptyLines:true,complete:r=>{if(r.errors?.length)console.warn('Avisos na leitura CSV:',r.errors);res(r.data)},error:rej})});const campo=(row,nomes)=>{for(const n of nomes){if(row[n]!==undefined)return row[n]}return''};const num=v=>parseNumeroBR(v);const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
 function itemLabel(k){return ITEM_LABELS[k]||k}
 function ordemMes(v){const s=String(v||'').toLowerCase().trim();const idx=ORDEM_MESES.findIndex(m=>s.startsWith(m));return idx>=0?idx:99}
@@ -284,10 +285,27 @@ function renderRanks(){
 }
 
 function initMap(){
-  map=L.map('map',{zoomControl:true,preferCanvas:true,minZoom:9,maxBounds:RIO_BOUNDS.pad(.18),maxBoundsViscosity:.85}).fitBounds(RIO_BOUNDS,{padding:[18,18]});
+  map=L.map('map',{zoomControl:true,preferCanvas:true,minZoom:9,maxBounds:RIO_MAX_BOUNDS,maxBoundsViscosity:.85}).setView(RIO_CENTER,10);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
   const Legend=L.Control.extend({options:{position:'bottomleft'},onAdd:function(){const d=L.DomUtil.create('div','mapLegend');d.innerHTML=`<b>Nota territorial calculada</b><span><i style="background:#78aaa3"></i>≥ 85%</span><span><i style="background:#6da5d8"></i>${META}% a 84,9%</span><span><i style="background:#e87535"></i>70% a ${fmt(META-.1)}%</span><span><i style="background:#e84855"></i>&lt; 70%</span><span><i class="nodata"></i>Sem avaliação no recorte</span>`;L.DomEvent.disableClickPropagation(d);return d}});
   map.addControl(new Legend());
+}
+function geometriaValida(feature){
+  try{
+    const g=feature&&feature.geometry;
+    if(!g||!Array.isArray(g.coordinates))return false;
+    let ok=false;
+    const walk=x=>{
+      if(!Array.isArray(x))return;
+      if(x.length>=2&&typeof x[0]==='number'&&typeof x[1]==='number'){
+        if(Number.isFinite(x[0])&&Number.isFinite(x[1])&&x[0]>=-180&&x[0]<=180&&x[1]>=-90&&x[1]<=90)ok=true;
+        return;
+      }
+      x.forEach(walk);
+    };
+    walk(g.coordinates);
+    return ok;
+  }catch(e){return false}
 }
 function renderMap(){
   if(!map||!GEO)return;
@@ -295,18 +313,18 @@ function renderMap(){
   if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}
   const byBairro={};group('bairro').forEach(x=>{byBairro[normaliza(x.k)]=x});
   const geoFeatures={};
-  geoLayer=L.geoJSON(GEO,{style:f=>{const nome=nomeBairroGeo(f.properties),d=byBairro[normaliza(nome)];if(!d)return{color:'#31445a',weight:.55,fillColor:'#1c2a3d',fillOpacity:.18};const cor=corNota(d.media);return{color:cor,weight:1.15,fillColor:cor,fillOpacity:.42}},onEachFeature:(f,l)=>{const nome=nomeBairroGeo(f.properties),d=byBairro[normaliza(nome)];geoFeatures[normaliza(nome)]=l;if(!d){l.options.interactive=false;return}l.on({mouseover:e=>e.target.setStyle({weight:2,fillOpacity:.58}),mouseout:e=>geoLayer.resetStyle(e.target),click:()=>{focarBairroNoMapa(nome)}});l.bindPopup(`<b>${nome}</b><br>Nota territorial: ${fmt(d.media)}%<br>Avaliações: ${d.n}<br>Trechos com ocorrência abaixo da referência: ${d.trechosAbaixo}<br>Trechos reincidentes: ${d.reincidentes}`)}}).addTo(map);
+  geoLayer=L.geoJSON(GEO,{filter:f=>geometriaValida(f),style:f=>{const nome=nomeBairroGeo(f.properties),d=byBairro[normaliza(nome)];if(!d)return{color:'#31445a',weight:.55,fillColor:'#1c2a3d',fillOpacity:.18};const cor=corNota(d.media);return{color:cor,weight:1.15,fillColor:cor,fillOpacity:.42}},onEachFeature:(f,l)=>{const nome=nomeBairroGeo(f.properties),d=byBairro[normaliza(nome)];geoFeatures[normaliza(nome)]=l;if(!d){l.options.interactive=false;return}l.on({mouseover:e=>e.target.setStyle({weight:2,fillOpacity:.58}),mouseout:e=>geoLayer.resetStyle(e.target),click:()=>{focarBairroNoMapa(nome)}});l.bindPopup(`<b>${nome}</b><br>Nota territorial: ${fmt(d.media)}%<br>Avaliações: ${d.n}<br>Trechos com ocorrência abaixo da referência: ${d.trechosAbaixo}<br>Trechos reincidentes: ${d.reincidentes}`)}}).addTo(map);
   map._geoFeatures=geoFeatures;
-  if(document.getElementById('page-territorial')?.classList.contains('active')){setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_BOUNDS,{padding:[18,18]})},60)}
+  if(document.getElementById('page-territorial')?.classList.contains('active')){setTimeout(()=>{map.invalidateSize();map.setView(RIO_CENTER,10)},60)}
 }
 function focarGerenciaNoMapa(ger){if(!map||!GEO)return;const gerNorm=normaliza(ger);const bairrosGer=new Set(DATA.filter(r=>normaliza(r.ger)===gerNorm).map(r=>normaliza(r.bairro)));if(geoLayer)geoLayer.eachLayer(l=>{const nm=normaliza(nomeBairroGeo(l.feature?.properties||{}));l.setStyle(bairrosGer.has(nm)?{color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:.18}:{color:'#1e3050',weight:.4,fillColor:'#0d1b2f',fillOpacity:.55})})}
-function focarBairroNoMapa(bairro){if(!map)return;if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}const layer=(map._geoFeatures||{})[normaliza(bairro)];if(layer){try{map.fitBounds(layer.getBounds(),{padding:[40,40],maxZoom:14})}catch(e){}highlightLayer=L.geoJSON(layer.feature,{style:{color:'#5b9bd5',weight:3,fillColor:'#5b9bd5',fillOpacity:.08}}).addTo(map);const center=layer.getBounds().getCenter();L.popup({className:'bairro-popup',closeButton:false,autoClose:true,offset:[0,-4]}).setLatLng(center).setContent(`<b>${bairro}</b>`).openOn(map)}}
+function focarBairroNoMapa(bairro){if(!map)return;if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}const layer=(map._geoFeatures||{})[normaliza(bairro)];if(layer){try{const b=layer.getBounds();if(b&&b.isValid()){map.fitBounds(b,{padding:[40,40],maxZoom:14});highlightLayer=L.geoJSON(layer.feature,{filter:f=>geometriaValida(f),style:{color:'#5b9bd5',weight:3,fillColor:'#5b9bd5',fillOpacity:.08}}).addTo(map);const center=b.getCenter();if(Number.isFinite(center.lat)&&Number.isFinite(center.lng))L.popup({className:'bairro-popup',closeButton:false,autoClose:true,offset:[0,-4]}).setLatLng(center).setContent(`<b>${bairro}</b>`).openOn(map)}}catch(e){console.warn('Falha ao focar bairro no mapa',bairro,e)}}}
 function abrirBairro(bairroEncoded){
   const bairro=decodeURIComponent(bairroEncoded);
   showPage('territorial');
   setTimeout(()=>focarBairroNoMapa(bairro),180);
 }
-function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();map.fitBounds(RIO_BOUNDS,{padding:[18,18]});renderMap()},180)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
+function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();map.setView(RIO_CENTER,10);renderMap()},180)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>

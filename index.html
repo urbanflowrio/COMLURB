@@ -2,240 +2,106 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPL · Painel Executivo · HUB COMLURB</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#030d19">
+<title>HUB COMLURB · Centro de Inteligência e Gestão Estratégica Operacional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07111f;--panel:#0d1b2f;--panel2:#0b1a2e;--line:#274260;--ink:#f2f6ff;
-  --muted:#9fb0c7;--soft:#c5d5e8;--blue:#6da5d8;--orange:#e87535;--green:#78aaa3;--red:#e84855;
-  --violet:#a78bfa;--shadow:0 18px 45px rgba(0,0,0,.28);--radius:22px;
-}
+:root{--bg:#030d19;--surface:#071a2c;--surface-hover:#0a2137;--line:#203a55;--line-strong:#315a7c;--text:#f7f9ff;--soft:#c8d8eb;--muted:#8ba4bf;--blue:#5b9bd5;--blue-light:#8ec5f3;--teal:#78aaa3;--radius:18px}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
-.app{max-width:1880px;margin:0 auto;padding:18px}
-.header{display:flex;align-items:center;gap:24px;padding:22px;border:1px solid rgba(111,164,216,.25);border-radius:24px;background:#0b1a2e;box-shadow:var(--shadow);margin-bottom:14px}
-.logo{width:250px;max-height:76px;object-fit:contain;border-right:1px solid rgba(255,255,255,.24);padding-right:22px}.eyebrow{font-size:11px;font-weight:950;letter-spacing:.16em;text-transform:uppercase;color:#b9c9dc}
-h1{margin:5px 0;font-size:clamp(30px,2.35vw,46px);line-height:1.02;letter-spacing:-.035em}.sub{color:#c5d5e8;font-size:14px;max-width:980px;line-height:1.45}
-.homeBtn{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 17px;border:1px solid rgba(142,197,243,.42);border-radius:13px;background:rgba(10,27,49,.78);color:#dcecff;font-size:12px;font-weight:850;text-decoration:none;white-space:nowrap}.homeBtn:hover{border-color:var(--blue);background:rgba(25,57,88,.82)}
-.controls{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:12px;margin:14px 0}.field,.btn{border:1px solid var(--line);background:rgba(13,27,47,.92);border-radius:16px;padding:11px 12px}label{display:block;color:#aebbd0;font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:950;margin-bottom:6px}select{width:100%;background:transparent;border:0;color:#f2f6ff;font-weight:850;outline:0}select option{background:#0d1b2f;color:#fff}.btn{cursor:pointer;color:#fff;font-weight:950}.btn.orange{border-color:rgba(232,117,53,.75);background:#14243b}
-.tabs{display:flex;gap:10px;margin:8px 0 14px}.tab{border:1px solid var(--line);background:#081525;color:#b8cce3;border-radius:999px;padding:11px 20px;font-weight:950;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.tab.active{background:#173454;color:#fff;border-color:#6da5d8}.page{display:none}.page.active{display:block}.status{margin:12px 0;padding:10px 12px;border:1px solid rgba(75,126,172,.55);background:#1b2130;border-radius:14px;color:#b8d4f2;font-size:13px}
-.dataMeta{display:none;margin:0 0 14px;padding:10px 12px;border:1px solid rgba(111,164,216,.20);border-radius:14px;background:#091728;color:#9fb0c7;font-size:12px;line-height:1.45}.dataMeta strong{color:#dcecff}
-.kpiRow{display:grid;grid-template-columns:1.25fr repeat(4,1fr);gap:12px;margin-bottom:14px}.kpi{min-height:156px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--blue)}.kpi.good:before{background:var(--green)}.kpi.att:before{background:var(--orange)}.kpi.bad:before{background:var(--red)}.kpi.vio:before{background:var(--violet)}.kpi .label{font-size:10px;color:#aebbd0;letter-spacing:.13em;text-transform:uppercase;font-weight:950}.kpi strong{display:block;font-size:clamp(27px,2.2vw,42px);letter-spacing:-.035em;margin:14px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kpi.hero strong{font-size:clamp(48px,4vw,72px);line-height:.92;color:#6da5d8}.kpi small{color:#c5d5e8;line-height:1.45}.chip{display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:4px 8px;font-size:11px;font-weight:950;margin-top:8px}.chip.pos{color:#9fe2c3;background:rgba(120,170,163,.10)}.chip.neg{color:#ff9aa4;background:rgba(232,72,85,.10)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}.panelHead{padding:16px 18px;border-bottom:1px solid var(--line);background:#0b1a2e;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.panel h2{margin:0;font-size:16px;letter-spacing:.04em;text-transform:uppercase}.hint{font-size:12px;color:#a8b8cf;margin-top:4px;line-height:1.35}.body{padding:16px}.execGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-bottom:14px}.trendGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-bottom:14px}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px}.splitTitle{font-size:12px;font-weight:950;letter-spacing:.11em;text-transform:uppercase;margin-bottom:12px}.splitTitle.green{color:#78aaa3}.splitTitle.red{color:#e84855}.metricRow{display:grid;grid-template-columns:36px minmax(0,1fr) 76px;align-items:center;gap:10px;margin:12px 0}.metricRow .pos{font-weight:950;color:#cfe0f5}.metricRow b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar{height:7px;border-radius:999px;background:#1b3657;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px}.val{font-weight:950;text-align:right}.val.good{color:#78aaa3}.val.att{color:#e87535}.val.bad{color:#e84855}.chartBox{height:390px;padding:8px 10px 0}.trendFoot{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 16px 16px;border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:14px}.tf{border-right:1px solid rgba(255,255,255,.08);padding-right:12px}.tf:last-child{border-right:0}.tf span{display:block;color:#9fb0c7;font-size:12px}.tf b{font-size:18px;color:#fff}.tf b.good{color:#78e0a8}.tf b.bad{color:#ff8090}.factor{display:grid;grid-template-columns:30px 1fr 80px;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.08)}.factor:last-child{border-bottom:0}.factor .idx{font-weight:950;color:#cfe0f5}.factor b{display:block}.factor small{color:#9fb0c7}.factor .num{text-align:right;font-weight:950}.cta{display:flex;justify-content:center;margin:4px 0 18px}.cta button{border:1px solid rgba(109,165,216,.65);background:linear-gradient(135deg,rgba(109,165,216,.22),rgba(13,27,47,.95));border-radius:999px;color:#ddecff;font-weight:950;letter-spacing:.08em;text-transform:uppercase;padding:14px 26px;cursor:pointer}
-.territorialGrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(360px,.75fr);gap:14px;margin-bottom:14px}#map{height:690px;background:#07111f}.leaflet-container{background:#07111f!important}.leaflet-tile-pane{background:#07111f}.sideStack{display:grid;gap:14px}.rank{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:11px 8px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;border-radius:10px;transition:background .15s}.rank:hover{background:rgba(109,165,216,.08)}.rank b{font-size:13px}.rank small{color:#a8b8cf;font-weight:950}.mbadge{font-size:10px;font-weight:800;margin-left:7px;vertical-align:middle;display:inline-block;padding:2px 7px;border-radius:999px;border:1px solid rgba(91,155,213,.35);color:#9fc8e8;background:rgba(91,155,213,.10)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;margin:2px;color:#cfe0f5;font-size:11px}.rank.destaque{background:rgba(232,117,53,.12);border-left:3px solid var(--orange);border-radius:0 10px 10px 0}.bairro-popup .leaflet-popup-content-wrapper{background:#0d1b2f;border:1px solid #5b9bd5;border-radius:10px;color:#f7f9ff;font-size:13px;font-weight:800;padding:4px 2px;box-shadow:0 4px 18px rgba(0,0,0,.5)}.bairro-popup .leaflet-popup-tip{background:#0d1b2f}.footer{border-top:1px solid rgba(255,255,255,.12);padding:24px 18px;margin-top:20px;color:#7f8fa6;font-size:13px;background:transparent}.footer strong{color:#8b98ad;font-weight:950}
-canvas{width:100%!important;height:100%!important}
-
-/* EXECUTIVO LIMPO */
-.executiveCore{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.executiveMid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px}.panelHead.clean{background:#0b1a2e}.resultHero .body{min-height:245px}.officialScore{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}.bigScore{font-size:clamp(76px,7vw,118px);font-weight:950;letter-spacing:-.07em;line-height:.9;color:#6da5d8}.scoreMeta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.miniChip{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:#cfe0f5}.miniChip.good{color:#9fe2c3;background:rgba(120,170,163,.10)}.miniChip.bad{color:#ff9aa4;background:rgba(232,72,85,.10)}.scoreDetails{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scoreBox{border-left:1px solid rgba(255,255,255,.10);padding-left:18px}.scoreBox span{display:block;color:#9fb0c7;font-size:11px;text-transform:uppercase;letter-spacing:.11em;font-weight:950}.scoreBox b{display:block;font-size:28px;margin-top:8px}.scoreBox small{color:#9fb0c7}.concWrap{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center}.concNumber{font-size:58px;font-weight:950;letter-spacing:-.05em}.concNumber small{display:block;font-size:13px;color:#9fb0c7;letter-spacing:0;font-weight:700;margin-top:5px}.concList{display:grid;gap:12px}.concItem{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:12px;align-items:center}.concItem b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.agendaList{display:grid;gap:14px}.agendaItem{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;background:rgba(255,255,255,.025)}.agendaItem span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:950;margin-bottom:6px}.agendaItem.territorial span{color:#e87535}.agendaItem.gerencial span{color:#e84855}.agendaItem.operacional span{color:#78aaa3}.agendaItem b{font-size:16px}.agendaItem p{margin:6px 0 0;color:#c5d5e8;font-size:13px;line-height:1.4}.trendPanel{margin-bottom:14px}.chartBox.compact{height:310px}.trendFoot.compact{grid-template-columns:repeat(5,1fr);margin-top:0}.metricRow{grid-template-columns:30px minmax(0,1fr) 72px}.metricRow .bar{grid-column:2/3}.cta{margin:16px 0 2px}.cta button{width:100%;min-height:72px;border-radius:22px;background:linear-gradient(135deg,#e87535,#b94f12);border:1px solid #ff9b55;color:#fff;box-shadow:0 12px 30px rgba(232,117,53,.22);font-size:22px;font-weight:950;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
-
-.cleanTerritory{grid-template-columns:minmax(0,1.75fr) minmax(340px,.65fr)}
-.cleanTerritory .sideStack .body{max-height:300px;overflow:auto}
-.drillPanel{margin-top:14px}
-.reincBadge{display:inline-block;margin-left:8px;padding:2px 7px;border:1px solid rgba(232,117,53,.45);background:rgba(232,117,53,.12);border-radius:999px;color:#ffb278;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
-.rank.compact{padding:9px 8px}
-.rank.compact .hint{font-size:11px}
-
-@media(max-width:1250px){.executiveCore,.executiveMid,.officialScore{grid-template-columns:1fr}.scoreDetails{grid-template-columns:1fr}.concWrap{grid-template-columns:1fr}.trendFoot.compact{grid-template-columns:1fr 1fr}}
-
-@media(max-width:1250px){.kpiRow{grid-template-columns:1fr 1fr}.execGrid,.trendGrid,.territorialGrid,.grid2{grid-template-columns:1fr}.controls{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.app{padding:12px}.header{flex-direction:column;align-items:flex-start}.logo{width:220px;border-right:0;padding-right:0}.homeBtn{width:100%;margin-left:0}.kpiRow,.controls,.split,.trendFoot{grid-template-columns:1fr}.tf{border-right:0;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:10px}.kpi.hero strong{font-size:48px}#map{height:520px}}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;overflow-x:hidden;background:radial-gradient(circle at 83% 4%,rgba(91,155,213,.12),transparent 28%),linear-gradient(180deg,#04111f 0%,var(--bg) 54%,#020912 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.24;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:96px 96px;mask-image:linear-gradient(180deg,#000,transparent 78%)}
+a{color:inherit;text-decoration:none}
+.shell{width:min(1240px,calc(100% - 64px));margin:0 auto;padding:26px 0 24px}
+.header{min-height:78px;display:flex;align-items:center;gap:26px;padding-bottom:20px;border-bottom:1px solid rgba(139,164,191,.22)}
+.logo{width:286px;flex:0 0 auto;display:block}
+.brand{min-height:48px;display:flex;flex-direction:column;justify-content:center;padding-left:26px;border-left:1px solid rgba(200,216,235,.27)}
+.brand strong{font-size:22px;line-height:1.05;letter-spacing:-.45px;font-weight:800}
+.brand span{margin-top:6px;color:var(--blue);font-size:13px;line-height:1.25;font-weight:600}
+.intro{max-width:920px;padding:38px 0 34px}
+.eyebrow,.section-label,.axis-code{display:block;color:var(--blue);font-size:11px;line-height:1;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.intro h1{margin:13px 0 0;font-size:clamp(36px,4.2vw,52px);line-height:1.02;letter-spacing:-2.1px;font-weight:800}
+.intro p{max-width:880px;margin:15px 0 0;color:var(--soft);font-size:15px;line-height:1.58}
+.intro small{display:block;margin-top:11px;color:var(--muted);font-size:12px;line-height:1.45;font-weight:500}
+.portfolio{padding-bottom:34px}
+.section-label{margin:0 0 18px}
+.axis-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+.axis{grid-column:span 6;min-width:0;display:flex;flex-direction:column;padding:22px;overflow:hidden;border:1px solid rgba(49,90,124,.66);border-radius:var(--radius);background:linear-gradient(180deg,rgba(7,26,44,.90),rgba(5,19,33,.78));box-shadow:0 18px 44px rgba(0,0,0,.13)}
+.axis.compact{grid-column:span 4}
+.axis-head{min-height:58px;padding-bottom:16px;border-bottom:1px solid rgba(139,164,191,.14)}
+.axis-code{font-size:10px;letter-spacing:1.7px}
+.axis h2{margin:9px 0 0;font-size:21px;line-height:1.18;letter-spacing:-.55px;font-weight:800}
+.module-list{display:grid;gap:10px;padding-top:12px}
+.module{min-height:74px;display:grid;grid-template-columns:minmax(0,1fr) 26px;align-items:center;gap:14px;padding:13px 14px 13px 16px;border:1px solid rgba(49,90,124,.62);border-radius:12px;background:rgba(3,13,25,.22);transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease}
+.module:hover{border-color:rgba(142,197,243,.72);background:rgba(10,33,55,.76);box-shadow:inset 3px 0 0 rgba(91,155,213,.78)}
+.module:focus-visible{outline:2px solid var(--blue-light);outline-offset:3px;border-color:var(--blue-light)}
+.module:active{background:rgba(14,43,70,.88);border-color:var(--blue)}
+.module strong{display:block;font-size:15px;line-height:1.3;letter-spacing:-.15px;font-weight:700}
+.module span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.42}
+.arrow{color:var(--blue);font-size:22px;line-height:1;text-align:center;transition:transform .16s ease,color .16s ease}
+.module:hover .arrow{color:var(--blue-light);transform:translateX(2px)}
+.footer{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding-top:20px;border-top:1px solid rgba(139,164,191,.22);color:var(--muted);font-size:11px;line-height:1.5}
+.footer strong{display:block;color:var(--soft);font-size:12px}
+@media(max-width:1040px){.shell{width:min(920px,calc(100% - 48px))}.axis,.axis.compact{grid-column:span 6}.axis:last-child{grid-column:1/-1}}
+@media(max-width:720px){.shell{width:calc(100% - 32px);padding-top:18px}.header{align-items:flex-start;flex-direction:column;gap:15px;padding-bottom:18px}.logo{width:min(268px,86vw)}.brand{min-height:auto;padding:0;border-left:0}.brand strong{font-size:19px}.brand span{max-width:340px;font-size:12px;line-height:1.4}.intro{padding:28px 0 26px}.intro h1{font-size:36px;letter-spacing:-1.5px}.intro p{font-size:14px;line-height:1.55}.axis-grid{display:block}.axis{margin-bottom:14px;padding:18px;border-radius:15px}.axis h2{font-size:19px}.axis-head{min-height:auto;padding-bottom:14px}.module{min-height:82px;padding:13px 12px 13px 14px}.module strong{font-size:15px}.module span{font-size:12px}.footer{flex-direction:column;gap:8px;padding-bottom:8px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="app">
-<header class="header">
-  <img class="logo" alt="COMLURB" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png">
-  <div><div class="eyebrow">HUB COMLURB · DLU · Inteligência Operacional</div><h1>IPL · Índice Padrão de Limpeza</h1><div class="sub">Indicador institucional da COMLURB para acompanhamento do padrão de limpeza urbana. O painel apresenta o resultado oficial SARC e, separadamente, o diagnóstico territorial calculado pelo HUB a partir das avaliações de trecho.</div></div>
-  <a class="homeBtn" href="../index.html">Home</a>
-</header>
-<section class="controls">
-  <div class="field"><label for="fMes">Mês</label><select id="fMes" onchange="onMesChange()"><option value="">Todos</option></select></div>
-  <div class="field"><label for="fSup">Superintendência</label><select id="fSup" onchange="onSupChange()"><option value="">Todas</option></select></div>
-  <div class="field"><label for="fGer">Gerência</label><select id="fGer" onchange="onGerChange()"><option value="">Todas</option></select></div>
-  <div class="field"><label for="fBairro">Bairro</label><select id="fBairro" onchange="onBairroChange()"><option value="">Todos</option></select></div>
-  <button type="button" class="btn orange" onclick="clearAll()">Limpar filtros</button>
-</section>
-<nav class="tabs" aria-label="Visões do IPL"><button type="button" class="tab active" onclick="showPage('executivo')">Painel Executivo</button><button type="button" class="tab" onclick="showPage('territorial')">Análise Territorial</button></nav>
-<div id="status" class="status" role="status" aria-live="polite">Carregando bases territoriais…</div><div id="dataMeta" class="dataMeta" aria-live="polite"></div>
-<section id="page-executivo" class="page active">
-  <div class="executiveCore">
-    <div class="panel resultHero"><div class="panelHead clean"><div><h2>Resultado oficial SARC</h2><div class="hint">Nota IPL média acumulada até o mês selecionado</div></div></div><div class="body" id="officialHero"></div></div>
-    <div class="panel concentration"><div class="panelHead clean"><div><h2>Concentração das não conformidades</h2><div class="hint">Participação dos principais bairros nas avaliações territoriais abaixo da meta</div></div></div><div class="body" id="concentrationPanel"></div></div>
-  </div>
-  <div class="executiveMid">
-    <div class="panel"><div class="panelHead clean"><div><h2>Desempenho por gerência</h2><div class="hint">Classificação oficial SARC acumulada até o mês selecionado</div></div></div><div class="body"><div class="split"><div><div class="splitTitle green">Melhores desempenhos</div><div id="bestGers"></div></div><div><div class="splitTitle red">Áreas de atenção</div><div id="attentionGers"></div></div></div></div></div>
-  </div>
-  <div class="panel trendPanel"><div class="panelHead clean"><div><h2>Evolução oficial acumulada</h2><div class="hint">Série SARC acumulada até o mês selecionado</div></div></div><div class="chartBox compact"><canvas id="trendChart" role="img" aria-label="Evolução acumulada do IPL oficial SARC e linha de meta"></canvas></div><div class="trendFoot compact" id="trendFoot"></div></div>
-</section>
-<section id="page-territorial" class="page">
-  <div class="territorialGrid cleanTerritory">
-    <div class="panel"><div class="panelHead"><div><h2>Mapa Territorial</h2><div class="hint">Bairros por nota calculada nos filtros selecionados. Clique no bairro para abrir o detalhe.</div></div></div><div id="map"></div></div>
-    <div class="sideStack">
-      <div class="panel"><div class="panelHead"><div><h2>Prioridade territorial</h2><div class="hint">Ordenação analítica do HUB, não indicador oficial. Considera distância da meta, reincidência e volume de avaliações.</div></div></div><div class="body" id="rankBairros"></div></div>
-      <div class="panel"><div class="panelHead"><div><h2>Trechos Reincidentes</h2><div class="hint">Mesmo bairro, logradouro e trecho avaliados duas ou mais vezes no período selecionado</div></div></div><div class="body" id="rankReincidencias"></div></div>
+<main class="shell">
+  <header class="header">
+    <img class="logo" src="assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio e COMLURB">
+    <div class="brand"><strong>HUB COMLURB</strong><span>Centro de Inteligência e Gestão Estratégica Operacional</span></div>
+  </header>
+  <section class="intro" aria-labelledby="page-title">
+    <span class="eyebrow">Portal Executivo</span>
+    <h1 id="page-title">Inteligência para decisão</h1>
+    <p>Acesso integrado aos painéis de governança, operação, território, pessoas, receitas e relacionamento com o cidadão.</p>
+    <small>Selecione um painel para acessar a análise executiva.</small>
+  </section>
+  <section class="portfolio" aria-labelledby="portfolio-title">
+    <h2 class="section-label" id="portfolio-title">Portfólio Executivo</h2>
+    <div class="axis-grid">
+      <article class="axis">
+        <header class="axis-head"><span class="axis-code">Eixo 01</span><h2>Governança e Resultados</h2></header>
+        <nav class="module-list" aria-label="Painéis de Governança e Resultados">
+          <a class="module" href="indicadores-gerais/"><div><strong>Governança Corporativa</strong><span>Indicadores institucionais e desempenho das áreas.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="ar/"><div><strong>Acordo de Resultados</strong><span>Metas pactuadas, evolução e resultados alcançados.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
+      </article>
+      <article class="axis">
+        <header class="axis-head"><span class="axis-code">Eixo 02</span><h2>Operação e Território</h2></header>
+        <nav class="module-list" aria-label="Painéis de Operação e Território">
+          <a class="module" href="engenharia-operacional/"><div><strong>Desempenho da Operação Urbana</strong><span>Indicadores técnicos e eficiência da operação.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="ipl/"><div><strong>Índice Padrão de Limpeza</strong><span>Indicador institucional e análise territorial do padrão de limpeza.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="territorial/"><div><strong>Território Operacional</strong><span>Estrutura territorial, áreas de atuação e serviços.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
+      </article>
+      <article class="axis compact">
+        <header class="axis-head"><span class="axis-code">Eixo 03</span><h2>Pessoas e Capacidade Organizacional</h2></header>
+        <nav class="module-list" aria-label="Painéis de Pessoas e Capacidade Organizacional">
+          <a class="module" href="pessoas/"><div><strong>Gestão Estratégica de Pessoas</strong><span>Força de trabalho, disponibilidade e distribuição.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
+      </article>
+      <article class="axis compact">
+        <header class="axis-head"><span class="axis-code">Eixo 04</span><h2>Receita e Sustentabilidade Financeira</h2></header>
+        <nav class="module-list" aria-label="Painéis de Receita e Sustentabilidade Financeira">
+          <a class="module" href="balanco-receita/"><div><strong>Performance dos Contratos de Receita</strong><span>Faturamento, recebimentos e débitos em aberto.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
+      </article>
+      <article class="axis compact">
+        <header class="axis-head"><span class="axis-code">Eixo 05</span><h2>Relacionamento com o Cidadão · 1746</h2></header>
+        <nav class="module-list" aria-label="Painéis de Relacionamento com o Cidadão">
+          <a class="module" href="chamados-1746/"><div><strong>Chamados</strong><span>Demandas operacionais, prazos e distribuição territorial.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+          <a class="module" href="ouvidoria/"><div><strong>Ouvidorias</strong><span>Manifestações, evolução e concentração territorial.</span></div><span class="arrow" aria-hidden="true">→</span></a>
+        </nav>
+      </article>
     </div>
-  </div>
-  <div class="panel drillPanel"><div class="panelHead"><div><h2 id="drillTitle">Detalhe Territorial</h2><div class="hint">Bairro → logradouro → trecho reincidente</div></div></div><div class="body" id="drilldown"><div class="status">Selecione um bairro no mapa ou na lista lateral.</div></div></div>
-</section>
-<footer class="footer"><strong>Fontes:</strong> SARC para o resultado oficial e base de avaliação de trechos para o diagnóstico territorial calculado pelo HUB. Atualização automática via Google Sheets.</footer>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script>
-const META=80;
-const URL_IPL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTcMXJxBYWRaLS_gTdPkAhjIXRHRs-MBNUbfwxmeoZaXMBE53gd1xXttAkQ_lb-HJZcboKMWhRHq8G_/pub?output=csv';
-const URL_SARC='https://docs.google.com/spreadsheets/d/1UY51_jeu1as503ckKOsi_tqHgaBu9innbcMBXKjA_mQ/gviz/tq?tqx=out:csv&gid=1044100274';
-const URL_GEO='../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson';
-const URL_COORDS='../territorial/data/coordenadas_bairros_rio.csv';
-const PESOS={LB:30,CD:20,Bens:6,Ralo:6,PapCheia:6,PapSuja:6,PapQuebrada:6,Fezes:3,Perfuro:3,Propaganda:2,Galhada:2,Capina:2,AreaVerde:2,Animal:1,MorRua:1,Lama:1,CxMet:1,PosSvc:1,PtoCrit:1};
-const ITEM_LABELS={LB:'Lixo Branco',CD:'Coleta domiciliar',Bens:'Bens, entulho, material de obra e pneus',Ralo:'Ralo',PapCheia:'Papeleira cheia',PapSuja:'Papeleira suja',PapQuebrada:'Papeleira quebrada',Fezes:'Fezes',Perfuro:'Lixo crítico',Propaganda:'Propaganda irregular',Galhada:'Galhada',Capina:'Capina',AreaVerde:'Áreas verdes',Animal:'Animal morto',MorRua:'Resíduo de morador de rua',Lama:'Lama e areia',CxMet:'Caixa metálica',PosSvc:'Resíduo pós-serviço',PtoCrit:'Ponto crítico'};
-const COL_BIN={'Lixo Crítico':'Perfuro','Lixo Critico':'Perfuro','Lixo Crítico - Fezes':'Fezes','Lixo Critico - Fezes':'Fezes','Áreas verdes avaliação':'AreaVerde','Areas verdes avaliacao':'AreaVerde','Caixa metálica avaliação':'CxMet','Caixa metalica avaliacao':'CxMet','Resíduo pós servico':'PosSvc','Residuo pos servico':'PosSvc','Ponto crítico':'PtoCrit','Ponto critico':'PtoCrit','Ralo':'Ralo','Propaganda':'Propaganda','Galhada':'Galhada','Capina':'Capina','Animal morto':'Animal','Resíduo morador de rua':'MorRua','Residuo morador de rua':'MorRua','Lama/Areia':'Lama','Papeleira/contêiner – Cheia':'PapCheia','Papeleira/conteiner - Cheia':'PapCheia','Papeleira/contêiner – Suja':'PapSuja','Papeleira/conteiner - Suja':'PapSuja','Papeleira/contêiner – Quebrada':'PapQuebrada','Papeleira/conteiner - Quebrada':'PapQuebrada'};
-const MESES_SARC=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-const MES_SARC_COL={'jan./26':'Jan','fev./26':'Fev','mar./26':'Mar','abr./26':'Abr','mai./26':'Mai','jun./26':'Jun','jul./26':'Jul','ago./26':'Ago','set./26':'Set','out./26':'Out','nov./26':'Nov','dez./26':'Dez'};
-const ORDEM_MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-const GEO_CENTROIDS={"PECHINCHA":[-22.932254,-43.354924],"CURICICA":[-22.949681,-43.385242],"CIDADE DE DEUS":[-22.947942,-43.361856],"ANIL":[-22.958493,-43.338646],"GARDENIA AZUL":[-22.958105,-43.351751],"TAQUARA":[-22.941898,-43.369768],"FREGUESIA (JACAREPAGUA)":[-22.939838,-43.343677],"JACAREPAGUA":[-22.965371,-43.337011],"BARRA DA TIJUCA":[-22.996644,-43.362730],"RECREIO DOS BANDEIRANTES":[-23.026454,-43.481533],"PENHA":[-22.831306,-43.264468],"DEL CASTILHO":[-22.879640,-43.272273],"MADUREIRA":[-22.873521,-43.336627],"CAMPO GRANDE":[-22.926512,-43.554290],"SANTA CRUZ":[-22.916679,-43.715767],"BANGU":[-22.861617,-43.487624],"REALENGO":[-22.876264,-43.430749],"CENTRO":[-22.907340,-43.171895],"COPACABANA":[-22.975220,-43.183350],"IPANEMA":[-22.987408,-43.198434],"TIJUCA":[-22.938773,-43.236418],"MEIER":[-22.901548,-43.281086],"BONSUCESSO":[-22.867346,-43.254837],"ROCINHA":[-22.989189,-43.248375],"PAVUNA":[-22.812851,-43.362865],"GUADALUPE":[-22.838493,-43.377453],"GUARATIBA":[-23.014443,-43.609302],"SEPETIBA":[-22.977347,-43.699608],"COSMOS":[-22.920384,-43.614954],"PADRE MIGUEL":[-22.874568,-43.450137],"RAMOS":[-22.855044,-43.258169],"OLARIA":[-22.849726,-43.274800],"ENGENHO NOVO":[-22.907987,-43.268098],"VILA ISABEL":[-22.916441,-43.246413],"BOTAFOGO":[-22.947809,-43.183621],"FLAMENGO":[-22.935551,-43.171468],"LAGOA":[-22.971730,-43.209435],"GAVEA":[-22.977772,-43.238677],"LARANJEIRAS":[-22.937579,-43.191428],"GLORIA":[-22.918728,-43.170578],"SAO CRISTOVAO":[-22.898797,-43.226668],"MANGUINHOS":[-22.879767,-43.245286],"COMPLEXO DO ALEMAO":[-22.859594,-43.274689],"INHAUMA":[-22.869901,-43.282228],"CACHAMBI":[-22.890510,-43.272345],"PIEDADE":[-22.891828,-43.312155],"ANCHIETA":[-22.824898,-43.400315],"ACARI":[-22.819699,-43.338860],"VIGARIO GERAL":[-22.808449,-43.308525],"MARE":[-22.848964,-43.244749],"PENHA CIRCULAR":[-22.829693,-43.284066],"IRAJA":[-22.835338,-43.326443],"VILA DA PENHA":[-22.843855,-43.310848],"MARECHAL HERMES":[-22.858389,-43.371281],"CASCADURA":[-22.885068,-43.327837],"CAMPINHO":[-22.882559,-43.349449],"VILA KENNEDY":[-22.857827,-43.485787],"SENADOR CAMARA":[-22.881181,-43.493560],"PACIENCIA":[-22.893644,-43.642949],"INHOAIBA":[-22.922457,-43.594419],"SENADOR VASCONCELOS":[-22.895885,-43.531750],"SANTISSIMO":[-22.884639,-43.513845],"PEDRA DE GUARATIBA":[-23.000754,-43.640748],"ILHA DE GUARATIBA":[-22.994142,-43.571243],"ALTO DA BOA VISTA":[-22.960494,-43.236534],"ANDARAI":[-22.929171,-43.252813],"GRAJAU":[-22.929842,-43.270173],"JARDIM BOTANICO":[-22.963721,-43.226412],"LEBLON":[-22.985841,-43.224307],"SAO CONRADO":[-22.998051,-43.263401],"VIDIGAL":[-22.995215,-43.236113]};
-let DATA=[],FILTERED=[],SARC_DATA={dir:[],sup:[],ger:[]},GEO=null,COORDS={},map,geoLayer,heatLayer,pointLayer,highlightLayer,trendChart;
-const $=id=>document.getElementById(id);const normaliza=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();const fmt=(n,d=1)=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});const csv=url=>new Promise((res,rej)=>{const sep=url.includes('?')?'&':'?';const urlSemCache=`${url}${sep}_=${Date.now()}`;Papa.parse(urlSemCache,{download:true,header:true,skipEmptyLines:true,complete:r=>{if(r.errors?.length)console.warn('Avisos na leitura CSV:',r.errors);res(r.data)},error:rej})});const campo=(row,nomes)=>{for(const n of nomes){if(row[n]!==undefined)return row[n]}return''};const num=v=>{const n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?null:n};const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
-function itemLabel(k){return ITEM_LABELS[k]||k}
-function ordemMes(v){const s=String(v||'').toLowerCase().trim();const idx=ORDEM_MESES.findIndex(m=>s.startsWith(m));return idx>=0?idx:99}
-function mesSarcAtual(){return MES_SARC_COL[$('fMes').value]||null}
-function mesesAteSelecionado(){const m=mesSarcAtual();if(!m)return MESES_SARC;const idx=MESES_SARC.indexOf(m);return idx>=0?MESES_SARC.slice(0,idx+1):MESES_SARC}
-function calcIPL(row){const itens={};let somaLB=0;for(let i=1;i<=4;i++){const p=parseFloat(row[`Lixo Branco TC${i} - P`]||0),g=parseFloat(row[`Lixo Branco TC${i} - G`]||0),tc=(p/2)+g;somaLB+=tc<=5?100:tc<=15?80:tc<=25?50:tc<=33?20:0}itens.LB=somaLB/4;const cdRaw=(row['Coleta domiciliar']||'').toString().trim();if(cdRaw===''||cdRaw==='N/A')itens.CD=null;else{const n=parseInt(cdRaw);itens.CD=n===0?100:n<=3?80:n<=7?40:20}const bv=[row['Entulho'],row['Bens inservíveis']||row['Bens inserviveis'],row['Material de Obra']||row['Material de obra'],row['Pneus']].map(v=>(v||'').trim().toUpperCase());if(bv.some(v=>v==='NOK'))itens.Bens=0;else if(bv.every(v=>v==='N/A'||v===''))itens.Bens=null;else itens.Bens=100;Object.entries(COL_BIN).forEach(([col,key])=>{if(row[col]!==undefined&&itens[key]===undefined){const v=(row[col]||'').trim().toUpperCase();itens[key]=v==='OK'?100:v==='NOK'?0:null}});Object.keys(PESOS).forEach(k=>{if(itens[k]===undefined)itens[k]=null});const somaNA=Object.entries(itens).filter(([,v])=>v===null).reduce((s,[k])=>s+PESOS[k],0);const qtdVal=Object.values(itens).filter(v=>v!==null).length;if(!qtdVal)return null;let nota=0;const perdaPorItem={},itensNok=[];Object.entries(itens).forEach(([k,v])=>{if(v===null)return;const pa=PESOS[k]+(somaNA/qtdVal);nota+=(v/100)*pa;const perda=pa-(v/100)*pa;perdaPorItem[k]=perda;if(v<100)itensNok.push(k)});return{nota:Math.round(nota*100)/100,perdaPorItem,itensNok}}
-function parseSARC(rows){const s={dir:[],sup:[],ger:[]};if(!rows.length)return s;const cols=Object.keys(rows[0]);const colFind=nomes=>cols.find(c=>nomes.some(n=>normaliza(c)===normaliza(n)))||null;const COL_IND=colFind(['Indicador','INDICADOR']),COL_DIR=colFind(['Diretoria','DIRETORIA']),COL_SUP=colFind(['Superint.','Superintendencia','Superintendência','SUP']),COL_GER=colFind(['Gerencia','Gerência','GER']),COL_ACUM=colFind(['Acumulado','ACUMULADO','Acum.']);rows.forEach(row=>{const ind=(row[COL_IND]||'').toUpperCase();if(!ind.includes('IPL'))return;const dir=(row[COL_DIR]||'').trim(),sup=COL_SUP?(row[COL_SUP]||'').trim():'',ger=COL_GER?(row[COL_GER]||'').trim():'';const notas={};MESES_SARC.forEach(m=>{const v=parseFloat((row[m]||'').toString().replace(',','.'));if(!isNaN(v))notas[m]=v});const acum=COL_ACUM?parseFloat((row[COL_ACUM]||'').toString().replace(',','.')):NaN;const obj={dir,sup,ger,notas,acum:isNaN(acum)?null:acum};if(ger&&ger!=='-')s.ger.push(obj);else if(sup&&sup!=='-')s.sup.push(obj);else s.dir.push(obj)});return s}
-function notaCor(n){return n>=85?'#78aaa3':n>=77?'#6da5d8':n>=70?'#e87535':'#e84855'}function corNota(n){return notaCor(n)}
-function prepararCoords(rows){const out={};rows.forEach(r=>{const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']),lat=num(campo(r,['lat','Lat','LAT','latitude'])),lon=num(campo(r,['lon','Lon','LON','lng','longitude']));if(b&&lat&&lon)out[normaliza(b)]={lat,lon}});return out}
-function centroideFeature(feature){try{const geom=feature.geometry;let coords=[];if(geom.type==='Polygon')coords=geom.coordinates[0];else if(geom.type==='MultiPolygon'){let maior=0,idx=0;geom.coordinates.forEach((p,i)=>{if(p[0].length>maior){maior=p[0].length;idx=i}});coords=geom.coordinates[idx][0]}if(!coords.length)return null;let sLat=0,sLon=0;coords.forEach(c=>{sLon+=c[0];sLat+=c[1]});return{lat:sLat/coords.length,lon:sLon/coords.length}}catch(e){return null}}
-function construirCentroidesGeo(geo){const out={};if(!geo||!geo.features)return out;geo.features.forEach(f=>{const nome=nomeBairroGeo(f.properties);const c=nome?centroideFeature(f):null;if(c)out[normaliza(nome)]={lat:c.lat,lon:c.lon}});return out}
-async function init(){try{$('status').textContent='Carregando base de trechos, SARC atualizada e mapa territorial…';const[base,sarcRows,geo,coords]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),fetch(URL_GEO).then(r=>r.ok?r.json():null).catch(()=>null),csv(URL_COORDS).catch(()=>[])]);GEO=geo;COORDS=prepararCoords(coords);SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairro=campo(r,['Bairro','BAIRRO']);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:campo(r,['Superintendência','Superintendencia']),ger:campo(r,['Gerência','Gerencia']),bairro,logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);initMap();populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
-function baseSup(){const m=$('fMes').value;return DATA.filter(r=>!m||r.mes===m)}function baseGer(){const m=$('fMes').value,s=$('fSup').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s))}function baseBairro(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g))}
-function preencherSelect(id,campo,label,base,preservar=true){const atual=preservar?$(id).value:'';const vals=[...new Set(base.map(r=>r[campo]).filter(Boolean))];if(campo==='mes')vals.sort((a,b)=>ordemMes(a)-ordemMes(b)||String(a).localeCompare(String(b),'pt-BR'));else vals.sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));$(id).innerHTML=`<option value="">${label}</option>`;vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o)});if(preservar&&vals.includes(atual))$(id).value=atual}
-function populateAll(){preencherSelect('fMes','mes','Todos',DATA);preencherSelect('fSup','sup','Todas',baseSup());preencherSelect('fGer','ger','Todas',baseGer());preencherSelect('fBairro','bairro','Todos',baseBairro())}
-function onMesChange(){$('fSup').value='';$('fGer').value='';$('fBairro').value='';populateAll();resetDrill();render()}function onSupChange(){$('fGer').value='';$('fBairro').value='';preencherSelect('fGer','ger','Todas',baseGer(),false);preencherSelect('fBairro','bairro','Todos',baseBairro(),false);resetDrill();render()}function onGerChange(){$('fBairro').value='';preencherSelect('fBairro','bairro','Todos',baseBairro(),false);resetDrill();render();const g=$('fGer').value;if(g)setTimeout(()=>focarGerenciaNoMapa(g),120)}function onBairroChange(){resetDrill();render();const b=$('fBairro').value;if(b)abrirBairro(encodeURIComponent(b))}
-function clearAll(){['fMes','fSup','fGer','fBairro'].forEach(id=>$(id).value='');if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}populateAll();resetDrill();render()}
-function apply(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value,b=$('fBairro').value;FILTERED=DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g)&&(!b||r.bairro===b))}
-function labelContexto(){return $('fMes').value || 'Acumulado'}
-function group(field,rows=FILTERED){const o={};rows.forEach(r=>{const k=r[field]||'Não informado';if(!o[k])o[k]=[];o[k].push(r)});return Object.entries(o).map(([k,rows])=>{const media=rows.reduce((s,r)=>s+r.nota,0)/rows.length;const itensAcc={};rows.forEach(r=>r.itensNok.forEach(i=>{itensAcc[i]=(itensAcc[i]||0)+1}));const abaixo=rows.filter(r=>r.nota<META).length;return{k,rows,n:rows.length,media,abaixo,itens:itensAcc,reincidentes:contaReincidencia(rows)}})}
-function chaveReincidencia(r){return[normaliza(r.bairro),normaliza(r.logradouro),normaliza(r.trecho)].join('|')}function contaReincidencia(rows){const c={};rows.forEach(r=>{const k=chaveReincidencia(r);c[k]=(c[k]||0)+1});return Object.values(c).filter(v=>v>=2).length}function calculaCriticidade(rows){const media=rows.reduce((s,r)=>s+r.nota,0)/rows.length;const reinc=contaReincidencia(rows);return(Math.max(0,META-media)*2)+(Math.min(reinc,20)*3)+Math.min(rows.length/5,20)}function corCriticidade(v){return v>=60?'#e84855':v>=40?'#e87535':v>=25?'#f4a261':'#6da5d8'}
-function acumuladoEntry(entry,mesCol=mesSarcAtual()){if(!entry)return null;if(!mesCol){if(entry.acum!==null)return entry.acum;const vals=MESES_SARC.map(m=>entry.notas[m]).filter(v=>v!==undefined);return vals.length?vals.reduce((s,v)=>s+v,0)/vals.length:null}const idx=MESES_SARC.indexOf(mesCol);const vals=MESES_SARC.slice(0,idx+1).map(m=>entry.notas[m]).filter(v=>v!==undefined);return vals.length?vals.reduce((s,v)=>s+v,0)/vals.length:null}
-function entryName(e){return e?.ger&&e.ger!=='-'?e.ger:e?.sup&&e.sup!=='-'?e.sup:e?.dir||'N/D'}
-function officialEntriesLevel(){if($('fGer').value)return {level:'ger',entries:SARC_DATA.ger.filter(e=>e.ger===$('fGer').value)};if($('fSup').value)return {level:'sup',entries:SARC_DATA.sup.filter(e=>e.sup===$('fSup').value)};return {level:'dir',entries:SARC_DATA.dir}}
-function officialScore(){const {entries}=officialEntriesLevel();if(entries.length)return acumuladoEntry(entries[0]);return null}
-function officialGerRank(){return SARC_DATA.ger.filter(e=>(!$('fSup').value||e.sup===$('fSup').value)&&(!$('fGer').value||e.ger===$('fGer').value)).map(e=>({k:e.ger,entry:e,media:acumuladoEntry(e)})).filter(x=>x.media!==null)}
-function serieOficial(){const {entries}=officialEntriesLevel();const entry=entries[0]||SARC_DATA.dir[0];if(!entry)return[];const mSel=mesSarcAtual();const limite=mSel?MESES_SARC.indexOf(mSel):MESES_SARC.length-1;return MESES_SARC.map((m,i)=>{if(i>limite)return null;const vals=MESES_SARC.slice(0,i+1).map(mm=>entry.notas[mm]).filter(v=>v!==undefined);return vals.length?{mes:m,media:vals.reduce((s,v)=>s+v,0)/vals.length}:null}).filter(Boolean)}
-function itemDominante(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(i=>{itens[i]=(itens[i]||0)+1}));return Object.entries(itens).map(([item,n])=>({item:itemLabel(item),key:item,n})).sort((a,b)=>b.n-a.n)[0]||null}
-function renderDataMeta(){const el=$('dataMeta');if(!el)return;const oficial=contextoOficial();const nivel=$('fGer').value?'Gerência: '+$('fGer').value:$('fSup').value?'Superintendência: '+$('fSup').value:'Diretoria / consolidado';const territorial=$('fMes').value?'Mês territorial: '+$('fMes').value:'Período territorial: todas as competências disponíveis';const bairro=$('fBairro').value?' · Bairro: '+$('fBairro').value:'';el.innerHTML=`<strong>Leitura oficial:</strong> ${oficial} · ${nivel} &nbsp; | &nbsp; <strong>Diagnóstico territorial:</strong> ${territorial}${bairro} · ${FILTERED.length.toLocaleString('pt-BR')} avaliações`;el.style.display='block'}
-function render(){apply();renderDataMeta();renderOfficialHero();renderConcentration();renderDesempenhoTerritorial();renderTrend();renderRanks();if(document.getElementById('page-territorial').classList.contains('active')) renderMap()}
-
-function contextoOficial(){return mesSarcAtual()?`Acumulado até ${$('fMes').value}`:'Acumulado oficial SARC'}
-function renderOfficialHero(){const score=officialScore();const serie=serieOficial();const last=serie[serie.length-1];const prev=serie.length>=2?serie[serie.length-2]:null;const first=serie[0];const deltaPrev=(last&&prev)?last.media-prev.media:null;const deltaMeta=score!==null?score-META:null;const deltaPeriodo=(last&&first)?last.media-first.media:null;const situ=deltaMeta!==null?(deltaMeta>=0?'Acima da meta':'Abaixo da meta'):'Sem leitura';$('officialHero').innerHTML=`<div class="officialScore"><div><div class="bigScore">${score!==null?fmt(score)+'%':'N/D'}</div><div class="scoreMeta"><span class="miniChip">Meta ${META}%</span><span class="miniChip ${deltaMeta>=0?'good':'bad'}">${situ}</span><span class="miniChip">${contextoOficial()}</span></div></div><div class="scoreDetails"><div class="scoreBox"><span>Comparação com o mês anterior</span><b class="${deltaPrev>=0?'good':'bad'}">${deltaPrev!==null?(deltaPrev>=0?'+':'')+fmt(deltaPrev)+' p.p.':'N/D'}</b><small>${prev?prev.mes+' → '+last.mes:''}</small></div><div class="scoreBox"><span>Distância da meta</span><b class="${deltaMeta>=0?'good':'bad'}">${deltaMeta!==null?(deltaMeta>=0?'+':'')+fmt(deltaMeta)+' p.p.':'N/D'}</b><small>Referência oficial SARC</small></div><div class="scoreBox"><span>No período</span><b class="${deltaPeriodo>=0?'good':'bad'}">${deltaPeriodo!==null?(deltaPeriodo>=0?'+':'')+fmt(deltaPeriodo)+' p.p.':'N/D'}</b><small>${first&&last?first.mes+' → '+last.mes:''}</small></div></div></div>`}
-function renderConcentration(){const abaixo=FILTERED.filter(r=>r.nota<META).length;const bairros=group('bairro').sort((a,b)=>b.abaixo-a.abaixo||calculaCriticidade(b.rows)-calculaCriticidade(a.rows));const top=bairros.slice(0,3);const topAbaixo=top.reduce((s,x)=>s+x.abaixo,0);const pct=abaixo?topAbaixo/abaixo*100:0;const max=Math.max(...top.map(x=>x.abaixo),1);$('concentrationPanel').innerHTML=`<div class="concWrap"><div class="concNumber">${fmt(pct,0)}%<small>das avaliações abaixo da meta</small></div><div class="concList">${top.map((x,i)=>`<div class="concItem"><div><b>${x.k}</b><div class="bar"><i style="width:${Math.max(5,x.abaixo/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#f4b84a'}"></i></div></div><span class="val ${i===0?'bad':'att'}">${x.abaixo}</span></div>`).join('')||'<div class="status">Sem bairros abaixo da meta.</div>'}</div></div>`}
-function totalNok(){let total=0;FILTERED.forEach(r=>total+=r.itensNok.length);return total}
-function gerenciaContribuicao(){const g=group('ger').filter(x=>x.k!=='Não informado').sort((a,b)=>b.abaixo-a.abaixo||a.media-b.media)[0];const total=FILTERED.filter(r=>r.nota<META).length;return g?{...g,pct:total?g.abaixo/total*100:0}:null}
-function fatorContribuicao(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(item=>{const label=itemLabel(item);itens[label]=(itens[label]||0)+1}));const total=Object.values(itens).reduce((a,b)=>a+b,0);const top=Object.entries(itens).map(([item,n])=>({item,n,pct:total?n/total*100:0})).sort((a,b)=>b.n-a.n)[0];return top||null}
-
-function renderDesempenhoTerritorial(){
-  const ranking = officialGerRank().filter(x=>x.media!==null && x.k && x.k!=='-');
-  const renderLista = (arr,tipo) => {
-    if(!arr.length){
-      return tipo==='attention'
-        ? '<div class="status">Nenhuma gerência abaixo da meta no período oficial.</div>'
-        : '<div class="status">Sem classificação oficial SARC para os filtros selecionados.</div>';
-    }
-    return arr.map((g,i)=>{
-      const cls = g.media>=META ? 'good' : 'bad';
-      const cor = tipo==='best' ? '#78aaa3' : '#e84855';
-      const delta = g.media - META;
-      return `<div class="metricRow">
-        <div class="pos">${i+1}</div>
-        <div>
-          <b>${g.k}</b>
-          <div class="hint">${delta>=0?'+':''}${fmt(delta)} p.p. em relação à meta</div>
-          <div class="bar"><i style="width:${Math.max(4,Math.min(100,g.media))}%;background:${cor}"></i></div>
-        </div>
-        <span class="val ${cls}">${fmt(g.media)}%</span>
-      </div>`;
-    }).join('');
-  };
-
-  const melhores = ranking
-    .slice()
-    .sort((a,b)=>b.media-a.media)
-    .slice(0,5);
-
-  const usadosMelhores = new Set(melhores.map(x=>normaliza(x.k)));
-
-  const atencao = ranking
-    .filter(x=>x.media < META && !usadosMelhores.has(normaliza(x.k)))
-    .sort((a,b)=>a.media-b.media)
-    .slice(0,5);
-
-  $('bestGers').innerHTML = renderLista(melhores,'best');
-  $('attentionGers').innerHTML = renderLista(atencao,'attention');
-}
-
-function renderTrend(){const serie=serieOficial();const canvas=$('trendChart');if(!serie.length){$('trendFoot').innerHTML='<div class="status">Sem série oficial para o recorte.</div>';return}if(trendChart)trendChart.destroy();trendChart=new Chart(canvas,{type:'line',data:{labels:serie.map(x=>x.mes),datasets:[{label:'Nota IPL média acumulada',data:serie.map(x=>x.media),borderColor:'#6da5d8',backgroundColor:'rgba(109,165,216,.16)',tension:.35,fill:true,pointRadius:4,pointHoverRadius:6},{label:'Meta',data:serie.map(()=>META),borderColor:'#e87535',borderDash:[7,6],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c5d5e8',boxWidth:11,font:{weight:'700'}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}%`}}},scales:{x:{ticks:{color:'#9fb0c7',font:{weight:'700'}},grid:{color:'rgba(255,255,255,.055)'}},y:{ticks:{color:'#9fb0c7',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.055)'},suggestedMin:Math.max(0,Math.min(...serie.map(x=>x.media),META)-8),suggestedMax:Math.min(100,Math.max(...serie.map(x=>x.media),META)+8)}}}});if(serie.length){const first=serie[0],last=serie[serie.length-1],best=serie.slice().sort((a,b)=>b.media-a.media)[0],worst=serie.slice().sort((a,b)=>a.media-b.media)[0],delta=last.media-first.media;$('trendFoot').innerHTML=`<div class="tf"><span>Δ período</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${fmt(delta)} p.p.</b></div><div class="tf"><span>Maior acumulado</span><b>${best.mes} · ${fmt(best.media)}%</b></div><div class="tf"><span>Menor acumulado</span><b>${worst.mes} · ${fmt(worst.media)}%</b></div><div class="tf"><span>Variação no período</span><b class="${delta>0?'good':delta<0?'bad':''}">${delta>0?'Alta':delta<0?'Queda':'Estável'}</b></div>`}else $('trendFoot').innerHTML=''}
-function renderFactors(){const itens={};FILTERED.forEach(r=>r.itensNok.forEach(item=>{const label=itemLabel(item);itens[label]=(itens[label]||0)+1}));const ranking=Object.entries(itens).map(([item,n])=>({item,n})).sort((a,b)=>b.n-a.n).slice(0,6);const max=Math.max(...ranking.map(x=>x.n),1);$('factorsPanel').innerHTML=ranking.map((x,i)=>`<div class="factor"><div class="idx">${i+1}</div><div><b>${x.item}</b><small><div class="bar" style="margin-top:7px"><i style="width:${Math.max(4,x.n/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#6da5d8'}"></i></div></small></div><div class="num">${x.n.toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="status">Sem NOK no recorte.</div>'}
-function rankHTML(arr,field='bairro'){
-  return arr.map(x=>{
-    const badge=field==='bairro'?(FILTERED.find(r=>normaliza(r.bairro)===normaliza(x.k))?.ger||''):'';
-    const crit=calculaCriticidade(x.rows);
-    return`<div class="rank compact" ${field==='bairro'?`onclick="abrirBairro('${encodeURIComponent(x.k)}')"`:''}>
-      <div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}
-        <div class="hint">${x.n} avaliações · ${fmt(x.media)}% média calculada · ${x.abaixo} abaixo da meta · ${x.reincidentes} reincid.</div>
-        <div class="bar"><i style="width:${Math.min(100,Math.max(8,crit))}%;background:${corCriticidade(crit)}"></i></div>
-      </div>
-      <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
-    </div>`
-  }).join('')||'<div class="status">Sem dados</div>'
-}
-
-function trechosReincidentes(rows=FILTERED){
-  const t={};
-  rows.forEach(r=>{
-    const k=[normaliza(r.bairro),normaliza(r.logradouro),normaliza(r.trecho)].join('|');
-    if(!t[k])t[k]={bairro:r.bairro,logradouro:r.logradouro,trecho:r.trecho||'trecho não informado',ger:r.ger,avaliacoes:0,notas:[],itens:{}};
-    t[k].avaliacoes++;
-    t[k].notas.push(r.nota);
-    r.itensNok.forEach(item=>{const label=itemLabel(item);t[k].itens[label]=(t[k].itens[label]||0)+1});
-  });
-  return Object.values(t)
-    .map(x=>({...x,media:x.notas.reduce((s,v)=>s+v,0)/x.notas.length}))
-    .filter(x=>x.avaliacoes>=2)
-    .sort((a,b)=>b.avaliacoes-a.avaliacoes || a.media-b.media);
-}
-
-function renderReincidencias(){
-  const dados=trechosReincidentes().slice(0,8);
-  $('rankReincidencias').innerHTML=dados.map(x=>{
-    const itemTop=Object.entries(x.itens).sort((a,b)=>b[1]-a[1])[0];
-    return `<div class="rank compact" onclick="abrirLogradouro('${encodeURIComponent(x.bairro)}','${encodeURIComponent(x.logradouro)}','${encodeURIComponent(x.trecho)}')">
-      <div><b>${x.bairro}</b><span class="reincBadge">${x.avaliacoes}x</span>
-        <div class="hint">${x.logradouro} · ${x.trecho}</div>
-        <div class="hint">Nota territorial média ${fmt(x.media)}%${itemTop?' · principal: '+itemTop[0]:''}</div>
-      </div>
-      <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
-    </div>`
-  }).join('')||'<div class="status">Sem trechos reincidentes no recorte atual.</div>';
-}
-
-function renderRanks(){
-  const bairros=group('bairro').sort((a,b)=>calculaCriticidade(b.rows)-calculaCriticidade(a.rows)).slice(0,8);
-  $('rankBairros').innerHTML=rankHTML(bairros,'bairro');
-  renderReincidencias();
-}
-
-function montarTrechos(rows){const t={};rows.forEach(r=>{const k=[r.bairro,r.logradouro,r.trecho].join(' | ');if(!t[k])t[k]={bairro:r.bairro,logradouro:r.logradouro,trecho:r.trecho||'trecho não informado',avaliacoes:0,notas:[],itens:{}};t[k].avaliacoes++;t[k].notas.push(r.nota);r.itensNok.forEach(item=>{const label=itemLabel(item);t[k].itens[label]=(t[k].itens[label]||0)+1})});Object.values(t).forEach(x=>{x.nota=x.notas.reduce((s,v)=>s+v,0)/x.notas.length});return t}
-function resetDrill(){$('drillTitle').textContent='Detalhe Territorial';$('drilldown').innerHTML='<div class="status">Selecione um bairro no mapa ou na lista lateral.</div>'}
-function initMap(){map=L.map('map').setView([-22.91,-43.35],10);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &amp; CARTO'}).addTo(map);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',{attribution:''}).addTo(map);pointLayer=L.layerGroup().addTo(map)}
-function renderMap(){if(!map||!GEO)return;if(geoLayer)map.removeLayer(geoLayer);if(heatLayer)map.removeLayer(heatLayer);if(pointLayer)pointLayer.clearLayers();const byBairro={};group('bairro').forEach(x=>{byBairro[normaliza(x.k)]=x});const geoFeatures={};geoLayer=L.geoJSON(GEO,{style:f=>{const nome=nomeBairroGeo(f.properties);const d=byBairro[normaliza(nome)];if(!d)return{color:'#274260',weight:.5,fillColor:'#1c2a3d',fillOpacity:.08};const cor=corNota(d.media);return{color:cor,weight:.9,fillColor:cor,fillOpacity:.25}},onEachFeature:(f,l)=>{const nome=nomeBairroGeo(f.properties);const d=byBairro[normaliza(nome)];geoFeatures[normaliza(nome)]=l;l.on('click',()=>{if(nome){$('fBairro').value=nome;resetDrill();render();abrirBairro(encodeURIComponent(nome))}});l.bindPopup(`<b>${nome}</b><br>${d?`Nota territorial calculada: ${fmt(d.media)}%<br>Avaliações: ${d.n}<br>Abaixo da meta: ${d.abaixo}`:'Sem avaliação no filtro'}`)}}).addTo(map);map._geoFeatures=geoFeatures;const centroiGeo=construirCentroidesGeo(GEO),pontos=[];Object.values(byBairro).forEach(d=>{const c=centroiGeo[normaliza(d.k)]||COORDS[normaliza(d.k)]||(GEO_CENTROIDS[normaliza(d.k)]?{lat:GEO_CENTROIDS[normaliza(d.k)][0],lon:GEO_CENTROIDS[normaliza(d.k)][1]}:null);if(!c)return;const crit=calculaCriticidade(d.rows);pontos.push([c.lat,c.lon,Math.max(.15,Math.min(1,crit/100))]);L.circleMarker([c.lat,c.lon],{radius:Math.max(5,Math.min(20,d.n/3+4)),color:corNota(d.media),fillColor:corNota(d.media),fillOpacity:.7,weight:1}).on('click',()=>{$('fBairro').value=d.k;resetDrill();render();abrirBairro(encodeURIComponent(d.k))}).bindPopup(`<b>${d.k}</b><br>Nota territorial calculada: ${fmt(d.media)}%<br>Avaliações: ${d.n}`).addTo(pointLayer)});if(pontos.length)heatLayer=L.heatLayer(pontos,{radius:34,blur:24,maxZoom:13,gradient:{0.2:'#6da5d8',0.5:'#e87535',0.8:'#e84855',1:'#fff'}}).addTo(map);try{map.fitBounds(geoLayer.getBounds(),{padding:[20,20]})}catch(e){}}
-function focarGerenciaNoMapa(ger){if(!map||!GEO)return;const gerNorm=normaliza(ger);const bairrosGer=new Set(DATA.filter(r=>normaliza(r.ger)===gerNorm).map(r=>normaliza(r.bairro)));if(geoLayer)geoLayer.eachLayer(l=>{const nm=normaliza(nomeBairroGeo(l.feature?.properties||{}));l.setStyle(bairrosGer.has(nm)?{color:'#5b9bd5',weight:2,fillColor:'#5b9bd5',fillOpacity:.18}:{color:'#1e3050',weight:.4,fillColor:'#0d1b2f',fillOpacity:.55})})}
-function focarBairroNoMapa(bairro){if(!map)return;if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}const layer=(map._geoFeatures||{})[normaliza(bairro)];if(layer){try{map.fitBounds(layer.getBounds(),{padding:[40,40],maxZoom:14})}catch(e){}highlightLayer=L.geoJSON(layer.feature,{style:{color:'#5b9bd5',weight:3,fillColor:'#5b9bd5',fillOpacity:.08}}).addTo(map);const center=layer.getBounds().getCenter();L.popup({className:'bairro-popup',closeButton:false,autoClose:true,offset:[0,-4]}).setLatLng(center).setContent(`<b>${bairro}</b>`).openOn(map)}}
-function abrirBairro(bairroEncoded){const bairro=decodeURIComponent(bairroEncoded);showPage('territorial');focarBairroNoMapa(bairro);const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro));const logs={};rows.forEach(r=>{const k=r.logradouro||'Não informado';if(!logs[k])logs[k]={logradouro:k,avaliacoes:0,notas:[],itens:{}};logs[k].avaliacoes++;logs[k].notas.push(r.nota);r.itensNok.forEach(item=>{const label=itemLabel(item);logs[k].itens[label]=(logs[k].itens[label]||0)+1})});const dados=Object.values(logs).map(x=>({...x,media:x.notas.reduce((s,v)=>s+v,0)/x.notas.length,reincidentes:Object.values(montarTrechos(rows.filter(r=>normaliza(r.logradouro)===normaliza(x.logradouro)))).filter(t=>t.avaliacoes>=2).length})).sort((a,b)=>b.reincidentes-a.reincidentes||a.media-b.media).slice(0,12);const gerBairro=FILTERED.find(r=>normaliza(r.bairro)===normaliza(bairro))?.ger||'';$('drillTitle').textContent=`${bairro}${gerBairro?' · '+gerBairro:''}`;$('drilldown').innerHTML=dados.map(l=>`<div class="rank compact" onclick="abrirLogradouro('${encodeURIComponent(bairro)}','${encodeURIComponent(l.logradouro)}')"><div><b>${l.logradouro}</b>${l.reincidentes?`<span class="reincBadge">${l.reincidentes} reincid.</span>`:''}<div class="hint">${l.avaliacoes} avaliações · nota territorial média ${fmt(l.media)}%</div><div class="bar"><i style="width:${Math.max(4,l.media)}%;background:${corNota(l.media)}"></i></div></div><small style="color:${corNota(l.media)}">${fmt(l.media)}%</small></div>`).join('')||'<div class="status">Sem dados para este bairro.</div>'}
-function abrirLogradouro(bairroEncoded,logradouroEncoded,trechoHighlight=''){const bairro=decodeURIComponent(bairroEncoded),logradouro=decodeURIComponent(logradouroEncoded),alvo=trechoHighlight?normaliza(decodeURIComponent(trechoHighlight)):'';const rows=FILTERED.filter(r=>normaliza(r.bairro)===normaliza(bairro)&&normaliza(r.logradouro)===normaliza(logradouro));const dados=Object.values(montarTrechos(rows)).sort((a,b)=>a.nota-b.nota);$('drillTitle').textContent=`Trechos · ${bairro} · ${logradouro}`;$('drilldown').innerHTML=dados.map(t=>{const isAlvo=alvo&&normaliza(t.trecho)===alvo;const itensTop=Object.entries(t.itens).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([item,n])=>`<span class="pill">${item}: ${n}</span>`).join('');return`<div class="rank${isAlvo?' destaque':''}"><div><b>${t.trecho}</b>${t.avaliacoes>=2?`<span class="reincBadge">${t.avaliacoes}x</span>`:''}<div class="hint">${t.avaliacoes} avaliações · nota territorial ${fmt(t.nota)}%</div><div>${itensTop||'<span class="pill">Sem NOK</span>'}</div><div class="bar"><i style="width:${Math.max(4,t.nota)}%;background:${corNota(t.nota)}"></i></div></div><small style="color:${corNota(t.nota)}">${fmt(t.nota)}%</small></div>`}).join('')||'<div class="status">Sem trechos para este logradouro.</div>'}
-function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'&&map){setTimeout(()=>{map.invalidateSize();renderMap();try{if(geoLayer)map.fitBounds(geoLayer.getBounds(),{padding:[20,20]})}catch(e){}},160)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
-document.addEventListener('DOMContentLoaded',init);
-</script>
+  </section>
+  <footer class="footer"><div><strong>HUB COMLURB</strong>Núcleo de Inteligência e Gestão Estratégica Operacional</div><span>COMLURB · Monitoramento Estratégico</span></footer>
+</main>
 </body>
 </html>

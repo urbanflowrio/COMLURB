@@ -1,22 +1,38 @@
-# Balanço Receita — HUB COMLURB v3
+# IPL · Índice Padrão de Limpeza — HUB COMLURB
 
-Refação focada em aderência ao padrão do HUB e eliminação de informações repetidas.
+**Status:** ativo no portal principal  
+**Responsável técnico:** Greicy Moreira
 
-## Hierarquia
-1. 3 KPIs únicos: Faturamento Bruto, Valor Líquido Pago, Débito Líquido.
-2. Uma única leitura executiva.
-3. Fluxo financeiro mensal.
-4. Concentração por secretaria.
-5. 3 contratos prioritários.
-6. Carteira completa recolhida.
+## Implementação ativa
+A versão publicada do módulo está em `index.html`. O arquivo `app.js` é legado,
+não é carregado pela página e foi mantido apenas para preservar a estrutura
+histórica do diretório.
 
-## Padrão HUB
-- Usa `../assets/css/hub-premium.css`
-- Usa `hub-layout.js` para header/footer
-- Usa `hub-cards.js` para KPIs
-- Sem design system paralelo no HTML
-- CSS específico isolado em `receita.css`
+## Leituras do painel
+O módulo separa duas camadas:
 
-## Dados
-`data.js` contém os valores consolidados usados apenas nesta versão de revisão visual.
-Na versão de produção, substituir por carregamento da fonte oficial publicada.
+1. **Resultado oficial SARC** — referência institucional usada no painel executivo.
+2. **Diagnóstico territorial calculado pelo HUB** — nota calculada a partir da base
+   de avaliações de trecho para análise por bairro, logradouro, reincidência e itens NOK.
+
+A ordenação de **prioridade territorial** é uma ferramenta analítica do HUB e não
+deve ser interpretada como indicador oficial. Ela combina distância da meta,
+reincidência e volume de avaliações.
+
+## Metodologia territorial preservada
+- Lixo Branco: faixas 100 / 80 / 50 / 20 / 0.
+- Coleta domiciliar: faixas 100 / 80 / 40 / 20.
+- Itens binários: OK / NOK / N/A.
+- Pesos de itens N/A são redistribuídos igualmente entre os itens válidos.
+- Bens inservíveis, entulho, material de obra e pneus compõem um único item de 6%.
+- Meta de referência utilizada na interface: 80%.
+
+## Fontes
+As URLs de produção estão definidas no início do script de `index.html`:
+- base de avaliação dos trechos;
+- SARC, aba geral;
+- GeoJSON de bairros;
+- coordenadas auxiliares de bairros.
+
+O painel não exibe uma data de atualização inventada. A competência é apresentada
+com base no mês selecionado e nas competências efetivamente disponíveis nos dados.

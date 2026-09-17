@@ -106,7 +106,7 @@ let MAP_DRILL_GER='',MAP_DRILL_BAIRRO='',BAIRRO_LAYERS={},TERRITORIO_DLU={};
 const RIO_CENTER=[-22.91,-43.38];
 const RIO_VIEW_BOUNDS=[[-23.08,-43.80],[-22.74,-43.06]];
 const RIO_MAX_BOUNDS=[[-23.14,-43.88],[-22.69,-42.98]];
-const $=id=>document.getElementById(id);const normaliza=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();const fmt=(n,d=1)=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});const parseNumeroBR=v=>{let t=String(v??'').trim();if(!t)return null;t=t.replace('%','').trim();if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');const n=Number(t);return Number.isFinite(n)?n:null};const parsePercentual=v=>{const n=parseNumeroBR(v);return n!==null&&n>=0&&n<=100?n:null};const csv=url=>new Promise((res,rej)=>{const sep=url.includes('?')?'&':'?';const urlSemCache=`${url}${sep}_=${Date.now()}`;Papa.parse(urlSemCache,{download:true,header:true,skipEmptyLines:true,complete:r=>{if(r.errors?.length)console.warn('Avisos na leitura CSV:',r.errors);res(r.data)},error:rej})});const campo=(row,nomes)=>{for(const n of nomes){if(row[n]!==undefined)return row[n]}return''};const num=v=>parseNumeroBR(v);const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
+const $=id=>document.getElementById(id);const normaliza=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,' ').replace(/\s+/g,' ').trim();const fmt=(n,d=1)=>Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});const parseNumeroBR=v=>{let t=String(v??'').trim();if(!t)return null;t=t.replace('%','').trim();if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');const n=Number(t);return Number.isFinite(n)?n:null};const parsePercentual=v=>{const n=parseNumeroBR(v);return n!==null&&n>=0&&n<=100?n:null};const csv=url=>new Promise((res,rej)=>{const sep=url.includes('?')?'&':'?';const urlSemCache=`${url}${sep}_=${Date.now()}`;Papa.parse(urlSemCache,{download:true,header:true,skipEmptyLines:true,complete:r=>{if(r.errors?.length)console.warn('Avisos na leitura CSV:',r.errors);res(r.data)},error:rej})});const campo=(row,nomes)=>{for(const n of nomes){if(row[n]!==undefined)return row[n]}return''};const num=v=>parseNumeroBR(v);const nomeBairroGeo=p=>p?.nome||p?.BAIRRO||p?.Bairro||p?.NOME||p?.Nome||p?.NM_BAIRRO||p?.bairro||p?.name||'';
 function itemLabel(k){return ITEM_LABELS[k]||k}
 function ordemMes(v){const s=String(v||'').toLowerCase().trim();const idx=ORDEM_MESES.findIndex(m=>s.startsWith(m));return idx>=0?idx:99}
 function mesSarcAtual(){return MES_SARC_COL[$('fMes').value]||null}
@@ -163,43 +163,50 @@ function pontoNaGeometria(lon,lat,g){
   if(g.type==='MultiPolygon')return (g.coordinates||[]).some(poligonoDentro);
   return false;
 }
+function distanciaEdicao(a,b){
+  a=normaliza(a);b=normaliza(b);const m=a.length,n=b.length;if(!m)return n;if(!n)return m;
+  const dp=Array.from({length:n+1},(_,i)=>i);
+  for(let i=1;i<=m;i++){let prev=dp[0];dp[0]=i;for(let j=1;j<=n;j++){const tmp=dp[j],c=a[i-1]===b[j-1]?0:1;dp[j]=Math.min(dp[j]+1,dp[j-1]+1,prev+c);prev=tmp}}
+  return dp[n];
+}
 function construirTerritorioDlu(){
   const out={};
   if(!GEO_DLU||!Array.isArray(GEO_DLU.features))return out;
-  const bairros=GEO_DLU.features.filter(f=>geometriaValida(f)&&nomeBairroGeo(f.properties)&&f.properties?.gerdlu);
-  const gerencias=GEO_DLU.features.filter(f=>geometriaValida(f)&&!nomeBairroGeo(f.properties)&&f.properties?.gerdlu);
-  bairros.forEach(f=>{
-    const p=f.properties||{},k=normaliza(nomeBairroGeo(p));
-    if(!k)return;
-    if(!out[k])out[k]={candidatos:[],features:[],preferida:'',supPreferida:''};
+  GEO_DLU.features.filter(f=>geometriaValida(f)&&nomeBairroGeo(f.properties)&&f.properties?.gerdlu).forEach(f=>{
+    const p=f.properties||{},nome=nomeBairroGeo(p),k=normaliza(nome);if(!k)return;
+    if(!out[k])out[k]={nome,candidatos:[],features:[]};
     if(!out[k].candidatos.some(x=>normaliza(x.ger)===normaliza(p.gerdlu)))out[k].candidatos.push({ger:p.gerdlu,sup:p.superdlu||p.first_superdlu||''});
     out[k].features.push(f);
   });
-  Object.entries(out).forEach(([k,info])=>{
-    const c=COORDS[k]||(GEO_CENTROIDS[k]?{lat:GEO_CENTROIDS[k][0],lon:GEO_CENTROIDS[k][1]}:null);
-    if(info.candidatos.length===1){info.preferida=info.candidatos[0].ger;info.supPreferida=info.candidatos[0].sup;return;}
-    if(c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon)){
-      const hitBairro=info.features.find(f=>pontoNaGeometria(c.lon,c.lat,f.geometry));
-      if(hitBairro){info.preferida=hitBairro.properties?.gerdlu||'';info.supPreferida=hitBairro.properties?.superdlu||'';return;}
-      const hitGer=gerencias.find(f=>pontoNaGeometria(c.lon,c.lat,f.geometry));
-      if(hitGer){info.preferida=hitGer.properties?.gerdlu||'';info.supPreferida=hitGer.properties?.first_superdlu||'';}
-    }
-  });
+  Object.values(out).forEach(info=>{info.compartilhado=info.candidatos.length>1;});
   return out;
+}
+function canonicalizarBairro(raw){
+  const k=normaliza(raw);if(!k)return'';
+  if(TERRITORIO_DLU[k])return TERRITORIO_DLU[k].nome;
+  const aliases={'SENADOR VASCONCELLOS':'SENADOR VASCONCELOS','OSVALDO CRUZ':'OSWALDO CRUZ','FREGUESIA JACAREPAGUA':'FREGUESIA JACAREPAGUA','FREGUESIA ILHA':'FREGUESIA ILHA'};
+  const ak=aliases[k];if(ak&&TERRITORIO_DLU[ak])return TERRITORIO_DLU[ak].nome;
+  if(k.length>=8){let melhor=null,dist=99,empate=false;for(const [ok,info] of Object.entries(TERRITORIO_DLU)){const d=distanciaEdicao(k,ok);if(d<dist){dist=d;melhor=info.nome;empate=false}else if(d===dist)empate=true}if(!empate&&dist<=1)return melhor;}
+  return String(raw||'').trim();
 }
 function resolverTerritorioDlu(bairro,gerBase,supBase){
   const info=TERRITORIO_DLU[normaliza(bairro)];
-  if(!info)return{ger:gerBase,sup:supBase,corrigido:false};
+  if(!info)return{ger:gerBase,sup:supBase,corrigido:false,compartilhado:false,status:'sem_camada',candidatos:[]};
   const valido=info.candidatos.find(x=>normaliza(x.ger)===normaliza(gerBase));
-  if(valido)return{ger:valido.ger,sup:valido.sup||supBase,corrigido:false};
-  const ger=info.preferida||(info.candidatos.length===1?info.candidatos[0].ger:'')||gerBase;
-  const cand=info.candidatos.find(x=>normaliza(x.ger)===normaliza(ger));
-  return{ger,sup:(cand?.sup||info.supPreferida||supBase),corrigido:!!ger&&normaliza(ger)!==normaliza(gerBase)};
+  if(valido)return{ger:valido.ger,sup:valido.sup||supBase,corrigido:false,compartilhado:info.compartilhado,status:'valido',candidatos:info.candidatos};
+  if(info.candidatos.length===1){const x=info.candidatos[0];return{ger:x.ger,sup:x.sup||supBase,corrigido:normaliza(x.ger)!==normaliza(gerBase),compartilhado:false,status:'corrigido_univoco',candidatos:info.candidatos};}
+  // Bairro compartilhado + gerência de origem incompatível: não inventar atribuição.
+  return{ger:'',sup:info.candidatos[0]?.sup||supBase,corrigido:false,compartilhado:true,status:'compartilhado_indefinido',candidatos:info.candidatos};
 }
-function prepararCoords(rows){const out={};rows.forEach(r=>{const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']),lat=num(campo(r,['lat','Lat','LAT','latitude','LATITUDE'])),lon=num(campo(r,['lon','Lon','LON','lng','longitude','LONGITUDE']));if(b&&lat&&lon)out[normaliza(b)]={lat,lon}});return out}
-function centroideFeature(feature){try{const geom=feature.geometry;let coords=[];if(geom.type==='Polygon')coords=geom.coordinates[0];else if(geom.type==='MultiPolygon'){let maior=0,idx=0;geom.coordinates.forEach((p,i)=>{if(p[0].length>maior){maior=p[0].length;idx=i}});coords=geom.coordinates[idx][0]}if(!coords.length)return null;let sLat=0,sLon=0;coords.forEach(c=>{sLon+=c[0];sLat+=c[1]});return{lat:sLat/coords.length,lon:sLon/coords.length}}catch(e){return null}}
-function construirCentroidesGeo(geo){const out={};if(!geo||!geo.features)return out;geo.features.forEach(f=>{const nome=nomeBairroGeo(f.properties);const c=nome?centroideFeature(f):null;if(c)out[normaliza(nome)]={lat:c.lat,lon:c.lon}});return out}
-async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,coords,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);COORDS=prepararCoords(coords);GEO_DLU=geoDlu;TERRITORIO_DLU=construirTerritorioDlu();SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairro=campo(r,['Bairro','BAIRRO']);const gerBase=campo(r,['Gerência','Gerencia']),supBase=campo(r,['Superintendência','Superintendencia']);const terr=resolverTerritorioDlu(bairro,gerBase,supBase);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:terr.sup,ger:terr.ger,gerOriginal:gerBase,gerCorrigida:terr.corrigido,bairro,logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
+function prepararCoords(rows){const out={};rows.forEach(r=>{const b=campo(r,['Bairro','BAIRRO','bairro','NOME','Nome','nome']),lat=num(campo(r,['lat','Lat','LAT','latitude','LATITUDE'])),lon=num(campo(r,['lon','Lon','LON','lng','longitude','LONGITUDE']));if(b&&Number.isFinite(lat)&&Number.isFinite(lon))out[normaliza(b)]={lat,lon}});return out}
+function pontosGeometria(g,out=[]){if(!g||!Array.isArray(g.coordinates))return out;const walk=x=>{if(!Array.isArray(x))return;if(x.length>=2&&typeof x[0]==='number'&&typeof x[1]==='number'){if(Number.isFinite(x[0])&&Number.isFinite(x[1]))out.push([x[1],x[0]]);return}x.forEach(walk)};walk(g.coordinates);return out}
+function pontoRepresentativoBairro(nome){
+  const info=TERRITORIO_DLU[normaliza(nome)];
+  if(info?.features?.length){const pts=[];info.features.forEach(f=>pontosGeometria(f.geometry,pts));if(pts.length){let minLat=90,maxLat=-90,minLon=180,maxLon=-180;pts.forEach(([lat,lon])=>{minLat=Math.min(minLat,lat);maxLat=Math.max(maxLat,lat);minLon=Math.min(minLon,lon);maxLon=Math.max(maxLon,lon)});return{lat:(minLat+maxLat)/2,lon:(minLon+maxLon)/2}}}
+  const fb=GEO_CENTROIDS[normaliza(nome)];return fb?{lat:fb[0],lon:fb[1]}:null;
+}
+function construirCentroidesGeo(){const out={};Object.values(TERRITORIO_DLU).forEach(info=>{const c=pontoRepresentativoBairro(info.nome);if(c)out[normaliza(info.nome)]=c});return out}
+async function init(){try{$('status').textContent='Carregando base territorial do HUB, SARC e avaliações do IPL…';const[base,sarcRows,coords,geoDlu]=await Promise.all([csv(URL_IPL),csv(URL_SARC).catch(()=>[]),csv(URL_COORDS).catch(()=>[]),fetch(URL_GEO_DLU).then(r=>r.ok?r.json():null).catch(()=>null)]);COORDS=prepararCoords(coords);GEO_DLU=geoDlu;TERRITORIO_DLU=construirTerritorioDlu();SARC_DATA=parseSARC(sarcRows);DATA=base.map(r=>{const c=calcIPL(r);if(!c)return null;const bairroOriginal=campo(r,['Bairro','BAIRRO']);const bairro=canonicalizarBairro(bairroOriginal);const gerBase=campo(r,['Gerência','Gerencia']),supBase=campo(r,['Superintendência','Superintendencia']);const terr=resolverTerritorioDlu(bairro,gerBase,supBase);return{mes:campo(r,['Mês','Mes','MES']),data:campo(r,['Data','DATA']),sup:terr.sup,ger:terr.ger,gerOriginal:gerBase,gerCorrigida:terr.corrigido,bairro,bairroOriginal,bairroCompartilhado:terr.compartilhado,territorioStatus:terr.status,gerenciasTerritoriais:(terr.candidatos||[]).map(x=>x.ger),logradouro:campo(r,['Nome','NOME']),tipo:campo(r,['TipoLogradouro','Tipo']),trecho:campo(r,['Trecho','TRECHO']),nota:c.nota,itensNok:c.itensNok,perdaPorItem:c.perdaPorItem}}).filter(r=>r&&r.bairro);const naoResolvidos=DATA.filter(r=>r.territorioStatus==='compartilhado_indefinido'||r.territorioStatus==='sem_camada');if(naoResolvidos.length)console.warn('IPL · registros territoriais sem atribuição gerencial forçada:',naoResolvidos.length);populateAll();render();$('status').style.display='none'}catch(e){$('status').textContent='Erro ao carregar: '+e.message;console.error(e)}}
 function baseSup(){const m=$('fMes').value;return DATA.filter(r=>!m||r.mes===m)}function baseGer(){const m=$('fMes').value,s=$('fSup').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s))}function baseBairro(){const m=$('fMes').value,s=$('fSup').value,g=$('fGer').value;return DATA.filter(r=>(!m||r.mes===m)&&(!s||r.sup===s)&&(!g||r.ger===g))}
 function preencherSelect(id,campo,label,base,preservar=true){const atual=preservar?$(id).value:'';const vals=[...new Set(base.map(r=>r[campo]).filter(Boolean))];if(campo==='mes')vals.sort((a,b)=>ordemMes(a)-ordemMes(b)||String(a).localeCompare(String(b),'pt-BR'));else vals.sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));$(id).innerHTML=`<option value="">${label}</option>`;vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$(id).appendChild(o)});if(preservar&&vals.includes(atual))$(id).value=atual}
 function populateAll(){preencherSelect('fMes','mes','Todos',DATA);preencherSelect('fSup','sup','Todas',baseSup());preencherSelect('fGer','ger','Todas',baseGer());preencherSelect('fBairro','bairro','Todos',baseBairro())}
@@ -295,13 +302,20 @@ function renderFactors(){
   const max=Math.max(...ranking.map(x=>x.perda),1);
   $('factorsPanel').innerHTML=ranking.map((x,i)=>`<div class="factor"><div class="idx">${i+1}</div><div><b>${x.item}</b><small>${total?fmt(x.perda/total*100,0):0}% da perda estimada<div class="bar" style="margin-top:7px"><i style="width:${Math.max(4,x.perda/max*100)}%;background:${i===0?'#e84855':i===1?'#e87535':'#6da5d8'}"></i></div></small></div><div class="num">${fmt(x.impacto,1)} p.p.<small style="display:block">médios</small></div></div>`).join('')||'<div class="status">Sem perda de pontos no recorte.</div>';
 }
-function rankHTML(arr,field='bairro'){
+function infoTerritorialBairro(bairro){return TERRITORIO_DLU[normaliza(bairro)]||null}
+function badgeTerritorial(bairro){const info=infoTerritorialBairro(bairro);if(!info)return'';return info.compartilhado?'COMPARTILHADO':(info.candidatos[0]?.ger||'')}
+function rankHTML(arr,field='bairro',gerContexto=''){
   return arr.map(x=>{
-    const badge=field==='bairro'?(FILTERED.find(r=>normaliza(r.bairro)===normaliza(x.k))?.ger||''):'';
+    const info=field==='bairro'?infoTerritorialBairro(x.k):null;
+    const compartilhado=!!info?.compartilhado;
+    const badge=field==='bairro'?badgeTerritorial(x.k):'';
     const selected=MAP_DRILL_BAIRRO&&normaliza(MAP_DRILL_BAIRRO)===normaliza(x.k);
-    return`<div class="rank compact ${selected?'selected':''}" ${field==='bairro'?`onclick="selecionarPrioridade('${encodeURIComponent(x.k)}','${encodeURIComponent(badge)}')"`:''}>
+    let hint=`${x.n} avaliações · ${x.trechosAbaixo} trechos abaixo da referência · ${x.reincidentes} reincidentes${x.trechosAbaixo?` · ${fmt(x.reincidentes/x.trechosAbaixo*100,0)}% persistentes`:''}`;
+    if(gerContexto&&compartilhado){const nGer=x.rows.filter(r=>normaliza(r.ger)===normaliza(gerContexto)).length;hint=`Bairro compartilhado · ${x.n} avaliações no bairro${nGer?` · ${nGer} atribuída${nGer===1?'':'s'} à ${gerContexto}`:` · sem atribuição exclusiva à ${gerContexto}`}`;}
+    const gerClick=compartilhado?'':(info?.candidatos?.[0]?.ger||x.rows.find(r=>r.ger)?.ger||'');
+    return`<div class="rank compact ${selected?'selected':''}" ${field==='bairro'?`onclick="selecionarPrioridade('${encodeURIComponent(x.k)}','${encodeURIComponent(gerClick)}')"`:''}>
       <div><b>${x.k}</b>${badge?`<span class="mbadge">${badge}</span>`:''}
-        <div class="hint">${x.n} avaliações · ${x.trechosAbaixo} trechos abaixo da referência · ${x.reincidentes} reincidentes${x.trechosAbaixo?` · ${fmt(x.reincidentes/x.trechosAbaixo*100,0)}% persistentes`:''}</div>
+        <div class="hint">${hint}</div>
         <div class="bar"><i style="width:${Math.max(4,Math.min(100,x.media))}%;background:${corNota(x.media)}"></i></div>
       </div>
       <small style="color:${corNota(x.media)}">${fmt(x.media)}%</small>
@@ -311,13 +325,11 @@ function rankHTML(arr,field='bairro'){
 
 function selecionarPrioridade(bairroEnc,gerEnc){
   const bairro=decodeURIComponent(bairroEnc||''),ger=decodeURIComponent(gerEnc||'');
-  if(!ger)return;
-  MAP_DRILL_GER=ger;MAP_DRILL_BAIRRO=bairro;
+  MAP_DRILL_BAIRRO=bairro;MAP_DRILL_GER=ger||'';
   renderRanks();renderMap();
   setTimeout(()=>{
-    focarGerenciaNoMapa(ger);
-    const l=BAIRRO_LAYERS[normaliza(bairro)];
-    if(l){l.openPopup();}
+    if(ger)focarGerenciaNoMapa(ger);else focarBairroNoMapa(bairro);
+    BAIRRO_LAYERS[normaliza(bairro)]?.openPopup();
   },80);
 }
 function voltarMunicipio(){
@@ -354,9 +366,9 @@ function renderReincidencias(){
 function renderRanks(){
   let bairros=group('bairro').sort((a,b)=>a.media-b.media||b.reincidentes-a.reincidentes||b.trechosAbaixo-a.trechosAbaixo);
   if(MAP_DRILL_GER){
-    bairros=bairros.filter(x=>x.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER)));
-    const head=`<div class="priorityDrillBar"><div><b>Gerência ${MAP_DRILL_GER}</b><small>Bairros da gerência · menor nota primeiro · clique para destacar no mapa</small></div><button class="backMini" type="button" onclick="voltarMunicipio()">← Voltar ao município</button></div>`;
-    $('rankBairros').innerHTML=head+rankHTML(bairros.slice(0,12),'bairro');
+    bairros=bairros.filter(x=>{const info=infoTerritorialBairro(x.k);return info?.candidatos?.some(c=>normaliza(c.ger)===normaliza(MAP_DRILL_GER))||x.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER))});
+    const head=`<div class="priorityDrillBar"><div><b>Gerência ${MAP_DRILL_GER}</b><small>Bairros do território · menor nota primeiro · bairros compartilhados mostram o total do bairro</small></div><button class="backMini" type="button" onclick="voltarMunicipio()">← Voltar ao município</button></div>`;
+    $('rankBairros').innerHTML=head+rankHTML(bairros.slice(0,12),'bairro',MAP_DRILL_GER);
   }else{
     $('rankBairros').innerHTML=rankHTML(bairros.slice(0,8),'bairro');
   }
@@ -411,57 +423,30 @@ function renderMap(){
   if(geoLayer)map.removeLayer(geoLayer);
   if(highlightLayer){map.removeLayer(highlightLayer);highlightLayer=null}
   BAIRRO_LAYERS={};
-
-  // Demarcação oficial da gerência selecionada no drill-down.
-  if(MAP_DRILL_GER){
-    const gf=featureGerencia(MAP_DRILL_GER);
-    if(gf){
-      highlightLayer=L.geoJSON(gf,{interactive:false,style:{color:'#ff9a5b',weight:3,opacity:1,fillColor:'#e87535',fillOpacity:.09,dashArray:'8 5'}}).addTo(map);
-    }
-  }
-
-  const bairros=group('bairro');
-  const maxN=Math.max(...bairros.map(x=>x.n),1);
-  const layers=[];
+  if(MAP_DRILL_GER){const gf=featureGerencia(MAP_DRILL_GER);if(gf)highlightLayer=L.geoJSON(gf,{interactive:false,style:{color:'#ff9a5b',weight:3,opacity:1,fillColor:'#e87535',fillOpacity:.09,dashArray:'8 5'}}).addTo(map);}
+  const bairros=group('bairro'),maxN=Math.max(...bairros.map(x=>x.n),1),layers=[];
   bairros.forEach(d=>{
-    const rowGer=d.rows.find(r=>r.ger)?.ger||'';
-    const c=COORDS[normaliza(d.k)]||(GEO_CENTROIDS[normaliza(d.k)]?{lat:GEO_CENTROIDS[normaliza(d.k)][0],lon:GEO_CENTROIDS[normaliza(d.k)][1]}:null);
-    if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
-    const inGer=!MAP_DRILL_GER||normaliza(rowGer)===normaliza(MAP_DRILL_GER);
-    const selected=MAP_DRILL_BAIRRO&&normaliza(d.k)===normaliza(MAP_DRILL_BAIRRO);
-    const raio=(6+Math.sqrt(d.n/maxN)*12)+(selected?4:0);
-    const cor=corNota(d.media);
-    const layer=L.circleMarker([c.lat,c.lon],{radius:raio,color:selected?'#ffffff':'#dcecff',weight:selected?3:1.1,fillColor:cor,fillOpacity:inGer?.92:.16,opacity:inGer?.95:.22});
-    layer.bindTooltip(`<b>${d.k}</b><br>${fmt(d.media)}% · ${d.n.toLocaleString('pt-BR')} avaliações<br>${rowGer?`Gerência ${rowGer}`:''}`,{direction:'top',sticky:true,className:'bairro-popup'});
-    layer.bindPopup(`<b>${d.k}</b>${rowGer?` <span class="mapDrillTag">${rowGer}</span>`:''}<br>Nota territorial: ${fmt(d.media)}%<br>Avaliações: ${d.n.toLocaleString('pt-BR')}<br>Trechos com ocorrência abaixo da referência: ${d.trechosAbaixo}<br>Trechos reincidentes: ${d.reincidentes}`);
-    layer.on('click',()=>{
-      MAP_DRILL_GER=rowGer||MAP_DRILL_GER;MAP_DRILL_BAIRRO=d.k;
-      renderRanks();renderMap();setTimeout(()=>{focarGerenciaNoMapa(MAP_DRILL_GER);BAIRRO_LAYERS[normaliza(d.k)]?.openPopup()},70);
-    });
-    BAIRRO_LAYERS[normaliza(d.k)]=layer;
-    layers.push(layer);
+    const info=infoTerritorialBairro(d.k),c=pontoRepresentativoBairro(d.k);if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
+    const compartilhado=!!info?.compartilhado;
+    const gerUnica=!compartilhado?(info?.candidatos?.[0]?.ger||d.rows.find(r=>r.ger)?.ger||''):'';
+    const pertenceGer=!MAP_DRILL_GER||info?.candidatos?.some(x=>normaliza(x.ger)===normaliza(MAP_DRILL_GER))||d.rows.some(r=>normaliza(r.ger)===normaliza(MAP_DRILL_GER));
+    const selected=MAP_DRILL_BAIRRO&&normaliza(d.k)===normaliza(MAP_DRILL_BAIRRO),raio=(6+Math.sqrt(d.n/maxN)*12)+(selected?4:0),cor=corNota(d.media);
+    const layer=L.circleMarker([c.lat,c.lon],{radius:raio,color:selected?'#ffffff':compartilhado?'#ffd19b':'#dcecff',weight:selected?3:compartilhado?2:1.1,fillColor:cor,fillOpacity:pertenceGer?.92:.14,opacity:pertenceGer?.95:.2});
+    const gerTxt=compartilhado?`Compartilhado: ${info.candidatos.map(x=>x.ger).join(' / ')}`:(gerUnica?`Gerência ${gerUnica}`:'');
+    layer.bindTooltip(`<b>${d.k}</b><br>${fmt(d.media)}% · ${d.n.toLocaleString('pt-BR')} avaliações${gerTxt?`<br>${gerTxt}`:''}`,{direction:'top',sticky:true,className:'bairro-popup'});
+    layer.bindPopup(`<b>${d.k}</b>${compartilhado?` <span class="mapDrillTag">COMPARTILHADO</span>`:gerUnica?` <span class="mapDrillTag">${gerUnica}</span>`:''}<br>Nota territorial do bairro: ${fmt(d.media)}%<br>Avaliações no bairro: ${d.n.toLocaleString('pt-BR')}<br>Trechos com ocorrência abaixo da referência: ${d.trechosAbaixo}<br>Trechos reincidentes: ${d.reincidentes}${compartilhado?`<br><small>Território compartilhado entre ${info.candidatos.map(x=>x.ger).join(' e ')}. O total acima não é artificialmente repartido.</small>`:''}`);
+    layer.on('click',()=>{MAP_DRILL_BAIRRO=d.k;if(!compartilhado&&gerUnica)MAP_DRILL_GER=gerUnica;renderRanks();renderMap();setTimeout(()=>{if(MAP_DRILL_GER)focarGerenciaNoMapa(MAP_DRILL_GER);else focarBairroNoMapa(d.k);BAIRRO_LAYERS[normaliza(d.k)]?.openPopup()},70)});
+    BAIRRO_LAYERS[normaliza(d.k)]=layer;layers.push(layer);
   });
   geoLayer=L.layerGroup(layers).addTo(map);
-  if(document.getElementById('page-territorial')?.classList.contains('active'))setTimeout(()=>{map.invalidateSize();if(MAP_DRILL_GER)focarGerenciaNoMapa(MAP_DRILL_GER);else map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false})},80);
+  if(document.getElementById('page-territorial')?.classList.contains('active'))setTimeout(()=>{map.invalidateSize();if(MAP_DRILL_GER)focarGerenciaNoMapa(MAP_DRILL_GER);else if(MAP_DRILL_BAIRRO)focarBairroNoMapa(MAP_DRILL_BAIRRO);else map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false})},80);
 }
 
 function focarGerenciaNoMapa(ger){
-  if(!map||!ger)return;
-  const gf=featureGerencia(ger);
-  if(gf){
-    const tmp=L.geoJSON(gf);
-    const b=tmp.getBounds();
-    if(b&&b.isValid()){map.fitBounds(b,{padding:[38,38],maxZoom:12.75,animate:false});return}
-  }
-  const rows=DATA.filter(r=>normaliza(r.ger)===normaliza(ger));
-  const coords=rows.map(r=>COORDS[normaliza(r.bairro)]||(GEO_CENTROIDS[normaliza(r.bairro)]?{lat:GEO_CENTROIDS[normaliza(r.bairro)][0],lon:GEO_CENTROIDS[normaliza(r.bairro)][1]}:null)).filter(c=>c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon));
-  if(coords.length){const lat=coords.reduce((s,c)=>s+c.lat,0)/coords.length,lon=coords.reduce((s,c)=>s+c.lon,0)/coords.length;map.setView([lat,lon],12)}
+  if(!map||!ger)return;const gf=featureGerencia(ger);if(gf){const tmp=L.geoJSON(gf),b=tmp.getBounds();if(b&&b.isValid()){map.fitBounds(b,{padding:[38,38],maxZoom:12.75,animate:false});return}}
 }
-
 function focarBairroNoMapa(bairro){
-  if(!map)return;
-  const c=COORDS[normaliza(bairro)]||(GEO_CENTROIDS[normaliza(bairro)]?{lat:GEO_CENTROIDS[normaliza(bairro)][0],lon:GEO_CENTROIDS[normaliza(bairro)][1]}:null);
-  if(c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon))map.setView([c.lat,c.lon],13);
+  if(!map)return;const c=pontoRepresentativoBairro(bairro);if(c&&Number.isFinite(c.lat)&&Number.isFinite(c.lon))map.setView([c.lat,c.lon],13);
 }
 function showPage(page){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelector(`.tab[onclick="showPage('${page}')"]`)?.classList.add('active');$(`page-${page}`).classList.add('active');if(page==='territorial'){setTimeout(()=>{if(!map)initMap();if(map){map.invalidateSize({pan:false});map.fitBounds(RIO_VIEW_BOUNDS,{padding:[10,10],animate:false});renderMap()}},120)}if(page==='executivo'&&trendChart){setTimeout(()=>trendChart.resize(),120)}}
 document.addEventListener('DOMContentLoaded',init);

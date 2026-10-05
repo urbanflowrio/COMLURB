@@ -1130,8 +1130,8 @@ h2 {
         <div id="filterContext" class="filterContext" style="display:none"></div>
         <button id="clearAllFilters" class="globalClearBtn" type="button" disabled>Limpar filtros</button>
         <div class="periodSwitch">
-          <button class="periodBtn active" type="button" data-period="acumulado">Jan a Ago</button>
-          <button class="periodBtn" type="button" data-period="agosto">Agosto</button>
+          <button class="periodBtn active" type="button" data-period="acumulado">Jan a Set</button>
+          <button class="periodBtn" type="button" data-period="setembro">Setembro</button>
         </div>
       </div>
     </div>
@@ -1241,7 +1241,7 @@ h2 {
           </div>
           <div class="body">
             <div class="chartBox short" id="apChartWrap"><canvas id="chartAP" role="img" aria-label="Comparação dos chamados por Área de Planejamento"></canvas></div>
-            <div class="emptyState" id="apEmpty" style="display:none;">A leitura por AP não foi exibida em agosto. O mapa, a lista e o detalhamento territorial permanecem no período mensal correto.</div>
+            <div class="emptyState" id="apEmpty" style="display:none;">A distribuição por AP está disponível integralmente para setembro.</div>
           </div>
         </div>
       </div>
@@ -2075,8 +2075,8 @@ HUB.loading = {
 };
 
 </script>
-<script src="./chamados_data.js?v=20260904"></script>
-<script src="./chamados_cube.js?v=20260904"></script>
+<script src="./chamados_data.js?v=20261005"></script>
+<script src="./chamados_cube.js?v=20261005"></script>
 <script>
 const GEO = window.CHAMADOS_DATA.geojson;
 const CUBE = window.CHAMADOS_CUBE;
@@ -2114,15 +2114,15 @@ function level(){return filterSubtype?'subtipo':filterType?'tipo':'all';}
 function contextLabel(){return filterSubtype?`${filterType} › ${filterSubtype}`:filterType||'Todos os serviços';}
 function prettyTypeLabel(s){return String(s||'').toLocaleLowerCase('pt-BR');}
 function prettyPlace(s){return String(s||'').toLocaleLowerCase('pt-BR').replace(/(^|[\s(\/-])([a-zà-ÿ])/g,(m,p1,p2)=>p1+p2.toLocaleUpperCase('pt-BR')).replace(/\b(Da|De|Do|Das|Dos|E|Em|Na|No|Nas|Nos)\b/g,m=>m.toLocaleLowerCase('pt-BR'));}
-function currentPeriodText(){return period==='acumulado'?'no acumulado de janeiro a agosto de 2026':'em agosto de 2026';}
-function previousPeriodText(){return period==='acumulado'?'jan a ago/2025':'agosto/2025';}
-function currentPeriodShort(){return period==='acumulado'?'jan a ago/2026':'ago/2026';}
-function previousPeriodShort(){return period==='acumulado'?'jan a ago/2025':'ago/2025';}
+function currentPeriodText(){return period==='acumulado'?'no acumulado de janeiro a setembro de 2026':'em setembro de 2026';}
+function previousPeriodText(){return period==='acumulado'?'jan a set/2025':'setembro/2025';}
+function currentPeriodShort(){return period==='acumulado'?'jan a set/2026':'set/2026';}
+function previousPeriodShort(){return period==='acumulado'?'jan a set/2025':'set/2025';}
 
 function monthlyPulse(x){
   const months=getSummary('acumulado').mensal||[];
-  const current=months.find(d=>norm(d.mes)==='AGOSTO');
-  const previous=months.find(d=>norm(d.mes)==='JULHO');
+  const current=months.find(d=>norm(d.mes)==='SETEMBRO');
+  const previous=months.find(d=>norm(d.mes)==='AGOSTO');
   if(!current||!previous||!previous.v2026)return null;
   const dif=current.v2026-previous.v2026;
   return{current:current.v2026,previous:previous.v2026,dif,var:dif/previous.v2026};
@@ -2182,15 +2182,15 @@ function renderLead(x){
 
   if(!filterType){
     const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
-    if(period==='agosto'){
-      headline=`Agosto fechou com <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> sobre agosto de 2025${pulse?` e ${pulse.dif>=0?'avanço':'recuo'} de <b>${pctSigned(pulse.var)}</b> frente a julho`:''}.`;
+    if(period==='setembro'){
+      headline=`Setembro fechou com <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> sobre setembro de 2025${pulse?` e ${pulse.dif>=0?'avanço':'recuo'} de <b>${pctSigned(pulse.var)}</b> frente a agosto`:''}.`;
       if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> explicou ${pct(shareOfMovement(a.dif,x.dif))} da ${direction>0?'alta':'redução'} anual do mês`;
       if(b)detail+=`, seguido por <b>${prettyTypeLabel(b.nome)}</b>, com ${pct(shareOfMovement(b.dif,x.dif))}`;
       detail+='.';
     }else{
-      headline=`De janeiro a agosto, o volume chegou a <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> em relação a 2025.`;
+      headline=`De janeiro a setembro, o volume chegou a <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> em relação a 2025.`;
       if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> respondeu por ${pct(shareOfMovement(a.dif,x.dif))} da variação acumulada`;
-      if(pulse)detail+=`. No mês mais recente, agosto ficou <b>${pctSigned(pulse.var)}</b> em relação a julho`;
+      if(pulse)detail+=`. No mês mais recente, setembro ficou <b>${pctSigned(pulse.var)}</b> em relação a agosto`;
       detail+='.';
     }
     if(topBairro)detail+=` <b>${prettyPlace(topBairro.nome)}</b> manteve o maior volume territorial, com ${fmt(topBairro.v2026)} chamados ${currentPeriodText()}.`;
@@ -2383,10 +2383,10 @@ function renderInsights(x){
   if(!filterType){
     const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
     const combined=(a&&b)?shareOfMovement(a.dif+b.dif,x.dif):(a?shareOfMovement(a.dif,x.dif):0);
-    if(period==='agosto'){
-      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Ritmo recente</div><b>${pulse&&pulse.dif>=0?'Agosto acelerou':'Agosto perdeu ritmo'}</b><p>${pulse?`O volume passou de <strong>${fmt(pulse.previous)}</strong> em julho para <strong>${fmt(pulse.current)}</strong> em agosto, variação de <strong>${pctSigned(pulse.var)}</strong>.`:'Comparação mensal indisponível.'}</p></div><div class="insightCard"><div class="tag">Principal motor da mudança</div><b>${a?.nome||'Não informado'}</b><p>${a?`Respondeu por <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da ${direction>0?'alta':'redução'} anual de agosto, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Concentração da variação</div><b>${a?.nome||''}${b?` + ${b.nome}`:''}</b><p>Os dois principais fatores explicam <strong>${pct(combined)}</strong> da ${direction>0?'alta':'redução'} do mês frente a agosto de 2025.</p></div>`;
+    if(period==='setembro'){
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Ritmo recente</div><b>${pulse&&pulse.dif>=0?'Setembro acelerou':'Setembro perdeu ritmo'}</b><p>${pulse?`O volume passou de <strong>${fmt(pulse.previous)}</strong> em agosto para <strong>${fmt(pulse.current)}</strong> em setembro, variação de <strong>${pctSigned(pulse.var)}</strong>.`:'Comparação mensal indisponível.'}</p></div><div class="insightCard"><div class="tag">Principal motor da mudança</div><b>${a?.nome||'Não informado'}</b><p>${a?`Respondeu por <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da ${direction>0?'alta':'redução'} anual de setembro, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Concentração da variação</div><b>${a?.nome||''}${b?` + ${b.nome}`:''}</b><p>Os dois principais fatores explicam <strong>${pct(combined)}</strong> da ${direction>0?'alta':'redução'} do mês frente a setembro de 2025.</p></div>`;
     }else{
-      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado acumulado</div><b>${fmt(x.total2026)} chamados</b><p>Entre janeiro e agosto, a demanda ficou <strong>${pctSigned(x.var)}</strong> em relação ao mesmo período de 2025.</p></div><div class="insightCard"><div class="tag">Principal contribuição</div><b>${a?.nome||'Não informado'}</b><p>${a?`Explicou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação acumulada, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Sinal mais recente</div><b>${pulse&&pulse.dif>=0?'Agosto acima de julho':'Agosto abaixo de julho'}</b><p>${pulse?`O mês mais recente variou <strong>${pctSigned(pulse.var)}</strong>, de ${fmt(pulse.previous)} para ${fmt(pulse.current)} chamados.`:'Comparação mensal indisponível.'}</p></div>`;
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado acumulado</div><b>${fmt(x.total2026)} chamados</b><p>Entre janeiro e setembro, a demanda ficou <strong>${pctSigned(x.var)}</strong> em relação ao mesmo período de 2025.</p></div><div class="insightCard"><div class="tag">Principal contribuição</div><b>${a?.nome||'Não informado'}</b><p>${a?`Explicou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação acumulada, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Sinal mais recente</div><b>${pulse&&pulse.dif>=0?'Setembro acima de agosto':'Setembro abaixo de agosto'}</b><p>${pulse?`O mês mais recente variou <strong>${pctSigned(pulse.var)}</strong>, de ${fmt(pulse.previous)} para ${fmt(pulse.current)} chamados.`:'Comparação mensal indisponível.'}</p></div>`;
     }
     return;
   }

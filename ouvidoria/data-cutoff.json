@@ -1,27 +1,48 @@
 {
   "modulo": "ouvidoria",
-  "competencia_mais_recente": "2026-08",
-  "data_corte": "2026-09-04",
-  "historico_congelado_ate": "2026-07",
+  "competencia_mais_recente": "2026-09",
+  "data_corte": "2026-10-05",
+  "historico_congelado_ate": "2026-08",
   "fonte_analitica": "ouvidoria_cube.js",
   "fonte_geografica": "ouvidoria_data.js",
-  "situacao_tecnica": "validado_com_ressalvas",
+  "situacao_tecnica": "validado",
   "qualidade": {
     "conciliacao_interna": "sem_divergencia",
-    "exclusao_pco": "declarada_na_base_agregada_sem_evidencia_bruta_para_reexecucao",
-    "area_planejamento_agosto_2025": {
-      "total": 2005,
-      "classificados": 1931,
-      "sem_classificacao": 74,
-      "cobertura_percentual": 96.31
+    "regra_pco": "PCO mantido na base institucional e excluído das análises operacionais",
+    "pco_setembro_2026": 174,
+    "area_planejamento_setembro_2025": {
+      "total": 2006,
+      "classificados": 2006,
+      "sem_classificacao": 0
     },
-    "area_planejamento_agosto_2026": {
-      "total": 3254,
-      "classificados": 3138,
-      "sem_classificacao": 116,
-      "cobertura_percentual": 96.44
+    "area_planejamento_setembro_2026": {
+      "total": 2476,
+      "classificados": 2476,
+      "sem_classificacao": 0,
+      "cobertura_percentual": 100.0
     },
-    "tratamento_interface": "O ranking mensal por área de planejamento é ocultado em agosto para não apresentar distribuição incompleta."
+    "tratamento_interface": "Distribuição por área de planejamento disponível integralmente para setembro."
   },
-  "regra": "Acrescentar a nova competência sem reprocessar silenciosamente as competências já fechadas. Retificações devem ser documentadas separadamente."
+  "revisoes_nao_incorporadas": [
+    {
+      "competencia": "2026-06",
+      "valor_fechado": 2764,
+      "valor_fonte_atual": 2765,
+      "diferenca": 1
+    },
+    {
+      "competencia": "2026-07",
+      "valor_fechado": 3236,
+      "valor_fonte_atual": 3222,
+      "diferenca": -14
+    },
+    {
+      "competencia": "2026-08",
+      "valor_fechado": 3254,
+      "valor_fonte_atual": 3252,
+      "diferenca": -2
+    }
+  ],
+  "observacao_institucional": "Agosto institucional: 3.452 fechado x 3.453 na fonte atual (+1), sem incorporação retroativa.",
+  "regra": "Série operacional oficial consolidada por data de corte. Setembro foi acrescentado ao histórico congelado até agosto; PCO permanece somente na camada institucional e revisões retroativas não são incorporadas."
 }

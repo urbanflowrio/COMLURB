@@ -4,8 +4,8 @@ Painel executivo interativo das ouvidorias operacionais da COMLURB.
 
 ## Escopo
 
-- Comparação jan a ago/2026 x jan a ago/2025
-- Recorte agosto/2026 x agosto/2025
+- Comparação jan a set/2026 x jan a set/2025
+- Recorte setembro/2026 x setembro/2025
 - Análise restrita às ouvidorias operacionais
 - Exclusão dos registros tratados internamente pela PCO
 - Visão executiva, territorial e analítica
@@ -14,9 +14,9 @@ Painel executivo interativo das ouvidorias operacionais da COMLURB.
 
 ## Corte e atualização
 
-- Competência mais recente: agosto/2026
+- Competência mais recente: setembro/2026
 - Data de corte deste pacote: 04/09/2026
-- Regra histórica: janeiro a julho permanece conforme o fechamento anterior; agosto foi incorporado como nova competência.
+- Regra histórica: janeiro a agosto permanece congelado conforme os fechamentos anteriores; setembro foi incorporado como nova competência.
 - Retificações retroativas devem ser registradas e autorizadas separadamente, sem reprocessamento silencioso do histórico fechado.
 
 ## Publicação
@@ -37,11 +37,6 @@ Para atualizar o módulo, publique em conjunto `index.html`, `ouvidoria_data.js`
 
 ## Qualidade conhecida
 
-Os totais, séries mensais, tipos, subtipos, gerências e bairros foram conciliados internamente sem divergência. A distribuição por área de planejamento não cobre a totalidade dos registros de agosto:
-
-- agosto/2025: 1.931 classificados de 2.005, com 74 sem área de planejamento;
-- agosto/2026: 3.138 classificados de 3.254, com 116 sem área de planejamento.
-
-Por esse motivo, o painel não exibe o ranking mensal de áreas de planejamento em agosto. A ausência é sinalizada na interface e não altera o total geral.
+Os totais, séries mensais, tipos, subtipos, gerências, áreas de planejamento e bairros de setembro foram conciliados sem divergência. Setembro/2026 possui cobertura de AP de 100%. O PCO permanece na base institucional e é excluído somente das análises operacionais. Revisões retroativas permanecem documentadas fora da série oficial.
 
 A exclusão dos registros tratados internamente pela PCO está declarada no escopo, mas não pode ser reexecutada ou auditada somente com os arquivos agregados deste pacote. A comprovação exige a base bruta e a regra de exclusão aplicada.

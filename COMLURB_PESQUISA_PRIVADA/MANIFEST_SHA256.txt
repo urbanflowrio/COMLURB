@@ -1,6 +1,0 @@
-adf2bf55d928f5baba24346c9acd05fc37681249415420d9af6c4927579e3c69  data/source_snapshots/DLU_Novos_Bairros_estrutura2025.geojson
-c1a2f3c28c333b8d3085fbd834bf98a2c939ac8aea29d0cadabee47afae6a80d  data/source_snapshots/chamados_cube.js
-8821870c494f78c9e9db4357927ebed4204e4cdaecaac5dbd0373df779bd6bfd  data/source_snapshots/ouvidoria_cube.js
-
-# ZIP original analisado
-eb23aa1f0345ae5ba047d22460dc7d99518c7f82d40bdb691e5674d9e1a2bfdb  /mnt/data/COMLURB-main (79).zip

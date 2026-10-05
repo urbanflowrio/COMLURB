@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Laboratório Territorial | Pesquisa Privada</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root{--bg:#07111d;--panel:#0d1a29;--panel2:#102235;--line:#1c3650;--txt:#edf4fa;--muted:#9fb0c1;--accent:#7fb0d7;--ok:#8ac0a5;--warn:#e3b56a;--bad:#e77d88}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#07111d,#091624 42%,#08131f);color:var(--txt);font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:1500px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:20px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);font-weight:800}.title{font-size:28px;margin:5px 0 4px}.sub{color:var(--muted);max-width:930px}.tag{padding:7px 10px;border:1px solid #735640;background:#2a2119;color:#f1c98e;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.card,.panel{background:rgba(13,26,41,.92);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.18)}.card{padding:16px}.card small{color:var(--muted);display:block;margin-bottom:5px}.card b{font-size:24px}.panel{padding:18px;margin-top:12px}.filters{display:grid;grid-template-columns:1.1fr 1fr 1fr 1.3fr auto;gap:10px;align-items:end}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}.field select,.field input{width:100%;background:#091522;border:1px solid #29435d;color:var(--txt);padding:10px 11px;border-radius:10px;outline:none}.btn{border:1px solid #315477;background:#102943;color:#eaf3fb;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}.pill{border:1px solid #284158;background:#0b1b2b;color:#b9cad9;padding:5px 8px;border-radius:999px;font-size:11px}.note{background:#0a1724;border-left:3px solid var(--accent);padding:12px 14px;color:#b8c9d8;margin-top:12px;border-radius:9px}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:13px;margin-top:14px;max-height:68vh}.table{width:100%;border-collapse:separate;border-spacing:0;min-width:1420px}.table th{position:sticky;top:0;background:#102235;color:#b7c9d9;font-size:11px;text-align:left;padding:10px;border-bottom:1px solid #2b455d;z-index:2;white-space:nowrap}.table td{padding:10px;border-bottom:1px solid #142a3d;color:#e6eef5;white-space:nowrap}.table tr:hover td{background:#0e2032}.num{text-align:right}.good{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.muted{color:var(--muted)}.status{padding:20px;color:var(--muted)}.footer{color:#7f93a7;font-size:11px;margin:14px 2px 30px}.method{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.method .m{background:#091725;border:1px solid #173149;border-radius:12px;padding:13px}.method b{display:block;margin-bottom:4px}.method span{color:var(--muted);font-size:12px}@media(max-width:900px){.wrap{padding:16px}.cards,.method{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr 1fr}.top{display:block}.tag{display:inline-block;margin-top:10px}}@media(max-width:600px){.cards,.method,.filters{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><div class="eyebrow">Pesquisa Privada · Inteligência e Apoio à Decisão</div><h1 class="title">Laboratório Territorial</h1><div class="sub">Matriz integrada por bairro para pesquisa e estruturação de problemas de decisão. Consolida sinais de IPL, Chamados 1746 e Ouvidoria sem alterar indicadores oficiais nem criar, nesta etapa, um ranking institucional.</div></div>
+    <div class="tag">EXPERIMENTAL · NÃO OFICIAL</div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><small>Bairros na matriz</small><b id="kBairros">—</b></div>
+    <div class="card"><small>Com IPL disponível</small><b id="kIpl">—</b></div>
+    <div class="card"><small>Com 1746 + Ouvidoria</small><b id="kRelacionamento">—</b></div>
+    <div class="card"><small>Completude integral</small><b id="kCompleto">—</b></div>
+  </div>
+
+  <div class="panel">
+    <div class="filters">
+      <div class="field"><label>Área de Planejamento</label><select id="fAp"><option value="">Todas</option></select></div>
+      <div class="field"><label>Gerência DLU</label><select id="fGer"><option value="">Todas</option></select></div>
+      <div class="field"><label>Completude</label><select id="fComp"><option value="">Todos</option><option value="completo">Completo</option><option value="parcial">Parcial</option></select></div>
+      <div class="field"><label>Buscar bairro</label><input id="fBusca" placeholder="Ex.: São Cristóvão" /></div>
+      <button class="btn" id="btnCsv">Exportar CSV</button>
+    </div>
+    <div class="meta"><span class="pill">1746: acumulado jan–set/2026</span><span class="pill">Ouvidoria: acumulado jan–set/2026</span><span class="pill">IPL: fonte publicada consumida ao vivo</span><span class="pill">Meta territorial IPL: 80%</span></div>
+    <div class="note"><b>Governança:</b> esta camada apenas integra sinais já existentes. A nota oficial SARC não é recalculada aqui. O valor de IPL exibido é o diagnóstico territorial calculado a partir das avaliações, seguindo a mesma lógica do módulo IPL. Pesos de decisão e ranking multicritério serão uma etapa posterior, após definição metodológica.</div>
+  </div>
+
+  <div class="panel">
+    <div class="method">
+      <div class="m"><b>1 · Unidade de análise</b><span>Bairro, com AP e gerência DLU como atributos territoriais.</span></div>
+      <div class="m"><b>2 · Sinais integrados</b><span>Qualidade observada (IPL), demanda cidadã (1746) e manifestação formal (Ouvidoria).</span></div>
+      <div class="m"><b>3 · Próxima etapa científica</b><span>Normalização, seleção de critérios, elicitação de pesos, método multicritério e validação.</span></div>
+    </div>
+    <div class="tableWrap"><table class="table"><thead><tr>
+      <th>Bairro</th><th>AP</th><th>Gerência</th><th class="num">IPL territorial</th><th class="num">Avaliações IPL</th><th class="num">Trechos &lt; 80</th><th class="num">Reincidentes</th><th class="num">1746 2026</th><th class="num">1746 var. YoY</th><th class="num">Ouvidoria 2026</th><th class="num">Ouvidoria var. YoY</th><th>Completude</th>
+    </tr></thead><tbody id="tbody"><tr><td colspan="12" class="status">Carregando matriz integrada…</td></tr></tbody></table></div>
+  </div>
+  <div class="footer">Laboratório Territorial · camada experimental de pesquisa. Não utilizar como indicador oficial, meta institucional ou instrumento de responsabilização sem validação metodológica e homologação.</div>
+</div>
+<script src="../data/source_snapshots/chamados_cube.js"></script>
+<script src="../data/source_snapshots/ouvidoria_cube.js"></script>
+<script src="./app.js"></script>
+</body></html>

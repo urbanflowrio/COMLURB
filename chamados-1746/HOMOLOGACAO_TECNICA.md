@@ -104,4 +104,4 @@ Identificação: `CHA-2026-10-05-TEC-01`.
 | `data-cutoff.json` | `173ba46bba3cd6702e8f8a1a9ae9fe2c4c66c9db69d497ba68b17801fbc4940c` |
 | Base auditável pós-auditoria | `108745d02b2b60ea7b1d7d3f88b1943a214e527e5989ad36dd5f6bad67a4be0c` |
 
-Status deste registro: correções executadas; sujeito à auditoria independente de aceite T1–T10.
+Status deste registro: correções executadas; aceite técnico independente aprovado — T1 a T10.

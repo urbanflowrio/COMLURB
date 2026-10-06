@@ -108,4 +108,4 @@ Identificação: `OUV-2026-10-05-TEC-01`.
 | `data-cutoff.json` | `5d3f9cb3897796b5efd403d15f17d44da5da93a8464dbee63824c82e1a845e0b` |
 | Base auditável pós-auditoria | `59047b094e86fe70a4d39121090550a21573a5f74168433ceeba3bd240561fe3` |
 
-Status deste registro: correções executadas; sujeito à auditoria independente de aceite T1–T10.
+Status deste registro: correções executadas; aceite técnico independente aprovado — T1 a T10.

@@ -7,7 +7,7 @@
   "fonte_geografica": "chamados_data.js",
   "situacao_tecnica": "validado",
   "qualidade": {
-    "conciliacao_totais": "sem_divergencia",
+    "conciliacao_totais": "Conciliação dos totais oficiais preservada. O acumulado mantém registros de agosto sem classificação de AP, representados como SEM AP (AGO).",
     "area_planejamento_setembro_2025": {
       "total": 21276,
       "classificados": 21276,
@@ -20,7 +20,21 @@
       "sem_classificacao": 0,
       "cobertura_percentual": 100.0
     },
-    "tratamento_interface": "Distribuição por área de planejamento disponível integralmente para setembro."
+    "tratamento_interface": "Setembro possui cobertura integral de AP. No acumulado, os registros históricos de agosto sem AP são exibidos como SEM AP (AGO), sem reclassificação retroativa.",
+    "area_planejamento_acumulado": {
+      "2025": {
+        "total": 224004,
+        "classificados": 223526,
+        "sem_classificacao": 478,
+        "cobertura_percentual": 99.7866
+      },
+      "2026": {
+        "total": 254772,
+        "classificados": 254071,
+        "sem_classificacao": 701,
+        "cobertura_percentual": 99.7249
+      }
+    }
   },
   "revisoes_nao_incorporadas": [
     {

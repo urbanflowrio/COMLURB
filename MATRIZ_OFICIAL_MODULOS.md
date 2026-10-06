@@ -1,6 +1,6 @@
 # HUB COMLURB | Matriz oficial de módulos
 
-Data da revisão: 15 de setembro de 2026.
+Data da revisão: 5 de outubro de 2026.
 
 Esta matriz registra o estado comprovado no repositório. Campo não comprovado não é preenchido por suposição.
 
@@ -15,8 +15,8 @@ Esta matriz registra o estado comprovado no repositório. Campo não comprovado 
 | Território Operacional | `territorial/` | Área responsável a confirmar | `territorial/data/unidades_comlurb.csv`; camadas em `assets/geojson/` | Cadastro estático. Data de referência não registrada | 342 unidades geocodificadas; 6 feições de Gerências DSU e 215 feições da estrutura territorial DLU. Navegação restaurada | Revisão técnica estrutural aprovada. Validação visual publicada pendente |
 | Gestão Estratégica de Pessoas | `pessoas/` | Área responsável a confirmar | Nenhuma fonte pública autorizada | Não se aplica | Bloqueado por LGPD até existir base agregada e anonimizada | Suspenso |
 | Performance dos Contratos de Receita | `balanco-receita/` | Área financeira responsável a confirmar | Google Sheets declarado em `balanco-receita/balanco-receita.js` | Exercício 2026 e exercícios anteriores conforme a fonte | Validador independente em `balanco-receita/validacao/`. Última conciliação conhecida sem divergência. Verificação técnica registrada em `balanco-receita/HOMOLOGACAO_TECNICA.md` | Homologação técnica aprovada. Validação visual publicada pendente |
-| Chamados 1746 | `chamados-1746/` | Área responsável a confirmar | Cubo analítico em `chamados-1746/chamados_cube.js`. GeoJSON em `chamados-1746/chamados_data.js` | Ago/2026. Corte em 04/09/2026 | Totais, séries e dimensões conciliados. AP de agosto com cobertura parcial documentada. Histórico congelado até jul/2026 | Homologação técnica aprovada com ressalva de AP. Validação visual publicada pendente |
-| Ouvidoria Operacional | `ouvidoria/` | Área responsável a confirmar | Cubo analítico em `ouvidoria/ouvidoria_cube.js`. GeoJSON em `ouvidoria/ouvidoria_data.js` | Ago/2026. Corte em 04/09/2026 | Conciliação interna sem divergência. AP de agosto com cobertura parcial. Exclusão da PCO sem base bruta no pacote para reexecução | Homologação técnica aprovada com ressalvas de AP e rastreabilidade da exclusão da PCO. Validação visual publicada pendente |
+| Chamados 1746 | `chamados-1746/` | Área responsável a confirmar | Cubo analítico em `chamados-1746/chamados_cube.js`. GeoJSON em `chamados-1746/chamados_data.js` | Set/2026. Corte em 05/10/2026 | Série oficial preservada. Histórico congelado até ago/2026. AP histórica de agosto representada por `SEM AP (AGO)`. Subtipos de PAPELEIRA com ressalva de homogeneidade. Cobertura cartográfica 2026 acumulada de 99,998% por ausência de polígono rastreado para Imperial de São Cristóvão | Correções pós-auditoria executadas. Nova auditoria independente pendente |
+| Ouvidoria Operacional | `ouvidoria/` | Área responsável a confirmar | Cubo analítico em `ouvidoria/ouvidoria_cube.js`. GeoJSON em `ouvidoria/ouvidoria_data.js` | Set/2026. Corte em 05/10/2026 | Série operacional oficial preservada. Histórico congelado até ago/2026. AP histórica de agosto representada por `SEM AP (AGO)`. PCO mantido institucionalmente e excluído somente da análise operacional | Correções pós-auditoria executadas. Nova auditoria independente pendente |
 
 ## Fora da Home
 

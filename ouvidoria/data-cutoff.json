@@ -7,7 +7,7 @@
   "fonte_geografica": "ouvidoria_data.js",
   "situacao_tecnica": "validado",
   "qualidade": {
-    "conciliacao_interna": "sem_divergencia",
+    "conciliacao_interna": "Conciliação dos totais operacionais preservada. O acumulado mantém registros de agosto sem classificação de AP, representados como SEM AP (AGO).",
     "regra_pco": "PCO mantido na base institucional e excluído das análises operacionais",
     "pco_setembro_2026": 174,
     "area_planejamento_setembro_2025": {
@@ -21,7 +21,21 @@
       "sem_classificacao": 0,
       "cobertura_percentual": 100.0
     },
-    "tratamento_interface": "Distribuição por área de planejamento disponível integralmente para setembro."
+    "tratamento_interface": "Setembro possui cobertura integral de AP. No acumulado, os registros históricos de agosto sem AP são exibidos como SEM AP (AGO), sem reclassificação retroativa.",
+    "area_planejamento_acumulado": {
+      "2025": {
+        "total": 25495,
+        "classificados": 25421,
+        "sem_classificacao": 74,
+        "cobertura_percentual": 99.7097
+      },
+      "2026": {
+        "total": 30349,
+        "classificados": 30233,
+        "sem_classificacao": 116,
+        "cobertura_percentual": 99.6178
+      }
+    }
   },
   "revisoes_nao_incorporadas": [
     {

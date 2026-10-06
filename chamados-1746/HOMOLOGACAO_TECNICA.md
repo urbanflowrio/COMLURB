@@ -69,3 +69,39 @@ O ranking mensal de AP permanece oculto em agosto para impedir uma leitura incom
 ## Critério para homologação final
 
 Após a publicação, testar em desktop e celular: carregamento, Home, alternância entre acumulado e agosto, filtros, drill-down de tipo e subtipo, mapa, tabelas e mensagens de ausência de AP. Registrar aprovador funcional e resultado em `BASELINE_HOMOLOGACAO.md`.
+
+
+---
+
+# Registro de homologação técnica — SET/2026
+
+Identificação: `CHA-2026-10-05-TEC-01`.
+
+## Escopo
+
+- competência mais recente: setembro/2026;
+- data de corte: 05/10/2026;
+- histórico congelado até agosto/2026;
+- total oficial Set/2026: 24.695;
+- acumulado oficial Jan–Set/2026: 254.772;
+- fonte analítica: `chamados_cube.js`;
+- fonte geográfica: `chamados_data.js`.
+
+## Ressalvas vigentes
+
+- Agosto/2025 (478) e agosto/2026 (701) permanecem sem classificação de AP no histórico congelado e são representados como `SEM AP (AGO)`, sem reclassificação retroativa.
+- Os subtipos de PAPELEIRA mudaram de regra de classificação a partir de agosto; a comparação acumulada desses subtipos não é homogênea.
+- Por decisão de governança no fechamento SET/2026, `IMPERIAL DE SAO CRISTOVAO` é tratado exclusivamente no join cartográfico como equivalente ao polígono `SAO CRISTOVAO`. O join agrega os volumes de todos os nomes do cubo que apontam para a mesma chave geográfica antes do desenho do mapa; o nome oficial do cubo não é alterado. Cobertura cartográfica: 100%.
+- Datas de corte individuais de Jan–Jul/2026 não foram localizadas na documentação disponível e permanecem `NÃO RASTREADO` na base auditável.
+
+## Integridade dos arquivos principais após correção pós-auditoria
+
+| Arquivo | SHA-256 |
+|---|---|
+| `index.html` | `fc6d56bfa85b488bdf81b014108a54aa70d3c7190084ccf38a622224c7963713` |
+| `chamados_data.js` | `b6a8889e39de9faf590a61d957fa47cb5461cefd8bd5f0cf2afb957a2d68d34b` |
+| `chamados_cube.js` | `3e1f33732b76384b00c44a208b0808f6196df34257d5f7531285cee55b08a201` |
+| `data-cutoff.json` | `173ba46bba3cd6702e8f8a1a9ae9fe2c4c66c9db69d497ba68b17801fbc4940c` |
+| Base auditável pós-auditoria | `108745d02b2b60ea7b1d7d3f88b1943a214e527e5989ad36dd5f6bad67a4be0c` |
+
+Status deste registro: correções executadas; sujeito à auditoria independente de aceite T1–T10.

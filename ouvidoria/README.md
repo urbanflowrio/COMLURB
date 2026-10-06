@@ -15,7 +15,7 @@ Painel executivo interativo das ouvidorias operacionais da COMLURB.
 ## Corte e atualização
 
 - Competência mais recente: setembro/2026
-- Data de corte deste pacote: 04/09/2026
+- Data de corte deste pacote: 05/10/2026
 - Regra histórica: janeiro a agosto permanece congelado conforme os fechamentos anteriores; setembro foi incorporado como nova competência.
 - Retificações retroativas devem ser registradas e autorizadas separadamente, sem reprocessamento silencioso do histórico fechado.
 
@@ -37,6 +37,6 @@ Para atualizar o módulo, publique em conjunto `index.html`, `ouvidoria_data.js`
 
 ## Qualidade conhecida
 
-Os totais, séries mensais, tipos, subtipos, gerências, áreas de planejamento e bairros de setembro foram conciliados sem divergência. Setembro/2026 possui cobertura de AP de 100%. O PCO permanece na base institucional e é excluído somente das análises operacionais. Revisões retroativas permanecem documentadas fora da série oficial.
+Os totais e a série operacional oficial de setembro foram preservados. Setembro/2026 possui cobertura de AP de 100%. No acumulado, os registros de agosto sem AP permanecem congelados e são representados como `SEM AP (AGO)`. O PCO permanece na base institucional e é excluído somente das análises operacionais. Revisões retroativas permanecem documentadas fora da série oficial.
 
 A exclusão dos registros tratados internamente pela PCO está declarada no escopo, mas não pode ser reexecutada ou auditada somente com os arquivos agregados deste pacote. A comprovação exige a base bruta e a regra de exclusão aplicada.

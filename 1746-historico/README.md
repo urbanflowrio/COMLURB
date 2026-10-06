@@ -1,15 +1,10 @@
-# 1746 — História 2026
+# 1746 Histórico — Jan/2025 a Set/2026
 
-Módulo analítico independente para leitura Jan–Set/2026.
+Módulo executivo separado para leitura temporal e territorial do relacionamento com o cidadão.
 
-## Governança
-- Fonte: séries oficiais consolidadas em `chamados-1746/chamados_cube.js` e `ouvidoria/ouvidoria_cube.js`.
-- Data de corte vigente: 05/10/2026.
-- Jan–Jun: leitura histórica construída sobre a série oficial consolidada.
-- Jul/Ago/Set: valores mantidos exatamente como fechados/publicados no HUB.
-- PCO: excluído da camada operacional de Ouvidoria.
-- Revisões retroativas da fonte não alteram fechamentos já congelados.
-- Este módulo não altera Chamados 1746 nem Ouvidoria; é apenas uma camada de leitura executiva.
-
-## Instalação
-Copiar a pasta `1746-historico/` para a raiz do repositório COMLURB. O módulo usa apenas `index.html`, `data.js` e a logo já existente em `assets/logos/`.
+## Regras
+- Fonte exclusiva: cubos oficiais homologados no fechamento SET/2026.
+- Jul/Ago/Set 2026 são resultados publicados preservados.
+- PCO permanece fora da camada operacional de Ouvidorias.
+- Dimensões: AP, gerência, bairro, tipo e subtipo. SUP não faz parte do escopo.
+- A timeline compara Jan–Set/2025 com Jan–Set/2026. Out–Dez/2025 não entram porque não pertencem ao recorte comparável oficial homologado atual.

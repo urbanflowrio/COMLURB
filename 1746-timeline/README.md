@@ -1,12 +1,15 @@
-# 1746 Timeline — versão editorial enxuta
+# 1746 Timeline Executiva
 
-Módulo executivo independente, com foco em leitura rápida.
+Módulo independente do HUB COMLURB.
 
-Estrutura:
-- headline central
-- três métricas de contexto
-- uma única timeline Jan–Set
-- quatro momentos de virada
-- três conclusões executivas
+## Conceito
+Leitura editorial enxuta + drill-down sob demanda.
 
-Sem grade de cards e sem excesso de barras.
+## Drill-down
+- Jan–Set acumulado: Tipo, AP, Gerência, Bairro e Subtipo.
+- Jan–Jun mensal: Tipo, a partir da série mensal oficialmente preservada.
+- Jul–Set mensal: dimensões legitimamente disponíveis nos fechamentos congelados.
+- Agosto mantém SEM AP (AGO) explícito, sem redistribuição.
+
+## Fonte
+Série oficial consolidada SET/2026 e matriz histórica auditada do módulo 1746-historico.

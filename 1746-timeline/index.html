@@ -72,6 +72,20 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
  .wrap{padding:24px 18px 42px}.timeline{grid-template-columns:repeat(3,1fr);row-gap:25px;padding-top:18px}.timeline:before{display:none}
  .turns,.takeaways{grid-template-columns:1fr}.turn{padding-right:0}.row{grid-template-columns:1.4fr .7fr .7fr}.row .rateCell{display:none}
 }
+
+.compareBox{
+  margin:16px 0 6px;padding:13px 14px;border:1px solid #21415d;border-radius:12px;
+  background:#0b1d30;color:#c9d7e3;font-size:11.5px;line-height:1.55
+}
+.compareBox b{color:#fff}
+.compareBox .taxaExp{display:block;margin-top:7px;color:#9fb4c7}
+.rankHeader{
+  display:grid;grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(85px,.65fr));
+  gap:11px;padding:9px 3px;border-top:1px solid #29435c;border-bottom:1px solid #29435c;
+  color:#8ea5b9;font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.05em
+}
+.rankHeader div:not(:first-child){text-align:right}
+
 </style>
 </head>
 <body>
@@ -147,6 +161,7 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
     <div class="drawerKicker" id="drawerKicker"></div>
     <h2 id="drawerTitle"></h2>
     <div class="drawerLead" id="drawerLead"></div>
+    <div class="compareBox" id="compareBox"></div>
     <div class="drawerMetrics" id="drawerMetrics"></div>
     <div class="tabs" id="tabs"></div>
     <div class="exploreLine"><span id="rankLabel"></span><button class="sortBtn" id="sortBtn" onclick="toggleSort()">alternar critério</button></div>
@@ -206,15 +221,30 @@ function monthLead(x){
  if(x.mes==='Junho') return 'Chamados praticamente estáveis frente a 2025, com aumento das ouvidorias. O ponto de atenção é o descolamento entre volume e manifestações.';
  if(x.mes==='Julho') return 'A demanda volta a crescer com força. Para este mês, o recorte territorial respeita as limitações do fechamento original.';
  if(x.mes==='Agosto') return 'Maior volume de chamados do período. O detalhamento territorial preserva o residual SEM AP (AGO), sem redistribuição.';
- if(x.mes==='Setembro') return 'Redução frente a agosto e taxa por mil próxima de 100. O drill-down mostra onde ainda houve contribuição positiva para a variação anual.';
+ if(x.mes==='Setembro') return 'Este quadro compara setembro/2026 com setembro/2025. O volume total caiu em relação a agosto, mas aqui o foco é entender quais serviços e territórios aumentaram ou reduziram frente ao mesmo mês do ano anterior.';
  return 'Leitura do mês comparada ao mesmo período de 2025. O detalhamento disponível segue a granularidade legitimamente preservada no fechamento.';
 }
 function setMetrics(c26,c25,o26,o25){
  const r26=rate(o26,c26),r25=rate(o25,c25);
+ const period = ctx.mode==='month' ? ctx.month+'/2025' : 'Jan–Set/2025';
+ const current = ctx.mode==='month' ? ctx.month+'/2026' : 'Jan–Set/2026';
+ const rateVar = (r25&&r26)?(r26/r25-1):null;
+ const rateText = rateVar==null ? 'sem comparação disponível' :
+   (rateVar>0 ? 'subiu '+pct(rateVar)+' em relação a '+period :
+    rateVar<0 ? 'caiu '+pct(Math.abs(rateVar))+' em relação a '+period :
+    'ficou estável em relação a '+period);
+
+ document.getElementById('compareBox').innerHTML=`
+   <b>Como ler este quadro</b><br>
+   Todos os valores de <b>${current}</b> estão sendo comparados com o <b>mesmo período de 2025</b>.
+   <span class="taxaExp"><b>Taxa por mil:</b> mostra quantas ouvidorias foram registradas para cada 1.000 chamados.
+   Exemplo: uma taxa de 100/mil significa 100 ouvidorias para cada 1.000 chamados.
+   Neste recorte, a taxa ${rateText}.</span>`;
+
  document.getElementById('drawerMetrics').innerHTML=`
- <div class="dm"><b>${pt(c26)}</b><span>chamados · ${pct(c26/c25-1)}</span></div>
- <div class="dm"><b>${pt(o26)}</b><span>ouvidorias · ${pct(o26/o25-1)}</span></div>
- <div class="dm"><b>${rateFmt(r26)}</b><span>taxa · ${r25?pct(r26/r25-1):'—'}</span></div>`;
+ <div class="dm"><b>${pt(c26)}</b><span>chamados em ${current}<br>${pct(c26/c25-1)} vs ${period}</span></div>
+ <div class="dm"><b>${pt(o26)}</b><span>ouvidorias em ${current}<br>${pct(o26/o25-1)} vs ${period}</span></div>
+ <div class="dm"><b>${rateFmt(r26)}</b><span>ouvidorias por 1.000 chamados<br>${rateVar==null?'—':(rateVar>=0?'+':'')+pct(rateVar)} vs ${period}</span></div>`;
 }
 const labels={tipos:'Tipo',aps:'AP',gerencias:'Gerência',bairros:'Bairro',subtipos:'Subtipo'};
 function buildTabs(list){
@@ -245,7 +275,9 @@ function render(){
  const metric = r => ctx.sort==='volume' ? ((r.c2026||0)+(r.o2026||0)) : ((r.cdif??r.dif??0)+(r.odif??0));
  rows.sort((a,b)=>metric(b)-metric(a));
  rows=rows.slice(0,12);
- document.getElementById('rankLabel').textContent=(ctx.sort==='dif'?'Maior contribuição para a variação':'Maior volume em 2026')+' · '+labels[ctx.dim];
+ document.getElementById('rankLabel').textContent=(ctx.sort==='dif'
+ ? 'Ordenado pelo que mais aumentou de 2025 para 2026'
+ : 'Ordenado pelo maior volume em 2026')+' · '+labels[ctx.dim];
  document.getElementById('sortBtn').textContent=ctx.sort==='dif'?'ver por volume':'ver por variação';
  const out=rows.map(r=>{
    const c26=r.c2026??r.v2026??null,c25=r.c2025??r.v2025??null,o26=r.o2026??null,o25=r.o2025??null;
@@ -254,12 +286,19 @@ function render(){
    const reason=r.reason||'';
    return `<div class="row">
      <div><div class="name">${r.nome||r.tipo||'—'}</div>${reason?`<div class="small">${reason}</div>`:''}</div>
-     <div class="cell"><b>${c26==null?'—':pt(c26)}</b>cham. ${cd==null?'':`<span class="${cd>=0?'pos':'neg'}">${cd>=0?'+':''}${pt(cd)}</span>`}</div>
-     <div class="cell"><b>${o26==null?'—':pt(o26)}</b>ouv. ${od==null?'':`<span class="${od>=0?'pos':'neg'}">${od>=0?'+':''}${pt(od)}</span>`}</div>
+     <div class="cell"><b>${c26==null?'—':pt(c26)}</b>cham. ${cd==null?'':`<span class="${cd>=0?'pos':'neg'}">${cd>=0?'+':''}${pt(cd)} vs 2025</span>`}</div>
+     <div class="cell"><b>${o26==null?'—':pt(o26)}</b>ouv. ${od==null?'':`<span class="${od>=0?'pos':'neg'}">${od>=0?'+':''}${pt(od)} vs 2025</span>`}</div>
      <div class="cell rateCell"><b>${rateFmt(rr)}</b>taxa</div>
    </div>`;
  }).join('');
- document.getElementById('rank').innerHTML=out||'<div class="empty">Não há recorte legítimo nesta dimensão para esta competência.</div>';
+ document.getElementById('rank').innerHTML=(out
+ ? `<div class="rankHeader">
+      <div>${labels[ctx.dim]}</div>
+      <div>Chamados 2026<br><span>dif. vs 2025</span></div>
+      <div>Ouvidorias 2026<br><span>dif. vs 2025</span></div>
+      <div>Taxa 2026<br><span>por 1.000 chamados</span></div>
+    </div>`+out
+ : '<div class="empty">Não há recorte legítimo nesta dimensão para esta competência.</div>');
  let method='Série oficial por data de corte. Valores de 2026 comparados ao mesmo recorte de 2025.';
  if(ctx.mode==='month' && ['Julho','Agosto','Setembro'].includes(ctx.month)){
    method+=' O detalhamento mensal utiliza os recortes congelados dos respectivos fechamentos.';

@@ -13,3 +13,6 @@ Leitura editorial enxuta + drill-down sob demanda.
 
 ## Fonte
 Série oficial consolidada SET/2026 e matriz histórica auditada do módulo 1746-historico.
+
+## Ajuste didático
+O drill-down informa explicitamente que 2026 é comparado ao mesmo período de 2025 e explica a taxa por mil em linguagem simples.

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1746 · Timeline Jan–Set/2026 | HUB COMLURB</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#0b1b2f;--panel2:#0d2035;--line:#203a56;
+  --text:#f4f8fc;--muted:#9eb3c7;--cyan:#5ee7e0;--amber:#f3c969;
+  --orange:#ff8b4a;--green:#69dda7;--blue:#4ca5ff;--shadow:0 18px 50px rgba(0,0,0,.24)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:radial-gradient(circle at 20% 0,#12304b 0,transparent 33%),var(--bg);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)
+}
+.shell{max-width:1480px;margin:auto;padding:22px}
+.top,.panel{border:1px solid var(--line);background:rgba(9,27,46,.94);border-radius:18px;box-shadow:var(--shadow)}
+.top{padding:22px 24px;display:flex;justify-content:space-between;gap:20px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:850}
+.top h1{font-size:clamp(28px,4vw,48px);margin:7px 0}
+.sub{color:var(--muted);max-width:960px;line-height:1.55}
+.stamp{border:1px solid #31526f;border-radius:12px;padding:10px 12px;height:max-content;color:#bdd0e2;font-size:12px}
+.nav{position:sticky;top:8px;z-index:20;display:flex;gap:8px;overflow:auto;margin:14px 0;padding:10px;background:rgba(7,17,31,.9);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:14px}
+.nav a{border:1px solid var(--line);background:#0b1a2c;color:#c4d4e4;padding:9px 12px;border-radius:10px;text-decoration:none;font-weight:750;white-space:nowrap}
+.nav a:hover{background:#153552;color:white;border-color:#3b6b92}
+.panel{padding:18px;margin-top:16px;scroll-margin-top:82px}
+.head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:14px}
+.head h2{margin:0;font-size:22px}.head p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+.heroGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{padding:18px;border:1px solid var(--line);background:linear-gradient(160deg,#0d2138,#09192a);border-radius:16px}
+.kpi .tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);font-weight:900}
+.kpi .v{font-size:29px;font-weight:850;margin:6px 0}.kpi .d{font-size:12px;color:var(--muted)}
+.heroMsg{margin-top:14px;padding:16px;border-left:3px solid var(--cyan);background:#10243a;border-radius:12px;color:#dce8f4;line-height:1.55;font-size:13px}
+.heroMsg strong{color:white}
+.phase{margin-top:14px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#09192a}
+.phaseHead{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 14px;background:#102943}
+.phaseHead.hot{background:#402c16}.phaseHead b{font-size:13px}.phaseHead span{font-size:11px;color:#b6c8d9}
+.monthGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px}
+.monthCard{padding:14px;border:1px solid #294866;border-radius:14px;background:#0b1a2c}
+.monthCard.hot{border-color:#6d4f24;background:#171d25}
+.monthTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.monthName{font-size:18px;font-weight:900}.monthTag{font-size:10px;font-weight:850;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan)}
+.monthCard.hot .monthTag{color:var(--amber)}
+.badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:850;letter-spacing:.04em}
+.b-up{background:#3a3218;color:#f3d985}.b-down{background:#143b32;color:#86efc2}
+.monthMetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}
+.mmetric{padding:9px;border-radius:10px;background:#0d2035;border:1px solid #223f5c}
+.mmetric small{display:block;color:var(--muted);font-size:9px}.mmetric b{display:block;font-size:15px;margin-top:3px}
+.note{font-size:10px;color:var(--muted)}
+.monthInsight{margin-top:10px;padding-top:10px;border-top:1px solid #223f5c;color:#c9d7e4;font-size:11.5px;line-height:1.45}
+.story{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.storyCard{padding:16px;border:1px solid var(--line);border-radius:16px;background:#0b1a2c}
+.storyCard h3{font-size:16px;margin:0 0 7px}.storyCard p{margin:0;color:#c9d7e4;font-size:12px;line-height:1.55}
+.timelineLine{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tpill{padding:8px 10px;border-radius:999px;background:#102943;border:1px solid #31526f;color:#dce8f4;font-size:11px;font-weight:800}
+.arrow{color:#64829d;font-weight:900}
+.close{padding:18px;border:1px solid #31526f;border-radius:16px;background:linear-gradient(145deg,#0d2138,#0a1929)}
+.close h3{margin:0 0 8px;font-size:20px}.close p{margin:0;color:#c9d7e4;line-height:1.65;font-size:13px}
+.footer{padding:25px 4px 45px;color:#7189a1;font-size:11px}
+@media(max-width:980px){.heroGrid,.story{grid-template-columns:1fr 1fr}.monthGrid{grid-template-columns:1fr}}
+@media(max-width:650px){.shell{padding:10px}.top{flex-direction:column}.heroGrid,.story{grid-template-columns:1fr}.monthMetrics{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+  <div>
+    <div class="eyebrow">Relacionamento com o Cidadão · 1746</div>
+    <h1>Timeline executiva · Jan–Set/2026</h1>
+    <div class="sub">
+      Leitura mês a mês da evolução dos chamados e das ouvidorias operacionais, sempre em comparação com o mesmo mês de 2025.
+      O foco é identificar mudança de ritmo, pressão de volume e moderação ao longo do ano.
+    </div>
+  </div>
+  <div class="stamp">Leitura executiva<br><b>Jan–Set/2026</b></div>
+</header>
+
+<nav class="nav">
+  <a href="../">← HUB</a>
+  <a href="#sintese">Síntese</a>
+  <a href="#timeline">Timeline</a>
+  <a href="#historia">História do período</a>
+  <a href="../1746-historico/">Histórico 1746</a>
+</nav>
+
+<section id="sintese" class="panel">
+  <div class="head">
+    <div><h2>Visão executiva</h2><p>O acumulado contextualiza a trajetória, mas a história aparece na sequência mensal.</p></div>
+  </div>
+  <div class="heroGrid">
+    <div class="kpi"><div class="tag">Chamados Jan–Set</div><div class="v">254.772</div><div class="d">+13,7% frente a 2025</div></div>
+    <div class="kpi"><div class="tag">Ouvidorias operacionais</div><div class="v">30.349</div><div class="d">+19,0% frente a 2025</div></div>
+    <div class="kpi"><div class="tag">Taxa acumulada</div><div class="v">119,1 / mil</div><div class="d">113,8 / mil em 2025 · +4,7%</div></div>
+    <div class="kpi"><div class="tag">Fechamento do período</div><div class="v">Set · 100 / mil</div><div class="d">queda contínua da taxa desde julho</div></div>
+  </div>
+  <div class="heroMsg">
+    <strong>Mensagem central:</strong> 2026 não apresenta uma trajetória linear de piora.
+    O ano combina expansão de demanda, picos de pressão e uma moderação clara no fechamento do período.
+    Chamados, ouvidorias e taxa precisam ser lidos em conjunto.
+  </div>
+</section>
+
+<section id="timeline" class="panel">
+  <div class="head">
+    <div><h2>Jan–Set · trajetória mês a mês</h2><p>Nove movimentos organizados em três fases executivas.</p></div>
+  </div>
+  <div id="phases"></div>
+</section>
+
+<section id="historia" class="panel">
+  <div class="head">
+    <div><h2>A história do período</h2><p>O que a sequência mensal revela para a gestão.</p></div>
+  </div>
+  <div class="story">
+    <div class="storyCard">
+      <h3>1 · Jan–Mar · recomposição</h3>
+      <p>Janeiro começa abaixo de 2025. Fevereiro retoma o crescimento sem aumento proporcional da taxa. Março muda o ritmo e concentra o maior salto de demanda do período.</p>
+    </div>
+    <div class="storyCard">
+      <h3>2 · Abr–Jun · oscilação</h3>
+      <p>Abril mostra ouvidorias crescendo acima da demanda, maio arrefece e junho vira ponto de inflexão: o volume de chamados fica praticamente estável, mas as ouvidorias sobem.</p>
+    </div>
+    <div class="storyCard">
+      <h3>3 · Jul–Set · pressão e moderação</h3>
+      <p>Julho inaugura novo patamar de volume, agosto registra o pico operacional e setembro fecha o trimestre com queda simultânea de chamados, ouvidorias e taxa por mil.</p>
+    </div>
+  </div>
+  <div class="timelineLine">
+    <span class="tpill">Jan · recuo</span><span class="arrow">→</span>
+    <span class="tpill">Fev · retomada</span><span class="arrow">→</span>
+    <span class="tpill">Mar · aceleração</span><span class="arrow">→</span>
+    <span class="tpill">Abr · pressão relativa</span><span class="arrow">→</span>
+    <span class="tpill">Mai · arrefecimento</span><span class="arrow">→</span>
+    <span class="tpill">Jun · inflexão</span><span class="arrow">→</span>
+    <span class="tpill">Jul · novo patamar</span><span class="arrow">→</span>
+    <span class="tpill">Ago · pico</span><span class="arrow">→</span>
+    <span class="tpill">Set · moderação</span>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="close">
+    <div class="eyebrow">Fechamento executivo</div>
+    <h3>Expansão → pressão → acomodação</h3>
+    <p>
+      Entre janeiro e setembro, a demanda cresceu de forma irregular, com picos claros em março e no terceiro trimestre.
+      Agosto foi o maior ponto de pressão em volume, mas a taxa de ouvidoria já estava em queda.
+      Setembro encerra o período em moderação, com redução simultânea de chamados e manifestações.
+      A leitura do período é, portanto, de expansão com picos de pressão — não de deterioração contínua.
+    </p>
+  </div>
+</section>
+
+<div class="footer">HUB COMLURB · Timeline executiva 1746 · Jan–Set/2026</div>
+</div>
+
+<script>
+const rows=[
+  {m:'Jan',c25:34305,c26:30475,o25:4046,o26:3668,tag:'Recuo de demanda',
+   insight:'O ano começa abaixo de 2025 em volume de chamados. A taxa permanece muito próxima da referência anterior, sem sinal de pressão adicional relevante.'},
+  {m:'Fev',c25:26209,c26:31103,o25:3635,o26:3667,tag:'Retomada',
+   insight:'A demanda cresce frente a 2025, mas as ouvidorias ficam praticamente estáveis. A taxa recua, indicando absorção do aumento de volume sem crescimento proporcional das manifestações.'},
+  {m:'Mar',c25:24281,c26:35562,o25:3416,o26:4458,tag:'Pico de expansão',
+   insight:'Março concentra a maior aceleração dos chamados no período. As ouvidorias também sobem, configurando o primeiro grande pico de pressão operacional de 2026.'},
+  {m:'Abr',c25:25905,c26:29537,o25:2845,o26:3677,tag:'Ouvidoria acelera',
+   insight:'Os chamados permanecem acima de 2025, mas as ouvidorias crescem em ritmo mais forte. É um mês em que percepção e demanda se afastam e exigem leitura conjunta.'},
+  {m:'Mai',c25:27167,c26:24700,o25:3286,o26:3149,tag:'Arrefecimento',
+   insight:'Chamados e ouvidorias recuam frente ao ano anterior. O movimento de expansão observado em março e abril perde força.'},
+  {m:'Jun',c25:21308,c26:21542,o25:2247,o26:2764,tag:'Inflexão',
+   insight:'O volume de chamados fica praticamente estável frente a 2025, enquanto as ouvidorias sobem. Junho é um ponto de mudança na relação entre demanda e manifestação.'},
+  {m:'Jul',c25:21789,c26:27553,o25:2009,o26:3236,tag:'Mudança de patamar',
+   insight:'Julho abre o terceiro trimestre com forte expansão de demanda. A comparação da taxa com 2025 exige contexto histórico, especialmente em Remoção Gratuita.'},
+  {m:'Ago',c25:21764,c26:29605,o25:2005,o26:3254,tag:'Pico de pressão',
+   insight:'Agosto registra o maior volume de chamados entre julho e setembro. Mesmo com maior pressão operacional, a taxa por mil recua em relação a julho.'},
+  {m:'Set',c25:21276,c26:24695,o25:2006,o26:2476,tag:'Moderação',
+   insight:'O trimestre termina com queda simultânea de chamados e ouvidorias. A taxa recua novamente e se aproxima do patamar observado no ano anterior.'}
+];
+const phases=[
+  {title:'1º movimento · recomposição',period:'Jan–Mar',hot:false,idx:[0,1,2]},
+  {title:'2º movimento · oscilação',period:'Abr–Jun',hot:false,idx:[3,4,5]},
+  {title:'3º movimento · pressão e moderação',period:'Jul–Set',hot:true,idx:[6,7,8]}
+];
+const num=n=>n.toLocaleString('pt-BR');
+const pct=x=>(x*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';
+const rate=x=>Math.round(x).toLocaleString('pt-BR');
+const html=phases.map(ph=>`
+  <div class="phase">
+    <div class="phaseHead ${ph.hot?'hot':''}"><b>${ph.title}</b><span>${ph.period}</span></div>
+    <div class="monthGrid">
+      ${ph.idx.map(i=>{
+        const x=rows[i],cv=x.c26/x.c25-1,ov=x.o26/x.o25-1,r25=x.o25/x.c25*1000,r26=x.o26/x.c26*1000;
+        return `<div class="monthCard ${ph.hot?'hot':''}">
+          <div class="monthTop">
+            <div><div class="monthName">${x.m}</div><div class="monthTag">${x.tag}</div></div>
+            <span class="badge ${r26<=r25?'b-down':'b-up'}">${rate(r26)} / mil</span>
+          </div>
+          <div class="monthMetrics">
+            <div class="mmetric"><small>Chamados</small><b>${num(x.c26)}</b><span class="note">${cv>=0?'+':''}${pct(cv)} a/a</span></div>
+            <div class="mmetric"><small>Ouvidorias</small><b>${num(x.o26)}</b><span class="note">${ov>=0?'+':''}${pct(ov)} a/a</span></div>
+            <div class="mmetric"><small>Taxa 2025</small><b>${rate(r25)}</b><span class="note">por mil</span></div>
+          </div>
+          <div class="monthInsight">${x.insight}</div>
+        </div>`
+      }).join('')}
+    </div>
+  </div>`).join('');
+document.getElementById('phases').innerHTML=html;
+</script>
+</body>
+</html>

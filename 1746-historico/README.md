@@ -1,10 +1,18 @@
-# 1746 Histórico — Jan/2025 a Set/2026
+# 1746 Histórico — V4.1
 
-Módulo executivo separado para leitura temporal e territorial do relacionamento com o cidadão.
+Baseline auditada para leitura comparável jan–set/2025 x jan–set/2026.
 
-## Regras
-- Fonte exclusiva: cubos oficiais homologados no fechamento SET/2026.
-- Jul/Ago/Set 2026 são resultados publicados preservados.
-- PCO permanece fora da camada operacional de Ouvidorias.
-- Dimensões: AP, gerência, bairro, tipo e subtipo. SUP não faz parte do escopo.
-- A timeline compara Jan–Set/2025 com Jan–Set/2026. Out–Dez/2025 não entram porque não pertencem ao recorte comparável oficial homologado atual.
+## Regras de padronização nominal formalizadas em 08/10/2026
+
+1. `AVALIAÇÃO DE PODA DE ÁRVORES EM LOGRADOURO` e `AVALIAÇÃO DE PODA DE ÁRVORES EM LOGRADOURO (180 DIAS)` são tratados como o MESMO SERVIÇO na camada analítica, sob o rótulo padronizado `AVALIAÇÃO DE PODA DE ÁRVORES EM LOGRADOURO`.
+2. `INSTALAÇÃO E/OU RETIRADA DE PAPELEIRA` e `LIMPEZA DE PAPELEIRA, CONTÊINER E CAÇAMBA COMLURB` são SERVIÇOS DISTINTOS e nunca são consolidados entre si.
+3. O rótulo bruto permanece preservado na fonte. A regra atua somente na camada analítica.
+4. A padronização não autoriza criar taxa por subtipo onde Chamados e Ouvidorias não tenham par comparável legítimo.
+5. Jul/Ago/Set 2026 permanecem congelados conforme os fechamentos homologados; nenhuma nova fotografia bruta recalcula esses resultados.
+
+## Governança
+
+- Revisões retroativas permanecem como `Revisão não incorporada`.
+- Julho × AP continua somente em volume de Ouvidoria.
+- Agosto × AP mantém `SEM AP (AGO)` como resíduo explícito.
+- Remoção Gratuita 2025 permanece tratada como descontinuidade não qualificada, sem inferência causal.

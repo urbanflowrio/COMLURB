@@ -1,14 +1,8 @@
-# 1746 Timeline
+# 1746 Timeline Executiva — V2
 
-Módulo executivo independente do HUB COMLURB.
+Módulo editorial independente do HUB COMLURB para leitura Jan–Set/2026.
 
-## Escopo
-- Jan–Set/2026 x mesmo período de 2025
-- Chamados 1746
-- Ouvidorias operacionais
-- Taxa por mil chamados
-- Narrativa executiva mês a mês
-
-## Governança
-Este módulo não substitui os módulos oficiais `chamados-1746`, `ouvidoria` nem `1746-historico`.
-É uma camada de leitura executiva.
+- foco em trajetória e pontos de virada;
+- Chamados, Ouvidorias e taxa por mil em trilhas separadas;
+- narrativa em cinco atos;
+- sem alteração nos módulos oficiais ou no histórico 1746.

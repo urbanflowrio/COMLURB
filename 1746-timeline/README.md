@@ -1,8 +1,12 @@
-# 1746 Timeline Executiva — V2
+# 1746 Timeline — versão editorial enxuta
 
-Módulo editorial independente do HUB COMLURB para leitura Jan–Set/2026.
+Módulo executivo independente, com foco em leitura rápida.
 
-- foco em trajetória e pontos de virada;
-- Chamados, Ouvidorias e taxa por mil em trilhas separadas;
-- narrativa em cinco atos;
-- sem alteração nos módulos oficiais ou no histórico 1746.
+Estrutura:
+- headline central
+- três métricas de contexto
+- uma única timeline Jan–Set
+- quatro momentos de virada
+- três conclusões executivas
+
+Sem grade de cards e sem excesso de barras.

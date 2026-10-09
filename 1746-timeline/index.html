@@ -49,43 +49,53 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
 .take p{font-size:14px;line-height:1.6;margin:0;color:#e1e9f0}
 .foot{margin-top:68px;color:#667e94;font-size:10px}
 
-/* Drill-down */
-.overlay{position:fixed;inset:0;background:rgba(3,9,15,.68);backdrop-filter:blur(5px);z-index:50;opacity:0;pointer-events:none;transition:.18s}
+/* Drill-down em cascata — amplo e legível */
+.overlay{position:fixed;inset:0;background:rgba(3,9,15,.72);backdrop-filter:blur(6px);z-index:50;opacity:0;pointer-events:none;transition:.18s}
 .overlay.open{opacity:1;pointer-events:auto}
-.drawer{position:absolute;right:0;top:0;height:100%;width:min(820px,94vw);background:#081522;border-left:1px solid #29435c;box-shadow:var(--shadow);overflow:auto;padding:26px 26px 44px}
-.close{position:sticky;top:0;float:right;border:1px solid #355570;background:#0e2135;color:#d5e2ec;border-radius:9px;padding:8px 11px;cursor:pointer;z-index:2}
-.drawerKicker{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
-.drawer h2{font-size:30px;margin:7px 0 7px}.drawerLead{color:#aebfd0;font-size:13px;line-height:1.55;max-width:690px}
-.drawerMetrics{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0 18px;padding:15px 0;border-top:1px solid #1c354c;border-bottom:1px solid #1c354c}
-.dm b{font-size:20px}.dm span{display:block;color:#8198ad;font-size:10px;margin-top:2px}
-.tabs{display:flex;gap:7px;overflow:auto;margin:16px 0}.tab{border:0;background:transparent;color:#89a2b7;padding:8px 9px;border-bottom:2px solid transparent;cursor:pointer;font-size:11px;font-weight:850;white-space:nowrap}
-.tab.active{color:#fff;border-bottom-color:var(--cyan)}.tab[disabled]{opacity:.33;cursor:not-allowed}
-.exploreLine{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:17px 0 8px}
-.exploreLine span{font-size:11px;color:#8299ae}.sortBtn{border:0;background:transparent;color:#b7cadb;font-size:10px;cursor:pointer;text-decoration:underline}
-.rank{border-top:1px solid #172e43}
-.row{display:grid;grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(85px,.65fr));gap:11px;padding:11px 3px;border-bottom:1px solid #172e43;align-items:center}
-.row .name{font-size:12px;font-weight:750;color:#e0e9f1}.row .small{font-size:9px;color:#7990a5;margin-top:3px;line-height:1.3}
-.cell{font-size:11px;text-align:right;color:#c6d4df}.cell b{display:block;font-size:12px;color:#f0f5f9}.pos{color:#ffd094!important}.neg{color:#89ddb6!important}
-.method{margin-top:18px;padding-top:14px;border-top:1px solid #1c354c;color:#7890a5;font-size:10px;line-height:1.5}
-.empty{padding:24px 0;color:#849bad;font-size:12px}
+.drawer{
+  position:absolute;right:0;top:0;height:100%;width:min(1040px,96vw);
+  background:#081522;border-left:1px solid #29435c;box-shadow:var(--shadow);
+  overflow:auto;padding:34px 42px 56px
+}
+.close{position:sticky;top:0;float:right;border:1px solid #355570;background:#0e2135;color:#d5e2ec;border-radius:10px;padding:10px 14px;cursor:pointer;z-index:3;font-size:13px}
+.drawerKicker{color:var(--cyan);font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.drawer h2{font-size:38px;line-height:1.05;margin:10px 0 10px}
+.drawerLead{color:#b4c5d4;font-size:15px;line-height:1.6;max-width:820px}
+.guide{
+  margin:22px 0 20px;padding:16px 18px;border-left:3px solid var(--cyan);
+  background:#0b1d30;border-radius:10px;color:#d6e2eb;font-size:14px;line-height:1.6
+}
+.guide b{color:#fff}
+.drawerMetrics{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr));gap:14px;margin:22px 0 12px}
+.dm{padding:15px 16px;border:1px solid #213d57;border-radius:12px;background:#0a1b2d}
+.dm b{font-size:25px;line-height:1.1}.dm span{display:block;color:#94a9bb;font-size:11px;margin-top:7px;line-height:1.35}
+.breadcrumb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:26px 0 18px;padding-top:18px;border-top:1px solid #1c354c}
+.crumb{border:0;background:transparent;color:#8fa7ba;padding:5px 0;cursor:pointer;font-size:12px}.crumb.active{color:#fff;font-weight:850}.sep{color:#46647e;font-size:11px}
+.stepHead{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:10px 0 8px}
+.stepHead h3{margin:0;font-size:20px}.stepHead span{font-size:11px;color:#8197aa;text-align:right}
+.choiceList{border-top:1px solid #1c354c}
+.choice{
+  display:grid;grid-template-columns:minmax(280px,1.55fr) minmax(135px,.65fr) minmax(135px,.65fr) minmax(150px,.72fr) 32px;
+  gap:18px;align-items:center;padding:17px 6px;border-bottom:1px solid #172e43;cursor:pointer;transition:.12s
+}
+.choice:hover{background:#0b1c2c}
+.choice .name{font-size:15px;font-weight:800;color:#edf4f9;line-height:1.3}
+.choice .sub{font-size:10.5px;color:#8199ad;margin-top:5px}
+.num{text-align:right;font-size:11px;color:#91a6b8;line-height:1.35}
+.num b{display:block;color:#edf4f9;font-size:17px;margin-bottom:3px}
+.go{text-align:right;color:#5ee7e0;font-size:24px}
+.pos{color:#ffd08a!important}.neg{color:#80dcb0!important}.muted{color:#7f95a8!important}
+.notice{padding:22px 0;color:#9bb0c2;font-size:13px;line-height:1.65;max-width:820px}
+.finalCard{margin-top:18px;padding:22px;border:1px solid #29435c;border-radius:16px;background:#0b1d30}
+.finalCard h3{margin:0 0 10px;font-size:22px}.finalCard p{margin:0;color:#c7d4df;line-height:1.7;font-size:14px}
+.method{margin-top:22px;padding-top:16px;border-top:1px solid #1c354c;color:#7890a5;font-size:11px;line-height:1.55}
 @media(max-width:900px){
  .wrap{padding:24px 18px 42px}.timeline{grid-template-columns:repeat(3,1fr);row-gap:25px;padding-top:18px}.timeline:before{display:none}
- .turns,.takeaways{grid-template-columns:1fr}.turn{padding-right:0}.row{grid-template-columns:1.4fr .7fr .7fr}.row .rateCell{display:none}
+ .turns,.takeaways{grid-template-columns:1fr}.turn{padding-right:0}
+ .drawer{width:100vw;padding:24px 18px 42px}
+ .drawer h2{font-size:30px}.drawerMetrics{grid-template-columns:1fr}
+ .choice{grid-template-columns:1fr 90px 90px 26px;gap:10px}.choice .ratecol{display:none}
 }
-
-.compareBox{
-  margin:16px 0 6px;padding:13px 14px;border:1px solid #21415d;border-radius:12px;
-  background:#0b1d30;color:#c9d7e3;font-size:11.5px;line-height:1.55
-}
-.compareBox b{color:#fff}
-.compareBox .taxaExp{display:block;margin-top:7px;color:#9fb4c7}
-.rankHeader{
-  display:grid;grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(85px,.65fr));
-  gap:11px;padding:9px 3px;border-top:1px solid #29435c;border-bottom:1px solid #29435c;
-  color:#8ea5b9;font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.05em
-}
-.rankHeader div:not(:first-child){text-align:right}
-
 </style>
 </head>
 <body>
@@ -158,28 +168,28 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDrawer()">
   <aside class="drawer">
     <button class="close" onclick="closeDrawer()">Fechar</button>
-    <div class="drawerKicker" id="drawerKicker"></div>
+    <div class="drawerKicker">Drill-down em cascata</div>
     <h2 id="drawerTitle"></h2>
     <div class="drawerLead" id="drawerLead"></div>
-    <div class="compareBox" id="compareBox"></div>
+    <div class="guide" id="guide"></div>
     <div class="drawerMetrics" id="drawerMetrics"></div>
-    <div class="tabs" id="tabs"></div>
-    <div class="exploreLine"><span id="rankLabel"></span><button class="sortBtn" id="sortBtn" onclick="toggleSort()">alternar critério</button></div>
-    <div class="rank" id="rank"></div>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="stepHead"><h3 id="stepTitle"></h3><span id="stepHint"></span></div>
+    <div id="cascadeContent"></div>
     <div class="method" id="method"></div>
   </aside>
 </div>
 
 <script src="./data.js"></script>
+<script src="./cascade_data.js"></script>
 <script>
 const D=window.TIMELINE1746_DATA;
+const C=window.TIMELINE1746_CASCADE;
 const pt=n=>Number(n||0).toLocaleString('pt-BR');
 const pct=x=>x==null?'—':((x*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%');
-const rate=(o,c)=>(o!=null&&c>0)?(o/c*1000):null;
-const rateFmt=x=>x==null?'—':x.toLocaleString('pt-BR',{maximumFractionDigits:0})+' / mil';
+const rate=(o,c)=>(o!=null&&c>0)?o/c*1000:null;
+const rateFmt=x=>x==null?'—':Math.round(x).toLocaleString('pt-BR')+' / mil';
 const shortMonth=m=>m.slice(0,3);
-const monthMap={Julho:'july',Agosto:'august',Setembro:'september'};
-let ctx={mode:'acc',month:null,dim:'tipos',sort:'dif'};
 
 const cTot=D.monthly.reduce((a,x)=>a+x.c2026,0), oTot=D.monthly.reduce((a,x)=>a+x.o2026,0);
 const c25=D.monthly.reduce((a,x)=>a+x.c2025,0), o25=D.monthly.reduce((a,x)=>a+x.o2025,0);
@@ -196,120 +206,101 @@ document.getElementById('timeline').innerHTML=D.monthly.map(x=>`
    <div class="rate">${rateFmt(x.r2026).replace(' / mil','/mil')}</div>
  </div>`).join('');
 
-function openAccum(){
- ctx={mode:'acc',month:null,dim:'tipos',sort:'dif'};
- document.getElementById('drawerKicker').textContent='Drill-down · acumulado';
- document.getElementById('drawerTitle').textContent='Jan–Set/2026';
- document.getElementById('drawerLead').textContent='Explore as dimensões que mais contribuíram para a variação acumulada. O critério inicial é diferença absoluta entre 2026 e 2025.';
- setMetrics(cTot,c25,oTot,o25);
- buildTabs(['tipos','aps','gerencias','bairros','subtipos']);
- render();
- show();
+let S={period:null,svc:null,sub:null,ap:null,ger:null,stage:'service'};
+function periodData(){return C.full[S.period]||C.monthly[S.period]||{}}
+function compLabel(){return S.period==='Jan–Set/2026'?'Jan–Set/2025':S.period.replace('/2026','/2025')}
+function hasTerritory(){return !!C.full[S.period]}
+function currentSummary(){
+ let d=periodData(), s=S.svc?d[S.svc]?.summary:null;
+ if(S.sub) s=d[S.svc]?.subtipos?.[S.sub]?.summary||s;
+ return s;
 }
-function openMonth(m){
- const x=D.monthly.find(r=>r.mes===m); ctx={mode:'month',month:m,dim:'tipos',sort:'dif'};
- document.getElementById('drawerKicker').textContent='Drill-down · competência';
- document.getElementById('drawerTitle').textContent=m+'/2026';
- document.getElementById('drawerLead').textContent=monthLead(x);
- setMetrics(x.c2026,x.c2025,x.o2026,x.o2025);
- const extra=monthMap[m]?['tipos','aps','gerencias','bairros','subtipos']:['tipos'];
- buildTabs(extra);
- render(); show();
+function openAccum(){S={period:'Jan–Set/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};openDrawer()}
+function openMonth(m){S={period:m+'/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};openDrawer()}
+function openDrawer(){
+ document.getElementById('drawerTitle').textContent=S.period;
+ document.getElementById('drawerLead').textContent=`Todos os números de ${S.period} são comparados com ${compLabel()}. Escolha uma opção por vez para aprofundar a leitura.`;
+ renderCascade();
+ document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden';
 }
-function monthLead(x){
- if(x.mes==='Março') return 'Maior aceleração dos chamados no período. O detalhamento por tipo permite identificar onde o crescimento se concentrou.';
- if(x.mes==='Junho') return 'Chamados praticamente estáveis frente a 2025, com aumento das ouvidorias. O ponto de atenção é o descolamento entre volume e manifestações.';
- if(x.mes==='Julho') return 'A demanda volta a crescer com força. Para este mês, o recorte territorial respeita as limitações do fechamento original.';
- if(x.mes==='Agosto') return 'Maior volume de chamados do período. O detalhamento territorial preserva o residual SEM AP (AGO), sem redistribuição.';
- if(x.mes==='Setembro') return 'Este quadro compara setembro/2026 com setembro/2025. O volume total caiu em relação a agosto, mas aqui o foco é entender quais serviços e territórios aumentaram ou reduziram frente ao mesmo mês do ano anterior.';
- return 'Leitura do mês comparada ao mesmo período de 2025. O detalhamento disponível segue a granularidade legitimamente preservada no fechamento.';
+function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.body.style.overflow=''}
+function setStage(stage){
+ S.stage=stage;
+ if(stage==='service'){S.svc=S.sub=S.ap=S.ger=null}
+ if(stage==='subtype'){S.sub=S.ap=S.ger=null}
+ if(stage==='ap'){S.ap=S.ger=null}
+ if(stage==='gerencia'){S.ger=null}
+ renderCascade();
 }
-function setMetrics(c26,c25,o26,o25){
- const r26=rate(o26,c26),r25=rate(o25,c25);
- const period = ctx.mode==='month' ? ctx.month+'/2025' : 'Jan–Set/2025';
- const current = ctx.mode==='month' ? ctx.month+'/2026' : 'Jan–Set/2026';
- const rateVar = (r25&&r26)?(r26/r25-1):null;
- const rateText = rateVar==null ? 'sem comparação disponível' :
-   (rateVar>0 ? 'subiu '+pct(rateVar)+' em relação a '+period :
-    rateVar<0 ? 'caiu '+pct(Math.abs(rateVar))+' em relação a '+period :
-    'ficou estável em relação a '+period);
-
- document.getElementById('compareBox').innerHTML=`
-   <b>Como ler este quadro</b><br>
-   Todos os valores de <b>${current}</b> estão sendo comparados com o <b>mesmo período de 2025</b>.
-   <span class="taxaExp"><b>Taxa por mil:</b> mostra quantas ouvidorias foram registradas para cada 1.000 chamados.
-   Exemplo: uma taxa de 100/mil significa 100 ouvidorias para cada 1.000 chamados.
-   Neste recorte, a taxa ${rateText}.</span>`;
-
- document.getElementById('drawerMetrics').innerHTML=`
- <div class="dm"><b>${pt(c26)}</b><span>chamados em ${current}<br>${pct(c26/c25-1)} vs ${period}</span></div>
- <div class="dm"><b>${pt(o26)}</b><span>ouvidorias em ${current}<br>${pct(o26/o25-1)} vs ${period}</span></div>
- <div class="dm"><b>${rateFmt(r26)}</b><span>ouvidorias por 1.000 chamados<br>${rateVar==null?'—':(rateVar>=0?'+':'')+pct(rateVar)} vs ${period}</span></div>`;
+function selectService(n){S.svc=n;S.stage='subtype';renderCascade()}
+function selectSubtype(n){S.sub=n;S.stage=hasTerritory()?'ap':'end';renderCascade()}
+function selectAP(n){S.ap=n;S.stage='gerencia';renderCascade()}
+function selectGer(n){S.ger=n;S.stage='bairro';renderCascade()}
+function bairroRows(){return C.full[S.period]?.[S.svc]?.subtipos?.[S.sub]?.bairros||[]}
+function aggregate(rows,key){
+ const m={};rows.forEach(x=>{const k=x[key]||'NÃO INFORMADO';if(!m[k])m[k]={nome:k,c2025:0,c2026:0,o2025:0,o2026:0};['c2025','c2026','o2025','o2026'].forEach(f=>m[k][f]+=x[f]||0)});return Object.values(m)
 }
-const labels={tipos:'Tipo',aps:'AP',gerencias:'Gerência',bairros:'Bairro',subtipos:'Subtipo'};
-function buildTabs(list){
- document.getElementById('tabs').innerHTML=list.map((d,i)=>`<button class="tab ${i===0?'active':''}" onclick="setDim('${d}',this)">${labels[d]}</button>`).join('');
-}
-function setDim(d,el){
- ctx.dim=d; document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); el.classList.add('active'); render();
-}
-function toggleSort(){ctx.sort=ctx.sort==='dif'?'volume':'dif';render()}
-function sourceRows(){
- if(ctx.mode==='acc') return D.accumulated[ctx.dim]||[];
- const key=monthMap[ctx.month];
- if(key && D.periods[key] && D.periods[key][ctx.dim]) return D.periods[key][ctx.dim];
- // Jan-Jun: derive monthly type from accumulated type series.
- if(ctx.dim==='tipos'){
-   return D.accumulated.tipos.map(t=>{
-     const m=(t.mensal||[]).find(z=>z.mes===ctx.month)||{};
-     const c2025=m.c2025??0,c2026=m.c2026??0,o2025=m.o2025??0,o2026=m.o2026??0;
-     return {nome:t.nome,c2025,c2026,o2025,o2026,cdif:c2026-c2025,odif:o2026-o2025,
-       cvar:c2025?c2026/c2025-1:null,ovar:o2025?o2026/o2025-1:null,
-       rate2025:rate(o2025,c2025),rate2026:rate(o2026,c2026),status:t.status||'taxa',reason:t.reason||''};
-   });
- }
+function rowsForStage(){
+ const d=periodData();
+ if(S.stage==='service')return Object.values(d).map(x=>x.summary);
+ if(S.stage==='subtype')return Object.values(d[S.svc]?.subtipos||{}).map(x=>x.summary);
+ const br=bairroRows();
+ if(S.stage==='ap')return aggregate(br,'ap');
+ if(S.stage==='gerencia')return aggregate(br.filter(x=>x.ap===S.ap),'gerencia');
+ if(S.stage==='bairro')return br.filter(x=>x.ap===S.ap&&x.gerencia===S.ger);
  return [];
 }
-function render(){
- let rows=sourceRows().filter(r=>(r.c2026||r.o2026||r.v2026));
- const metric = r => ctx.sort==='volume' ? ((r.c2026||0)+(r.o2026||0)) : ((r.cdif??r.dif??0)+(r.odif??0));
- rows.sort((a,b)=>metric(b)-metric(a));
- rows=rows.slice(0,12);
- document.getElementById('rankLabel').textContent=(ctx.sort==='dif'
- ? 'Ordenado pelo que mais aumentou de 2025 para 2026'
- : 'Ordenado pelo maior volume em 2026')+' · '+labels[ctx.dim];
- document.getElementById('sortBtn').textContent=ctx.sort==='dif'?'ver por volume':'ver por variação';
- const out=rows.map(r=>{
-   const c26=r.c2026??r.v2026??null,c25=r.c2025??r.v2025??null,o26=r.o2026??null,o25=r.o2025??null;
-   const cd=r.cdif??(c26!=null&&c25!=null?c26-c25:null), od=r.odif??(o26!=null&&o25!=null?o26-o25:null);
-   const rr=r.rate2026??rate(o26,c26);
-   const reason=r.reason||'';
-   return `<div class="row">
-     <div><div class="name">${r.nome||r.tipo||'—'}</div>${reason?`<div class="small">${reason}</div>`:''}</div>
-     <div class="cell"><b>${c26==null?'—':pt(c26)}</b>cham. ${cd==null?'':`<span class="${cd>=0?'pos':'neg'}">${cd>=0?'+':''}${pt(cd)} vs 2025</span>`}</div>
-     <div class="cell"><b>${o26==null?'—':pt(o26)}</b>ouv. ${od==null?'':`<span class="${od>=0?'pos':'neg'}">${od>=0?'+':''}${pt(od)} vs 2025</span>`}</div>
-     <div class="cell rateCell"><b>${rateFmt(rr)}</b>taxa</div>
-   </div>`;
- }).join('');
- document.getElementById('rank').innerHTML=(out
- ? `<div class="rankHeader">
-      <div>${labels[ctx.dim]}</div>
-      <div>Chamados 2026<br><span>dif. vs 2025</span></div>
-      <div>Ouvidorias 2026<br><span>dif. vs 2025</span></div>
-      <div>Taxa 2026<br><span>por 1.000 chamados</span></div>
-    </div>`+out
- : '<div class="empty">Não há recorte legítimo nesta dimensão para esta competência.</div>');
- let method='Série oficial por data de corte. Valores de 2026 comparados ao mesmo recorte de 2025.';
- if(ctx.mode==='month' && ['Julho','Agosto','Setembro'].includes(ctx.month)){
-   method+=' O detalhamento mensal utiliza os recortes congelados dos respectivos fechamentos.';
-   if(ctx.month==='Julho'&&ctx.dim==='aps') method+=' Julho × AP deve ser interpretado somente conforme a disponibilidade registrada no fechamento.';
-   if(ctx.month==='Agosto'&&ctx.dim==='aps') method+=' O residual SEM AP (AGO) é preservado e não redistribuído.';
- }
- if(ctx.mode==='month' && !monthMap[ctx.month]) method+=' Para Jan–Jun, o drill-down mensal exibido é por Tipo; dimensões territoriais não são derivadas artificialmente.';
- document.getElementById('method').textContent=method;
+function diffClass(n){return n>0?'pos':n<0?'neg':'muted'}
+function choiceHTML(x,next){
+ const cd=(x.c2026||0)-(x.c2025||0),od=(x.o2026||0)-(x.o2025||0),r=rate(x.o2026,x.c2026);
+ const safe=String(x.nome).replaceAll("'","\\'");
+ return `<div class="choice" onclick="${next}('${safe}')">
+   <div><div class="name">${x.nome}</div><div class="sub">${S.period} comparado com ${compLabel()}</div></div>
+   <div class="num"><b>${x.c2026?pt(x.c2026):'—'}</b>chamados<br><span class="${diffClass(cd)}">${cd>=0?'+':''}${pt(cd)} vs 2025</span></div>
+   <div class="num"><b>${x.o2026?pt(x.o2026):'—'}</b>ouvidorias<br><span class="${diffClass(od)}">${od>=0?'+':''}${pt(od)} vs 2025</span></div>
+   <div class="num ratecol"><b>${rateFmt(r)}</b>${r!=null?'ouvidorias / 1.000 chamados':'sem taxa'}</div>
+   <div class="go">›</div>
+ </div>`;
 }
-function show(){document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden'}
-function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.body.style.overflow=''}
+function renderCascade(){
+ const s=currentSummary();
+ if(s){
+   const r=rate(s.o2026,s.c2026), cd=s.c2026-s.c2025, od=s.o2026-s.o2025;
+   document.getElementById('guide').innerHTML=`<b>Leitura deste recorte:</b> ${S.svc}${S.sub?' › '+S.sub:''}. Em ${S.period}, foram <b>${pt(s.c2026)} chamados</b> e <b>${pt(s.o2026)} ouvidorias</b>. ${r!=null?`Isso equivale a <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:''}`;
+   document.getElementById('drawerMetrics').innerHTML=`
+    <div class="dm"><b>${pt(s.c2026)}</b><span>chamados em ${S.period}<br>${cd>=0?'+':''}${pt(cd)} vs ${compLabel()}</span></div>
+    <div class="dm"><b>${pt(s.o2026)}</b><span>ouvidorias em ${S.period}<br>${od>=0?'+':''}${pt(od)} vs ${compLabel()}</span></div>
+    <div class="dm"><b>${rateFmt(r)}</b><span>ouvidorias para cada 1.000 chamados deste recorte</span></div>`;
+ }else{
+   document.getElementById('guide').innerHTML=`<b>Como usar:</b> Serviço → Subtipo → AP → Gerência → Bairro. Você escolhe um item por vez e a tela recalcula somente aquele recorte.`;
+   document.getElementById('drawerMetrics').innerHTML='';
+ }
+ const crumbs=[['Serviço','service']];
+ if(S.svc)crumbs.push([S.svc,'subtype']);
+ if(S.sub)crumbs.push([S.sub,hasTerritory()?'ap':'end']);
+ if(S.ap)crumbs.push([S.ap,'gerencia']);
+ if(S.ger)crumbs.push([S.ger,'bairro']);
+ document.getElementById('breadcrumb').innerHTML=crumbs.map((x,i)=>`${i?'<span class="sep">›</span>':''}<button class="crumb ${x[1]===S.stage?'active':''}" onclick="setStage('${x[1]}')">${x[0]}</button>`).join('');
+ const titles={service:'1. Escolha o serviço',subtype:'2. Escolha o subtipo específico',ap:'3. Escolha a Área de Planejamento',gerencia:'4. Escolha a gerência',bairro:'5. Escolha o bairro',end:'Limite do detalhamento disponível'};
+ document.getElementById('stepTitle').textContent=titles[S.stage]||'';
+ document.getElementById('stepHint').textContent=`${S.period} × ${compLabel()}`;
+ if(S.stage==='end'){
+   document.getElementById('cascadeContent').innerHTML=`<div class="notice">Neste mês, o fechamento oficial permite chegar ao subtipo, mas não possui o cruzamento mensal desse subtipo com território. A navegação é interrompida aqui para não criar uma distribuição artificial.</div>`;
+   document.getElementById('method').textContent='O drill respeita a granularidade disponível no fechamento congelado.';
+   return;
+ }
+ let rows=rowsForStage().filter(x=>x.c2025||x.c2026||x.o2025||x.o2026);
+ rows.sort((a,b)=>((b.c2026||0)+(b.o2026||0))-((a.c2026||0)+(a.o2026||0)));
+ const next={service:'selectService',subtype:'selectSubtype',ap:'selectAP',gerencia:'selectGer',bairro:'showBairro'}[S.stage];
+ document.getElementById('cascadeContent').innerHTML='<div class="choiceList">'+rows.map(x=>choiceHTML(x,next)).join('')+'</div>';
+ document.getElementById('method').textContent='Taxa por mil = ouvidorias ÷ chamados × 1.000. As diferenças apresentadas são sempre em relação ao mesmo período de 2025.';
+}
+function showBairro(n){
+ const x=bairroRows().find(r=>r.nome===n&&r.ap===S.ap&&r.gerencia===S.ger);if(!x)return;
+ const cd=x.c2026-x.c2025,od=x.o2026-x.o2025,r=rate(x.o2026,x.c2026);
+ document.getElementById('stepTitle').textContent='5. Bairro selecionado';
+ document.getElementById('cascadeContent').innerHTML=`<div class="finalCard"><h3>${x.nome}</h3><p>Em ${S.period}, este recorte registrou <b>${pt(x.c2026)} chamados</b> (${cd>=0?'+':''}${pt(cd)} em relação a ${compLabel()}) e <b>${pt(x.o2026)} ouvidorias</b> (${od>=0?'+':''}${pt(od)}). ${r!=null?`A taxa foi de <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:'Não há chamados comparáveis para calcular a taxa.'}</p></div>`;
+}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 </script>
 </body>

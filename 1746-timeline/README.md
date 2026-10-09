@@ -1,18 +1,14 @@
-# 1746 Timeline Executiva
+# 1746 Timeline — V6
 
-Módulo independente do HUB COMLURB.
+Base visual: V4, preservada.
+Drill-down: cascata ampla e legível.
 
-## Conceito
-Leitura editorial enxuta + drill-down sob demanda.
+Caminho:
+Serviço → Subtipo → AP → Gerência → Bairro.
 
-## Drill-down
-- Jan–Set acumulado: Tipo, AP, Gerência, Bairro e Subtipo.
-- Jan–Jun mensal: Tipo, a partir da série mensal oficialmente preservada.
-- Jul–Set mensal: dimensões legitimamente disponíveis nos fechamentos congelados.
-- Agosto mantém SEM AP (AGO) explícito, sem redistribuição.
+Disponibilidade:
+- Jan–Set acumulado: cascata completa.
+- Agosto e Setembro: cascata completa.
+- Demais meses: a cascata para quando a fonte oficial não sustenta o cruzamento mensal por território.
 
-## Fonte
-Série oficial consolidada SET/2026 e matriz histórica auditada do módulo 1746-historico.
-
-## Ajuste didático
-O drill-down informa explicitamente que 2026 é comparado ao mesmo período de 2025 e explica a taxa por mil em linguagem simples.
+A taxa é sempre explicada como ouvidorias por 1.000 chamados.

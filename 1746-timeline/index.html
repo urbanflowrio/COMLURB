@@ -1,75 +1,316 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>1746 · Jan–Set/2026 | HUB COMLURB</title>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1746 · Leitura Jan–Set/2026 | HUB COMLURB</title>
 <style>
-:root{--bg:#07111f;--bg2:#0a1727;--text:#f4f8fc;--muted:#91a6ba;--line:#29435c;--cyan:#63e6df;--orange:#ff9a5b;--green:#77ddb0}
-*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 18% 0,rgba(44,94,128,.28),transparent 31%),linear-gradient(180deg,var(--bg2),var(--bg))}
-.wrap{max-width:1420px;margin:auto;padding:28px 34px 54px}.back{display:inline-block;color:#a9bfd3;text-decoration:none;font-size:12px;margin-bottom:18px}.kicker{color:var(--cyan);font-size:11px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}
-h1{font-size:clamp(34px,4.5vw,58px);line-height:1.03;max-width:1120px;margin:10px 0 15px;letter-spacing:-.035em}.lead{font-size:16px;line-height:1.6;color:#c7d5e2;max-width:1020px;margin:0}
-.metrics{display:flex;gap:36px;flex-wrap:wrap;margin-top:22px}.metric b{font-size:23px}.metric span{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}.actions{display:flex;gap:10px;margin-top:22px}
-.btn{border:1px solid #375a78;background:#0e2135;color:#dce8f3;padding:10px 13px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:800}.btn.primary{border-color:#277b77}
-.section{margin-top:70px}.sectionTitle{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#9eb2c5;margin-bottom:22px}.timeline{position:relative;display:grid;grid-template-columns:repeat(9,1fr);padding:40px 4px 25px}
-.timeline:before{content:"";position:absolute;left:2%;right:2%;top:70px;height:2px;background:linear-gradient(90deg,#31516d,#4b708d 65%,var(--orange))}
-.month{position:relative;text-align:center;min-height:100px;cursor:pointer}.dot{width:14px;height:14px;border-radius:50%;border:3px solid #89a9c2;background:var(--bg);margin:23px auto 12px;position:relative;z-index:2}.month.emph .dot{width:18px;height:18px;border-color:var(--orange);margin-top:21px}
-.m{font-weight:850;font-size:13px}.val{font-size:11px;color:#c4d3df;margin-top:5px}.rate{font-size:10px;color:var(--muted);margin-top:2px}.turns{display:grid;grid-template-columns:1fr 1.1fr 1.2fr 1fr;gap:34px;margin-top:24px;padding-top:27px;border-top:1px solid rgba(112,146,176,.21)}
-.turn .n{font-size:10px;color:var(--cyan);font-weight:900;letter-spacing:.12em;text-transform:uppercase}.turn h3{font-size:18px;margin:8px 0 7px}.turn p{font-size:12.5px;line-height:1.55;color:#b7c7d6;margin:0}.turn.hot .n{color:var(--orange)}
-.statement{margin-top:66px;padding:32px 0;border-top:1px solid rgba(112,146,176,.22);border-bottom:1px solid rgba(112,146,176,.22)}.statement p{font-size:clamp(22px,2.7vw,37px);line-height:1.26;max-width:1180px;margin:0}.statement strong{color:var(--orange)}.foot{margin-top:60px;color:#667e94;font-size:10px}
-.overlay{position:fixed;inset:0;background:rgba(2,8,14,.72);backdrop-filter:blur(5px);z-index:50;opacity:0;pointer-events:none;transition:.18s}.overlay.open{opacity:1;pointer-events:auto}.drawer{position:absolute;right:0;top:0;width:min(900px,96vw);height:100%;overflow:auto;background:#081522;border-left:1px solid #29435c;padding:24px 28px 48px}.close{position:sticky;top:0;float:right;border:1px solid #365873;background:#0d2032;color:white;padding:8px 11px;border-radius:9px;cursor:pointer}
-.dk{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.drawer h2{font-size:30px;margin:7px 0 5px}.dl{font-size:12.5px;color:#aec0d0;line-height:1.55;max-width:740px}.help{margin:16px 0;padding:13px 15px;border-left:3px solid var(--cyan);background:#0b1d30;border-radius:9px;color:#cbd9e5;font-size:11.5px;line-height:1.55}
-.summary{display:flex;gap:28px;flex-wrap:wrap;padding:14px 0;border-top:1px solid #1b354c;border-bottom:1px solid #1b354c;margin:16px 0}.sv b{font-size:20px}.sv span{display:block;font-size:9.5px;color:#869db1;margin-top:2px}
-.breadcrumb{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:20px 0 14px}.crumb{border:0;background:transparent;color:#8fa7ba;padding:5px 0;cursor:pointer;font-size:11px}.crumb.active{color:white;font-weight:800}.sep{color:#46647e;font-size:10px}
-.stepTitle{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:9px}.stepTitle b{font-size:14px}.stepTitle span{font-size:10px;color:#8197aa}.choiceList{border-top:1px solid #1b354c}
-.choice{display:grid;grid-template-columns:minmax(220px,1.5fr) 100px 100px 105px 30px;gap:12px;align-items:center;padding:12px 3px;border-bottom:1px solid #172e43;cursor:pointer}.choice:hover{background:#0b1c2c}.choice .name{font-size:12px;font-weight:750;color:#edf4f9}.choice .sub{font-size:9.5px;color:#8097aa;margin-top:3px}
-.num{text-align:right;font-size:10px;color:#91a6b8}.num b{display:block;color:#edf4f9;font-size:12px}.go{text-align:right;color:#5ee7e0;font-size:18px}.pos{color:#ffd08a!important}.neg{color:#80dcb0!important}.muted{color:#7f95a8!important}
-.finalCard{margin-top:14px;padding:17px;border:1px solid #29435c;border-radius:14px;background:#0b1d30}.finalCard h3{margin:0 0 8px;font-size:17px}.finalCard p{margin:0;color:#bdccda;line-height:1.6;font-size:12px}.notice{padding:16px 0;color:#96aabd;font-size:11px;line-height:1.55}
-@media(max-width:900px){.wrap{padding:20px 17px 40px}.timeline{grid-template-columns:repeat(3,1fr);row-gap:25px}.timeline:before{display:none}.turns{grid-template-columns:1fr}.choice{grid-template-columns:1fr 75px 75px 24px}.choice .ratecol{display:none}}
-</style></head>
-<body><div class="wrap">
-<a class="back" href="../">← voltar ao HUB</a>
-<div class="kicker">Relacionamento com o Cidadão · 1746</div>
-<h1>Jan–Set/2026: crescimento da demanda, com pressão concentrada em momentos específicos.</h1>
-<p class="lead">O acumulado permanece acima de 2025, mas a evolução mensal não é uniforme. Março concentra a maior aceleração dos chamados; julho e agosto elevam novamente o volume; setembro encerra o período com desaceleração de chamados, ouvidorias e taxa por mil.</p>
-<div class="metrics"><div class="metric"><b>254.772</b><span>chamados · +13,7% frente a Jan–Set/2025</span></div><div class="metric"><b>30.349</b><span>ouvidorias operacionais · +19,0%</span></div><div class="metric"><b>119 / mil</b><span>119 ouvidorias para cada 1.000 chamados</span></div></div>
-<div class="actions"><button class="btn primary" onclick="openAccum()">Explorar Jan–Set</button><button class="btn" onclick="openMonth('Setembro')">Detalhar setembro</button></div>
-<section class="section"><div class="sectionTitle">Evolução mensal · clique no mês para detalhar</div><div class="timeline" id="timeline"></div>
-<div class="turns"><div class="turn"><div class="n">Jan–Fev</div><h3>Retomada sem pressão proporcional</h3><p>Janeiro começa abaixo de 2025. Em fevereiro, os chamados crescem, enquanto as ouvidorias permanecem praticamente estáveis e a taxa recua.</p></div><div class="turn"><div class="n">Mar</div><h3>Maior aceleração da demanda</h3><p>Março registra a maior variação mensal dos chamados no comparativo anual e também aumento relevante das ouvidorias.</p></div><div class="turn hot"><div class="n">Jul–Ago</div><h3>Concentração de volume no terceiro trimestre</h3><p>Julho e agosto elevam o patamar de demanda. Agosto tem o maior volume do período, embora a taxa por mil já recue frente a julho.</p></div><div class="turn"><div class="n">Set</div><h3>Desaceleração</h3><p>Setembro apresenta redução frente a agosto nos chamados e nas ouvidorias, acompanhada de nova queda da taxa por mil.</p></div></div></section>
-<div class="statement"><p><strong>O aumento do volume não se traduz, mês a mês, em aumento proporcional da taxa de ouvidoria.</strong> Por isso, a leitura precisa separar demanda, manifestações e taxa relativa.</p></div>
-<div class="foot">HUB COMLURB · Leitura executiva 1746 · Jan–Set/2026 · série oficial congelada</div></div>
-
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeDrawer()"><aside class="drawer"><button class="close" onclick="closeDrawer()">Fechar</button><div class="dk">Drill-down em cascata</div><h2 id="title"></h2><div class="dl" id="lead"></div><div class="help" id="help"></div><div class="summary" id="summary"></div><div class="breadcrumb" id="breadcrumb"></div><div class="stepTitle"><b id="stepTitle"></b><span id="stepHint"></span></div><div id="content"></div></aside></div>
-<script src="./cascade_data.js"></script><script>
-const C=window.TIMELINE1746_CASCADE;
-const MONTHS=[['Janeiro',30475,3668,120],['Fevereiro',31103,3667,118],['Março',35562,4458,125],['Abril',29537,3677,124],['Maio',24700,3149,127],['Junho',21542,2764,128],['Julho',27553,3236,117],['Agosto',29605,3254,110],['Setembro',24695,2476,100]];
-const emph=new Set(['Março','Agosto','Setembro']);const pt=n=>Number(n||0).toLocaleString('pt-BR');const rt=(o,c)=>(o!=null&&c>0)?o/c*1000:null;const rtf=x=>x==null?'—':Math.round(x).toLocaleString('pt-BR')+' / mil';
-document.getElementById('timeline').innerHTML=MONTHS.map(x=>`<div class="month ${emph.has(x[0])?'emph':''}" onclick="openMonth('${x[0]}')"><div class="m">${x[0].slice(0,3)}</div><div class="dot"></div><div class="val">${pt(x[1])} chamados</div><div class="rate">${x[3]}/mil</div></div>`).join('');
-let S={period:null,svc:null,sub:null,ap:null,ger:null,stage:'service'};
-function periodData(){return C.full[S.period]||C.monthly[S.period]||{}}function comparisonLabel(){return S.period==='Jan–Set/2026'?'Jan–Set/2025':S.period.replace('/2026','/2025')}
-function currentSummary(){let d=periodData(),s=S.svc?d[S.svc]?.summary:null;if(S.sub)s=d[S.svc]?.subtipos?.[S.sub]?.summary||s;return s}
-function openAccum(){S={period:'Jan–Set/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};open()}
-function openMonth(m){S={period:m+'/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};open()}
-function open(){document.getElementById('title').textContent=S.period;document.getElementById('lead').textContent=`A comparação é sempre com ${comparisonLabel()}. Escolha um serviço e avance etapa por etapa até o bairro.`;render();document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden'}
-function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.body.style.overflow=''}
-function hasTerritory(){return !!C.full[S.period]}
-function setStage(stage){S.stage=stage;if(stage==='service')S.svc=S.sub=S.ap=S.ger=null;if(stage==='subtype')S.sub=S.ap=S.ger=null;if(stage==='ap')S.ap=S.ger=null;if(stage==='gerencia')S.ger=null;render()}
-function selectService(n){S.svc=n;S.stage='subtype';render()}function selectSubtype(n){S.sub=n;S.stage=hasTerritory()?'ap':'end';render()}function selectAP(n){S.ap=n;S.stage='gerencia';render()}function selectGer(n){S.ger=n;S.stage='bairro';render()}
-function bairroRows(){return C.full[S.period]?.[S.svc]?.subtipos?.[S.sub]?.bairros||[]}
-function aggregate(rows,key){const m={};rows.forEach(x=>{const k=x[key]||'NÃO INFORMADO';if(!m[k])m[k]={nome:k,c2025:0,c2026:0,o2025:0,o2026:0};['c2025','c2026','o2025','o2026'].forEach(f=>m[k][f]+=x[f]||0)});return Object.values(m)}
-function rowsForStage(){const d=periodData();if(S.stage==='service')return Object.values(d).map(x=>x.summary);if(S.stage==='subtype')return Object.values(d[S.svc]?.subtipos||{}).map(x=>x.summary);let br=bairroRows();if(S.stage==='ap')return aggregate(br,'ap');if(S.stage==='gerencia')return aggregate(br.filter(x=>x.ap===S.ap),'gerencia');if(S.stage==='bairro')return br.filter(x=>x.ap===S.ap&&x.gerencia===S.ger);return[]}
-function diffClass(n){return n>0?'pos':n<0?'neg':'muted'}
-function choiceHTML(x,next){const cd=(x.c2026||0)-(x.c2025||0),od=(x.o2026||0)-(x.o2025||0),r=rt(x.o2026,x.c2026),safe=String(x.nome).replaceAll("'","\\'");return `<div class="choice" onclick="${next}('${safe}')"><div><div class="name">${x.nome}</div><div class="sub">${S.period} × ${comparisonLabel()}</div></div><div class="num"><b>${x.c2026?pt(x.c2026):'—'}</b>chamados<br><span class="${diffClass(cd)}">${cd>=0?'+':''}${pt(cd)}</span></div><div class="num"><b>${x.o2026?pt(x.o2026):'—'}</b>ouvidorias<br><span class="${diffClass(od)}">${od>=0?'+':''}${pt(od)}</span></div><div class="num ratecol"><b>${rtf(r)}</b>${r!=null?'ouvidorias / 1.000 chamados':'sem taxa'}</div><div class="go">›</div></div>`}
-function render(){
- const s=currentSummary();
- document.getElementById('summary').innerHTML=s?`<div class="sv"><b>${pt(s.c2026)}</b><span>chamados em ${S.period}</span></div><div class="sv"><b>${pt(s.o2026)}</b><span>ouvidorias em ${S.period}</span></div><div class="sv"><b>${rtf(rt(s.o2026,s.c2026))}</b><span>ouvidorias por 1.000 chamados</span></div>`:'';
- document.getElementById('help').innerHTML=s?`<b>Leitura simples:</b> ${S.svc}${S.sub?' › '+S.sub:''} teve ${pt(s.c2026)} chamados e ${pt(s.o2026)} ouvidorias em ${S.period}. ${s.c2026?`Isso equivale a ${Math.round(rt(s.o2026,s.c2026))} ouvidorias para cada 1.000 chamados.`:'Não há chamados comparáveis para calcular a taxa.'}`:`<b>Como usar:</b> Serviço → Subtipo → AP → Gerência → Bairro. Cada tela mostra somente o recorte escolhido.`;
- const crumbs=[['Serviço','service']];if(S.svc)crumbs.push([S.svc,'subtype']);if(S.sub)crumbs.push([S.sub,hasTerritory()?'ap':'end']);if(S.ap)crumbs.push([S.ap,'gerencia']);if(S.ger)crumbs.push([S.ger,'bairro']);
- document.getElementById('breadcrumb').innerHTML=crumbs.map((x,i)=>`${i?'<span class="sep">›</span>':''}<button class="crumb ${x[1]===S.stage?'active':''}" onclick="setStage('${x[1]}')">${x[0]}</button>`).join('');
- const titles={service:'1. Escolha o serviço',subtype:'2. Escolha o subtipo específico',ap:'3. Escolha a Área de Planejamento',gerencia:'4. Escolha a gerência',bairro:'5. Escolha o bairro',end:'Limite do detalhamento para esta competência'};
- document.getElementById('stepTitle').textContent=titles[S.stage];document.getElementById('stepHint').textContent=`sempre comparado com ${comparisonLabel()}`;
- if(S.stage==='end'){document.getElementById('content').innerHTML=`<div class="notice">O fechamento de ${S.period} permite chegar com segurança ao subtipo. A distribuição territorial mensal deste subtipo não existe no snapshot oficial; por isso, a cascata para aqui em vez de criar uma divisão artificial.</div>`;return}
- let rows=rowsForStage().filter(x=>x.c2025||x.c2026||x.o2025||x.o2026);rows.sort((a,b)=>((b.c2026||0)+(b.o2026||0))-((a.c2026||0)+(a.o2026||0)));
- let next={service:'selectService',subtype:'selectSubtype',ap:'selectAP',gerencia:'selectGer',bairro:'showBairro'}[S.stage];
- document.getElementById('content').innerHTML='<div class="choiceList">'+rows.map(x=>choiceHTML(x,next)).join('')+'</div>';
+:root{
+  --bg:#07111f;--bg2:#0a1727;--panel:#0c1b2c;--text:#f4f8fc;--muted:#91a6ba;
+  --line:#29435c;--line2:#193249;--cyan:#63e6df;--orange:#ff9a5b;--green:#77ddb0;
+  --shadow:0 24px 80px rgba(0,0,0,.34)
 }
-function showBairro(n){const x=bairroRows().find(r=>r.nome===n&&r.ap===S.ap&&r.gerencia===S.ger);if(!x)return;const cd=x.c2026-x.c2025,od=x.o2026-x.o2025,r=rt(x.o2026,x.c2026);document.getElementById('stepTitle').textContent='5. Bairro selecionado';document.getElementById('content').innerHTML=`<div class="finalCard"><h3>${x.nome}</h3><p>Em ${S.period}, foram <b>${pt(x.c2026)} chamados</b> (${cd>=0?'+':''}${pt(cd)} vs ${comparisonLabel()}) e <b>${pt(x.o2026)} ouvidorias</b> (${od>=0?'+':''}${pt(od)}). ${r!=null?`A taxa foi de <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:'Não há taxa comparável neste recorte.'}</p></div>`}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;
+  background:radial-gradient(circle at 18% 0,rgba(44,94,128,.28),transparent 31%),linear-gradient(180deg,var(--bg2),var(--bg));
+}
+button{font:inherit}
+.wrap{max-width:1420px;margin:auto;padding:34px 34px 58px}
+.back{display:inline-block;color:#a9bfd3;text-decoration:none;font-size:12px;margin-bottom:26px}
+.back:hover{color:#fff}
+.kicker{color:var(--cyan);font-size:11px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}
+h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 0 18px;letter-spacing:-.04em}
+.lead{font-size:17px;line-height:1.6;color:#c7d5e2;max-width:1020px;margin:0}
+.metrics{display:flex;gap:36px;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid rgba(112,146,176,.23)}
+.metric b{font-size:23px}.metric span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.btn{border:1px solid #375a78;background:#0e2135;color:#dce8f3;padding:10px 13px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:800}
+.btn:hover{border-color:#65a3ce;background:#12304b}.btn.primary{border-color:#277b77;color:#dffffc}
+.section{margin-top:72px}
+.sectionTitle{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#9eb2c5;margin-bottom:24px}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(9,1fr);padding:42px 4px 28px}
+.timeline:before{content:"";position:absolute;left:2%;right:2%;top:72px;height:2px;background:linear-gradient(90deg,#31516d,#4b708d 65%,var(--orange))}
+.month{position:relative;text-align:center;min-height:102px;cursor:pointer;border-radius:12px;padding:2px 3px;transition:.16s}
+.month:hover{background:rgba(64,106,141,.12)}
+.dot{width:14px;height:14px;border-radius:50%;border:3px solid #89a9c2;background:var(--bg);margin:23px auto 12px;position:relative;z-index:2}
+.month.emph .dot{width:18px;height:18px;border-color:var(--orange);background:#181c22;margin-top:21px}
+.m{font-weight:850;font-size:13px}.val{font-size:11px;color:#c4d3df;margin-top:5px}.rate{font-size:10px;color:var(--muted);margin-top:2px}
+.turns{display:grid;grid-template-columns:1fr 1.1fr 1.2fr 1fr;gap:34px;margin-top:24px;padding-top:27px;border-top:1px solid rgba(112,146,176,.21)}
+.turn{padding-right:12px}.turn .n{font-size:10px;color:var(--cyan);font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.turn h3{font-size:18px;margin:8px 0 7px}.turn p{font-size:12.5px;line-height:1.55;color:#b7c7d6;margin:0}
+.turn.hot .n{color:var(--orange)}
+.statement{margin-top:76px;padding:35px 0;border-top:1px solid rgba(112,146,176,.22);border-bottom:1px solid rgba(112,146,176,.22)}
+.statement p{font-size:clamp(23px,2.9vw,39px);line-height:1.26;max-width:1180px;margin:0;letter-spacing:-.02em}
+.statement strong{color:var(--orange)}
+.takeaways{display:grid;grid-template-columns:repeat(3,1fr);gap:42px;margin-top:56px}
+.take h4{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:#a9bfd1;margin:0 0 8px}
+.take p{font-size:14px;line-height:1.6;margin:0;color:#e1e9f0}
+.foot{margin-top:68px;color:#667e94;font-size:10px}
+
+/* Drill-down */
+.overlay{position:fixed;inset:0;background:rgba(3,9,15,.68);backdrop-filter:blur(5px);z-index:50;opacity:0;pointer-events:none;transition:.18s}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:absolute;right:0;top:0;height:100%;width:min(820px,94vw);background:#081522;border-left:1px solid #29435c;box-shadow:var(--shadow);overflow:auto;padding:26px 26px 44px}
+.close{position:sticky;top:0;float:right;border:1px solid #355570;background:#0e2135;color:#d5e2ec;border-radius:9px;padding:8px 11px;cursor:pointer;z-index:2}
+.drawerKicker{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+.drawer h2{font-size:30px;margin:7px 0 7px}.drawerLead{color:#aebfd0;font-size:13px;line-height:1.55;max-width:690px}
+.drawerMetrics{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0 18px;padding:15px 0;border-top:1px solid #1c354c;border-bottom:1px solid #1c354c}
+.dm b{font-size:20px}.dm span{display:block;color:#8198ad;font-size:10px;margin-top:2px}
+.tabs{display:flex;gap:7px;overflow:auto;margin:16px 0}.tab{border:0;background:transparent;color:#89a2b7;padding:8px 9px;border-bottom:2px solid transparent;cursor:pointer;font-size:11px;font-weight:850;white-space:nowrap}
+.tab.active{color:#fff;border-bottom-color:var(--cyan)}.tab[disabled]{opacity:.33;cursor:not-allowed}
+.exploreLine{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:17px 0 8px}
+.exploreLine span{font-size:11px;color:#8299ae}.sortBtn{border:0;background:transparent;color:#b7cadb;font-size:10px;cursor:pointer;text-decoration:underline}
+.rank{border-top:1px solid #172e43}
+.row{display:grid;grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(85px,.65fr));gap:11px;padding:11px 3px;border-bottom:1px solid #172e43;align-items:center}
+.row .name{font-size:12px;font-weight:750;color:#e0e9f1}.row .small{font-size:9px;color:#7990a5;margin-top:3px;line-height:1.3}
+.cell{font-size:11px;text-align:right;color:#c6d4df}.cell b{display:block;font-size:12px;color:#f0f5f9}.pos{color:#ffd094!important}.neg{color:#89ddb6!important}
+.method{margin-top:18px;padding-top:14px;border-top:1px solid #1c354c;color:#7890a5;font-size:10px;line-height:1.5}
+.empty{padding:24px 0;color:#849bad;font-size:12px}
+@media(max-width:900px){
+ .wrap{padding:24px 18px 42px}.timeline{grid-template-columns:repeat(3,1fr);row-gap:25px;padding-top:18px}.timeline:before{display:none}
+ .turns,.takeaways{grid-template-columns:1fr}.turn{padding-right:0}.row{grid-template-columns:1.4fr .7fr .7fr}.row .rateCell{display:none}
+}
+
+.compareBox{
+  margin:16px 0 6px;padding:13px 14px;border:1px solid #21415d;border-radius:12px;
+  background:#0b1d30;color:#c9d7e3;font-size:11.5px;line-height:1.55
+}
+.compareBox b{color:#fff}
+.compareBox .taxaExp{display:block;margin-top:7px;color:#9fb4c7}
+.rankHeader{
+  display:grid;grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(85px,.65fr));
+  gap:11px;padding:9px 3px;border-top:1px solid #29435c;border-bottom:1px solid #29435c;
+  color:#8ea5b9;font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.05em
+}
+.rankHeader div:not(:first-child){text-align:right}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← voltar ao HUB</a>
+  <div class="kicker">Relacionamento com o Cidadão · 1746</div>
+  <h1>Jan–Set/2026: crescimento da demanda, com pressão concentrada em momentos específicos.</h1>
+  <p class="lead">
+    O acumulado permanece acima de 2025, mas a evolução mensal não é uniforme.
+    Março concentra a maior aceleração dos chamados; julho e agosto elevam novamente o volume;
+    setembro encerra o período com desaceleração de chamados, ouvidorias e taxa por mil.
+  </p>
+
+  <div class="metrics" id="topMetrics"></div>
+  <div class="actions">
+    <button class="btn primary" onclick="openAccum()">Explorar Jan–Set</button>
+    <button class="btn" onclick="openMonth('Setembro')">Detalhar setembro</button>
+  </div>
+
+  <section class="section">
+    <div class="sectionTitle">Evolução mensal · clique no mês para detalhar</div>
+    <div class="timeline" id="timeline"></div>
+
+    <div class="turns">
+      <div class="turn">
+        <div class="n">Jan–Fev</div>
+        <h3>Retomada sem pressão proporcional</h3>
+        <p>Janeiro começa abaixo de 2025. Em fevereiro, os chamados crescem, enquanto as ouvidorias permanecem praticamente estáveis e a taxa recua.</p>
+      </div>
+      <div class="turn">
+        <div class="n">Mar</div>
+        <h3>Maior aceleração da demanda</h3>
+        <p>Março registra a maior variação mensal dos chamados no comparativo anual e também aumento relevante das ouvidorias.</p>
+      </div>
+      <div class="turn hot">
+        <div class="n">Jul–Ago</div>
+        <h3>Concentração de volume no terceiro trimestre</h3>
+        <p>Julho e agosto elevam o patamar de demanda. Agosto tem o maior volume do período, embora a taxa por mil já recue frente a julho.</p>
+      </div>
+      <div class="turn">
+        <div class="n">Set</div>
+        <h3>Desaceleração</h3>
+        <p>Setembro apresenta redução frente a agosto nos chamados e nas ouvidorias, acompanhada de nova queda da taxa por mil.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="statement">
+    <p><strong>O aumento do volume não se traduz, mês a mês, em aumento proporcional da taxa de ouvidoria.</strong> Por isso, a leitura executiva precisa separar demanda, manifestações e taxa relativa.</p>
+  </div>
+
+  <section class="takeaways">
+    <div class="take">
+      <h4>Demanda</h4>
+      <p>O crescimento está concentrado em determinados meses e serviços. Março e agosto são os principais pontos de aceleração do volume.</p>
+    </div>
+    <div class="take">
+      <h4>Manifestações</h4>
+      <p>As ouvidorias crescem mais que os chamados no acumulado, mas a trajetória mensal alterna alta, estabilidade e recuo.</p>
+    </div>
+    <div class="take">
+      <h4>Gestão</h4>
+      <p>O drill-down deve orientar a análise para os serviços e territórios que mais contribuíram para cada variação, evitando conclusões a partir do total isolado.</p>
+    </div>
+  </section>
+
+  <div class="foot">HUB COMLURB · Leitura executiva 1746 · Jan–Set/2026 · série oficial congelada</div>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeDrawer()">
+  <aside class="drawer">
+    <button class="close" onclick="closeDrawer()">Fechar</button>
+    <div class="drawerKicker" id="drawerKicker"></div>
+    <h2 id="drawerTitle"></h2>
+    <div class="drawerLead" id="drawerLead"></div>
+    <div class="compareBox" id="compareBox"></div>
+    <div class="drawerMetrics" id="drawerMetrics"></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="exploreLine"><span id="rankLabel"></span><button class="sortBtn" id="sortBtn" onclick="toggleSort()">alternar critério</button></div>
+    <div class="rank" id="rank"></div>
+    <div class="method" id="method"></div>
+  </aside>
+</div>
+
+<script src="./data.js"></script>
+<script>
+const D=window.TIMELINE1746_DATA;
+const pt=n=>Number(n||0).toLocaleString('pt-BR');
+const pct=x=>x==null?'—':((x*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%');
+const rate=(o,c)=>(o!=null&&c>0)?(o/c*1000):null;
+const rateFmt=x=>x==null?'—':x.toLocaleString('pt-BR',{maximumFractionDigits:0})+' / mil';
+const shortMonth=m=>m.slice(0,3);
+const monthMap={Julho:'july',Agosto:'august',Setembro:'september'};
+let ctx={mode:'acc',month:null,dim:'tipos',sort:'dif'};
+
+const cTot=D.monthly.reduce((a,x)=>a+x.c2026,0), oTot=D.monthly.reduce((a,x)=>a+x.o2026,0);
+const c25=D.monthly.reduce((a,x)=>a+x.c2025,0), o25=D.monthly.reduce((a,x)=>a+x.o2025,0);
+document.getElementById('topMetrics').innerHTML=`
+ <div class="metric"><b>${pt(cTot)}</b><span>chamados · ${pct(cTot/c25-1)} frente a 2025</span></div>
+ <div class="metric"><b>${pt(oTot)}</b><span>ouvidorias operacionais · ${pct(oTot/o25-1)}</span></div>
+ <div class="metric"><b>${rateFmt(rate(oTot,cTot))}</b><span>taxa acumulada · ${pct(rate(oTot,cTot)/rate(o25,c25)-1)}</span></div>`;
+
+const emph=new Set(['Março','Agosto','Setembro']);
+document.getElementById('timeline').innerHTML=D.monthly.map(x=>`
+ <div class="month ${emph.has(x.mes)?'emph':''}" onclick="openMonth('${x.mes}')">
+   <div class="m">${shortMonth(x.mes)}</div><div class="dot"></div>
+   <div class="val">${pt(x.c2026)} chamados</div>
+   <div class="rate">${rateFmt(x.r2026).replace(' / mil','/mil')}</div>
+ </div>`).join('');
+
+function openAccum(){
+ ctx={mode:'acc',month:null,dim:'tipos',sort:'dif'};
+ document.getElementById('drawerKicker').textContent='Drill-down · acumulado';
+ document.getElementById('drawerTitle').textContent='Jan–Set/2026';
+ document.getElementById('drawerLead').textContent='Explore as dimensões que mais contribuíram para a variação acumulada. O critério inicial é diferença absoluta entre 2026 e 2025.';
+ setMetrics(cTot,c25,oTot,o25);
+ buildTabs(['tipos','aps','gerencias','bairros','subtipos']);
+ render();
+ show();
+}
+function openMonth(m){
+ const x=D.monthly.find(r=>r.mes===m); ctx={mode:'month',month:m,dim:'tipos',sort:'dif'};
+ document.getElementById('drawerKicker').textContent='Drill-down · competência';
+ document.getElementById('drawerTitle').textContent=m+'/2026';
+ document.getElementById('drawerLead').textContent=monthLead(x);
+ setMetrics(x.c2026,x.c2025,x.o2026,x.o2025);
+ const extra=monthMap[m]?['tipos','aps','gerencias','bairros','subtipos']:['tipos'];
+ buildTabs(extra);
+ render(); show();
+}
+function monthLead(x){
+ if(x.mes==='Março') return 'Maior aceleração dos chamados no período. O detalhamento por tipo permite identificar onde o crescimento se concentrou.';
+ if(x.mes==='Junho') return 'Chamados praticamente estáveis frente a 2025, com aumento das ouvidorias. O ponto de atenção é o descolamento entre volume e manifestações.';
+ if(x.mes==='Julho') return 'A demanda volta a crescer com força. Para este mês, o recorte territorial respeita as limitações do fechamento original.';
+ if(x.mes==='Agosto') return 'Maior volume de chamados do período. O detalhamento territorial preserva o residual SEM AP (AGO), sem redistribuição.';
+ if(x.mes==='Setembro') return 'Este quadro compara setembro/2026 com setembro/2025. O volume total caiu em relação a agosto, mas aqui o foco é entender quais serviços e territórios aumentaram ou reduziram frente ao mesmo mês do ano anterior.';
+ return 'Leitura do mês comparada ao mesmo período de 2025. O detalhamento disponível segue a granularidade legitimamente preservada no fechamento.';
+}
+function setMetrics(c26,c25,o26,o25){
+ const r26=rate(o26,c26),r25=rate(o25,c25);
+ const period = ctx.mode==='month' ? ctx.month+'/2025' : 'Jan–Set/2025';
+ const current = ctx.mode==='month' ? ctx.month+'/2026' : 'Jan–Set/2026';
+ const rateVar = (r25&&r26)?(r26/r25-1):null;
+ const rateText = rateVar==null ? 'sem comparação disponível' :
+   (rateVar>0 ? 'subiu '+pct(rateVar)+' em relação a '+period :
+    rateVar<0 ? 'caiu '+pct(Math.abs(rateVar))+' em relação a '+period :
+    'ficou estável em relação a '+period);
+
+ document.getElementById('compareBox').innerHTML=`
+   <b>Como ler este quadro</b><br>
+   Todos os valores de <b>${current}</b> estão sendo comparados com o <b>mesmo período de 2025</b>.
+   <span class="taxaExp"><b>Taxa por mil:</b> mostra quantas ouvidorias foram registradas para cada 1.000 chamados.
+   Exemplo: uma taxa de 100/mil significa 100 ouvidorias para cada 1.000 chamados.
+   Neste recorte, a taxa ${rateText}.</span>`;
+
+ document.getElementById('drawerMetrics').innerHTML=`
+ <div class="dm"><b>${pt(c26)}</b><span>chamados em ${current}<br>${pct(c26/c25-1)} vs ${period}</span></div>
+ <div class="dm"><b>${pt(o26)}</b><span>ouvidorias em ${current}<br>${pct(o26/o25-1)} vs ${period}</span></div>
+ <div class="dm"><b>${rateFmt(r26)}</b><span>ouvidorias por 1.000 chamados<br>${rateVar==null?'—':(rateVar>=0?'+':'')+pct(rateVar)} vs ${period}</span></div>`;
+}
+const labels={tipos:'Tipo',aps:'AP',gerencias:'Gerência',bairros:'Bairro',subtipos:'Subtipo'};
+function buildTabs(list){
+ document.getElementById('tabs').innerHTML=list.map((d,i)=>`<button class="tab ${i===0?'active':''}" onclick="setDim('${d}',this)">${labels[d]}</button>`).join('');
+}
+function setDim(d,el){
+ ctx.dim=d; document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); el.classList.add('active'); render();
+}
+function toggleSort(){ctx.sort=ctx.sort==='dif'?'volume':'dif';render()}
+function sourceRows(){
+ if(ctx.mode==='acc') return D.accumulated[ctx.dim]||[];
+ const key=monthMap[ctx.month];
+ if(key && D.periods[key] && D.periods[key][ctx.dim]) return D.periods[key][ctx.dim];
+ // Jan-Jun: derive monthly type from accumulated type series.
+ if(ctx.dim==='tipos'){
+   return D.accumulated.tipos.map(t=>{
+     const m=(t.mensal||[]).find(z=>z.mes===ctx.month)||{};
+     const c2025=m.c2025??0,c2026=m.c2026??0,o2025=m.o2025??0,o2026=m.o2026??0;
+     return {nome:t.nome,c2025,c2026,o2025,o2026,cdif:c2026-c2025,odif:o2026-o2025,
+       cvar:c2025?c2026/c2025-1:null,ovar:o2025?o2026/o2025-1:null,
+       rate2025:rate(o2025,c2025),rate2026:rate(o2026,c2026),status:t.status||'taxa',reason:t.reason||''};
+   });
+ }
+ return [];
+}
+function render(){
+ let rows=sourceRows().filter(r=>(r.c2026||r.o2026||r.v2026));
+ const metric = r => ctx.sort==='volume' ? ((r.c2026||0)+(r.o2026||0)) : ((r.cdif??r.dif??0)+(r.odif??0));
+ rows.sort((a,b)=>metric(b)-metric(a));
+ rows=rows.slice(0,12);
+ document.getElementById('rankLabel').textContent=(ctx.sort==='dif'
+ ? 'Ordenado pelo que mais aumentou de 2025 para 2026'
+ : 'Ordenado pelo maior volume em 2026')+' · '+labels[ctx.dim];
+ document.getElementById('sortBtn').textContent=ctx.sort==='dif'?'ver por volume':'ver por variação';
+ const out=rows.map(r=>{
+   const c26=r.c2026??r.v2026??null,c25=r.c2025??r.v2025??null,o26=r.o2026??null,o25=r.o2025??null;
+   const cd=r.cdif??(c26!=null&&c25!=null?c26-c25:null), od=r.odif??(o26!=null&&o25!=null?o26-o25:null);
+   const rr=r.rate2026??rate(o26,c26);
+   const reason=r.reason||'';
+   return `<div class="row">
+     <div><div class="name">${r.nome||r.tipo||'—'}</div>${reason?`<div class="small">${reason}</div>`:''}</div>
+     <div class="cell"><b>${c26==null?'—':pt(c26)}</b>cham. ${cd==null?'':`<span class="${cd>=0?'pos':'neg'}">${cd>=0?'+':''}${pt(cd)} vs 2025</span>`}</div>
+     <div class="cell"><b>${o26==null?'—':pt(o26)}</b>ouv. ${od==null?'':`<span class="${od>=0?'pos':'neg'}">${od>=0?'+':''}${pt(od)} vs 2025</span>`}</div>
+     <div class="cell rateCell"><b>${rateFmt(rr)}</b>taxa</div>
+   </div>`;
+ }).join('');
+ document.getElementById('rank').innerHTML=(out
+ ? `<div class="rankHeader">
+      <div>${labels[ctx.dim]}</div>
+      <div>Chamados 2026<br><span>dif. vs 2025</span></div>
+      <div>Ouvidorias 2026<br><span>dif. vs 2025</span></div>
+      <div>Taxa 2026<br><span>por 1.000 chamados</span></div>
+    </div>`+out
+ : '<div class="empty">Não há recorte legítimo nesta dimensão para esta competência.</div>');
+ let method='Série oficial por data de corte. Valores de 2026 comparados ao mesmo recorte de 2025.';
+ if(ctx.mode==='month' && ['Julho','Agosto','Setembro'].includes(ctx.month)){
+   method+=' O detalhamento mensal utiliza os recortes congelados dos respectivos fechamentos.';
+   if(ctx.month==='Julho'&&ctx.dim==='aps') method+=' Julho × AP deve ser interpretado somente conforme a disponibilidade registrada no fechamento.';
+   if(ctx.month==='Agosto'&&ctx.dim==='aps') method+=' O residual SEM AP (AGO) é preservado e não redistribuído.';
+ }
+ if(ctx.mode==='month' && !monthMap[ctx.month]) method+=' Para Jan–Jun, o drill-down mensal exibido é por Tipo; dimensões territoriais não são derivadas artificialmente.';
+ document.getElementById('method').textContent=method;
+}
+function show(){document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden'}
+function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.body.style.overflow=''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
-</script></body></html>
+</script>
+</body>
+</html>

@@ -1,13 +1,18 @@
-# 1746 Timeline — Drill-down em cascata V5
+# 1746 Timeline Executiva
 
-Tela principal preservada.
+Módulo independente do HUB COMLURB.
 
-Cascata:
-Serviço → Subtipo → AP → Gerência → Bairro.
+## Conceito
+Leitura editorial enxuta + drill-down sob demanda.
 
-Disponibilidade:
-- Jan–Set acumulado: cascata completa.
-- Agosto e Setembro: cascata completa com os cubos oficiais congelados.
-- Janeiro a Julho: serviço e subtipo mensal; a cascata territorial é interrompida quando a fonte não sustenta o cruzamento mensal por subtipo e território.
+## Drill-down
+- Jan–Set acumulado: Tipo, AP, Gerência, Bairro e Subtipo.
+- Jan–Jun mensal: Tipo, a partir da série mensal oficialmente preservada.
+- Jul–Set mensal: dimensões legitimamente disponíveis nos fechamentos congelados.
+- Agosto mantém SEM AP (AGO) explícito, sem redistribuição.
 
-A taxa é explicada sempre como ouvidorias por 1.000 chamados.
+## Fonte
+Série oficial consolidada SET/2026 e matriz histórica auditada do módulo 1746-historico.
+
+## Ajuste didático
+O drill-down informa explicitamente que 2026 é comparado ao mesmo período de 2025 e explica a taxa por mil em linguagem simples.

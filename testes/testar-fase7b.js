@@ -716,7 +716,10 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
     "assets/components/hub-data-source.js": "1f9ebe28dbf978cdcc6574e93b679f8a11118bbf2ef5d5e1103ac5b7fdda7f80",
     "assets/components/hub-utils.js": "4037b280e5240c942c4339fbec1e165392f78fe89ca3331a9e638dcc59024f52",
     // Dependência Papa Parse fixada em 5.4.1 na baseline de governança.
-    "package.json": "cc95db695f37b76412c7e498a3792439ad94141fe9c8053e77391babd68bfde6"
+    // Atualizado no pacote de confiabilidade 1 (out/2026): inclusão da suíte
+    // test:confiabilidade no npm test. Hash anterior:
+    // cc95db695f37b76412c7e498a3792439ad94141fe9c8053e77391babd68bfde6
+    "package.json": "1b742c3709e2f0ea8c879e00e77b478e25db26d75f2730f1c00936f1477c6558"
   };
   Object.keys(HASHES_ESPERADOS).forEach(function (rel) {
     var abs = path.join(raiz, rel);

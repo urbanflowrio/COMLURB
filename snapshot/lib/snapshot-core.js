@@ -42,6 +42,50 @@ var RETENCAO_DIAS_REJEITADOS_E_FALHAS = 90;
 var CAMPOS_VOLATEIS_QUALITY = ["timestamp"];
 var CAMPOS_VOLATEIS_LINEAGE = ["timestamp"];
 
+/* Defasagem da fonte (pacote de confiabilidade 1, out/2026).
+   Uma fonte mensal é considerada defasada quando faltam
+   LIMITE_COMPETENCIAS_DEFASAGEM ou mais competências já fechadas entre a
+   última competência do período de referência e a data da execução.
+   A avaliação só altera o TEXTO do relatório; não altera envelope, hash,
+   snapshot nem status do ciclo. */
+var LIMITE_COMPETENCIAS_DEFASAGEM = 2;
+
+function avaliarDefasagem(referencePeriod, agoraISO) {
+  var ref = String(referencePeriod || "");
+  var m = ref.match(/(\d{4})-(\d{2})$/);
+  if (!m) {
+    return { avaliavel: false, motivo: "período de referência sem competência mensal (" + (ref || "vazio") + ")" };
+  }
+  var ano = Number(m[1]), mes = Number(m[2]);
+  var agora = new Date(agoraISO);
+  if (mes < 1 || mes > 12 || isNaN(agora.getTime())) {
+    return { avaliavel: false, motivo: "período de referência ou data de execução inválidos" };
+  }
+  // Mês corrente ainda não está fechado: a última competência fechada é o mês anterior.
+  var ultimaFechada = agora.getUTCFullYear() * 12 + agora.getUTCMonth() - 1;
+  var ultimaFonte = ano * 12 + (mes - 1);
+  var faltando = Math.max(0, ultimaFechada - ultimaFonte);
+  return {
+    avaliavel: true,
+    ultimaCompetencia: m[2] + "/" + m[1],
+    competenciasFechadasSemDado: faltando,
+    limite: LIMITE_COMPETENCIAS_DEFASAGEM,
+    defasada: faltando >= LIMITE_COMPETENCIAS_DEFASAGEM
+  };
+}
+
+function textoDefasagem(d) {
+  if (!d || !d.avaliavel) return "não avaliada — " + (d ? d.motivo : "sem dados");
+  if (!d.competenciasFechadasSemDado) return "em dia (última competência " + d.ultimaCompetencia + ")";
+  return d.competenciasFechadasSemDado + " competência(s) fechada(s) sem dado após " + d.ultimaCompetencia +
+    (d.defasada ? " — FONTE DEFASADA (limite: " + d.limite + ")" : " — dentro do limite de " + d.limite);
+}
+
+function passoDefasagem(d) {
+  return "Fonte sem atualização: " + d.competenciasFechadasSemDado + " competência(s) fechada(s) sem dado após " +
+    d.ultimaCompetencia + ". Confirmar com a área responsável se a fonte continua sendo produzida.";
+}
+
 /* ================================================================
    VALIDAÇÃO DO ENVELOPE
    ================================================================ */
@@ -436,6 +480,7 @@ function processarCicloModulo(params) {
     (latestAnterior.schemaVersion !== envelope.schemaVersion || latestAnterior.domain !== envelope.domain);
 
   var avisos = (envelope.quality && envelope.quality.avisos) || [];
+  var defasagem = avaliarDefasagem(envelope.referencePeriod, agoraISO);
 
   if (!mudou) {
     var relatorioSemMudanca = montarRelatorio({
@@ -451,10 +496,12 @@ function processarCicloModulo(params) {
       snapshotCriado: false,
       ultimoSnapshotValidoPreservado: true,
       hash: hash,
-      proximoPassoRecomendado: "Nenhuma ação necessária."
+      defasagem: defasagem,
+      proximoPassoRecomendado: defasagem.defasada ? passoDefasagem(defasagem) : "Nenhuma ação necessária."
     });
 
-    var persistirPorAviso = avisos.length > 0;
+    // Fonte defasada também gera relatório persistido, para que o alerta fique registrado.
+    var persistirPorAviso = avisos.length > 0 || defasagem.defasada === true;
     var caminhoRelatorioSM = persistirPorAviso
       ? gravarRelatorioPersistido(raizDados, moduloId, "sem_mudanca_com_aviso", relatorioSemMudanca)
       : null;
@@ -489,9 +536,12 @@ function processarCicloModulo(params) {
     snapshotCriado: true,
     ultimoSnapshotValidoPreservado: true,
     hash: hash,
+    defasagem: defasagem,
     proximoPassoRecomendado: mudancaEstrutural
       ? "Mudança estrutural detectada — revisar manualmente antes de considerar este snapshot rotina."
-      : "Nenhuma ação necessária além da revisão de rotina do relatório."
+      : defasagem.defasada
+        ? passoDefasagem(defasagem)
+        : "Nenhuma ação necessária além da revisão de rotina do relatório."
   });
 
   var caminhoRelatorioNovo = gravarRelatorioPersistido(raizDados, moduloId, statusCiclo, relatorioNovo);
@@ -530,6 +580,7 @@ function montarRelatorio(campos) {
   linhas.push("- **Snapshot criado nesta execução:** " + (campos.snapshotCriado ? "sim" : "não"));
   linhas.push("- **Último snapshot válido preservado:** " + (campos.ultimoSnapshotValidoPreservado ? "sim" : "não"));
   linhas.push("- **Hash:** " + (campos.hash || "não calculado"));
+  if (campos.defasagem) linhas.push("- **Defasagem da fonte:** " + textoDefasagem(campos.defasagem));
   linhas.push("- **Próximo passo recomendado:** " + campos.proximoPassoRecomendado);
 
   if (campos.erros && campos.erros.length) {
@@ -565,6 +616,8 @@ module.exports = {
   listarElegiveisRetencao: listarElegiveisRetencao,
   processarCicloModulo: processarCicloModulo,
   montarRelatorio: montarRelatorio,
+  LIMITE_COMPETENCIAS_DEFASAGEM: LIMITE_COMPETENCIAS_DEFASAGEM,
+  avaliarDefasagem: avaliarDefasagem,
   _sanitizarNomePasta: sanitizarNomePasta,
   _normalizarTimestampParaNomeArquivo: normalizarTimestampParaNomeArquivo
 };

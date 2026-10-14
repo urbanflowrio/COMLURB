@@ -2281,7 +2281,7 @@ function renderInfra(){
 
   const predial=corta13(relatorioSerie(RAW.relatorio,"QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS",nTodos));
   const refrig=corta13(relatorioSerie(RAW.relatorio,"REFRIGERACAO",nTodos));
-  const eco=corta13(relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPOINTOS",nTodos));
+  const eco=corta13(relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPONTOS",nTodos));
 
   const lastInfo=arr=>{const i=lastValidIndex(arr); return i>=0?{i,v:arr[i]}:{i:-1,v:null};};
   const fmtPct=v=>Number.isFinite(v)?v.toFixed(1).replace('.',',')+'%':'n/d';
@@ -2562,7 +2562,7 @@ function computeExecutiveData() {
 
   const predial = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS"), j.keys);
   const refrig = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "REFRIGERACAO"), j.keys);
-  const eco = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "MANUTENCAO DE ECOPOINTOS"), j.keys);
+  const eco = execSeriesFromMap(execRelatorioMap(RAW.relatorio, "MANUTENCAO DE ECOPONTOS"), j.keys);
   const predialItens = [
     { nome: "Intervenções", serie: predial },
     { nome: "Refrigeração", serie: refrig },

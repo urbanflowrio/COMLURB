@@ -1082,6 +1082,7 @@ h2 {
       <div>
         <div class="eyebrow">PERÍODO DA ANÁLISE</div>
         <div class="sub">Ouvidorias operacionais • exclui registros tratados internamente pela PCO</div>
+        <div class="sub" id="dataCutoff" hidden></div>
       </div>
       <div class="moduleControls">
         <div id="filterContext" class="filterContext" style="display:none"></div>
@@ -2095,6 +2096,24 @@ function mainDrivers(x){
 }
 function shareOfMovement(value,total){return total?Math.abs(value/total):0;}
 
+// Pacote de confiabilidade 1 (out/2026): competência e data de corte lidas do
+// data-cutoff.json publicado junto com o cubo. Se o arquivo não carregar, a
+// linha permanece oculta: nenhuma data é exibida sem origem.
+function carregarCorte(){
+  const el=document.getElementById('dataCutoff');
+  if(!el||typeof fetch!=='function')return;
+  const MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const comp=v=>{const m=/^(\d{4})-(\d{2})$/.exec(String(v||''));return m&&+m[2]>=1&&+m[2]<=12?MESES[+m[2]-1]+'/'+m[1]:null;};
+  const dia=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v||''));return m?m[3]+'/'+m[2]+'/'+m[1]:null;};
+  fetch('data-cutoff.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(d=>{
+    const c=comp(d.competencia_mais_recente),k=dia(d.data_corte);
+    if(!c||!k)return;
+    const partes=['Competência '+c,'corte em '+k];
+    const h=comp(d.historico_congelado_ate);if(h)partes.push('histórico congelado até '+h);
+    el.textContent=partes.join(' · ');
+    el.hidden=false;
+  }).catch(err=>console.warn('data-cutoff.json não carregado; competência não exibida.',err));
+}
 function init(){
   HUB.header.render('header',{systemLabel:'CANAIS DO CIDADÃO',title:'Ouvidoria',subtitle:'Leitura executiva das ouvidorias operacionais, evolução temporal e concentração territorial',navigation:[
     {id:'screenExecutiva',label:'Visão Executiva',onActivate:()=>setTimeout(()=>{resizeCharts();window.scrollTo({top:0,behavior:'smooth'});},60)},
@@ -2102,6 +2121,7 @@ function init(){
     {id:'screenAnalitica',label:'Analítico',onActivate:()=>setTimeout(()=>{resizeCharts();window.scrollTo({top:0,behavior:'smooth'});},60)}
   ]});
   HUB.footer.render('footer');
+  carregarCorte();
   document.querySelectorAll('.periodBtn').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.periodBtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');period=btn.dataset.period;selectedBairro=null;render();});
   document.querySelectorAll('.metricPill').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.metricPill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');mapMetric=btn.dataset.mapmetric;drawMap();});
   document.getElementById('clearAnalyticFilter').onclick=()=>clearFilter();

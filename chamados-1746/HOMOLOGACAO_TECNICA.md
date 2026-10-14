@@ -147,3 +147,22 @@ Redação de dois cartões da leitura executiva, para não atribuir causa a uma 
 Os demais arquivos mantêm os hashes do registro `CHA-2026-10-05-TEC-01`. O hash anterior de `index.html` fica preservado acima como histórico.
 
 Status deste registro: revisão editorial documentada; resultados homologados em `CHA-2026-10-05-TEC-01` preservados.
+
+---
+
+## Homologação técnica do Pacote de Confiabilidade 1 — CHA-2026-10-14-TEC-02
+
+Data do registro: 14/10/2026. Referência: `CONF-2026-10-P1`.
+
+- Base editorial preservada: registro `CHA-2026-10-08-EDT-01`.
+- Publicação em `main`: commit `2b11b85ac7942546d91c692b2dc9e37f230829a5`.
+- Alteração: exibição de competência, data de corte e histórico congelado a partir de `data-cutoff.json`, sem mudança nos cubos ou nas regras oficiais.
+- Verificações técnicas: 668 testes aprovados e 0 reprovados, conforme execução independente documentada na preparação do pacote; hashes e lista de sete arquivos conferidos na publicação.
+- Evidência visual: captura da página publicada conferida nesta conversa (desktop); confirmação da usuária de funcionamento no celular, em 14/10/2026. Totais na tela mantidos.
+- Limite do aceite: a confirmação de navegação móvel é declarada pela usuária; não representa nova conferência dos dados brutos nem inspeção de todos os filtros individualmente.
+
+| Arquivo | SHA-256 do P1 |
+|---|---|
+| `index.html` | `aa3ff3ee2886dbd28fb671ed97c1d1c1c9c9851c6ccd0002df0f9b2aac4e8979` |
+
+Resultado: **aceite técnico e visual do escopo P1 registrado**. O histórico de homologação anterior permanece válido; esta seção documenta exclusivamente as modificações de confiabilidade do P1.

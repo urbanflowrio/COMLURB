@@ -60,3 +60,12 @@ Os itens abaixo foram identificados como cópias sem referência ou arquivos ant
 | `assets/data/ouvidoria/ouvidoria_data.js` | Espelho conferido e sincronizado em 05/10/2026; SHA-256 idêntico ao arquivo vigente do módulo |
 | `assets/data/ouvidoria/ouvidoria_cube.js` | Espelho conferido e sincronizado em 05/10/2026; SHA-256 idêntico ao arquivo vigente do módulo |
 | `territorial/unidades_comlurb (1).csv` | Cópia idêntica. O painel usa `territorial/data/unidades_comlurb.csv` |
+
+
+## Pacote de Confiabilidade 1 — aceite em 14/10/2026
+
+| Data | Módulos | Identificação | Evidências | Responsável pela conferência visual | Resultado |
+|---|---|---|---|---|---|
+| 14/10/2026 | Chamados 1746, Ouvidoria, Engenharia e snapshot | `CONF-2026-10-P1` | Commit `2b11b85`; hashes dos sete arquivos conferidos; regressão 668/668 informada na preparação; GitHub Pages concluído; capturas de desktop de Chamados, Ouvidoria e Ecopontos; confirmação de funcionamento no celular | Greicy Moreira (confirmação em conversa) | **Aceite visual do escopo P1; alerta semanal DTE pendente de execução** |
+
+Observações de controle: (1) os cubos, totais e regras oficiais não foram alterados neste pacote; (2) o gráfico de Ecopontos passou a exibir valores no portal publicado; (3) o alerta de defasagem do snapshot tem teste técnico aprovado, mas sua próxima execução semanal em produção ainda precisa ser conferida no relatório gerado; (4) privacidade do cadastro territorial e das planilhas de hora extra permanece pendente e fora deste escopo; (5) esta evidência não substitui homologação institucional dos demais módulos.

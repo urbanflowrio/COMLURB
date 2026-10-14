@@ -32,18 +32,10 @@ A camada SIURB consolida vínculos de UCV (`gerencia`), UGU (`gerencia_1`), UCS 
 
 **Sem alteração no HUB publicado.**
 
-## Regra funcional confirmada pela gestão — códigos CG e LRC (14/10/2026)
+## Regra funcional confirmada — prefixo C nas gerências DLU (14/10/2026)
 
-A usuária confirmou expressamente que **todas as gerências com código iniciado por `C` pertencem à Superintendência `LRC`**, e solicitou a utilização dos seguintes identificadores nas análises do HUB e do piloto:
+**Regra geral:** toda gerência da DLU cujo código começa com a letra `C` pertence à Superintendência **LRC**, independentemente das demais letras ou números. Não se limita às sete gerências `CG` citadas como exemplos.
 
-| Código da gerência | Superintendência confirmada |
-|---|---|
-| `CG08T` | `LRC` |
-| `CG09V` | `LRC` |
-| `CG10R` | `LRC` |
-| `CG12I` | `LRC` |
-| `CG13M` | `LRC` |
-| `CG13P` | `LRC` |
-| `CG20G` | `LRC` |
+Exemplos: `CG08T`, `CG09V`, `CG10R`, `CG12I`, `CG13M`, `CG13P`, `CG20G`. A relação é ilustrativa, não exaustiva.
 
-**Decisão do piloto:** utilizar `CG*` e `LRC` como referência operacional para essas sete gerências. Guardar os códigos divergentes da camada SIURB como atributos de origem e não reclassificar/somar automaticamente `NG*` ou `SG*` nos indicadores. A confirmação esclarece a associação das siglas; a tabela de equivalência entre versões e a vigência temporal da mudança ainda exigem documentação formal antes de converter registros históricos. Nenhum cubo ou GeoJSON da produção será modificado nesta fase.
+**Regra do piloto:** classificar como `LRC` todos os códigos de gerências DLU que, após normalização de espaços e caixa, iniciem por `C`. Não estender a regra às coordenadorias e gerências DSU. Preservar os códigos originais das fontes para rastreabilidade; diferenças do SIURB e equivalências históricas exigem confirmação de vigência antes de recodificação. Nenhum cubo ou mapa oficial de produção deve ser modificado nesta etapa.

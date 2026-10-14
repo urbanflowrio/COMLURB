@@ -109,3 +109,45 @@ Identificação: `OUV-2026-10-05-TEC-01`.
 | Base auditável pós-auditoria | `59047b094e86fe70a4d39121090550a21573a5f74168433ceeba3bd240561fe3` |
 
 Status deste registro: correções executadas; aceite técnico independente aprovado — T1 a T10.
+
+---
+
+# Registro de revisão editorial — 08/10/2026
+
+Identificação: `OUV-2026-10-08-EDT-01`.
+
+Registrado em 14/10/2026, após reconciliação com o histórico do repositório. Este registro **não é nova homologação de dados**: documenta uma alteração de redação feita depois de `OUV-2026-10-05-TEC-01` e confirma que ela não afeta resultados.
+
+## Origem
+
+- versão homologada em `OUV-2026-10-05-TEC-01`: commit `7caafd9` (06/10/2026), SHA-256 `5f8221e9c499c0105dcd1b609720fb19d5fdc2a4324571ae0938393772484ab3`;
+- alteração posterior: commit `6d2ad9f` (08/10/2026), que modificou somente `chamados-1746/index.html` e `ouvidoria/index.html`, 2 linhas em cada.
+
+## Alteração
+
+Redação de dois cartões da leitura executiva, para não atribuir causa a uma participação na variação:
+
+| Antes | Depois |
+|---|---|
+| Principal motor da mudança | Principal contribuição para a variação |
+| Respondeu por X da alta/redução anual | Representou X da variação anual |
+| Os dois principais fatores explicam X | As duas principais contribuições representam X |
+| Explicou X da variação acumulada | Representou X da variação acumulada |
+
+## Verificação
+
+- cálculos exibidos idênticos antes e depois: `pct(shareOfMovement(a.dif, x.dif))`, `signed(a.dif)`, `pct(combined)`, `fmt(x.total2026)`, `pctSigned(x.var)`;
+- única expressão removida: a escolha da palavra "alta" ou "redução";
+- nenhuma alteração de cálculo, filtro, classificação, AP, gerência, bairro, alias cartográfico ou PCO;
+- cubo, GeoJSON e `data-cutoff.json` inalterados (hashes do registro anterior conferem);
+- revisão independente da reconciliação: aprovada.
+
+## Integridade após a revisão editorial
+
+| Arquivo | SHA-256 |
+|---|---|
+| `index.html` | `170c6a74ccf3a9be029f6d70b307992709170773153c51af04ee797a5bded468` |
+
+Os demais arquivos mantêm os hashes do registro `OUV-2026-10-05-TEC-01`. O hash anterior de `index.html` fica preservado acima como histórico.
+
+Status deste registro: revisão editorial documentada; resultados homologados em `OUV-2026-10-05-TEC-01` preservados.

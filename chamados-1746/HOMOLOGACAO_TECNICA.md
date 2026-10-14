@@ -105,3 +105,45 @@ Identificação: `CHA-2026-10-05-TEC-01`.
 | Base auditável pós-auditoria | `108745d02b2b60ea7b1d7d3f88b1943a214e527e5989ad36dd5f6bad67a4be0c` |
 
 Status deste registro: correções executadas; aceite técnico independente aprovado — T1 a T10.
+
+---
+
+# Registro de revisão editorial — 08/10/2026
+
+Identificação: `CHA-2026-10-08-EDT-01`.
+
+Registrado em 14/10/2026, após reconciliação com o histórico do repositório. Este registro **não é nova homologação de dados**: documenta uma alteração de redação feita depois de `CHA-2026-10-05-TEC-01` e confirma que ela não afeta resultados.
+
+## Origem
+
+- versão homologada em `CHA-2026-10-05-TEC-01`: commit `7caafd9` (06/10/2026), SHA-256 `fc6d56bfa85b488bdf81b014108a54aa70d3c7190084ccf38a622224c7963713`;
+- alteração posterior: commit `6d2ad9f` (08/10/2026), que modificou somente `chamados-1746/index.html` e `ouvidoria/index.html`, 2 linhas em cada.
+
+## Alteração
+
+Redação de dois cartões da leitura executiva, para não atribuir causa a uma participação na variação:
+
+| Antes | Depois |
+|---|---|
+| Principal motor da mudança | Principal contribuição para a variação |
+| Respondeu por X da alta/redução anual | Representou X da variação anual |
+| Os dois principais fatores explicam X | As duas principais contribuições representam X |
+| Explicou X da variação acumulada | Representou X da variação acumulada |
+
+## Verificação
+
+- cálculos exibidos idênticos antes e depois: `pct(shareOfMovement(a.dif, x.dif))`, `signed(a.dif)`, `pct(combined)`, `fmt(x.total2026)`, `pctSigned(x.var)`;
+- única expressão removida: a escolha da palavra "alta" ou "redução";
+- nenhuma alteração de cálculo, filtro, classificação, AP, gerência, bairro, alias cartográfico ou PCO;
+- cubo, GeoJSON e `data-cutoff.json` inalterados (hashes do registro anterior conferem);
+- revisão independente da reconciliação: aprovada.
+
+## Integridade após a revisão editorial
+
+| Arquivo | SHA-256 |
+|---|---|
+| `index.html` | `96c09524842f6fa300137526e0c3bfb75af72ed9ed5c2cc69b05e5b92cdc7068` |
+
+Os demais arquivos mantêm os hashes do registro `CHA-2026-10-05-TEC-01`. O hash anterior de `index.html` fica preservado acima como histórico.
+
+Status deste registro: revisão editorial documentada; resultados homologados em `CHA-2026-10-05-TEC-01` preservados.

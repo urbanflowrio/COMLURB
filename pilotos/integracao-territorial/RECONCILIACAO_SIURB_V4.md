@@ -31,3 +31,19 @@ A camada SIURB consolida vínculos de UCV (`gerencia`), UGU (`gerencia_1`), UCS 
 - O relatório tabular completo por bairro foi produzido como artefato local desta auditoria; a presente nota registra os resultados principais sem incluir dados geográficos de acesso restrito.
 
 **Sem alteração no HUB publicado.**
+
+## Regra funcional confirmada pela gestão — códigos CG e LRC (14/10/2026)
+
+A usuária confirmou expressamente que **todas as gerências com código iniciado por `C` pertencem à Superintendência `LRC`**, e solicitou a utilização dos seguintes identificadores nas análises do HUB e do piloto:
+
+| Código da gerência | Superintendência confirmada |
+|---|---|
+| `CG08T` | `LRC` |
+| `CG09V` | `LRC` |
+| `CG10R` | `LRC` |
+| `CG12I` | `LRC` |
+| `CG13M` | `LRC` |
+| `CG13P` | `LRC` |
+| `CG20G` | `LRC` |
+
+**Decisão do piloto:** utilizar `CG*` e `LRC` como referência operacional para essas sete gerências. Guardar os códigos divergentes da camada SIURB como atributos de origem e não reclassificar/somar automaticamente `NG*` ou `SG*` nos indicadores. A confirmação esclarece a associação das siglas; a tabela de equivalência entre versões e a vigência temporal da mudança ainda exigem documentação formal antes de converter registros históricos. Nenhum cubo ou GeoJSON da produção será modificado nesta fase.

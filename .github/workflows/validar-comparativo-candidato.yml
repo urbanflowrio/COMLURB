@@ -1,0 +1,35 @@
+name: Validacao candidata do Comparativo 1746
+on:
+  push:
+    branches:
+      - homologacao/comparativo-1746-out2026
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  homologar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Dependencias
+        run: npm ci --no-audit --no-fund
+      - name: Regressao integral da versao candidata
+        run: npm run test:regression
+      - name: Validar integracao de caminhos e referencias
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');const assert=require('assert');
+          const html=fs.readFileSync('1746-comparativo/index.html','utf8');
+          assert(html.includes('src="../chamados-1746/chamados_cube.js"'));
+          assert(html.includes("fetch('../chamados-1746/data-cutoff.json'"));
+          assert(html.includes('src="./populacao_ibge_2022.js"'));
+          assert(html.includes('Mostrar todos os subtipos'));
+          assert(html.includes('162/162 denominações conciliadas'));
+          for(const file of ['chamados-1746/chamados_cube.js','chamados-1746/data-cutoff.json','1746-comparativo/populacao_ibge_2022.js'])assert(fs.existsSync(file),file);
+          const cutoff=JSON.parse(fs.readFileSync('chamados-1746/data-cutoff.json','utf8'));assert(cutoff&&typeof cutoff==='object');
+          console.log('Caminhos, controle de corte e recursos aprovados.');
+          NODE

@@ -1,12 +1,14 @@
-# Gestão Estratégica de Pessoas — V1 integrada para homologação
+# Gestão Estratégica de Pessoas — V2 para homologação
 
-Arquivos nativos: `index.html`, `pessoas.css`, `pessoas.js`, `resumo-publico.js`.
+Substituir apenas os arquivos da pasta `pessoas/` usando os caminhos do ZIP. Usa `../assets/css/hub-premium.css`, `HUB.header` e `HUB.footer` existentes.
 
-- Usa `assets/css/hub-premium.css`, `HUB.header`, `HUB.footer` e funções compartilhadas.
-- Home existente em `index.html` continua a apontar para `pessoas/`; não alterada.
-- Fonte: fotografia somente agregada da planilha SARC, aba `geral`, consolidado COMLURB, consultada em 21/10/2026.
-- Não contém dados pessoais, números por gerência, cadastros individualizados nem URL de fonte restrita.
-- Valores de 2025 são usados somente onde foi confirmada a série de absenteísmo.
-- Ausência de valor oficial é null, nunca zero inferido. Efetivo permanece pendente.
-- Homologação obrigatória: validação institucional de dados, visual desktop/celular e aceite LGPD antes de publicar publicamente.
-- A publicação da pasta não torna a fotografia automática. A atualização futura exige rotina de exportação somente de agregados aprovada.
+## Decisões de projeto
+- Painel de gestão: síntese narrativa, sinais, diagnóstico temporal, agenda de investigação e transparência.
+- Somente consolidados corporativos SARC aprovados como fotografia auxiliar (extração 21/10/2026).
+- Não insere base individual, laudos ou acidentes analisados na página pública.
+- Não infere taxa de afastados sem efetivo e não mistura fontes com critérios diferentes.
+- Série de 13 competências Set/25–Set/26, lacunas explícitas.
+- A homepage do HUB, outros módulos e arquivos compartilhados ficam intocados.
+
+## Pendências antes da publicação pública
+Teste visual desktop/celular; aprovação institucional da divulgação de agregados e da modelagem de privacidade; homologação dos indicadores e governança de atualização; efetivo ativo por competência e cortes seguros por diretoria. Não é atualização em tempo real.

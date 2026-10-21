@@ -11,7 +11,7 @@ let debtRows=[],billed2026Rows=[],period="2026",rankingChart=null,monthlyChart=n
 
 const valueLabelsPlugin={id:"hubValueLabels",afterDatasetsDraw(chart,args,options){
   if(!options?.display)return;
-  const {ctx}=chart;ctx.save();ctx.fillStyle="#f7f9ff";ctx.font="800 10px Segoe UI";
+  const {ctx}=chart;ctx.save();ctx.fillStyle="#f7f9ff";ctx.font="800 13px Segoe UI";
   chart.getDatasetMeta(0).data.forEach((element,index)=>{
     const label=compact.format(chart.data.datasets[0].data[index]),point=element.tooltipPosition();
     if(chart.config.type==="bar"){
@@ -349,6 +349,9 @@ async function load(){
 }
 
 function init(){
+  Chart.defaults.font.size=13;
+  Chart.defaults.font.family="Segoe UI, Arial, sans-serif";
+  Chart.defaults.color="#c9daed";
   Chart.register(valueLabelsPlugin);
   HUB.header.render("header",{systemLabel:"HUB COMLURB · INTELIGÊNCIA OPERACIONAL",title:"Performance dos Contratos de Receita",subtitle:"Faturamento e débitos por período, secretaria, serviço, mês e unidade."});HUB.footer.render("footer");
   document.querySelectorAll("[data-period]").forEach(btn=>btn.addEventListener("click",()=>{period=btn.dataset.period;selectedDebtPosition=null;selectedBilledMonth=null;selectedDebtYear=null;serviceDebtDrillOpen=false;document.querySelectorAll("[data-period]").forEach(b=>b.classList.toggle("active",b===btn));$("secretaryFilter").value="";$("serviceFilter").value="";$("monthFilter").value="";populateCascade();render();}));

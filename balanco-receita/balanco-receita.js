@@ -321,7 +321,30 @@ async function load(){
     if(!baseResponse.ok||!billedResponse.ok)throw new Error("Fonte indisponível");
     debtRows=parseDebtRows(await baseResponse.text());billed2026Rows=parseBilled2026(await billedResponse.text());
     if(!debtRows.length||!billed2026Rows.length)throw new Error("Base vazia");$("dataAlert").hidden=true;
-  }catch(error){$("dataAlert").hidden=false;console.warn("HUB COMLURB: falha na atualização das bases.",error);}
+  }catch(error){
+    const snapshot=window.DAF_DATA;
+    if(snapshot&&Array.isArray(snapshot.registros)&&snapshot.registros.length&&Array.isArray(snapshot.faturamentoMensal)){
+      debtRows=snapshot.registros.map(r=>({
+        secretaria:String(r.secretaria||"Não informada"),service:standardService(r.servico),
+        unit:standardUnit(r.unidade),year:Number(r.ano)||0,month:MONTHS[String(r.mes||"").toLowerCase()]||0,
+        billed:Number(r.bruto)||0,paid:Number(r.pago)||0,paidProvided:r.pago!=null,
+        debt:Number(r.debito)||0,type:"",launches:1
+      }));
+      billed2026Rows=snapshot.faturamentoMensal.map((r,i)=>({
+        secretaria:"Consolidado DAF",service:"Faturamento consolidado",unit:"Todas as unidades",
+        year:2026,month:({jan:1,fev:2,mar:3,abr:4,mai:5,jun:6,jul:7,ago:8,set:9,out:10,nov:11,dez:12})[String(r.mes||"").toLowerCase().slice(0,3)]||i+1,
+        billed:Number(r.valor)||0,paid:0,paidProvided:false,debt:0,launches:0,type:""
+      }));
+      $("dataAlert").textContent="Fonte online indisponível. Exibindo cópia local DAF com corte em setembro/2026. Faturamento mensal apenas consolidado; detalhamento por serviço/secretaria indisponível nesta fonte.";
+      $("dataAlert").hidden=false;
+      console.warn("HUB COMLURB: fonte remota indisponível; base DAF local utilizada.",error);
+    }else{
+      $("dataAlert").textContent="Não foi possível carregar os dados financeiros. Os indicadores estão indisponíveis.";
+      $("dataAlert").hidden=false;
+      console.error("HUB COMLURB: nenhuma fonte financeira disponível.",error);
+      return;
+    }
+  }
   populateCascade();render();
 }
 

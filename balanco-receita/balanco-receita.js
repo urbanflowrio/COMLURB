@@ -290,15 +290,44 @@ function renderMonthly(){
   }
 }
 
+let detailService=null,detailUnit=null;
 function renderServices(cards,focus){
-  const filtered=cards.filter(s=>s.value>0);
-  $("serviceBars").innerHTML=filtered.length?filtered.map(s=>{
-    const breakdown=s.name==="Limpeza Hospitalar"?`<div class="hospitalInline"><em>Maiores débitos por unidade</em>${s.list.filter(h=>h[focus]>0).slice(0,4).map((h,i)=>`<div><span>${i+1}. ${escapeHTML(h.unit)}</span><b>${escapeHTML(money.format(h[focus]))}</b></div>`).join("")}</div>`:"";
-    const note=period==="2026"?`${s.list.filter(r=>r.debt>0).length} ${s.list.filter(r=>r.debt>0).length===1?"unidade com débito":"unidades com débito"}`:`${percent.format(s.rate)} em aberto`;
-    return `<div class="serviceBar ${breakdown?"hasBreakdown":""}"><div><b>${escapeHTML(s.name)}</b><span>Líder: ${escapeHTML(s.leader.unit)}</span></div><strong>${escapeHTML(money.format(s.value))}</strong><small>${escapeHTML(note)}</small>${breakdown}</div>`;
-  }).join(""):'<div class="emptyState">Não há serviços para os filtros aplicados.</div>';
+ const filtered=cards.filter(s=>s.value>0);
+ if(detailService&&!filtered.some(s=>s.name===detailService)){detailService=null;detailUnit=null;}
+ const container=$("serviceBars");
+ const items=filtered.map(s=>{
+   const selected=detailService===s.name;
+   const note=period==="2026"?s.list.filter(r=>r.debt>0).length+" unidades com débito":percent.format(s.rate)+" em aberto";
+   return '<button type="button" class="serviceBar serviceChoice'+(selected?' selected':'')+'" data-service="'+escapeHTML(s.name)+'" aria-expanded="'+selected+'"><span class="serviceChoiceName"><b>'+escapeHTML(s.name)+'</b><span>Líder: '+escapeHTML(s.leader.unit)+'</span><small>'+escapeHTML(note)+'</small></span><strong>'+escapeHTML(money.format(s.value))+'</strong></button>';
+ }).join("");
+ container.innerHTML=items||'<div class="emptyState">Não há serviços para os filtros aplicados.</div>';
+ container.querySelectorAll("[data-service]").forEach(btn=>btn.addEventListener("click",()=>{
+  const name=btn.dataset.service;detailService=detailService===name?null:name;detailUnit=null;renderServices(cards,focus);
+ }));
+ const existing=$("serviceDetail");if(existing)existing.remove();
+ if(!detailService)return;
+ const chosen=filtered.find(s=>s.name===detailService);if(!chosen)return;
+ const panel=document.createElement("section");panel.id="serviceDetail";panel.className="receitaPanel serviceDetail";
+ panel.innerHTML='<div class="serviceDetailHead"><div><span class="eyebrow">Detalhamento</span><h2>'+escapeHTML(detailService)+'</h2></div><button class="detailButton" id="closeServiceDetail" type="button">Fechar</button></div><div id="serviceDetailBody"></div>';
+ container.parentElement.after(panel);
+ $("closeServiceDetail").addEventListener("click",()=>{detailService=null;detailUnit=null;renderServices(cards,focus);});
+ function draw(){
+  const body=$("serviceDetailBody");
+  if(!detailUnit){
+   const units=chosen.list.filter(u=>u[focus]>0).sort((x,y)=>y[focus]-x[focus]);
+   body.innerHTML='<p class="serviceDetailCaption">Selecione uma unidade para ver as competências.</p><div class="serviceUnitList">'+units.map(u=>'<button type="button" class="serviceDetailRow" data-unit="'+escapeHTML(u.unit)+'"><span>'+escapeHTML(u.unit)+'</span><strong>'+escapeHTML(money.format(u[focus]))+'</strong><span class="detailArrow">›</span></button>').join("")+'</div>';
+   body.querySelectorAll("[data-unit]").forEach(btn=>btn.addEventListener("click",()=>{detailUnit=btn.dataset.unit;draw();}));
+   return;
+  }
+  const source=applyFilters(periodDebtRows()).filter(r=>r.service===detailService&&r.unit===detailUnit);
+  const byMonth=new Map();
+  source.forEach(r=>{const k=String(r.year)+"|"+String(r.month||0);byMonth.set(k,(byMonth.get(k)||0)+r.debt);});
+  const entries=[...byMonth].sort((a,b)=>b[0].localeCompare(a[0]));
+  body.innerHTML='<button type="button" class="detailButton" id="backServiceUnits">← Unidades</button><h3>'+escapeHTML(detailUnit)+'</h3><p class="serviceDetailCaption">Débitos por competência</p><div class="serviceUnitList">'+(entries.length?entries.map(([k,v])=>{const [year,month]=k.split("|");return '<div class="serviceDetailRow"><span>'+escapeHTML((MONTH_LABELS[Number(month)]||"Sem mês")+"/"+year)+'</span><strong>'+escapeHTML(money.format(v))+'</strong></div>';}).join(""):'<p class="serviceDetailCaption">Sem débitos detalhados para esta seleção.</p>')+'</div>';
+  $("backServiceUnits").addEventListener("click",()=>{detailUnit=null;draw();});
+ }
+ draw();
 }
-
 function renderTable(rows){
   $("statusColumn").textContent=period==="2026"?"Situação":"Em aberto";
   $("detailBody").innerHTML=rows.map(r=>`<tr><td>${escapeHTML(r.secretaria)}</td><td>${escapeHTML(r.service)}</td><td><b>${escapeHTML(r.unit)}</b></td><td>${escapeHTML(money.format(r.billed))}</td><td>${period==="2026"?"Sem informação":r.paidProvided?escapeHTML(money.format(r.paid)):"Sem informação"}</td><td><b>${escapeHTML(money.format(r.debt))}</b></td><td>${period==="2026"?(r.debt>0?"Débito identificado":"Sem débito identificado"):escapeHTML(percent.format(currentRate(r)))}</td></tr>`).join("");

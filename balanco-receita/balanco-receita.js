@@ -1,5 +1,5 @@
-const BASE_URL="https://docs.google.com/spreadsheets/d/1eWK6G5fNGhW8pt7OsirTpFnYvI3KF7afjX3O-FUXiPk/gviz/tq?tqx=out:csv&sheet=Base_Padronizada&range=A2:T5000";
-const BILLED_2026_URL="https://docs.google.com/spreadsheets/d/1eWK6G5fNGhW8pt7OsirTpFnYvI3KF7afjX3O-FUXiPk/gviz/tq?tqx=out:csv&sheet=Valores%20Faturados%202026&range=A1:O500";
+const BASE_URL="https://docs.google.com/spreadsheets/d/1fWsN8qeTKwbbZJBLykiqvfJAbQ5Bp6Ye8qWX8FhenrI/gviz/tq?tqx=out:csv&sheet=Base_Padronizada&range=A2:T5000";
+const BILLED_2026_URL="https://docs.google.com/spreadsheets/d/1fWsN8qeTKwbbZJBLykiqvfJAbQ5Bp6Ye8qWX8FhenrI/gviz/tq?tqx=out:csv&sheet=Valores%20Faturados%202026&range=A1:O500";
 const $=id=>document.getElementById(id);
 const money=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
 const compact=new Intl.NumberFormat("pt-BR",{notation:"compact",maximumFractionDigits:1});
@@ -338,3 +338,13 @@ function init(){
   $("toggleDetails").addEventListener("click",()=>{const open=$("detailWrap").classList.toggle("open");$("toggleDetails").textContent=open?"Recolher dados":"Explorar dados";$("toggleDetails").setAttribute("aria-expanded",String(open));});load();
 }
 document.addEventListener("DOMContentLoaded",init);
+
+// DAF consolidation: keeps the existing operational view and expands the historical diagnosis in place.
+document.addEventListener('DOMContentLoaded',()=>{
+ const btn=document.getElementById('dafExpand'),wrap=document.getElementById('dafFrameWrap'),frame=document.getElementById('dafFrame');
+ if(!btn||!wrap||!frame)return;
+ function toggle(open){wrap.hidden=!open;btn.setAttribute('aria-expanded',String(open));btn.textContent=open?'Recolher análise estratégica':'Abrir análise estratégica';if(open&&!frame.src)frame.src=frame.dataset.src;}
+ btn.addEventListener('click',()=>toggle(wrap.hidden));
+ if(location.hash==='#inteligencia-daf'){toggle(true);document.getElementById('inteligencia-daf').scrollIntoView();}
+ window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==frame.contentWindow)return;const d=event.data;if(d&&d.type==='daf-resize'&&Number.isFinite(d.height)){frame.style.height=Math.min(16000,Math.max(500,d.height+16))+'px';}});
+});

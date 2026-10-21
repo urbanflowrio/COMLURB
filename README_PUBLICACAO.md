@@ -1,11 +1,17 @@
-# HUB COMLURB — Módulo DAF, redesign estratégico
+# Consolidação DAF no Balanço Receita — HUB COMLURB
 
-Atualização isolada: substitua **somente** os arquivos da pasta `daf/` na raiz do repositório `urbanflowrio/COMLURB`. Não substitua o `index.html` da raiz. O pacote usa `../assets/css/hub-premium.css` e mantém a identidade do HUB.
+## Publicação
+Substitua os arquivos `balanco-receita/index.html`, `balanco-receita/balanco-receita.js`, `balanco-receita/balanco-receita.css`.
+Adicione `balanco-receita/inteligencia/{index.html,app.js,data.js,style.css}`.
+Substitua `daf/index.html` pelo redirecionamento. **Não apague outros arquivos do repositório.**
 
-Arquivos: `daf/index.html`, `daf/style.css`, `daf/app.js`, `daf/data.js`.
+## Fonte
+A tela existente passa a consultar a planilha Google DAF validada (ID final 1fWsN8qe...) em vez da antiga fonte. A seção histórica integrada continua com o corte estático de setembro/2026, identificado ao usuário; não há sincronização automática dela.
 
-URL após a publicação: https://urbanflowrio.github.io/COMLURB/daf/
+## Validação em produção
+1. Abrir `/balanco-receita/` e conferir carregamento do painel atual.
+2. Abrir `#inteligencia-daf`, verificar diagnóstico e filtros em cascata.
+3. Abrir `/daf/` e verificar redirecionamento.
+4. Comparar estoque e indicadores com a planilha oficial antes de classificar como homologado.
 
-Dados: estoque detalhado (414 lançamentos) e fluxo financeiro Jan–Set/2026. Sem conexão em tempo real. Ressalva de R$ 2,07 preservada. Estoque histórico e saldos do exercício são conceitos diferentes. Rankings por exposição, não risco de cobrança.
-
-Verificação: testar carregamento, navegação por 3 abas, filtros em cascata, busca por NF, detalhes e visualização no celular. O hub publicado não foi alterado por este pacote.
+**Nota:** A nova área funciona dentro da página via documento interno (iframe mesmo domínio), evitando conflitos dos estilos/IDs e mantendo o HUB atual intacto.

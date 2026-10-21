@@ -70,3 +70,24 @@
 
 /* Seção DAF reservada para uso posterior, oculta na página principal. */
 #inteligencia-daf { display: none !important; }
+
+/* Detalhamento: serviço → unidade → competência */
+.serviceBars .serviceChoice{appearance:none;font:inherit;color:inherit;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.09);border-radius:0;cursor:pointer;text-align:left;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:16px 0;min-height:0}
+.serviceChoice:hover,.serviceChoice.selected{background:rgba(91,155,213,.08)}
+.serviceChoice:focus-visible,.serviceDetailRow:focus-visible{outline:2px solid #7ec3f5;outline-offset:2px}
+.serviceChoiceName,.serviceChoiceName b,.serviceChoiceName span,.serviceChoiceName small{display:block}
+.serviceChoiceName b{font-size:15px;color:#fff}
+.serviceChoiceName span,.serviceChoiceName small{font-size:13px;color:#b5cadf;margin-top:5px}
+.serviceChoice strong{font-size:15px;color:#ff9a8f;white-space:nowrap}
+.serviceDetail{margin-top:14px;padding:20px 22px}
+.serviceDetailHead{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:14px}
+.serviceDetailHead h2{font-size:21px;margin:6px 0}
+.serviceDetailCaption{font-size:14px;color:#c4d5e7;margin:10px 0 14px}
+.serviceUnitList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 26px}
+.serviceDetailRow{display:flex;align-items:center;gap:16px;justify-content:space-between;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.1);width:100%;padding:13px 5px;color:#e1ebf7;text-align:left;font:inherit;font-size:14px}
+button.serviceDetailRow{cursor:pointer}
+button.serviceDetailRow:hover{background:rgba(91,155,213,.08)}
+.serviceDetailRow strong{margin-left:auto;color:#ff9a8f;white-space:nowrap}
+.detailArrow{color:#7ec3f5;font-size:22px}
+.serviceDetail h3{font-size:18px;margin:12px 0}
+@media(max-width:820px){.serviceUnitList{grid-template-columns:1fr}.serviceDetail{padding:16px}}

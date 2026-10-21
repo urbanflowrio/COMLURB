@@ -316,35 +316,35 @@ function populateCascade(){
 }
 
 async function load(){
-  try{
-    const [baseResponse,billedResponse]=await Promise.all([fetch(`${BASE_URL}&_=${Date.now()}`,{cache:"no-store"}),fetch(`${BILLED_2026_URL}&_=${Date.now()}`,{cache:"no-store"})]);
-    if(!baseResponse.ok||!billedResponse.ok)throw new Error("Fonte indisponível");
-    debtRows=parseDebtRows(await baseResponse.text());billed2026Rows=parseBilled2026(await billedResponse.text());
-    if(!debtRows.length||!billed2026Rows.length)throw new Error("Base vazia");$("dataAlert").hidden=true;
-  }catch(error){
-    const snapshot=window.DAF_DATA;
-    if(snapshot&&Array.isArray(snapshot.registros)&&snapshot.registros.length&&Array.isArray(snapshot.faturamentoMensal)){
-      debtRows=snapshot.registros.map(r=>({
-        secretaria:String(r.secretaria||"Não informada"),service:standardService(r.servico),
-        unit:standardUnit(r.unidade),year:Number(r.ano)||0,month:MONTHS[String(r.mes||"").toLowerCase()]||0,
-        billed:Number(r.bruto)||0,paid:Number(r.pago)||0,paidProvided:r.pago!=null,
-        debt:Number(r.debito)||0,type:"",launches:1
-      }));
-      billed2026Rows=snapshot.faturamentoMensal.map((r,i)=>({
-        secretaria:"Consolidado DAF",service:"Faturamento consolidado",unit:"Todas as unidades",
-        year:2026,month:({jan:1,fev:2,mar:3,abr:4,mai:5,jun:6,jul:7,ago:8,set:9,out:10,nov:11,dez:12})[String(r.mes||"").toLowerCase().slice(0,3)]||i+1,
-        billed:Number(r.valor)||0,paid:0,paidProvided:false,debt:0,launches:0,type:""
-      }));
-      $("dataAlert").textContent="Fonte online indisponível. Exibindo cópia local DAF com corte em setembro/2026. Faturamento mensal apenas consolidado; detalhamento por serviço/secretaria indisponível nesta fonte.";
-      $("dataAlert").hidden=false;
-      console.warn("HUB COMLURB: fonte remota indisponível; base DAF local utilizada.",error);
-    }else{
-      $("dataAlert").textContent="Não foi possível carregar os dados financeiros. Os indicadores estão indisponíveis.";
-      $("dataAlert").hidden=false;
-      console.error("HUB COMLURB: nenhuma fonte financeira disponível.",error);
-      return;
-    }
+  const snapshot=window.DAF_DATA;
+  if(!snapshot||!Array.isArray(snapshot.registros)||snapshot.registros.length!==414||!Array.isArray(snapshot.faturamentoDetalhado)||!snapshot.faturamentoDetalhado.length){
+    $("dataAlert").textContent="Base DAF de setembro/2026 não disponível. Indicadores temporariamente indisponíveis.";
+    $("dataAlert").hidden=false;
+    console.error("HUB COMLURB: dados estáticos DAF incompletos.");
+    return;
   }
+  debtRows=snapshot.registros.map(r=>({
+    secretaria:String(r.secretaria||"Não informada"),service:standardService(r.servico),
+    unit:standardUnit(r.unidade),year:Number(r.ano)||0,
+    month:MONTHS[String(r.mes||"").toLowerCase()]||0,
+    billed:Number(r.bruto)||0,paid:Number(r.pago)||0,paidProvided:r.pago!=null,
+    debt:Number(r.debito)||0,type:"",launches:1
+  }));
+  billed2026Rows=snapshot.faturamentoDetalhado.map(r=>{
+    const service=standardService(r.servico);
+    return {secretaria:SERVICE_SECRETARY[service]||"Não informada",service,
+      unit:standardUnit(r.unidade),year:2026,month:Number(r.mes),
+      billed:Number(r.valor)||0,paid:0,paidProvided:false,debt:0,launches:0,type:""};
+  });
+  const actual=totals(billed2026Rows).billed;
+  const expected=Number(snapshot.resumo?.faturamento)||199932855.80;
+  if(Math.abs(actual-expected)>0.05){
+    $("dataAlert").textContent="Inconsistência no faturamento da base DAF. Indicadores indisponíveis até conferência.";
+    $("dataAlert").hidden=false;
+    console.error("HUB COMLURB: divergência no faturamento.",actual,expected);
+    debtRows=[];billed2026Rows=[];return;
+  }
+  $("dataAlert").hidden=true;
   populateCascade();render();
 }
 

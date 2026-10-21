@@ -1,42 +1,12 @@
-# pessoas — HUB COMLURB
+# Gestão Estratégica de Pessoas — V1 integrada para homologação
 
-**Status:** Temporariamente indisponível — em revisão por LGPD.
-**Responsável técnico:** Greicy Moreira
+Arquivos nativos: `index.html`, `pessoas.css`, `pessoas.js`, `resumo-publico.js`.
 
-## Situação atual
-
-A versão anterior deste módulo carregava, diretamente no navegador, as
-bases individualizadas R54 (dados funcionais) e LAUDOS (dados de saúde),
-incluindo nome, matrícula, idade, bairro de residência, afastamento e
-tipos de laudo médico por servidor. A interface permitia busca nominal e
-exportação em massa desses campos em Excel.
-
-Isso foi identificado como risco crítico de LGPD e foi desativado nesta
-versão. `index.html` não carrega mais nenhuma planilha individualizada,
-não contém nenhuma URL de fonte de dado pessoal e não mantém nenhum dado
-de servidor em memória no navegador. `data.js`, `screens.js` e `app.js`
-foram substituídos por stubs sem lógica e sem dado algum, mantidos apenas
-para não quebrar referências antigas em cache.
-
-## Fontes de dados
-
-Nenhuma. O módulo não deve voltar a carregar R54 ou LAUDOS por inteiro no
-cliente.
-
-## Requisitos para republicação
-
-1. Fonte de dados já agregada e anonimizada (não a planilha individual
-   filtrada no cliente) — a agregação deve ocorrer antes de chegar ao
-   navegador.
-2. Piso mínimo por grupo (quantidade mínima de pessoas por recorte, por
-   exemplo bairro, setor ou função) para impedir reidentificação em
-   recortes pequenos.
-3. Nenhum campo individual (nome, matrícula, idade, bairro de residência,
-   afastamento, laudo) em nenhum objeto JavaScript servido ao navegador,
-   mesmo que não exibido na tela.
-4. Nenhuma URL de planilha individualizada exposta no código-fonte.
-5. Nenhuma busca nominal nem exportação por pessoa.
-
-Enquanto esses requisitos não estiverem atendidos por uma fonte real, o
-módulo deve permanecer na versão institucional de indisponibilidade
-temporária.
+- Usa `assets/css/hub-premium.css`, `HUB.header`, `HUB.footer` e funções compartilhadas.
+- Home existente em `index.html` continua a apontar para `pessoas/`; não alterada.
+- Fonte: fotografia somente agregada da planilha SARC, aba `geral`, consolidado COMLURB, consultada em 21/10/2026.
+- Não contém dados pessoais, números por gerência, cadastros individualizados nem URL de fonte restrita.
+- Valores de 2025 são usados somente onde foi confirmada a série de absenteísmo.
+- Ausência de valor oficial é null, nunca zero inferido. Efetivo permanece pendente.
+- Homologação obrigatória: validação institucional de dados, visual desktop/celular e aceite LGPD antes de publicar publicamente.
+- A publicação da pasta não torna a fotografia automática. A atualização futura exige rotina de exportação somente de agregados aprovada.

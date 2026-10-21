@@ -1,82 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestão Estratégica de Pessoas | HUB COMLURB</title>
-
-  <link rel="stylesheet" href="../assets/css/hub-premium.css">
-
-  <style>
-    * { box-sizing: border-box; }
-    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
-    body { margin: 0; }
-    .app { width: 100%; max-width: 100%; min-width: 0; }
-
-    .unavailableWrap {
-      display: flex;
-      justify-content: center;
-      padding: 40px 18px 60px;
-    }
-    .unavailableCard {
-      max-width: 640px;
-      width: 100%;
-      text-align: center;
-      padding: 40px 32px;
-    }
-    .unavailableCard .hint {
-      margin-top: 14px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .unavailableBadge {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--linha);
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #c7d8ee;
-      margin-bottom: 18px;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="app">
-
-    <div id="header"></div>
-
-    <div class="unavailableWrap">
-      <div class="panel unavailableCard">
-        <div class="body">
-          <span class="unavailableBadge">Módulo temporariamente indisponível</span>
-          <h2>Gestão Estratégica de Pessoas</h2>
-          <div class="hint">
-            Este módulo está em revisão para adequação à LGPD e será republicado
-            somente com indicadores agregados, sem dados individuais de servidores.
-            Nenhuma base pessoal é carregada nesta página.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="footer"></div>
-
-  </div>
-
-  <script src="../assets/components/hub-utils.js"></script>
-  <script src="../assets/components/hub-layout.js"></script>
-
-  <script>
-    HUB.header.render("header", {
-      systemLabel: "HUB COMLURB",
-      title: "Gestão Estratégica de Pessoas",
-      subtitle: "Módulo temporariamente indisponível"
-    });
-
-    HUB.footer.render("footer", {});
-  </script>
-</body>
-</html>
+<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Cache-Control" content="no-store"><title>Gestão Estratégica de Pessoas · HUB COMLURB</title><link rel="stylesheet" href="../assets/css/hub-premium.css"><link rel="stylesheet" href="pessoas.css"></head>
+<body><div class="app pessoasApp"><div id="hubHeader"></div>
+<main>
+<div class="peopleContext"><span>CAPITAL HUMANO · VISÃO EXECUTIVA</span><span id="sourceStamp"></span></div>
+<section class="peopleHero"><div><div class="kicker">Disponibilidade da força de trabalho</div><h1>Pessoas, capacidade e prevenção</h1><p>Indicadores consolidados da Companhia, com período e fonte identificados em cada leitura. Nenhuma informação individual é publicada.</p></div><div class="peoplePeriod"><label for="periodSelect">Competência</label><select id="periodSelect" aria-label="Competência"></select></div></section>
+<section class="peopleScore" id="scoreCards" aria-label="Indicadores executivos"></section>
+<section class="peopleReadout" id="executiveNote" aria-live="polite"></section>
+<section class="peopleTwo"><article class="peoplePanel"><div class="peoplePanelHeading"><div><div class="kicker">EVOLUÇÃO TEMPORAL</div><h2>Indicador em perspectiva</h2><p>Acompanhe a trajetória, com lacunas preservadas quando não há apuração oficial.</p></div><label for="indicatorSelect">Indicador<select id="indicatorSelect"></select></label></div><div class="peopleChart" id="trendChart" role="img" aria-label="Evolução mensal do indicador selecionado"></div><div id="trendTable" class="peopleTableWrap"></div></article>
+<article class="peoplePanel"><div class="kicker">LEITURA GERENCIAL</div><h2>Disponibilidade e segurança</h2><div id="riskReadout"></div><div class="peoplePrinciple"><strong>Como interpretar</strong><p>Estoque de empregados afastados, taxas e ocorrências são conceitos diferentes. Não se somam entre si, nem são convertidos em percentuais sem denominador oficial.</p></div></article></section>
+<section class="peoplePanel peopleSources"><div class="kicker">CONTROLE E GOVERNANÇA</div><h2>Rastreabilidade dos indicadores</h2><div id="sourcesTable" class="peopleTableWrap"></div><p class="peopleDisclaimer">Fotografia agregada para avaliação e homologação. A validação institucional de privacidade e a autorização de publicação devem preceder a disponibilização pública. Para indicadores sem apuração, exibe-se “Não disponível”, nunca zero presumido.</p></section>
+</main><div id="hubFooter"></div></div>
+<script src="../assets/components/hub-utils.js"></script><script src="../assets/components/hub-layout.js"></script><script src="../assets/components/hub-cards.js"></script><script src="resumo-publico.js"></script><script src="pessoas.js"></script></body></html>

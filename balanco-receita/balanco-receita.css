@@ -67,3 +67,6 @@
 .serviceBars .hospitalInline{margin-top:9px}
 @media(max-width:1100px){.serviceBars{columns:2}}
 @media(max-width:700px){.serviceBars{columns:1}}
+
+/* Seção DAF reservada para uso posterior, oculta na página principal. */
+#inteligencia-daf { display: none !important; }

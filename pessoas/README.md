@@ -1,9 +1,9 @@
-# Gestão Estratégica de Pessoas — V5 | Hub COMLURB
+# Gestão Estratégica de Pessoas V8
 
-Fonte: `pessoas-completo-2026-10-21_16-15-08.xlsx`. Deduplicação por registro funcional (somente no processamento). Nenhum registro individual é enviado ao navegador.
+Fonte: extração funcional em 21/10/2026. Hierarquia: Diretoria → Superintendência → Lotação (código) e NOMESETOR (nome).
 
-Indicadores de estrutura: `N` Sit_cargo (OPER/ADM); `M` Função Cargo agrupada em cinco categorias amplas; `AC` Faixa Etária; `AF` Faixa Tempo de Casa; `W` Sit_ferias. Indicadores da V4: `G` Diretoria, `T` Sit_afastados. `B` Registro foi utilizado apenas para deduplicação. A coluna `AI` Sit_restricao não é publicada por envolver informação potencialmente sensível.
+18.519 registros únicos; 1.712 classificados como afastados; 21 registros duplicados não contabilizados.
 
-A base cadastral não corresponde necessariamente ao fechamento SARC. Férias e afastamentos não devem ser somados, pois os indicadores não são mutuamente exclusivos. Sem análises cruzadas por grupos pequenos.
+Privacidade: nenhuma linha individual, nome de pessoa, matrícula, CPF ou motivo clínico embarcado. Só são publicados grupos com efetivo >=30, afastados >=10, demais >=10, com supressão complementar de grupos reduzidos e sem drill em categorias agregadas.
 
-Publicação somente após revisão institucional LGPD; usar os sete arquivos dentro de `pessoas/` diretamente no caminho `COMLURB/pessoas/`.
+Indicador é taxa cadastral, não absenteísmo oficial. A hierarquia vem do cadastro informado e deve ser homologada institucionalmente.

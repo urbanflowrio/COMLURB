@@ -324,10 +324,15 @@
 
   /* ---------------- Bloco 5 ---------------- */
   function renderTmp(n) {
+    const temTemporarios = Number.isFinite(n.vinc[3]) && n.vinc[3] > 0;
+    $("bloco-tmp").hidden = !temTemporarios;
+    if (!temTemporarios) return;
+    // As séries de admissões e perfil são agregados da empresa.
+    $("ondaChart").closest(".pe-card").hidden = sel !== "COMLURB";
     const us = unidadesComparaveis(sel, (u) => garisDe(u) !== null && garisDe(u) >= 30 && u.vinc[3] !== null && u.vinc[3] > 0)
       .map((u) => ({ u, p: pct(u.vinc[3], garisDe(u)) })).sort((a, b) => b.p - a.p);
     const ref = pct(ROOT.vinc[3], garisDe(ROOT));
-    $("tmpSub").textContent = `${n.vinc[3] !== null ? `Recorte: ${nf(n.vinc[3])} temporários. ` : ""}Referência COMLURB ${pf(ref)} dos garis (linha). Unidades com 10+ temporários.`;
+    $("tmpSub").textContent = `${n.vinc[3] !== null ? `Recorte: ${nf(n.vinc[3])} temporários. ` : ""}Referência COMLURB ${pf(ref)} dos garis (linha). Unidades com 30 ou mais garis e contagem de temporários disponível.`;
     hbars($("tmpBars"), us.map(({ u, p }) => ({ id: u.id, label: esc(u.label), pct: p, val: pf(p), sub: `${nf(u.vinc[3])} de ${nf(garisDe(u))} garis`, cor: "var(--ent-temporario)", tip: `<b>${esc(u.label)}</b><br>${nf(u.vinc[3])} temporários entre ${nf(garisDe(u))} garis` })), { max: Math.max(30, ...us.map((x) => x.p)), ref });
 
     const O = D.ondas, W = 360, H = 150, m = { l: 34, r: 6, t: 8, b: 34 };

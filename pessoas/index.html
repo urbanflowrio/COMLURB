@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=10">
+<link rel="stylesheet" href="pessoas.css?v=11">
 </head>
 <body>
 <div class="app">
@@ -54,7 +54,7 @@
         </div>
       </div>
       <div class="pe-card" style="margin-top:16px">
-        <div class="pe-head" style="margin-bottom:8px"><div><h3>Unidades do recorte</h3><div class="sub" style="margin:0">Clique em uma linha para detalhar. Unidades com menos de 30 pessoas são agrupadas.</div></div><span class="pe-chip prov" id="unitsChip">Estrutura provisória</span></div>
+        <div class="pe-head" style="margin-bottom:8px"><div><h3>Unidades do recorte</h3><div class="sub" style="margin:0">Clique em uma linha para detalhar. Algumas unidades são somadas em uma única linha para proteger grupos pequenos. Essa linha é um agrupamento de apresentação, não um setor do cadastro, e não permite detalhamento.</div></div><span class="pe-chip" id="unitsChip">Cadastro consolidado de setores</span></div>
         <div class="pe-tabela-wrap alta"><table id="unitTable"></table></div>
       </div>
     </section>
@@ -71,7 +71,7 @@
       </div>
       <div class="pe-grid" style="margin-top:16px">
         <div class="pe-card">
-          <div class="pe-head" style="margin-bottom:6px"><div><h3>Taxa de afastados por unidade e tamanho</h3><div class="sub" style="margin:0" id="funilSub"></div></div><span class="pe-chip prov">Comparativo provisório</span></div>
+          <div class="pe-head" style="margin-bottom:6px"><div><h3>Taxa de afastados por unidade e tamanho</h3><div class="sub" style="margin:0" id="funilSub"></div></div></div>
           <div id="funil"></div>
           <p class="pe-nota">A faixa azul é a variação esperada só pelo tamanho da unidade (95%). Pontos fora dela são <b>sinais para investigar</b>, sem ajuste por função ou idade, e não medem desempenho.</p>
         </div>
@@ -92,7 +92,7 @@
       </div></div>
       <div class="pe-grid">
         <div class="pe-card">
-          <div class="pe-head" style="margin-bottom:6px"><div><h3>Garis efetivos com restrição, por unidade</h3><div class="sub" style="margin:0" id="resSub"></div></div><span class="pe-chip prov">Comparativo provisório</span></div>
+          <div class="pe-head" style="margin-bottom:6px"><div><h3>Garis efetivos com restrição, por unidade</h3><div class="sub" style="margin:0" id="resSub"></div></div></div>
           <div class="pe-tabela-wrap alta" style="max-height:470px"><div class="pe-hbars" id="resBars"></div></div>
         </div>
         <div class="pe-card">
@@ -142,7 +142,7 @@
       </div></div>
       <div class="pe-grid">
         <div class="pe-card">
-          <div class="pe-head" style="margin-bottom:6px"><div><h3>Temporários entre os garis da unidade</h3><div class="sub" style="margin:0" id="tmpSub"></div></div><span class="pe-chip prov">Comparativo provisório</span></div>
+          <div class="pe-head" style="margin-bottom:6px"><div><h3>Temporários entre os garis da unidade</h3><div class="sub" style="margin:0" id="tmpSub"></div></div></div>
           <div class="pe-tabela-wrap alta" style="max-height:470px"><div class="pe-hbars" id="tmpBars"></div></div>
         </div>
         <div class="pe-card">
@@ -175,7 +175,7 @@
 <div class="pe-tip" id="peTip" hidden></div>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
-<script src="dados-pessoas.js?v=10"></script>
-<script src="pessoas.js?v=10"></script>
+<script src="dados-pessoas.js?v=11"></script>
+<script src="pessoas.js?v=11"></script>
 </body>
 </html>

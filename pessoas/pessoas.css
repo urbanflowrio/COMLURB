@@ -147,3 +147,10 @@
   .pe-heat { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .pe * { transition: none !important; } }
+
+/* Nome completo dos filtros em qualquer largura. */
+.pe-recorte label { max-width: none; flex: 1 1 260px; align-self: start; }
+.pe-filtro-texto { display: block; color: var(--texto); font-size: 12px; font-weight: 400; line-height: 1.45; letter-spacing: normal; text-transform: none; overflow-wrap: anywhere; }
+.pe-filtro-texto[hidden] { display: none; }
+.pe-path { overflow-wrap: anywhere; }
+.pe-chip { white-space: normal; }

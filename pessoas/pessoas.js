@@ -366,7 +366,7 @@
     $("feriasDir").innerHTML = `<thead><tr><th>Diretoria</th><th class="n">Empregados em alerta</th></tr></thead><tbody>` +
       D.feriasDiretoria.map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${f.alerta === null ? SUPR : nf(f.alerta)}</td></tr>`).join("") + "</tbody>";
     $("qualTable").innerHTML = `<thead><tr><th>Ponto</th><th class="n">Registros</th></tr></thead><tbody>` +
-      D.qualidade.map((q) => `<tr><td>${esc(q.label)}</td><td class="n">${q.n === null ? SUPR : nf(q.n)}</td></tr>`).join("") + "</tbody>";
+      D.qualidade.map((q) => `<tr><td>${esc(q.label === "Motoristas sem CNH registrada" ? "Motoristas sem categoria de CNH no cadastro" : q.label === "Códigos de Setor Anterior sem correspondência" ? "Setor Anterior ausente das lotações da base funcional" : q.label === "Lotações com menos de 30 pessoas" ? "Lotações pequenas (critério de proteção, não erro)" : q.label)}</td><td class="n">${q.n === null ? SUPR : nf(q.n)}</td></tr>`).join("") + "</tbody>";
   }
 
   /* ---------------- Rodapé ---------------- */
@@ -379,5 +379,21 @@
     const n = A[sel];
     renderKpis(n); renderQuadro(n); renderAfast(n); renderRestr(n); renderTmp(n);
   }
-  syncSelects(); renderRecorte(); renderSucessao(); renderAlertas();
+
+  function renderEnvelhecimento() {
+    const tabela = $("agingTable");
+    if (!tabela) return;
+    const familias = D.sucessao
+      .filter((f) => Number.isFinite(f.n) && f.n >= 30 && Number.isFinite(f.fx[6]))
+      .map((f) => ({ ...f, proporcao: pct(f.fx[6], f.n) }))
+      .sort((a, b) => b.proporcao - a.proporcao).slice(0, 4);
+    tabela.innerHTML = '<thead><tr><th>Família de funções</th><th class="n">Quadro</th><th class="n">Acima de 60</th><th class="n">% da família</th></tr></thead><tbody>' +
+      familias.map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${nf(f.n)}</td><td class="n">${nf(f.fx[6])}</td><td class="n">${pf(f.proporcao)}</td></tr>`).join("") + '</tbody>';
+    const garis = D.sucessao.find((f) => f.label === "Gari efetivo");
+    $("agingLeitura").textContent = garis && Number.isFinite(garis.n) && Number.isFinite(garis.fx[6])
+      ? `Entre os garis efetivos, ${nf(garis.fx[6])} de ${nf(garis.n)} estão na faixa acima de 60 anos (${pf(pct(garis.fx[6], garis.n))}). Quantidade e proporção devem ser lidas juntas: uma família pequena pode ter maior percentual e uma família numerosa pode concentrar mais pessoas.`
+      : "Leia quantidade e proporção em conjunto. Valores protegidos permanecem indisponíveis.";
+  }
+
+  syncSelects(); renderRecorte(); renderSucessao(); renderAlertas(); renderEnvelhecimento();
 })();

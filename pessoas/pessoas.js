@@ -61,6 +61,18 @@
   function preencher(select, itens, valor, vazio) {
     select.innerHTML = `<option value="">${esc(vazio)}</option>` + itens.map((n) => `<option value="${esc(n.id)}"${n.id === valor ? " selected" : ""}>${esc(n.label)}${n.n !== null ? " · " + nf(n.n) : ""}</option>`).join("");
     select.disabled = itens.length === 0;
+    const texto = select.selectedOptions[0]?.textContent || "";
+    select.title = texto;
+    let detalhe = document.getElementById(select.id + "Texto");
+    if (!detalhe) {
+      detalhe = document.createElement("span");
+      detalhe.id = select.id + "Texto";
+      detalhe.className = "pe-filtro-texto";
+      select.insertAdjacentElement("afterend", detalhe);
+      select.setAttribute("aria-describedby", detalhe.id);
+    }
+    detalhe.textContent = valor ? texto : "";
+    detalhe.hidden = !valor;
   }
   function syncSelects() {
     const p = caminho(sel);
@@ -70,7 +82,6 @@
     preencher($("selN2"), n1 ? filhos(n1) : [], n2, n1 ? "Todas" : "—");
     const node = A[sel];
     const chips = [];
-    if (node.nivel >= 2) chips.push('<span class="pe-chip prov">Estrutura provisória · a homologar pela DGG</span>');
     if (node.especial) chips.push(`<span class="pe-chip esp">Lotação especial: ${esc(node.especial)}</span>`);
     (node.contem || []).forEach((c) => chips.push(`<span class="pe-chip esp">Contém lotação especial · ${esc(c)}</span>`));
     $("pePath").innerHTML = `<span>Recorte: <b style="color:var(--texto)">${p.map((x) => esc(x.label)).join(" › ")}</b>${node.tipo && node.nivel >= 2 ? ` <span class="muted">(${esc(node.tipo)})</span>` : ""}</span>` + chips.join("");
@@ -122,7 +133,7 @@
 
   /* ---------------- Bloco 1 ---------------- */
   function renderQuadro(n) {
-    $("sitSub").textContent = `${nf(n.n)} empregados. Contagens sensíveis abaixo de 10 aparecem como —.`;
+    $("sitSub").textContent = `${nf(n.n)} empregados. O traço (—) indica um valor ocultado para proteger informações pessoais, inclusive quando necessário para impedir seu cálculo por diferença.`;
     const tot = n.n || 1;
     $("sitStack").innerHTML = n.sit.map((v, i) => (v ? `<span style="width:${(100 * v) / tot}%;background:${COR_SIT[i]}" data-tip="<b>${esc(R.sit[i])}</b>: ${nf(v)} (${pf(pct(v, n.n))})"></span>` : "")).join("");
     $("sitStack").setAttribute("aria-label", R.sit.map((s, i) => `${s}: ${nf(n.sit[i])}`).join("; "));
@@ -142,13 +153,13 @@
 
     let lista = filhos(sel), titulo = "";
     if (!lista.length && A[sel].pai) { lista = filhos(A[sel].pai); titulo = "irmãs"; }
-    $("unitsChip").hidden = A[sel].nivel === 0 && false;
+    $("unitsChip").textContent = "Cadastro consolidado de setores";
     $("unitTable").innerHTML = `<thead><tr><th>Unidade</th><th>Tipo</th><th class="n">Quadro</th><th class="n">Afastados</th><th class="n">% afast.</th><th class="n">Com restrição</th><th class="n">% restr.</th><th class="n">Temporários</th></tr></thead><tbody>` +
       (lista.length ? lista.map((u) => {
         const pa = pct(u.sit[3], u.n), pr = pct(u.sit[2], u.n);
         const tag = u.especial ? ' <span class="pe-chip esp">lotação especial</span>' : (u.contem && u.contem.length ? ' <span class="pe-chip esp">contém lotação especial</span>' : "");
         const clic = u.filhos.length || u.id !== sel;
-        return `<tr class="${clic && !u.agrupado ? "clic" : ""}${u.id === sel ? " sel" : ""}" ${clic && !u.agrupado ? `tabindex="0" data-id="${esc(u.id)}"` : ""}><td>${esc(u.label)}${tag}</td><td><span class="muted">${esc(u.tipo || "")}</span></td><td class="n">${cellN(u.n)}</td><td class="n">${cellN(u.sit[3])}</td><td class="n">${pf(pa)}</td><td class="n">${cellN(u.sit[2])}</td><td class="n">${pf(pr)}</td><td class="n">${cellN(u.vinc[3])}</td></tr>`;
+        return `<tr class="${clic && !u.agrupado ? "clic" : ""}${u.id === sel ? " sel" : ""}" ${clic && !u.agrupado ? `tabindex="0" data-id="${esc(u.id)}"` : ""}><td>${esc(u.agrupado ? u.label.replace("Demais unidades (agrupadas,", "Unidades reunidas para apresentação (") : u.label)}${tag}</td><td><span class="muted">${esc(u.tipo || "")}</span></td><td class="n">${cellN(u.n)}</td><td class="n">${cellN(u.sit[3])}</td><td class="n">${pf(pa)}</td><td class="n">${cellN(u.sit[2])}</td><td class="n">${pf(pr)}</td><td class="n">${cellN(u.vinc[3])}</td></tr>`;
       }).join("") : `<tr><td colspan="8" class="muted">Sem subdivisões publicáveis.</td></tr>`) + "</tbody>";
     $("unitTable").querySelectorAll("tr[data-id]").forEach((tr) => {
       tr.addEventListener("click", () => escolher(tr.dataset.id));
@@ -299,7 +310,7 @@
         h += `<div class="h">${esc(D.mapa.linhas[i])}</div>` + linhaM.map((v, j) => {
           const t = v ? Math.min(5, Math.floor((v / mx) * 6)) : -1;
           const bg = v === null ? "transparent" : v === 0 ? "rgba(132,165,198,.05)" : SEQ[t + 1 > 6 ? 6 : t + 1];
-          return `<div class="c" style="background:${bg};${t >= 4 ? "color:#06111f;font-weight:600" : ""}" data-tip="${esc(`${D.mapa.linhas[i]} · ${D.mapa.colunas[j]} de casa: ${v === null ? "menos de 10" : nf(v)}`)}">${v === null ? "·" : v === 0 ? "" : nf(v)}</div>`;
+          return `<div class="c" style="background:${bg};${t >= 4 ? "color:#06111f;font-weight:600" : ""}" data-tip="${esc(`${D.mapa.linhas[i]} · ${D.mapa.colunas[j]} de casa: ${v === null ? "Valor protegido" : nf(v)}`)}">${v === null ? "·" : v === 0 ? "" : nf(v)}</div>`;
         }).join("");
       });
       $("mapa").style.gridTemplateColumns = `minmax(92px,1.1fr) repeat(${cols}, minmax(44px,1fr))`;
@@ -326,7 +337,7 @@
     O.forEach((o, i) => {
       const x = m.l + i * bw;
       if (o.n) g += `<rect x="${x + 2}" y="${Y(o.n)}" width="${bw - 4}" height="${H - m.b - Y(o.n)}" rx="2" fill="var(--ent-temporario)"/>`;
-      g += `<rect class="hit" x="${x}" y="${m.t}" width="${bw}" height="${H - m.t - m.b}" data-tip="${esc(`<b>${o.mes}</b><br>${o.n === null ? "menos de 10" : nf(o.n) + " admitidos"}`)}"/>`;
+      g += `<rect class="hit" x="${x}" y="${m.t}" width="${bw}" height="${H - m.t - m.b}" data-tip="${esc(`<b>${o.mes}</b><br>${o.n === null ? "Valor protegido" : nf(o.n) + " admitidos"}`)}"/>`;
       if (i % 2 === 0) g += `<text x="${x + bw / 2}" y="${H - m.b + 14}" text-anchor="middle">${o.mes.replace("/20", "/")}</text>`;
     });
     g += `<line class="eixo" x1="${m.l}" x2="${W - m.r}" y1="${H - m.b}" y2="${H - m.b}"/>`;
@@ -356,7 +367,7 @@
   /* ---------------- Rodapé ---------------- */
   $("peRodape").innerHTML = `<div><b style="color:var(--texto)">Fonte:</b> ${esc(D.meta.fonte)}, deduplicada por registro.</div>
     <div><b style="color:var(--texto)">Proteção:</b> ${esc(D.meta.regras.texto)} O traço (—) indica valor suprimido. Não há nomes, matrículas, CPF, datas individuais, endereço, documentos, raça/cor, deficiência, sexo ou nível salarial no pacote.</div>
-    <div><b style="color:var(--texto)">Estrutura:</b> ${esc(D.meta.provisorio)} Lotações especiais (GGQ02, Cargos Indisponíveis) aparecem destacadas e ficam fora dos comparativos.</div>
+    <div><b style="color:var(--texto)">Estrutura:</b> Cadastro consolidado de setores, conforme as definições confirmadas para o HUB. Os agrupamentos são apenas de apresentação e não alteram a estrutura cadastrada. Lotações especiais (GGQ02, Cargos Indisponíveis) aparecem destacadas e ficam fora dos comparativos.</div>
     <div><b style="color:var(--texto)">Leitura:</b> afastado e restrição são situações cadastrais. Não medem absenteísmo, produtividade, capacidade operacional nem necessidade de contratação.</div>`;
 
   function renderRecorte() {

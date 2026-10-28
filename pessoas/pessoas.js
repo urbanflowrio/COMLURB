@@ -242,8 +242,8 @@
     const us = unidadesComparaveis(sel, (u) => u.garisEf !== null && u.garisEf >= 30 && u.resGarisEf !== null)
       .map((u) => ({ u, p: pct(u.resGarisEf, u.garisEf) })).sort((a, b) => b.p - a.p);
     const local = pct(n.resGarisEf, n.garisEf);
-    $("resSub").textContent = `${local !== null ? `Recorte: ${pf(local)} de ${nf(n.garisEf)} garis efetivos. ` : ""}Referência COMLURB ${pf(refP)} (linha). Unidades com 30+ garis efetivos.`;
-    hbars($("resBars"), us.map(({ u, p }) => ({ id: u.id, label: esc(u.label), pct: p, val: pf(p), sub: `${nf(u.resGarisEf)} de ${nf(u.garisEf)}`, cor: "var(--st-restricao)", tip: `<b>${esc(u.label)}</b><br>${nf(u.resGarisEf)} de ${nf(u.garisEf)} garis efetivos com restrição` })), { max: 60, ref: refP });
+    $("resSub").textContent = `${local !== null ? `Recorte: ${pf(local)} (${nf(n.resGarisEf)} com restrição entre ${nf(n.garisEf)} garis efetivos). ` : ""}Referência COMLURB ${pf(refP)} (linha). Unidades com 30+ garis efetivos.`;
+    hbars($("resBars"), us.map(({ u, p }) => ({ id: u.id, label: esc(u.label), pct: p, val: pf(p), sub: `${nf(u.resGarisEf)} com restrição / ${nf(u.garisEf)} garis efetivos`, cor: "var(--st-restricao)", tip: `<b>${esc(u.label)}</b><br>${nf(u.resGarisEf)} de ${nf(u.garisEf)} garis efetivos com restrição` })), { max: 60, ref: refP });
     const rows = (arr) => arr.map((x) => ({ label: esc(x.label), pct: pct(x.r, x.n), val: pf(pct(x.r, x.n)), sub: x.r === null ? "suprimido" : `${nf(x.r)} de ${nf(x.n)}`, cor: "var(--st-restricao)" }));
     hbars($("resFaixa"), rows(D.restricao.faixa.filter((x) => x.n)), { max: 60, ref: refP });
     hbars($("resJornada"), rows(D.restricao.jornada.filter((x) => x.n)), { max: 60, ref: refP });

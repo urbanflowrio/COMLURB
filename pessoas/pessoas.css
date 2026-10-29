@@ -154,3 +154,4 @@
 .pe-filtro-texto[hidden] { display: none; }
 .pe-path { overflow-wrap: anywhere; }
 .pe-chip { white-space: normal; }
+#movKpis{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}.mov-number{display:block;font-size:2rem;color:var(--text,#eef3fa);margin-top:12px}.mov-path{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}#movAno{background:#142439;color:#eef3fa;border:1px solid #45617c;border-radius:6px;padding:8px;margin-left:8px}#movUnidades button{text-align:left;white-space:normal}@media(max-width:650px){#movKpis{grid-template-columns:1fr}#movMensal th,#movMensal td,#movUnidades th,#movUnidades td{white-space:nowrap}}

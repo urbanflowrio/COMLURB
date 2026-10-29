@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=11">
+<link rel="stylesheet" href="pessoas.css?v=12">
 </head>
 <body>
 <div class="app">
@@ -106,6 +106,34 @@
       </div>
     </section>
 
+    <section class="pe-bloco" id="bloco-movimentacao">
+      <div class="pe-head"><div>
+        <div class="pe-eyebrow">Movimentação do quadro · COMLURB</div>
+        <h2>Quanto as entradas recompõem as saídas registradas</h2>
+        <p>Admissões identificadas na BASE SIPE e na listagem de desligados, sem repetir a mesma matrícula e data de exercício. Inclui todos os vínculos das fontes, como estágios e cargos de confiança.</p>
+      </div></div>
+      <div class="pe-card">
+        <label for="movAno">Ano da movimentação <select id="movAno" aria-describedby="movPeriodo"></select></label>
+        <p class="pe-nota" id="movPeriodo"></p>
+        <p class="pe-nota">Esta seção tem filtros próprios. Os filtros do quadro atual no início da página não alteram esta série histórica.</p>
+        <div class="pe-grid mov-kpis" id="movKpis" aria-live="polite"></div>
+        <p class="pe-nota" id="movLeitura"></p>
+        <p class="pe-aviso">Saldo observado = entradas identificadas menos saídas registradas. Não é a variação confirmada do quadro: há duas matrículas presentes na SIPE que também constam como desligadas. A cobertura histórica das fontes e as datas de corte precisam ser conciliadas.</p>
+      </div>
+      <div class="pe-grid" style="margin-top:16px">
+        <div class="pe-card"><h3>Entradas e saídas por mês</h3><div class="pe-tabela-wrap"><table id="movMensal"></table></div></div>
+        <div class="pe-card"><h3>Formas de desligamento</h3><div class="sub">Classificações originais do cadastro. Os códigos legais permanecem sem interpretação adicional.</div><div class="pe-tabela-wrap"><table id="movMotivos"></table></div></div>
+      </div>
+      <div class="pe-card" style="margin-top:16px">
+        <h3>Movimentações por unidade no ano</h3>
+        <div class="sub">Clique para detalhar Diretoria, Sup/Coord e unidade. A estrutura usa o cadastro consolidado atual; não reconstitui a hierarquia histórica. Nas entradas de quem permanece, a lotação é a da SIPE atual; nas demais, é o setor informado na listagem de desligados. O saldo por unidade não mede transferências nem recomposição local confirmada.</div>
+        <div id="movCaminho" class="mov-path"></div>
+        <div class="pe-tabela-wrap alta"><table id="movUnidades"></table></div>
+        <p class="pe-nota">Siglas sem vínculo comprovado no cadastro atual permanecem em “Sem correspondência”. Traço indica contagem protegida, inclusive por supressão complementar; não significa zero. Saldo só aparece quando as duas contagens estão disponíveis.</p>
+      </div>
+      <p class="pe-nota">Fontes: BASE SIPE de 26/10/2026, Listagem de Desligados recebida em 29/10/2026 e Cadastro consolidado de setores. Atualização desta seção exige reler as três fontes e gerar novos agregados; a rotina automática anterior ainda não contempla esta integração.</p>
+    </section>
+
     <section class="pe-bloco" id="bloco-suc">
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Renovação e sucessão · COMLURB</div>
@@ -190,5 +218,7 @@
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=14"></script>
 <script src="pessoas.js?v=12"></script>
+<script src="movimentacao-dados.js?v=1"></script>
+<script src="movimentacao.js?v=1"></script>
 </body>
 </html>

@@ -36,8 +36,13 @@ def main():
     assert len(exits)==len({int(r['NUMFUNC']) for r in exits}),'Matrículas de desligados repetidas'
     assert len(ids)==len({int(r[1]) for r in ids}),'Matrículas SIPE repetidas'
     events={}; departures=[]; overlap=0
+    saidas_por_matricula={int(r['NUMFUNC']):date(r['DTVAC']) for r in exits if date(r['DTVAC'])<=cutoff}
+    desconsiderados=0
     for i,row in enumerate(ids):
         start=date(starts[i][0]); assert start<=cutoff
+        if int(row[1]) in saidas_por_matricula and start<=saidas_por_matricula[int(row[1])]:
+            desconsiderados+=1
+            continue
         events[(int(row[1]),start)]=(start,units[i][0])
     sipe_ids={int(r[1]) for r in ids}
     for r in exits:
@@ -48,7 +53,8 @@ def main():
         if key not in events: events[key]=(start,r['SETOR'])
         departures.append((end,r['SETOR'],r['FORMAVAC']))
     output={'meta':{'referencia_sipe':a.referencia,'ultimo_desligamento':max(x[0] for x in departures).isoformat(),
-        'fonte_desligados':'Listagem de Desligados recebida em 29/10/2026','sobreposicoes':overlap,
+        'fonte_desligados':'Listagem de Desligados recebida em 29/10/2026','sobreposicoes':0,
+        'conciliados_como_desligados':desconsiderados,
         'escopo':'Todos os vínculos presentes nas fontes, inclusive estágios e cargos de confiança.',
         'minimo':10},'anos':{}}
     for year in range(2018,cutoff.year+1):

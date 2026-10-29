@@ -1,5 +1,19 @@
 # Gestão Estratégica de Pessoas V8
 
+## Conciliação de desligados (29/10/2026)
+
+Por decisão da responsável, dois registros presentes simultaneamente na SIPE e
+na listagem de desligados são tratados como desligados. A fonte bruta permanece
+preservada. A exclusão ocorre antes de calcular todos os agregados do quadro.
+Quadro conciliado: 18.513; afastados: 1.742; temporários: 962. Admissões e saídas
+históricas permanecem na movimentação, com deduplicação por registro e exercício.
+
+O gerador `gerar_dados_pessoas.py` exige `--desligados` com a listagem privada.
+Compara a saída à referência e ao início do vínculo para preservar readmissões
+posteriores. Não grave planilhas ou identificadores individuais no repositório.
+Use os totais conferidos e as contagens públicas anteriores para a supressão.
+O monitoramento existente recebeu a regra de exclusão das duas matrículas.
+
 ## Movimentação do quadro (29/10/2026)
 
 Nova seção independente da fotografia cadastral. Fonte: BASE SIPE de 26/10/2026,
@@ -11,7 +25,8 @@ Entradas combinam `dtexerc` da SIPE e `DTEXERC` dos desligados. Deduplicação p
 matrícula e data de exercício preserva diferentes vínculos da mesma matrícula.
 Saídas usam `DTVAC`; `FORMAVAC` mantém a classificação original. Nenhuma data
 posterior à referência SIPE é incorporada. O saldo observado não reconcilia o
-estoque: duas matrículas da listagem ainda constam na SIPE. A hierarquia é a do
+estoque: cobertura e datas de corte precisam ser consideradas. Os registros
+conciliados como desligados não entram no quadro atual. A hierarquia é a do
 cadastro atual, não uma reconstrução histórica; lotações de admissão não estão
 disponíveis para quem permanece. Códigos sem correspondência ficam separados.
 

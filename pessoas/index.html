@@ -118,7 +118,7 @@
         <p class="pe-nota">Esta seção tem filtros próprios. Os filtros do quadro atual no início da página não alteram esta série histórica.</p>
         <div class="pe-grid mov-kpis" id="movKpis" aria-live="polite"></div>
         <p class="pe-nota" id="movLeitura"></p>
-        <p class="pe-aviso">Saldo observado = entradas identificadas menos saídas registradas. Não é a variação confirmada do quadro: há duas matrículas presentes na SIPE que também constam como desligadas. A cobertura histórica das fontes e as datas de corte precisam ser conciliadas.</p>
+        <p class="pe-aviso">Saldo observado = entradas identificadas menos saídas registradas. Os desligamentos confirmados prevalecem sobre a presença na SIPE e são excluídos do quadro atual. O saldo histórico depende da cobertura das fontes e das datas de corte.</p>
       </div>
       <div class="pe-grid" style="margin-top:16px">
         <div class="pe-card"><h3>Entradas e saídas por mês</h3><div class="pe-tabela-wrap"><table id="movMensal"></table></div></div>
@@ -216,9 +216,9 @@
 <div class="pe-tip" id="peTip" hidden></div>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
-<script src="dados-pessoas.js?v=14"></script>
+<script src="dados-pessoas.js?v=15"></script>
 <script src="pessoas.js?v=12"></script>
-<script src="movimentacao-dados.js?v=1"></script>
+<script src="movimentacao-dados.js?v=2"></script>
 <script src="movimentacao.js?v=1"></script>
 </body>
 </html>

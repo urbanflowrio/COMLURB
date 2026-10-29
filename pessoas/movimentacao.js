@@ -37,8 +37,11 @@
     [['Entradas identificadas',d.entradas],['Desligamentos registrados',d.saidas],['Saldo observado',d.entradas-d.saidas]].forEach(([title,value])=>{
       const box=el('div',null,'pe-card');box.append(el('h3',title),el('strong',fmt(value),'mov-number'));k.append(box);
     });
-    const monthNames=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    table(root.querySelector('#movMensal'),['Mês','Entradas','Saídas','Saldo observado'],d.meses.map(m=>[monthNames[m.mes-1],m.entradas,m.saidas,diff(m.entradas,m.saidas)]));
+    table(root.querySelector('#movAnual'),['Ano','Entradas','Saídas','Saldo observado'],Object.entries(data.anos).reverse().map(([y,a])=>{
+      const button=el('button',y+(Number(y)===Number(data.meta.referencia_sipe.slice(0,4))?' · parcial':''),'pe-btn');button.type='button';button.setAttribute('aria-pressed',String(y===year.value));button.onclick=()=>{year.value=y;render();};
+      return[button,a.entradas,a.saidas,a.entradas-a.saidas];
+    }));
+    root.querySelector('#movMotivosTitulo').textContent='Motivos dos desligamentos · '+year.value;
     table(root.querySelector('#movMotivos'),['Forma de desligamento','Quantidade'],d.motivos.map(m=>[m.nome,m.n]));
     const partial=Number(year.value)===Number(data.meta.referencia_sipe.slice(0,4));
     root.querySelector('#movPeriodo').textContent=partial ? `${year.value} parcial. SIPE de ${dateLabel(data.meta.referencia_sipe)}; último desligamento registrado em ${dateLabel(data.meta.ultimo_desligamento)}.` : `${year.value}: movimentações identificadas nas fontes disponíveis. Série histórica sujeita à cobertura do cadastro.`;
@@ -47,4 +50,12 @@
     units();
   }
   year.addEventListener('change',render);render();
+  const subtabs=[...root.querySelectorAll('.pe-subabas [role="tab"]')];
+  function selectSubtab(chosen) {
+    subtabs.forEach(t=>{const active=t===chosen;t.setAttribute('aria-selected',String(active));t.tabIndex=active?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!active;});
+  }
+  subtabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>selectSubtab(t));
+    t.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=subtabs[e.key==='Home'?0:e.key==='End'?subtabs.length-1:(i+1)%subtabs.length];selectSubtab(next);next.focus();}});
+  });
 })();

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=12">
+<link rel="stylesheet" href="pessoas.css?v=13">
 </head>
 <body>
 <div class="app">
@@ -15,10 +15,20 @@
       <div>
         <div class="pe-eyebrow">Fotografia cadastral · somente agregados protegidos</div>
         <h2>Quadro, situação e renovação da força de trabalho</h2>
-        <p>Escolha um recorte da estrutura para ver composição, afastamentos, restrições e temporários. Sucessão e alertas cadastrais são lidos no total da empresa.</p>
+        <p>Escolha uma aba para consultar o assunto. Quadro, afastamentos, restrições e temporários permitem filtrar a estrutura; as demais abas mostram a visão da COMLURB.</p>
       </div>
       <div class="pe-ref">BASE DE REFERÊNCIA<strong id="dataReferencia">—</strong>Não é a taxa oficial de absenteísmo (SARC)</div>
     </section>
+
+    <nav class="pe-abas" id="pessoasAbas" role="tablist" aria-label="Assuntos de Pessoas">
+      <button type="button" role="tab" id="aba-quadro" data-aba="quadro" aria-controls="bloco-quadro" aria-selected="true" tabindex="0">Quadro</button>
+      <button type="button" role="tab" id="aba-afast" data-aba="afast" aria-controls="bloco-afast" aria-selected="false" tabindex="-1">Afastamentos</button>
+      <button type="button" role="tab" id="aba-restr" data-aba="restr" aria-controls="bloco-restr" aria-selected="false" tabindex="-1">Restrições</button>
+      <button type="button" role="tab" id="aba-movimentacao" data-aba="movimentacao" aria-controls="bloco-movimentacao" aria-selected="false" tabindex="-1">Desligamentos</button>
+      <button type="button" role="tab" id="aba-suc" data-aba="suc" aria-controls="bloco-suc" aria-selected="false" tabindex="-1">Renovação</button>
+      <button type="button" role="tab" id="aba-tmp" data-aba="tmp" aria-controls="bloco-tmp" aria-selected="false" tabindex="-1">Temporários</button>
+      <button type="button" role="tab" id="aba-alertas" data-aba="alertas" aria-controls="bloco-alertas" aria-selected="false" tabindex="-1">Cadastro</button>
+    </nav>
 
     <section class="pe-recorte" aria-label="Recorte da estrutura">
       <label for="selDir">Diretoria<select id="selDir"></select></label>
@@ -30,7 +40,7 @@
 
     <section class="pe-kpis" id="peKpis" aria-label="Síntese do recorte"></section>
 
-    <section class="pe-bloco" id="bloco-quadro">
+    <section class="pe-bloco" id="bloco-quadro" role="tabpanel" aria-labelledby="aba-quadro" tabindex="0">
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Quadro e situação</div>
         <h2>Quem compõe o recorte e em que situação está</h2>
@@ -59,7 +69,7 @@
       </div>
     </section>
 
-    <section class="pe-bloco" id="bloco-afast">
+    <section class="pe-bloco" id="bloco-afast" role="tabpanel" aria-labelledby="aba-afast" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Afastamentos qualificados</div>
         <h2>O que é ausência em curso e o que é estoque antigo</h2>
@@ -84,7 +94,7 @@
       </div>
     </section>
 
-    <section class="pe-bloco" id="bloco-restr">
+    <section class="pe-bloco" id="bloco-restr" role="tabpanel" aria-labelledby="aba-restr" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Restrição</div>
         <h2>Onde a marcação de restrição se concentra entre garis efetivos</h2>
@@ -106,25 +116,31 @@
       </div>
     </section>
 
-    <section class="pe-bloco" id="bloco-movimentacao">
+    <section class="pe-bloco" id="bloco-movimentacao" role="tabpanel" aria-labelledby="aba-movimentacao" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Movimentação do quadro · COMLURB</div>
-        <h2>Quanto as entradas recompõem as saídas registradas</h2>
+        <h2>Desligamentos por ano e motivo</h2>
         <p>Admissões identificadas na BASE SIPE e na listagem de desligados, sem repetir a mesma matrícula e data de exercício. Inclui todos os vínculos das fontes, como estágios e cargos de confiança.</p>
       </div></div>
       <div class="pe-card">
         <label for="movAno">Ano da movimentação <select id="movAno" aria-describedby="movPeriodo"></select></label>
         <p class="pe-nota" id="movPeriodo"></p>
-        <p class="pe-nota">Esta seção tem filtros próprios. Os filtros do quadro atual no início da página não alteram esta série histórica.</p>
+        <p class="pe-nota">Visão anual da COMLURB. Escolha o ano para consultar os motivos e detalhar as unidades.</p>
         <div class="pe-grid mov-kpis" id="movKpis" aria-live="polite"></div>
         <p class="pe-nota" id="movLeitura"></p>
         <p class="pe-aviso">Saldo observado = entradas identificadas menos saídas registradas. Os desligamentos confirmados prevalecem sobre a presença na SIPE e são excluídos do quadro atual. O saldo histórico depende da cobertura das fontes e das datas de corte.</p>
       </div>
-      <div class="pe-grid" style="margin-top:16px">
-        <div class="pe-card"><h3>Entradas e saídas por mês</h3><div class="pe-tabela-wrap"><table id="movMensal"></table></div></div>
-        <div class="pe-card"><h3>Formas de desligamento</h3><div class="sub">Classificações originais do cadastro. Os códigos legais permanecem sem interpretação adicional.</div><div class="pe-tabela-wrap"><table id="movMotivos"></table></div></div>
+      <div class="pe-subabas" role="tablist" aria-label="Detalhamento dos desligamentos">
+        <button type="button" role="tab" id="mov-tab-anual" aria-controls="mov-painel-anual" aria-selected="true">Por ano e motivo</button>
+        <button type="button" role="tab" id="mov-tab-unidades" aria-controls="mov-painel-unidades" aria-selected="false" tabindex="-1">Por unidade</button>
       </div>
-      <div class="pe-card" style="margin-top:16px">
+      <div id="mov-painel-anual" role="tabpanel" aria-labelledby="mov-tab-anual">
+        <div class="pe-grid" style="margin-top:16px">
+          <div class="pe-card"><h3>Histórico anual</h3><div class="sub">Selecione um ano para ver os motivos. O ano mais recente é parcial.</div><div class="pe-tabela-wrap"><table id="movAnual"></table></div></div>
+          <div class="pe-card"><h3 id="movMotivosTitulo">Motivos dos desligamentos</h3><div class="sub">Classificações originais do cadastro. Os códigos legais permanecem sem interpretação adicional.</div><div class="pe-tabela-wrap"><table id="movMotivos"></table></div></div>
+        </div>
+      </div>
+      <div class="pe-card" id="mov-painel-unidades" role="tabpanel" aria-labelledby="mov-tab-unidades" style="margin-top:16px" hidden>
         <h3>Movimentações por unidade no ano</h3>
         <div class="sub">Clique para detalhar Diretoria, Sup/Coord e unidade. A estrutura usa o cadastro consolidado atual; não reconstitui a hierarquia histórica. Nas entradas de quem permanece, a lotação é a da SIPE atual; nas demais, é o setor informado na listagem de desligados. O saldo por unidade não mede transferências nem recomposição local confirmada.</div>
         <div id="movCaminho" class="mov-path"></div>
@@ -134,7 +150,7 @@
       <p class="pe-nota">Fontes: BASE SIPE de 26/10/2026, Listagem de Desligados recebida em 29/10/2026 e Cadastro consolidado de setores. Atualização desta seção exige reler as três fontes e gerar novos agregados; a rotina automática anterior ainda não contempla esta integração.</p>
     </section>
 
-    <section class="pe-bloco" id="bloco-suc">
+    <section class="pe-bloco" id="bloco-suc" role="tabpanel" aria-labelledby="aba-suc" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Renovação e sucessão · COMLURB</div>
         <h2>Onde o quadro atual tem pouca renovação e muita experiência acumulada</h2>
@@ -175,7 +191,7 @@
       </div>
     </section>
 
-    <section class="pe-bloco" id="bloco-tmp">
+    <section class="pe-bloco" id="bloco-tmp" role="tabpanel" aria-labelledby="aba-tmp" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Garis temporários</div>
         <h2>Onde os temporários entraram e com que peso entre os garis</h2>
@@ -196,7 +212,7 @@
       </div>
     </section>
 
-    <section class="pe-bloco" id="bloco-alertas">
+    <section class="pe-bloco" id="bloco-alertas" role="tabpanel" aria-labelledby="aba-alertas" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Alertas cadastrais e de férias · COMLURB</div>
         <h2>O que corrigir no cadastro antes de comparar unidades</h2>
@@ -218,7 +234,8 @@
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=15"></script>
 <script src="pessoas.js?v=12"></script>
-<script src="movimentacao-dados.js?v=2"></script>
-<script src="movimentacao.js?v=1"></script>
+<script src="movimentacao-dados.js?v=3"></script>
+<script src="movimentacao.js?v=2"></script>
+<script src="abas.js?v=1"></script>
 </body>
 </html>

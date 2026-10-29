@@ -1,5 +1,17 @@
 # Gestão Estratégica de Pessoas V8
 
+## Navegação por assunto (29/10/2026)
+
+O painel usa sete abas: Quadro, Afastamentos, Restrições, Desligamentos,
+Renovação, Temporários e Cadastro. Os filtros da estrutura aparecem somente
+nas abas que usam o recorte. A seleção permanece ao alternar entre abas.
+Cada aba possui endereço por fragmento e navegação de teclado.
+
+Desligamentos apresenta histórico por ano e motivos do ano selecionado,
+com a subaba Por unidade para o detalhamento anual da estrutura. A tabela
+mensal foi retirada da interface e do agregado de movimentação. Nenhum total
+foi alterado nesta reorganização.
+
 ## Conciliação de desligados (29/10/2026)
 
 Por decisão da responsável, dois registros presentes simultaneamente na SIPE e

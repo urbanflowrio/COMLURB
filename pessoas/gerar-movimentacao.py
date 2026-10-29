@@ -59,11 +59,6 @@ def main():
         'minimo':10},'anos':{}}
     for year in range(2018,cutoff.year+1):
         ent=[r for r in events.values() if r[0].year==year]; sai=[r for r in departures if r[0].year==year]
-        count_months=12 if year<cutoff.year else cutoff.month
-        months=[]
-        for records in (ent,sai):
-            counts=collections.Counter(r[0].month for r in records)
-            months.append(protect([counts[m] for m in range(1,count_months+1)]))
         # Hierarquia atual identifica códigos, sem presumir a estrutura de anos anteriores.
         nodes={}
         for kind,records in enumerate((ent,sai)):
@@ -87,7 +82,7 @@ def main():
                 if n['pai'] and nodes[n['pai']]['v'][metric] is None: n['v'][metric]=None
         reasons=collections.Counter(r[2] for r in sai)
         names=sorted(reasons,key=lambda k:-reasons[k]); vals=protect([reasons[k] for k in names])
-        output['anos'][str(year)]={'entradas':len(ent),'saidas':len(sai),'meses':[{'mes':m+1,'entradas':months[0][m],'saidas':months[1][m]} for m in range(count_months)],
+        output['anos'][str(year)]={'entradas':len(ent),'saidas':len(sai),
             'unidades':list(nodes.values()),'motivos':[{'nome':k,'n':v} for k,v in zip(names,vals)]}
         assert sum(collections.Counter(r[0].month for r in ent).values())==len(ent)
         assert sum(collections.Counter(r[0].month for r in sai).values())==len(sai)

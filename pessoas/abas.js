@@ -11,6 +11,7 @@
     if(updateHash) history.replaceState(null,'','#'+chosen.dataset.aba);
     document.getElementById('peTip').hidden=true;
   }
+  document.querySelectorAll('[data-abrir-aba]').forEach(el=>el.addEventListener('click',()=>{ const tab=tabs.find(t=>t.dataset.aba===el.dataset.abrirAba); if(tab){ show(tab.dataset.aba); tab.focus(); } }));
   tabs.forEach((t,i)=>{
     t.addEventListener('click',()=>show(t.dataset.aba));
     t.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight') n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(e.key==='Home')n=0;if(e.key==='End')n=tabs.length-1;if(n!==undefined){e.preventDefault();show(tabs[n].dataset.aba);tabs[n].focus();}});

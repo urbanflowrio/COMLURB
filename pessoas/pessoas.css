@@ -205,3 +205,21 @@
 
 /* Visão executiva de Pessoas */
 .visao-leitura{background:#102941;margin-bottom:14px}.visao-leitura p{color:var(--texto);max-width:1000px;line-height:1.6;margin:8px 0 0}.visao-heading{margin:25px 0 12px}.visao-heading h3{margin:4px 0}.visao-prioridades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.visao-prioridade{display:flex;flex-direction:column}.visao-prioridade p,.geral-grid p{color:var(--silenciado);line-height:1.5}.visao-valor{font-size:26px;font-weight:700;color:var(--texto);margin:10px 0 5px}.visao-acao{font-size:12px;color:var(--silenciado);border-top:1px solid var(--linha);padding-top:12px;margin-top:auto}.visao-detalhe{align-self:flex-start;margin-top:14px}.visao-link{display:flex;justify-content:space-between;gap:12px;width:100%;border:0;border-bottom:1px solid var(--linha);background:transparent;color:var(--texto);font:inherit;text-align:left;padding:11px 0;cursor:pointer}.visao-link:hover{text-decoration:underline}@media(max-width:850px){.visao-prioridades{grid-template-columns:1fr}}
+
+/* Hierarquia visual da visão geral */
+#bloco-geral .visao-leitura{background:linear-gradient(110deg,#173c5c,#10263e);border-color:#477390;border-left:4px solid #73b7df;padding:22px 24px}
+#bloco-geral .visao-leitura h3{font-size:19px;color:#fff;margin:7px 0}
+#bloco-geral .visao-leitura p{font-size:15px;color:#e2effb}
+#bloco-geral .geral-kpi{background:#10253d;border-top:3px solid #77b5dc}
+#bloco-geral .geral-kpi:nth-child(2){border-top-color:#e98252}
+#bloco-geral .geral-kpi:nth-child(3){border-top-color:#a59af1}
+#bloco-geral .geral-kpi:nth-child(4){border-top-color:#e4b052}
+#bloco-geral .visao-prioridade{background:#10243a;position:relative;border-top:3px solid #e98252;padding:21px}
+#bloco-geral .visao-prioridade:nth-child(2){border-top-color:#77b5dc}
+#bloco-geral .visao-prioridade:nth-child(3){border-top-color:#a59af1}
+#bloco-geral .visao-prioridade:nth-child(1) .visao-valor{color:#ffa477}
+#bloco-geral .visao-prioridade:nth-child(2) .visao-valor{color:#a8d9f5}
+#bloco-geral .visao-prioridade:nth-child(3) .visao-valor{color:#c8befa}
+#bloco-geral .visao-prioridade h3{font-size:15px;color:#f2f8ff}
+#bloco-geral .visao-prioridade p{color:#c6d8e9}
+#bloco-geral .visao-acao{color:#b7ccdd}

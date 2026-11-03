@@ -347,10 +347,6 @@
   }
 
   /* ---------------- Rodapé ---------------- */
-  $("peRodape").innerHTML = `<div><b style="color:var(--texto)">Fonte:</b> ${esc(D.meta.fonte)}, deduplicada por registro.</div>
-    <div><b style="color:var(--texto)">Proteção:</b> ${esc(D.meta.regras.texto)} O símbolo (•) indica valor suprimido. Não há nomes, matrículas, CPF, datas individuais, endereço, documentos, raça/cor, deficiência, sexo ou nível salarial no pacote.</div>
-    <div><b style="color:var(--texto)">Estrutura:</b> Cadastro consolidado de setores, conforme as definições confirmadas para o HUB. Os agrupamentos são apenas de apresentação e não alteram a estrutura cadastrada. Lotações especiais (GGQ02, Cargos Indisponíveis) aparecem destacadas e ficam fora dos comparativos.</div>
-    <div><b style="color:var(--texto)">Leitura:</b> afastado e restrição são situações cadastrais. Não medem absenteísmo, produtividade, capacidade operacional nem necessidade de contratação.</div>`;
 
   function renderRecorte() {
     const n = A[sel];

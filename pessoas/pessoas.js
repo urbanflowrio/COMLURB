@@ -127,6 +127,24 @@
     $("peKpis").innerHTML = k.map(([t, v, d, c]) => `<article class="pe-kpi"><div class="k">${c ? `<i style="background:${c}"></i>` : ""}${t}</div><div class="v">${v}</div><div class="d">${d}</div></article>`).join("");
   }
 
+  function renderGeral() {
+    const n = ROOT, af = n.sit[3], rs = n.sit[2], temp = n.vinc[3];
+    const indicadores = [
+      ["Quadro total", nf(n.n), "empregados", "quadro"],
+      ["Afastados", nf(af), af !== null ? pf(pct(af,n.n)) + " do quadro" : "Dado protegido", "afast"],
+      ["Com restrição", nf(rs), rs !== null ? pf(pct(rs,n.n)) + " do quadro" : "Dado protegido", "restr"],
+      ["Garis temporários", nf(temp), temp !== null && garisDe(n) ? pf(pct(temp,garisDe(n))) + " dos garis" : "Regime por tempo determinado", "tmp"]
+    ];
+    $("geralKpis").innerHTML = indicadores.map(([titulo,valor,detalhe,aba]) => `<button type="button" class="pe-kpi geral-kpi" data-abrir-aba="${aba}"><span class="k">${esc(titulo)}</span><span class="v">${esc(valor)}</span><span class="d">${esc(detalhe)}</span></button>`).join("");
+    $("geralPontos").innerHTML = `<div class="geral-ponto"><strong>Afastamentos</strong><p>${af !== null ? pf(pct(af,n.n)) + " do quadro está afastado." : "Dado protegido."} Compare proporções e quantidades nas unidades.</p></div><div class="geral-ponto"><strong>Renovação</strong><p>Identifique famílias de funções com maior concentração de pessoas acima de 60 anos para apoiar o planejamento de sucessão.</p></div><div class="geral-ponto"><strong>Temporários</strong><p>Acompanhe a distribuição dos garis temporários pelas unidades.</p></div>`;
+    const unidades = unidadesComparaveis("COMLURB").filter(u => u.sit[3] !== null && u.sit[3] !== undefined);
+    const ordenarTaxa = [...unidades].sort((a,b) => pct(b.sit[3],b.n)-pct(a.sit[3],a.n));
+    const ordenarVolume = [...unidades].sort((a,b) => b.sit[3]-a.sit[3]);
+    const linha = (titulo, u) => u ? `<div class="geral-unidade"><div><span>${titulo}</span><strong>${esc(u.label.replace(/[—–]/g, " "))}</strong><small>${nf(u.sit[3])} afastados em ${nf(u.n)} pessoas</small></div><b>${pf(pct(u.sit[3],u.n))}</b></div>` : "";
+    $("geralUnidades").innerHTML = linha("Maior proporção", ordenarTaxa[0]) + linha("Maior quantidade", ordenarVolume[0]) || '<p class="pe-nota">Sem dados disponíveis para comparação.</p>';
+  }
+  renderGeral();
+
   /* ---------------- Bloco 1 ---------------- */
   function renderQuadro(n) {
     $("sitSub").textContent = `${nf(n.n)} empregados. O símbolo (•) indica um valor ocultado para proteger informações pessoais, inclusive quando necessário para impedir seu cálculo por diferença.`;

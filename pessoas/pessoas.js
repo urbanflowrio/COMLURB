@@ -14,10 +14,6 @@
     av.innerHTML = "<b>Dados em conferência.</b> Os totais desta competência ainda não foram conferidos de forma independente. Não divulgar.";
     $("pe").prepend(av);
   }
-  if (!D.meta.origem_publicada) {
-    const card = $("origTable").closest(".pe-card");
-    if (card) card.innerHTML = '<h3>Lotação oficial e visão por origem</h3><p class="pe-nota">A visão por origem não foi publicada nesta competência porque exporia grupos pequenos da GGQ02.</p>';
-  }
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const nf = (v) => (v === null || v === undefined ? "•" : Number(v).toLocaleString("pt-BR"));
   const pct = (a, b, d = 1) => (a === null || b === null || a === undefined || b === undefined || !b ? null : (100 * a) / b);
@@ -199,8 +195,8 @@
     const ocultas = todas.length - unidades.length;
     const media = pct(ROOT.sit[3], ROOT.n);
     $("funilSub").textContent = `Média da COMLURB: ${pf(media)}. Unidades com pelo menos 30 pessoas.${ocultas ? ` ${ocultas} unidades não aparecem porque os dados estão protegidos.` : ""}`;
-    $("funil").innerHTML = unidades.length ? '<table class="res-table"><thead><tr><th>Unidade</th><th>Pessoas na unidade</th><th>Afastados</th><th>Percentual</th></tr></thead><tbody>' + unidades.map(u => `<tr><td><button type="button" class="res-unit" data-id="${esc(u.id)}">${esc(u.label)}</button></td><td>${nf(u.n)}</td><td>${nf(u.sit[3])}</td><td><strong>${pf(pct(u.sit[3],u.n))}</strong></td></tr>`).join("") + '</tbody></table>' : '<p class="pe-nota">Não há unidades com dados disponíveis neste recorte.</p>';
-    $("funil").querySelectorAll("[data-id]").forEach(b => b.addEventListener("click", () => escolher(b.dataset.id)));
+    const maximo = Math.min(100, Math.max(1, media || 0, ...unidades.map(u => pct(u.sit[3],u.n))) * 1.15);
+    hbars($("funil"), unidades.map(u => ({id:u.id, label:esc(u.label), pct:pct(u.sit[3],u.n), val:pf(pct(u.sit[3],u.n)), sub:`${nf(u.sit[3])} de ${nf(u.n)} pessoas`, cor:"var(--st-afastado)"})), {max:maximo, ref:media});
     const u = unidades[0];
     $("afastExemplo").textContent = u ? `Como ler: em ${u.label}, ${nf(u.sit[3])} das ${nf(u.n)} pessoas estão afastadas. Isso corresponde a ${pf(pct(u.sit[3],u.n))} da unidade.` : "";
   }

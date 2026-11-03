@@ -194,46 +194,15 @@
   }
 
   function renderFunil() {
-    const box = $("funil");
-    const p0 = ROOT.sit[3] / ROOT.n;
     const todas = unidadesComparaveis(sel);
-    const pts = todas.filter((u) => u.sit[3] !== null);
-    const supr = todas.length - pts.length;
-    $("funilSub").textContent = pts.length ? `${pts.length} unidades com 30+ pessoas; referência COMLURB ${pf(100 * p0)}. ${supr ? `${supr} com contagem suprimida ficam fora do gráfico.` : ""}` : "";
-    if (pts.length < 2) { box.innerHTML = '<p class="pe-nota">Este recorte não tem unidades comparáveis suficientes. Escolha uma diretoria ou superintendência.</p>'; return; }
-    const W = 640, H = 300, m = { l: 46, r: 16, t: 12, b: 38 };
-    const xmax = Math.max(...pts.map((u) => u.n)) * 1.06, xmin = 0;
-    const ymax = Math.max(0.2, ...pts.map((u) => (u.sit[3] / u.n) * 1.12));
-    const X = (v) => m.l + ((v - xmin) / (xmax - xmin)) * (W - m.l - m.r);
-    const Y = (v) => H - m.b - (v / ymax) * (H - m.t - m.b);
-    const lim = (nn, s) => Math.max(0, Math.min(ymax, p0 + s * 1.96 * Math.sqrt((p0 * (1 - p0)) / nn)));
-    const xs = []; for (let v = 30; v <= xmax; v += (xmax - 30) / 60) xs.push(v);
-    const sup = xs.map((v) => `${X(v).toFixed(1)},${Y(lim(v, 1)).toFixed(1)}`), inf = xs.map((v) => `${X(v).toFixed(1)},${Y(lim(v, -1)).toFixed(1)}`);
-    const passo = ymax > 0.25 ? 0.1 : 0.05;
-    let g = "";
-    for (let v = 0; v <= ymax + 1e-9; v += passo) g += `<line class="grade" x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end">${Math.round(v * 100)}%</text>`;
-    const xstep = xmax > 1500 ? 500 : xmax > 600 ? 200 : 100;
-    for (let v = 0; v <= xmax; v += xstep) g += `<text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle">${nf(v)}</text>`;
-    g += `<text x="${(W + m.l) / 2}" y="${H - 4}" text-anchor="middle">Pessoas na unidade</text>`;
-    const band = `<polygon class="lim" points="${sup.join(" ")} ${inf.reverse().join(" ")}"/><polyline class="limline" points="${sup.join(" ")}"/>`;
-    const ref = `<line class="refline" x1="${X(30)}" x2="${W - m.r}" y1="${Y(p0)}" y2="${Y(p0)}"/>`;
-    const fora = (u) => u.sit[3] / u.n > lim(u.n, 1) + 1e-12;
-    const dots = pts.map((u) => {
-      const t = u.sit[3] / u.n, cx = X(u.n), cy = Y(t);
-      const tipo = fora(u) ? "Acima da faixa esperada" : t / 1 < lim(u.n, -1) ? "Abaixo da faixa esperada" : "Dentro da faixa esperada";
-      const html = `<b>${esc(u.label)}</b><br>${nf(u.sit[3])} afastados em ${nf(u.n)} (${pf(100 * t)})${u.nat ? `<br>Benefício: ${nf(u.nat[0])} · Suspensos: ${nf(u.nat[1])}` : ""}<br>${tipo}`;
-      return `<g><circle class="pt${fora(u) ? " fora" : ""}${u.id === sel ? " sel" : ""}" cx="${cx}" cy="${cy}" r="5"/><circle class="hit" cx="${cx}" cy="${cy}" r="11" data-id="${esc(u.id)}" data-tip="${esc(html)}" tabindex="0"/></g>`;
-    }).join("");
-    const lbl = pts.filter(fora).map((u) => {
-      const cx = X(u.n), cy = Y(u.sit[3] / u.n), right = cx < W * 0.7;
-      return `<text class="rotulo" x="${cx + (right ? 9 : -9)}" y="${cy + 4}" text-anchor="${right ? "start" : "end"}">${esc(u.label.replace(/^Gerência /, ""))}</text>`;
-    }).join("");
-    box.innerHTML = `<svg class="pe-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Taxa de afastados por tamanho de unidade">${g}<line class="eixo" x1="${m.l}" x2="${W - m.r}" y1="${H - m.b}" y2="${H - m.b}"/>${band}${ref}${dots}${lbl}</svg>`;
-    box.querySelectorAll(".hit").forEach((c) => {
-      c.addEventListener("click", () => escolher(c.dataset.id));
-      c.addEventListener("keydown", (e) => { if (e.key === "Enter") escolher(c.dataset.id); });
-    });
-    bindTips(box);
+    const unidades = todas.filter(u => u.sit[3] !== null && u.sit[3] !== undefined).sort((a,b) => pct(b.sit[3],b.n) - pct(a.sit[3],a.n));
+    const ocultas = todas.length - unidades.length;
+    const media = pct(ROOT.sit[3], ROOT.n);
+    $("funilSub").textContent = `Média da COMLURB: ${pf(media)}. Unidades com pelo menos 30 pessoas.${ocultas ? ` ${ocultas} unidades não aparecem porque os dados estão protegidos.` : ""}`;
+    $("funil").innerHTML = unidades.length ? '<table class="res-table"><thead><tr><th>Unidade</th><th>Pessoas na unidade</th><th>Afastados</th><th>Percentual</th></tr></thead><tbody>' + unidades.map(u => `<tr><td><button type="button" class="res-unit" data-id="${esc(u.id)}">${esc(u.label)}</button></td><td>${nf(u.n)}</td><td>${nf(u.sit[3])}</td><td><strong>${pf(pct(u.sit[3],u.n))}</strong></td></tr>`).join("") + '</tbody></table>' : '<p class="pe-nota">Não há unidades com dados disponíveis neste recorte.</p>';
+    $("funil").querySelectorAll("[data-id]").forEach(b => b.addEventListener("click", () => escolher(b.dataset.id)));
+    const u = unidades[0];
+    $("afastExemplo").textContent = u ? `Como ler: em ${u.label}, ${nf(u.sit[3])} das ${nf(u.n)} pessoas estão afastadas. Isso corresponde a ${pf(pct(u.sit[3],u.n))} da unidade.` : "";
   }
 
   /* ---------------- Bloco 3 ---------------- */

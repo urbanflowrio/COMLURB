@@ -140,17 +140,21 @@
     $("geralKpis").innerHTML = indicadores.map(([titulo,valor,detalhe,aba]) => `<button type="button" class="pe-kpi geral-kpi" data-abrir-aba="${aba}"><span class="k">${esc(titulo)}</span><span class="v">${esc(valor)}</span><span class="d">${esc(detalhe)}</span></button>`).join("");
     const dur = n.dur || [], longo = Number.isFinite(dur[2]) && Number.isFinite(dur[3]) ? dur[2] + dur[3] : null;
     const familias = (D.sucessao || []).filter(x => Number.isFinite(x.n) && x.n >= 30 && Array.isArray(x.fx) && Number.isFinite(x.fx[6])).sort((a,b) => pct(b.fx[6],b.n) - pct(a.fx[6],a.n));
-    const lider = familias[0], cedidos = A[APAS_ID];
-    const textoLongo = longo !== null && af ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano (${pf(pct(longo,af))}).` : "Dados de duração indisponíveis.";
-    const textoIdade = lider ? `${esc(lider.label)}: ${nf(lider.fx[6])} de ${nf(lider.n)} pessoas estão acima de 60 anos (${pf(pct(lider.fx[6],lider.n))}).` : "Dados de renovação indisponíveis.";
-    const textoGari = Number.isFinite(n.resGarisEf) && Number.isFinite(n.garisEf) ? `${nf(n.resGarisEf)} dos ${nf(n.garisEf)} garis efetivos têm registro de restrição (${pf(pct(n.resGarisEf,n.garisEf))}).` : "Dados de restrição indisponíveis.";
-    const textoCessao = cedidos && Number.isFinite(cedidos.n) ? `${nf(cedidos.n)} empregados estão no grupo de APAs cedidos à SME, distribuídos pelas CREs.` : "Dados de cessão indisponíveis.";
-    $("geralPontos").innerHTML = `<div class="geral-ponto"><strong>Afastamentos prolongados</strong><p>${textoLongo}</p></div><div class="geral-ponto"><strong>Renovação e sucessão</strong><p>${textoIdade} A idade não prevê desligamento.</p></div><div class="geral-ponto"><strong>Garis efetivos com restrição</strong><p>${textoGari}</p></div><div class="geral-ponto"><strong>Cedidos à SME</strong><p>${textoCessao}</p></div>`;
-    const unidades = unidadesComparaveis("COMLURB").filter(u => u.sit[3] !== null && u.sit[3] !== undefined);
-    const ordenarTaxa = [...unidades].sort((a,b) => pct(b.sit[3],b.n)-pct(a.sit[3],a.n));
-    const ordenarVolume = [...unidades].sort((a,b) => b.sit[3]-a.sit[3]);
-    const linha = (titulo, u) => u ? `<div class="geral-unidade"><div><span>${titulo}</span><strong>${esc(u.label.replace(/[—–]/g, " "))}</strong><small>${nf(u.sit[3])} afastados em ${nf(u.n)} pessoas</small></div><b>${pf(pct(u.sit[3],u.n))}</b></div>` : "";
-    $("geralUnidades").innerHTML = linha("Maior proporção", ordenarTaxa[0]) + linha("Maior quantidade", ordenarVolume[0]) || '<p class="pe-nota">Sem dados disponíveis para comparação.</p>';
+    const lider = familias[0], cedidos = A[APAS_ID], percentualLongo = pct(longo,af), percentualGari = pct(n.resGarisEf,n.garisEf);
+    const pctIdade = lider ? pct(lider.fx[6],lider.n) : null;
+    const sentencas = [];
+    if (percentualLongo !== null) sentencas.push(`${pf(percentualLongo)} das pessoas afastadas estão nessa situação há mais de um ano.`);
+    if (lider && pctIdade !== null) sentencas.push(`A família ${esc(lider.label)} tem ${pf(pctIdade)} de pessoas acima de 60 anos, informação útil para planejar sucessão e transferência de conhecimento.`);
+    $("geralLeitura").innerHTML = sentencas.length ? sentencas.join(" ") : "Não há dados disponíveis para esta leitura.";
+    const item = (categoria,valor,titulo,descricao,acao,aba) => `<article class="pe-card visao-prioridade"><div class="pe-eyebrow">${categoria}</div><div class="visao-valor">${valor}</div><h3>${titulo}</h3><p>${descricao}</p><div class="visao-acao">${acao}</div><button type="button" class="pe-btn visao-detalhe" data-abrir-aba="${aba}">Ver detalhes</button></article>`;
+    const textoLongo = percentualLongo !== null ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano.` : "Dados de duração indisponíveis.";
+    const textoIdade = lider ? `${nf(lider.fx[6])} de ${nf(lider.n)} pessoas na família ${esc(lider.label)} estão acima de 60 anos.` : "Dados de renovação indisponíveis.";
+    const textoGari = percentualGari !== null ? `${nf(n.resGarisEf)} de ${nf(n.garisEf)} garis efetivos têm registro de restrição.` : "Dados de restrição indisponíveis.";
+    $("geralPontos").innerHTML =
+      item("Afastamentos",pf(percentualLongo),"Há mais de um ano",textoLongo,"Acompanhar as situações de longa duração.","afast") +
+      item("Renovação",pf(pctIdade),"Pessoas acima de 60 anos",textoIdade,"Planejar sucessão e transferência de conhecimento. A idade não prevê desligamento.","suc") +
+      item("Restrições",pf(percentualGari),"Garis efetivos com restrição",textoGari,"Examinar a distribuição por unidade e função.","restr");
+    $("geralCedidos").innerHTML = cedidos && Number.isFinite(cedidos.n) ? `<div class="visao-valor">${nf(cedidos.n)}</div><p>Empregados no grupo de APAs cedidos à SME, distribuídos pelas CREs e apresentados separadamente das gerências operacionais.</p>` : "<p>Dados de cessão indisponíveis.</p>";
   }
   renderGeral();
 

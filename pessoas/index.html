@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=14">
+<link rel="stylesheet" href="pessoas.css?v=15">
 </head>
 <body>
 <div class="app">
@@ -72,18 +72,18 @@
     <section class="pe-bloco" id="bloco-afast" role="tabpanel" aria-labelledby="aba-afast" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Afastamentos qualificados</div>
-        <h2>O que é ausência em curso e o que é estoque antigo</h2>
-        <p>Compare as naturezas e as durações dos afastamentos registrados na data da extração.</p>
+        <h2>Afastamentos no quadro</h2>
+        <p>Veja a proporção por unidade, a natureza e a duração dos afastamentos na data de referência.</p>
       </div></div>
-      <div class="pe-grid meio">
+      <div class="pe-card afast-unidades">
+        <div class="pe-head"><div><h3>Onde os afastamentos são proporcionalmente maiores</h3><div class="sub" id="funilSub"></div></div></div>
+        <div class="pe-hbars" id="funil"></div>
+        <button type="button" class="pe-btn afast-mais" id="afastMais" hidden>Ver todas as unidades</button>
+        <p class="pe-nota">A linha clara nas barras indica a média da COMLURB. A proporção não informa a causa dos afastamentos.</p>
+      </div>
+      <div class="pe-grid meio afast-detalhes" style="margin-top:16px">
         <div class="pe-card"><h3>Natureza do afastamento</h3><div class="sub" id="natSub"></div><div class="pe-hbars" id="natBars"></div></div>
         <div class="pe-card"><h3>Duração do afastamento</h3><div class="sub">Duração cadastrada na data de referência.</div><div class="pe-hbars" id="durBars"></div></div>
-      </div>
-      <div class="pe-card" style="margin-top:16px">
-        <div class="pe-head"><div><h3>Afastamentos por unidade</h3><div class="sub" id="funilSub"></div></div></div>
-        <div class="pe-tabela-wrap alta"><div class="pe-hbars" id="funil"></div></div>
-        <p class="pe-nota" id="afastExemplo"></p>
-        <p class="pe-nota">A linha nas barras indica a média da COMLURB. O percentual mostra a proporção de afastados na unidade; a quantidade ajuda a avaliar o volume.</p>
       </div>
     </section>
 
@@ -225,7 +225,7 @@
 <div class="pe-tip" id="peTip" hidden></div>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
-<script src="dados-pessoas.js?v=16"></script>
+<script src="dados-pessoas.js?v=17"></script>
 <script src="pessoas.js?v=15"></script>
 <script src="movimentacao-dados.js?v=3"></script>
 <script src="movimentacao.js?v=3"></script>

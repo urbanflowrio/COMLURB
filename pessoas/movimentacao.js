@@ -34,7 +34,7 @@
   }
   function render() {
     parent='';const d=data.anos[year.value], k=root.querySelector('#movKpis');k.replaceChildren();
-    [['Entradas identificadas',d.entradas],['Desligamentos registrados',d.saidas],['Diferença observada',d.entradas-d.saidas]].forEach(([title,value])=>{
+    [['Entradas identificadas',d.entradas],['Desligamentos registrados',d.saidas]].forEach(([title,value])=>{
       const box=el('div',null,'pe-card');box.append(el('h3',title),el('strong',fmt(value),'mov-number'));k.append(box);
     });
     table(root.querySelector('#movAnual'),['Ano','Entradas','Saídas','Diferença observada'],Object.entries(data.anos).reverse().map(([y,a])=>{

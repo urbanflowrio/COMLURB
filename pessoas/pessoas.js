@@ -292,7 +292,7 @@
     const fxBar = (it) => `<div class="mini" style="min-width:120px">${it.fx.map((v, j) => (v ? `<span style="width:${(100 * v) / it.n}%;background:${SEQ[j]}" title="${esc(R.faixas[j])}: ${nf(v)}"></span>` : "")).join("")}</div>`;
     const linha = (it, fam, filho) => {
       const p60 = pct(it.fx[6], it.n), pa = pct(it.apo, it.n);
-      return `<tr class="${fam ? "clic" : ""}" ${fam ? `tabindex="0" data-fam="${esc(it.label)}"` : ""}><td>${filho ? '<span class="muted">↳ </span>' : ""}${esc(it.label)} <span class="muted">(${filho ? (it.label.startsWith("Demais funções") ? "grupo" : "função") : (it.funcoes.length === 1 && it.funcoes[0].n === it.n ? "função" : "grupo")})</span>${fam && it.funcoes.length ? ' <span class="muted">▸</span>' : ""}</td><td class="n">${cellN(it.n)}</td><td>${fxBar(it)}</td><td class="n"><div class="barcell">${pf(p60)}<span class="t"><i style="width:${p60 ?? 0}%;background:var(--seq-6)"></i></span></div></td><td class="n">${pf(pa)}</td><td class="n">${it.desde2015 === null ? SUPR : nf(it.desde2015)}</td></tr>`;
+      return `<tr class="${fam ? "clic" : ""}" ${fam ? `tabindex="0" data-fam="${esc(it.label)}"` : ""}><td>${filho ? '<span class="muted">↳ </span>' : ""}${esc(it.label)}${fam && it.funcoes.length ? ' <span class="muted">▸</span>' : ""}</td><td class="n">${cellN(it.n)}</td><td>${fxBar(it)}</td><td class="n"><div class="barcell">${pf(p60)}<span class="t"><i style="width:${p60 ?? 0}%;background:var(--seq-6)"></i></span></div></td><td class="n">${pf(pa)}</td><td class="n">${it.desde2015 === null ? SUPR : nf(it.desde2015)}</td></tr>`;
     };
     const ordem = [...S].sort((a, b) => (pct(b.fx[6], b.n) ?? 0) - (pct(a.fx[6], a.n) ?? 0));
     let aberta = null;
@@ -399,11 +399,8 @@
     const gari = D.sucessao.find(f => f.label === "Gari efetivo");
     $("agingDestaques").innerHTML = (familias[0] ? `<article><span>Maior proporção entre os grupos publicados</span><strong>${pf(familias[0].proporcao)}</strong><p>${esc(familias[0].label)}: ${nf(familias[0].fx[6])} de ${nf(familias[0].n)} pessoas acima de 60 anos.</p></article>` : "") + (gari && Number.isFinite(gari.fx[6]) ? `<article><span>Quantidade entre garis efetivos</span><strong>${nf(gari.fx[6])}</strong><p>pessoas acima de 60 anos, ${pf(pct(gari.fx[6],gari.n))} dos ${nf(gari.n)} garis efetivos.</p></article>` : "");
     tabela.innerHTML = '<thead><tr><th>Função ou grupo de funções</th><th class="n">Quadro</th><th class="n">Acima de 60</th><th class="n">% do grupo</th></tr></thead><tbody>' +
-      familias.map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${nf(f.n)}</td><td class="n">${nf(f.fx[6])}</td><td class="n">${pf(f.proporcao)}</td></tr>`).join("") + '</tbody>';
-    const garis = D.sucessao.find((f) => f.label === "Gari efetivo");
-    $("agingLeitura").textContent = garis && Number.isFinite(garis.n) && Number.isFinite(garis.fx[6])
-      ? `Entre os garis efetivos, ${nf(garis.fx[6])} de ${nf(garis.n)} estão na faixa acima de 60 anos (${pf(pct(garis.fx[6], garis.n))}). Quantidade e proporção devem ser lidas juntas: um grupo menor pode ter maior percentual e um grupo maior pode concentrar mais pessoas.`
-      : "Leia quantidade e proporção em conjunto. Valores protegidos permanecem indisponíveis.";
+      [...familias, ...(gari && Number.isFinite(gari.n) && Number.isFinite(gari.fx[6]) && !familias.some(f => f.label === gari.label) ? [{...gari, proporcao:pct(gari.fx[6],gari.n)}] : [])].map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${nf(f.n)}</td><td class="n">${nf(f.fx[6])}</td><td class="n">${pf(f.proporcao)}</td></tr>`).join("") + '</tbody>';
+
   }
 
   syncSelects(); renderRecorte(); renderSucessao(); renderAlertas(); renderEnvelhecimento();

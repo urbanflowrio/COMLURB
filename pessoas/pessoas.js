@@ -48,7 +48,7 @@
 
   /* Cabeçalho e rodapé institucionais */
   if (window.HUB && HUB.header) {
-    HUB.header.render("hubHeader", { systemLabel: "HUB COMLURB · PESSOAS E CAPACIDADE ORGANIZACIONAL", title: "Gestão Estratégica de Pessoas", subtitle: `Fotografia cadastral de ${dataRef} · agregados protegidos` });
+    HUB.header.render("hubHeader", { systemLabel: "HUB COMLURB · PESSOAS E CAPACIDADE ORGANIZACIONAL", title: "Gestão Estratégica de Pessoas" });
     HUB.footer.render("hubFooter");
   }
 

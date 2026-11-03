@@ -5,6 +5,8 @@
   const D = window.PESSOAS_DADOS;
   if (!D) return;
   const A = D.arvore, R = D.meta.rotulos, ROOT = A.COMLURB;
+  const APAS_ID = "D:DSU|_APAS";
+  if (A[APAS_ID]) A[APAS_ID].label = "Empregados cedidos à SME";
   const $ = (id) => document.getElementById(id);
   const dataRef = D.meta.referencia.split('-').reverse().join('/');
   $('dataReferencia').textContent = dataRef;
@@ -112,7 +114,7 @@
     else if (node.nivel === 1) base = filhos(id).flatMap((n1) => (n1.filhos.length ? filhos(n1.id) : [n1]));
     else if (node.nivel === 2) base = node.filhos.length ? filhos(id) : [node];
     else base = filhos(node.pai);
-    return base.filter((u) => !u.agrupado && !u.especial && u.n !== null && u.n >= 30 && (!prop || prop(u)));
+    return base.filter((u) => !u.agrupado && !u.especial && u.n !== null && u.n >= 30 && (id === APAS_ID || id.startsWith(APAS_ID + "|") || !u.id.startsWith(APAS_ID + "|")) && (!prop || prop(u)));
   }
 
   /* ---------------- KPIs ---------------- */
@@ -136,7 +138,14 @@
       ["Garis temporários", nf(temp), temp !== null && garisDe(n) ? pf(pct(temp,garisDe(n))) + " dos garis" : "Regime por tempo determinado", "tmp"]
     ];
     $("geralKpis").innerHTML = indicadores.map(([titulo,valor,detalhe,aba]) => `<button type="button" class="pe-kpi geral-kpi" data-abrir-aba="${aba}"><span class="k">${esc(titulo)}</span><span class="v">${esc(valor)}</span><span class="d">${esc(detalhe)}</span></button>`).join("");
-    $("geralPontos").innerHTML = `<div class="geral-ponto"><strong>Afastamentos</strong><p>${af !== null ? pf(pct(af,n.n)) + " do quadro está afastado." : "Dado protegido."} Compare proporções e quantidades nas unidades.</p></div><div class="geral-ponto"><strong>Renovação</strong><p>Identifique famílias de funções com maior concentração de pessoas acima de 60 anos para apoiar o planejamento de sucessão.</p></div><div class="geral-ponto"><strong>Temporários</strong><p>Acompanhe a distribuição dos garis temporários pelas unidades.</p></div>`;
+    const dur = n.dur || [], longo = Number.isFinite(dur[2]) && Number.isFinite(dur[3]) ? dur[2] + dur[3] : null;
+    const familias = (D.sucessao || []).filter(x => Number.isFinite(x.n) && x.n >= 30 && Array.isArray(x.fx) && Number.isFinite(x.fx[6])).sort((a,b) => pct(b.fx[6],b.n) - pct(a.fx[6],a.n));
+    const lider = familias[0], cedidos = A[APAS_ID];
+    const textoLongo = longo !== null && af ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano (${pf(pct(longo,af))}).` : "Dados de duração indisponíveis.";
+    const textoIdade = lider ? `${esc(lider.label)}: ${nf(lider.fx[6])} de ${nf(lider.n)} pessoas estão acima de 60 anos (${pf(pct(lider.fx[6],lider.n))}).` : "Dados de renovação indisponíveis.";
+    const textoGari = Number.isFinite(n.resGarisEf) && Number.isFinite(n.garisEf) ? `${nf(n.resGarisEf)} dos ${nf(n.garisEf)} garis efetivos têm registro de restrição (${pf(pct(n.resGarisEf,n.garisEf))}).` : "Dados de restrição indisponíveis.";
+    const textoCessao = cedidos && Number.isFinite(cedidos.n) ? `${nf(cedidos.n)} empregados estão no grupo de APAs cedidos à SME, distribuídos pelas CREs.` : "Dados de cessão indisponíveis.";
+    $("geralPontos").innerHTML = `<div class="geral-ponto"><strong>Afastamentos prolongados</strong><p>${textoLongo}</p></div><div class="geral-ponto"><strong>Renovação e sucessão</strong><p>${textoIdade} A idade não prevê desligamento.</p></div><div class="geral-ponto"><strong>Garis efetivos com restrição</strong><p>${textoGari}</p></div><div class="geral-ponto"><strong>Cedidos à SME</strong><p>${textoCessao}</p></div>`;
     const unidades = unidadesComparaveis("COMLURB").filter(u => u.sit[3] !== null && u.sit[3] !== undefined);
     const ordenarTaxa = [...unidades].sort((a,b) => pct(b.sit[3],b.n)-pct(a.sit[3],a.n));
     const ordenarVolume = [...unidades].sort((a,b) => b.sit[3]-a.sit[3]);

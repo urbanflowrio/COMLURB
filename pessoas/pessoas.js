@@ -296,7 +296,7 @@
     const ordem = [...S].sort((a, b) => (pct(b.fx[6], b.n) ?? 0) - (pct(a.fx[6], a.n) ?? 0));
     let aberta = null;
     const draw = () => {
-      $("sucTable").innerHTML = `<thead><tr><th>Família</th><th class="n">Quadro</th><th>Faixa etária</th><th class="n">Acima de 60</th><th class="n">Aposentado INSS</th><th class="n">Admitidos desde 2015</th></tr></thead><tbody>` +
+      $("sucTable").innerHTML = `<thead><tr><th>Função ou grupo de funções</th><th class="n">Quadro</th><th>Faixa etária</th><th class="n">Acima de 60</th><th class="n">Aposentado INSS</th><th class="n">Admitidos desde 2015</th></tr></thead><tbody>` +
         ordem.map((it) => linha(it, true, false) + (aberta === it.label ? it.funcoes.map((f) => linha(f, false, true)).join("") : "")).join("") + "</tbody>";
       $("sucTable").querySelectorAll("tr[data-fam]").forEach((tr) => {
         const f = () => { aberta = aberta === tr.dataset.fam ? null : tr.dataset.fam; draw(); };
@@ -391,11 +391,11 @@
       .filter((f) => Number.isFinite(f.n) && f.n >= 30 && Number.isFinite(f.fx[6]))
       .map((f) => ({ ...f, proporcao: pct(f.fx[6], f.n) }))
       .sort((a, b) => b.proporcao - a.proporcao).slice(0, 4);
-    tabela.innerHTML = '<thead><tr><th>Família de funções</th><th class="n">Quadro</th><th class="n">Acima de 60</th><th class="n">% da família</th></tr></thead><tbody>' +
+    tabela.innerHTML = '<thead><tr><th>Função ou grupo de funções</th><th class="n">Quadro</th><th class="n">Acima de 60</th><th class="n">% do grupo</th></tr></thead><tbody>' +
       familias.map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${nf(f.n)}</td><td class="n">${nf(f.fx[6])}</td><td class="n">${pf(f.proporcao)}</td></tr>`).join("") + '</tbody>';
     const garis = D.sucessao.find((f) => f.label === "Gari efetivo");
     $("agingLeitura").textContent = garis && Number.isFinite(garis.n) && Number.isFinite(garis.fx[6])
-      ? `Entre os garis efetivos, ${nf(garis.fx[6])} de ${nf(garis.n)} estão na faixa acima de 60 anos (${pf(pct(garis.fx[6], garis.n))}). Quantidade e proporção devem ser lidas juntas: uma família pequena pode ter maior percentual e uma família numerosa pode concentrar mais pessoas.`
+      ? `Entre os garis efetivos, ${nf(garis.fx[6])} de ${nf(garis.n)} estão na faixa acima de 60 anos (${pf(pct(garis.fx[6], garis.n))}). Quantidade e proporção devem ser lidas juntas: um grupo menor pode ter maior percentual e um grupo maior pode concentrar mais pessoas.`
       : "Leia quantidade e proporção em conjunto. Valores protegidos permanecem indisponíveis.";
   }
 

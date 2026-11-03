@@ -223,3 +223,5 @@
 #bloco-geral .visao-prioridade h3{font-size:15px;color:#f2f8ff}
 #bloco-geral .visao-prioridade p{color:#c6d8e9}
 #bloco-geral .visao-acao{color:#b7ccdd}
+
+#bloco-geral .leitura-frase{display:block}#bloco-geral .leitura-frase + .leitura-frase{margin-top:8px}#bloco-geral .geral-grid .pe-eyebrow{margin-bottom:10px}#bloco-geral .geral-grid h3{margin-top:0}

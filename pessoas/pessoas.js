@@ -244,12 +244,15 @@
     const local = pct(n.resGarisEf, n.garisEf);
     $("resSub").textContent = `Média COMLURB: ${pf(refP)}. ${local !== null ? `Recorte selecionado: ${pf(local)}. ` : ""}Unidades com pelo menos 30 garis efetivos.`;
     const table = $("resBars");
-    table.innerHTML = `<table class="res-table"><thead><tr><th>Unidade</th><th>Garis efetivos</th><th>Com registro de restrição</th><th>Percentual</th></tr></thead><tbody>` + us.map(({u,p}) => `<tr><td><button type="button" class="res-unit" data-id="${esc(u.id)}">${esc(u.label)}</button></td><td>${nf(u.garisEf)}</td><td>${nf(u.resGarisEf)}</td><td><strong>${pf(p)}</strong><span class="res-track"><i style="width:${Math.min(100, Math.max(0,p))}%"></i><i class="res-ref" style="left:${Math.min(100,Math.max(0,refP || 0))}%" title="Média COMLURB: ${pf(refP)}"></i></span></td></tr>`).join("") + `</tbody></table>`;
+    table.innerHTML = `<table class="res-table"><thead><tr><th>Unidade</th><th>Garis efetivos</th><th>Com restrição</th><th>Percentual</th></tr></thead><tbody>` + us.map(({u,p}) => `<tr><td><button type="button" class="res-unit" data-id="${esc(u.id)}">${esc(u.label)}</button></td><td>${nf(u.garisEf)}</td><td>${nf(u.resGarisEf)}</td><td><strong>${pf(p)}</strong><span class="res-track"><i style="width:${Math.min(100, Math.max(0,p))}%"></i><i class="res-ref" style="left:${Math.min(100,Math.max(0,refP || 0))}%" title="Média COMLURB: ${pf(refP)}"></i></span></td></tr>`).join("") + `</tbody></table>`;
     table.querySelectorAll("[data-id]").forEach(b => b.addEventListener("click", () => escolher(b.dataset.id)));
     $("resExemplo").textContent = us.length ? `Como ler: em ${us[0].u.label}, ${nf(us[0].u.resGarisEf)} dos ${nf(us[0].u.garisEf)} garis efetivos têm registro de restrição, o equivalente a ${pf(us[0].p)}.` : "Sem dados publicáveis neste recorte.";
     const rows = (arr) => arr.map((x) => ({ label: esc(x.label), pct: pct(x.r, x.n), val: pf(pct(x.r, x.n)), sub: x.r === null ? "suprimido" : `${nf(x.r)} de ${nf(x.n)}`, cor: "var(--st-restricao)" }));
     hbars($("resFaixa"), rows(D.restricao.faixa.filter((x) => x.n)), { max: 60, ref: refP });
-    hbars($("resJornada"), rows(D.restricao.jornada.filter((x) => x.n)), { max: 60, ref: refP });
+    const jornadas = D.restricao.jornada.filter(x => x.n);
+    $("resJornada").innerHTML = '<table class="res-table"><thead><tr><th>Jornada</th><th>Garis efetivos</th><th>Com restrição</th><th>Percentual</th></tr></thead><tbody>' + jornadas.map(x => `<tr><td>${esc(x.label)}</td><td>${nf(x.n)}</td><td>${nf(x.r)}</td><td><strong>${pf(pct(x.r,x.n))}</strong></td></tr>`).join("") + '</tbody></table>';
+    const exemplo = jornadas.find(x => x.r !== null && x.r !== undefined);
+    $("jornadaExemplo").textContent = exemplo ? `Como ler: na jornada ${exemplo.label}, ${nf(exemplo.r)} dos ${nf(exemplo.n)} garis efetivos têm restrição, o equivalente a ${pf(pct(exemplo.r, exemplo.n))}.` : "";
   }
 
   /* ---------------- Bloco 4 ---------------- */

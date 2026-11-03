@@ -292,7 +292,7 @@
     const fxBar = (it) => `<div class="mini" style="min-width:120px">${it.fx.map((v, j) => (v ? `<span style="width:${(100 * v) / it.n}%;background:${SEQ[j]}" title="${esc(R.faixas[j])}: ${nf(v)}"></span>` : "")).join("")}</div>`;
     const linha = (it, fam, filho) => {
       const p60 = pct(it.fx[6], it.n), pa = pct(it.apo, it.n);
-      return `<tr class="${fam ? "clic" : ""}" ${fam ? `tabindex="0" data-fam="${esc(it.label)}"` : ""}><td>${filho ? '<span class="muted">↳ </span>' : ""}${esc(it.label)}${fam && it.funcoes.length ? ' <span class="muted">▸</span>' : ""}</td><td class="n">${cellN(it.n)}</td><td>${fxBar(it)}</td><td class="n"><div class="barcell">${pf(p60)}<span class="t"><i style="width:${p60 ?? 0}%;background:var(--seq-6)"></i></span></div></td><td class="n">${pf(pa)}</td><td class="n">${it.desde2015 === null ? SUPR : nf(it.desde2015)}</td></tr>`;
+      return `<tr class="${fam ? "clic" : ""}" ${fam ? `tabindex="0" data-fam="${esc(it.label)}"` : ""}><td>${filho ? '<span class="muted">↳ </span>' : ""}${esc(it.label)} <span class="muted">(${filho ? (it.label.startsWith("Demais funções") ? "grupo" : "função") : (it.funcoes.length === 1 && it.funcoes[0].n === it.n ? "função" : "grupo")})</span>${fam && it.funcoes.length ? ' <span class="muted">▸</span>' : ""}</td><td class="n">${cellN(it.n)}</td><td>${fxBar(it)}</td><td class="n"><div class="barcell">${pf(p60)}<span class="t"><i style="width:${p60 ?? 0}%;background:var(--seq-6)"></i></span></div></td><td class="n">${pf(pa)}</td><td class="n">${it.desde2015 === null ? SUPR : nf(it.desde2015)}</td></tr>`;
     };
     const ordem = [...S].sort((a, b) => (pct(b.fx[6], b.n) ?? 0) - (pct(a.fx[6], a.n) ?? 0));
     let aberta = null;

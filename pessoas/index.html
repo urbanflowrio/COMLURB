@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=13">
+<link rel="stylesheet" href="pessoas.css?v=14">
 </head>
 <body>
 <div class="app">
@@ -17,7 +17,7 @@
         <h2>Quadro, situação e renovação da força de trabalho</h2>
         <p>Escolha uma aba para consultar o assunto. Quadro, afastamentos, restrições e temporários permitem filtrar a estrutura; as demais abas mostram a visão da COMLURB.</p>
       </div>
-      <div class="pe-ref">BASE DE REFERÊNCIA<strong id="dataReferencia">—</strong>Não é a taxa oficial de absenteísmo (SARC)</div>
+      <div class="pe-ref">BASE DE REFERÊNCIA<strong id="dataReferencia">•</strong>Não é a taxa oficial de absenteísmo (SARC)</div>
     </section>
 
     <nav class="pe-abas" id="pessoasAbas" role="tablist" aria-label="Assuntos de Pessoas">
@@ -97,15 +97,15 @@
     <section class="pe-bloco" id="bloco-restr" role="tabpanel" aria-labelledby="aba-restr" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Restrição</div>
-        <h2>Onde a marcação de restrição se concentra entre garis efetivos</h2>
-        <p>A base registra a restrição sem dizer sua natureza ou alcance. Ela não equivale a indisponibilidade nem a capacidade perdida.</p>
+        <h2>Garis efetivos com registro de restrição</h2>
+        <p>Percentual de garis efetivos com registro de restrição em cada unidade.</p>
       </div></div>
       <div class="pe-grid">
         <div class="pe-card">
-          <div class="pe-head" style="margin-bottom:6px"><div><h3>Percentual de garis efetivos com restrição, por unidade</h3><div class="sub" style="margin:0" id="resSub"></div></div></div>
-          <div class="pe-tabela-wrap alta" style="max-height:470px"><div class="pe-hbars" id="resBars"></div></div>
-          <p class="pe-nota"><b>Como comparar:</b> percentual = garis efetivos com restrição ÷ total de garis efetivos da unidade × 100. As unidades estão ordenadas do maior para o menor percentual; cada linha mostra também a quantidade com restrição e o total usado no cálculo.</p>
-          <p class="pe-nota">Uma unidade maior pode ter mais pessoas com restrição sem ter a maior proporção. A quantidade mostra o volume para acompanhamento; o percentual mostra a concentração. Diferenças de função e idade também precisam ser consideradas na interpretação. O indicador usa a marcação de <b>restrição da BASE SIPE</b>.</p>
+          <div class="pe-head" style="margin-bottom:6px"><div><h3>Registro de restrição por unidade</h3><div class="sub" style="margin:0" id="resSub"></div></div></div>
+          <div class="pe-tabela-wrap alta" style="max-height:470px"><div id="resBars"></div></div>
+          <p class="pe-nota" id="resExemplo"></p>
+          <p class="pe-nota">A linha nas barras indica a média COMLURB. Selecione uma unidade para detalhar.</p>
         </div>
         <div class="pe-card">
           <h3>Por faixa etária</h3><div class="sub">Garis efetivos, COMLURB. Comparação das proporções por faixa etária.</div>
@@ -233,9 +233,9 @@
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=15"></script>
-<script src="pessoas.js?v=12"></script>
+<script src="pessoas.js?v=13"></script>
 <script src="movimentacao-dados.js?v=3"></script>
-<script src="movimentacao.js?v=2"></script>
+<script src="movimentacao.js?v=3"></script>
 <script src="abas.js?v=1"></script>
 </body>
 </html>

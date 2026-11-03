@@ -144,8 +144,8 @@
     const pctIdade = lider ? pct(lider.fx[6],lider.n) : null;
     const sentencas = [];
     if (percentualLongo !== null) sentencas.push(`${pf(percentualLongo)} das pessoas afastadas estão nessa situação há mais de um ano.`);
-    if (lider && pctIdade !== null) sentencas.push(`Funções: ${esc(lider.label)}. ${pf(pctIdade)} das pessoas têm mais de 60 anos.`);
-    $("geralLeitura").innerHTML = sentencas.length ? sentencas.join(" ") : "Não há dados disponíveis para esta leitura.";
+    if (lider && pctIdade !== null) sentencas.push(`Em ${esc(lider.label)}, ${pf(pctIdade)} das pessoas têm mais de 60 anos.`);
+    $("geralLeitura").innerHTML = sentencas.length ? sentencas.map(s => `<span class="leitura-frase">${s}</span>`).join("") : "Não há dados disponíveis para esta leitura.";
     const item = (categoria,valor,titulo,descricao,acao,aba) => `<article class="pe-card visao-prioridade"><div class="pe-eyebrow">${categoria}</div><div class="visao-valor">${valor}</div><h3>${titulo}</h3><p>${descricao}</p><div class="visao-acao">${acao}</div><button type="button" class="pe-btn visao-detalhe" data-abrir-aba="${aba}">Ver detalhes</button></article>`;
     const textoLongo = percentualLongo !== null ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano.` : "Dados de duração indisponíveis.";
     const textoIdade = lider ? `${nf(lider.fx[6])} de ${nf(lider.n)} pessoas nas funções de ${esc(lider.label)} estão acima de 60 anos.` : "Dados de renovação indisponíveis.";

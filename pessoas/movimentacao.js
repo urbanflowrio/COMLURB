@@ -30,14 +30,14 @@
       if(d.unidades.some(c=>c.pai===n.id)) {const b=el('button',n.nome,'pe-btn'); b.type='button';b.onclick=()=>{parent=n.id;units();};return[b,...n.v,diff(...n.v)];}
       return[name,...n.v,diff(...n.v)];
     });
-    table(root.querySelector('#movUnidades'),['Unidade','Entradas','Saídas','Saldo observado'],rows);
+    table(root.querySelector('#movUnidades'),['Unidade','Entradas','Saídas','Diferença observada'],rows);
   }
   function render() {
     parent='';const d=data.anos[year.value], k=root.querySelector('#movKpis');k.replaceChildren();
-    [['Entradas identificadas',d.entradas],['Desligamentos registrados',d.saidas],['Saldo observado',d.entradas-d.saidas]].forEach(([title,value])=>{
+    [['Entradas identificadas',d.entradas],['Desligamentos registrados',d.saidas],['Diferença observada',d.entradas-d.saidas]].forEach(([title,value])=>{
       const box=el('div',null,'pe-card');box.append(el('h3',title),el('strong',fmt(value),'mov-number'));k.append(box);
     });
-    table(root.querySelector('#movAnual'),['Ano','Entradas','Saídas','Saldo observado'],Object.entries(data.anos).reverse().map(([y,a])=>{
+    table(root.querySelector('#movAnual'),['Ano','Entradas','Saídas','Diferença observada'],Object.entries(data.anos).reverse().map(([y,a])=>{
       const button=el('button',y+(Number(y)===Number(data.meta.referencia_sipe.slice(0,4))?' · parcial':''),'pe-btn');button.type='button';button.setAttribute('aria-pressed',String(y===year.value));button.onclick=()=>{year.value=y;render();};
       return[button,a.entradas,a.saidas,a.entradas-a.saidas];
     }));
@@ -46,7 +46,7 @@
     const partial=Number(year.value)===Number(data.meta.referencia_sipe.slice(0,4));
     root.querySelector('#movPeriodo').textContent=partial ? `${year.value} parcial. SIPE de ${dateLabel(data.meta.referencia_sipe)}; último desligamento registrado em ${dateLabel(data.meta.ultimo_desligamento)}.` : `${year.value}: movimentações identificadas nas fontes disponíveis. Série histórica sujeita à cobertura do cadastro.`;
     const pdv=d.motivos.find(m=>m.nome==='PDV');
-    root.querySelector('#movLeitura').textContent=pdv?.n != null && d.saidas ? `PDV: ${fmt(pdv.n)} saídas, equivalentes a ${(pdv.n/d.saidas*100).toLocaleString('pt-BR',{maximumFractionDigits:1})}% dos desligamentos registrados no ano. Considere essa concentração ao comparar períodos e planejar reposições.` : 'Compare entradas e saídas do mesmo período. Os totais incluem diferentes vínculos; o saldo geral não informa a reposição por cargo.';
+    root.querySelector('#movLeitura').textContent=pdv?.n != null && d.saidas ? `PDV: ${fmt(pdv.n)} saídas, equivalentes a ${(pdv.n/d.saidas*100).toLocaleString('pt-BR',{maximumFractionDigits:1})}% dos desligamentos registrados no ano. Considere essa concentração ao comparar períodos e planejar reposições.` : 'As entradas e saídas identificadas incluem diferentes vínculos. A diferença não informa a reposição por função.';
     units();
   }
   year.addEventListener('change',render);render();

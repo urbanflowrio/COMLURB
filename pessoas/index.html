@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=20">
+<link rel="stylesheet" href="pessoas.css?v=21">
 </head>
 <body>
 <div class="app">
@@ -137,7 +137,7 @@
         <p class="pe-nota">Visão anual da COMLURB. Escolha o ano para consultar os motivos e detalhar as unidades.</p>
         <div class="pe-grid mov-kpis" id="movKpis" aria-live="polite"></div>
         <p class="pe-nota" id="movLeitura"></p>
-        <p class="pe-aviso">Saldo observado = entradas identificadas menos saídas registradas. Os desligamentos confirmados prevalecem sobre a presença na SIPE e são excluídos do quadro atual. O saldo histórico depende da cobertura das fontes e das datas de corte.</p>
+        <p class="pe-aviso">A diferença entre entradas identificadas e saídas registradas depende da cobertura das fontes e das datas de corte. Ela não comprova a redução do quadro nem a reposição por função.</p>
       </div>
       <div class="pe-subabas" role="tablist" aria-label="Detalhamento dos desligamentos">
         <button type="button" role="tab" id="mov-tab-anual" aria-controls="mov-painel-anual" aria-selected="true">Por ano e motivo</button>
@@ -156,7 +156,7 @@
         <div class="pe-tabela-wrap alta"><table id="movUnidades"></table></div>
         <p class="pe-nota">Siglas sem vínculo comprovado no cadastro atual permanecem em “Sem correspondência”. Traço indica contagem protegida, inclusive por supressão complementar; não significa zero. Saldo só aparece quando as duas contagens estão disponíveis.</p>
       </div>
-      <p class="pe-nota">Fontes: BASE SIPE de 26/10/2026, Listagem de Desligados recebida em 29/10/2026 e Cadastro consolidado de setores. Atualização desta seção exige reler as três fontes e gerar novos agregados; a rotina automática anterior ainda não contempla esta integração.</p>
+      <p class="pe-nota">Fontes: BASE SIPE de 26/10/2026, Listagem de Desligados recebida em 29/10/2026 e Cadastro consolidado de setores. A atualização desta seção depende da conferência das três fontes e da geração dos agregados de movimentação.</p>
     </section>
 
     <section class="pe-bloco" id="bloco-suc" role="tabpanel" aria-labelledby="aba-suc" tabindex="0" hidden>
@@ -169,19 +169,21 @@
         <h3>Envelhecimento do quadro: concentração etária e sucessão</h3>
         <div class="sub">COMLURB · sem temporários e cargos de confiança extraquadro · faixas etárias da BASE SIPE.</div>
         <p class="pe-nota"><b>Indicador:</b> pessoas na faixa “Acima de 60 anos” ÷ quadro do mesmo grupo de funções × 100. O corte de 60 anos é descritivo do HUB, sem classificar capacidade individual. A tabela destaca as maiores proporções entre os grupos de funções com valores disponíveis.</p>
+        <div class="renov-destaques" id="agingDestaques"></div>
+        <h3>Maiores proporções por função ou grupo</h3>
         <div class="pe-tabela-wrap"><table id="agingTable"></table></div>
         <p class="pe-nota" id="agingLeitura"></p>
-        <p class="pe-nota"><b>Base científica:</b> Ilmarinen, Tuomi e Klockars (1997) acompanharam 818 empregados por 11 anos e encontraram associação da capacidade para o trabalho com idade e exigências físicas. Alcântara et al. (2014), em estudo com 5.646 empregados municipais brasileiros, mostraram a importância conjunta da saúde e das características do trabalho. As populações e métodos diferem da COMLURB; seus resultados não estimam o risco individual dos nossos empregados.</p>
+        <details class="pe-detalhes"><summary>Entenda o indicador e suas referências</summary><p class="pe-nota"><b>Base científica:</b> Ilmarinen, Tuomi e Klockars (1997) acompanharam 818 empregados por 11 anos e encontraram associação da capacidade para o trabalho com idade e exigências físicas. Alcântara et al. (2014), em estudo com 5.646 empregados municipais brasileiros, mostraram a importância conjunta da saúde e das características do trabalho. As populações e métodos diferem da COMLURB; seus resultados não estimam o risco individual dos nossos empregados.</p>
         <p class="pe-nota"><b>Aplicação ao planejamento:</b> avaliar transferência de conhecimento e sucessão nos grupos de funções com maior concentração etária; examinar exigências físicas, condições de trabalho e saúde ocupacional em conjunto. Idade isolada não mede produtividade, incapacidade nem previsão de desligamento.</p>
         <p class="pe-nota"><b>Evolução mensal:</b> a variação da proporção entre duas competências comparáveis será medida em pontos percentuais. Uma única extração permite descrever a composição atual; não permite calcular a velocidade de envelhecimento. Admissões, saídas e mudanças de cadastro também alteram a proporção.</p>
-        <p class="pe-nota">Estudos: <a href="https://pubmed.ncbi.nlm.nih.gov/9247995/" target="_blank" rel="noopener">Ilmarinen et al., 1997</a> · <a href="https://doi.org/10.3233/WOR-131703" target="_blank" rel="noopener">Alcântara et al., 2014</a>.</p>
+        <p class="pe-nota">Estudos: <a href="https://pubmed.ncbi.nlm.nih.gov/9247995/" target="_blank" rel="noopener">Ilmarinen et al., 1997</a> · <a href="https://doi.org/10.3233/WOR-131703" target="_blank" rel="noopener">Alcântara et al., 2014</a>.</p></details>
       </div>
-      <div class="pe-card">
+      <details class="pe-card pe-detalhes" style="margin-top:16px"><summary>Ano de admissão de quem está no quadro hoje</summary>
         <h3>Ano de admissão de quem está no quadro hoje</h3>
         <div class="sub">Pessoas que permanecem no quadro, agrupadas pelo ano de exercício. O gráfico não mostra todas as admissões históricas. Valores protegidos não aparecem.</div>
         <div id="admChart"></div>
         <div class="pe-legend" id="admLegend"></div>
-      </div>
+      </details>
       <div class="pe-card" style="margin-top:16px">
         <h3>Funções e grupos de funções: idade e aposentadoria pelo INSS</h3>
         <div class="sub">Faixa etária cadastral. Clique em um grupo para ver as funções com 30 ou mais pessoas. Sem temporários e cargos de confiança extraquadro.</div>
@@ -241,9 +243,9 @@
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=18"></script>
-<script src="pessoas.js?v=27"></script>
+<script src="pessoas.js?v=28"></script>
 <script src="movimentacao-dados.js?v=3"></script>
-<script src="movimentacao.js?v=3"></script>
+<script src="movimentacao.js?v=4"></script>
 <script src="abas.js?v=2"></script>
 </body>
 </html>

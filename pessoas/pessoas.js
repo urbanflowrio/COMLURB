@@ -148,11 +148,12 @@
     $("geralLeitura").innerHTML = sentencas.length ? sentencas.map(s => `<span class="leitura-frase">${s}</span>`).join("") : "Não há dados disponíveis para esta leitura.";
     const item = (categoria,valor,titulo,descricao,acao,aba) => `<article class="pe-card visao-prioridade"><div class="pe-eyebrow">${categoria}</div><div class="visao-valor">${valor}</div><h3>${titulo}</h3><p>${descricao}</p><div class="visao-acao">${acao}</div><button type="button" class="pe-btn visao-detalhe" data-abrir-aba="${aba}">Ver detalhes</button></article>`;
     const textoLongo = percentualLongo !== null ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano.` : "Dados de duração indisponíveis.";
-    const textoIdade = lider ? `${nf(lider.fx[6])} de ${nf(lider.n)} pessoas nas funções de ${esc(lider.label)} estão acima de 60 anos.` : "Dados de renovação indisponíveis.";
+    const garisIdade = (D.sucessao || []).find(x => x.label === "Gari efetivo");
+    const textoIdade = lider ? `${nf(lider.fx[6])} de ${nf(lider.n)} em ${esc(lider.label)} estão acima de 60 anos.${garisIdade && Number.isFinite(garisIdade.fx[6]) ? ` Entre os garis efetivos, são ${nf(garisIdade.fx[6])} pessoas (${pf(pct(garisIdade.fx[6],garisIdade.n))}).` : ""}` : "Dados de renovação indisponíveis.";
     const textoGari = percentualGari !== null ? `${nf(n.resGarisEf)} de ${nf(n.garisEf)} garis efetivos têm registro de restrição.` : "Dados de restrição indisponíveis.";
     $("geralPontos").innerHTML =
       item("Afastamentos",pf(percentualLongo),"Há mais de um ano",textoLongo,"Acompanhar as situações de longa duração.","afast") +
-      item("Renovação",pf(pctIdade),"Pessoas acima de 60 anos",textoIdade,"Planejar sucessão e transferência de conhecimento. A idade não prevê desligamento.","suc") +
+      item("Renovação",pf(pctIdade),"Maior proporção acima de 60 anos",textoIdade,"Compare proporção e quantidade. Idade não prevê desligamento.","suc") +
       item("Restrições",pf(percentualGari),"Garis efetivos com restrição",textoGari,"Examinar a distribuição por unidade e função.","restr");
     $("geralCedidos").innerHTML = cedidos && Number.isFinite(cedidos.n) ? `<div class="visao-valor">${nf(cedidos.n)}</div><p>Empregados no grupo de APAs cedidos à SME, distribuídos pelas CREs e apresentados separadamente das gerências operacionais.</p>` : "<p>Dados de cessão indisponíveis.</p>";
   }
@@ -395,6 +396,8 @@
       .filter((f) => Number.isFinite(f.n) && f.n >= 30 && Number.isFinite(f.fx[6]))
       .map((f) => ({ ...f, proporcao: pct(f.fx[6], f.n) }))
       .sort((a, b) => b.proporcao - a.proporcao).slice(0, 4);
+    const gari = D.sucessao.find(f => f.label === "Gari efetivo");
+    $("agingDestaques").innerHTML = (familias[0] ? `<article><span>Maior proporção entre os grupos publicados</span><strong>${pf(familias[0].proporcao)}</strong><p>${esc(familias[0].label)}: ${nf(familias[0].fx[6])} de ${nf(familias[0].n)} pessoas acima de 60 anos.</p></article>` : "") + (gari && Number.isFinite(gari.fx[6]) ? `<article><span>Quantidade entre garis efetivos</span><strong>${nf(gari.fx[6])}</strong><p>pessoas acima de 60 anos, ${pf(pct(gari.fx[6],gari.n))} dos ${nf(gari.n)} garis efetivos.</p></article>` : "");
     tabela.innerHTML = '<thead><tr><th>Função ou grupo de funções</th><th class="n">Quadro</th><th class="n">Acima de 60</th><th class="n">% do grupo</th></tr></thead><tbody>' +
       familias.map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${nf(f.n)}</td><td class="n">${nf(f.fx[6])}</td><td class="n">${pf(f.proporcao)}</td></tr>`).join("") + '</tbody>';
     const garis = D.sucessao.find((f) => f.label === "Gari efetivo");

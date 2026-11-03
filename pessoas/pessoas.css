@@ -225,3 +225,6 @@
 #bloco-geral .visao-acao{color:#b7ccdd}
 
 #bloco-geral .leitura-frase{display:block}#bloco-geral .leitura-frase + .leitura-frase{margin-top:8px}#bloco-geral .geral-grid .pe-eyebrow{margin-bottom:10px}#bloco-geral .geral-grid h3{margin-top:0}
+
+/* Destaques de renovação */
+.renov-destaques{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0 24px}.renov-destaques article{background:#112d47;border:1px solid #365b78;border-radius:10px;padding:18px 20px}.renov-destaques article:nth-child(2){border-top:3px solid #d7a654}.renov-destaques span{display:block;color:#a9c9e1;font-size:12px}.renov-destaques strong{display:block;font-size:28px;color:#b9dff5;margin:8px 0}.renov-destaques p{color:#d1dfeb;font-size:13px;line-height:1.5;margin:0}.pe-detalhes summary{cursor:pointer;color:#b9dff5;font-weight:600;padding:8px 0}.pe-detalhes summary:focus-visible{outline:2px solid #b9dff5;outline-offset:4px}@media(max-width:650px){.renov-destaques{grid-template-columns:1fr}}

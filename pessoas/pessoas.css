@@ -168,3 +168,7 @@
 .pe [role=tabpanel]:focus-visible{outline:2px solid #8bbff3;outline-offset:4px}
 #movAnual button[aria-pressed=true]{border-color:#8bbff3;background:#173b60;color:#fff}
 @media(max-width:650px){.pe-abas button{padding:9px 12px;flex:0 0 auto}.pe-recorte{position:static}.pe-abas{margin-left:-4px;margin-right:-4px}}
+
+/* Comparação de restrição */
+.res-table{width:100%;border-collapse:collapse;font-size:12px}.res-table th,.res-table td{padding:10px 8px;border-bottom:1px solid var(--grade);vertical-align:middle}.res-table th{text-align:left;color:var(--silenciado)}.res-table th:not(:first-child),.res-table td:not(:first-child){text-align:right}.res-unit{background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit}.res-unit:hover,.res-unit:focus{text-decoration:underline}.res-track{display:block;position:relative;width:100%;min-width:90px;height:7px;background:var(--grade);margin-top:6px;border-radius:5px}.res-track i{display:block;height:100%;background:var(--st-restricao);border-radius:5px}.res-track .res-ref{position:absolute;top:-3px;height:13px;width:2px;background:var(--texto)}
+@media(max-width:600px){.res-table{min-width:580px}}

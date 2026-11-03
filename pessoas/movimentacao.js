@@ -5,7 +5,7 @@
   if (!data) return;
   const root = document.getElementById('bloco-movimentacao');
   if (!root) return;
-  const fmt = n => n == null ? '—' : n.toLocaleString('pt-BR');
+  const fmt = n => n == null ? '•' : n.toLocaleString('pt-BR');
   const dateLabel = s => s.split('-').reverse().join('/');
   const el = (tag, text, cls) => { const x = document.createElement(tag); if (text != null) x.textContent = text; if (cls) x.className = cls; return x; };
   const year = root.querySelector('#movAno');

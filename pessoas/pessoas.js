@@ -123,7 +123,7 @@
     const k = [
       ["Quadro", nf(n.n), "Empregados distintos no recorte", ""],
       ["Afastados", nf(af), af !== null ? `${pf(pct(af, n.n))} do quadro${n.nat ? ` · doença/acidente ${nf(n.nat[0])} · suspensos ${nf(n.nat[1])}` : ""}` : "Suprimido neste recorte", "var(--st-afastado)"],
-      ["Com restrição", nf(rs), rs !== null ? `${pf(pct(rs, n.n))} do quadro · não equivale a indisponibilidade` : "Suprimido neste recorte", "var(--st-restricao)"],
+      ["Com restrição", nf(rs), rs !== null ? `${pf(pct(rs, n.n))} do quadro · situação cadastral` : "Suprimido neste recorte", "var(--st-restricao)"],
       ["Garis temporários", nf(n.vinc[3]), n.vinc[3] !== null && garisDe(n) ? `${pf(pct(n.vinc[3], garisDe(n)))} dos garis do recorte` : "Regime por tempo determinado", "var(--ent-temporario)"],
     ];
     $("peKpis").innerHTML = k.map(([t, v, d, c]) => `<article class="pe-kpi"><div class="k">${c ? `<i style="background:${c}"></i>` : ""}${t}</div><div class="v">${v}</div><div class="d">${d}</div></article>`).join("");
@@ -134,7 +134,7 @@
     const indicadores = [
       ["Quadro total", nf(n.n), "empregados", "quadro"],
       ["Afastados", nf(af), af !== null ? pf(pct(af,n.n)) + " do quadro" : "Dado protegido", "afast"],
-      ["Com restrição", nf(rs), rs !== null ? pf(pct(rs,n.n)) + " do quadro" : "Dado protegido", "restr"],
+      ["Com restrição", nf(rs), rs !== null ? pf(pct(rs,n.n)) + " do quadro na situação de restrição" : "Dado protegido", "restr"],
       ["Garis temporários", nf(temp), temp !== null && garisDe(n) ? pf(pct(temp,garisDe(n))) + " dos garis" : "Regime por tempo determinado", "tmp"]
     ];
     $("geralKpis").innerHTML = indicadores.map(([titulo,valor,detalhe,aba]) => `<button type="button" class="pe-kpi geral-kpi" data-abrir-aba="${aba}"><span class="k">${esc(titulo)}</span><span class="v">${esc(valor)}</span><span class="d">${esc(detalhe)}</span></button>`).join("");
@@ -204,7 +204,7 @@
       renderFunil(); renderOrigem(); return;
     }
     const resumo = (el, rotulos, valores) => {
-      el.innerHTML = rotulos.map((label, i) => `<div class="af-item"><span>${esc(label)}</span><strong>${nf(valores[i])}</strong><small>${valores[i] !== null && af ? pf(pct(valores[i],af)) + " dos afastados" : "Dado protegido"}</small></div>`).join("");
+      el.innerHTML = rotulos.map((label, i) => `<div class="af-item"><span>${esc(label)}</span><strong>${nf(valores[i])}</strong><small>${valores[i] === null ? "Dado protegido" : af > 0 ? pf(pct(valores[i],af)) + " dos afastados" : "Sem afastados no recorte"}</small></div>`).join("");
     };
     resumo($("natBars"), R.nat, n.nat);
     resumo($("durBars"), R.dur, n.dur);
@@ -278,7 +278,7 @@
         g += `<rect x="${x + 1}" y="${y1}" width="${Math.max(1, bw - 2)}" height="${Math.max(0, y0 - y1 - (acc ? 1 : 0))}" rx="1.5" fill="${c}"/>`;
         acc += v;
       });
-      const tipTxt = `<b>${esc(a.ano)}</b><br>Efetivos: ${a.efetivos === null ? "menos de 10" : nf(a.efetivos)}<br>Confiança extraquadro: ${a.confianca === null ? "menos de 10" : nf(a.confianca)}<br>Temporários: ${a.temporarios === null ? "menos de 10" : nf(a.temporarios)}`;
+      const tipTxt = `<b>${esc(a.ano)}</b><br>Efetivos: ${a.efetivos === null ? "Dado protegido" : nf(a.efetivos)}<br>Confiança extraquadro: ${a.confianca === null ? "Dado protegido" : nf(a.confianca)}<br>Temporários: ${a.temporarios === null ? "Dado protegido" : nf(a.temporarios)}`;
       g += `<rect class="hit" x="${x}" y="${m.t}" width="${bw}" height="${H - m.t - m.b}" data-tip="${esc(tipTxt)}"/>`;
       if (a.ano === "até 1979" || (+a.ano % 5 === 0 && +a.ano > 1980)) g += `<text x="${x + bw / 2}" y="${H - m.b + 15}" text-anchor="middle">${a.ano === "até 1979" ? "≤79" : a.ano}</text>`;
     });
@@ -333,8 +333,12 @@
   /* ---------------- Bloco 5 ---------------- */
   function renderTmp(n) {
     const temTemporarios = Number.isFinite(n.vinc[3]) && n.vinc[3] > 0;
-    $("bloco-tmp").hidden = !temTemporarios;
-    if (!temTemporarios) return;
+    if (!temTemporarios) {
+      $("tmpSub").textContent = n.vinc[3] === 0 ? "Não há garis temporários neste recorte." : "A quantidade de garis temporários está protegida neste recorte.";
+      $("tmpBars").innerHTML = "";
+      $("ondaChart").closest(".pe-card").hidden = true;
+      return;
+    }
     // As séries de admissões e perfil são agregados da empresa.
     $("ondaChart").closest(".pe-card").hidden = sel !== "COMLURB";
     const us = unidadesComparaveis(sel, (u) => garisDe(u) !== null && garisDe(u) >= 30 && u.vinc[3] !== null && u.vinc[3] > 0)

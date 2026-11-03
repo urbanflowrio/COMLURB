@@ -189,16 +189,20 @@
       }).join("") + "</tbody>";
   }
 
+  let afastExpandido = false;
   function renderFunil() {
     const todas = unidadesComparaveis(sel);
     const unidades = todas.filter(u => u.sit[3] !== null && u.sit[3] !== undefined).sort((a,b) => pct(b.sit[3],b.n) - pct(a.sit[3],a.n));
     const ocultas = todas.length - unidades.length;
     const media = pct(ROOT.sit[3], ROOT.n);
-    $("funilSub").textContent = `Média da COMLURB: ${pf(media)}. Unidades com pelo menos 30 pessoas.${ocultas ? ` ${ocultas} unidades não aparecem porque os dados estão protegidos.` : ""}`;
+    $("funilSub").textContent = `Média COMLURB: ${pf(media)} · Unidades com 30 ou mais pessoas.${ocultas ? ` ${ocultas} unidades com dados protegidos não são exibidas.` : ""}`;
     const maximo = Math.min(100, Math.max(1, media || 0, ...unidades.map(u => pct(u.sit[3],u.n))) * 1.15);
-    hbars($("funil"), unidades.map(u => ({id:u.id, label:esc(u.label), pct:pct(u.sit[3],u.n), val:pf(pct(u.sit[3],u.n)), sub:`${nf(u.sit[3])} de ${nf(u.n)} pessoas`, cor:"var(--st-afastado)"})), {max:maximo, ref:media});
-    const u = unidades[0];
-    $("afastExemplo").textContent = u ? `Como ler: em ${u.label}, ${nf(u.sit[3])} das ${nf(u.n)} pessoas estão afastadas. Isso corresponde a ${pf(pct(u.sit[3],u.n))} da unidade.` : "";
+    const mostradas = afastExpandido ? unidades : unidades.slice(0, 6);
+    hbars($("funil"), mostradas.map(u => ({id:u.id, label:esc(u.label), pct:pct(u.sit[3],u.n), val:pf(pct(u.sit[3],u.n)), sub:`${nf(u.sit[3])} afastados de ${nf(u.n)} pessoas`, cor:"var(--st-afastado)"})), {max:maximo, ref:media});
+    const botao = $("afastMais");
+    botao.hidden = unidades.length <= 6;
+    botao.textContent = afastExpandido ? "Mostrar menos" : `Ver todas as ${nf(unidades.length)} unidades`;
+    botao.onclick = () => { afastExpandido = !afastExpandido; renderFunil(); };
   }
 
   /* ---------------- Bloco 3 ---------------- */

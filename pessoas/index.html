@@ -79,18 +79,11 @@
         <div class="pe-card"><h3>Natureza do afastamento</h3><div class="sub" id="natSub"></div><div class="pe-hbars" id="natBars"></div></div>
         <div class="pe-card"><h3>Duração do afastamento</h3><div class="sub">Duração cadastrada na data de referência.</div><div class="pe-hbars" id="durBars"></div></div>
       </div>
-      <div class="pe-grid" style="margin-top:16px">
-        <div class="pe-card">
-          <div class="pe-head" style="margin-bottom:6px"><div><h3>Afastados por unidade</h3><div class="sub" style="margin:0" id="funilSub"></div></div></div>
-          <div class="pe-tabela-wrap alta"><div id="funil"></div></div>
-          <p class="pe-nota" id="afastExemplo"></p><p class="pe-nota">A comparação ajuda a identificar unidades para acompanhamento. A diferença em relação à COMLURB não explica a causa dos afastamentos.</p>
-        </div>
-        <div class="pe-card">
-          <h3>Lotação oficial e visão por origem</h3>
-          <div class="sub">A GGQ02 é uma lotação administrativa vinculada à DGG, associada a empregados afastados. A visão por origem usa o Setor Anterior como referência analítica.</div>
-          <div class="pe-tabela-wrap"><table id="origTable"></table></div>
-          <p class="pe-aviso">A lotação oficial é o padrão. A visão por origem é analítica e só é publicada por diretoria, para não expor grupos pequenos.</p>
-        </div>
+      <div class="pe-card" style="margin-top:16px">
+        <div class="pe-head"><div><h3>Afastamentos por unidade</h3><div class="sub" id="funilSub"></div></div></div>
+        <div class="pe-tabela-wrap alta"><div class="pe-hbars" id="funil"></div></div>
+        <p class="pe-nota" id="afastExemplo"></p>
+        <p class="pe-nota">A linha nas barras indica a média da COMLURB. O percentual mostra a proporção de afastados na unidade; a quantidade ajuda a avaliar o volume.</p>
       </div>
     </section>
 
@@ -232,7 +225,7 @@
 <div class="pe-tip" id="peTip" hidden></div>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
-<script src="dados-pessoas.js?v=15"></script>
+<script src="dados-pessoas.js?v=16"></script>
 <script src="pessoas.js?v=15"></script>
 <script src="movimentacao-dados.js?v=3"></script>
 <script src="movimentacao.js?v=3"></script>

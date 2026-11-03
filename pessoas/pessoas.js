@@ -1,4 +1,4 @@
-/* Gestão Estratégica de Pessoas — HUB COMLURB (v10)
+/* Gestão Estratégica de Pessoas • HUB COMLURB (v10)
    Lê window.PESSOAS_DADOS (agregados protegidos). null = valor suprimido por proteção estatística. */
 (() => {
   "use strict";
@@ -19,10 +19,10 @@
     if (card) card.innerHTML = '<h3>Lotação oficial e visão por origem</h3><p class="pe-nota">A visão por origem não foi publicada nesta competência porque exporia grupos pequenos da GGQ02.</p>';
   }
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const nf = (v) => (v === null || v === undefined ? "—" : Number(v).toLocaleString("pt-BR"));
+  const nf = (v) => (v === null || v === undefined ? "•" : Number(v).toLocaleString("pt-BR"));
   const pct = (a, b, d = 1) => (a === null || b === null || a === undefined || b === undefined || !b ? null : (100 * a) / b);
-  const pf = (p, d = 1) => (p === null ? "—" : p.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d }) + "%");
-  const SUPR = '<span class="supr" title="Suprimido para proteção estatística">—</span>';
+  const pf = (p, d = 1) => (p === null ? "•" : p.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d }) + "%");
+  const SUPR = '<span class="supr" title="Suprimido para proteção estatística">•</span>';
   const garisDe = (u) => (u.fam[0] === null || u.fam[1] === null ? null : u.fam[0] + u.fam[1]);
   const cellN = (v) => (v === null ? SUPR : nf(v));
   const COR_SIT = ["var(--st-ativo)", "var(--st-ferias)", "var(--st-restricao)", "var(--st-afastado)"];
@@ -79,7 +79,7 @@
     const d = p[1]?.id || "", n1 = p[2]?.id || "", n2 = p[3]?.id || "";
     preencher($("selDir"), filhos("COMLURB"), d, "Todas as diretorias");
     preencher($("selN1"), d ? filhos(d) : [], n1, d ? "Todas da diretoria" : "Escolha a diretoria");
-    preencher($("selN2"), n1 ? filhos(n1) : [], n2, n1 ? "Todas" : "—");
+    preencher($("selN2"), n1 ? filhos(n1) : [], n2, n1 ? "Todas" : "•");
     const node = A[sel];
     const chips = [];
     if (node.especial) chips.push(`<span class="pe-chip esp">Lotação especial: ${esc(node.especial)}</span>`);
@@ -133,7 +133,7 @@
 
   /* ---------------- Bloco 1 ---------------- */
   function renderQuadro(n) {
-    $("sitSub").textContent = `${nf(n.n)} empregados. O traço (—) indica um valor ocultado para proteger informações pessoais, inclusive quando necessário para impedir seu cálculo por diferença.`;
+    $("sitSub").textContent = `${nf(n.n)} empregados. O símbolo (•) indica um valor ocultado para proteger informações pessoais, inclusive quando necessário para impedir seu cálculo por diferença.`;
     const tot = n.n || 1;
     $("sitStack").innerHTML = n.sit.map((v, i) => (v ? `<span style="width:${(100 * v) / tot}%;background:${COR_SIT[i]}" data-tip="<b>${esc(R.sit[i])}</b>: ${nf(v)} (${pf(pct(v, n.n))})"></span>` : "")).join("");
     $("sitStack").setAttribute("aria-label", R.sit.map((s, i) => `${s}: ${nf(n.sit[i])}`).join("; "));
@@ -144,7 +144,7 @@
 
     const linhas = n.famsit ? R.fam.map((f, i) => ({ f, n: n.fam[i], s: n.famsit[i] })).filter((x) => x.n !== 0) : [];
     if (!n.famsit) {
-      $("famTable").innerHTML = `<tbody><tr><td class="muted">A situação por grupo funcional está indisponível neste recorte para proteger grupos pequenos. O quadro por grupo deste recorte: ${R.fam.map((f, i) => `${esc(f)} ${n.fam[i] === null ? "—" : nf(n.fam[i])}`).join(" · ")}.</td></tr></tbody>`;
+      $("famTable").innerHTML = `<tbody><tr><td class="muted">A situação por grupo funcional está indisponível neste recorte para proteger grupos pequenos. O quadro por grupo deste recorte: ${R.fam.map((f, i) => `${esc(f)} ${n.fam[i] === null ? "•" : nf(n.fam[i])}`).join(" · ")}.</td></tr></tbody>`;
     }
     if (n.famsit) $("famTable").innerHTML = `<thead><tr><th>Grupo</th><th class="n">Pessoas</th><th>Situação</th>${R.sit.map((s) => `<th class="n">${s}</th>`).join("")}</tr></thead><tbody>` +
       linhas.map((x) => `<tr><td>${esc(x.f)}</td><td class="n">${cellN(x.n)}</td><td><div class="mini">${x.n ? x.s.map((v, j) => (v ? `<span style="width:${(100 * v) / x.n}%;background:${COR_SIT[j]}"></span>` : "")).join("") : ""}</div></td>${x.s.map((v) => `<td class="n">${v === null ? SUPR : nf(v)}</td>`).join("")}</tr>`).join("") + "</tbody>";
@@ -189,7 +189,7 @@
     $("origTable").innerHTML = `<thead><tr><th>Diretoria</th><th class="n">Taxa oficial</th><th class="n">Taxa por origem</th><th class="n">Afastados (of. → orig.)</th></tr></thead><tbody>` +
       ["DLU", "DSU", "_DEM"].map((k) => {
         const [a, b] = linhaO(k);
-        return `<tr><td>${esc((b || a).label)}</td><td class="n">${a ? pf(pct(a.af, a.n)) : "—"}</td><td class="n">${b ? pf(pct(b.af, b.n)) : "—"}</td><td class="n">${a ? nf(a.af) : "—"} → ${b ? nf(b.af) : "—"}</td></tr>`;
+        return `<tr><td>${esc((b || a).label)}</td><td class="n">${a ? pf(pct(a.af, a.n)) : "•"}</td><td class="n">${b ? pf(pct(b.af, b.n)) : "•"}</td><td class="n">${a ? nf(a.af) : "•"} → ${b ? nf(b.af) : "•"}</td></tr>`;
       }).join("") + "</tbody>";
   }
 
@@ -242,8 +242,11 @@
     const us = unidadesComparaveis(sel, (u) => u.garisEf !== null && u.garisEf >= 30 && u.resGarisEf !== null)
       .map((u) => ({ u, p: pct(u.resGarisEf, u.garisEf) })).sort((a, b) => b.p - a.p);
     const local = pct(n.resGarisEf, n.garisEf);
-    $("resSub").textContent = `${local !== null ? `Recorte: ${pf(local)} (${nf(n.resGarisEf)} com restrição entre ${nf(n.garisEf)} garis efetivos). ` : ""}Referência COMLURB ${pf(refP)} (linha). Unidades com 30+ garis efetivos.`;
-    hbars($("resBars"), us.map(({ u, p }) => ({ id: u.id, label: esc(u.label), pct: p, val: pf(p), sub: `${nf(u.resGarisEf)} com restrição / ${nf(u.garisEf)} garis efetivos`, cor: "var(--st-restricao)", tip: `<b>${esc(u.label)}</b><br>${nf(u.resGarisEf)} de ${nf(u.garisEf)} garis efetivos com restrição` })), { max: 60, ref: refP });
+    $("resSub").textContent = `Média COMLURB: ${pf(refP)}. ${local !== null ? `Recorte selecionado: ${pf(local)}. ` : ""}Unidades com pelo menos 30 garis efetivos.`;
+    const table = $("resBars");
+    table.innerHTML = `<table class="res-table"><thead><tr><th>Unidade</th><th>Garis efetivos</th><th>Com registro de restrição</th><th>Percentual</th></tr></thead><tbody>` + us.map(({u,p}) => `<tr><td><button type="button" class="res-unit" data-id="${esc(u.id)}">${esc(u.label)}</button></td><td>${nf(u.garisEf)}</td><td>${nf(u.resGarisEf)}</td><td><strong>${pf(p)}</strong><span class="res-track"><i style="width:${Math.min(100, Math.max(0,p))}%"></i><i class="res-ref" style="left:${Math.min(100,Math.max(0,refP || 0))}%" title="Média COMLURB: ${pf(refP)}"></i></span></td></tr>`).join("") + `</tbody></table>`;
+    table.querySelectorAll("[data-id]").forEach(b => b.addEventListener("click", () => escolher(b.dataset.id)));
+    $("resExemplo").textContent = us.length ? `Como ler: em ${us[0].u.label}, ${nf(us[0].u.resGarisEf)} dos ${nf(us[0].u.garisEf)} garis efetivos têm registro de restrição, o equivalente a ${pf(us[0].p)}.` : "Sem dados publicáveis neste recorte.";
     const rows = (arr) => arr.map((x) => ({ label: esc(x.label), pct: pct(x.r, x.n), val: pf(pct(x.r, x.n)), sub: x.r === null ? "suprimido" : `${nf(x.r)} de ${nf(x.n)}`, cor: "var(--st-restricao)" }));
     hbars($("resFaixa"), rows(D.restricao.faixa.filter((x) => x.n)), { max: 60, ref: refP });
     hbars($("resJornada"), rows(D.restricao.jornada.filter((x) => x.n)), { max: 60, ref: refP });
@@ -362,7 +365,7 @@
   function renderAlertas() {
     const NOMES = { AGENDADAS: "Agendadas", DE_FERIAS: "Em férias", NORMAL: "Normal", SEM_PERIODO: "Sem período aquisitivo", ALERTA_BAIXO: "Alerta baixo", ALERTA_MEDIO: "Alerta médio", ALERTA_ALTO: "Alerta alto", CRITICO: "Crítico", VENCIDO: "Vencidas" };
     const tot = D.ferias.reduce((a, f) => a + (f.n || 0), 0);
-    hbars($("feriasBars"), D.ferias.map((f) => ({ label: NOMES[f.label] || f.label, pct: f.n, val: f.n === null ? "—" : nf(f.n), sub: f.n ? pf(pct(f.n, tot)) : "", cor: ["VENCIDO", "CRITICO", "ALERTA_ALTO"].includes(f.label) ? "var(--st-afastado)" : "var(--ent-base)" })), { max: Math.max(...D.ferias.map((f) => f.n || 0)) });
+    hbars($("feriasBars"), D.ferias.map((f) => ({ label: NOMES[f.label] || f.label, pct: f.n, val: f.n === null ? "•" : nf(f.n), sub: f.n ? pf(pct(f.n, tot)) : "", cor: ["VENCIDO", "CRITICO", "ALERTA_ALTO"].includes(f.label) ? "var(--st-afastado)" : "var(--ent-base)" })), { max: Math.max(...D.ferias.map((f) => f.n || 0)) });
     $("feriasDir").innerHTML = `<thead><tr><th>Diretoria</th><th class="n">Empregados em alerta</th></tr></thead><tbody>` +
       D.feriasDiretoria.map((f) => `<tr><td>${esc(f.label)}</td><td class="n">${f.alerta === null ? SUPR : nf(f.alerta)}</td></tr>`).join("") + "</tbody>";
     $("qualTable").innerHTML = `<thead><tr><th>Ponto</th><th class="n">Registros</th></tr></thead><tbody>` +
@@ -371,7 +374,7 @@
 
   /* ---------------- Rodapé ---------------- */
   $("peRodape").innerHTML = `<div><b style="color:var(--texto)">Fonte:</b> ${esc(D.meta.fonte)}, deduplicada por registro.</div>
-    <div><b style="color:var(--texto)">Proteção:</b> ${esc(D.meta.regras.texto)} O traço (—) indica valor suprimido. Não há nomes, matrículas, CPF, datas individuais, endereço, documentos, raça/cor, deficiência, sexo ou nível salarial no pacote.</div>
+    <div><b style="color:var(--texto)">Proteção:</b> ${esc(D.meta.regras.texto)} O símbolo (•) indica valor suprimido. Não há nomes, matrículas, CPF, datas individuais, endereço, documentos, raça/cor, deficiência, sexo ou nível salarial no pacote.</div>
     <div><b style="color:var(--texto)">Estrutura:</b> Cadastro consolidado de setores, conforme as definições confirmadas para o HUB. Os agrupamentos são apenas de apresentação e não alteram a estrutura cadastrada. Lotações especiais (GGQ02, Cargos Indisponíveis) aparecem destacadas e ficam fora dos comparativos.</div>
     <div><b style="color:var(--texto)">Leitura:</b> afastado e restrição são situações cadastrais. Não medem absenteísmo, produtividade, capacidade operacional nem necessidade de contratação.</div>`;
 

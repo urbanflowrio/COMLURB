@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=15">
+<link rel="stylesheet" href="pessoas.css?v=16">
 </head>
 <body>
 <div class="app">
@@ -77,13 +77,13 @@
       </div></div>
       <div class="pe-card afast-unidades">
         <div class="pe-head"><div><h3>Onde os afastamentos são proporcionalmente maiores</h3><div class="sub" id="funilSub"></div></div></div>
-        <div class="pe-hbars" id="funil"></div>
+        <div class="af-destaques" id="funil"></div>
         <button type="button" class="pe-btn afast-mais" id="afastMais" hidden>Ver todas as unidades</button>
-        <p class="pe-nota">A linha clara nas barras indica a média da COMLURB. A proporção não informa a causa dos afastamentos.</p>
+        <p class="pe-nota">As unidades são ordenadas pelo percentual de afastados. Os valores indicam a situação na data da base.</p>
       </div>
       <div class="pe-grid meio afast-detalhes" style="margin-top:16px">
-        <div class="pe-card"><h3>Natureza do afastamento</h3><div class="sub" id="natSub"></div><div class="pe-hbars" id="natBars"></div></div>
-        <div class="pe-card"><h3>Duração do afastamento</h3><div class="sub">Duração cadastrada na data de referência.</div><div class="pe-hbars" id="durBars"></div></div>
+        <div class="pe-card"><h3>Natureza do afastamento</h3><div class="sub" id="natSub"></div><div class="af-resumo" id="natBars"></div></div>
+        <div class="pe-card"><h3>Duração do afastamento</h3><div class="sub">Duração cadastrada na data de referência.</div><div class="af-resumo" id="durBars"></div></div>
       </div>
     </section>
 
@@ -225,7 +225,7 @@
 <div class="pe-tip" id="peTip" hidden></div>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
-<script src="dados-pessoas.js?v=17"></script>
+<script src="dados-pessoas.js?v=18"></script>
 <script src="pessoas.js?v=15"></script>
 <script src="movimentacao-dados.js?v=3"></script>
 <script src="movimentacao.js?v=3"></script>

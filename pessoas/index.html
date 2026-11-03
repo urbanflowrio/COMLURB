@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestão Estratégica de Pessoas · HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<link rel="stylesheet" href="pessoas.css?v=17">
+<link rel="stylesheet" href="pessoas.css?v=18">
 </head>
 <body>
 <div class="app">
@@ -39,11 +39,20 @@
     <section class="pe-kpis" id="peKpis" aria-label="Síntese do recorte"></section>
 
     <section class="pe-bloco" id="bloco-geral" role="tabpanel" aria-labelledby="aba-geral" tabindex="0">
-      <div class="pe-head"><div><div class="pe-eyebrow">Visão geral</div><h2>Pessoas em perspectiva</h2><p>Um panorama da força de trabalho para apoiar as prioridades de gestão.</p></div></div>
-      <div class="pe-kpis" id="geralKpis"></div>
+      <div class="pe-head"><div><div class="pe-eyebrow">Visão geral</div><h2>Visão geral de Pessoas</h2><p>Leitura consolidada da força de trabalho da Companhia.</p></div></div>
+      <div class="pe-card visao-leitura"><div class="pe-eyebrow">Leitura executiva</div><h3>O que o quadro revela</h3><p id="geralLeitura"></p></div>
+      <div class="pe-kpis" id="geralKpis" style="margin-top:14px"></div>
+      <div class="visao-heading"><div class="pe-eyebrow">Ação gerencial</div><h3>Prioridades de gestão</h3></div>
+      <div class="visao-prioridades" id="geralPontos"></div>
       <div class="geral-grid">
-        <div class="pe-card"><div class="pe-eyebrow">Leitura executiva</div><h3>Pontos para acompanhamento</h3><div id="geralPontos"></div></div>
-        <div class="pe-card"><div class="pe-eyebrow">Afastamentos por unidade</div><h3>Proporção e quantidade</h3><p class="pe-nota">Unidades comparáveis da DLU e DSU com pelo menos 30 pessoas e dados disponíveis. Cedidos à SME são apresentados separadamente.</p><div id="geralUnidades"></div><button type="button" class="pe-btn geral-link" data-abrir-aba="afast">Ver afastamentos</button></div>
+        <div class="pe-card"><div class="pe-eyebrow">Composição da força de trabalho</div><h3>Empregados cedidos à SME</h3><div id="geralCedidos"></div></div>
+        <div class="pe-card"><div class="pe-eyebrow">Onde aprofundar</div><h3>Explorar os dados</h3>
+          <button type="button" class="visao-link" data-abrir-aba="afast"><span>Afastamentos: onde estão e há quanto tempo?</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="suc"><span>Renovação: quais funções merecem atenção?</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="restr"><span>Restrições: como se distribuem entre os garis?</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="tmp"><span>Temporários: onde estão alocados?</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="movimentacao"><span>Desligamentos: como se comportam as entradas e saídas?</span><span aria-hidden="true">→</span></button>
+        </div>
       </div>
     </section>
 
@@ -232,7 +241,7 @@
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=18"></script>
-<script src="pessoas.js?v=21"></script>
+<script src="pessoas.js?v=22"></script>
 <script src="movimentacao-dados.js?v=3"></script>
 <script src="movimentacao.js?v=3"></script>
 <script src="abas.js?v=2"></script>

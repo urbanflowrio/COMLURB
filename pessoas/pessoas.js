@@ -172,9 +172,11 @@
       $("natBars").innerHTML = msg; $("durBars").innerHTML = msg;
       renderFunil(); renderOrigem(); return;
     }
-    const maxN = Math.max(1, ...n.nat.map((v) => v || 0), ...n.dur.map((v) => v || 0));
-    hbars($("natBars"), R.nat.map((s, i) => ({ label: esc(s), pct: n.nat[i], val: nf(n.nat[i]), sub: af && n.nat[i] !== null ? pf(pct(n.nat[i], af)) + " dos afast." : "", cor: i === 0 ? "var(--st-afastado)" : "var(--ent-base)" })), { max: maxN });
-    hbars($("durBars"), R.dur.map((s, i) => ({ label: esc(s), pct: n.dur[i], val: nf(n.dur[i]), sub: af && n.dur[i] !== null ? pf(pct(n.dur[i], af)) + " dos afast." : "", cor: "var(--ent-base)" })), { max: maxN });
+    const resumo = (el, rotulos, valores) => {
+      el.innerHTML = rotulos.map((label, i) => `<div class="af-item"><span>${esc(label)}</span><strong>${nf(valores[i])}</strong><small>${valores[i] !== null && af ? pf(pct(valores[i],af)) + " dos afastados" : "Dado protegido"}</small></div>`).join("");
+    };
+    resumo($("natBars"), R.nat, n.nat);
+    resumo($("durBars"), R.dur, n.dur);
     renderFunil(); renderOrigem();
   }
 
@@ -196,11 +198,11 @@
     const ocultas = todas.length - unidades.length;
     const media = pct(ROOT.sit[3], ROOT.n);
     $("funilSub").textContent = `Média COMLURB: ${pf(media)} · Unidades com 30 ou mais pessoas.${ocultas ? ` ${ocultas} unidades com dados protegidos não são exibidas.` : ""}`;
-    const maximo = Math.min(100, Math.max(1, media || 0, ...unidades.map(u => pct(u.sit[3],u.n))) * 1.15);
-    const mostradas = afastExpandido ? unidades : unidades.slice(0, 6);
-    hbars($("funil"), mostradas.map(u => ({id:u.id, label:esc(u.label), pct:pct(u.sit[3],u.n), val:pf(pct(u.sit[3],u.n)), sub:`${nf(u.sit[3])} afastados de ${nf(u.n)} pessoas`, cor:"var(--st-afastado)"})), {max:maximo, ref:media});
+    const mostradas = afastExpandido ? unidades : unidades.slice(0, 3);
+    $("funil").innerHTML = mostradas.map((u,i) => `<button type="button" class="af-unidade" data-id="${esc(u.id)}"><span class="af-pos">${String(i+1).padStart(2,"0")}</span><span class="af-nome">${esc(u.label)}</span><strong>${pf(pct(u.sit[3],u.n))}</strong><small>${nf(u.sit[3])} afastados entre ${nf(u.n)} pessoas</small></button>`).join("") || '<p class="pe-nota">Não há unidades com dados disponíveis neste recorte.</p>';
+    $("funil").querySelectorAll("[data-id]").forEach(b => b.addEventListener("click", () => escolher(b.dataset.id)));
     const botao = $("afastMais");
-    botao.hidden = unidades.length <= 6;
+    botao.hidden = unidades.length <= 3;
     botao.textContent = afastExpandido ? "Mostrar menos" : `Ver todas as ${nf(unidades.length)} unidades`;
     botao.onclick = () => { afastExpandido = !afastExpandido; renderFunil(); };
   }

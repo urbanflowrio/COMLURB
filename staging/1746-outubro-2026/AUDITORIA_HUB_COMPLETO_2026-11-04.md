@@ -47,10 +47,11 @@ No mesmo cruzamento, outubro/2025 registrou 317 chamados e 48 ouvidorias. Em out
 - Home e seis páginas de entrada/visão do 1746 examinadas; todos os recursos locais explícitos encontrados na árvore da branch e nenhum ID HTML duplicado detectado nesses arquivos.
 - O novo Boletim Executivo usa somente HTML/CSS, três seções fixas, duas prioridades territoriais e **nenhum JavaScript**, evitando falhas de carregamento de dados nessa página.
 - O teste `tests/1746-outubro/executivo.spec.cjs` foi atualizado para esperar duas prioridades e validar a interseção apresentada, não os três alertas antigos.
-- Os cinco módulos analíticos permanecem em ambiente de preparação. Seus testes de navegador são condição de homologação; o resultado da última execução após esta revisão **não foi confirmado nesta auditoria**.
+- As três prévias obsoletas (v2, v3, v4) e o JavaScript `executivo.js` não utilizado foram removidos da branch para evitar acesso acidental a análises ultrapassadas. Permanecem `index.html` e `boletim-outubro-2026-auditado-v5.html`.
+- A execução em Chromium [41882429579](https://github.com/urbanflowrio/COMLURB/actions/runs/41882429579) mostrou **5 de 5 smoke tests dos módulos analíticos aprovados**. A suíte geral falhou porque o teste do boletim ainda esperava três prioridades; o boletim corretamente apresentava duas. Corrigimos a expectativa no commit `2ec4419a`. A aprovação da suíte completa **ainda não foi confirmada após esse ajuste**. Esses smoke tests verificam carregamento, filtros selecionados e responsividade básica, mas não homologam exaustivamente todos os fluxos de interação e gráficos.
 
 ## 6. Pendências e recomendações
-**P1. Homologação:** executar e conferir no navegador a prévia revisada, incluindo desktop/celular, seis páginas da camada 1746 e os filtros/drill-down dos cinco módulos técnicos.
+**P1. Homologação:** confirmar aprovação da suíte atualizada no GitHub Actions e realizar conferência visual do boletim desktop/celular, além dos filtros/drill-down mais importantes dos cinco módulos técnicos. Os cinco smoke tests passaram na execução anterior, mas a suíte atualizada precisa ser confirmada.
 
 **P1. Comparação de produção:** comparar o conteúdo servido pelo GitHub Pages com o HEAD de `main` para confirmar implantação e invalidação de cache. O endereço público não pôde ser inspecionado nesta rodada.
 

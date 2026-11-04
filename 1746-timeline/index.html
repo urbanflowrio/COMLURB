@@ -140,6 +140,22 @@ body{background:#06111f;color:#f7f9ff;font-family:"Segoe UI",Arial,sans-serif}
 .drawer h2{font-size:38px}
 @media(max-width:1150px){.timeline-page .timeline{grid-template-columns:repeat(5,minmax(0,1fr));row-gap:24px}.timeline-page .timeline:before{display:none}.timeline-page .turns{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-page .takeaways{grid-template-columns:repeat(3,minmax(0,1fr))}.timeline-page .metric{border-bottom:1px solid #294866}}
 @media(max-width:760px){.timeline-main{padding-top:14px}.timeline-hero-title{font-size:clamp(30px,7vw,42px)}.timeline-page .timeline{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-page .turns,.timeline-page .takeaways{grid-template-columns:1fr}.timeline-page .metrics{display:grid;grid-template-columns:1fr}.timeline-page .metric{border-right:0;border-bottom:1px solid #294866}.timeline-page .metric:last-child{border-bottom:0}.timeline-page .statement{margin-top:40px}.timeline-page .statement p{font-size:clamp(25px,6vw,35px)}.timeline-page .takeaways{gap:12px}.timeline-related a{flex:1 1 100%;text-align:center}}
+
+/* Fechamento editorial: navegação integrada, fonte sem divisores duplicados */
+.timeline-page .timeline-next{margin-top:38px;padding-top:0;border:0}
+.timeline-next-head{margin-bottom:20px}
+.timeline-next-label{display:block;color:#8ec5f3;font-size:10px;font-weight:800;letter-spacing:.14em;margin-bottom:9px}
+.timeline-next-head h2{font-size:clamp(22px,2.4vw,31px);line-height:1.2;letter-spacing:-.025em;font-weight:800;color:#f7f9ff;margin:0 0 9px}
+.timeline-next-head p{font-size:13px;color:#b8c9de;line-height:1.65;max-width:980px;margin:0}
+.timeline-related{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0}
+.timeline-related a{display:flex;flex-direction:column;justify-content:space-between;min-height:112px;min-width:0;gap:10px;border:1px solid #31516d;border-radius:14px;padding:18px 16px;background:#0a1b31;text-decoration:none;transition:background .15s,border-color .15s}
+.timeline-related a:hover,.timeline-related a:focus-visible{border-color:#8ec5f3;background:#12304b}
+.timeline-related a strong{color:#f7f9ff;font-size:13px;line-height:1.35;font-weight:800}
+.timeline-related a span{color:#b8c9de;font-size:11px;line-height:1.55}
+.timeline-methodology{border-top:0;padding-top:0;margin:29px 0 0;font-size:11px;color:#91a6ba;line-height:1.7}
+@media(max-width:1260px){.timeline-related{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.timeline-related{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-page .timeline-next{margin-top:28px}}
+@media(max-width:480px){.timeline-related{grid-template-columns:1fr}.timeline-related a{min-height:0;gap:7px}}
 </style>
 </head>
 <body>
@@ -195,8 +211,21 @@ body{background:#06111f;color:#f7f9ff;font-family:"Segoe UI",Arial,sans-serif}
   </div>
 
 
+    <section class="timeline-next" aria-labelledby="timeline-next-title">
+      <div class="timeline-next-head">
+        <span class="timeline-next-label">RELACIONAMENTO COM O CIDADÃO | 1746</span>
+        <h2 id="timeline-next-title">Continue a análise nos demais módulos</h2>
+        <p>A Linha do Tempo mostra a evolução dos registros. Nos outros painéis, é possível consultar os serviços, comparar territórios e detalhar os resultados.</p>
+      </div>
+      <nav class="timeline-related" aria-label="Demais módulos do 1746">
+        <a href="../1746-resumo-executivo/"><strong>Boletim Executivo</strong><span>Resultado do mês e principais destaques.</span></a>
+        <a href="../chamados-1746/"><strong>Chamados</strong><span>Distribuição por serviço e território.</span></a>
+        <a href="../ouvidoria/"><strong>Ouvidorias</strong><span>Manifestações e concentração dos registros.</span></a>
+        <a href="../1746-comparativo/"><strong>Comparativo territorial</strong><span>Diferenças entre bairros e serviços.</span></a>
+        <a href="../1746-historico/"><strong>Histórico</strong><span>Evolução e comparação entre períodos.</span></a>
+      </nav>
+    </section>
     <div class="timeline-methodology"><strong>Fonte:</strong> CAS – Controle de Atendimento a Solicitações. Análise restrita às ouvidorias operacionais, com exclusão dos registros tratados internamente pela PCO.</div>
-    <nav class="timeline-related" aria-label="Navegar por módulos 1746"><a href="../1746-resumo-executivo/">Boletim Executivo</a><a href="../chamados-1746/">Chamados</a><a href="../ouvidoria/">Ouvidorias</a><a href="../1746-comparativo/">Comparativo territorial</a><a href="../1746-historico/">Histórico</a></nav>
     </div>
   </main>
   <div id="hubFooter"></div>

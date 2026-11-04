@@ -249,7 +249,9 @@ body{background:#06111f;color:#f7f9ff;font-family:"Segoe UI",Arial,sans-serif}
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script>
-HUB.header.render("hubHeader",{systemLabel:"RELACIONAMENTO COM O CIDADÃO | 1746",title:"Linha do Tempo 1746",subtitle:"Evolução mensal de chamados e ouvidorias operacionais, janeiro a outubro de 2026",homeHref:"../",homeLabel:"Voltar ao HUB"});
+HUB.header.render("hubHeader",{logo:false,systemLabel:"RELACIONAMENTO COM O CIDADÃO | 1746",title:"Linha do Tempo 1746",subtitle:"Evolução mensal de chamados e ouvidorias operacionais, janeiro a outubro de 2026",homeHref:"../",homeLabel:"Voltar ao HUB"});
+const timelineHeader=document.querySelector("#hubHeader .header");
+if(timelineHeader){const logo=document.createElement("div");logo.className="logoWrap";logo.innerHTML='<img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio e COMLURB">';timelineHeader.prepend(logo);}
 HUB.footer.render("hubFooter");
 </script>
 <script src="./data.js"></script>

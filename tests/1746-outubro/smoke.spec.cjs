@@ -14,7 +14,8 @@ for (const pathname of pages) {
       await expect(page.locator('.timeline-page .statement')).toBeVisible();
       await expect(page.locator('.timeline-page .takeaways')).toHaveCount(0);
       await expect(page.locator('.timeline-methodology')).toContainText('CAS – Controle de Atendimento a Solicitações');
-      await expect(page.locator('#timeline-next-title')).toHaveText('Veja também os outros painéis do 1746');
+      await expect(page.locator('#timeline-next-title')).toHaveText('Além da Linha do Tempo');
+      await expect(page.locator('.timeline-next-head p')).toHaveText('Dos resultados gerais aos detalhes de cada serviço e território.');
       await expect(page.locator('.timeline-related a')).toHaveCount(5);
       await expect(page.locator('.timeline-methodology')).toContainText('exclusão dos registros tratados internamente pela PCO');
       await expect(page.locator('#timeline .month')).toHaveCount(10);

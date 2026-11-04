@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-const D=window.TIMELINE1746_DATA, $=id=>document.getElementById(id);
+const D=window.TIMELINE1746_DATA, $=id=>{const el=document.getElementById(id);if(!el)throw new Error('Elemento não encontrado: #'+id);return el};
 if(!D || !D.periods?.october || !D.accumulated){$('error').textContent='Não foi possível carregar os cubos auditados. Confira a origem da página e o arquivo 1746-timeline/data.js.';return;}
 const num=n=>Number.isFinite(n)?Math.round(n).toLocaleString('pt-BR'):'n/d';
 const pct=n=>Number.isFinite(n)?(n>0?'+':'')+(n*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%':'n/d';
@@ -197,5 +197,8 @@ $('alertRules').textContent='Critérios exploratórios: pelo menos 80 chamados e
 $('metric').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});
 $('scope').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});
 $('trendMetric').addEventListener('change',renderTrend);
-try{renderKpis();renderHighlights();renderTrend();renderAlerts();renderOrigins();renderTerritory();renderPersistence()}catch(e){$('error').textContent='Erro ao construir a leitura executiva: '+e.message;console.error(e)}
+const stages=[['indicadores',renderKpis],['destaques',renderHighlights],['série mensal',renderTrend],['alertas',renderAlerts],['composição',renderOrigins],['território',renderTerritory],['persistência',renderPersistence]];
+let failed=[];
+for(const [name,fn] of stages){try{fn()}catch(e){failed.push(name+': '+e.message);console.error('1746 falha em '+name,e)}}
+if(failed.length){const error=document.getElementById('error');if(error)error.textContent='Algumas análises não foram carregadas: '+failed.join('; ');}
 })();

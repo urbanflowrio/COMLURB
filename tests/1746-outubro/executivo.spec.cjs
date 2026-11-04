@@ -9,6 +9,17 @@ test('Inteligência Executiva 1746 carrega cubos, alertas e filtros sem erros',a
  await expect(page.locator('#accumulated')).toContainText('278.888');
  await expect(page.locator('#origin tbody tr').first()).toBeVisible();
  await expect(page.locator('#alerts .card').first()).toBeVisible();
+ const firstAlert=page.locator('#alerts button[data-alert-index]').first();
+ await firstAlert.click();
+ await expect(firstAlert).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('#alertDetail')).toBeVisible();
+ await expect(page.locator('#detailContent .detail-metric')).toHaveCount(2);
+ await expect(page.locator('#detailContent')).toContainText('Out/2025');
+ const selectedTitle=await page.locator('#alerts button[data-alert-index]').first().locator('h3').innerText();
+ await expect(page.locator('#detailTitle')).toContainText(selectedTitle.split('·')[0].trim());
+ await page.locator('#detailClose').click();
+ await expect(page.locator('#alertDetail')).toBeHidden();
+ await expect(firstAlert).toHaveAttribute('aria-expanded','false');
  await expect(page.locator('#aps tbody tr').first()).toBeVisible();
  await page.locator('#scope').selectOption('accumulated');
  await expect(page.locator('#origin')).toContainText('Saldo líquido');

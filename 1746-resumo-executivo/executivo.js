@@ -93,16 +93,102 @@ function renderAlertDetail(index) {
  const metricCard=(label,m)=>'<div class="detail-metric"><label>'+label+'</label><strong>'+num(r[m+'2026'])+' <span style="font-size:13px;color:var(--muted);font-weight:400">em 2026</span></strong><p>Out/2025: <b>'+num(r[m+'2025'])+'</b></p><p>Diferença: <b>'+signed(r[m+'2026']-r[m+'2025'])+'</b> · Variação: <b>'+pct(rel(r[m+'2026'],r[m+'2025']))+'</b></p></div>';
  const context=a.level==='high'?'Os dois indicadores cresceram neste recorte. Prioridade para verificar a natureza da demanda e o histórico local.':a.level==='watch'?'As manifestações cresceram mais intensamente do que o volume de chamados. Investigar a composição e o contexto operacional.':'O volume de chamados cresceu sem aumento proporcional das manifestações. Isso não prova melhora ou piora dos serviços.';
  const peerCount=comparable.length;
- const contributionNote=kind==='serviço'?'O painel apresenta este serviço específico.':'O cubo contém totais por '+kind+' e não relaciona, neste recorte, cada serviço individualmente a esta localização. Não é possível identificar com segurança os serviços causadores desta variação sem um cruzamento adicional.';
+ const contributionNote=kind==='serviço'?'Veja abaixo os subtipos deste serviço em outubro.':'Veja abaixo os serviços que compõem o recorte selecionado e abra cada um para conhecer os subtipos.';
+
  const rank=(p)=>p>0?'posição '+p+' entre '+peerCount+' recortes com valores disponíveis':'posição indisponível';
  content.innerHTML='<div class="detail-metrics">'+metricCard('Chamados','c')+metricCard('Ouvidorias operacionais','o')+'</div>'+
  '<div class="detail-context"><div><h4>Leitura do alerta</h4><p>'+context+'</p><p>'+contributionNote+'</p></div>'+
  '<div><h4>Posição em volume · outubro/2026</h4><p>Chamados: <b>'+rank(posC)+'</b></p><p>Ouvidorias: <b>'+rank(posO)+'</b></p><p class="note">Ranking apenas entre recortes com ambos os totais disponíveis, não um ranking institucional completo.</p></div></div>'+
- '<div class="detail-disclaimer">Base: outubro/2025 × outubro/2026, COMLURB. Volumes agregados por '+esc(kind)+'. Não equivale a comprovação de falha, identificação de ocorrências repetidas ou causa da variação.</div>';
+ '<div id="alertCascade" class="cascade-area" aria-label="Composição por serviço e subtipo"></div>'+ 
+ '<div class="detail-disclaimer">Base: outubro/2025 comparado com outubro/2026, COMLURB. Os subtipos preservam as nomenclaturas próprias de Chamados e Ouvidorias e não são usados como taxas cruzadas. A composição não comprova a causa do crescimento.</div>';
  region.hidden=false;
+ renderAlertCascade(a);
  $('alerts').querySelectorAll('[data-alert-index]').forEach(btn=>btn.setAttribute('aria-expanded',String(Number(btn.dataset.alertIndex)===index)));
  region.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
+const alertCascadeState={rows:[],selectedService:null,selectedSubtype:null};
+const metrics=['c2025','c2026','o2025','o2026'];
+const emptyCounts=()=>({c2025:0,c2026:0,o2025:0,o2026:0});
+const addCounts=(to,from)=>{for(const k of metrics)to[k]+=(Number(from[k])||0);return to;};
+function renderAlertCascade(a){
+ const mount=$('alertCascade');
+ const cascade=window.TIMELINE1746_CASCADE?.full?.['Outubro/2026'];
+ if(!cascade){mount.innerHTML='<h4>Serviços e subtipos</h4><p class="cascade-note">A base em cascata não foi carregada. Confira a disponibilidade do arquivo 1746-timeline/cascade_data.js.</p>';return;}
+ const collections=[];
+ const match=(row)=>a.kind==='bairro'?row.nome===a.r.nome:a.kind==='gerência'?row.gerencia===a.r.nome:a.kind==='AP'?row.ap===a.r.nome:true;
+ for(const [serviceName,service] of Object.entries(cascade)){
+  if(a.kind==='serviço'&&serviceName!==a.r.nome)continue;
+  const subs=[];
+  const serviceTotal=emptyCounts();
+  for(const [subName,sub] of Object.entries(service.subtipos||{})){
+   const matching=a.kind==='serviço'?sub.bairros||[]:(sub.bairros||[]).filter(match);
+   const sum=matching.reduce(addCounts,emptyCounts());
+   if(!metrics.some(k=>sum[k]))continue;
+   addCounts(serviceTotal,sum);
+   subs.push({name:subName,sum,locations:matching});
+  }
+  if(subs.length)collections.push({name:serviceName,sum:serviceTotal,subs});
+ }
+ const check=collections.reduce((t,s)=>addCounts(t,s.sum),emptyCounts());
+ const valid=metrics.every(k=>check[k]===Number(a.r[k]||0));
+ if(!valid){
+  mount.innerHTML='<h4>Composição por serviço e subtipo</h4><p class="cascade-note">O cruzamento disponível não reconciliou os quatro totais deste alerta. Por segurança, a composição não será exibida.</p>';
+  return;
+ }
+ alertCascadeState.rows=collections.sort((a,b)=>(b.sum.c2026+b.sum.o2026)-(a.sum.c2026+a.sum.o2026));
+ alertCascadeState.selectedService=null;alertCascadeState.selectedSubtype=null;
+ const signedQty=n=>(n>0?'+':'')+num(n);
+ const summ=(s,k)=>num(s[k])+' ('+signedQty(s[k]-s[k.replace('2026','2025')])+')';
+ mount.innerHTML='<h4>De onde vêm os registros: serviço e subtipo</h4>'+
+ '<p class="cascade-note">Recorte: '+esc(a.r.nome)+'. Totais conferidos com os indicadores do alerta para 2025 e 2026. Selecione um serviço para ver seus subtipos e depois escolha um subtipo para identificar os recortes territoriais disponíveis.</p>'+
+ '<div id="alertCascadeServices">'+alertCascadeState.rows.map((s,i)=>'<div class="cascade-service"><button type="button" data-service-index="'+i+'" aria-expanded="false"><span class="cascade-title">'+esc(s.name)+'<small class="cascade-meta">'+s.subs.length+' subtipo(s) com registros</small></span><span class="cascade-qty">'+num(s.sum.c2026)+'<small>chamados</small></span><span class="cascade-qty">'+num(s.sum.o2026)+'<small>ouvidorias</small></span><span class="cascade-arrow">▸</span></button><div class="cascade-subwrap" data-service-body="'+i+'" hidden></div></div>').join('')+'</div>'+
+ '<p class="cascade-note">Conferência: '+num(check.c2026)+' chamados e '+num(check.o2026)+' ouvidorias, com reconciliação dos dois anos. Diferenças e variações por subtipo representam volumes próprios de cada base.</p>';
+ mount.onclick=(event)=>{
+  const subButton=event.target.closest('[data-sub-index]');
+  if(subButton){const si=Number(subButton.dataset.serviceParent),sb=Number(subButton.dataset.subIndex);openCascadeSubtype(si,sb,a);return;}
+  const serviceButton=event.target.closest('[data-service-index]');
+  if(serviceButton)openCascadeService(Number(serviceButton.dataset.serviceIndex),a);
+ };
+}
+function openCascadeService(index,a){
+ const mount=$('alertCascade');
+ const parent=mount.querySelector('[data-service-body="'+index+'"]');
+ const button=mount.querySelector('[data-service-index="'+index+'"]');
+ if(!parent||!button)return;
+ const open=button.getAttribute('aria-expanded')==='true';
+ mount.querySelectorAll('[data-service-body]').forEach(el=>el.hidden=true);
+ mount.querySelectorAll('[data-service-index]').forEach(el=>el.setAttribute('aria-expanded','false'));
+ if(open)return;
+ const svc=alertCascadeState.rows[index];
+ button.setAttribute('aria-expanded','true');parent.hidden=false;
+ parent.innerHTML='<p class="cascade-summary">'+esc(svc.name)+'. Selecione um subtipo para consultar a distribuição territorial específica.</p>'+
+ [...svc.subs].sort((a,b)=>(b.sum.c2026+b.sum.o2026)-(a.sum.c2026+a.sum.o2026)).map(sub=>{
+   const subIndex=svc.subs.indexOf(sub);
+   return '<div class="cascade-sub"><button type="button" data-service-parent="'+index+'" data-sub-index="'+subIndex+'" aria-expanded="false"><span class="cascade-title">'+esc(sub.name)+'</span><span class="cascade-qty">'+num(sub.sum.c2026)+'<small>chamados</small></span><span class="cascade-qty">'+num(sub.sum.o2026)+'<small>ouvidorias</small></span><span class="cascade-arrow">▸</span></button><div class="cascade-territory" data-sub-body="'+subIndex+'" hidden></div></div>';
+ }).join('');
+}
+function openCascadeSubtype(serviceIndex,subIndex,a){
+ const mount=$('alertCascade'),service=alertCascadeState.rows[serviceIndex],sub=service?.subs[subIndex];
+ if(!sub)return;
+ const section=mount.querySelector('[data-service-body="'+serviceIndex+'"]');
+ const body=section.querySelector('[data-sub-body="'+subIndex+'"]'),button=section.querySelector('[data-sub-index="'+subIndex+'"]');
+ if(!body||!button)return;
+ const opened=button.getAttribute('aria-expanded')==='true';
+ section.querySelectorAll('[data-sub-body]').forEach(el=>el.hidden=true);
+ section.querySelectorAll('[data-sub-index]').forEach(el=>el.setAttribute('aria-expanded','false'));
+ if(opened)return;
+ button.setAttribute('aria-expanded','true');body.hidden=false;
+ const key=a.kind==='bairro'?'gerencia':a.kind==='gerência'?'nome':a.kind==='AP'?'gerencia':'nome';
+ const data=new Map();
+ for(const r of sub.locations){const label=a.kind==='bairro'?r.ap+' / '+r.gerencia:a.kind==='gerência'?r.nome:a.kind==='AP'?r.gerencia:r.nome;const v=data.get(label)||emptyCounts();addCounts(v,r);data.set(label,v);}
+ const rows=[...data.entries()].sort((a,b)=>(b[1].c2026+b[1].o2026)-(a[1].c2026+a[1].o2026)).slice(0,20);
+ const location=a.kind==='bairro'?'AP / Gerência':a.kind==='gerência'?'Bairro':a.kind==='AP'?'Gerência':'Bairro';
+ body.innerHTML='<div class="cascade-summary">Subtipo: <b>'+esc(sub.name)+'</b>. Chamados em 2025: '+num(sub.sum.c2025)+', em 2026: '+num(sub.sum.c2026)+'. Ouvidorias em 2025: '+num(sub.sum.o2025)+', em 2026: '+num(sub.sum.o2026)+'.</div>'+
+ table([location,'Chamados 2026','Ouvidorias 2026'],rows.map(([name,x])=>[esc(name),num(x.c2026),num(x.o2026)]))+
+ (data.size>rows.length?'<p class="cascade-note">Exibidos os 20 recortes de maior volume entre '+data.size+'.</p>':'');
+}
+
 function closeDetail(){region.hidden=true;current=null;$('alerts').querySelectorAll('[data-alert-index]').forEach(btn=>btn.setAttribute('aria-expanded','false'))}
 $('alerts').addEventListener('click',event=>{const target=event.target.closest('[data-alert-index]');if(target)renderAlertDetail(Number(target.dataset.alertIndex));});
 $('detailClose').addEventListener('click',closeDetail);

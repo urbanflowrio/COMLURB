@@ -1,24 +1,24 @@
 {
   "modulo": "chamados-1746",
-  "competencia_mais_recente": "2026-09",
-  "data_corte": "2026-10-05",
-  "historico_congelado_ate": "2026-08",
+  "competencia_mais_recente": "2026-10",
+  "data_corte": null,
+  "historico_congelado_ate": "2026-09",
   "fonte_analitica": "chamados_cube.js",
   "fonte_geografica": "chamados_data.js",
-  "situacao_tecnica": "validado",
+  "situacao_tecnica": "validado_tecnicamente_com_base_oficial_comlurb",
   "qualidade": {
     "conciliacao_totais": "Conciliação dos totais oficiais preservada. O acumulado mantém registros de agosto sem classificação de AP, representados como SEM AP (AGO).",
     "area_planejamento_setembro_2025": {
       "total": 21276,
       "classificados": 21276,
       "sem_classificacao": 0,
-      "cobertura_percentual": 100.0
+      "cobertura_percentual": 100
     },
     "area_planejamento_setembro_2026": {
       "total": 24695,
       "classificados": 24695,
       "sem_classificacao": 0,
-      "cobertura_percentual": 100.0
+      "cobertura_percentual": 100
     },
     "tratamento_interface": "Setembro possui cobertura integral de AP. No acumulado, os registros históricos de agosto sem AP são exibidos como SEM AP (AGO), sem reclassificação retroativa.",
     "area_planejamento_acumulado": {
@@ -48,7 +48,15 @@
       "valor_fechado": 29605,
       "valor_fonte_atual": 29590,
       "diferenca": -15
+    },
+    {
+      "competencia": "2026-09",
+      "observacao": "Divergência na fonte atual de setembro/2026 de -23 chamados; fechamento 24.695 mantido."
     }
   ],
-  "regra": "Série oficial consolidada por data de corte. Setembro foi acrescentado ao histórico congelado até agosto; revisões retroativas permanecem documentadas e não incorporadas."
+  "regra": "Janeiro–setembro permanece congelado. Outubro foi adicionado apenas para preparação, sem auditoria independente e sem publicação.",
+  "status_publicacao": "PREVIA - NAO PUBLICADO",
+  "homologacao_independente": false,
+  "fonte_oficial": "COMLURB — extrações finais de outubro/2026",
+  "observacao_corte": "Data precisa da extração final não informada; validação técnica realizada em 04/11/2026. Não confundir com data de corte da fonte."
 }

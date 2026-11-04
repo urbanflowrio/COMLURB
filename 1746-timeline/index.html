@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>1746 · Leitura Jan–Set/2026 | HUB COMLURB</title>
+<title>1746 · Leitura Jan–Out/2026 | HUB COMLURB</title>
 <style>
 :root{
   --bg:#07111f;--bg2:#0a1727;--panel:#0c1b2c;--text:#f4f8fc;--muted:#91a6ba;
@@ -102,17 +102,17 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
 <div class="wrap">
   <a class="back" href="../">← voltar ao HUB</a>
   <div class="kicker">Relacionamento com o Cidadão · 1746</div>
-  <h1>Jan–Set/2026: crescimento da demanda, com pressão concentrada em momentos específicos.</h1>
+  <h1>Jan–Out/2026: crescimento da demanda, com pressão concentrada em momentos específicos.</h1><div style='padding:9px 12px;border:1px solid #29435c;border-radius:10px;color:#c6daec;margin:12px 0'>PRÉVIA · Outubro/2026 validado tecnicamente com fontes COMLURB, sem auditoria independente. Janeiro–setembro congelado.</div>
   <p class="lead">
     O acumulado permanece acima de 2025, mas a evolução mensal não é uniforme.
     Março concentra a maior aceleração dos chamados; julho e agosto elevam novamente o volume;
-    setembro encerra o período com desaceleração de chamados, ouvidorias e taxa por mil.
+    setembro mostra desaceleração, enquanto outubro apresenta nova redução das ouvidorias operacionais e variação positiva de chamados.
   </p>
 
   <div class="metrics" id="topMetrics"></div>
   <div class="actions">
-    <button class="btn primary" onclick="openAccum()">Explorar Jan–Set</button>
-    <button class="btn" onclick="openMonth('Setembro')">Detalhar setembro</button>
+    <button class="btn primary" onclick="openAccum()">Explorar Jan–Out</button>
+    <button class="btn" onclick="openMonth('Outubro')">Detalhar outubro</button>
   </div>
 
   <section class="section">
@@ -162,7 +162,7 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
     </div>
   </section>
 
-  <div class="foot">HUB COMLURB · Leitura executiva 1746 · Jan–Set/2026 · série oficial congelada</div>
+  <div class="foot">HUB COMLURB · Leitura executiva 1746 · Jan–Out/2026 · série congelada até setembro; outubro validado tecnicamente pela COMLURB</div>
 </div>
 
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDrawer()">
@@ -198,7 +198,7 @@ document.getElementById('topMetrics').innerHTML=`
  <div class="metric"><b>${pt(oTot)}</b><span>ouvidorias operacionais · ${pct(oTot/o25-1)}</span></div>
  <div class="metric"><b>${rateFmt(rate(oTot,cTot))}</b><span>taxa acumulada · ${pct(rate(oTot,cTot)/rate(o25,c25)-1)}</span></div>`;
 
-const emph=new Set(['Março','Agosto','Setembro']);
+const emph=new Set(['Março','Agosto','Outubro']);
 document.getElementById('timeline').innerHTML=D.monthly.map(x=>`
  <div class="month ${emph.has(x.mes)?'emph':''}" onclick="openMonth('${x.mes}')">
    <div class="m">${shortMonth(x.mes)}</div><div class="dot"></div>
@@ -208,14 +208,14 @@ document.getElementById('timeline').innerHTML=D.monthly.map(x=>`
 
 let S={period:null,svc:null,sub:null,ap:null,ger:null,stage:'service'};
 function periodData(){return C.full[S.period]||C.monthly[S.period]||{}}
-function compLabel(){return S.period==='Jan–Set/2026'?'Jan–Set/2025':S.period.replace('/2026','/2025')}
+function compLabel(){return S.period==='Jan–Out/2026'?'Jan–Out/2025':S.period.replace('/2026','/2025')}
 function hasTerritory(){return !!C.full[S.period]}
 function currentSummary(){
  let d=periodData(), s=S.svc?d[S.svc]?.summary:null;
  if(S.sub) s=d[S.svc]?.subtipos?.[S.sub]?.summary||s;
  return s;
 }
-function openAccum(){S={period:'Jan–Set/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};openDrawer()}
+function openAccum(){S={period:'Jan–Out/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};openDrawer()}
 function openMonth(m){S={period:m+'/2026',svc:null,sub:null,ap:null,ger:null,stage:'service'};openDrawer()}
 function openDrawer(){
  document.getElementById('drawerTitle').textContent=S.period;
@@ -252,7 +252,7 @@ function rowsForStage(){
 }
 function diffClass(n){return n>0?'pos':n<0?'neg':'muted'}
 function choiceHTML(x,next){
- const cd=(x.c2026||0)-(x.c2025||0),od=(x.o2026||0)-(x.o2025||0),r=rate(x.o2026,x.c2026);
+ const cd=(x.c2026||0)-(x.c2025||0),od=(x.o2026||0)-(x.o2025||0),r=((S.period==='Outubro/2026'||S.period==='Jan–Out/2026')&&S.stage==='subtype')?null:rate(x.o2026,x.c2026);
  const safe=String(x.nome).replaceAll("'","\\'");
  return `<div class="choice" onclick="${next}('${safe}')">
    <div><div class="name">${x.nome}</div><div class="sub">${S.period} comparado com ${compLabel()}</div></div>
@@ -265,7 +265,7 @@ function choiceHTML(x,next){
 function renderCascade(){
  const s=currentSummary();
  if(s){
-   const r=rate(s.o2026,s.c2026), cd=s.c2026-s.c2025, od=s.o2026-s.o2025;
+   const r=(S.period==='Outubro/2026'||S.period==='Jan–Out/2026')&&S.sub?null:rate(s.o2026,s.c2026), cd=s.c2026-s.c2025, od=s.o2026-s.o2025;
    document.getElementById('guide').innerHTML=`<b>Leitura deste recorte:</b> ${S.svc}${S.sub?' › '+S.sub:''}. Em ${S.period}, foram <b>${pt(s.c2026)} chamados</b> e <b>${pt(s.o2026)} ouvidorias</b>. ${r!=null?`Isso equivale a <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:''}`;
    document.getElementById('drawerMetrics').innerHTML=`
     <div class="dm"><b>${pt(s.c2026)}</b><span>chamados em ${S.period}<br>${cd>=0?'+':''}${pt(cd)} vs ${compLabel()}</span></div>
@@ -297,7 +297,7 @@ function renderCascade(){
 }
 function showBairro(n){
  const x=bairroRows().find(r=>r.nome===n&&r.ap===S.ap&&r.gerencia===S.ger);if(!x)return;
- const cd=x.c2026-x.c2025,od=x.o2026-x.o2025,r=rate(x.o2026,x.c2026);
+ const cd=x.c2026-x.c2025,od=x.o2026-x.o2025,r=(S.period==='Outubro/2026'||S.period==='Jan–Out/2026')?null:rate(x.o2026,x.c2026);
  document.getElementById('stepTitle').textContent='5. Bairro selecionado';
  document.getElementById('cascadeContent').innerHTML=`<div class="finalCard"><h3>${x.nome}</h3><p>Em ${S.period}, este recorte registrou <b>${pt(x.c2026)} chamados</b> (${cd>=0?'+':''}${pt(cd)} em relação a ${compLabel()}) e <b>${pt(x.o2026)} ouvidorias</b> (${od>=0?'+':''}${pt(od)}). ${r!=null?`A taxa foi de <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:'Não há chamados comparáveis para calcular a taxa.'}</p></div>`;
 }

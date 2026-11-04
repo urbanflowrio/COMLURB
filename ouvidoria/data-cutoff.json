@@ -1,11 +1,11 @@
 {
   "modulo": "ouvidoria",
-  "competencia_mais_recente": "2026-09",
-  "data_corte": "2026-10-05",
-  "historico_congelado_ate": "2026-08",
+  "competencia_mais_recente": "2026-10",
+  "data_corte": null,
+  "historico_congelado_ate": "2026-09",
   "fonte_analitica": "ouvidoria_cube.js",
   "fonte_geografica": "ouvidoria_data.js",
-  "situacao_tecnica": "validado",
+  "situacao_tecnica": "validado_tecnicamente_com_base_oficial_comlurb",
   "qualidade": {
     "conciliacao_interna": "Conciliação dos totais operacionais preservada. O acumulado mantém registros de agosto sem classificação de AP, representados como SEM AP (AGO).",
     "regra_pco": "PCO mantido na base institucional e excluído das análises operacionais",
@@ -19,7 +19,7 @@
       "total": 2476,
       "classificados": 2476,
       "sem_classificacao": 0,
-      "cobertura_percentual": 100.0
+      "cobertura_percentual": 100
     },
     "tratamento_interface": "Setembro possui cobertura integral de AP. No acumulado, os registros históricos de agosto sem AP são exibidos como SEM AP (AGO), sem reclassificação retroativa.",
     "area_planejamento_acumulado": {
@@ -55,8 +55,16 @@
       "valor_fechado": 3254,
       "valor_fonte_atual": 3252,
       "diferenca": -2
+    },
+    {
+      "competencia": "2026-09",
+      "observacao": "Divergência na fonte atual de setembro/2026 de +2 ouvidorias gerais; fechamento 2.650 mantido."
     }
   ],
   "observacao_institucional": "Agosto institucional: 3.452 fechado x 3.453 na fonte atual (+1), sem incorporação retroativa.",
-  "regra": "Série operacional oficial consolidada por data de corte. Setembro foi acrescentado ao histórico congelado até agosto; PCO permanece somente na camada institucional e revisões retroativas não são incorporadas."
+  "regra": "Janeiro–setembro permanece congelado. Outubro foi adicionado apenas para preparação, sem auditoria independente e sem publicação.",
+  "status_publicacao": "PREVIA - NAO PUBLICADO",
+  "homologacao_independente": false,
+  "fonte_oficial": "COMLURB — extrações finais de outubro/2026",
+  "observacao_corte": "Data precisa da extração final não informada; validação técnica realizada em 04/11/2026. Não confundir com data de corte da fonte."
 }

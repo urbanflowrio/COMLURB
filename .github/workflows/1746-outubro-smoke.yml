@@ -1,7 +1,7 @@
 name: 1746 Outubro - Teste funcional isolado
 on:
   push:
-    branches: [preparacao-1746-outubro-2026, refino-visual-boletim-1746-nov2026]
+    branches: [preparacao-1746-outubro-2026]
   workflow_dispatch:
 permissions:
   contents: read

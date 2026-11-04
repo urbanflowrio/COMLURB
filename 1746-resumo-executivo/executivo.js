@@ -21,6 +21,18 @@ $('kpis').innerHTML=items.map(([label,a,b])=>'<div class="card kpi"><div class="
 $('accumulated').innerHTML='<div class="kpi"><div class="label">Chamados</div><div class="value">'+num(acc.c2026)+'</div><div class="delta">'+pct(rel(acc.c2026,acc.c2025))+' frente a '+num(acc.c2025)+'</div></div><div class="statline kpi"><div class="label">Ouvidorias operacionais</div><div class="value">'+num(acc.o2026)+'</div><div class="delta">'+pct(rel(acc.o2026,acc.o2025))+' frente a '+num(acc.o2025)+'</div></div>';
 $('executiveSummary').innerHTML='<b>Leitura de outubro.</b> Os chamados cresceram '+pct(rel(oct.c2026,oct.c2025))+' ('+num(oct.c2026-oct.c2025)+' registros), enquanto as ouvidorias operacionais variaram '+pct(rel(oct.o2026,oct.o2025))+' ('+num(oct.o2026-oct.o2025)+'). A divergência de movimentos exige investigar serviços e territórios; não permite concluir melhora ou piora da qualidade dos serviços.';
 }
+function renderHighlights(){
+ const tipos=D.periods.october.tipos||[];
+ const r=tipos.filter(x=>Number.isFinite(x.c2025)&&Number.isFinite(x.c2026)&&Number.isFinite(x.o2025)&&Number.isFinite(x.o2026));
+ const topC=[...r].sort((a,b)=>(b.c2026-b.c2025)-(a.c2026-a.c2025))[0];
+ const topFall=[...r].sort((a,b)=>(a.o2026-a.o2025)-(b.o2026-b.o2025))[0];
+ const items=[
+  ['O que impulsionou os chamados',topC?esc(topC.nome)+': '+(d(topC,'c')>=0?'+':'')+num(d(topC,'c'))+' registros em outubro':'Sem tipo comparável'],
+  ['Onde houve redução de ouvidorias',topFall?esc(topFall.nome)+': '+num(d(topFall,'o'))+' registros':'Sem tipo comparável'],
+  ['Como interpretar','Mais chamados com menos ouvidorias não é prova de melhoria. Investigue a composição da demanda e os territórios.']
+ ];
+ $('highlights').innerHTML=items.map(x=>'<div class="highlight"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('');
+}
 function renderTrend(){let m=$('trendMetric').value,max=Math.max(...D.monthly.flatMap(x=>[x[m+'2025'],x[m+'2026']]));$('trend').innerHTML=D.monthly.map(x=>'<div class="chartrow"><span>'+esc(x.mes)+'</span><div class="twobar"><div class="barline"><span class="bar" style="width:'+100*x[m+'2025']/max+'%"></span></div><div class="barline"><span class="bar new" style="width:'+100*x[m+'2026']/max+'%"></span></div></div><span style="text-align:right">'+pct(rel(x[m+'2026'],x[m+'2025']))+'</span></div>').join('')}
 function renderOrigins(){
 const m=metric(),rs=sorted(rows('tipos'),m),positive=rs.filter(r=>d(r,m)>0).slice(0,5),negative=[...rs].reverse().filter(r=>d(r,m)<0).slice(0,3),meta=getScope().meta,total=d(meta,m);
@@ -69,12 +81,12 @@ const score=(level==='high'?2e6:level==='watch'?1e6:0)+Math.max(0,r.o2026-r.o202
 all.push({kind,r,cv,ov,level,description,score});
 }
 all.sort((a,b)=>b.score-a.score);
-const selected=all.slice(0,6);
+const selected=all.slice(0,3);
 $('alerts').innerHTML=selected.length?selected.map(a=>'<article class="card alert"><div><span class="pill '+a.level+'">'+(a.level==='high'?'Alta atenção':a.level==='watch'?'Monitorar ouvidorias':'Monitorar demanda')+'</span></div><h3>'+esc(a.r.nome)+' <span class="note">· '+a.kind+'</span></h3><p>'+a.description+'</p><div class="numbers">Chamados: <b>'+pct(a.cv)+'</b> · Ouvidorias: <b>'+pct(a.ov)+'</b></div><div class="numbers">2026: '+num(a.r.c2026)+' chamados · '+num(a.r.o2026)+' ouvidorias</div><a class="action" href="../1746-timeline/">Investigar no detalhamento →</a></article>').join(''):'<div class="card">Nenhum recorte atende aos critérios de alerta definidos para outubro.</div>';
-$('alertRules').textContent='Critérios exploratórios: pelo menos 80 chamados em out/2025, 20 ouvidorias em out/2025 e em out/2026; atenção alta = chamados +15% e ouvidorias +20%; monitorar ouvidorias = +20% em ouvidorias; monitorar demanda = +20% em chamados. Exibidos seis recortes com maior prioridade, sem eliminação de sobreposição entre serviço e território. Comparação de volumes, não de taxas nem de ocorrências individualizadas.';
+$('alertRules').textContent='Critérios exploratórios: pelo menos 80 chamados em out/2025, 20 ouvidorias em out/2025 e em out/2026; atenção alta = chamados +15% e ouvidorias +20%; monitorar ouvidorias = +20% em ouvidorias; monitorar demanda = +20% em chamados. Exibidos três recortes com maior prioridade, sem eliminação de sobreposição entre serviço e território. Comparação de volumes, não de taxas nem de ocorrências individualizadas.';
 }
 $('metric').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});
 $('scope').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});
 $('trendMetric').addEventListener('change',renderTrend);
-try{renderKpis();renderTrend();renderAlerts();renderQuadrants();renderOrigins();renderTerritory();renderPersistence()}catch(e){$('error').textContent='Erro ao construir a leitura executiva: '+e.message;console.error(e)}
+try{renderKpis();renderHighlights();renderTrend();renderAlerts();renderQuadrants();renderOrigins();renderTerritory();renderPersistence()}catch(e){$('error').textContent='Erro ao construir a leitura executiva: '+e.message;console.error(e)}
 })();

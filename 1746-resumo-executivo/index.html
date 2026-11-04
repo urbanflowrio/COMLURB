@@ -32,8 +32,31 @@ main{max-width:1140px}.hero{padding:30px 0 18px}.hero .lead{font-size:14px;max-w
 .detail-context a{font-size:12px;color:var(--blue)}
 .detail-disclaimer{color:var(--muted);font-size:11px;margin-top:12px}
 @media(max-width:640px){.detail-region{padding:14px}.detail-metrics,.detail-context{grid-template-columns:1fr}.detail-metric strong{font-size:22px}.detail-header h3{font-size:18px}}
+
+/* Detalhamento hierárquico do recorte: serviço, subtipo, território */
+.cascade-area{margin-top:18px;border-top:1px solid var(--edge);padding-top:17px}
+.cascade-area h4{font-size:15px;margin:0 0 7px}
+.cascade-note{font-size:12px;color:var(--muted);margin-bottom:12px}
+.cascade-service{border:1px solid var(--edge);border-radius:10px;background:#071b2c;margin:8px 0;overflow:hidden}
+.cascade-service>button,.cascade-sub>button{display:grid;width:100%;grid-template-columns:minmax(0,1fr) 105px 105px 20px;gap:10px;align-items:center;text-align:left;padding:13px 14px;background:transparent;color:var(--ink);border:0;cursor:pointer;font:inherit}
+.cascade-service>button:hover,.cascade-sub>button:hover,.cascade-service>button[aria-expanded="true"],.cascade-sub>button[aria-expanded="true"]{background:#102c42}
+.cascade-service>button:focus-visible,.cascade-sub>button:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+.cascade-title{min-width:0;font-size:13px;font-weight:750;overflow-wrap:anywhere}
+.cascade-meta{font-size:10px;color:var(--muted);display:block;font-weight:500}
+.cascade-qty{text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
+.cascade-qty small{display:block;color:var(--muted);font-size:10px}
+.cascade-subwrap{padding:12px;background:#081f31;border-top:1px solid var(--edge)}
+.cascade-sub{margin:5px 0;border:1px solid #22415a;border-radius:9px;overflow:hidden}
+.cascade-sub>button{padding:10px 12px;font-size:12px}
+.cascade-territory{padding:12px 15px;background:#071929;border-top:1px solid var(--edge)}
+.cascade-territory .tablebox{margin-top:8px}
+.cascade-territory table{min-width:470px}
+.cascade-summary{margin-bottom:10px;font-size:12px;color:var(--soft)}
+.cascade-arrow{color:var(--blue);text-align:right}
+@media(max-width:640px){.cascade-service>button,.cascade-sub>button{grid-template-columns:minmax(0,1fr) 60px 60px 12px;gap:5px;padding:11px 8px}.cascade-title{font-size:11px}.cascade-qty{font-size:12px}.cascade-subwrap{padding:7px}.cascade-territory{padding:10px 7px}}
 </style>
 <script defer src="../1746-timeline/data.js"></script>
+<script defer src="../1746-timeline/cascade_data.js"></script>
 <script defer src="executivo.js"></script>
 </head>
 <body><header><div><div class="brand">HUB COMLURB <small>Relacionamento com o Cidadão · 1746</small></div><a class="back" href="../">← Portal Executivo</a></div></header>

@@ -99,15 +99,71 @@ section{margin-top:34px}
 .nested-area p{font-size:12px;color:var(--soft);line-height:1.65;margin:12px 0 0}
 .nested-area p strong{color:var(--ink)}
 @media(max-width:600px){.nested-area{padding:13px}.nested-metrics{grid-template-columns:1fr;gap:10px}}
+
+/* Identidade visual institucional, derivada da Home do HUB COMLURB */
+:root{--bg:#030d19;--panel:#071a2c;--line:#203a55;--ink:#f7f9ff;--soft:#c8d8eb;--muted:#8ba4bf;--blue:#8ec5f3;--teal:#78aaa3;--amber:#e8ae6d;--green:#84d8ad;--red:#efa4a1}
+html{scroll-behavior:smooth}
+body{min-height:100vh;overflow-x:hidden;background:radial-gradient(circle at 83% 4%,rgba(91,155,213,.12),transparent 28%),linear-gradient(180deg,#04111f 0%,#030d19 54%,#020912 100%);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.24;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:96px 96px;mask-image:linear-gradient(180deg,#000,transparent 78%)}
+.shell{max-width:1160px;width:min(1160px,calc(100% - 64px))}
+.hub-header{display:flex;align-items:center;gap:26px;min-height:106px;padding:24px 0 20px;border-bottom:1px solid rgba(139,164,191,.22)}
+.hub-logo{flex:0 0 286px;display:block;line-height:0}
+.hub-logo img{width:100%;height:auto;max-height:78px;object-fit:contain}
+.hub-brand{min-height:48px;display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;padding-left:26px;border-left:1px solid rgba(200,216,235,.27)}
+.hub-brand strong{font-size:22px;line-height:1.05;letter-spacing:-.45px;font-weight:800}
+.hub-brand span{margin-top:6px;color:#5b9bd5;font-size:13px;line-height:1.25;font-weight:600}
+.hub-home-button{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-height:42px;padding:0 17px;border:1px solid rgba(142,197,243,.42);border-radius:13px;background:rgba(10,27,49,.78);color:#dcecff;font-size:12px;font-weight:800;text-decoration:none;transition:border-color .18s ease,background-color .18s ease}
+.hub-home-button:hover{border-color:#8ec5f3;background:rgba(25,57,88,.82)}
+.hub-logo:focus-visible,.hub-home-button:focus-visible{outline:2px solid #8ec5f3;outline-offset:4px}
+main.shell{padding-top:42px;padding-bottom:52px}
+.eyebrow{font-size:11px;letter-spacing:2px;color:#5b9bd5}
+h1{font-size:clamp(34px,4.3vw,51px);letter-spacing:-1.6px;line-height:1.08;margin:12px 0 10px}
+.lead{font-size:15px;line-height:1.6}
+.period{font-size:12px;margin-top:12px}
+section{margin-top:43px}
+.section-head{margin-bottom:20px;gap:12px}
+.step{width:27px;height:27px;flex-basis:27px;border-radius:8px;color:#8ec5f3;border-color:#315a7c;background:rgba(91,155,213,.07)}
+h2{font-size:20px;letter-spacing:-.5px}
+.grid,.factor-grid{gap:20px}
+.kpi{padding:25px 27px;border:1px solid rgba(49,90,124,.66);border-radius:18px;background:linear-gradient(180deg,rgba(7,26,44,.94),rgba(5,19,33,.83));box-shadow:0 18px 44px rgba(0,0,0,.13)}
+.kpi-label{font-size:13px;font-weight:700}
+.kpi-value{font-size:clamp(34px,4.5vw,46px);line-height:1.17;margin:10px 0 5px}
+.change{font-size:14px}
+.small{margin-top:10px;font-size:12px}
+.reading,.priority-lead{margin-top:19px;padding:17px 20px;border-left:3px solid #78aaa3;background:rgba(10,33,55,.78);border-radius:9px;line-height:1.7}
+.priority-lead{margin-top:0;margin-bottom:21px}
+.factor{padding:21px 18px 14px;border-top:1px solid rgba(49,90,124,.66)}
+.factor-name{font-size:13px;color:var(--soft)}
+.factor-num{margin-top:10px;font-size:24px}
+.factor p{max-width:520px;margin-top:10px;font-size:13px;line-height:1.72}
+.priority-list{background:transparent;border:0;border-radius:0;display:grid;gap:18px;overflow:visible}
+.priority{gap:24px;padding:24px 26px;border:1px solid rgba(49,90,124,.66);border-radius:18px;background:linear-gradient(180deg,rgba(7,26,44,.94),rgba(5,19,33,.82));box-shadow:0 18px 44px rgba(0,0,0,.09)}
+.priority:last-child{border-bottom:1px solid rgba(49,90,124,.66)}
+.place{font-size:17px}
+.kind{font-size:11px;margin-top:5px}
+.priority-comparisons{gap:16px}
+.priority-measure{background:rgba(3,13,25,.25);border:1px solid rgba(49,90,124,.62);border-radius:12px;padding:16px 18px;gap:12px}
+.priority-measure>strong{font-size:12px}
+.period-values{gap:18px}
+.period-values b{font-size:21px}
+.growth{font-size:15px}
+.priority-why{margin-top:18px;font-size:13px;line-height:1.72}
+.nested-area{margin-top:17px;background:rgba(10,33,55,.58);border-left:3px solid #5b9bd5;padding:17px 19px;border-radius:9px}
+.nested-area p{margin:9px 0 0;line-height:1.65}
+.end-note{margin-top:17px;font-size:12px;line-height:1.6}
+footer{border-top:1px solid rgba(139,164,191,.22);padding:22px 0 30px;line-height:1.7}
+footer a{color:#8ec5f3}
+@media(max-width:900px){.hub-header{gap:17px;flex-wrap:wrap}.hub-logo{flex-basis:230px}.hub-brand{padding-left:17px}.hub-brand strong{font-size:19px}.hub-brand span{font-size:11px}.hub-home-button{margin-left:auto}.priority{grid-template-columns:130px minmax(0,1fr);gap:17px;padding:21px}.priority-measure{padding:13px}.period-values b{font-size:18px}}
+@media(max-width:660px){.shell{width:calc(100% - 32px)}.hub-header{align-items:flex-start;flex-direction:column;gap:12px;padding:20px 0}.hub-logo{flex:auto;width:min(268px,86vw)}.hub-brand{border-left:0;padding:0;min-height:0}.hub-home-button{margin:0}.hub-brand strong{font-size:19px}main.shell{padding-top:30px}.grid,.factor-grid{grid-template-columns:1fr}.kpi{padding:20px}.priority{grid-template-columns:1fr;gap:13px;padding:19px}.priority-comparisons{grid-template-columns:1fr}.priority-measure{padding:14px}.factor{padding:18px 8px}.section-head{margin-bottom:15px}section{margin-top:34px}}
 </style>
-</head>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></head>
 <body>
-<header><div class="shell head"><div class="brand">HUB COMLURB <small>Relacionamento com o Cidadão | 1746</small></div><a class="back" href="../">Voltar ao HUB</a></div></header>
+<div class="shell"><header class="hub-header" aria-label="Cabeçalho institucional"><a class="hub-logo" href="../" aria-label="Voltar ao HUB COMLURB"><img src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio e COMLURB"></a><div class="hub-brand"><strong>HUB COMLURB</strong><span>Centro de Inteligência e Gestão Estratégica Operacional</span></div><a class="hub-home-button" href="../">Voltar ao HUB</a></header></div>
 <main class="shell">
-<div class="eyebrow">Leitura para a Diretoria | Fechamento de outubro</div>
+<div class="eyebrow">Relacionamento com o Cidadão | 1746</div>
 <h1>Boletim Executivo 1746</h1>
 <p class="lead">O resultado, o que explica a mudança e os territórios que merecem atenção.</p>
-<div class="period">Outubro de 2026 em comparação com outubro de 2025</div>
+<div class="period">Fechamento de outubro/2026 <span aria-hidden="true">·</span> Comparativo com outubro/2025</div>
 
 <section aria-labelledby="resultado">
  <div class="section-head"><span class="step">1</span><h2 id="resultado">O que aconteceu</h2></div>
@@ -143,5 +199,5 @@ section{margin-top:34px}
  <p class="end-note">Critério de seleção: crescimento simultâneo dos indicadores e volume mínimo. A informação da OG18G complementa Campo Grande, sem duplicar os registros. Os resultados orientam a investigação, mas não comprovam falha nos serviços.</p>
 </section>
 </main>
-<footer><div class="shell"><strong>Fonte:</strong> bases COMLURB e cubos auditados para outubro de 2025 e outubro de 2026. Os fatores territoriais foram conferidos com a cascata de serviços e subtipos e reconciliados com os respectivos totais. A data de corte da extração de outubro não foi informada. Sem homologação independente do sistema 1746. <strong>Prévia para conferência, não publicada.</strong> <a href="../">Acessar módulos técnicos do HUB</a>.</div></footer>
+<footer><div class="shell"><strong>Fonte:</strong> bases COMLURB e cubos auditados para outubro de 2025 e outubro de 2026. Os fatores territoriais foram conferidos com a cascata de serviços e subtipos e reconciliados com os respectivos totais. A data de corte da extração de outubro não foi informada. Sem homologação independente do sistema 1746. <a href="../">Acessar módulos técnicos do HUB</a>.</div></footer>
 </body></html>

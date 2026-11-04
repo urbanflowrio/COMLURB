@@ -2,8 +2,8 @@
 (() => {
 const D=window.TIMELINE1746_DATA, $=id=>document.getElementById(id);
 if(!D || !D.periods?.october || !D.accumulated){$('error').textContent='Não foi possível carregar os cubos auditados. Confira a origem da página e o arquivo 1746-timeline/data.js.';return;}
-const num=n=>Number.isFinite(n)?Math.round(n).toLocaleString('pt-BR'):'—';
-const pct=n=>Number.isFinite(n)?(n>0?'+':'')+(n*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%':'—';
+const num=n=>Number.isFinite(n)?Math.round(n).toLocaleString('pt-BR'):'n/d';
+const pct=n=>Number.isFinite(n)?(n>0?'+':'')+(n*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%':'n/d';
 const diff=(a,b)=>Number.isFinite(a)&&Number.isFinite(b)?a-b:null;
 const rel=(a,b)=>b>0?(a-b)/b:null;
 const esc=t=>String(t??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
@@ -37,7 +37,7 @@ function renderOrigins(){
 const m=metric(),rs=sorted(rows('tipos'),m),positive=rs.filter(r=>d(r,m)>0).slice(0,5),negative=[...rs].reverse().filter(r=>d(r,m)<0).slice(0,3),meta=getScope().meta,total=d(meta,m);
 const items=[...positive,...negative.filter(x=>!positive.includes(x))];
 $('origin').innerHTML='<p class="note">Saldo líquido no período: <b>'+((total>=0)?'+':'')+num(total)+'</b>. Percentuais de contribuição podem superar 100% quando existem compensações negativas.</p>'+table(['Tipo','2025','2026','Dif.','% var.'],items.map(r=>[esc(r.nome),num(v(r,m,2025)),num(v(r,m,2026)),'<span class="'+(d(r,m)>=0?'positive':'negative')+'">'+(d(r,m)>0?'+':'')+num(d(r,m))+'</span>',pct(rel(v(r,m,2026),v(r,m,2025)))]));
-const subs=sorted(rows('subtipos'),m,'volume').slice(0,8);$('subtypes').innerHTML=table(['Subtipo','2026','Dif.'],subs.map(r=>[esc(r.nome),num(v(r,m,2026)),Number.isFinite(d(r,m))?(d(r,m)>0?'+':'')+num(d(r,m)):'—']))+'<p class="note">Subtipos podem ter nomenclaturas diferentes entre Chamados e Ouvidorias; sem taxa cruzada.</p>';
+const subs=sorted(rows('subtipos'),m,'volume').slice(0,8);$('subtypes').innerHTML=table(['Subtipo','2026','Dif.'],subs.map(r=>[esc(r.nome),num(v(r,m,2026)),Number.isFinite(d(r,m))?(d(r,m)>0?'+':'')+num(d(r,m)):'n/d']))+'<p class="note">Subtipos podem ter nomenclaturas diferentes entre Chamados e Ouvidorias; sem taxa cruzada.</p>';
 }
 function renderTerritory(){
 const m=metric();
@@ -56,13 +56,6 @@ return {last,plus,months};
 function renderPersistence(){
 const m=metric(),a=rows('tipos').filter(x=>v(x,m,2026)>=80).map(r=>({r,p:classify(r,m)})).filter(x=>x.p&&x.p.last>0).sort((a,b)=>b.p.last-a.p.last||v(b.r,m,2026)-v(a.r,m,2026)).slice(0,9);
 $('persistence').innerHTML= a.length?table(['Serviço','Jul','Ago','Set','Out','Classificação'],a.map(({r,p})=>[esc(r.nome),...p.months.map(x=>pct(rel(x[m+'2026'],x[m+'2025']))),p.last>=3?'<span class="pill high">Persistente</span>':p.last===2?'<span class="pill watch">Emergente</span>':'<span class="pill">Pontual</span>'])):'<p>Não há casos classificados com os critérios definidos.</p>';
-}
-function renderQuadrants(){
-const list=rows('tipos').filter(r=>r.status==='taxa'&&v(r,'c',2025)>=100&&v(r,'o',2025)>=20&&v(r,'c',2026)>=100).map(r=>({r,upC:d(r,'c')>0,upO:d(r,'o')>0}));
-const groups=[['Chamados ↑ · Ouvidorias ↑',x=>x.upC&&x.upO],['Chamados ↑ · Ouvidorias ↓/=',x=>x.upC&&!x.upO],['Chamados ↓/= · Ouvidorias ↑',x=>!x.upC&&x.upO],['Ambos ↓/=',x=>!x.upC&&!x.upO]];
-$('quadrants').innerHTML=groups.map(([title,test])=>'<div style="background:#0b2a40;border:1px solid var(--edge);padding:12px;border-radius:10px"><div class="note">'+title+'</div><div class="kpi value" style="font-weight:800;font-size:24px">'+list.filter(test).length+'</div><div class="note">serviços com base mínima</div></div>').join('');
-const valid=list.map(({r})=>r).sort((a,b)=>v(b,'o',2026)-v(a,'o',2026)).slice(0,7);
-$('relative').innerHTML=table(['Serviço','Ouvid.','/mil'],valid.map(r=>[esc(r.nome),num(v(r,'o',2026)),Number.isFinite(r.rate2026)?num(r.rate2026):'—']))+'<p class="note">Somente tipos com status de taxa válida no cubo; pares mínimos para leitura da matriz.</p>';
 }
 function renderAlerts(){
 const domain=[['serviço','tipos'],['AP','aps'],['gerência','gerencias'],['bairro','bairros']];
@@ -118,5 +111,5 @@ $('alertRules').textContent='Critérios exploratórios: pelo menos 80 chamados e
 $('metric').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});
 $('scope').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});
 $('trendMetric').addEventListener('change',renderTrend);
-try{renderKpis();renderHighlights();renderTrend();renderAlerts();renderQuadrants();renderOrigins();renderTerritory();renderPersistence()}catch(e){$('error').textContent='Erro ao construir a leitura executiva: '+e.message;console.error(e)}
+try{renderKpis();renderHighlights();renderTrend();renderAlerts();renderOrigins();renderTerritory();renderPersistence()}catch(e){$('error').textContent='Erro ao construir a leitura executiva: '+e.message;console.error(e)}
 })();

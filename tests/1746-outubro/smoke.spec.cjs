@@ -8,6 +8,18 @@ for (const pathname of pages) {
     const response=await page.goto('http://127.0.0.1:8765/'+pathname, {waitUntil:'domcontentloaded', timeout:45000});
     expect(response.status()).toBe(200);
     await page.waitForTimeout(1800);
+    if (pathname === '1746-timeline/') {
+      await expect(page.locator('#hubHeader .header .mainTitle')).toHaveText('Linha do Tempo 1746');
+      await expect(page.locator('#hubFooter .footerTitle')).toHaveText('HUB COMLURB');
+      await expect(page.locator('.timeline-page .statement')).toBeVisible();
+      await expect(page.locator('#timeline .month')).toHaveCount(10);
+      await expect(page.locator('.timeline-hero-title')).toBeVisible();
+      await page.getByRole('button', {name:'Detalhar outubro'}).click();
+      await expect(page.locator('#overlay')).toHaveClass(/open/);
+      await expect(page.locator('#drawerTitle')).toHaveText('Outubro/2026');
+      await page.locator('.close').click();
+      await expect(page.locator('#overlay')).not.toHaveClass(/open/);
+    }
     expect(await page.locator('body').innerText()).toMatch(/1746|Ouvidoria|Chamados|COMLURB/i);
     await page.screenshot({path:testInfo.outputPath('desktop.png'),fullPage:true});
     const controls=page.locator('select:visible');

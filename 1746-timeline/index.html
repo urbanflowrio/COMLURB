@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>1746 · Leitura Jan–Out/2026 | HUB COMLURB</title>
+<link rel="stylesheet" href="../assets/css/hub-premium.css">
 <style>
 :root{
   --bg:#07111f;--bg2:#0a1727;--panel:#0c1b2c;--text:#f4f8fc;--muted:#91a6ba;
@@ -30,7 +31,7 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
 .btn:hover{border-color:#65a3ce;background:#12304b}.btn.primary{border-color:#277b77;color:#dffffc}
 .section{margin-top:72px}
 .sectionTitle{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#9eb2c5;margin-bottom:24px}
-.timeline{position:relative;display:grid;grid-template-columns:repeat(9,1fr);padding:42px 4px 28px}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));padding:42px 4px 28px}
 .timeline:before{content:"";position:absolute;left:2%;right:2%;top:72px;height:2px;background:linear-gradient(90deg,#31516d,#4b708d 65%,var(--orange))}
 .month{position:relative;text-align:center;min-height:102px;cursor:pointer;border-radius:12px;padding:2px 3px;transition:.16s}
 .month:hover{background:rgba(64,106,141,.12)}
@@ -96,13 +97,59 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
  .drawer h2{font-size:30px}.drawerMetrics{grid-template-columns:1fr}
  .choice{grid-template-columns:1fr 90px 90px 26px;gap:10px}.choice .ratecol{display:none}
 }
+
+/* Padrão institucional nativo do HUB, preservando visualização e drill da linha do tempo */
+:root{--bg:#06111f;--bg2:#06111f;--panel:#0d1f36;--text:#f7f9ff;--muted:#b8c9de;--line:#294866;--cyan:#8ec5f3;--orange:#e8ae6d;--green:#84d8ad}
+body{background:#06111f;color:#f7f9ff;font-family:"Segoe UI",Arial,sans-serif}
+.timeline-page{width:100%;min-width:0}
+.timeline-main{width:100%;min-width:0;padding:24px 0 8px}
+.timeline-page .kicker{color:#8ec5f3;letter-spacing:.18em;font-size:11px}
+.timeline-hero-title{font-size:clamp(32px,3.4vw,52px);font-weight:850;letter-spacing:-.035em;line-height:1.12;max-width:1300px;margin:12px 0 18px;color:#f7f9ff}
+.timeline-page .source-note{margin:0 0 16px;color:#9eb6cc;font-size:12px;line-height:1.6}
+.timeline-page .lead{font-size:16px;max-width:1280px;color:#c8d8eb}
+.timeline-page .metrics{gap:0;margin-top:30px;padding:0;border:1px solid #294866;border-radius:17px;overflow:hidden;background:#0a1b31}
+.timeline-page .metric{flex:1 1 220px;min-width:0;padding:22px 28px;border-right:1px solid #294866}
+.timeline-page .metric:last-child{border-right:0}
+.timeline-page .metric b{font-size:clamp(23px,2.3vw,33px);color:#f7f9ff}
+.timeline-page .metric span{margin-top:8px;color:#b8c9de;font-size:12px;line-height:1.5}
+.timeline-page .actions{margin-top:20px}
+.timeline-page .btn{border-color:#315a7c;border-radius:12px;background:#0a1b31;color:#dcecff;padding:12px 16px;font-size:12px}
+.timeline-page .btn.primary{border-color:#5b9bd5;color:#f7f9ff;background:#173550}
+.timeline-page .btn:hover{background:#21466a;border-color:#8ec5f3}
+.timeline-page .section{margin-top:54px}
+.timeline-page .sectionTitle{font-weight:800;color:#b8c9de}
+.timeline-page .timeline{grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+.timeline-page .month{min-width:0}
+.timeline-page .month:hover{background:rgba(91,155,213,.12)}
+.timeline-page .turns{gap:28px;padding-top:33px}
+.timeline-page .turn h3{color:#f7f9ff;line-height:1.35}
+.timeline-page .statement{margin-top:64px;padding:38px 0;border-top:1px solid #294866;border-bottom:1px solid #294866}
+.timeline-page .statement p{max-width:1500px;font-size:clamp(26px,3vw,47px);line-height:1.2;font-weight:700;letter-spacing:-.03em}
+.timeline-page .statement strong{color:#e8ae6d}
+.timeline-page .takeaways{margin-top:42px;gap:26px}
+.timeline-page .take{border:1px solid #294866;border-radius:16px;background:#0a1b31;padding:23px 24px}
+.timeline-page .take h4{color:#8ec5f3;margin-bottom:12px}
+.timeline-page .take p{color:#c8d8eb}
+.timeline-methodology{margin-top:44px;border-top:1px solid #294866;padding-top:22px;color:#91a6ba;font-size:11px;line-height:1.7}
+.timeline-methodology strong{color:#c8d8eb}
+.timeline-related{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;margin-bottom:2px}
+.timeline-related a{border:1px solid #315a7c;color:#dcecff;background:#0a1b31;padding:11px 15px;border-radius:12px;font-size:12px;font-weight:700;text-decoration:none}
+.timeline-related a:hover{border-color:#8ec5f3;background:#173550}
+.overlay{z-index:100}
+.drawer{background:#081522}
+.drawer h2{font-size:38px}
+@media(max-width:1150px){.timeline-page .timeline{grid-template-columns:repeat(5,minmax(0,1fr));row-gap:24px}.timeline-page .timeline:before{display:none}.timeline-page .turns{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-page .takeaways{grid-template-columns:repeat(3,minmax(0,1fr))}.timeline-page .metric{border-bottom:1px solid #294866}}
+@media(max-width:760px){.timeline-main{padding-top:14px}.timeline-hero-title{font-size:clamp(30px,7vw,42px)}.timeline-page .timeline{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-page .turns,.timeline-page .takeaways{grid-template-columns:1fr}.timeline-page .metrics{display:grid;grid-template-columns:1fr}.timeline-page .metric{border-right:0;border-bottom:1px solid #294866}.timeline-page .metric:last-child{border-bottom:0}.timeline-page .statement{margin-top:40px}.timeline-page .statement p{font-size:clamp(25px,6vw,35px)}.timeline-page .takeaways{gap:12px}.timeline-related a{flex:1 1 100%;text-align:center}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <a class="back" href="../">← voltar ao HUB</a>
-  <div class="kicker">Relacionamento com o Cidadão · 1746</div>
-  <h1>Jan–Out/2026: crescimento da demanda, com pressão concentrada em momentos específicos.</h1><div style='padding:9px 12px;border:1px solid #29435c;border-radius:10px;color:#c6daec;margin:12px 0'>PRÉVIA · Outubro/2026 validado tecnicamente com fontes COMLURB, sem auditoria independente. Janeiro–setembro congelado.</div>
+<div class="app">
+  <div id="hubHeader"></div>
+  <main class="timeline-page">
+    <div class="timeline-main">
+      <div class="kicker">RELACIONAMENTO COM O CIDADÃO | 1746</div>
+      <h2 class="timeline-hero-title">Jan–Out/2026: crescimento da demanda, com variações importantes ao longo do ano.</h2>
+      <p class="source-note">Base COMLURB · Comparação com janeiro a outubro de 2025 · Histórico preservado até setembro/2026</p>
   <p class="lead">
     O acumulado permanece acima de 2025, mas a evolução mensal não é uniforme.
     Março concentra a maior aceleração dos chamados; julho e agosto elevam novamente o volume;
@@ -133,7 +180,7 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
       <div class="turn hot">
         <div class="n">Jul–Ago</div>
         <h3>Concentração de volume no terceiro trimestre</h3>
-        <p>Julho e agosto elevam o patamar de demanda. Agosto tem o maior volume do período, embora a taxa por mil já recue frente a julho.</p>
+        <p>Julho e agosto apresentam altas expressivas em relação a 2025. Março mantém o maior volume absoluto de chamados; em agosto, a taxa de ouvidorias por mil chamados recua frente a julho.</p>
       </div>
       <div class="turn">
         <div class="n">Set</div>
@@ -162,7 +209,11 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
     </div>
   </section>
 
-  <div class="foot">HUB COMLURB · Leitura executiva 1746 · Jan–Out/2026 · série congelada até setembro; outubro validado tecnicamente pela COMLURB</div>
+    <div class="timeline-methodology"><strong>Fonte:</strong> bases COMLURB, fechamento jan–out/2026. Série de janeiro a setembro preservada; outubro incorporado após conciliação interna. Sem validação independente do sistema 1746. As comparações e taxas não medem, isoladamente, qualidade do serviço.</div>
+    <nav class="timeline-related" aria-label="Navegar por módulos 1746"><a href="../1746-resumo-executivo/">Boletim Executivo</a><a href="../chamados-1746/">Chamados</a><a href="../ouvidoria/">Ouvidorias</a><a href="../1746-comparativo/">Comparativo territorial</a><a href="../1746-historico/">Histórico</a></nav>
+    </div>
+  </main>
+  <div id="hubFooter"></div>
 </div>
 
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDrawer()">
@@ -180,6 +231,12 @@ h1{font-size:clamp(36px,5vw,64px);line-height:1.02;max-width:1150px;margin:12px 
   </aside>
 </div>
 
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
+<script>
+HUB.header.render("hubHeader",{systemLabel:"RELACIONAMENTO COM O CIDADÃO | 1746",title:"Linha do Tempo 1746",subtitle:"Evolução mensal de chamados e ouvidorias operacionais, janeiro a outubro de 2026",homeHref:"../",homeLabel:"Voltar ao HUB"});
+HUB.footer.render("hubFooter");
+</script>
 <script src="./data.js"></script>
 <script src="./cascade_data.js"></script>
 <script>

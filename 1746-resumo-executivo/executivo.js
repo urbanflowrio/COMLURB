@@ -81,7 +81,38 @@ all.push({kind,r,cv,ov,level,description,score});
 }
 all.sort((a,b)=>b.score-a.score);
 const selected=all.slice(0,3);
-$('alerts').innerHTML=selected.length?selected.map(a=>'<article class="card alert"><div><span class="pill '+a.level+'">'+(a.level==='high'?'Alta atenção':a.level==='watch'?'Monitorar ouvidorias':'Monitorar demanda')+'</span></div><h3>'+esc(a.r.nome)+' <span class="note">· '+a.kind+'</span></h3><p>'+a.description+'</p><div class="numbers">Chamados: <b>'+pct(a.cv)+'</b> · Ouvidorias: <b>'+pct(a.ov)+'</b></div><div class="numbers">2026: '+num(a.r.c2026)+' chamados · '+num(a.r.o2026)+' ouvidorias</div><a class="action" href="../1746-timeline/">Investigar no detalhamento →</a></article>').join(''):'<div class="card">Nenhum recorte atende aos critérios de alerta definidos para outubro.</div>';
+$('alerts').innerHTML=selected.length?selected.map((a,i)=>'<button type="button" class="card alert" data-alert-index="'+i+'" aria-controls="alertDetail" aria-expanded="false" aria-label="Ver o detalhamento de '+esc(a.r.nome)+' ('+a.kind+')"><span class="pill '+a.level+'">'+(a.level==='high'?'Alta atenção':a.level==='watch'?'Monitorar ouvidorias':'Monitorar demanda')+'</span><h3>'+esc(a.r.nome)+' <span class="note">· '+a.kind+'</span></h3><p>'+a.description+'</p><div class="numbers">Chamados: <b>'+pct(a.cv)+'</b> · Ouvidorias: <b>'+pct(a.ov)+'</b></div><div class="numbers">2026: '+num(a.r.c2026)+' chamados · '+num(a.r.o2026)+' ouvidorias</div></button>').join(''):'<div class="card">Nenhum recorte atende aos critérios de alerta definidos para outubro.</div>';
+const region=$('alertDetail'), content=$('detailContent'),title=$('detailTitle');
+const kindKey={'serviço':'tipos','AP':'aps','gerência':'gerencias','bairro':'bairros'};
+let current=null;
+const signed=n=>(n>0?'+':'')+num(n);
+function renderAlertDetail(index) {
+ const a=selected[index];if(!a)return;
+ if(current===index){closeDetail();return;}
+ current=index;
+ const {r,kind}=a;
+ const key=kindKey[kind],siblings=D.periods.october[key]||[];
+ const comparable=siblings.filter(x=>Number.isFinite(x.c2026)&&Number.isFinite(x.o2026));
+ const rankFor=m=>[...comparable].sort((x,y)=>y[m+'2026']-x[m+'2026']).findIndex(x=>x.nome===r.nome)+1;
+ const posC=rankFor('c'),posO=rankFor('o');
+ const total=D.periods.october.meta;
+ title.textContent=r.nome+' · '+kind+' · Outubro/2026';
+ const metricCard=(label,m)=>'<div class="detail-metric"><label>'+label+'</label><strong>'+num(r[m+'2026'])+' <span style="font-size:13px;color:var(--muted);font-weight:400">em 2026</span></strong><p>Out/2025: <b>'+num(r[m+'2025'])+'</b></p><p>Diferença: <b>'+signed(r[m+'2026']-r[m+'2025'])+'</b> · Variação: <b>'+pct(rel(r[m+'2026'],r[m+'2025']))+'</b></p></div>';
+ const context=a.level==='high'?'Os dois indicadores cresceram neste recorte. Prioridade para verificar a natureza da demanda e o histórico local.':a.level==='watch'?'As manifestações cresceram mais intensamente do que o volume de chamados. Investigar a composição e o contexto operacional.':'O volume de chamados cresceu sem aumento proporcional das manifestações. Isso não prova melhora ou piora dos serviços.';
+ const peerCount=comparable.length;
+ const contributionNote=kind==='serviço'?'O painel apresenta este serviço específico.':'O cubo contém totais por '+kind+' e não relaciona, neste recorte, cada serviço individualmente a esta localização. Não é possível identificar com segurança os serviços causadores desta variação sem um cruzamento adicional.';
+ const rank=(p)=>p>0?'posição '+p+' entre '+peerCount+' recortes com valores disponíveis':'posição indisponível';
+ content.innerHTML='<div class="detail-metrics">'+metricCard('Chamados','c')+metricCard('Ouvidorias operacionais','o')+'</div>'+
+ '<div class="detail-context"><div><h4>Leitura do alerta</h4><p>'+context+'</p><p>'+contributionNote+'</p></div>'+
+ '<div><h4>Posição em volume · outubro/2026</h4><p>Chamados: <b>'+rank(posC)+'</b></p><p>Ouvidorias: <b>'+rank(posO)+'</b></p><p class="note">Ranking apenas entre recortes com ambos os totais disponíveis, não um ranking institucional completo.</p></div></div>'+
+ '<div class="detail-disclaimer">Base: outubro/2025 × outubro/2026, COMLURB. Volumes agregados por '+esc(kind)+'. Não equivale a comprovação de falha, identificação de ocorrências repetidas ou causa da variação.</div>';
+ region.hidden=false;
+ $('alerts').querySelectorAll('[data-alert-index]').forEach(btn=>btn.setAttribute('aria-expanded',String(Number(btn.dataset.alertIndex)===index)));
+ region.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closeDetail(){region.hidden=true;current=null;$('alerts').querySelectorAll('[data-alert-index]').forEach(btn=>btn.setAttribute('aria-expanded','false'))}
+$('alerts').addEventListener('click',event=>{const target=event.target.closest('[data-alert-index]');if(target)renderAlertDetail(Number(target.dataset.alertIndex));});
+$('detailClose').addEventListener('click',closeDetail);
 $('alertRules').textContent='Critérios exploratórios: pelo menos 80 chamados em out/2025, 20 ouvidorias em out/2025 e em out/2026; atenção alta = chamados +15% e ouvidorias +20%; monitorar ouvidorias = +20% em ouvidorias; monitorar demanda = +20% em chamados. Exibidos três recortes com maior prioridade, sem eliminação de sobreposição entre serviço e território. Comparação de volumes, não de taxas nem de ocorrências individualizadas.';
 }
 $('metric').addEventListener('change',()=>{renderOrigins();renderTerritory();renderPersistence()});

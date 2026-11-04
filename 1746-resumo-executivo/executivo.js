@@ -16,7 +16,7 @@ const sorted=(a,m,mode='delta')=>[...a].filter(r=>Number.isFinite(v(r,m,2026))).
 const table=(headers,arr)=>'<div class="tablebox"><table><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+arr.map(r=>'<tr>'+r.map((c,i)=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
 function renderKpis(){
 const oct=D.periods.october.meta,acc=D.accumulated.meta;
-const items=[['Chamados · Outubro',oct.c2026,oct.c2025],['Ouvidorias operacionais · Outubro',oct.o2026,oct.o2025],['Chamados · Jan–Out',acc.c2026,acc.c2025],['Ouvidorias operacionais · Jan–Out',acc.o2026,acc.o2025]];
+const items=[['Chamados · Outubro',oct.c2026,oct.c2025],['Ouvidorias operacionais · Outubro',oct.o2026,oct.o2025]];
 $('kpis').innerHTML=items.map(([label,a,b])=>'<div class="card kpi"><div class="label">'+esc(label)+'</div><div class="value">'+num(a)+'</div><div class="delta '+(a<b?'down':'')+'">'+pct(rel(a,b))+' · '+(a>=b?'+':'')+num(a-b)+'</div><div class="note">Comparável em 2025: '+num(b)+'</div></div>').join('');
 $('accumulated').innerHTML='<div class="kpi"><div class="label">Chamados</div><div class="value">'+num(acc.c2026)+'</div><div class="delta">'+pct(rel(acc.c2026,acc.c2025))+' frente a '+num(acc.c2025)+'</div></div><div class="statline kpi"><div class="label">Ouvidorias operacionais</div><div class="value">'+num(acc.o2026)+'</div><div class="delta">'+pct(rel(acc.o2026,acc.o2025))+' frente a '+num(acc.o2025)+'</div></div>';
 $('executiveSummary').innerHTML='<b>Leitura de outubro.</b> Os chamados cresceram '+pct(rel(oct.c2026,oct.c2025))+' ('+num(oct.c2026-oct.c2025)+' registros), enquanto as ouvidorias operacionais variaram '+pct(rel(oct.o2026,oct.o2025))+' ('+num(oct.o2026-oct.o2025)+'). A divergência de movimentos exige investigar serviços e territórios; não permite concluir melhora ou piora da qualidade dos serviços.';
@@ -28,8 +28,7 @@ function renderHighlights(){
  const topFall=[...r].sort((a,b)=>(a.o2026-a.o2025)-(b.o2026-b.o2025))[0];
  const items=[
   ['O que impulsionou os chamados',topC?esc(topC.nome)+': '+(d(topC,'c')>=0?'+':'')+num(d(topC,'c'))+' registros em outubro':'Sem tipo comparável'],
-  ['Onde houve redução de ouvidorias',topFall?esc(topFall.nome)+': '+num(d(topFall,'o'))+' registros':'Sem tipo comparável'],
-  ['Como interpretar','Mais chamados com menos ouvidorias não é prova de melhoria. Investigue a composição da demanda e os territórios.']
+  ['Onde houve redução de ouvidorias',topFall?esc(topFall.nome)+': '+num(d(topFall,'o'))+' registros':'Sem tipo comparável']
  ];
  $('highlights').innerHTML=items.map(x=>'<div class="highlight"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('');
 }

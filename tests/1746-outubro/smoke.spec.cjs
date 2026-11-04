@@ -12,6 +12,9 @@ for (const pathname of pages) {
       await expect(page.locator('#hubHeader .header .mainTitle')).toHaveText('Linha do Tempo 1746');
       await expect(page.locator('#hubFooter .footerTitle')).toHaveText('HUB COMLURB');
       await expect(page.locator('.timeline-page .statement')).toBeVisible();
+      await expect(page.locator('.timeline-page .takeaways')).toHaveCount(0);
+      await expect(page.locator('.timeline-methodology')).toContainText('CAS – Controle de Atendimento a Solicitações');
+      await expect(page.locator('.timeline-methodology')).toContainText('exclusão dos registros tratados internamente pela PCO');
       await expect(page.locator('#timeline .month')).toHaveCount(10);
       await expect(page.locator('.timeline-hero-title')).toBeVisible();
       await page.getByRole('button', {name:'Detalhar outubro'}).click();

@@ -1,0 +1,25 @@
+const {test,expect}=require('@playwright/test');
+test('Inteligência Executiva 1746 carrega cubos, alertas e filtros sem erros',async ({page},info)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const response=await page.goto('http://127.0.0.1:8765/1746-resumo-executivo/',{waitUntil:'load',timeout:45000});
+ expect(response.status()).toBe(200);
+ await expect(page.locator('#kpis .card')).toHaveCount(4);
+ await expect(page.locator('#kpis')).toContainText('24.116');
+ await expect(page.locator('#kpis')).toContainText('2.213');
+ await expect(page.locator('#accumulated')).toContainText('278.888');
+ await expect(page.locator('#origin tbody tr').first()).toBeVisible();
+ await expect(page.locator('#alerts .card').first()).toBeVisible();
+ await expect(page.locator('#aps tbody tr').first()).toBeVisible();
+ await page.locator('#scope').selectOption('accumulated');
+ await expect(page.locator('#origin')).toContainText('Saldo líquido');
+ await page.locator('#metric').selectOption('o');
+ await expect(page.locator('#subtypes tbody tr').first()).toBeVisible();
+ await page.locator('#trendMetric').selectOption('o');
+ await expect(page.locator('#trend .chartrow')).toHaveCount(10);
+ await page.screenshot({path:info.outputPath('executivo-desktop.png'),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ await page.screenshot({path:info.outputPath('executivo-mobile.png'),fullPage:true});
+ const over=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+ expect(over).toBeLessThan(26);
+ expect(errors).toEqual([]);
+});

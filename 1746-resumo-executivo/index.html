@@ -1,75 +1,93 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Inteligência Executiva 1746 · HUB COMLURB</title>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#030d19">
+<title>Boletim Executivo 1746 | Outubro de 2026 | COMLURB</title>
 <style>
-:root{--bg:#030d19;--panel:#081b2e;--panel2:#0a2339;--edge:#24425c;--ink:#f1f6fe;--soft:#c4d6e6;--muted:#90acc4;--blue:#77b7ee;--teal:#72d3c4;--amber:#eac587;--red:#ed9b9b}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 100% 0,rgba(44,95,144,.20),transparent 42%),var(--bg);color:var(--ink);font:14px/1.55 Inter,system-ui,Arial,sans-serif}a{color:inherit}button,select{font:inherit}button{cursor:pointer}header{border-bottom:1px solid var(--edge);background:#061523}header>div{width:min(1280px,calc(100% - 36px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0}.brand{font-size:17px;font-weight:800}.brand small{display:block;font-size:11px;color:var(--muted);font-weight:500}.back{font-size:12px;text-decoration:none;color:var(--blue)}main{width:min(1280px,calc(100% - 36px));margin:0 auto}.hero{padding:32px 0 22px}.overline{color:var(--teal);text-transform:uppercase;font-size:11px;letter-spacing:1.7px;font-weight:800}h1{font-size:clamp(30px,4vw,47px);line-height:1.1;margin:8px 0 12px;letter-spacing:-1.3px}h2{font-size:21px;letter-spacing:-.35px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px}p{color:var(--soft);margin:7px 0 12px}.muted,.note{color:var(--muted);font-size:12px}.lead{max-width:880px}.nav{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 25px}.nav a{font-size:12px;padding:8px 12px;text-decoration:none;border:1px solid var(--edge);border-radius:999px;background:#081b2e}.nav a:hover,.module:hover{border-color:var(--blue)}section{margin-bottom:30px;scroll-margin-top:15px}.grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:linear-gradient(155deg,var(--panel2),var(--panel));border:1px solid var(--edge);border-radius:16px;padding:20px;min-width:0}.kpi .value{font-size:31px;line-height:1.3;font-weight:800;font-variant-numeric:tabular-nums}.kpi .label{font-size:12px;color:var(--muted)}.delta{font-size:13px;font-weight:750;color:var(--teal)}.delta.down{color:var(--amber)}.statline{border-top:1px solid var(--edge);padding-top:9px;margin-top:9px}.section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:13px}.section-head h2{margin:0}.pill{border:1px solid var(--edge);background:#0c2941;color:var(--soft);border-radius:999px;padding:4px 10px;font-size:11px;white-space:nowrap}.pill.high{color:#ffd4c5;border-color:#8e4e48}.pill.watch{color:#f6dbab;border-color:#8c713f}.pill.observe{color:#a3e2d7;border-color:#397c71}.callout{padding:15px 18px;border-left:3px solid var(--teal);background:#0b2335;border-radius:5px;color:var(--soft)}.callout b{color:var(--ink)}.alert{display:flex;flex-direction:column;gap:8px}.alert h3{margin:0}.alert p{margin:0}.alert .numbers{font-size:12px;color:var(--soft)}.action{color:var(--blue);font-size:12px;text-decoration:none;font-weight:750}.controls{display:flex;align-items:center;flex-wrap:wrap;gap:9px}.controls label{font-size:12px;color:var(--soft)}select{background:#0a2841;color:var(--ink);border:1px solid #3a6280;padding:9px 10px;border-radius:9px;max-width:100%}.tablebox{overflow-x:auto;border-radius:11px;border:1px solid var(--edge)}table{width:100%;border-collapse:collapse;font-size:12px;min-width:615px}td,th{padding:10px 13px;text-align:right;border-bottom:1px solid #1c3a50;font-variant-numeric:tabular-nums}td:first-child,th:first-child{text-align:left;min-width:170px}th{color:#b4cae0;background:#0b253d;font-weight:700}tbody tr:hover{background:#112c45}tbody tr:last-child td{border-bottom:0}.positive{color:var(--teal)}.negative{color:var(--amber)}.chartrows{display:grid;gap:11px}.chartrow{display:grid;grid-template-columns:95px minmax(0,1fr) 90px;gap:10px;align-items:center;font-size:12px}.twobar{display:grid;gap:3px}.barline{display:flex;align-items:center;gap:4px}.bar{height:8px;background:#3d7caf;display:block;min-width:2px;border-radius:4px}.bar.new{background:var(--teal)}.legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin:8px 0 14px}.swatch{width:9px;height:9px;display:inline-block;background:#3d7caf;margin-right:4px}.swatch.new{background:var(--teal)}.modules{grid-template-columns:repeat(5,minmax(0,1fr))}.module{text-decoration:none;display:block;padding:17px;background:var(--panel);border:1px solid var(--edge);border-radius:12px;min-width:0}.module b{display:block}.module small{color:var(--muted);display:block;margin-top:6px}.governance{font-size:12px;color:var(--soft);line-height:1.7;border-left:3px solid #638aac;background:#081a2a;padding:17px}.governance strong{color:var(--ink)}footer{border-top:1px solid var(--edge);padding:22px 0 35px;color:var(--muted);font-size:11px}.hidden{display:none!important}#error{color:var(--red);font-weight:700}@media(max-width:930px){.kpis,.three{grid-template-columns:repeat(2,minmax(0,1fr))}.modules{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:650px){.kpis,.two,.three,.modules{grid-template-columns:1fr}.card{padding:15px}.hero{padding-top:23px}.chartrow{grid-template-columns:69px minmax(0,1fr) 76px}.kpi .value{font-size:27px}header>div{flex-wrap:wrap}.controls{width:100%}}
-.deep{border:1px solid var(--edge);border-radius:14px;background:#071b2d;overflow:hidden}.deep>summary,.method>summary{display:block;list-style:none;cursor:pointer;padding:18px 20px;font-weight:750;color:var(--ink);position:relative}.deep>summary::-webkit-details-marker,.method>summary::-webkit-details-marker{display:none}.deep>summary:after,.method>summary:after{content:"＋";position:absolute;right:20px;color:var(--blue)}.deep[open]>summary:after,.method[open]>summary:after{content:"−"}.deep[open]>summary{border-bottom:1px solid var(--edge)}.deep-body{padding:19px}.accordion-section{margin:0 0 10px}.accordion-section .section-head{margin-bottom:15px}.accordion-section .deep .card{box-shadow:none}.accordion-section .section-head h2{font-size:19px}.method{border:1px solid var(--edge);border-radius:11px;margin-top:14px}.method p,.method .governance{margin:0 14px 14px}.method>summary{font-size:12px;padding:12px 15px;color:var(--muted)}.method>summary:after{right:13px}.highlight{background:#081e30;border-left:2px solid #477ca4;border-radius:8px;padding:14px}.highlight b{display:block;color:var(--ink);font-size:14px}.highlight span{color:var(--soft);font-size:12px;display:block;margin-top:5px}.card{background:var(--panel);box-shadow:none}.kpis{gap:12px}.kpi .value{font-size:29px}#alertas #alerts{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding-bottom:12px}.nav{margin:10px 0 29px}#diagnostico{margin-top:36px}@media(max-width:850px){#alertas #alerts{grid-template-columns:1fr}}@media(max-width:650px){.deep>summary{padding:15px}.deep-body{padding:11px}#highlights{grid-template-columns:1fr}}
-/* Diretoria: síntese linear e poucos blocos acima da dobra */
-main{max-width:1140px}.hero{padding:30px 0 18px}.hero .lead{font-size:14px;max-width:700px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.kpi{padding:20px 22px}.kpi .value{font-size:40px}.kpi .label{font-size:14px}.kpi .note{margin-top:4px}.callout{font-size:15px;line-height:1.65;padding:18px 22px}#highlights{margin-top:13px!important}.highlight{padding:16px 19px;border:1px solid var(--edge);border-left:3px solid #4f95b3;background:#091f32}.highlight span{line-height:1.5}#alertas{margin-top:12px}#alertas #alerts{display:grid;grid-template-columns:1fr;gap:9px}#alerts .alert{display:grid;grid-template-columns:110px minmax(0,1.2fr) minmax(0,1.5fr) auto;align-items:center;gap:13px;padding:13px 18px;border-radius:10px}#alerts .alert h3{font-size:13px;margin:0}#alerts .alert p{font-size:12px;margin:0}#alerts .alert .numbers{font-size:12px;margin:0}#alerts .alert .action{display:none}.alert .pill{white-space:normal}#alerts .alert .numbers:last-of-type{display:none}#diagnostico{margin:34px 0 12px}.executive-deep .deep-body{padding:13px}.executive-deep .accordion-section{margin-bottom:9px}.executive-deep .accordion-section .deep{background:#061829}.technical-links{margin-top:20px}.method{margin:16px 0}section{margin-bottom:25px}#sintese .deep{margin-top:12px!important}.section-head h2{font-size:20px}.kpi .delta{font-size:14px}@media(max-width:860px){#alerts .alert{grid-template-columns:110px 1fr;align-items:start}#alerts .alert p{grid-column:2}#alerts .alert .numbers{grid-column:2}}@media(max-width:620px){.kpis,#highlights{grid-template-columns:1fr}.kpi .value{font-size:34px}#alerts .alert{grid-template-columns:1fr;gap:5px}#alerts .alert p,#alerts .alert .numbers{grid-column:1}#alerts .alert .pill{display:inline-block}.executive-deep .deep-body{padding:7px}.callout{font-size:14px;padding:15px}}
-
-/* Alertas: seleção direta e recorte contextual sem sair da página */
-#alerts .alert{width:100%;color:inherit;text-align:left;font:inherit;cursor:pointer;transition:border-color .15s,background .15s;background:var(--panel);border:1px solid var(--edge);position:relative}
-#alerts .alert:hover,#alerts .alert:focus-visible{border-color:var(--blue);background:#102b42;outline:none}
-#alerts .alert[aria-expanded="true"]{border-color:var(--teal);background:#103044;box-shadow:inset 3px 0 0 var(--teal)}
-#alerts .alert h3:after{content:"  ↗";font-size:12px;color:var(--blue)}
-#alerts .alert[aria-expanded="true"] h3:after{content:"  ▾";color:var(--teal)}
-.detail-region{margin-top:14px;padding:22px;border:1px solid #357d8a;background:linear-gradient(145deg,#0b283a,#06192b);border-radius:14px;scroll-margin-top:20px}
-.detail-region[hidden]{display:none!important}
-.detail-header{display:flex;align-items:start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--edge);padding-bottom:12px;margin-bottom:14px}
-.detail-header h3{font-size:21px;margin:6px 0 0}
-.detail-close{background:transparent;border:1px solid var(--edge);border-radius:9px;padding:8px 13px;color:var(--soft)}
-.detail-close:hover,.detail-close:focus-visible{border-color:var(--blue);color:var(--ink)}
-.detail-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:15px 0}
-.detail-metric{padding:16px;border:1px solid var(--edge);border-radius:11px;background:#071c2e}
-.detail-metric label{display:block;color:var(--muted);font-size:12px}
-.detail-metric strong{font-size:25px;display:block;font-variant-numeric:tabular-nums;margin:5px 0}
-.detail-metric p{font-size:12px;margin:4px 0;color:var(--soft)}
-.detail-context{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
-.detail-context>div{padding:14px 16px;background:#0a2235;border-radius:10px}
-.detail-context h4{margin:0 0 8px;font-size:13px}
-.detail-context p{font-size:13px;margin:5px 0}
-.detail-context a{font-size:12px;color:var(--blue)}
-.detail-disclaimer{color:var(--muted);font-size:11px;margin-top:12px}
-@media(max-width:640px){.detail-region{padding:14px}.detail-metrics,.detail-context{grid-template-columns:1fr}.detail-metric strong{font-size:22px}.detail-header h3{font-size:18px}}
-
-/* Detalhamento hierárquico do recorte: serviço, subtipo, território */
-.cascade-area{margin-top:18px;border-top:1px solid var(--edge);padding-top:17px}
-.cascade-area h4{font-size:15px;margin:0 0 7px}
-.cascade-note{font-size:12px;color:var(--muted);margin-bottom:12px}
-.cascade-service{border:1px solid var(--edge);border-radius:10px;background:#071b2c;margin:8px 0;overflow:hidden}
-.cascade-service>button,.cascade-sub>button{display:grid;width:100%;grid-template-columns:minmax(0,1fr) 105px 105px 20px;gap:10px;align-items:center;text-align:left;padding:13px 14px;background:transparent;color:var(--ink);border:0;cursor:pointer;font:inherit}
-.cascade-service>button:hover,.cascade-sub>button:hover,.cascade-service>button[aria-expanded="true"],.cascade-sub>button[aria-expanded="true"]{background:#102c42}
-.cascade-service>button:focus-visible,.cascade-sub>button:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
-.cascade-title{min-width:0;font-size:13px;font-weight:750;overflow-wrap:anywhere}
-.cascade-meta{font-size:10px;color:var(--muted);display:block;font-weight:500}
-.cascade-qty{text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
-.cascade-qty small{display:block;color:var(--muted);font-size:10px}
-.cascade-subwrap{padding:12px;background:#081f31;border-top:1px solid var(--edge)}
-.cascade-sub{margin:5px 0;border:1px solid #22415a;border-radius:9px;overflow:hidden}
-.cascade-sub>button{padding:10px 12px;font-size:12px}
-.cascade-territory{padding:12px 15px;background:#071929;border-top:1px solid var(--edge)}
-.cascade-territory .tablebox{margin-top:8px}
-.cascade-territory table{min-width:470px}
-.cascade-summary{margin-bottom:10px;font-size:12px;color:var(--soft)}
-.cascade-arrow{color:var(--blue);text-align:right}
-@media(max-width:640px){.cascade-service>button,.cascade-sub>button{grid-template-columns:minmax(0,1fr) 60px 60px 12px;gap:5px;padding:11px 8px}.cascade-title{font-size:11px}.cascade-qty{font-size:12px}.cascade-subwrap{padding:7px}.cascade-territory{padding:10px 7px}}
+:root{--bg:#030d19;--panel:#081b2d;--line:#23415e;--ink:#f5f8fe;--soft:#c8d7e6;--muted:#93aec5;--blue:#83bbea;--teal:#89d4ca;--amber:#e8c58e}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(ellipse at 90% 0%,#10283d 0%,transparent 38%),var(--bg);font:14px/1.52 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+.shell{max-width:1040px;width:calc(100% - 48px);margin:0 auto}
+header{border-bottom:1px solid #1a3349;background:#04111e}
+.head{display:flex;justify-content:space-between;align-items:center;min-height:69px;gap:18px}
+.brand{font-size:15px;font-weight:800;letter-spacing:-.2px}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+.back{text-decoration:none;color:var(--blue);font-size:12px;white-space:nowrap}
+main{padding-top:30px;padding-bottom:26px}
+.eyebrow{color:var(--teal);text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1.5px}
+h1{font-size:clamp(29px,4vw,41px);line-height:1.12;letter-spacing:-1.1px;margin:7px 0 6px}
+.lead{margin:0;color:var(--soft);font-size:14px}
+.period{color:var(--muted);font-size:12px;margin-top:7px}
+section{margin-top:25px}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.step{width:23px;height:23px;flex:0 0 23px;border:1px solid #35657c;display:grid;place-items:center;color:var(--teal);border-radius:7px;font-size:11px;font-weight:800}
+h2{font-size:17px;line-height:1.2;margin:0;letter-spacing:-.25px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.kpi{border:1px solid var(--line);border-radius:13px;background:linear-gradient(155deg,#0a2339,#061829);padding:18px 20px}
+.kpi-label{color:var(--soft);font-size:12px}
+.kpi-value{font-size:clamp(29px,4vw,39px);font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.3;margin-top:3px}
+.change{font-size:13px;font-weight:750;margin-top:2px}
+.change.up{color:var(--teal)}.change.down{color:var(--amber)}
+.small{font-size:11px;color:var(--muted);margin-top:6px}
+.reading{margin-top:11px;background:#0a2133;border-left:3px solid var(--teal);padding:12px 16px;border-radius:5px;color:var(--soft);line-height:1.6}
+.reading strong{color:var(--ink)}
+.factor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.factor{border-top:1px solid var(--line);padding:14px 3px 3px}
+.factor-name{font-weight:750;font-size:14px}
+.factor-num{font-weight:800;color:var(--ink);font-size:20px;letter-spacing:-.4px;font-variant-numeric:tabular-nums;margin-top:3px}
+.factor p{font-size:12px;color:var(--soft);margin:4px 0 0;line-height:1.58}
+.priority-list{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#071b2d}
+.priority{display:grid;grid-template-columns:minmax(135px,175px) minmax(0,1fr);gap:18px;padding:15px 20px;border-bottom:1px solid #1c3850;align-items:start}
+.priority:last-child{border-bottom:0}
+.place{font-size:15px;font-weight:800}
+.kind{font-size:11px;color:var(--muted);margin-top:1px}
+.priority-stat{font-size:12px;color:var(--soft);line-height:1.6}
+.priority-stat strong{color:var(--ink)}
+.priority-why{color:var(--soft);font-size:12px;margin-top:5px}
+.end-note{font-size:11px;color:var(--muted);margin:10px 0 0;line-height:1.58}
+footer{border-top:1px solid #1b3349;color:var(--muted);font-size:11px;line-height:1.65;padding:16px 0 25px}
+footer a{color:var(--blue);text-decoration:none}
+footer strong{color:var(--soft)}
+@media(max-width:660px){.shell{width:calc(100% - 30px)}main{padding-top:24px}.head{min-height:60px}.grid,.factor-grid{grid-template-columns:1fr}.priority{grid-template-columns:1fr;gap:5px;padding:13px 15px}.factor{padding-top:11px}.kpi{padding:15px}section{margin-top:23px}.reading{padding:12px}}
 </style>
-<script defer src="../1746-timeline/data.js?v=out2026"></script>
-<script defer src="../1746-timeline/cascade_data.js?v=out2026"></script>
-<script defer src="executivo.js?v=out2026-drillfix2"></script>
 </head>
-<body><header><div><div class="brand">HUB COMLURB <small>Relacionamento com o Cidadão · 1746</small></div><a class="back" href="../">← Portal Executivo</a></div></header>
-<main><div class="hero"><span class="overline">Prévia de homologação · Outubro/2026</span><h1>1746 · Resultado de outubro</h1><p class="lead">O essencial para a Diretoria, em uma única leitura. Outubro de 2026 comparado a outubro de 2025.</p><div id="error" role="alert"></div></div>
+<body>
+<header><div class="shell head"><div class="brand">HUB COMLURB <small>Relacionamento com o Cidadão | 1746</small></div><a class="back" href="../">Voltar ao HUB</a></div></header>
+<main class="shell">
+<div class="eyebrow">Leitura para a Diretoria | Fechamento de outubro</div>
+<h1>Boletim Executivo 1746</h1>
+<p class="lead">O resultado, o que explica a mudança e os territórios que merecem atenção.</p>
+<div class="period">Outubro de 2026 em comparação com outubro de 2025</div>
 
-<section id="sintese"><div class="section-head"><h2>O que mudou</h2><span class="pill">Out/2026 × Out/2025</span></div><div id="kpis" class="grid kpis"></div><div id="executiveSummary" class="callout" style="margin-top:16px"></div><div id="highlights" class="grid two" style="margin-top:16px"></div><details class="deep" style="margin-top:16px"><summary>Ver séries mensais e resultados acumulados</summary><div class="grid two" style="margin-top:14px"><article class="card"><h3>Evolução mensal · 2025 × 2026</h3><p class="note">Mesmos meses, mesma série; cada linha usa sua própria escala.</p><div class="controls"><label for="trendMetric">Indicador</label><select id="trendMetric"><option value="c">Chamados</option><option value="o">Ouvidorias operacionais</option></select></div><div class="legend"><span><i class="swatch"></i>2025</span><span><i class="swatch new"></i>2026</span></div><div id="trend" class="chartrows"></div></article><article class="card"><h3>Acumulado · Jan a Out/2026</h3><div id="accumulated"></div><p class="note">Comparação com jan a out/2025; preservados os meses previamente fechados.</p></article></div></details></section>
-<section id="alertas"><div class="section-head"><h2>Onde concentrar a atenção</h2><span class="pill">Triagem por volume</span></div><p>Três sinais prioritários identificados nos dados de outubro. Não significam falha comprovada.</p><div class="grid three" id="alerts" aria-label="Alertas prioritários"></div><section id="alertDetail" class="detail-region" hidden aria-live="polite" aria-label="Detalhamento do alerta selecionado"><div class="detail-header"><div><div class="overline">Detalhamento do alerta selecionado</div><h3 id="detailTitle"></h3></div><button type="button" id="detailClose" class="detail-close" aria-label="Fechar detalhamento">Fechar ×</button></div><div id="detailContent"></div></section><details class="method"><summary>Como os alertas são calculados</summary><p class="note" id="alertRules"></p></details></section>
-<div id="diagnostico" class="section-head"><h2>Detalhamento técnico</h2><span class="note">Opcional · para a equipe de análise</span></div>
-<details class="deep executive-deep"><summary>Explorar análises e séries completas</summary><div class="deep-body">
-<section id="composicao" class="accordion-section"><details class="deep"><summary>Ver o que explica as variações</summary><div class="deep-body"><div class="section-head"><h2>03 · Origem das variações</h2><div class="controls"><label for="scope">Período</label><select id="scope"><option value="october">Outubro/2026 × Outubro/2025</option><option value="accumulated">Jan a Out/2026 × Jan a Out/2025</option></select><label for="metric">Indicador</label><select id="metric"><option value="c">Chamados</option><option value="o">Ouvidorias operacionais</option></select></div></div><div class="grid two"><div class="card"><h3>Serviços que mais explicam a variação</h3><p class="note">Decomposição em volumes comparáveis por tipo; contribuições positivas e negativas são mantidas.</p><div id="origin"></div></div><div class="card"><h3>Subtipos em evidência</h3><p class="note">Para outubro, subtipos de ouvidoria são exibidos apenas em volume, sem taxa ou equivalência nominal presumida.</p><div id="subtypes"></div></div></div></div></details></section>
-<section id="territorio" class="accordion-section"><details class="deep"><summary>Explorar AP, gerência e bairro</summary><div class="deep-body"><div class="section-head"><h2>04 · Inteligência Territorial</h2><span class="pill">Volume ≠ variação</span></div><p>Distinguimos territórios com mais registros daqueles que mais contribuíram para a mudança. Abaixo, o período e o indicador acompanham os seletores da seção anterior.</p><div class="grid three"><article class="card"><h3>Áreas de Planejamento</h3><div id="aps"></div></article><article class="card"><h3>Gerências</h3><div id="gerencias"></div></article><article class="card"><h3>Bairros</h3><div id="bairros"></div></article></div></div></details></section>
-<section id="persistencia" class="accordion-section"><details class="deep"><summary>Ver persistência mensal</summary><div class="deep-body"><div class="section-head"><h2>05 · Persistência e mudanças de padrão</h2><span class="pill">Julho → Outubro</span></div><p>Triagem por tipo de serviço, com os quatro últimos fechamentos disponíveis. Persistência significa crescimento interanual recorrente de volume no mesmo serviço, não repetição de uma ocorrência individual.</p><div class="card"><div id="persistence"></div><p class="note">Classificação: persistente = três ou quatro meses seguidos em alta; emergente = dois últimos meses em alta; pontual = alta apenas em outubro. Não classificado quando não há série comparável.</p></div></div></details></section>
-<section class="technical-links"><h2>Consultar o HUB 1746 completo</h2><div class="grid modules"><a class="module" href="../chamados-1746/"><b>Chamados</b><small>Tipos, territórios e detalhamento</small></a><a class="module" href="../ouvidoria/"><b>Ouvidorias</b><small>Visão operacional e institucional</small></a><a class="module" href="../1746-comparativo/"><b>Comparativo territorial</b><small>AP, gerências e bairros</small></a><a class="module" href="../1746-historico/"><b>Histórico</b><small>Taxas e mix nos pares válidos</small></a><a class="module" href="../1746-timeline/"><b>Timeline</b><small>Detalhamento em cascata</small></a></div></section>
-</div></details>
-<section><details class="method"><summary>Fontes, critérios e limites metodológicos</summary><div class="governance"><strong>Governança e ressalvas metodológicas.</strong> Fonte exclusiva: bases COMLURB, histórico oficial jan a set e extração de outubro auditada tecnicamente. PCO excluída das ouvidorias operacionais, mas mantida no total institucional. Outubro: 2.369 ouvidorias gerais, 156 PCO e 2.213 operacionais. Comparativos anuais respeitam séries fechadas; revisões retroativas não incorporadas. A data de corte da extração de outubro não foi informada. A referência independente do sistema 1746 não está disponível. Critérios dos alertas são exploratórios; não implicam avaliação de desempenho, taxa de resolução ou causalidade. Esta página é uma prévia em branch separada e não representa publicação homologada.</div></details></section>
-<footer>HUB COMLURB · Inteligência Executiva 1746 · Outubro/2026 · Prévia técnica</footer></main></body></html>
+<section aria-labelledby="resultado">
+ <div class="section-head"><span class="step">1</span><h2 id="resultado">O que aconteceu</h2></div>
+ <div class="grid">
+  <div class="kpi"><div class="kpi-label">Chamados</div><div class="kpi-value">24.116</div><div class="change up">+11,4% | +2.464 registros</div><div class="small">Outubro de 2025: 21.652</div></div>
+  <div class="kpi"><div class="kpi-label">Ouvidorias operacionais</div><div class="kpi-value">2.213</div><div class="change down">-17,9% | 484 registros a menos</div><div class="small">Outubro de 2025: 2.697 | PCO excluída</div></div>
+ </div>
+ <div class="reading"><strong>Leitura executiva.</strong> Os chamados aumentaram, enquanto as ouvidorias operacionais diminuíram. Os movimentos são distintos e, isoladamente, não demonstram melhora ou piora da qualidade dos serviços.</div>
+</section>
+
+<section aria-labelledby="fatores">
+ <div class="section-head"><span class="step">2</span><h2 id="fatores">O que explica a mudança</h2></div>
+ <div class="factor-grid">
+  <div class="factor"><div class="factor-name">Limpeza</div><div class="factor-num">+2.581 chamados</div><p>Principal contribuição positiva para a variação de chamados em outubro. O volume passou de 5.745 para 8.326.</p></div>
+  <div class="factor"><div class="factor-name">Remoção Gratuita</div><div class="factor-num">325 ouvidorias a menos</div><p>Principal contribuição negativa nas ouvidorias operacionais. O volume passou de 799 para 474.</p></div>
+ </div>
+</section>
+
+<section aria-labelledby="prioridades">
+ <div class="section-head"><span class="step">3</span><h2 id="prioridades">Onde concentrar a atenção</h2></div>
+ <div class="priority-list">
+  <article class="priority"><div><div class="place">OG18G</div><div class="kind">Gerência</div></div><div><div class="priority-stat"><strong>+81,0% em chamados</strong> (462 para 836) | <strong>+81,4% em ouvidorias</strong> (70 para 127)</div><div class="priority-why">Limpeza concentrou 303 dos 374 chamados adicionais. O crescimento também exige atenção às manifestações recebidas.</div></div></article>
+  <article class="priority"><div><div class="place">Bangu</div><div class="kind">Bairro</div></div><div><div class="priority-stat"><strong>+70,9% em chamados</strong> (577 para 986) | <strong>+80,4% em ouvidorias</strong> (46 para 83)</div><div class="priority-why">Limpeza respondeu por 405 dos 409 chamados adicionais no bairro, principal fator da mudança de volume.</div></div></article>
+  <article class="priority"><div><div class="place">Campo Grande</div><div class="kind">Bairro</div></div><div><div class="priority-stat"><strong>+26,9% em chamados</strong> (1.415 para 1.796) | <strong>+36,2% em ouvidorias</strong> (152 para 207)</div><div class="priority-why">Limpeza acrescentou 271 chamados e 48 ouvidorias. Vale acompanhar a concentração dessa demanda.</div></div></article>
+ </div>
+ <p class="end-note">Os três recortes foram selecionados por uma regra exploratória de crescimento e volume. São prioridades para investigação, não diagnósticos de falha. Gerências e bairros podem se sobrepor; seus totais não devem ser somados.</p>
+</section>
+</main>
+<footer><div class="shell"><strong>Fonte:</strong> bases COMLURB e cubos auditados para outubro de 2025 e outubro de 2026. Os fatores territoriais foram conferidos com a cascata de serviços e subtipos e reconciliados com os respectivos totais. A data de corte da extração de outubro não foi informada. Sem homologação independente do sistema 1746. <strong>Prévia para conferência, não publicada.</strong> <a href="../">Acessar módulos técnicos do HUB</a>.</div></footer>
+</body></html>

@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#030d19">
 <title>Boletim Executivo 1746 | Outubro de 2026 | COMLURB</title>
 <style>
-:root{--bg:#030d19;--panel:#081b2d;--line:#23415e;--ink:#f5f8fe;--soft:#c8d7e6;--muted:#93aec5;--blue:#83bbea;--teal:#89d4ca;--amber:#e8c58e}
+:root{--bg:#030d19;--panel:#081b2d;--line:#23415e;--ink:#f5f8fe;--soft:#c8d7e6;--muted:#93aec5;--blue:#83bbea;--teal:#89d4ca;--amber:#e8ae6d;--green:#84d8ad;--red:#efa4a1}
 *{box-sizing:border-box}
 html{background:var(--bg)}
 body{margin:0;background:radial-gradient(ellipse at 90% 0%,#10283d 0%,transparent 38%),var(--bg);font:14px/1.52 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
@@ -30,7 +30,7 @@ h2{font-size:17px;line-height:1.2;margin:0;letter-spacing:-.25px}
 .kpi-label{color:var(--soft);font-size:12px}
 .kpi-value{font-size:clamp(29px,4vw,39px);font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.3;margin-top:3px}
 .change{font-size:13px;font-weight:750;margin-top:2px}
-.change.up{color:var(--teal)}.change.down{color:var(--amber)}
+.change.up{color:var(--amber)}.change.down{color:var(--green)}
 .small{font-size:11px;color:var(--muted);margin-top:6px}
 .reading{margin-top:11px;background:#0a2133;border-left:3px solid var(--teal);padding:12px 16px;border-radius:5px;color:var(--soft);line-height:1.6}
 .reading strong{color:var(--ink)}
@@ -45,7 +45,7 @@ h2{font-size:17px;line-height:1.2;margin:0;letter-spacing:-.25px}
 .place{font-size:15px;font-weight:800}
 .kind{font-size:11px;color:var(--muted);margin-top:1px}
 .priority-stat{font-size:12px;color:var(--soft);line-height:1.6}
-.priority-stat strong{color:var(--ink)}
+.priority-stat strong{color:var(--ink)}.priority-stat .calls-up{color:var(--amber)}.priority-stat .ouvid-up{color:var(--red)}
 .priority-why{color:var(--soft);font-size:12px;margin-top:5px}
 .end-note{font-size:11px;color:var(--muted);margin:10px 0 0;line-height:1.58}
 footer{border-top:1px solid #1b3349;color:var(--muted);font-size:11px;line-height:1.65;padding:16px 0 25px}
@@ -68,23 +68,23 @@ footer strong{color:var(--soft)}
   <div class="kpi"><div class="kpi-label">Chamados</div><div class="kpi-value">24.116</div><div class="change up">+11,4% | +2.464 registros</div><div class="small">Outubro de 2025: 21.652</div></div>
   <div class="kpi"><div class="kpi-label">Ouvidorias operacionais</div><div class="kpi-value">2.213</div><div class="change down">-17,9% | 484 registros a menos</div><div class="small">Outubro de 2025: 2.697 | PCO excluída</div></div>
  </div>
- <div class="reading"><strong>Leitura executiva.</strong> Os chamados aumentaram, enquanto as ouvidorias operacionais diminuíram. Os movimentos são distintos e, isoladamente, não demonstram melhora ou piora da qualidade dos serviços.</div>
+ <div class="reading"><strong>Leitura executiva.</strong> Em outubro, houve 2.464 chamados adicionais, com a alta concentrada em Limpeza. Já as ouvidorias operacionais recuaram 484 registros, principalmente em Remoção Gratuita. A redução das ouvidorias é favorável ao indicador, mas sua interpretação depende do contexto dos serviços e dos registros.</div>
 </section>
 
 <section aria-labelledby="fatores">
  <div class="section-head"><span class="step">2</span><h2 id="fatores">O que explica a mudança</h2></div>
  <div class="factor-grid">
-  <div class="factor"><div class="factor-name">Limpeza</div><div class="factor-num">+2.581 chamados</div><p>Principal contribuição positiva para a variação de chamados em outubro. O volume passou de 5.745 para 8.326.</p></div>
-  <div class="factor"><div class="factor-name">Remoção Gratuita</div><div class="factor-num">325 ouvidorias a menos</div><p>Principal contribuição negativa nas ouvidorias operacionais. O volume passou de 799 para 474.</p></div>
+  <div class="factor"><div class="factor-name">Limpeza</div><div class="factor-num">+2.581 chamados</div><p>O serviço acrescentou 2.581 registros, mais que o aumento líquido de 2.464 chamados, porque outros serviços apresentaram reduções.</p></div>
+  <div class="factor"><div class="factor-name">Remoção Gratuita</div><div class="factor-num">325 ouvidorias a menos</div><p>A redução de 325 registros representa cerca de 67% da queda líquida de 484 ouvidorias operacionais em outubro.</p></div>
  </div>
 </section>
 
 <section aria-labelledby="prioridades">
  <div class="section-head"><span class="step">3</span><h2 id="prioridades">Onde concentrar a atenção</h2></div>
  <div class="priority-list">
-  <article class="priority"><div><div class="place">OG18G</div><div class="kind">Gerência</div></div><div><div class="priority-stat"><strong>+81,0% em chamados</strong> (462 para 836) | <strong>+81,4% em ouvidorias</strong> (70 para 127)</div><div class="priority-why">Limpeza concentrou 303 dos 374 chamados adicionais. O crescimento também exige atenção às manifestações recebidas.</div></div></article>
-  <article class="priority"><div><div class="place">Bangu</div><div class="kind">Bairro</div></div><div><div class="priority-stat"><strong>+70,9% em chamados</strong> (577 para 986) | <strong>+80,4% em ouvidorias</strong> (46 para 83)</div><div class="priority-why">Limpeza respondeu por 405 dos 409 chamados adicionais no bairro, principal fator da mudança de volume.</div></div></article>
-  <article class="priority"><div><div class="place">Campo Grande</div><div class="kind">Bairro</div></div><div><div class="priority-stat"><strong>+26,9% em chamados</strong> (1.415 para 1.796) | <strong>+36,2% em ouvidorias</strong> (152 para 207)</div><div class="priority-why">Limpeza acrescentou 271 chamados e 48 ouvidorias. Vale acompanhar a concentração dessa demanda.</div></div></article>
+  <article class="priority"><div><div class="place">OG18G</div><div class="kind">Gerência</div></div><div><div class="priority-stat"><strong class="calls-up">+81,0% em chamados</strong> (462 para 836) | <strong class="ouvid-up">+81,4% em ouvidorias</strong> (70 para 127)</div><div class="priority-why">Limpeza respondeu por 303 dos 374 chamados adicionais e por 62 ouvidorias adicionais. Outros serviços compensaram parcialmente a alta das manifestações.</div></div></article>
+  <article class="priority"><div><div class="place">Bangu</div><div class="kind">Bairro</div></div><div><div class="priority-stat"><strong class="calls-up">+70,9% em chamados</strong> (577 para 986) | <strong class="ouvid-up">+80,4% em ouvidorias</strong> (46 para 83)</div><div class="priority-why">Limpeza explicou 405 dos 409 chamados adicionais e 20 das 37 ouvidorias adicionais no bairro.</div></div></article>
+  <article class="priority"><div><div class="place">Campo Grande</div><div class="kind">Bairro</div></div><div><div class="priority-stat"><strong class="calls-up">+26,9% em chamados</strong> (1.415 para 1.796) | <strong class="ouvid-up">+36,2% em ouvidorias</strong> (152 para 207)</div><div class="priority-why">Limpeza respondeu por 271 dos 381 chamados adicionais e por 48 das 55 ouvidorias adicionais no bairro.</div></div></article>
  </div>
  <p class="end-note">Os três recortes foram selecionados por uma regra exploratória de crescimento e volume. São prioridades para investigação, não diagnósticos de falha. Gerências e bairros podem se sobrepor; seus totais não devem ser somados.</p>
 </section>

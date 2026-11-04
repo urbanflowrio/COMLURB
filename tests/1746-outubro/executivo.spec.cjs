@@ -15,9 +15,9 @@ test('Boletim executivo 1746: leitura única, dados conferidos e responsividade'
  await expect(page.locator('main')).toContainText('Bangu');
  await expect(page.locator('main')).toContainText('Campo Grande');
  await expect(page.locator('.priority')).toHaveCount(2);
- await expect(page.locator('main')).toContainText('71,7% dos chamados');
- await expect(page.locator('main')).toContainText('78,0% das ouvidorias');
- await expect(page.locator('main')).toContainText('317');
+ await expect(page.locator('main')).toContainText('já estão incluídos no total do bairro');
+ expect(await page.locator('main').innerText()).not.toContain('PCO excluída');
+ expect(await page.locator('main').innerText()).not.toContain('interseção');
  await expect(page.locator('main')).toContainText('599');
  await expect(page.locator('main')).toContainText('99');
  expect(await page.locator('main details, main button, main select').count()).toBe(0);

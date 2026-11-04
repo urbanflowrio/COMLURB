@@ -14,6 +14,13 @@ test('Inteligência Executiva 1746 carrega cubos, alertas e filtros sem erros',a
  await expect(firstAlert).toHaveAttribute('aria-expanded','true');
  await expect(page.locator('#alertDetail')).toBeVisible();
  await expect(page.locator('#detailContent .detail-metric')).toHaveCount(2);
+ await expect(page.locator('#alertCascadeServices .cascade-service').first()).toBeVisible();
+ await expect(page.locator('#alertCascade')).toContainText('De onde vêm os registros');
+ await page.locator('#alertCascadeServices [data-service-index]').first().click();
+ await expect(page.locator('#alertCascadeServices [data-service-body="0"]')).toBeVisible();
+ await expect(page.locator('#alertCascadeServices [data-sub-index]').first()).toBeVisible();
+ await page.locator('#alertCascadeServices [data-sub-index]').first().click();
+ await expect(page.locator('#alertCascadeServices .cascade-territory:visible').first()).toContainText('Subtipo:');
  await expect(page.locator('#detailContent')).toContainText('Out/2025');
  const selectedTitle=await page.locator('#alerts button[data-alert-index]').first().locator('h3').innerText();
  await expect(page.locator('#detailTitle')).toContainText(selectedTitle.split('·')[0].trim());

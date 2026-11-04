@@ -53,6 +53,28 @@ footer a{color:var(--blue);text-decoration:none}
 footer strong{color:var(--soft)}
 @media(max-width:660px){.shell{width:calc(100% - 30px)}main{padding-top:24px}.head{min-height:60px}.grid,.factor-grid{grid-template-columns:1fr}.priority{grid-template-columns:1fr;gap:5px;padding:13px 15px}.factor{padding-top:11px}.kpi{padding:15px}section{margin-top:23px}.reading{padding:12px}}
 .priority-comparisons{display:flex;gap:16px;flex-wrap:wrap}.priority-measure{display:grid;grid-template-columns:140px minmax(150px,1fr) 65px;align-items:center;gap:12px;min-width:min(100%,385px);flex:1}.priority-measure>strong{font-size:12px;color:var(--soft)}.period-values{display:flex;gap:9px;align-items:center;white-space:nowrap}.period-values span:not(.direction){display:flex;flex-direction:column;gap:1px}.period-values small{font-size:10px;letter-spacing:.35px;color:var(--muted);font-weight:650}.period-values b{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}.direction{color:var(--muted)}.growth{font-size:13px;font-weight:800;text-align:right}.priority{grid-template-columns:minmax(110px,145px) minmax(0,1fr)}.priority-why{margin-top:11px}@media(max-width:850px){.priority-comparisons{display:grid;gap:12px}.priority-measure{width:100%}}@media(max-width:660px){.priority-measure{grid-template-columns:1fr auto;min-width:0}.priority-measure>strong{grid-column:1/-1}.period-values{justify-content:flex-start}.growth{justify-self:end}}
+
+/* Respiração editorial e comparações claramente separadas */
+.shell{max-width:1160px}
+section{margin-top:34px}
+.section-head{margin-bottom:16px}
+.factor-grid{gap:30px}
+.factor{padding:20px 7px 8px}
+.factor-num{margin-top:8px}
+.factor p{font-size:13px;line-height:1.72;max-width:490px;margin-top:8px}
+.priority{grid-template-columns:145px minmax(0,1fr);gap:24px;padding:22px 24px}
+.priority-comparisons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.priority-measure{display:flex;flex-direction:column;align-items:stretch;gap:9px;min-width:0;width:auto;padding:12px 16px;border:1px solid #24445e;border-radius:10px;background:#0a2235}
+.priority-measure>strong{font-size:12px;color:var(--soft)}
+.period-values{display:flex;justify-content:flex-start;align-items:center;gap:18px;white-space:nowrap}
+.period-values span:not(.direction){gap:4px}
+.period-values small{font-size:11px}
+.period-values b{font-size:18px}
+.growth{text-align:left;font-size:15px}
+.priority-why{margin-top:13px;font-size:13px;line-height:1.65}
+@media(max-width:940px){.priority{grid-template-columns:125px minmax(0,1fr);gap:16px;padding:19px}.priority-comparisons{gap:10px}.priority-measure{padding:11px}.period-values{gap:10px}}
+@media(max-width:740px){.priority{grid-template-columns:1fr;gap:14px}.priority-comparisons{grid-template-columns:1fr 1fr}.priority-measure{min-width:0}.priority-why{margin-top:8px}}
+@media(max-width:540px){.priority-comparisons{grid-template-columns:1fr}.priority-measure{gap:7px}.factor-grid{gap:8px}.factor{padding-top:15px}section{margin-top:27px}}
 </style>
 </head>
 <body>
@@ -75,8 +97,8 @@ footer strong{color:var(--soft)}
 <section aria-labelledby="fatores">
  <div class="section-head"><span class="step">2</span><h2 id="fatores">O que explica a mudança</h2></div>
  <div class="factor-grid">
-  <div class="factor"><div class="factor-name">Limpeza</div><div class="factor-num">+2.581 chamados</div><p>O serviço acrescentou 2.581 registros, mais que o aumento líquido de 2.464 chamados, porque outros serviços apresentaram reduções.</p></div>
-  <div class="factor"><div class="factor-name">Remoção Gratuita</div><div class="factor-num">325 ouvidorias a menos</div><p>A redução de 325 registros representa cerca de 67% da queda líquida de 484 ouvidorias operacionais em outubro.</p></div>
+  <div class="factor"><div class="factor-name">Chamados | Limpeza</div><div class="factor-num">+2.581 chamados</div><p>Limpeza registrou 2.581 chamados a mais. Os demais serviços, juntos, tiveram 117 chamados a menos. Por isso, o total aumentou 2.464 registros.</p></div>
+  <div class="factor"><div class="factor-name">Ouvidorias operacionais | Remoção Gratuita</div><div class="factor-num">325 ouvidorias a menos</div><p>Remoção Gratuita registrou 325 ouvidorias a menos. Os demais serviços, juntos, tiveram 159 a menos. A redução total foi de 484 registros.</p></div>
  </div>
 </section>
 

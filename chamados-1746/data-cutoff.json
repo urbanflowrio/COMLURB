@@ -54,9 +54,35 @@
       "observacao": "Divergência na fonte atual de setembro/2026 de -23 chamados; fechamento 24.695 mantido."
     }
   ],
-  "regra": "Janeiro–setembro permanece congelado. Outubro foi adicionado apenas para preparação, sem auditoria independente e sem publicação.",
-  "status_publicacao": "PREVIA - NAO PUBLICADO",
+  "regra": "Janeiro a setembro permanece congelado. Outubro foi incorporado após auditoria interna; a homologação independente não foi realizada.",
+  "auditoria_interna": {
+    "status": "concluida",
+    "data": "2026-11-04",
+    "relatorio": "staging/1746-outubro-2026/AUDITORIA_HUB_COMPLETO_2026-11-04.md",
+    "escopo": "Conciliações numéricas e conferência estática documentadas no relatório. Não equivale a homologação independente."
+  },
+  "publicacao": {
+    "status": "publicado",
+    "branch": "main",
+    "preparacao": {
+      "branch": "preparacao-1746-outubro-2026",
+      "commit": "8182241",
+      "data": "2026-11-04",
+      "descricao": "Incorporação técnica de outubro/2026 nos cinco módulos, fora da main."
+    },
+    "publicacao_dados": {
+      "commit": "36892a8",
+      "data": "2026-11-04",
+      "descricao": "Merge na main do fechamento de outubro/2026 e do Boletim Executivo."
+    },
+    "refinamento_visual": {
+      "commit": "be5a809",
+      "data": "2026-11-04",
+      "descricao": "Integração da Linha do Tempo e do Boletim ao padrão visual do HUB, sem alteração de dados."
+    }
+  },
   "homologacao_independente": false,
+  "homologacao_independente_observacao": "Não realizada. Auditoria interna, publicação e homologação independente são etapas distintas.",
   "fonte_oficial": "COMLURB — extrações finais de outubro/2026",
-  "observacao_corte": "Data precisa da extração final não informada; validação técnica realizada em 04/11/2026. Não confundir com data de corte da fonte."
+  "observacao_corte": "Data precisa da extração final não informada. O campo data_corte permanece nulo até haver documentação da extração; a validação técnica de 04/11/2026 não substitui a data de corte da fonte."
 }

@@ -27,7 +27,7 @@ Este documento reúne decisões antigas encontradas no Google Drive, regras espe
 1. **Origem imutável.** Registrar e conservar `TipoOriginal`, `SubTipoOriginal`, `GerenciaRegistrada`, `APOriginal`, `BairroOriginal`, competência, canal, ano, fonte, extração e corte. Não reescrever as colunas originais.
 2. **Semântica central da instância.** `NomeExibicao`, `AtividadeAnalitica`, `Objeto`, `ResponsavelExecutor`, `StatusRegra`, `ruleVersion` e `evidencia` devem sair de um único mapa governado para Chamados e Ouvidorias; não reimplementar nos gráficos.
 3. **Limpeza ≠ instalação/retirada.** Coincidência de objeto (papeleira, caçamba, contêiner) não implica equivalência de operação. Descrições compostas não devem ser repartidas sem campo que permita fazê-lo.
-4. **Gerência registrada ≠ executora.** Preservar ambas. Instalação/retirada de papeleira → **LDE** (confirmação operacional do usuário, independentemente da gerência registrada). Instalação de caçamba comunitária → **LRS** (confirmação operacional). Limpeza territorial e atendimento/encaminhamento em códigos BG/CG/NG/OG/SG requerem validação antes de definir executora.
+4. **Gerência registrada ≠ executora.** Preservar ambas. Instalação/retirada de papeleira → **LDE** (confirmação operacional do usuário, independentemente da gerência registrada). Instalação de caçamba comunitária → **LRS** (confirmação operacional). **Retirada de caçamba comunitária e limpeza física de papeleiras, contêineres e caçambas COMLURB → gerências territoriais** (confirmação operacional). O papel das territoriais em manifestações de informação e encaminhamento **depende do serviço** e ainda necessita explicação; não inferir execução por mera presença do código de gerência.
 5. **Prefixo de Ouvidoria.** Remover somente no campo de exibição as variantes iniciais `OUV -`, `OUV –`, `OUV —` (com tolerância de espaços); manter origem e não unir atividades diferentes. O prefixo não deve fazer parte da chave semântica. Não retirar `OUV` no interior de uma expressão.
 6. **PCO.** Manter Ouvidorias PCO na base institucional e excluí-las exclusivamente dos indicadores operacionais, conforme norma mensal.
 7. **Fechamentos.** Preservar valores fechados de meses anteriores, inclusive julho, agosto e setembro/2026. Extrações posteriores não substituem mês fechado. Registrar em `Revisoes_Nao_Incorporadas` (valor anterior, novo, diferença, extração, motivo).
@@ -42,7 +42,10 @@ Este documento reúne decisões antigas encontradas no Google Drive, regras espe
 - Os ADRs antigos estavam marcados como propostas; não assumir sua implantação integral.
 - A planilha de governança de julho propõe abas EXPORT_HUB; o princípio posterior de fonte única proíbe segunda base mantida manualmente. Avaliar modelo de exportação apenas se for gerado automaticamente e rastreável.
 - As exportações originais de outubro são agregadas; não permitem atribuir atividade específica a cada protocolo quando o subtipo mistura serviços.
-- Necessária aprovação da matriz do documento 02 e deliberação sobre caçamba comunitária e recálculo paralelo.
+- Necessária aprovação da matriz do documento 02 e decisão sobre o significado de registros mistos de informação, implantação de varrição e eventual recálculo paralelo. As executoras de instalação/retirada de caçamba comunitária e limpeza de equipamentos já foram confirmadas pela operação.
 - O diagnóstico em `1746-out2026` é evidência de divergências, não norma operacional homologada.
 
 **Status final:** minuta pronta para revisão; nenhuma transformação de dado, cubo, snapshot ou painel alterado.
+
+## Validações adicionais (05/11/2026)
+Confirmados: **LRS instala caçambas comunitárias; gerências territoriais as retiram e executam limpeza física de papeleiras/contêineres/caçambas COMLURB**. Papel de cada territorial nos registros de informação: depende do serviço, a detalhar. O rótulo `IMPLANTAÇÃO DE VARRIÇÃO` não deve ser interpretado literalmente até esclarecimento. Esses registros atualizam a minuta, **não** homologam uma série reclassificada.

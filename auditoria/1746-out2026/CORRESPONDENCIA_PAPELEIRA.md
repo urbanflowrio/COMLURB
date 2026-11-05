@@ -36,7 +36,11 @@ Evidência do remapeamento: `BASE_AUDITAVEL_CHAMADOS_1746_JULHO_2026_COMPLETA_RE
 2. **Ouvidorias de implantação ou retirada continuam existindo**, divididas entre os tipos PAPELEIRA e LIMPEZA. Somando os dois tipos, foram 53 em outubro de 2025 e 100 em outubro de 2026.
 3. **Limpeza de papeleira é uma atividade estável**, sempre classificada em LIMPEZA nos dois anos e nos dois canais.
 
-## Efeito sobre o boletim (proposta, não aplicada)
+## Efeito sobre o boletim
+
+**Aplicado em 05/11/2026, com ajuste:** +2.581 mantido como variação oficial de chamados de Limpeza; +158 mantido como variação oficial de ouvidorias e Campo Grande mantido em 48, com +86 e 47 informados na nota de Classificação como valores só da atividade de limpeza; 2.415 retirado; nota de Papeleira corrigida para "3 de maio a outubro de 2026". A tabela abaixo registra a proposta original.
+
+### Proposta original
 
 | Trecho | Situação | Proposta |
 |---|---|---|

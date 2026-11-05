@@ -56,13 +56,21 @@ const oDemais = oOut.dif - oNamed.reduce((s, n) => s + svc(oOut, n).dif, 0);
 check('A4', 'Decomposição de ouvidorias', [...oNamed.map(n => sig(svc(oOut, n).dif)), sig(oDemais), sig(oOut.dif)]);
 assert('A4', 'Soma dos serviços fecha o total (chamados)', cOut.children.reduce((s, r) => s + r.dif, 0) === cOut.dif);
 assert('A4', 'Soma dos serviços fecha o total (ouvidorias)', oOut.children.reduce((s, r) => s + r.dif, 0) === oOut.dif);
-// A4: "praticamente todo o aumento" deve valer nas duas taxonomias de Papeleira
-// (outubro separa Papeleira; o histórico congelado a soma a Limpeza). Auditoria 05/11/2026, D2.
-const limp = svc(cOut, 'LIMPEZA').dif, papel = (svc(cOut, 'PAPELEIRA') || { dif: 0 }).dif;
-check('A4', 'Limpeza: praticamente todo o aumento', ['praticamente todo o aumento', '2.581 chamados a mais']);
-assert('A4', 'Limpeza >= 95% do aumento nas duas taxonomias', limp / cOut.dif >= 0.95 && (limp + papel) / cOut.dif >= 0.95,
-  `${(limp / cOut.dif * 100).toFixed(1)}% e ${((limp + papel) / cOut.dif * 100).toFixed(1)}%`);
-check('A4', 'Alta de Limpeza somando Papeleira', int(limp + papel));
+// A4: Limpeza acima do aumento total. Limpeza de papeleira e implantação ou retirada de papeleira
+// são serviços distintos; o tipo LIMPEZA de chamados não tem implantação ou retirada em out/2025
+// nem em out/2026 (auditoria/1746-out2026/CORRESPONDENCIA_PAPELEIRA.md). Não se soma Papeleira a Limpeza.
+const limp = svc(cOut, 'LIMPEZA').dif;
+assert('A4', 'Limpeza supera o aumento total', limp > cOut.dif, `${limp} > ${cOut.dif}`);
+check('A4', 'Limpeza acima do aumento total', ['2.581 chamados a mais, acima do aumento total', int(cOut.dif - limp) + ' a menos']);
+assert('A4', 'Chamados de Limpeza sem implantação ou retirada de papeleira',
+  !C.periods.outubro.byTipo['LIMPEZA'].children.some(r => /INSTALA|RETIRADA DE PAPELEIRA/.test(r.nome) && (r.v2025 || r.v2026)));
+// Ouvidorias de Limpeza: +158 oficial (classificação da fonte) e +86 só na atividade de limpeza
+const oLimp = O.periods.outubro.byTipo['LIMPEZA'];
+const oImp = oLimp.children.filter(r => /PAPELEIRA/.test(r.nome) && /INSTALA|RETIRADA/.test(r.nome));
+const oImpDif = oImp.reduce((s, r) => s + r.dif, 0);
+assert('A4', 'Ouvidorias de implantação ou retirada em Limpeza: 0 em out/25 e 72 em out/26',
+  oImp.reduce((s, r) => s + r.v2025, 0) === 0 && oImp.reduce((s, r) => s + r.v2026, 0) === 72);
+check('A4', 'Ouvidorias de Limpeza: oficial e ajustada', [`de ${sig(oLimp.dif)} para ${sig(oLimp.dif - oImpDif)} na cidade`, '72 desses casos']);
 
 // A5: Remoção Gratuita em ouvidorias. A leitura correta é o nível baixo de 2026,
 // não uma base excepcional em out/2025 (auditoria 05/11/2026, D1).
@@ -132,13 +140,20 @@ for (const [nome, ger] of [['CAMPO GRANDE', 'OG18G'], ['BANGU', 'OG17B']]) {
   check('A10', `${ger} dentro de ${nome}`, `${ger} registrou ${int(gc)} chamados e ${int(go)} ouvidorias`);
   assert('A10', `${ger} contida no bairro`, gc <= c.v2026 && go <= o.v2026);
 }
+// Campo Grande: ouvidorias de implantação ou retirada de papeleira classificadas em Limpeza
+let cgImp = 0;
+for (const [sv, S] of Object.entries(cas)) if (sv === 'LIMPEZA') for (const [st, T] of Object.entries(S.subtipos || {}))
+  if (/PAPELEIRA/.test(st) && /INSTALA|RETIRADA/.test(st)) for (const b of T.bairros || []) if (b.nome === 'CAMPO GRANDE') cgImp += b.o2026 - b.o2025;
+const cgLo = O.periods.outubro.byTipo['LIMPEZA'].bairros.find(r => r.nome === 'CAMPO GRANDE').dif;
+check('A10', 'Campo Grande: Limpeza oficial e ajustada', `de ${int(cgLo)} para ${int(cgLo - cgImp)} em Campo Grande`);
+assert('A10', 'Campo Grande: 1 ouvidoria de implantação ou retirada em Limpeza', cgImp === 1, String(cgImp));
 const soma = bo('CAMPO GRANDE').dif + bo('BANGU').dif;
 check('A10', 'Ouvidorias a mais nos dois bairros', `${int(soma)} ouvidorias a mais`);
 
-// Papeleira
+// Papeleira (implantação ou retirada) em chamados
 const pap = svc(cOut, 'PAPELEIRA');
 assert('M1', 'Papeleira: 166 em out/2025 e zero em out/2026', pap.v2025 === 166 && pap.v2026 === 0);
-check('M1', 'Nota de Papeleira sem presumir descontinuação', ['166 chamados', 'não tem registros desde maio de 2026 nas fontes examinadas']);
+check('M1', 'Nota de Papeleira sem presumir descontinuação', ['166 registros em outubro de 2025', '3 de maio a outubro de 2026']);
 check('M2', 'Nota de Manejo Arbóreo', 'subtipo de avaliação de poda mudou de nome');
 check('M3', 'Limitação das fontes agregadas', 'Não houve conferência de registros individuais');
 
@@ -148,7 +163,10 @@ assert('R1', 'Sem travessões no texto', !/[–—]/.test(text));
 const rejeitadas = [
   [/excepcional/i, 'D1: out/2025 não foi atípico em Remoção Gratuita'],
   [/mais que o triplo/i, 'D1: comparação apenas com setembro/2025'],
-  [/acima do aumento total/i, 'D2: depende da taxonomia de Papeleira'],
+  [/2\.415/, 'D2 corrigida: somava implantação ou retirada de papeleira à limpeza'],
+  [/Papeleira est[áa] somada a Limpeza|somando Papeleira/i, 'D2 corrigida: serviços distintos não se somam'],
+  [/praticamente todo o aumento/i, 'D2 corrigida: Limpeza supera o aumento total'],
+  [/n[ãa]o tem registros desde maio/i, 'N1: houve 3 registros de maio a outubro de 2026'],
   [/perfis opostos|distribu[ií]d/i, 'D3: contraste AP5 e AP3 é efeito do agrupamento'],
   [/nenhum passa de/i, 'D3: contraste AP5 e AP3 é efeito do agrupamento'],
   [/ausente em 2026|em desuso/i, 'D4: Papeleira existiu em 2026 até abril; sem prova de descontinuação formal'],

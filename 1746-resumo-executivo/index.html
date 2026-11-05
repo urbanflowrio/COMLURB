@@ -8,15 +8,16 @@
 <!--
   RASTREABILIDADE (resumo). Documento completo: 1746-resumo-executivo/RASTREABILIDADE.md
   Verificação automática: node tests/1746-outubro/boletim-rastreabilidade.cjs
+  Auditoria independente: auditoria/1746-out2026/AUDITORIA_BOLETIM_1746_OUT2026.md
   A1  Chamados 21.652 / 24.116 ............ CHAMADOS_CUBE.periods.outubro.all
   A2  Ouvidorias 2.697 / 2.213 ............ OUVIDORIA_CUBE.periods.outubro.all
   A3  Acumulado jan a out +13,5% / +15,5% . periods.acumulado.all (dois cubos)
   A4  Decomposição por serviço ............ periods.outubro.all.children (dois cubos)
-  A5  Remoção Gratuita 246/799/469/474 .... OUVIDORIA_CUBE.periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal
-  A6  Sem Remoção Gratuita: -8,4% ......... derivado de A2 e A4
+  A5  Remoção Gratuita 799/474; set e out menores de 2026  OUVIDORIA_CUBE.periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal
+  A6  Ouvidorias: menor mês de jan a out/26  OUVIDORIA_CUBE.periods.acumulado.all.mensal
   A7  2.060 em remoção, capina, varrição .. CHAMADOS_CUBE.periods.outubro.byTipo.LIMPEZA.children
   A8  Único grande serviço nos dois canais  periods.outubro.all.children; grande = pelo menos 5% dos chamados de out/2025
-  A9  AP5 concentrada, AP3 distribuída .... periods.outubro.all.ap + TIMELINE1746_CASCADE.full['Outubro/2026']
+  A9  AP5 e AP3; CG e Bangu 68% da alta e 40% da base da AP5  periods.outubro.all.ap + bairros
   A10 Bairros e gerências ................. TIMELINE1746_CASCADE.full['Outubro/2026'], conciliado com periods.outubro.all.bairros
 -->
 <style>
@@ -97,7 +98,7 @@
 
     <section class="be-section" aria-labelledby="be-resultado">
       <h2 class="be-label" id="be-resultado">Resultado</h2>
-      <p class="be-headline">O aumento dos chamados esteve concentrado em <strong>Limpeza</strong>. Já a redução das ouvidorias foi influenciada pelo <strong>volume excepcional de Remoção Gratuita em outubro de 2025</strong>.</p>
+      <p class="be-headline">O aumento dos chamados esteve concentrado em <strong>Limpeza</strong>. Outubro registrou o <strong>menor volume mensal de ouvidorias operacionais de janeiro a outubro de 2026</strong>, com a maior redução em Remoção Gratuita.</p>
 
       <div class="be-figures">
         <div class="be-fig">
@@ -128,7 +129,7 @@
       <div class="be-explain">
         <div class="be-col">
           <h3>Chamados</h3>
-          <p class="be-reading">Limpeza teve 2.581 chamados a mais, acima do aumento total da cidade. Remoção de resíduos, capina e varrição respondem por 2.060 desses registros.</p>
+          <p class="be-reading">Limpeza respondeu por praticamente todo o aumento, com 2.581 chamados a mais. Remoção de resíduos, capina e varrição somam 2.060 desses registros.</p>
           <ul class="be-ledger" aria-label="Variação de chamados por serviço">
             <li><span>Limpeza</span><b class="up">+2.581</b></li>
             <li><span>Coleta Domiciliar</span><b class="up">+608</b></li>
@@ -140,7 +141,7 @@
         </div>
         <div class="be-col">
           <h3>Ouvidorias operacionais</h3>
-          <p class="be-reading">Remoção Gratuita teve 799 ouvidorias em outubro de 2025, mais que o triplo de setembro daquele ano. Em 2026 o serviço ficou estável, com 469 em setembro e 474 em outubro. Sem ele, a redução seria de 8,4%.</p>
+          <p class="be-reading">Remoção Gratuita teve 474 ouvidorias, contra 799 em outubro de 2025. Setembro e outubro foram os dois menores meses do serviço em 2026.</p>
           <ul class="be-ledger" aria-label="Variação de ouvidorias operacionais por serviço">
             <li><span>Remoção Gratuita</span><b class="down">−325</b></li>
             <li><span>Manejo Arbóreo</span><b class="down">−172</b></li>
@@ -155,7 +156,7 @@
 
     <section class="be-section" aria-labelledby="be-onde">
       <h2 class="be-label" id="be-onde">Onde ocorreu</h2>
-      <p class="be-where-lead">A AP5 e a AP3 reúnem 2.310 dos 2.464 chamados adicionais, com altas quase iguais e perfis opostos. Na AP5, dois bairros somam 68% do aumento. Na AP3, 56 dos 80 bairros cresceram e nenhum passa de 11% do aumento.</p>
+      <p class="be-where-lead">A AP5 e a AP3 reúnem 2.310 dos 2.464 chamados adicionais. Na AP5, Campo Grande e Bangu somam 68% do aumento, bem acima dos 40% que representam no volume da área.</p>
 
       <div class="be-places">
         <article class="be-place">
@@ -196,9 +197,9 @@
       <div><dt>Serviços citados</dt><dd>Os cinco com pelo menos 5% dos chamados de outubro de 2025.</dd></div>
       <div><dt>Bairros destacados</dt><dd>Os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.</dd></div>
       <div><dt>Leitura</dt><dd>As variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.</dd></div>
-      <div><dt>Classificação</dt><dd>Em outubro de 2025, 166 chamados foram classificados no serviço Papeleira, ausente em 2026. Eles estão em Demais serviços.</dd></div>
-      <div><dt>Fonte</dt><dd>Cubos auditados de chamados e ouvidorias de outubro de 2026. Cruzamento entre bairro e gerência da base da Linha do Tempo, conciliado com os totais dos cubos.</dd></div>
-      <div><dt>Situação</dt><dd>Auditoria interna documentada em 04/11/2026; sem homologação independente.</dd></div>
+      <div><dt>Classificação</dt><dd>Papeleira teve 166 chamados em outubro de 2025, incluídos em Demais serviços, e não tem registros desde maio de 2026 nas fontes examinadas. Na série oficial de janeiro a setembro, Papeleira está somada a Limpeza; com esse critério, a alta de Limpeza em outubro seria de 2.415 chamados. Em Manejo Arbóreo, o subtipo de avaliação de poda mudou de nome em 2026, o que afeta a comparação do serviço.</dd></div>
+      <div><dt>Fonte</dt><dd>Cubos de chamados e ouvidorias de outubro de 2026, conciliados com as exportações agregadas da COMLURB. Não houve conferência de registros individuais do sistema 1746.</dd></div>
+      <div><dt>Situação</dt><dd>Auditoria interna em 04/11/2026 e auditoria das interpretações em 05/11/2026; sem homologação independente.</dd></div>
     </dl>
   </main>
   <div id="hubFooter"></div>

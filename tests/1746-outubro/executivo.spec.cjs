@@ -15,9 +15,11 @@ test('Boletim executivo 1746: leitura única, dados conferidos e responsividade'
  await expect(page.locator('.be-place')).toHaveCount(2);
  await expect(page.locator('.be-more a')).toHaveCount(5);
  const main=page.locator('main');
- for(const t of ['24.116','2.213','21.652','2.697','+13,5%','+15,5%','+2.581','799','8,4%','97,6%','2.310','Campo Grande','Bangu','OG18G','OG17B','599 chamados e 99 ouvidorias','637 chamados e 52 ouvidorias','já contidos nesses totais','92 ouvidorias a mais','04/11/2026','sem homologação independente'])
+ for(const t of ['24.116','2.213','21.652','2.697','+13,5%','+15,5%','+2.581','799','474','97,6%','2.310','2.415','Campo Grande','Bangu','OG18G','OG17B','599 chamados e 99 ouvidorias','637 chamados e 52 ouvidorias','já contidos nesses totais','92 ouvidorias a mais','04/11/2026','sem homologação independente','menor volume mensal de ouvidorias operacionais de janeiro a outubro de 2026'])
    await expect(main).toContainText(t);
  expect(await main.innerText()).not.toMatch(/Vale acompanhar|Merece atenção|Leitura executiva|É importante destacar/);
+ // Afirmações rejeitadas pela auditoria de 05/11/2026
+ expect(await main.innerText()).not.toMatch(/excepcional|acima do aumento total|perfis opostos|ausente em 2026|em desuso|redução seria de/i);
  expect(await page.locator('main details, main button, main select, main table, main canvas').count()).toBe(0);
  expect(await page.locator('script').count()).toBeGreaterThanOrEqual(3);
  expect(await page.locator('body').innerText()).not.toMatch(/[–—]/);

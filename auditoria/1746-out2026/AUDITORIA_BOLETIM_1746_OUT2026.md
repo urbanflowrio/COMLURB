@@ -140,3 +140,18 @@ Os números estão corretos e rastreáveis até as exportações da COMLURB. A m
 - Série de 2024.
 - Documentação da data de extração.
 - Registro formal das mudanças de classificação de Papeleira e Manejo Arbóreo.
+
+## G. Correções aplicadas (05/11/2026)
+
+Autorizadas após o parecer. O desenho da V7 foi preservado; só o texto mudou.
+
+| Item | Antes | Depois |
+|---|---|---|
+| Mensagem principal | Redução das ouvidorias influenciada pelo volume excepcional de Remoção Gratuita em outubro de 2025 | Outubro registrou o menor volume mensal de ouvidorias operacionais de janeiro a outubro de 2026, com a maior redução em Remoção Gratuita |
+| Leitura de chamados | Limpeza acima do aumento total da cidade | Limpeza respondeu por praticamente todo o aumento (98% a 105%, conforme a taxonomia de Papeleira) |
+| Leitura de ouvidorias | Base de 2025 mais que o triplo de setembro; 8,4% sem Remoção Gratuita | 474 contra 799; setembro e outubro foram os dois menores meses do serviço em 2026 |
+| Onde ocorreu | AP5 concentrada, AP3 distribuída | AP5 e AP3 com 2.310 dos 2.464; Campo Grande e Bangu com 68% do aumento da AP5 contra 40% do volume |
+| Nota de classificação | Papeleira ausente em 2026 | Sem registros nessa classificação desde maio de 2026 nas fontes examinadas; alta de Limpeza de 2.415 somando Papeleira; mudança de subtipo em Manejo Arbóreo |
+| Nota de fonte | Cubos auditados | Cubos conciliados com as exportações agregadas da COMLURB; sem conferência de registros individuais |
+
+O script `auditoria_independente.py` registra a auditoria da versão `d06d74f`. Rodado contra a versão corrigida, as afirmações retiradas aparecem como ausentes do HTML, o que é o resultado esperado. A proteção contra reintrodução está em `tests/1746-outubro/boletim-rastreabilidade.cjs` (verificações R2) e em `executivo.spec.cjs`.

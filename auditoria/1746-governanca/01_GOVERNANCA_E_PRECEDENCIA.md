@@ -49,3 +49,10 @@ Este documento reúne decisões antigas encontradas no Google Drive, regras espe
 
 ## Validações adicionais (05/11/2026)
 Confirmados: **LRS instala caçambas comunitárias; gerências territoriais as retiram e executam limpeza física de papeleiras/contêineres/caçambas COMLURB**. Papel de cada territorial nos registros de informação: depende do serviço, a detalhar. O rótulo `IMPLANTAÇÃO DE VARRIÇÃO` não deve ser interpretado literalmente até esclarecimento. Esses registros atualizam a minuta, **não** homologam uma série reclassificada.
+
+## REGRA MAIS RECENTE — PRECEDÊNCIA DO TIPO (05/11/2026)
+**Esta decisão prevalece sobre qualquer interpretação anterior deste documento que propusesse reclassificar pelo SubTipo.** A classificação estatística é determinada pelo campo `TipoOriginal`: `LIMPEZA` continua LIMPEZA; `PAPELEIRA` continua PAPELEIRA, mesmo quando o SubTipo menciona instalação/retirada. A gerência executora não muda o Tipo. `LIMPEZA (DLU)` e demais Tipos permanecem distintos até eventual regra homologada.
+
+Corrigir, em estudo de reconciliação, apenas os casos em que o tratamento histórico alterou o próprio Tipo original `PAPELEIRA` para `LIMPEZA`. Registros originalmente de Tipo LIMPEZA não devem ser excluídos dos indicadores Limpeza para simular apenas limpeza física. Valores derivados dessa exclusão (como +86 e +47 em outubro) não são substitutos dos totais por Tipo. Conservar o fechamento como evidência até validação da reconstrução.
+
+Registro mensal e implicações: [04_REVISAO_MENSAL_TIPOS_1746.md](04_REVISAO_MENSAL_TIPOS_1746.md).

@@ -13,10 +13,10 @@ Manter seis colunas lógicas por registro: `tipo_original` / `subtipo_original` 
 | H03 | Fonte | Ouvidorias instalação/retirada de papeleira dentro de tipo LIMPEZA | 4 e 329 jan–out congelado; outubro +158 oficial versus +86 excluindo 72 | Distinguir tipo oficial e atividade ajustada, sem mudar os totais | Diagnóstico confirmado |
 | H04 | Fonte | Reclassificação retroativa julho–set das ouvidorias | 170 no tipo LIMPEZA em fechamento versus 4 na extração atual, por subtipo | Priorizar snapshot congelado; registrar diferenças não incorporadas | Pendente conciliação detalhada |
 | H05 | Fonte | Chamados de implantação/retirada no próprio tipo LIMPEZA | 68 (2025) e 4 (2026) jan–out | Classificar atividade sem alterar gerência ou tipo original | Pendente |
-| H06 | Serviço distinto | Informação sobre instalação/retirada de caçamba comunitária sob LIMPEZA | 2.117 (2025), 3.506 (2026); cerca de 38% do crescimento de Ouvidorias de Limpeza na fonte | Separar classe analítica `informação relativa a caçamba`; não imputar execução | **Decisão operacional pendente** |
+| H06 | Serviço distinto | Informação sobre instalação/retirada de caçamba comunitária sob LIMPEZA | 2.117 (2025), 3.506 (2026); cerca de 38% do crescimento de Ouvidorias de Limpeza na fonte | Separar informação sobre serviço de execução: **instalação LRS; retirada gerências territoriais**, sem inferir qual ocorreu em cada registro de informação | **Responsabilidade de execução confirmada; semântica do registro misto pendente** |
 | H07 | Hipótese | Subtipo retirada de caçamba comunitária versus informação instalação/retirada | 221 (2025), 9 (2026), possível mudança de nome | Não unificar antes de verificar equivalência | A confirmar |
-| H08 | Serviço distinto | Implantação de varrição no tipo LIMPEZA | 39 e 4 jan–out | Identificar implantação de serviço (não execução de varrição) | Pendente |
-| H09 | Agrupamento irredutível | Um subtipo reúne limpeza de papeleira, contêiner e caçamba | Chamados 1.660 e 2.874 jan–out | Objeto `múltiplo` até existir detalhamento; nunca repartir proporcionalmente | Tratamento proposto |
+| H08 | Significado operacional pendente | `IMPLANTAÇÃO DE VARRIÇÃO` no tipo LIMPEZA | 39 e 4 jan–out | **Não interpretar literalmente como implantação/expansão**; usuário indicou que significa outra coisa; aguardar definição antes de reclassificar | **Pendente de explicação operacional** |
+| H09 | Agrupamento irredutível | Um subtipo reúne limpeza de papeleira, contêiner e caçamba | Chamados 1.660 e 2.874 jan–out | **Gerências territoriais executam a limpeza**; objeto `múltiplo` até existir detalhamento; nunca repartir proporcionalmente | **Executora confirmada; desagregação indisponível** |
 | H10 | Fonte | Fiscalização de caçamba particular em tipos diferentes | Chamados 1 (2025) e 86 (2026), 70 out/26 | Confirmar equivalência e unidade fiscalizadora | A confirmar |
 | H11 | Nomenclatura | Poda com/sem `(180 DIAS)` | Acumulado por subtipo dividido; tipo permanece igual | Conferir significado de prazo; exibição única somente após validação | A confirmar |
 | H12 | Nomenclatura | Prefixo `OUV -` removido jan–set e mantido em outubro | Subtipos duplicados no acumulado | **Retirar prefixo da exibição** em todo o histórico; preservar origem; teste semântico | Confirmado como diretriz |
@@ -37,7 +37,7 @@ Manter seis colunas lógicas por registro: `tipo_original` / `subtipo_original` 
 | Ouvidorias Limpeza, Campo Grande | +48 | +47 retirando 1 ocorrência de instalação/retirada | Bairro continua +55 ouvidorias no total |
 
 ## Ordem de execução, sem alteração de dados
-1. Confirmar responsabilidades pendentes no dicionário (prioridade: retirada de caçamba comunitária, registros de informação e gerências territoriais).
+1. Consolidar responsabilidades já confirmadas (LDE instala/retira papeleiras; LRS instala caçambas comunitárias; territoriais retiram caçambas comunitárias e limpam equipamentos). Solicitar explicação sobre papel das territoriais por serviço e significado de implantação de varrição.
 2. Aprovar regras de classificação por **atividade** separadas de classificação por **tipo oficial**.
 3. Extrair matriz original → congelado de cada competência de 2025/2026, incluindo `Revisoes_Nao_Incorporadas`, e verificar consistência por tipo/subtipo/gerência/AP/bairro.
 4. Registrar `ruleVersion`, decisão, teste unitário de cada remapeamento e versão da fonte/snapshot.
@@ -56,3 +56,6 @@ Manter série oficial congelada **como publicada** e gerar separadamente série 
 - [ADR-004](https://drive.google.com/file/d/1yF9011pFyMWAyKDeCCMw2Pv--umMeFCH/view)
 
 **Não executar a transformação sem validação das pendências.**
+
+## Atualização de validação operacional — 05/11/2026
+A operação confirmou **retirada de caçamba comunitária** e **limpeza física de papeleiras, contêineres e caçambas COMLURB** como atribuições das gerências territoriais. Isso **não** resolve, por si só, o significado dos registros de **informação** sobre instalação/retirada, nem permite alocar volumes aos três equipamentos contidos em um único subtipo. Foi também indicado que o subtipo `IMPLANTAÇÃO DE VARRIÇÃO` **significa outra coisa**; a interpretação literal anterior foi suspensa, sem substituí-la por hipótese nova. **Não recalcular indicadores com base nessas confirmações antes da conciliação.**

@@ -8,14 +8,27 @@ node tests/1746-outubro/boletim-rastreabilidade.cjs
 
 O script recalcula cada valor a partir dos cubos e confirma que o número exibido no HTML é o calculado. Resultado em 05/11/2026: 36 verificações aprovadas, nenhuma falha.
 
+## Tipos de validação
+
+| Tipo | O que cobre | Como é feita | Situação |
+|---|---|---|---|
+| Numérica | Cada número do boletim é igual ao valor calculado nos cubos; somas fecham os totais; a base da Linha do Tempo concilia com os cubos | Automática: `boletim-rastreabilidade.cjs` | 36 de 36 aprovadas |
+| Estrutural e visual | Cabeçalho, rodapé e logo do HUB, três momentos, ausência de tabelas e travessões, largura no celular | Automática: `executivo.spec.cjs` em navegador real | Aprovada localmente; execução em CI registrada no workflow da branch |
+| Metodológica | Critérios de seleção (grande serviço, bairros destacados), tratamento das gerências, leitura do efeito de base | Revisão humana dos critérios desta página | Critérios documentados; aceite pendente |
+| Editorial | Clareza, hierarquia, ausência de conclusões causais ou sem evidência | Revisão humana | Pendente de homologação |
+
+A validação numérica confirma que os números estão corretos e presentes. Ela não valida a interpretação: escolher um critério, chamar uma base de "excepcional" ou destacar dois bairros são decisões metodológicas e editoriais, que dependem de aceite humano.
+
 ## Situação dos dados
 
 | Etapa | Situação | Referência |
 |---|---|---|
+| Preparação dos dados de outubro | Incorporados fora da `main` em 04/11/2026 | commit `8182241`, branch `preparacao-1746-outubro-2026` |
 | Auditoria interna | Concluída em 04/11/2026 | `staging/1746-outubro-2026/AUDITORIA_HUB_COMPLETO_2026-11-04.md` |
-| Publicação dos dados de outubro | Publicado na `main` em 04/11/2026 | commit `be5a809` |
+| Publicação dos dados de outubro | Merge na `main` em 04/11/2026, 15:23 | commit `36892a8` |
+| Refinamento visual posterior | Na `main` em 04/11/2026, 16:41, sem alteração de dados | commit `be5a809` |
 | Homologação independente | Não realizada | `data-cutoff.json` dos módulos Chamados 1746 e Ouvidoria |
-| Data de corte da extração | Não informada | campo `data_corte` nulo nos dois `data-cutoff.json` |
+| Data de corte da extração | Não informada; mantida nula até haver documentação da extração | campo `data_corte` nos dois `data-cutoff.json` |
 
 Auditoria interna, publicação e homologação independente são etapas distintas e não devem ser tratadas como equivalentes.
 

@@ -57,9 +57,8 @@
 .be-ledger li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;color:var(--be-soft);border-bottom:1px solid rgba(41,72,102,.3)}
 .be-ledger li b{font-weight:700;white-space:nowrap}
 .be-ledger li.total{border-bottom:0;border-top:1px solid var(--be-rule);margin-top:2px;padding-top:9px;color:var(--be-ink);font-weight:700}
-.be-statement{margin:52px 0 0;padding:30px 0;border-top:1px solid var(--be-rule);border-bottom:1px solid var(--be-rule)}
-.be-statement p{margin:0;max-width:1300px;font-size:clamp(21px,2.1vw,32px);line-height:1.28;font-weight:700;letter-spacing:-.02em;color:var(--be-soft)}
-.be-statement strong{color:var(--be-ink)}
+.be-bridge{margin:36px 0 0;padding-top:20px;border-top:1px solid var(--be-rule2);max-width:1180px;font-size:16px;line-height:1.6;color:var(--be-soft)}
+.be-bridge strong{color:var(--be-ink);font-weight:700}
 
 /* Onde ocorreu */
 .be-where-lead{margin:0 0 34px;max-width:1180px;font-size:clamp(18px,1.45vw,22px);line-height:1.55;color:var(--be-ink);font-weight:500}
@@ -81,12 +80,14 @@
 .be-more span{margin-right:6px;color:var(--be-mute);font-size:12px;font-weight:700}
 .be-more a{padding:9px 14px;border:1px solid #315a7c;border-radius:10px;color:#dcecff;background:#0a1b31;text-decoration:none;font-size:12px;font-weight:700}
 .be-more a:hover{background:#173550;border-color:var(--be-accent)}
-.be-method{margin:28px 0 0;padding-top:20px;border-top:1px solid var(--be-rule2);color:#91a6ba;font-size:11px;line-height:1.75;max-width:1500px}
-.be-method strong{color:var(--be-soft)}
+.be-method{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 32px;margin:32px 0 0;padding-top:22px;border-top:1px solid var(--be-rule2)}
+.be-method div{min-width:0}
+.be-method dt{margin:0 0 4px;color:var(--be-soft);font-size:11px;font-weight:700}
+.be-method dd{margin:0;color:#91a6ba;font-size:11px;line-height:1.6}
 
-@media(max-width:1180px){.be-place{grid-template-columns:minmax(130px,1fr) minmax(0,1fr) minmax(0,1fr)}.be-place .be-note{grid-column:1/-1}}
+@media(max-width:1180px){.be-method{grid-template-columns:repeat(2,minmax(0,1fr))}.be-place{grid-template-columns:minmax(130px,1fr) minmax(0,1fr) minmax(0,1fr)}.be-place .be-note{grid-column:1/-1}}
 @media(max-width:900px){.be-figures{grid-template-columns:1fr 1fr}.be-fig:nth-child(2){border-right:0}.be-fig:last-child{grid-column:1/-1;border-top:1px solid var(--be-rule)}.be-explain{grid-template-columns:1fr}.be-col{padding:0}.be-col+.be-col{padding:36px 0 0;margin-top:36px;border-left:0;border-top:1px solid var(--be-rule2)}}
-@media(max-width:620px){.be{padding-top:10px}.be-section{margin-top:48px}.be-figures{grid-template-columns:1fr}.be-fig{border-right:0;border-bottom:1px solid var(--be-rule);padding:22px 20px}.be-fig:last-child{border-bottom:0;border-top:0}.be-place{grid-template-columns:1fr 1fr;gap:18px}.be-place-head{grid-column:1/-1}.be-more a{flex:1 1 100%;text-align:center}.be-statement{margin-top:40px;padding:24px 0}}
+@media(max-width:620px){.be{padding-top:10px}.be-section{margin-top:48px}.be-figures{grid-template-columns:1fr}.be-fig{border-right:0;border-bottom:1px solid var(--be-rule);padding:22px 20px}.be-fig:last-child{border-bottom:0;border-top:0}.be-place{grid-template-columns:1fr 1fr;gap:18px}.be-place-head{grid-column:1/-1}.be-more{display:grid;grid-template-columns:1fr 1fr;gap:8px}.be-more span{grid-column:1/-1}.be-more a{text-align:center}.be-method{grid-template-columns:1fr;gap:14px}}
 </style>
 </head>
 <body>
@@ -149,9 +150,7 @@
           </ul>
         </div>
       </div>
-      <div class="be-statement">
-        <p>Entre os cinco serviços que somam 97,6% dos chamados, <strong>Limpeza foi o único que cresceu nos dois canais.</strong></p>
-      </div>
+      <p class="be-bridge">Entre os cinco serviços que somam 97,6% dos chamados, <strong>Limpeza foi o único que cresceu nos dois canais.</strong></p>
     </section>
 
     <section class="be-section" aria-labelledby="be-onde">
@@ -191,15 +190,16 @@
       <a href="../1746-timeline/">Linha do tempo</a>
     </nav>
 
-    <div class="be-method">
-      <strong>Períodos:</strong> outubro de 2026 comparado a outubro de 2025; no ano, janeiro a outubro dos dois anos.
-      <strong>Ouvidorias operacionais:</strong> excluem os registros tratados internamente pela PCO.
-      <strong>Critérios:</strong> os cinco serviços citados são os que têm pelo menos 5% dos chamados de outubro de 2025. Os bairros destacados são os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.
-      <strong>Leitura:</strong> as variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.
-      <strong>Classificação:</strong> em outubro de 2025, 166 chamados foram classificados no serviço Papeleira, classificação ausente em 2026; eles estão em Demais serviços.
-      <strong>Fonte:</strong> cubos auditados de chamados e ouvidorias do fechamento de outubro de 2026; cruzamento entre bairro e gerência a partir da base da Linha do Tempo, conciliado com os totais dos cubos.
-      <strong>Situação:</strong> auditoria interna documentada em 04/11/2026; sem homologação independente.
-    </div>
+    <dl class="be-method">
+      <div><dt>Períodos</dt><dd>Outubro de 2026 comparado a outubro de 2025. No ano, janeiro a outubro dos dois anos.</dd></div>
+      <div><dt>Ouvidorias operacionais</dt><dd>Excluem os registros tratados internamente pela PCO.</dd></div>
+      <div><dt>Serviços citados</dt><dd>Os cinco com pelo menos 5% dos chamados de outubro de 2025.</dd></div>
+      <div><dt>Bairros destacados</dt><dd>Os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.</dd></div>
+      <div><dt>Leitura</dt><dd>As variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.</dd></div>
+      <div><dt>Classificação</dt><dd>Em outubro de 2025, 166 chamados foram classificados no serviço Papeleira, ausente em 2026. Eles estão em Demais serviços.</dd></div>
+      <div><dt>Fonte</dt><dd>Cubos auditados de chamados e ouvidorias de outubro de 2026. Cruzamento entre bairro e gerência da base da Linha do Tempo, conciliado com os totais dos cubos.</dd></div>
+      <div><dt>Situação</dt><dd>Auditoria interna documentada em 04/11/2026; sem homologação independente.</dd></div>
+    </dl>
   </main>
   <div id="hubFooter"></div>
 </div>

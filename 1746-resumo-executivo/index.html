@@ -5,129 +5,208 @@
 <meta name="theme-color" content="#06111f">
 <title>Boletim Executivo 1746 | Outubro de 2026 | HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
+<!--
+  RASTREABILIDADE (resumo). Documento completo: 1746-resumo-executivo/RASTREABILIDADE.md
+  Verificação automática: node tests/1746-outubro/boletim-rastreabilidade.cjs
+  A1  Chamados 21.652 / 24.116 ............ CHAMADOS_CUBE.periods.outubro.all
+  A2  Ouvidorias 2.697 / 2.213 ............ OUVIDORIA_CUBE.periods.outubro.all
+  A3  Acumulado jan a out +13,5% / +15,5% . periods.acumulado.all (dois cubos)
+  A4  Decomposição por serviço ............ periods.outubro.all.children (dois cubos)
+  A5  Remoção Gratuita 246/799/469/474 .... OUVIDORIA_CUBE.periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal
+  A6  Sem Remoção Gratuita: -8,4% ......... derivado de A2 e A4
+  A7  2.060 em remoção, capina, varrição .. CHAMADOS_CUBE.periods.outubro.byTipo.LIMPEZA.children
+  A8  Único grande serviço nos dois canais  periods.outubro.all.children; grande = pelo menos 5% dos chamados de out/2025
+  A9  AP5 concentrada, AP3 distribuída .... periods.outubro.all.ap + TIMELINE1746_CASCADE.full['Outubro/2026']
+  A10 Bairros e gerências ................. TIMELINE1746_CASCADE.full['Outubro/2026'], conciliado com periods.outubro.all.bairros
+-->
 <style>
-/* Layout nativo do HUB: .app, .header e .footer vêm do hub-premium.css */
-:root{--orange-soft:#e8ae6d;--green-soft:#84d8ad;--red-soft:#efa4a1}
-.bulletin{width:100%;margin:0;min-width:0;color:#f7f9ff}
-.bulletin *{box-sizing:border-box}
-.bulletin-hero{padding:16px 2px 27px;border-bottom:1px solid rgba(139,164,191,.2)}
-.bulletin .eyebrow{color:#8ec5f3;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:800}
-.bulletin-title{margin:13px 0 10px;font-size:clamp(32px,3.4vw,50px);line-height:1.09;letter-spacing:-1.5px;color:#f7f9ff;font-weight:800}
-.bulletin .lead{margin:0;color:#c8d8eb;font-size:15px;line-height:1.6}
-.bulletin .period{margin-top:12px;color:#8ba4bf;font-size:12px}
-.bulletin >section{margin-top:32px}
-.bulletin .section-head{display:flex;align-items:center;gap:12px;margin:0 0 18px}
-.bulletin .step{display:grid;place-items:center;flex:0 0 27px;width:27px;height:27px;border:1px solid #315a7c;background:rgba(91,155,213,.08);border-radius:8px;color:#8ec5f3;font-size:11px;font-weight:800}
-.bulletin .section-head h2{margin:0;font-size:21px;letter-spacing:-.5px;color:#f7f9ff;line-height:1.25}
-.bulletin .grid,.bulletin .factor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.bulletin .kpi{min-width:0;padding:26px 30px;border:1px solid rgba(49,90,124,.66);border-radius:18px;background:linear-gradient(180deg,rgba(7,26,44,.94),rgba(5,19,33,.83));box-shadow:0 18px 44px rgba(0,0,0,.12)}
-.bulletin .kpi-label{font-size:13px;font-weight:700;color:#c8d8eb}
-.bulletin .kpi-value{margin:8px 0 5px;font-size:clamp(33px,3vw,48px);line-height:1.15;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-1.4px}
-.bulletin .change{font-size:14px;font-weight:750}
-.bulletin .change.up{color:var(--orange-soft)}
-.bulletin .change.down{color:var(--green-soft)}
-.bulletin .small{font-size:12px;margin-top:10px;color:#8ba4bf}
-.bulletin .reading,.bulletin .priority-lead{margin:17px 0 0;padding:17px 20px;border-left:3px solid #78aaa3;border-radius:9px;background:rgba(10,33,55,.78);color:#c8d8eb;font-size:13px;line-height:1.7}
-.bulletin .reading strong,.bulletin .priority-lead strong{color:#f7f9ff}
-.bulletin .factor{min-width:0;border-top:1px solid rgba(49,90,124,.66);padding:19px 20px 12px 4px}
-.bulletin .factor-name{font-size:13px;font-weight:750;color:#c8d8eb}
-.bulletin .factor-num{font-size:clamp(20px,2vw,26px);font-weight:800;color:#f7f9ff;margin-top:9px;letter-spacing:-.5px}
-.bulletin .factor p{color:#c8d8eb;font-size:13px;line-height:1.72;margin:9px 0 0;max-width:750px}
-.bulletin .priority-lead{margin:0 0 19px}
-.bulletin .priority-list{display:grid;grid-template-columns:1fr;gap:18px}
-.bulletin .priority{display:grid;grid-template-columns:180px minmax(0,1fr);gap:24px;align-items:start;min-width:0;padding:25px 28px;border:1px solid rgba(49,90,124,.66);border-radius:18px;background:linear-gradient(180deg,rgba(7,26,44,.94),rgba(5,19,33,.83))}
-.bulletin .place{font-weight:800;font-size:18px}
-.bulletin .kind{margin-top:5px;color:#8ba4bf;font-size:11px}
-.bulletin .priority-stat{min-width:0;color:#c8d8eb}
-.bulletin .priority-comparisons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.bulletin .priority-measure{min-width:0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:18px 20px;border:1px solid rgba(49,90,124,.62);border-radius:12px;background:rgba(3,13,25,.26)}
-.bulletin .priority-measure>strong{grid-column:1/-1;color:#c8d8eb;font-size:12px;font-weight:750}
-.bulletin .period-values{display:flex;align-items:center;gap:20px;min-width:0}
-.bulletin .period-values span:not(.direction){display:flex;flex-direction:column;gap:5px}
-.bulletin .period-values small{font-size:10px;letter-spacing:.5px;color:#8ba4bf;font-weight:700}
-.bulletin .period-values b{color:#f7f9ff;font-size:clamp(17px,1.5vw,23px);font-variant-numeric:tabular-nums}
-.bulletin .period-values .direction{color:#8ba4bf}
-.bulletin .growth{font-size:15px;font-weight:800;text-align:right}
-.bulletin .calls-up{color:var(--orange-soft)}
-.bulletin .ouvid-up{color:var(--red-soft)}
-.bulletin .priority-why{margin-top:19px;font-size:13px;line-height:1.7;color:#c8d8eb}
-.bulletin .priority-why strong{color:#f7f9ff}
-.bulletin .detail-inline{color:#8ba4bf}
-.bulletin .nested-area{margin-top:16px;padding:16px 20px;background:rgba(10,33,55,.58);border-left:3px solid #5b9bd5;border-radius:9px}
-.bulletin .nested-title{font-weight:800;color:#f7f9ff;font-size:13px}
-.bulletin .nested-area p{color:#c8d8eb;font-size:12px;line-height:1.65;margin:9px 0 0}
-.bulletin .nested-area p strong{color:#f7f9ff}
-.bulletin .end-note{font-size:12px;line-height:1.6;color:#8ba4bf;margin:15px 0 0}
-.bulletin-methodology{margin:36px 0 4px;padding:18px 0 0;border-top:1px solid rgba(139,164,191,.18);color:#8ba4bf;font-size:11px;line-height:1.65}
-.bulletin-methodology strong{color:#c8d8eb}
-.bulletin-methodology a{color:#8ec5f3}
-.bulletin .related-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.bulletin .related-links a{padding:9px 14px;border:1px solid rgba(142,197,243,.36);border-radius:10px;color:#dcecff;background:#0a1b31;text-decoration:none;font-size:12px;font-weight:700}
-.bulletin .related-links a:hover{background:#12304b;border-color:#8ec5f3}
-@media(max-width:1080px){.bulletin .priority{grid-template-columns:150px minmax(0,1fr);gap:16px}.bulletin .priority-measure{padding:14px;grid-template-columns:1fr}.bulletin .growth{text-align:left}}
-@media(max-width:820px){.bulletin .priority{grid-template-columns:1fr}.bulletin .priority-comparisons{grid-template-columns:repeat(2,minmax(0,1fr))}.bulletin .period-values{gap:10px}}
-@media(max-width:650px){.bulletin .grid,.bulletin .factor-grid,.bulletin .priority-comparisons{grid-template-columns:1fr}.bulletin .priority{padding:18px}.bulletin .kpi{padding:20px}.bulletin .factor{padding:18px 5px}.bulletin .priority-measure{display:grid;grid-template-columns:1fr auto}.bulletin .growth{text-align:right}.bulletin .related-links a{width:100%;text-align:center}.bulletin-hero{padding-top:4px}}
+:root{--be-ink:#f7f9ff;--be-soft:#c8d8eb;--be-mute:#8ba4bf;--be-rule:#294866;--be-rule2:rgba(41,72,102,.55);--be-up:#e8ae6d;--be-down:#84d8ad;--be-alert:#efa4a1;--be-accent:#8ec5f3}
+.be{width:100%;min-width:0;padding:22px 2px 6px;color:var(--be-ink)}
+.be *{box-sizing:border-box}
+.be-label{display:flex;align-items:center;gap:14px;margin:0 0 22px;color:var(--be-accent);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.be-label:after{content:"";flex:1;height:1px;background:var(--be-rule2)}
+.be-section{margin-top:64px}
+.be-section:first-of-type{margin-top:6px}
+
+/* Mensagem principal */
+.be-headline{margin:0;max-width:1480px;font-size:clamp(27px,3vw,46px);line-height:1.2;font-weight:700;letter-spacing:-.03em;color:var(--be-soft)}
+.be-headline strong{color:var(--be-ink);font-weight:800}
+
+/* Números do mês e do ano */
+.be-figures{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.9fr);margin-top:40px;border:1px solid var(--be-rule);border-radius:18px;background:#0a1b31;overflow:hidden}
+.be-fig{min-width:0;padding:26px 30px 24px;border-right:1px solid var(--be-rule)}
+.be-fig:last-child{border-right:0;background:rgba(6,17,31,.45)}
+.be-fig-name{font-size:13px;font-weight:700;color:var(--be-soft)}
+.be-fig-value{margin:6px 0 4px;font-size:clamp(34px,3.3vw,52px);line-height:1.1;font-weight:800;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.be-fig-change{font-size:15px;font-weight:750;font-variant-numeric:tabular-nums}
+.be-fig-base{margin-top:10px;font-size:12px;color:var(--be-mute)}
+.be-year{display:grid;gap:14px;margin-top:12px}
+.be-year div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--be-rule2)}
+.be-year div:last-child{border-bottom:0;padding-bottom:0}
+.be-year span{font-size:13px;color:var(--be-soft)}
+.be-year b{font-size:clamp(20px,1.8vw,26px);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--be-up)}.down{color:var(--be-down)}.alert{color:var(--be-alert)}
+
+/* O que explica */
+.be-explain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+.be-col{min-width:0;padding:0 48px 0 0}
+.be-col+.be-col{padding:0 0 0 48px;border-left:1px solid var(--be-rule2)}
+.be-col h3{margin:0 0 12px;font-size:13px;font-weight:800;color:var(--be-soft);letter-spacing:.02em}
+.be-reading{margin:0;max-width:720px;font-size:clamp(18px,1.45vw,22px);line-height:1.5;color:var(--be-ink);font-weight:500}
+.be-ledger{margin:24px 0 0;padding:0;list-style:none;max-width:520px;font-size:13px;font-variant-numeric:tabular-nums}
+.be-ledger li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;color:var(--be-soft);border-bottom:1px solid rgba(41,72,102,.3)}
+.be-ledger li b{font-weight:700;white-space:nowrap}
+.be-ledger li.total{border-bottom:0;border-top:1px solid var(--be-rule);margin-top:2px;padding-top:9px;color:var(--be-ink);font-weight:700}
+.be-statement{margin:52px 0 0;padding:30px 0;border-top:1px solid var(--be-rule);border-bottom:1px solid var(--be-rule)}
+.be-statement p{margin:0;max-width:1300px;font-size:clamp(21px,2.1vw,32px);line-height:1.28;font-weight:700;letter-spacing:-.02em;color:var(--be-soft)}
+.be-statement strong{color:var(--be-ink)}
+
+/* Onde ocorreu */
+.be-where-lead{margin:0 0 34px;max-width:1180px;font-size:clamp(18px,1.45vw,22px);line-height:1.55;color:var(--be-ink);font-weight:500}
+.be-places{border-top:1px solid var(--be-rule)}
+.be-place{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start;padding:24px 0;border-bottom:1px solid var(--be-rule)}
+.be-place-name{font-size:20px;font-weight:800;line-height:1.2}
+.be-place-ap{margin-top:5px;font-size:12px;color:var(--be-mute)}
+.be-m small{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--be-mute);margin-bottom:6px}
+.be-m span{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.be-m em{display:block;margin-top:3px;font-style:normal;font-size:14px;font-weight:750;font-variant-numeric:tabular-nums}
+.be-place p{margin:0;font-size:13px;line-height:1.65;color:var(--be-soft)}
+.be-place p+p{margin-top:8px;color:var(--be-mute)}
+.be-place p strong{color:var(--be-ink)}
+.be-closing{margin:30px 0 0;max-width:1300px;font-size:clamp(21px,2.1vw,32px);line-height:1.28;font-weight:700;letter-spacing:-.02em;color:var(--be-soft)}
+.be-closing strong{color:var(--be-ink)}
+
+/* Fechamento */
+.be-more{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:64px}
+.be-more span{margin-right:6px;color:var(--be-mute);font-size:12px;font-weight:700}
+.be-more a{padding:9px 14px;border:1px solid #315a7c;border-radius:10px;color:#dcecff;background:#0a1b31;text-decoration:none;font-size:12px;font-weight:700}
+.be-more a:hover{background:#173550;border-color:var(--be-accent)}
+.be-method{margin:28px 0 0;padding-top:20px;border-top:1px solid var(--be-rule2);color:#91a6ba;font-size:11px;line-height:1.75;max-width:1500px}
+.be-method strong{color:var(--be-soft)}
+
+@media(max-width:1180px){.be-place{grid-template-columns:minmax(130px,1fr) minmax(0,1fr) minmax(0,1fr)}.be-place .be-note{grid-column:1/-1}}
+@media(max-width:900px){.be-figures{grid-template-columns:1fr 1fr}.be-fig:nth-child(2){border-right:0}.be-fig:last-child{grid-column:1/-1;border-top:1px solid var(--be-rule)}.be-explain{grid-template-columns:1fr}.be-col{padding:0}.be-col+.be-col{padding:36px 0 0;margin-top:36px;border-left:0;border-top:1px solid var(--be-rule2)}}
+@media(max-width:620px){.be{padding-top:10px}.be-section{margin-top:48px}.be-figures{grid-template-columns:1fr}.be-fig{border-right:0;border-bottom:1px solid var(--be-rule);padding:22px 20px}.be-fig:last-child{border-bottom:0;border-top:0}.be-place{grid-template-columns:1fr 1fr;gap:18px}.be-place-head{grid-column:1/-1}.be-more a{flex:1 1 100%;text-align:center}.be-statement{margin-top:40px;padding:24px 0}}
 </style>
 </head>
 <body>
 <div class="app">
   <div id="hubHeader"></div>
-  <main class="bulletin">
-    <div class="bulletin-hero">
-<div class="eyebrow">Relacionamento com o Cidadão | 1746</div>
-<h2 class="bulletin-title">Síntese do fechamento</h2>
-<p class="lead">O resultado, o que explica a mudança e os territórios que merecem atenção.</p>
-<div class="period">Fechamento de outubro/2026 <span aria-hidden="true">·</span> Comparativo com outubro/2025</div>
+  <main class="be">
 
-</div><section aria-labelledby="resultado">
- <div class="section-head"><span class="step">1</span><h2 id="resultado">O que aconteceu</h2></div>
- <div class="grid">
-  <div class="kpi"><div class="kpi-label">Chamados</div><div class="kpi-value">24.116</div><div class="change up">+11,4% | +2.464 registros</div><div class="small">Outubro de 2025: 21.652</div></div>
-  <div class="kpi"><div class="kpi-label">Ouvidorias operacionais</div><div class="kpi-value">2.213</div><div class="change down">-17,9% | 484 registros a menos</div><div class="small">Outubro de 2025: 2.697</div></div>
- </div>
- <div class="reading"><strong>Leitura executiva.</strong> Em outubro, houve 2.464 chamados adicionais, com a alta concentrada em Limpeza. Já as ouvidorias operacionais recuaram 484 registros, principalmente em Remoção Gratuita. A redução das ouvidorias é favorável ao indicador, mas sua interpretação depende do contexto dos serviços e dos registros.</div>
-</section>
+    <section class="be-section" aria-labelledby="be-resultado">
+      <h2 class="be-label" id="be-resultado">Resultado</h2>
+      <p class="be-headline">O aumento dos chamados esteve concentrado em <strong>Limpeza</strong>. Já a redução das ouvidorias foi influenciada pelo <strong>volume excepcional de Remoção Gratuita em outubro de 2025</strong>.</p>
 
-<section aria-labelledby="fatores">
- <div class="section-head"><span class="step">2</span><h2 id="fatores">O que explica a mudança</h2></div>
- <div class="factor-grid">
-  <div class="factor"><div class="factor-name">Chamados | Limpeza</div><div class="factor-num">+2.581 chamados</div><p>Limpeza registrou 2.581 chamados a mais. Os demais serviços, juntos, tiveram 117 chamados a menos. Por isso, o total aumentou 2.464 registros.</p></div>
-  <div class="factor"><div class="factor-name">Ouvidorias operacionais | Remoção Gratuita</div><div class="factor-num">325 ouvidorias a menos</div><p>Remoção Gratuita registrou 325 ouvidorias a menos. Os demais serviços, juntos, tiveram 159 a menos. A redução total foi de 484 registros.</p></div>
- </div>
-</section>
+      <div class="be-figures">
+        <div class="be-fig">
+          <div class="be-fig-name">Chamados em outubro</div>
+          <div class="be-fig-value">24.116</div>
+          <div class="be-fig-change up">+11,4% · 2.464 a mais</div>
+          <div class="be-fig-base">Outubro de 2025: 21.652</div>
+        </div>
+        <div class="be-fig">
+          <div class="be-fig-name">Ouvidorias operacionais em outubro</div>
+          <div class="be-fig-value">2.213</div>
+          <div class="be-fig-change down">−17,9% · 484 a menos</div>
+          <div class="be-fig-base">Outubro de 2025: 2.697</div>
+        </div>
+        <div class="be-fig">
+          <div class="be-fig-name">No ano, janeiro a outubro</div>
+          <div class="be-year">
+            <div><span>Chamados</span><b class="up">+13,5%</b></div>
+            <div><span>Ouvidorias operacionais</span><b class="alert">+15,5%</b></div>
+          </div>
+          <div class="be-fig-base">Comparação com janeiro a outubro de 2025</div>
+        </div>
+      </div>
+    </section>
 
-<section aria-labelledby="prioridades">
- <div class="section-head"><span class="step">3</span><h2 id="prioridades">Onde concentrar a atenção</h2></div>
- <p class="priority-lead"><strong>Principal achado territorial:</strong> Limpeza concentrou o crescimento dos chamados nos dois bairros destacados, acompanhado por aumento das ouvidorias operacionais. </p>
- <div class="priority-list">
-  <article class="priority"><div><div class="place">Campo Grande</div><div class="kind">Bairro</div></div><div class="priority-stat">
-  <div class="priority-comparisons"><div class="priority-measure"><strong>Chamados</strong><span class="period-values"><span><small>OUT/2025</small><b>1.415</b></span><span class="direction" aria-hidden="true">→</span><span><small>OUT/2026</small><b>1.796</b></span></span><span class="calls-up growth">+26,9%</span></div><div class="priority-measure"><strong>Ouvidorias operacionais</strong><span class="period-values"><span><small>OUT/2025</small><b>152</b></span><span class="direction" aria-hidden="true">→</span><span><small>OUT/2026</small><b>207</b></span></span><span class="ouvid-up growth">+36,2%</span></div></div>
-  <div class="priority-why">Limpeza explicou <strong>71%</strong> do aumento de chamados <span class="detail-inline">(271 de 381)</span> e <strong>87%</strong> do aumento das ouvidorias <span class="detail-inline">(48 de 55)</span>.</div>
-  <div class="nested-area"><div class="nested-title">Campo Grande e OG18G</div><p>Em outubro/2026, <strong>599 chamados</strong> e <strong>99 ouvidorias</strong> de Campo Grande estavam vinculados à gerência OG18G. Esses registros <strong>já estão incluídos no total do bairro</strong>.</p></div>
-  </div></article>
-  <article class="priority"><div><div class="place">Bangu</div><div class="kind">Bairro</div></div><div class="priority-stat">
-  <div class="priority-comparisons"><div class="priority-measure"><strong>Chamados</strong><span class="period-values"><span><small>OUT/2025</small><b>577</b></span><span class="direction" aria-hidden="true">→</span><span><small>OUT/2026</small><b>986</b></span></span><span class="calls-up growth">+70,9%</span></div><div class="priority-measure"><strong>Ouvidorias operacionais</strong><span class="period-values"><span><small>OUT/2025</small><b>46</b></span><span class="direction" aria-hidden="true">→</span><span><small>OUT/2026</small><b>83</b></span></span><span class="ouvid-up growth">+80,4%</span></div></div>
-  <div class="priority-why">Limpeza explicou <strong>99%</strong> do aumento de chamados <span class="detail-inline">(405 de 409)</span> e registrou <strong>20 das 37 ouvidorias adicionais</strong> no bairro.</div>
-  </div></article>
- </div>
- <p class="end-note">Critério de seleção: crescimento simultâneo dos indicadores e volume mínimo. A informação da OG18G complementa Campo Grande, sem duplicar os registros. Os resultados orientam a investigação, mas não comprovam falha nos serviços.</p>
-</section>
+    <section class="be-section" aria-labelledby="be-explica">
+      <h2 class="be-label" id="be-explica">O que explica</h2>
+      <div class="be-explain">
+        <div class="be-col">
+          <h3>Chamados</h3>
+          <p class="be-reading">Limpeza teve 2.581 chamados a mais, acima do aumento total da cidade. Remoção de resíduos, capina e varrição respondem por 2.060 desses registros.</p>
+          <ul class="be-ledger" aria-label="Variação de chamados por serviço">
+            <li><span>Limpeza</span><b class="up">+2.581</b></li>
+            <li><span>Coleta Domiciliar</span><b class="up">+608</b></li>
+            <li><span>Remoção Gratuita</span><b>−484</b></li>
+            <li><span>Manejo Arbóreo</span><b>−418</b></li>
+            <li><span>Demais serviços</span><b>+177</b></li>
+            <li class="total"><span>Total</span><b>+2.464</b></li>
+          </ul>
+        </div>
+        <div class="be-col">
+          <h3>Ouvidorias operacionais</h3>
+          <p class="be-reading">Remoção Gratuita teve 799 ouvidorias em outubro de 2025, mais que o triplo de setembro daquele ano. Em 2026 o serviço ficou estável, com 469 em setembro e 474 em outubro. Sem ele, a redução seria de 8,4%.</p>
+          <ul class="be-ledger" aria-label="Variação de ouvidorias operacionais por serviço">
+            <li><span>Remoção Gratuita</span><b class="down">−325</b></li>
+            <li><span>Manejo Arbóreo</span><b class="down">−172</b></li>
+            <li><span>Limpeza</span><b class="alert">+158</b></li>
+            <li><span>Demais serviços</span><b>−145</b></li>
+            <li class="total"><span>Total</span><b>−484</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="be-statement">
+        <p>Entre os cinco serviços que somam 97,6% dos chamados, <strong>Limpeza foi o único que cresceu nos dois canais.</strong></p>
+      </div>
+    </section>
 
-    <nav class="related-links" aria-label="Módulos relacionados">
+    <section class="be-section" aria-labelledby="be-onde">
+      <h2 class="be-label" id="be-onde">Onde ocorreu</h2>
+      <p class="be-where-lead">A AP5 e a AP3 reúnem 2.310 dos 2.464 chamados adicionais, com altas quase iguais e perfis opostos. Na AP5, dois bairros somam 68% do aumento. Na AP3, 56 dos 80 bairros cresceram e nenhum passa de 11% do aumento.</p>
+
+      <div class="be-places">
+        <article class="be-place">
+          <div class="be-place-head"><div class="be-place-name">Campo Grande</div><div class="be-place-ap">AP5</div></div>
+          <div class="be-m"><small>CHAMADOS</small><span>1.415 → 1.796</span><em class="up">+26,9%</em></div>
+          <div class="be-m"><small>OUVIDORIAS</small><span>152 → 207</span><em class="alert">+36,2%</em></div>
+          <div class="be-note">
+            <p>Limpeza respondeu por <strong>271 dos 381 chamados</strong> e <strong>48 das 55 ouvidorias</strong> adicionais.</p>
+            <p>A gerência OG18G registrou 599 chamados e 99 ouvidorias no bairro, já contidos nesses totais.</p>
+          </div>
+        </article>
+        <article class="be-place">
+          <div class="be-place-head"><div class="be-place-name">Bangu</div><div class="be-place-ap">AP5</div></div>
+          <div class="be-m"><small>CHAMADOS</small><span>577 → 986</span><em class="up">+70,9%</em></div>
+          <div class="be-m"><small>OUVIDORIAS</small><span>46 → 83</span><em class="alert">+80,4%</em></div>
+          <div class="be-note">
+            <p>Limpeza respondeu por <strong>405 dos 409 chamados</strong> e <strong>20 das 37 ouvidorias</strong> adicionais.</p>
+            <p>A gerência OG17B registrou 637 chamados e 52 ouvidorias no bairro, já contidos nesses totais.</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="be-closing">Os dois bairros somaram <strong>92 ouvidorias a mais</strong> num mês em que a cidade registrou 484 a menos.</p>
+    </section>
+
+    <nav class="be-more" aria-label="Módulos para aprofundamento">
+      <span>Para aprofundar</span>
       <a href="../chamados-1746/">Chamados 1746</a>
       <a href="../ouvidoria/">Ouvidorias</a>
       <a href="../1746-comparativo/">Comparativo territorial</a>
       <a href="../1746-historico/">Histórico</a>
       <a href="../1746-timeline/">Linha do tempo</a>
     </nav>
-    <div class="bulletin-methodology"><strong>Fonte:</strong> bases COMLURB e cubos auditados de outubro de 2025 e outubro de 2026. Os fatores territoriais foram reconciliados com os totais correspondentes. A data de corte da extração não foi informada. Não há homologação independente do sistema 1746.</div>
+
+    <div class="be-method">
+      <strong>Períodos:</strong> outubro de 2026 comparado a outubro de 2025; no ano, janeiro a outubro dos dois anos.
+      <strong>Ouvidorias operacionais:</strong> excluem os registros tratados internamente pela PCO.
+      <strong>Critérios:</strong> os cinco serviços citados são os que têm pelo menos 5% dos chamados de outubro de 2025. Os bairros destacados são os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.
+      <strong>Leitura:</strong> as variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.
+      <strong>Classificação:</strong> em outubro de 2025, 166 chamados foram classificados no serviço Papeleira, classificação ausente em 2026; eles estão em Demais serviços.
+      <strong>Fonte:</strong> cubos auditados de chamados e ouvidorias do fechamento de outubro de 2026; cruzamento entre bairro e gerência a partir da base da Linha do Tempo, conciliado com os totais dos cubos.
+      <strong>Situação:</strong> auditoria interna documentada em 04/11/2026; sem homologação independente.
+    </div>
   </main>
   <div id="hubFooter"></div>
 </div>
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script>
-HUB.header.render("hubHeader",{systemLabel:"RELACIONAMENTO COM O CIDADÃO | 1746",title:"Boletim Executivo 1746",subtitle:"Fechamento de outubro/2026 · Comparação com outubro/2025",homeHref:"../",homeLabel:"Voltar ao HUB"});
+HUB.header.render("hubHeader",{systemLabel:"RELACIONAMENTO COM O CIDADÃO | 1746",title:"Boletim Executivo 1746",subtitle:"Outubro de 2026 comparado a outubro de 2025",homeHref:"../",homeLabel:"Voltar ao HUB"});
 HUB.footer.render("hubFooter");
 </script>
 </body></html>

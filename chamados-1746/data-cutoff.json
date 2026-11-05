@@ -54,9 +54,21 @@
       "observacao": "Divergência na fonte atual de setembro/2026 de -23 chamados; fechamento 24.695 mantido."
     }
   ],
-  "regra": "Janeiro–setembro permanece congelado. Outubro foi adicionado apenas para preparação, sem auditoria independente e sem publicação.",
-  "status_publicacao": "PREVIA - NAO PUBLICADO",
+  "regra": "Janeiro a setembro permanece congelado. Outubro foi incorporado após auditoria interna; a homologação independente não foi realizada.",
+  "auditoria_interna": {
+    "status": "concluida",
+    "data": "2026-11-04",
+    "relatorio": "staging/1746-outubro-2026/AUDITORIA_HUB_COMPLETO_2026-11-04.md",
+    "escopo": "Conciliações numéricas e conferência estática documentadas no relatório. Não equivale a homologação independente."
+  },
+  "publicacao": {
+    "status": "publicado",
+    "branch": "main",
+    "data": "2026-11-04",
+    "commit": "be5a809"
+  },
   "homologacao_independente": false,
+  "homologacao_independente_observacao": "Não realizada. Auditoria interna, publicação e homologação independente são etapas distintas.",
   "fonte_oficial": "COMLURB — extrações finais de outubro/2026",
   "observacao_corte": "Data precisa da extração final não informada; validação técnica realizada em 04/11/2026. Não confundir com data de corte da fonte."
 }

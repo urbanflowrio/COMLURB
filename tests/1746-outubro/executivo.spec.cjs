@@ -7,26 +7,20 @@ test('Boletim executivo 1746: leitura única, dados conferidos e responsividade'
  await expect(page.locator('#hubFooter .footerTitle')).toHaveText('HUB COMLURB');
  await expect(page.locator('#hubHeader .logoImg')).toBeVisible();
  await expect(page.locator('.app')).toBeVisible();
+ // Três momentos: Resultado, O que explica, Onde ocorreu
  await expect(page.locator('main > section')).toHaveCount(3);
- await expect(page.locator('.kpi')).toHaveCount(2);
- await expect(page.locator('.priority')).toHaveCount(2);
- await expect(page.locator('.related-links a')).toHaveCount(5);
- await expect(page.locator('main')).toContainText('24.116');
- await expect(page.locator('main')).toContainText('2.213');
- await expect(page.locator('main')).toContainText('+2.581 chamados');
- await expect(page.locator('main')).toContainText('405 de 409');
- await expect(page.locator('main')).toContainText('OG18G');
- await expect(page.locator('main')).toContainText('Bangu');
- await expect(page.locator('main')).toContainText('Campo Grande');
- await expect(page.locator('.priority')).toHaveCount(2);
- await expect(page.locator('main')).toContainText('já estão incluídos no total do bairro');
- expect(await page.locator('main').innerText()).not.toContain('PCO excluída');
- expect(await page.locator('main').innerText()).not.toContain('interseção');
- await expect(page.locator('main')).toContainText('599');
- await expect(page.locator('main')).toContainText('99');
- expect(await page.locator('main details, main button, main select').count()).toBe(0);
+ await expect(page.locator('main > section h2')).toHaveText(['Resultado','O que explica','Onde ocorreu']);
+ await expect(page.locator('.be-headline')).toContainText('O aumento dos chamados esteve concentrado em Limpeza');
+ await expect(page.locator('.be-fig')).toHaveCount(3);
+ await expect(page.locator('.be-place')).toHaveCount(2);
+ await expect(page.locator('.be-more a')).toHaveCount(5);
+ const main=page.locator('main');
+ for(const t of ['24.116','2.213','21.652','2.697','+13,5%','+15,5%','+2.581','799','8,4%','97,6%','2.310','Campo Grande','Bangu','OG18G','OG17B','599 chamados e 99 ouvidorias','637 chamados e 52 ouvidorias','já contidos nesses totais','92 ouvidorias a mais','04/11/2026','sem homologação independente'])
+   await expect(main).toContainText(t);
+ expect(await main.innerText()).not.toMatch(/Vale acompanhar|Merece atenção|Leitura executiva|É importante destacar/);
+ expect(await page.locator('main details, main button, main select, main table, main canvas').count()).toBe(0);
  expect(await page.locator('script').count()).toBeGreaterThanOrEqual(3);
- expect(await page.locator('body').innerText()).not.toMatch(/[\u2013\u2014]/);
+ expect(await page.locator('body').innerText()).not.toMatch(/[–—]/);
  await page.screenshot({path:info.outputPath('boletim-executivo-desktop.png'),fullPage:true});
  await page.setViewportSize({width:390,height:844});
  await expect(page.locator('.header .mainTitle')).toBeVisible();

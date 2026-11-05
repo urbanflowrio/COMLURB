@@ -6,18 +6,21 @@ Cada afirmação do boletim (`1746-resumo-executivo/index.html`) tem origem iden
 node tests/1746-outubro/boletim-rastreabilidade.cjs
 ```
 
-O script recalcula cada valor a partir dos cubos e confirma que o número exibido no HTML é o calculado. Resultado em 05/11/2026: 36 verificações aprovadas, nenhuma falha.
+O script recalcula cada valor a partir dos cubos, confirma que o número exibido no HTML é o calculado e reprova o texto se uma afirmação rejeitada pela auditoria voltar à página. Resultado em 05/11/2026, após as correções: 48 verificações aprovadas, nenhuma falha.
+
+A auditoria independente das fontes primárias está em `auditoria/1746-out2026/AUDITORIA_BOLETIM_1746_OUT2026.md`, com script reproduzível em Python.
 
 ## Tipos de validação
 
 | Tipo | O que cobre | Como é feita | Situação |
 |---|---|---|---|
-| Numérica | Cada número do boletim é igual ao valor calculado nos cubos; somas fecham os totais; a base da Linha do Tempo concilia com os cubos | Automática: `boletim-rastreabilidade.cjs` | 36 de 36 aprovadas |
+| Numérica (cubos) | Cada número do boletim é igual ao valor calculado nos cubos; somas fecham os totais; a base da Linha do Tempo concilia com os cubos | Automática: `boletim-rastreabilidade.cjs` | Aprovada |
+| Numérica (fontes primárias) | Cubos, staging e Linha do Tempo conferidos contra as exportações agregadas da COMLURB | Automática: `auditoria/1746-out2026/auditoria_independente.py` | Aprovada; divergência zero em outubro |
 | Estrutural e visual | Cabeçalho, rodapé e logo do HUB, três momentos, ausência de tabelas e travessões, largura no celular | Automática: `executivo.spec.cjs` em navegador real | Aprovada localmente; execução em CI registrada no workflow da branch |
-| Metodológica | Critérios de seleção (grande serviço, bairros destacados), tratamento das gerências, leitura do efeito de base | Revisão humana dos critérios desta página | Critérios documentados; aceite pendente |
+| Metodológica | Critérios de seleção, tratamento das gerências, robustez das leituras em outras janelas e taxonomias | Auditoria de 05/11/2026 e revisão humana | Três leituras corrigidas; aceite pendente |
 | Editorial | Clareza, hierarquia, ausência de conclusões causais ou sem evidência | Revisão humana | Pendente de homologação |
 
-A validação numérica confirma que os números estão corretos e presentes. Ela não valida a interpretação: escolher um critério, chamar uma base de "excepcional" ou destacar dois bairros são decisões metodológicas e editoriais, que dependem de aceite humano.
+A validação numérica confirma que os números estão corretos e presentes. Ela não valida a interpretação: a versão anterior passou nas verificações numéricas e ainda assim continha uma leitura incorreta da base de comparação. Por isso as afirmações rejeitadas passaram a ter testes próprios.
 
 ## Situação dos dados
 
@@ -50,11 +53,12 @@ O cruzamento entre bairro e gerência existe apenas na base da Linha do Tempo (T
 | A2 | Ouvidorias operacionais: 2.697 e 2.213, −17,9%, 484 a menos | OC `periods.outubro.all` | idem; PCO excluída na origem do cubo |
 | A3 | No ano: chamados +13,5%, ouvidorias operacionais +15,5% | CC e OC `periods.acumulado.all` | `var` do acumulado janeiro a outubro, 2026 contra 2025 |
 | A4 | Decomposição por serviço (chamados e ouvidorias) | CC e OC `periods.outubro.all.children` | `dif` de cada serviço; "Demais serviços" = total menos os serviços nomeados; soma dos serviços igual ao total |
-| A5 | Remoção Gratuita: 799 ouvidorias em out/2025, mais que o triplo de set/2025 (246); 469 em set/2026 e 474 em out/2026 | OC `periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal` | valores mensais `v2025` e `v2026` |
-| A6 | Sem Remoção Gratuita, a redução seria de 8,4% | OC `periods.outubro.all` e `children` | (2.213 − 474) ÷ (2.697 − 799) − 1 = 1.739 ÷ 1.898 − 1 |
+| A5 | Remoção Gratuita: 474 ouvidorias contra 799 em out/2025; setembro e outubro foram os dois menores meses do serviço em 2026 | OC `periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal` | valores de outubro; menores valores de `v2026` na série de janeiro a outubro |
+| A6 | Outubro registrou o menor volume mensal de ouvidorias operacionais de janeiro a outubro de 2026, com a maior redução em Remoção Gratuita | OC `periods.acumulado.all.mensal` e `periods.outubro.all.children` | menor `v2026` da série; serviço com o `dif` mais negativo |
+| A4b | Limpeza respondeu por praticamente todo o aumento | CC `periods.outubro.all.children` | 2.581 de 2.464 (104,7%) com Papeleira separada; 2.415 de 2.464 (98,0%) somando Papeleira a Limpeza, como na série de janeiro a setembro |
 | A7 | Remoção de resíduos, capina e varrição respondem por 2.060 chamados adicionais | CC `periods.outubro.byTipo.LIMPEZA.children` | soma de `dif` dos três subtipos de logradouro |
 | A8 | Entre os cinco serviços que somam 97,6% dos chamados, Limpeza foi o único que cresceu nos dois canais | CC e OC `periods.outubro.all.children` | grande serviço: pelo menos 5% dos chamados de out/2025; crescimento: `dif` positivo em chamados e em ouvidorias |
-| A9 | AP5 e AP3 reúnem 2.310 dos 2.464 chamados adicionais; na AP5, dois bairros somam 68% do aumento; na AP3, 56 dos 80 bairros cresceram e nenhum passa de 11% | CC `periods.outubro.all.ap` e TC `full['Outubro/2026']` | bairros agregados por AP na TC, conciliados com o `dif` por AP do cubo |
+| A9 | AP5 e AP3 reúnem 2.310 dos 2.464 chamados adicionais; na AP5, Campo Grande e Bangu somam 68% do aumento, contra 40% do volume da área | CC `periods.outubro.all.ap` e TC `full['Outubro/2026']` | bairros agregados por AP na TC, conciliados com o `dif` por AP do cubo; participação no aumento e no volume de out/2025 |
 | A10 | Campo Grande e Bangu: valores dos dois períodos, participação de Limpeza, gerências OG18G e OG17B, 92 ouvidorias a mais | CC e OC `periods.outubro.all.bairros`, `byTipo.LIMPEZA.bairros`; TC para as gerências | critério de seleção abaixo; registros da gerência somados dentro do bairro na TC |
 
 ## Critérios
@@ -72,10 +76,25 @@ O cruzamento entre bairro e gerência existe apenas na base da Linha do Tempo (T
 
 Em Bangu, a OG17B cresceu mais que o bairro porque as demais gerências do bairro tiveram saldo de 7 chamados a menos.
 
+## Afirmações rejeitadas pela auditoria de 05/11/2026
+
+O teste reprova a página se qualquer uma delas voltar ao texto.
+
+| Afirmação retirada | Motivo |
+|---|---|
+| Volume excepcional de Remoção Gratuita em outubro de 2025 | Out/2025 (799) está no nível típico de 2025, 6º de 12 meses; o atípico foi o vale de julho a setembro de 2025 |
+| Sem Remoção Gratuita, a redução seria de 8,4% | Sustentava a leitura acima |
+| Limpeza teve mais chamados do que o aumento total | Deixa de valer quando Papeleira é somada a Limpeza, como na série oficial de janeiro a setembro |
+| AP5 concentrada e AP3 distribuída | Efeito do número de bairros: as duas APs precisam de cerca de 10% dos bairros para somar metade da alta |
+| Papeleira ausente em 2026 ou em desuso | O tipo teve 457 chamados de janeiro a abril de 2026; a ausência de registros não comprova descontinuação formal |
+| Menor volume do ano | Novembro e dezembro de 2026 não estão fechados; usar "de janeiro a outubro de 2026" |
+
 ## Limitações
 
 - As variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.
-- A redução das ouvidorias em outubro é influenciada por uma base de comparação atípica; a afirmação é aritmética e não atribui causa ao pico de outubro de 2025.
-- Em outubro de 2025, 166 chamados foram classificados no serviço Papeleira, classificação ausente em 2026. Eles estão em "Demais serviços" e afetam a comparação desse grupo.
+- As fontes primárias são exportações agregadas de tabela dinâmica, não registros individuais do sistema 1746. Os totais estão conciliados com essas exportações; não houve auditoria de protocolos.
+- Papeleira: 166 chamados em out/2025, em "Demais serviços"; sem registros nessa classificação desde maio de 2026 nas fontes examinadas. Na série oficial de janeiro a setembro, Papeleira está somada a Limpeza.
+- Manejo Arbóreo: o subtipo de avaliação de poda mudou de nome em 2026 (1.576 em out/2025 no nome antigo; 1.227 em out/2026 na versão "180 dias"), o que afeta a comparação do serviço.
+- Não há série de 2024 nas fontes; sazonalidade e tendência não podem ser separadas.
 - O cruzamento bairro por gerência depende da base da Linha do Tempo, conciliada com os cubos, mas não publicada nos módulos de Chamados e Ouvidoria.
 - Não há homologação independente do sistema 1746, e a data de corte da extração não foi informada.

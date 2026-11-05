@@ -56,18 +56,29 @@ const oDemais = oOut.dif - oNamed.reduce((s, n) => s + svc(oOut, n).dif, 0);
 check('A4', 'Decomposição de ouvidorias', [...oNamed.map(n => sig(svc(oOut, n).dif)), sig(oDemais), sig(oOut.dif)]);
 assert('A4', 'Soma dos serviços fecha o total (chamados)', cOut.children.reduce((s, r) => s + r.dif, 0) === cOut.dif);
 assert('A4', 'Soma dos serviços fecha o total (ouvidorias)', oOut.children.reduce((s, r) => s + r.dif, 0) === oOut.dif);
-check('A4', 'Limpeza acima do aumento total', '2.581 chamados a mais');
-assert('A4', 'Limpeza > aumento total', svc(cOut, 'LIMPEZA').dif > cOut.dif);
+// A4: "praticamente todo o aumento" deve valer nas duas taxonomias de Papeleira
+// (outubro separa Papeleira; o histórico congelado a soma a Limpeza). Auditoria 05/11/2026, D2.
+const limp = svc(cOut, 'LIMPEZA').dif, papel = (svc(cOut, 'PAPELEIRA') || { dif: 0 }).dif;
+check('A4', 'Limpeza: praticamente todo o aumento', ['praticamente todo o aumento', '2.581 chamados a mais']);
+assert('A4', 'Limpeza >= 95% do aumento nas duas taxonomias', limp / cOut.dif >= 0.95 && (limp + papel) / cOut.dif >= 0.95,
+  `${(limp / cOut.dif * 100).toFixed(1)}% e ${((limp + papel) / cOut.dif * 100).toFixed(1)}%`);
+check('A4', 'Alta de Limpeza somando Papeleira', int(limp + papel));
 
-// A5: base atípica de Remoção Gratuita
+// A5: Remoção Gratuita em ouvidorias. A leitura correta é o nível baixo de 2026,
+// não uma base excepcional em out/2025 (auditoria 05/11/2026, D1).
 const rg = O.periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal;
-const set = rg.find(r => r.mes === 'Setembro'), out = rg.find(r => r.mes === 'Outubro');
-check('A5', 'Remoção Gratuita out/2025, set e out/2026', [int(out.v2025), int(set.v2026), int(out.v2026)]);
-assert('A5', 'Out/2025 mais que o triplo de set/2025', out.v2025 > 3 * set.v2025, `${out.v2025} x ${set.v2025}`);
-// A6: queda sem Remoção Gratuita
-const rgo = svc(oOut, 'REMOÇÃO GRATUITA');
-const semRG = ((oOut.total2026 - rgo.v2026) / (oOut.total2025 - rgo.v2025)) - 1;
-check('A6', 'Redução sem Remoção Gratuita', pctAbs(semRG));
+const out = rg.find(r => r.mes === 'Outubro');
+check('A5', 'Remoção Gratuita out/2025 e out/2026', [int(out.v2025), int(out.v2026)]);
+const rg26 = rg.map(r => ({ mes: r.mes, v: r.v2026 })).sort((a, b) => a.v - b.v);
+assert('A5', 'Setembro e outubro são os dois menores meses de 2026', ['Setembro', 'Outubro'].every(m => rg26.slice(0, 2).some(r => r.mes === m)),
+  rg26.slice(0, 2).map(r => r.mes + ' ' + r.v).join(', '));
+// A6: menor mês de ouvidorias operacionais de janeiro a outubro de 2026
+const om = O.periods.acumulado.all.mensal;
+const minMes = om.reduce((a, b) => (b.v2026 < a.v2026 ? b : a));
+check('A6', 'Menor volume mensal de janeiro a outubro de 2026', 'menor volume mensal de ouvidorias operacionais de janeiro a outubro de 2026');
+assert('A6', 'Outubro é o menor mês de 2026', minMes.mes === 'Outubro' && om.length === 10, `${minMes.mes} ${minMes.v2026}`);
+const maiorQueda = [...oOut.children].sort((a, b) => a.dif - b.dif)[0];
+assert('A6', 'Maior redução é Remoção Gratuita', maiorQueda.nome === 'REMOÇÃO GRATUITA', `${maiorQueda.nome} ${maiorQueda.dif}`);
 
 // A7: subtipos de Limpeza
 const lch = C.periods.outubro.byTipo['LIMPEZA'].children;
@@ -97,11 +108,10 @@ const ap5 = doAP('AP5'), ap3 = doAP('AP3');
 const dif = b => b.c26 - b.c25;
 const ap5Tot = ap5.reduce((s, b) => s + dif(b), 0), ap3Tot = ap3.reduce((s, b) => s + dif(b), 0);
 assert('A9', 'Cascata concilia com o cubo por AP', ap5Tot === ap('AP5').dif && ap3Tot === ap('AP3').dif, `${ap5Tot}/${ap('AP5').dif} ${ap3Tot}/${ap('AP3').dif}`);
-const cgBg = ap5.filter(b => ['CAMPO GRANDE', 'BANGU'].includes(b.nome)).reduce((s, b) => s + dif(b), 0);
-check('A9', 'AP5: dois bairros no aumento', Math.round(cgBg / ap5Tot * 100) + '%');
-const ap3Max = Math.max(...ap3.map(dif));
-assert('A9', 'AP3: nenhum bairro passa de 11%', ap3Max / ap3Tot <= 0.11, (ap3Max / ap3Tot * 100).toFixed(2) + '%');
-check('A9', 'AP3: bairros com alta', `${ap3.filter(b => dif(b) > 0).length} dos ${ap3.length} bairros`);
+const doisBairros = ap5.filter(b => ['CAMPO GRANDE', 'BANGU'].includes(b.nome));
+const cgBg = doisBairros.reduce((s, b) => s + dif(b), 0);
+const cgBgBase = doisBairros.reduce((s, b) => s + b.c25, 0) / ap5.reduce((s, b) => s + b.c25, 0);
+check('A9', 'AP5: Campo Grande e Bangu no aumento e na base', [Math.round(cgBg / ap5Tot * 100) + '% do aumento', Math.round(cgBgBase * 100) + '% que representam']);
 
 // A10: bairros destacados e gerências
 const bc = n => cOut.bairros.find(r => r.nome === n), bo = n => oOut.bairros.find(r => r.nome === n);
@@ -127,10 +137,25 @@ check('A10', 'Ouvidorias a mais nos dois bairros', `${int(soma)} ouvidorias a ma
 
 // Papeleira
 const pap = svc(cOut, 'PAPELEIRA');
-assert('M1', 'Papeleira: 166 em out/2025 e zero em 2026', pap.v2025 === 166 && pap.v2026 === 0);
+assert('M1', 'Papeleira: 166 em out/2025 e zero em out/2026', pap.v2025 === 166 && pap.v2026 === 0);
+check('M1', 'Nota de Papeleira sem presumir descontinuação', ['166 chamados', 'não tem registros desde maio de 2026 nas fontes examinadas']);
+check('M2', 'Nota de Manejo Arbóreo', 'subtipo de avaliação de poda mudou de nome');
+check('M3', 'Limitação das fontes agregadas', 'Não houve conferência de registros individuais');
 
 // Redação
 assert('R1', 'Sem travessões no texto', !/[–—]/.test(text));
+// Afirmações rejeitadas pela auditoria de 05/11/2026 (auditoria/1746-out2026). Não podem voltar ao texto.
+const rejeitadas = [
+  [/excepcional/i, 'D1: out/2025 não foi atípico em Remoção Gratuita'],
+  [/mais que o triplo/i, 'D1: comparação apenas com setembro/2025'],
+  [/acima do aumento total/i, 'D2: depende da taxonomia de Papeleira'],
+  [/perfis opostos|distribu[ií]d/i, 'D3: contraste AP5 e AP3 é efeito do agrupamento'],
+  [/nenhum passa de/i, 'D3: contraste AP5 e AP3 é efeito do agrupamento'],
+  [/ausente em 2026|em desuso/i, 'D4: Papeleira existiu em 2026 até abril; sem prova de descontinuação formal'],
+  [/redução seria de/i, 'A6: cálculo sem Remoção Gratuita sustentava a tese rejeitada'],
+  [/menores? do ano/i, 'Escopo: usar "de janeiro a outubro de 2026"; novembro e dezembro não estão fechados'],
+];
+for (const [re, motivo] of rejeitadas) assert('R2', 'Afirmação rejeitada ausente: ' + motivo, !re.test(text), re.toString());
 
 console.log(`\n${ok} verificações aprovadas, ${fail} falhas.`);
 process.exit(fail ? 1 : 0);

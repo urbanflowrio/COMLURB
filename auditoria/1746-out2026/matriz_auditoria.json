@@ -1,0 +1,233 @@
+[
+ {
+  "id": "A1",
+  "afirmacao": "Chamados out/25 e out/26",
+  "valor_boletim": [
+   "21.652",
+   "24.116",
+   "+11,4%",
+   "2.464 a mais"
+  ],
+  "valor_reconstruido": "21652 / 24116 (+11,4%)",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": "Fonte primária, mês Outubro."
+ },
+ {
+  "id": "A2",
+  "afirmacao": "Ouvidorias operacionais out/25 e out/26",
+  "valor_boletim": [
+   "2.697",
+   "2.213",
+   "−17,9%"
+  ],
+  "valor_reconstruido": "2697 / 2213 (−17,9%); PCO (184, 156)",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": "Operacional = institucional menos Gerência PCO; a PCO contém só os tipos Ouvidoria e Diversos."
+ },
+ {
+  "id": "A3",
+  "afirmacao": "No ano: chamados +13,5%, ouvidorias +15,5%",
+  "valor_boletim": [
+   "+13,5%",
+   "+15,5%"
+  ],
+  "valor_reconstruido": "Série oficial congelada: +13,5% / +15,5%; fonte atual: +13,5% / +15,4%",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada com ressalva",
+  "impacto": "Baixo",
+  "nota": "Usa a série congelada (regra de data de corte). Com a fonte atual, ouvidorias seriam +15,4%. Novembro/2026 parcial na fonte (2279 chamados) corretamente excluído."
+ },
+ {
+  "id": "A4a",
+  "afirmacao": "Limpeza +2.581, acima do aumento total",
+  "valor_boletim": "2.581 chamados a mais",
+  "valor_reconstruido": "Limpeza +2581; Limpeza + Papeleira +2415 (total +2464)",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada com ressalva",
+  "impacto": "Alto",
+  "nota": "Depende da taxonomia: o histórico congelado do cubo agrega Papeleira a Limpeza, mas outubro não. Somando Papeleira, a alta de Limpeza é menor que o aumento total."
+ },
+ {
+  "id": "A4b",
+  "afirmacao": "Remoção de resíduos, capina e varrição: 2.060",
+  "valor_boletim": "2.060",
+  "valor_reconstruido": 2060,
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": ""
+ },
+ {
+  "id": "A5",
+  "afirmacao": "Volume excepcional de Remoção Gratuita em out/2025",
+  "valor_boletim": [
+   "799",
+   "469 em setembro e 474 em outubro"
+  ],
+  "valor_reconstruido": "out/25 = 799: 6º de 12 meses de 2025, mediana dos demais 772, z = 0.05; jul a set/25 = 317, 247, 246; nov e dez/25 = 1014, 1133; set e out/26 = 468, 474",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Incorreta",
+  "impacto": "Crítico",
+  "nota": "Out/2025 está no nível típico de 2025; o atípico foi o vale de jul a set/2025. A queda de out/2026 vem do nível baixo de 2026 (set e out são os menores do ano), não de uma base inflada."
+ },
+ {
+  "id": "A6",
+  "afirmacao": "Sem Remoção Gratuita, redução de 8,4%",
+  "valor_boletim": "8,4%",
+  "valor_reconstruido": "−8,4%",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada com ressalva",
+  "impacto": "Moderado",
+  "nota": "Aritmética correta; perde sentido se a premissa de base excepcional (A5) for retirada."
+ },
+ {
+  "id": "A7",
+  "afirmacao": "Entre os cinco serviços com 97,6% dos chamados, só Limpeza cresceu nos dois canais",
+  "valor_boletim": [
+   "97,6%",
+   "Limpeza foi o único que cresceu nos dois canais"
+  ],
+  "valor_reconstruido": "grandes = ['COLETA DOMICILIAR', 'LIMPEZA', 'MANEJO ARBÓREO', 'REMOÇÃO GRATUITA', 'VETORES']; 97.6%; crescem nos dois: ['LIMPEZA']; Limpeza ouv +158, dos quais +72 num subtipo de Papeleira inexistente em Limpeza em out/25",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada com ressalva",
+  "impacto": "Moderado",
+  "nota": "Conclusão se mantém em todas as taxonomias testadas; a magnitude em ouvidorias cai para +86 sem o subtipo reclassificado."
+ },
+ {
+  "id": "A4c",
+  "afirmacao": "Decomposição de chamados e ouvidorias",
+  "valor_boletim": [
+   "+608",
+   "−484",
+   "−418",
+   "+177",
+   "−325",
+   "−172",
+   "+158",
+   "−145"
+  ],
+  "valor_reconstruido": {
+   "COLETA DOMICILIAR": 608,
+   "REMOÇÃO GRATUITA": -484,
+   "MANEJO ARBÓREO": -418,
+   "ouv": {
+    "REMOÇÃO GRATUITA": -325,
+    "MANEJO ARBÓREO": -172,
+    "LIMPEZA": 158
+   }
+  },
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada com ressalva",
+  "impacto": "Moderado",
+  "nota": "Manejo Arbóreo: subtipo de avaliação de poda trocado de nome (1.576 para 1.227 com a versão \"180 dias\"); \"Demais serviços\" inclui −166 de Papeleira."
+ },
+ {
+  "id": "A8a",
+  "afirmacao": "AP5 e AP3 reúnem 2.310 dos 2.464",
+  "valor_boletim": "2.310",
+  "valor_reconstruido": 2310,
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": ""
+ },
+ {
+  "id": "A8b",
+  "afirmacao": "AP5 concentrada (68% em dois bairros), AP3 distribuída",
+  "valor_boletim": [
+   "68%",
+   "56 dos 80 bairros"
+  ],
+  "valor_reconstruido": "Bairros para 50% da alta: AP5 2 de 21 (10%), AP3 7 de 80 (9%); bairros que cresceram: AP5 18/21 (86%), AP3 56/80 (70%)",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Não validada",
+  "impacto": "Alto",
+  "nota": "Os números estão certos, mas o contraste decorre do agrupamento: AP5 tem 21 bairros e dois deles somam 40% da base. Proporcionalmente, a concentração é a mesma nas duas APs."
+ },
+ {
+  "id": "A9",
+  "afirmacao": "CAMPO GRANDE: valores, Limpeza e gerência OG18G",
+  "valor_boletim": [
+   "1.415 → 1.796",
+   "152 → 207",
+   "271 dos 381 chamados",
+   "599 chamados e 99 ouvidorias"
+  ],
+  "valor_reconstruido": "ch [1415, 1796], ouv [152, 207], Limpeza ch +271 ouv +48, OG18G ch [317, 599] ouv [48, 99]",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": "Gerência com a mesma área de atuação em 2025 e 2026 (mesmos bairros em jan a out). "
+ },
+ {
+  "id": "A10",
+  "afirmacao": "BANGU: valores, Limpeza e gerência OG17B",
+  "valor_boletim": [
+   "577 → 986",
+   "46 → 83",
+   "405 dos 409 chamados",
+   "637 chamados e 52 ouvidorias"
+  ],
+  "valor_reconstruido": "ch [577, 986], ouv [46, 83], Limpeza ch +405 ouv +20, OG17B ch [221, 637] ouv [28, 52]",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada com ressalva",
+  "impacto": "Baixo",
+  "nota": "Gerência com a mesma área de atuação em 2025 e 2026 (mesmos bairros em jan a out). Ouvidorias sobre base pequena (46): o +80,4% deve vir sempre com os absolutos, como já vem."
+ },
+ {
+  "id": "A11",
+  "afirmacao": "Dois maiores aumentos de chamados e de ouvidorias são Bangu e Campo Grande",
+  "valor_boletim": [
+   "Bangu",
+   "Campo Grande"
+  ],
+  "valor_reconstruido": "chamados ['BANGU', 'CAMPO GRANDE'], ouvidorias ['CAMPO GRANDE', 'BANGU']",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": ""
+ },
+ {
+  "id": "A12",
+  "afirmacao": "92 ouvidorias a mais nos dois bairros, 484 a menos na cidade",
+  "valor_boletim": "92 ouvidorias a mais",
+  "valor_reconstruido": 92,
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Validada",
+  "impacto": "-",
+  "nota": ""
+ },
+ {
+  "id": "N1",
+  "afirmacao": "Papeleira: 166 em out/25, \"ausente em 2026\"",
+  "valor_boletim": [
+   "166 chamados",
+   "ausente em 2026"
+  ],
+  "valor_reconstruido": "Papeleira 2026: Jan 189, Fev 124, Mar 132, Abr 12, Mai 0, Jun 0, Jul 2, Ago 0, Set 1, Out 0; 2025 em todos os meses (1701 no ano)",
+  "nivel": "A",
+  "no_html": true,
+  "situacao": "Incorreta",
+  "impacto": "Moderado",
+  "nota": "O tipo existiu em 2026 até abril; a redação correta é \"em desuso desde maio de 2026\"."
+ }
+]

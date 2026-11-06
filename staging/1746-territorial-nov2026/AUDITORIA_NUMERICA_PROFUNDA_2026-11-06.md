@@ -35,6 +35,7 @@
 | **A10** | **MÉDIO** | Novembro de 2026 é parcial | Total Chamados de 2026 em toda a fonte: **282.380**, mas jan–out fecha em **278.810**. A diferença **3.570** pertence a novembro parcial. | Excluir novembro de todas as séries oficialmente fechadas em outubro. |
 | **A11** | **MÉDIO** | Impossibilidade de homologação em nível de protocolo | Fontes são agregados de tabelas dinâmicas sem IDs/protocolos individuais ou data documentada de extração. | Testes de contagem não detectam eventual protocolo duplicado ou erro de origem. Solicitar extração granular em futura etapa. |
 | **A12** | **ALTO (PROCESSO)** | Prévia com layout original continua carregando cubos oficiais | As cinco cópias visuais restauraram o HTML original e seus scripts, sem injeção dos novos cubos. As cinco páginas alternativas da staging usam uma agregação sem SubTipo. | Não apresentar prévias visuais como integração homologada. Adaptar cubos originais com testes de contrato e drill antes de substituir produção. |
+| **A13** | **MÉDIO** | Revisão institucional adicional em outubro de Ouvidorias | Nova extração institucional out/26 **2.370** = 2.213 operacionais + **157 PCO**; auditoria da extração anterior registrava **156 PCO** e, portanto, **2.369 institucionais**. | Preservar versão de origem e documentar +1 institucional não operacional; não atribuir a mudança ao serviço sem nível de protocolo. |
 
 ## 3. Saldos mensais comparados
 

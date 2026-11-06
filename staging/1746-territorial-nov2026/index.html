@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1746 · Prévia de integração territorial</title>
+<style>
+:root{color-scheme:dark;--bg:#071321;--card:#0c2135;--line:#24415a;--muted:#adc1d2;--cyan:#69dedb;--amber:#f8c779;--white:#f2f7fc}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% 0,#123451,var(--bg) 50%);color:var(--white);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1170px;margin:auto;padding:30px 20px 70px}
+header{border-bottom:1px solid var(--line);padding-bottom:24px;display:flex;justify-content:space-between;gap:20px;align-items:flex-start}h1{font-size:clamp(27px,4vw,43px);letter-spacing:-.04em;line-height:1.15;margin:9px 0}h2{font-size:19px;margin:0 0 12px}p{color:var(--muted);margin:8px 0}.eyebrow{font-size:11px;color:var(--cyan);font-weight:800;letter-spacing:.15em;text-transform:uppercase}.tag{border:1px solid #a47937;background:#3c2e1b;border-radius:8px;padding:6px 10px;font-size:11px;color:#ffdfac;white-space:nowrap}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.card,.panel{border:1px solid var(--line);background:var(--card);border-radius:15px;padding:18px}.metric{font-weight:800;font-size:29px;letter-spacing:-.04em;margin:4px 0}.caption{color:var(--muted);font-size:12px}.panel{margin-top:14px}.table{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap}th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}th{text-align:right;color:#c7daeb;font-size:12px;background:#132d46}td:first-child,th:first-child{text-align:left}td.warn{color:var(--amber);font-weight:750}td.zero{color:#8dd6c2}.notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}.notes p{margin:0}a{color:var(--cyan)}.footer{margin-top:18px;font-size:12px;color:var(--muted)}.error{color:#ffc9bc}.legend{font-size:12px;color:var(--muted);margin:0 0 14px}
+@media(max-width:800px){header{flex-direction:column}.cards{grid-template-columns:repeat(2,1fr)}.notes{grid-template-columns:1fr}}@media(max-width:460px){.cards{grid-template-columns:1fr}}
+</style></head>
+<body><main>
+<header><div><span class="eyebrow">HUB COMLURB · 1746 · laboratório</span><h1>Conciliação territorial<br>do histórico 1746</h1><p>Prévia técnica das fontes históricas atualizadas. Classificação preservada pelo <strong>Tipo original</strong>; AP padronizada em campo separado; Ouvidorias operacionais excluem PCO.</p></div><div class="tag">TESTE · NÃO HOMOLOGADO</div></header>
+<section class="cards" id="cards"><div class="card"><div class="caption">Status</div><div class="metric">Auditoria</div><div class="caption">Dados carregando…</div></div></section>
+<section class="panel"><h2>Diferenças mensais em relação à série publicada</h2><p class="legend">Diferença = nova extração menos fechamento publicado. Valores oficiais não foram substituídos. Comparações por Tipo preservam o nome informado pela fonte.</p><div class="table"><table><thead><tr><th>Mês</th><th>Chamados 2025</th><th>Chamados 2026</th><th>Ouvidorias 2025</th><th>Ouvidorias 2026</th></tr></thead><tbody id="comparison"><tr><td colspan="5">Carregando dados de conferência…</td></tr></tbody></table></div></section>
+<section class="panel"><h2>Orientações para homologação</h2><div class="notes"><div><strong>Fechamentos preservados</strong><p>Julho, agosto e setembro mantêm os números publicados até a aprovação de eventual retificação histórica.</p></div><div><strong>Outubro: diferença de quatro Chamados</strong><p>A extração traz 24.120; o HUB publicado apresenta 24.116. A diferença permanece explícita e não foi removida.</p></div><div><strong>Novembro fora do corte</strong><p>3.570 Chamados de novembro/2026 foram preservados na fonte, sem compor esta análise até outubro.</p></div><div><strong>SubTipos de Ouvidorias</strong><p>A auditoria de SubTipos está suspensa enquanto a fonte não fornecer detalhamento completo.</p></div></div></section>
+<p class="footer">Fontes: <a id="c" target="_blank" rel="noopener">Chamados tratados</a> · <a id="o" target="_blank" rel="noopener">Ouvidorias tratadas</a> · <a id="territorio" target="_blank" rel="noopener">Cadastro territorial mestre</a>. Esta página é uma prévia de verificação: não substitui o HUB publicado.</p>
+</main>
+<script>
+(async()=>{
+const f=v=>new Intl.NumberFormat('pt-BR').format(v),d=v=>v>0?'+'+f(v):v<0?'−'+f(Math.abs(v)):'0';
+try{
+ const response=await fetch('./preflight.json',{cache:'no-store'});if(!response.ok)throw Error('Não foi possível ler a evidência de auditoria.');
+ const data=await response.json(),a=data.metadata;
+ document.querySelector('#c').href=a.fonteChamados;document.querySelector('#o').href=a.fonteOuvidorias;document.querySelector('#territorio').href=a.cadastroTerritorial;
+ const differences=data.monthly.flatMap(m=>Object.values(m.diferencas).filter(v=>v!==0));
+ document.querySelector('#cards').innerHTML=[
+ ['Linhas de Chamados',f(a.totalLinhas.chamados),'Origem preservada'],
+ ['Linhas de Ouvidorias',f(a.totalLinhas.ouvidorias),'PCO separada no operacional'],
+ ['APs padronizadas',f(a.linhasAPCorrigidas.chamados+a.linhasAPCorrigidas.ouvidorias),'2.079 Chamados · 487 Ouvidorias'],
+ ['Divergências mensais',f(differences.length),'Todas registradas, nenhuma absorvida']
+ ].map(c=>'<div class="card"><div class="caption">'+c[0]+'</div><div class="metric">'+c[1]+'</div><div class="caption">'+c[2]+'</div></div>').join('');
+ document.querySelector('#comparison').innerHTML=data.monthly.map(m=>'<tr><td>'+m.mes+'</td>'+['chamados2025','chamados2026','ouvidorias2025','ouvidorias2026'].map(k=>'<td class="'+(m.diferencas[k]===0?'zero':'warn')+'" title="Extração '+f(m.fonte[k])+' · Publicado '+f(m.publicado[k])+'">'+d(m.diferencas[k])+'</td>').join('')+'</tr>').join('');
+}catch(e){document.querySelector('#comparison').innerHTML='<tr><td colspan="5" class="error">'+e.message+'. Acesse o JSON de auditoria na branch de testes.</td></tr>';document.querySelector('#cards').innerHTML='<div class="card"><strong class="error">Fonte de prévia indisponível</strong><p>Os arquivos oficiais não foram alterados.</p></div>'}
+})();
+</script></body></html>

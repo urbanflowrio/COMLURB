@@ -110,3 +110,10 @@ Em outubro isolado: Chamados de Limpeza +2.587 (HUB +2.581); Ouvidorias de Limpe
 7. **Testar em navegador e homologar por aceite operacional** antes de publicação.
 
 **Limite da auditoria:** exames quantitativos e estruturais das fontes agregadas e dos artefatos existentes. Não é uma auditoria dos protocolos da plataforma 1746, das decisões de classificação de cada solicitação ou da operação em campo. A evidência não permite determinar a causa de revisões de julho a outubro.
+
+
+## 9. Auditoria do processo de testes automáticos
+
+Durante a verificação final, o GitHub Actions apresentou falhas após a restauração do layout original. Os **testes numéricos da camada tratada passaram** (15.862 chaves de Chamados e 11.902 chaves de Ouvidorias somadas por mês e por PCO). A falha foi causada por uma asserção de interface obsoleta, que exigia controles do layout alternativo já descontinuado. A verificação foi corrigida para exigir a identidade byte a byte (exceto anotação de prévia e título) entre os cinco HTMLs originais e as respectivas cópias de conferência. **Nova execução concluída com sucesso:** https://github.com/urbanflowrio/COMLURB/actions/runs/42221795429
+
+Esse sucesso não significa que os cinco módulos foram reprocessados com dados novos. Significa somente que os dados de staging se conciliam matematicamente e que o layout existente foi preservado. A homologação funcional em navegador e a integração dos contratos dos cubos oficiais permanecem pendentes.

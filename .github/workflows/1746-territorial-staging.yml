@@ -73,3 +73,49 @@ jobs:
           assert.equal(C.Setembro.tipo.LIMPEZA[1]-C.Setembro.tipo.LIMPEZA[0],1163);
           console.log('OK: 9 competências, ambas as fontes, somatórios de AP/Tipo/Bairro e revisões');
           NODE
+      - name: Validar a sintaxe da navegação de cinco módulos
+        run: node --check staging/1746-territorial-nov2026/preview-app.js
+      - name: Conciliar 10 meses por Tipo, AP, Bairro e Gerência na nova camada
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict'),fs=require('node:fs');
+          const dir='staging/1746-territorial-nov2026/';
+          for(const [fname,channel,expectedRows,expectedNull] of [
+            ['chamados-tratados-2025-2026.json','Chamados',53470,1742],
+            ['ouvidorias-tratadas-2025-2026.json','Ouvidorias',12982,415]
+          ]){
+            const d=JSON.parse(fs.readFileSync(dir+fname,'utf8'));
+            assert.equal(d.meta.channel,channel);
+            assert.equal(d.meta.sourceRows,expectedRows);
+            assert.equal(d.meta.nullOriginalLines,expectedNull);
+            assert.ok(d.records.length>7000);
+            let count=0;
+            for(let m=1;m<=10;m++){
+              const all=d.records.filter(r=>r[0]===m);
+              for(const r of all){assert.match(r[1],/^AP[1-5]$/);assert.equal(r.length,7);}
+              const institutional=[0,0],operational=[0,0];
+              for(const r of all){
+                count++;
+                institutional[0]+=r[5];institutional[1]+=r[6];
+                if(channel!=='Ouvidorias'||r[4]!=='PCO'){operational[0]+=r[5];operational[1]+=r[6];}
+              }
+              assert.equal(operational[0],d.monthly[m].y25,channel+' '+m+' operacional 2025');
+              assert.equal(operational[1],d.monthly[m].y26,channel+' '+m+' operacional 2026');
+              if(channel==='Ouvidorias'){
+                assert.equal(institutional[0],d.monthly[m].inst25);
+                assert.equal(institutional[1],d.monthly[m].inst26);
+                assert.equal(institutional[1]-operational[1],d.monthly[m].pco26);
+              }
+            }
+            assert.equal(count,d.records.length);
+            console.log('OK: '+channel+' 10 meses / '+count+' chaves de drill');
+          }
+          for(const mod of ['chamados','ouvidoria','historico','timeline','comparativo']){
+            const html=fs.readFileSync(dir+'preview-'+mod+'.html','utf8');
+            assert.ok(html.includes('data-mode="'+mod+'"'));
+            assert.ok(html.includes('preview-app.js'));
+            for(const id of ['mes','ap','tipo','bairro','gerencia','reset','pco','results'])
+              assert.ok(html.includes('id="'+id+'"'),mod+' '+id);
+          }
+          console.log('OK: cinco previews e contrato do drill')
+          NODE

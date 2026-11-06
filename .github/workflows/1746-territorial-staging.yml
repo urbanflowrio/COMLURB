@@ -1,0 +1,130 @@
+name: 1746 Territorial — Self-Test (staging)
+on:
+  push:
+    branches: [teste-integracao-territorial-1746-nov2026]
+    paths:
+      - "staging/1746-territorial-nov2026/**"
+      - ".github/workflows/1746-territorial-staging.yml"
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Validar regras e contrato de integração
+        run: node staging/1746-territorial-nov2026/reconciliar.cjs --self-test
+      - name: Conferir integridade dos dados de preflight
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),assert=require('assert/strict');
+          const d=JSON.parse(fs.readFileSync('staging/1746-territorial-nov2026/preflight.json','utf8'));
+          assert.equal(d.monthly.length,10);
+          assert.equal(d.metadata.linhasAPCorrigidas.chamados,2079);
+          assert.equal(d.metadata.linhasAPCorrigidas.ouvidorias,487);
+          const deltas=d.monthly.flatMap(m=>Object.values(m.diferencas).filter(x=>x!==0));
+          assert.equal(deltas.length,7);
+          const oct=d.monthly.find(m=>m.mes==='Outubro');
+          assert.equal(oct.diferencas.chamados2026,4);
+          assert.equal(oct.diferencas.ouvidorias2026,0);
+          console.log('OK: 10 meses; 7 divergências registradas; sem alteração da main');
+          NODE
+      - name: Conferir auditoria janeiro–setembro (AP, Tipo e versões)
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),assert=require('node:assert/strict');
+          const dir='staging/1746-territorial-nov2026/';
+          const C=JSON.parse(fs.readFileSync(dir+'auditoria-chamados-jan-set2026.json','utf8')).meses;
+          const O=JSON.parse(fs.readFileSync(dir+'auditoria-ouvidorias-jan-set2026.json','utf8')).meses;
+          const B=JSON.parse(fs.readFileSync(dir+'baseline-publicada-jan-set2026.json','utf8')).meses;
+          const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
+          for(const m of months){
+            for(const [data,group] of [[C[m],'Chamados'],[O[m],'Ouvidorias']]){
+              assert.ok(data,group+' '+m);
+              for(let y=0;y<2;y++){
+                const apSum=Object.values(data.ap).reduce((a,v)=>a+v[y],0);
+                const tipoSum=Object.values(data.tipo).reduce((a,v)=>a+v[y],0);
+                const bairroSum=Object.values(data.bairro).reduce((a,v)=>a+v[y],0);
+                assert.equal(apSum,data.total[y],group+' '+m+' AP');
+                assert.equal(tipoSum,data.total[y],group+' '+m+' Tipo');
+                assert.equal(bairroSum,data.total[y],group+' '+m+' Bairro');
+              }
+            }
+            assert.equal(C[m].total[0]>0,true);
+            assert.equal(O[m].total[0]>0,true);
+            const b=B[m].total;
+            if(months.indexOf(m)<6){
+              assert.equal(C[m].total[1],b.chamados2026,'Chamados '+m);
+              assert.equal(O[m].total[1],b.ouvidorias2026,'Ouvidorias '+m);
+            }
+          }
+          assert.equal(B.Julho.papeleira.ouvidorias2026,46);
+          assert.equal(O.Julho.tipo.PAPELEIRA[1],86);
+          assert.equal(B.Agosto.papeleira.ouvidorias2026,45);
+          assert.equal(O.Agosto.tipo.PAPELEIRA[1],93);
+          assert.equal(B.Setembro.papeleira.ouvidorias2026,53);
+          assert.equal(O.Setembro.tipo.PAPELEIRA[1],92);
+          assert.equal(C.Setembro.tipo.LIMPEZA[1]-C.Setembro.tipo.LIMPEZA[0],1163);
+          console.log('OK: 9 competências, ambas as fontes, somatórios de AP/Tipo/Bairro e revisões');
+          NODE
+      - name: Validar a sintaxe da navegação de cinco módulos
+        run: node --check staging/1746-territorial-nov2026/preview-app.js
+      - name: Conciliar 10 meses por Tipo, AP, Bairro e Gerência na nova camada
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict'),fs=require('node:fs');
+          const dir='staging/1746-territorial-nov2026/';
+          for(const [fname,channel,expectedRows,expectedNull] of [
+            ['chamados-tratados-2025-2026.json','Chamados',53470,1742],
+            ['ouvidorias-tratadas-2025-2026.json','Ouvidorias',12982,415]
+          ]){
+            const d=JSON.parse(fs.readFileSync(dir+fname,'utf8'));
+            assert.equal(d.meta.channel,channel);
+            assert.equal(d.meta.sourceRows,expectedRows);
+            assert.equal(d.meta.nullOriginalLines,expectedNull);
+            assert.ok(d.records.length>7000);
+            let count=0;
+            for(let m=1;m<=10;m++){
+              const all=d.records.filter(r=>r[0]===m);
+              for(const r of all){assert.match(r[1],/^AP[1-5]$/);assert.equal(r.length,7);}
+              const institutional=[0,0],operational=[0,0];
+              for(const r of all){
+                count++;
+                institutional[0]+=r[5];institutional[1]+=r[6];
+                if(channel!=='Ouvidorias'||r[4]!=='PCO'){operational[0]+=r[5];operational[1]+=r[6];}
+              }
+              assert.equal(operational[0],d.monthly[m].y25,channel+' '+m+' operacional 2025');
+              assert.equal(operational[1],d.monthly[m].y26,channel+' '+m+' operacional 2026');
+              if(channel==='Ouvidorias'){
+                assert.equal(institutional[0],d.monthly[m].inst25);
+                assert.equal(institutional[1],d.monthly[m].inst26);
+                assert.equal(institutional[1]-operational[1],d.monthly[m].pco26);
+              }
+            }
+            assert.equal(count,d.records.length);
+            console.log('OK: '+channel+' 10 meses / '+count+' chaves de drill');
+          }
+          const modules={
+            chamados:'chamados-1746',
+            ouvidoria:'ouvidoria',
+            historico:'1746-historico',
+            timeline:'1746-timeline',
+            comparativo:'1746-comparativo'
+          };
+          for(const [mod,folder] of Object.entries(modules)){
+            const redirect=fs.readFileSync(dir+'preview-'+mod+'.html','utf8');
+            assert.ok(redirect.includes('../../'+folder+'/previa-territorial-layout-original.html'),mod+' redirecionamento');
+            const original=fs.readFileSync(folder+'/index.html','utf8');
+            const replica=fs.readFileSync(folder+'/previa-territorial-layout-original.html','utf8')
+              .replace(String.fromCharCode(10)+'<!-- PRÉVIA FIEL AO LAYOUT OFICIAL · SEM ATUALIZAÇÃO DE CUBOS · BRANCH TESTE · 06/11/2026 -->'+String.fromCharCode(10),'')
+              .replace(/(<title>)Prévia do layout oficial · /,'$1');
+            assert.equal(replica,original,mod+' layout 100% preservado');
+          }
+          console.log('OK: cinco redirecionamentos e layouts oficiais preservados; drill original não modificado')
+          NODE

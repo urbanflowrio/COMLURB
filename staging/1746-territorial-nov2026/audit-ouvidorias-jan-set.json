@@ -1,0 +1,6779 @@
+{
+  "source": "1QYo05-kXN-F_HbShX_QIliY8Kwn6_rIgrThsfk1u_A0",
+  "canal": "Ouvidorias",
+  "cutoff": "jan-set",
+  "reviewedRows": 11760,
+  "monthly": {
+    "Janeiro": {
+      "total": {
+        "y25": 4046,
+        "y26": 3668
+      },
+      "institucional": {
+        "y25": 4732,
+        "y26": 3861
+      },
+      "pco": {
+        "y25": 686,
+        "y26": 193
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 1,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 2,
+          "y26": 18
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 287,
+          "y26": 200
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 1988,
+          "y26": 1728
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 41,
+          "y26": 31
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 3,
+          "y26": 3
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 8,
+          "y26": 9
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 1162,
+          "y26": 1175
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 0,
+          "y26": 0
+        },
+        "COLETA SELETIVA": {
+          "y25": 34,
+          "y26": 17
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 458,
+          "y26": 419
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 28,
+          "y26": 15
+        },
+        "VETORES": {
+          "y25": 34,
+          "y26": 53
+        }
+      },
+      "ap": {
+        "AP3": {
+          "y25": 1840,
+          "y26": 1423
+        },
+        "AP2": {
+          "y25": 431,
+          "y26": 447
+        },
+        "AP4": {
+          "y25": 614,
+          "y26": 758
+        },
+        "AP1": {
+          "y25": 150,
+          "y26": 88
+        },
+        "AP5": {
+          "y25": 1011,
+          "y26": 952
+        }
+      },
+      "bairro": {
+        "CACHAMBI": {
+          "y25": 48,
+          "y26": 30
+        },
+        "FLAMENGO": {
+          "y25": 11,
+          "y26": 15
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 15,
+          "y26": 6
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 43,
+          "y26": 35
+        },
+        "CENTRO": {
+          "y25": 30,
+          "y26": 18
+        },
+        "COPACABANA": {
+          "y25": 37,
+          "y26": 34
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 80,
+          "y26": 101
+        },
+        "PRACA SECA": {
+          "y25": 67,
+          "y26": 92
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 49,
+          "y26": 90
+        },
+        "RIO COMPRIDO": {
+          "y25": 24,
+          "y26": 12
+        },
+        "SANTO CRISTO": {
+          "y25": 12,
+          "y26": 2
+        },
+        "TIJUCA": {
+          "y25": 135,
+          "y26": 164
+        },
+        "BENTO RIBEIRO": {
+          "y25": 104,
+          "y26": 43
+        },
+        "BOTAFOGO": {
+          "y25": 28,
+          "y26": 33
+        },
+        "BRÁS DE PINA": {
+          "y25": 36,
+          "y26": 43
+        },
+        "CAMORIM": {
+          "y25": 5,
+          "y26": 6
+        },
+        "CAMPO GRANDE": {
+          "y25": 330,
+          "y26": 266
+        },
+        "CIDADE NOVA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "COSMOS": {
+          "y25": 49,
+          "y26": 69
+        },
+        "GALEAO": {
+          "y25": 2,
+          "y26": 4
+        },
+        "GLORIA": {
+          "y25": 3,
+          "y26": 7
+        },
+        "GUARATIBA": {
+          "y25": 81,
+          "y26": 58
+        },
+        "JARDIM SULACAP": {
+          "y25": 20,
+          "y26": 19
+        },
+        "LAGOA": {
+          "y25": 3,
+          "y26": 1
+        },
+        "LARANJEIRAS": {
+          "y25": 21,
+          "y26": 18
+        },
+        "MADUREIRA": {
+          "y25": 43,
+          "y26": 20
+        },
+        "MANGUINHOS": {
+          "y25": 1,
+          "y26": 3
+        },
+        "MEIER": {
+          "y25": 55,
+          "y26": 35
+        },
+        "PADRE MIGUEL": {
+          "y25": 34,
+          "y26": 23
+        },
+        "PECHINCHA": {
+          "y25": 58,
+          "y26": 57
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 15,
+          "y26": 11
+        },
+        "PENHA": {
+          "y25": 55,
+          "y26": 29
+        },
+        "REALENGO": {
+          "y25": 67,
+          "y26": 89
+        },
+        "ANIL": {
+          "y25": 33,
+          "y26": 31
+        },
+        "CIDADE DE DEUS": {
+          "y25": 6,
+          "y26": 7
+        },
+        "CURICICA": {
+          "y25": 12,
+          "y26": 27
+        },
+        "GARDENIA AZUL": {
+          "y25": 9,
+          "y26": 5
+        },
+        "JACAREPAGUA": {
+          "y25": 20,
+          "y26": 29
+        },
+        "TANQUE": {
+          "y25": 16,
+          "y26": 49
+        },
+        "TAQUARA": {
+          "y25": 131,
+          "y26": 158
+        },
+        "VILA VALQUEIRE": {
+          "y25": 58,
+          "y26": 43
+        },
+        "ITANHANGA": {
+          "y25": 1,
+          "y26": 4
+        },
+        "VARGEM GRANDE": {
+          "y25": 14,
+          "y26": 9
+        },
+        "VARGEM PEQUENA": {
+          "y25": 11,
+          "y26": 15
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 13,
+          "y26": 8
+        },
+        "ANDARAI": {
+          "y25": 18,
+          "y26": 27
+        },
+        "GRAJAU": {
+          "y25": 25,
+          "y26": 17
+        },
+        "MARACANA": {
+          "y25": 21,
+          "y26": 16
+        },
+        "VILA ISABEL": {
+          "y25": 48,
+          "y26": 45
+        },
+        "BONSUCESSO": {
+          "y25": 13,
+          "y26": 18
+        },
+        "MARE": {
+          "y25": 0,
+          "y26": 2
+        },
+        "OLARIA": {
+          "y25": 56,
+          "y26": 35
+        },
+        "RAMOS": {
+          "y25": 59,
+          "y26": 51
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 4,
+          "y26": 8
+        },
+        "DEL CASTILHO": {
+          "y25": 15,
+          "y26": 10
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 17,
+          "y26": 12
+        },
+        "HIGIENOPOLIS": {
+          "y25": 21,
+          "y26": 25
+        },
+        "INHAUMA": {
+          "y25": 43,
+          "y26": 40
+        },
+        "JACARE": {
+          "y25": 8,
+          "y26": 5
+        },
+        "MARIA DA GRACA": {
+          "y25": 24,
+          "y26": 16
+        },
+        "TOMAS COELHO": {
+          "y25": 10,
+          "y26": 11
+        },
+        "ENGENHO NOVO": {
+          "y25": 48,
+          "y26": 33
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 13,
+          "y26": 9
+        },
+        "RIACHUELO": {
+          "y25": 20,
+          "y26": 17
+        },
+        "SAMPAIO": {
+          "y25": 8,
+          "y26": 12
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 3,
+          "y26": 3
+        },
+        "TODOS OS SANTOS": {
+          "y25": 33,
+          "y26": 15
+        },
+        "ABOLICAO": {
+          "y25": 23,
+          "y26": 26
+        },
+        "ENCANTADO": {
+          "y25": 20,
+          "y26": 21
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 44,
+          "y26": 39
+        },
+        "PIEDADE": {
+          "y25": 65,
+          "y26": 56
+        },
+        "PILARES": {
+          "y25": 28,
+          "y26": 21
+        },
+        "BANCARIOS": {
+          "y25": 17,
+          "y26": 11
+        },
+        "CACUIA": {
+          "y25": 2,
+          "y26": 5
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 15,
+          "y26": 21
+        },
+        "JARDIM GUANABARA": {
+          "y25": 20,
+          "y26": 24
+        },
+        "MONERO": {
+          "y25": 7,
+          "y26": 5
+        },
+        "PENHA CIRCULAR": {
+          "y25": 47,
+          "y26": 37
+        },
+        "COLEGIO": {
+          "y25": 4,
+          "y26": 7
+        },
+        "IRAJA": {
+          "y25": 72,
+          "y26": 56
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 16,
+          "y26": 17
+        },
+        "VILA DA PENHA": {
+          "y25": 33,
+          "y26": 25
+        },
+        "VILA KOSMOS": {
+          "y25": 14,
+          "y26": 13
+        },
+        "HONORIO GURGEL": {
+          "y25": 36,
+          "y26": 11
+        },
+        "MARECHAL HERMES": {
+          "y25": 87,
+          "y26": 29
+        },
+        "OSVALDO CRUZ": {
+          "y25": 63,
+          "y26": 36
+        },
+        "ROCHA MIRANDA": {
+          "y25": 32,
+          "y26": 11
+        },
+        "CASCADURA": {
+          "y25": 25,
+          "y26": 24
+        },
+        "CAVALCANTI": {
+          "y25": 13,
+          "y26": 11
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 6,
+          "y26": 5
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 44,
+          "y26": 30
+        },
+        "VAZ LOBO": {
+          "y25": 6,
+          "y26": 7
+        },
+        "ANCHIETA": {
+          "y25": 32,
+          "y26": 23
+        },
+        "GUADALUPE": {
+          "y25": 29,
+          "y26": 19
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 20,
+          "y26": 12
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 19,
+          "y26": 28
+        },
+        "ACARI": {
+          "y25": 5,
+          "y26": 0
+        },
+        "BARROS FILHO": {
+          "y25": 2,
+          "y26": 5
+        },
+        "COELHO NETO": {
+          "y25": 23,
+          "y26": 19
+        },
+        "COSTA BARROS": {
+          "y25": 6,
+          "y26": 17
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 7,
+          "y26": 6
+        },
+        "PAVUNA": {
+          "y25": 62,
+          "y26": 37
+        },
+        "CORDOVIL": {
+          "y25": 8,
+          "y26": 20
+        },
+        "JARDIM AMERICA": {
+          "y25": 20,
+          "y26": 12
+        },
+        "VIGARIO GERAL": {
+          "y25": 19,
+          "y26": 8
+        },
+        "BANGU": {
+          "y25": 117,
+          "y26": 102
+        },
+        "SENADOR CAMARA": {
+          "y25": 36,
+          "y26": 38
+        },
+        "INHOAIBA": {
+          "y25": 28,
+          "y26": 36
+        },
+        "SANTISSIMO": {
+          "y25": 29,
+          "y26": 21
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 28,
+          "y26": 25
+        },
+        "PACIENCIA": {
+          "y25": 38,
+          "y26": 44
+        },
+        "SANTA CRUZ": {
+          "y25": 84,
+          "y26": 89
+        },
+        "SEPETIBA": {
+          "y25": 33,
+          "y26": 37
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 14,
+          "y26": 16
+        },
+        "VILA MILITAR": {
+          "y25": 3,
+          "y26": 6
+        },
+        "CAJU": {
+          "y25": 5,
+          "y26": 4
+        },
+        "CATUMBI": {
+          "y25": 3,
+          "y26": 2
+        },
+        "SANTA TERESA": {
+          "y25": 32,
+          "y26": 19
+        },
+        "COSME VELHO": {
+          "y25": 2,
+          "y26": 0
+        },
+        "HUMAITA": {
+          "y25": 6,
+          "y26": 5
+        },
+        "IPANEMA": {
+          "y25": 10,
+          "y26": 16
+        },
+        "JARDIM BOTANICO": {
+          "y25": 9,
+          "y26": 8
+        },
+        "LEBLON": {
+          "y25": 11,
+          "y26": 7
+        },
+        "BENFICA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "SAO CRISTOVAO": {
+          "y25": 13,
+          "y26": 13
+        },
+        "SAO CONRADO": {
+          "y25": 2,
+          "y26": 1
+        },
+        "VIDIGAL": {
+          "y25": 0,
+          "y26": 0
+        },
+        "JOA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "JACAREZINHO": {
+          "y25": 2,
+          "y26": 3
+        },
+        "ROCHA": {
+          "y25": 8,
+          "y26": 9
+        },
+        "AGUA SANTA": {
+          "y25": 8,
+          "y26": 9
+        },
+        "COCOTA": {
+          "y25": 3,
+          "y26": 6
+        },
+        "JARDIM CARIOCA": {
+          "y25": 20,
+          "y26": 21
+        },
+        "PITANGUEIRAS": {
+          "y25": 6,
+          "y26": 20
+        },
+        "PORTUGUESA": {
+          "y25": 4,
+          "y26": 17
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 9,
+          "y26": 6
+        },
+        "RIBEIRA": {
+          "y25": 2,
+          "y26": 7
+        },
+        "TAUA": {
+          "y25": 15,
+          "y26": 16
+        },
+        "ZUMBI": {
+          "y25": 3,
+          "y26": 2
+        },
+        "VISTA ALEGRE": {
+          "y25": 10,
+          "y26": 8
+        },
+        "CAMPINHO": {
+          "y25": 10,
+          "y26": 9
+        },
+        "TURIACU": {
+          "y25": 7,
+          "y26": 3
+        },
+        "PARADA DE LUCAS": {
+          "y25": 3,
+          "y26": 4
+        },
+        "DEODORO": {
+          "y25": 3,
+          "y26": 0
+        },
+        "GAMBOA": {
+          "y25": 4,
+          "y26": 3
+        },
+        "SAUDE": {
+          "y25": 3,
+          "y26": 1
+        },
+        "LAPA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "PAQUETA": {
+          "y25": 2,
+          "y26": 0
+        },
+        "ESTACIO": {
+          "y25": 9,
+          "y26": 3
+        },
+        "CATETE": {
+          "y25": 3,
+          "y26": 10
+        },
+        "URCA": {
+          "y25": 5,
+          "y26": 2
+        },
+        "LEME": {
+          "y25": 1,
+          "y26": 2
+        },
+        "GAVEA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "MANGUEIRA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "VASCO DA GAMA": {
+          "y25": 5,
+          "y26": 2
+        },
+        "ROCINHA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "VILA KENNEDY": {
+          "y25": 0,
+          "y26": 1
+        },
+        "CAMPO DOS AFONSOS": {
+          "y25": 0,
+          "y26": 0
+        },
+        "IMPERIAL DE SÃO CRISTÓVÃO": {
+          "y25": 1,
+          "y26": 0
+        }
+      },
+      "nulo": {
+        "linhas": 44,
+        "y25": 107,
+        "y26": 81
+      },
+      "invalid": 0,
+      "linhas": 1420
+    },
+    "Fevereiro": {
+      "total": {
+        "y25": 3635,
+        "y26": 3667
+      },
+      "institucional": {
+        "y25": 4282,
+        "y26": 3786
+      },
+      "pco": {
+        "y25": 647,
+        "y26": 119
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 2,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 5,
+          "y26": 16
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 231,
+          "y26": 223
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 1607,
+          "y26": 1929
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 1,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 47,
+          "y26": 12
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 5,
+          "y26": 5
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 9,
+          "y26": 20
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 1194,
+          "y26": 896
+        },
+        "COLETA SELETIVA": {
+          "y25": 17,
+          "y26": 28
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 439,
+          "y26": 468
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 38,
+          "y26": 17
+        },
+        "VETORES": {
+          "y25": 40,
+          "y26": 53
+        }
+      },
+      "ap": {
+        "AP2": {
+          "y25": 397,
+          "y26": 492
+        },
+        "AP1": {
+          "y25": 102,
+          "y26": 109
+        },
+        "AP3": {
+          "y25": 1518,
+          "y26": 1565
+        },
+        "AP5": {
+          "y25": 1007,
+          "y26": 862
+        },
+        "AP4": {
+          "y25": 611,
+          "y26": 639
+        }
+      },
+      "bairro": {
+        "GAVEA": {
+          "y25": 6,
+          "y26": 1
+        },
+        "LARANJEIRAS": {
+          "y25": 14,
+          "y26": 23
+        },
+        "TIJUCA": {
+          "y25": 98,
+          "y26": 145
+        },
+        "CENTRO": {
+          "y25": 19,
+          "y26": 27
+        },
+        "COPACABANA": {
+          "y25": 29,
+          "y26": 35
+        },
+        "MADUREIRA": {
+          "y25": 32,
+          "y26": 33
+        },
+        "SANTO CRISTO": {
+          "y25": 1,
+          "y26": 9
+        },
+        "BANGU": {
+          "y25": 122,
+          "y26": 105
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 50,
+          "y26": 42
+        },
+        "BOTAFOGO": {
+          "y25": 33,
+          "y26": 38
+        },
+        "BRÁS DE PINA": {
+          "y25": 29,
+          "y26": 32
+        },
+        "CAMPO GRANDE": {
+          "y25": 314,
+          "y26": 235
+        },
+        "CATETE": {
+          "y25": 9,
+          "y26": 19
+        },
+        "CIDADE NOVA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "DEL CASTILHO": {
+          "y25": 17,
+          "y26": 12
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 75,
+          "y26": 86
+        },
+        "GUARATIBA": {
+          "y25": 68,
+          "y26": 63
+        },
+        "IPANEMA": {
+          "y25": 22,
+          "y26": 12
+        },
+        "MARACANA": {
+          "y25": 14,
+          "y26": 14
+        },
+        "MEIER": {
+          "y25": 48,
+          "y26": 48
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 17,
+          "y26": 13
+        },
+        "PRACA SECA": {
+          "y25": 56,
+          "y26": 68
+        },
+        "REALENGO": {
+          "y25": 78,
+          "y26": 82
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 55,
+          "y26": 55
+        },
+        "SANTA TERESA": {
+          "y25": 25,
+          "y26": 17
+        },
+        "TAQUARA": {
+          "y25": 93,
+          "y26": 114
+        },
+        "TODOS OS SANTOS": {
+          "y25": 22,
+          "y26": 43
+        },
+        "URCA": {
+          "y25": 5,
+          "y26": 7
+        },
+        "VILA DA PENHA": {
+          "y25": 28,
+          "y26": 30
+        },
+        "VILA ISABEL": {
+          "y25": 34,
+          "y26": 55
+        },
+        "VILA VALQUEIRE": {
+          "y25": 49,
+          "y26": 48
+        },
+        "CIDADE DE DEUS": {
+          "y25": 6,
+          "y26": 2
+        },
+        "CURICICA": {
+          "y25": 24,
+          "y26": 26
+        },
+        "GARDENIA AZUL": {
+          "y25": 13,
+          "y26": 4
+        },
+        "JACAREPAGUA": {
+          "y25": 19,
+          "y26": 14
+        },
+        "PECHINCHA": {
+          "y25": 68,
+          "y26": 62
+        },
+        "TANQUE": {
+          "y25": 35,
+          "y26": 32
+        },
+        "ITANHANGA": {
+          "y25": 4,
+          "y26": 3
+        },
+        "VARGEM PEQUENA": {
+          "y25": 16,
+          "y26": 14
+        },
+        "ANDARAI": {
+          "y25": 31,
+          "y26": 32
+        },
+        "GRAJAU": {
+          "y25": 23,
+          "y26": 25
+        },
+        "BONSUCESSO": {
+          "y25": 20,
+          "y26": 19
+        },
+        "MANGUINHOS": {
+          "y25": 1,
+          "y26": 1
+        },
+        "MARE": {
+          "y25": 10,
+          "y26": 5
+        },
+        "OLARIA": {
+          "y25": 29,
+          "y26": 34
+        },
+        "RAMOS": {
+          "y25": 47,
+          "y26": 33
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 9,
+          "y26": 2
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 12,
+          "y26": 20
+        },
+        "HIGIENOPOLIS": {
+          "y25": 21,
+          "y26": 22
+        },
+        "INHAUMA": {
+          "y25": 34,
+          "y26": 37
+        },
+        "JACARE": {
+          "y25": 8,
+          "y26": 10
+        },
+        "MARIA DA GRACA": {
+          "y25": 9,
+          "y26": 19
+        },
+        "TOMAS COELHO": {
+          "y25": 16,
+          "y26": 27
+        },
+        "CACHAMBI": {
+          "y25": 34,
+          "y26": 38
+        },
+        "ENGENHO NOVO": {
+          "y25": 55,
+          "y26": 31
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 18,
+          "y26": 18
+        },
+        "RIACHUELO": {
+          "y25": 20,
+          "y26": 15
+        },
+        "ROCHA": {
+          "y25": 7,
+          "y26": 4
+        },
+        "SAMPAIO": {
+          "y25": 6,
+          "y26": 8
+        },
+        "ABOLICAO": {
+          "y25": 12,
+          "y26": 15
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 32,
+          "y26": 46
+        },
+        "PIEDADE": {
+          "y25": 32,
+          "y26": 54
+        },
+        "PILARES": {
+          "y25": 31,
+          "y26": 13
+        },
+        "CACUIA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 18,
+          "y26": 18
+        },
+        "GALEAO": {
+          "y25": 3,
+          "y26": 4
+        },
+        "JARDIM CARIOCA": {
+          "y25": 17,
+          "y26": 34
+        },
+        "JARDIM GUANABARA": {
+          "y25": 29,
+          "y26": 42
+        },
+        "PENHA": {
+          "y25": 33,
+          "y26": 31
+        },
+        "PENHA CIRCULAR": {
+          "y25": 31,
+          "y26": 37
+        },
+        "IRAJA": {
+          "y25": 72,
+          "y26": 59
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 6,
+          "y26": 2
+        },
+        "BENTO RIBEIRO": {
+          "y25": 88,
+          "y26": 39
+        },
+        "HONORIO GURGEL": {
+          "y25": 26,
+          "y26": 9
+        },
+        "MARECHAL HERMES": {
+          "y25": 43,
+          "y26": 23
+        },
+        "OSVALDO CRUZ": {
+          "y25": 41,
+          "y26": 27
+        },
+        "ROCHA MIRANDA": {
+          "y25": 24,
+          "y26": 20
+        },
+        "CASCADURA": {
+          "y25": 21,
+          "y26": 31
+        },
+        "CAVALCANTI": {
+          "y25": 9,
+          "y26": 6
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 6,
+          "y26": 3
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 47,
+          "y26": 45
+        },
+        "ANCHIETA": {
+          "y25": 20,
+          "y26": 28
+        },
+        "GUADALUPE": {
+          "y25": 22,
+          "y26": 24
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 17,
+          "y26": 29
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 20,
+          "y26": 25
+        },
+        "ACARI": {
+          "y25": 2,
+          "y26": 26
+        },
+        "BARROS FILHO": {
+          "y25": 3,
+          "y26": 0
+        },
+        "COELHO NETO": {
+          "y25": 10,
+          "y26": 14
+        },
+        "COSTA BARROS": {
+          "y25": 15,
+          "y26": 12
+        },
+        "PAVUNA": {
+          "y25": 62,
+          "y26": 68
+        },
+        "CORDOVIL": {
+          "y25": 11,
+          "y26": 12
+        },
+        "JARDIM AMERICA": {
+          "y25": 4,
+          "y26": 25
+        },
+        "VIGARIO GERAL": {
+          "y25": 8,
+          "y26": 9
+        },
+        "PADRE MIGUEL": {
+          "y25": 30,
+          "y26": 25
+        },
+        "SENADOR CAMARA": {
+          "y25": 33,
+          "y26": 40
+        },
+        "COSMOS": {
+          "y25": 33,
+          "y26": 32
+        },
+        "INHOAIBA": {
+          "y25": 19,
+          "y26": 26
+        },
+        "SANTISSIMO": {
+          "y25": 41,
+          "y26": 22
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 24,
+          "y26": 38
+        },
+        "PACIENCIA": {
+          "y25": 48,
+          "y26": 27
+        },
+        "SANTA CRUZ": {
+          "y25": 104,
+          "y26": 79
+        },
+        "SEPETIBA": {
+          "y25": 34,
+          "y26": 46
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 15,
+          "y26": 10
+        },
+        "JARDIM SULACAP": {
+          "y25": 22,
+          "y26": 14
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 15,
+          "y26": 10
+        },
+        "CAJU": {
+          "y25": 7,
+          "y26": 1
+        },
+        "GAMBOA": {
+          "y25": 4,
+          "y26": 1
+        },
+        "ESTACIO": {
+          "y25": 3,
+          "y26": 4
+        },
+        "RIO COMPRIDO": {
+          "y25": 18,
+          "y26": 13
+        },
+        "FLAMENGO": {
+          "y25": 15,
+          "y26": 21
+        },
+        "GLORIA": {
+          "y25": 4,
+          "y26": 10
+        },
+        "LEME": {
+          "y25": 1,
+          "y26": 4
+        },
+        "LAGOA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "LEBLON": {
+          "y25": 8,
+          "y26": 8
+        },
+        "BENFICA": {
+          "y25": 5,
+          "y26": 5
+        },
+        "MANGUEIRA": {
+          "y25": 1,
+          "y26": 1
+        },
+        "SAO CRISTOVAO": {
+          "y25": 10,
+          "y26": 16
+        },
+        "VASCO DA GAMA": {
+          "y25": 3,
+          "y26": 6
+        },
+        "SAO CONRADO": {
+          "y25": 2,
+          "y26": 1
+        },
+        "ANIL": {
+          "y25": 33,
+          "y26": 43
+        },
+        "CAMORIM": {
+          "y25": 4,
+          "y26": 14
+        },
+        "VARGEM GRANDE": {
+          "y25": 11,
+          "y26": 12
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 7,
+          "y26": 5
+        },
+        "JACAREZINHO": {
+          "y25": 1,
+          "y26": 1
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 3,
+          "y26": 5
+        },
+        "AGUA SANTA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "ENCANTADO": {
+          "y25": 31,
+          "y26": 18
+        },
+        "BANCARIOS": {
+          "y25": 15,
+          "y26": 29
+        },
+        "COCOTA": {
+          "y25": 1,
+          "y26": 7
+        },
+        "MONERO": {
+          "y25": 4,
+          "y26": 8
+        },
+        "PITANGUEIRAS": {
+          "y25": 7,
+          "y26": 10
+        },
+        "PORTUGUESA": {
+          "y25": 10,
+          "y26": 10
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 4,
+          "y26": 2
+        },
+        "RIBEIRA": {
+          "y25": 4,
+          "y26": 7
+        },
+        "TAUA": {
+          "y25": 19,
+          "y26": 15
+        },
+        "ZUMBI": {
+          "y25": 2,
+          "y26": 2
+        },
+        "COLEGIO": {
+          "y25": 9,
+          "y26": 12
+        },
+        "VILA KOSMOS": {
+          "y25": 9,
+          "y26": 8
+        },
+        "VISTA ALEGRE": {
+          "y25": 9,
+          "y26": 8
+        },
+        "CAMPINHO": {
+          "y25": 11,
+          "y26": 9
+        },
+        "TURIACU": {
+          "y25": 10,
+          "y26": 13
+        },
+        "VAZ LOBO": {
+          "y25": 11,
+          "y26": 8
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 2,
+          "y26": 5
+        },
+        "PARADA DE LUCAS": {
+          "y25": 2,
+          "y26": 8
+        },
+        "VILA KENNEDY": {
+          "y25": 0,
+          "y26": 4
+        },
+        "CAMPO DOS AFONSOS": {
+          "y25": 1,
+          "y26": 1
+        },
+        "DEODORO": {
+          "y25": 4,
+          "y26": 2
+        },
+        "VILA MILITAR": {
+          "y25": 1,
+          "y26": 1
+        },
+        "SAUDE": {
+          "y25": 0,
+          "y26": 2
+        },
+        "PAQUETA": {
+          "y25": 1,
+          "y26": 1
+        },
+        "CATUMBI": {
+          "y25": 1,
+          "y26": 1
+        },
+        "COSME VELHO": {
+          "y25": 2,
+          "y26": 4
+        },
+        "HUMAITA": {
+          "y25": 12,
+          "y26": 8
+        },
+        "JARDIM BOTANICO": {
+          "y25": 10,
+          "y26": 7
+        },
+        "ROCINHA": {
+          "y25": 0,
+          "y26": 0
+        },
+        "VIDIGAL": {
+          "y25": 0,
+          "y26": 2
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "JOA": {
+          "y25": 0,
+          "y26": 0
+        },
+        "GRUMARI": {
+          "y25": 0,
+          "y26": 0
+        },
+        "IMPERIAL DE SÃO CRISTÓVÃO": {
+          "y25": 1,
+          "y26": 0
+        }
+      },
+      "nulo": {
+        "linhas": 39,
+        "y25": 117,
+        "y26": 74
+      },
+      "invalid": 0,
+      "linhas": 1368
+    },
+    "Março": {
+      "total": {
+        "y25": 3416,
+        "y26": 4458
+      },
+      "institucional": {
+        "y25": 3661,
+        "y26": 4643
+      },
+      "pco": {
+        "y25": 245,
+        "y26": 185
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 0,
+          "y26": 3
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 8,
+          "y26": 12
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 168,
+          "y26": 263
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 1317,
+          "y26": 2626
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 34,
+          "y26": 47
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 1,
+          "y26": 9
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 13,
+          "y26": 14
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 1345,
+          "y26": 883
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 1,
+          "y26": 0
+        },
+        "COLETA SELETIVA": {
+          "y25": 15,
+          "y26": 18
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 441,
+          "y26": 472
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 49,
+          "y26": 33
+        },
+        "VETORES": {
+          "y25": 24,
+          "y26": 78
+        }
+      },
+      "ap": {
+        "AP2": {
+          "y25": 428,
+          "y26": 607
+        },
+        "AP4": {
+          "y25": 639,
+          "y26": 701
+        },
+        "AP1": {
+          "y25": 122,
+          "y26": 135
+        },
+        "AP3": {
+          "y25": 1331,
+          "y26": 1772
+        },
+        "AP5": {
+          "y25": 896,
+          "y26": 1243
+        }
+      },
+      "bairro": {
+        "COPACABANA": {
+          "y25": 39,
+          "y26": 45
+        },
+        "IPANEMA": {
+          "y25": 12,
+          "y26": 17
+        },
+        "TAQUARA": {
+          "y25": 118,
+          "y26": 170
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 60,
+          "y26": 37
+        },
+        "BOTAFOGO": {
+          "y25": 29,
+          "y26": 71
+        },
+        "CENTRO": {
+          "y25": 35,
+          "y26": 18
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 44,
+          "y26": 39
+        },
+        "GRAJAU": {
+          "y25": 39,
+          "y26": 31
+        },
+        "MADUREIRA": {
+          "y25": 34,
+          "y26": 53
+        },
+        "PRACA SECA": {
+          "y25": 59,
+          "y26": 70
+        },
+        "SANTO CRISTO": {
+          "y25": 6,
+          "y26": 10
+        },
+        "TIJUCA": {
+          "y25": 113,
+          "y26": 143
+        },
+        "BANGU": {
+          "y25": 94,
+          "y26": 158
+        },
+        "BRÁS DE PINA": {
+          "y25": 22,
+          "y26": 41
+        },
+        "CACHAMBI": {
+          "y25": 46,
+          "y26": 30
+        },
+        "CAMPO GRANDE": {
+          "y25": 256,
+          "y26": 394
+        },
+        "CIDADE DE DEUS": {
+          "y25": 9,
+          "y26": 7
+        },
+        "CIDADE NOVA": {
+          "y25": 9,
+          "y26": 6
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 15,
+          "y26": 29
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 75,
+          "y26": 84
+        },
+        "GLORIA": {
+          "y25": 6,
+          "y26": 7
+        },
+        "HIGIENOPOLIS": {
+          "y25": 9,
+          "y26": 15
+        },
+        "IRAJA": {
+          "y25": 53,
+          "y26": 71
+        },
+        "JARDIM AMERICA": {
+          "y25": 7,
+          "y26": 13
+        },
+        "LARANJEIRAS": {
+          "y25": 19,
+          "y26": 20
+        },
+        "RAMOS": {
+          "y25": 35,
+          "y26": 53
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 73,
+          "y26": 62
+        },
+        "RIACHUELO": {
+          "y25": 13,
+          "y26": 14
+        },
+        "SANTISSIMO": {
+          "y25": 22,
+          "y26": 23
+        },
+        "SAUDE": {
+          "y25": 1,
+          "y26": 3
+        },
+        "VILA ISABEL": {
+          "y25": 37,
+          "y26": 59
+        },
+        "ANIL": {
+          "y25": 38,
+          "y26": 31
+        },
+        "CAMORIM": {
+          "y25": 16,
+          "y26": 25
+        },
+        "CURICICA": {
+          "y25": 10,
+          "y26": 36
+        },
+        "GARDENIA AZUL": {
+          "y25": 2,
+          "y26": 11
+        },
+        "PECHINCHA": {
+          "y25": 53,
+          "y26": 51
+        },
+        "JACAREPAGUA": {
+          "y25": 16,
+          "y26": 15
+        },
+        "TANQUE": {
+          "y25": 34,
+          "y26": 34
+        },
+        "VILA VALQUEIRE": {
+          "y25": 57,
+          "y26": 40
+        },
+        "ITANHANGA": {
+          "y25": 2,
+          "y26": 1
+        },
+        "VARGEM GRANDE": {
+          "y25": 9,
+          "y26": 10
+        },
+        "VARGEM PEQUENA": {
+          "y25": 8,
+          "y26": 17
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 9,
+          "y26": 9
+        },
+        "ANDARAI": {
+          "y25": 16,
+          "y26": 56
+        },
+        "MARACANA": {
+          "y25": 14,
+          "y26": 26
+        },
+        "BONSUCESSO": {
+          "y25": 10,
+          "y26": 17
+        },
+        "MANGUINHOS": {
+          "y25": 0,
+          "y26": 1
+        },
+        "MARE": {
+          "y25": 1,
+          "y26": 18
+        },
+        "OLARIA": {
+          "y25": 28,
+          "y26": 33
+        },
+        "DEL CASTILHO": {
+          "y25": 18,
+          "y26": 10
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 17,
+          "y26": 25
+        },
+        "INHAUMA": {
+          "y25": 24,
+          "y26": 47
+        },
+        "JACARE": {
+          "y25": 5,
+          "y26": 12
+        },
+        "MARIA DA GRACA": {
+          "y25": 8,
+          "y26": 18
+        },
+        "TOMAS COELHO": {
+          "y25": 11,
+          "y26": 27
+        },
+        "ENGENHO NOVO": {
+          "y25": 41,
+          "y26": 44
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 6,
+          "y26": 13
+        },
+        "MEIER": {
+          "y25": 45,
+          "y26": 42
+        },
+        "SAMPAIO": {
+          "y25": 6,
+          "y26": 1
+        },
+        "TODOS OS SANTOS": {
+          "y25": 23,
+          "y26": 19
+        },
+        "ABOLICAO": {
+          "y25": 10,
+          "y26": 22
+        },
+        "AGUA SANTA": {
+          "y25": 5,
+          "y26": 8
+        },
+        "ENCANTADO": {
+          "y25": 30,
+          "y26": 25
+        },
+        "PIEDADE": {
+          "y25": 57,
+          "y26": 77
+        },
+        "PILARES": {
+          "y25": 17,
+          "y26": 30
+        },
+        "BANCARIOS": {
+          "y25": 8,
+          "y26": 18
+        },
+        "CACUIA": {
+          "y25": 6,
+          "y26": 9
+        },
+        "JARDIM CARIOCA": {
+          "y25": 15,
+          "y26": 32
+        },
+        "JARDIM GUANABARA": {
+          "y25": 22,
+          "y26": 39
+        },
+        "MONERO": {
+          "y25": 3,
+          "y26": 5
+        },
+        "PITANGUEIRAS": {
+          "y25": 6,
+          "y26": 11
+        },
+        "PORTUGUESA": {
+          "y25": 7,
+          "y26": 7
+        },
+        "PENHA": {
+          "y25": 30,
+          "y26": 41
+        },
+        "PENHA CIRCULAR": {
+          "y25": 19,
+          "y26": 51
+        },
+        "COLEGIO": {
+          "y25": 3,
+          "y26": 12
+        },
+        "VILA DA PENHA": {
+          "y25": 41,
+          "y26": 35
+        },
+        "BENTO RIBEIRO": {
+          "y25": 57,
+          "y26": 54
+        },
+        "HONORIO GURGEL": {
+          "y25": 7,
+          "y26": 9
+        },
+        "MARECHAL HERMES": {
+          "y25": 26,
+          "y26": 47
+        },
+        "OSVALDO CRUZ": {
+          "y25": 23,
+          "y26": 27
+        },
+        "ROCHA MIRANDA": {
+          "y25": 24,
+          "y26": 18
+        },
+        "CAMPINHO": {
+          "y25": 13,
+          "y26": 11
+        },
+        "CASCADURA": {
+          "y25": 30,
+          "y26": 35
+        },
+        "CAVALCANTI": {
+          "y25": 9,
+          "y26": 4
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 1,
+          "y26": 7
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 41,
+          "y26": 63
+        },
+        "TURIACU": {
+          "y25": 9,
+          "y26": 6
+        },
+        "ANCHIETA": {
+          "y25": 27,
+          "y26": 32
+        },
+        "GUADALUPE": {
+          "y25": 18,
+          "y26": 30
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 31,
+          "y26": 19
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 22,
+          "y26": 26
+        },
+        "ACARI": {
+          "y25": 0,
+          "y26": 1
+        },
+        "BARROS FILHO": {
+          "y25": 8,
+          "y26": 2
+        },
+        "COELHO NETO": {
+          "y25": 6,
+          "y26": 17
+        },
+        "COSTA BARROS": {
+          "y25": 8,
+          "y26": 21
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 9,
+          "y26": 7
+        },
+        "PAVUNA": {
+          "y25": 47,
+          "y26": 83
+        },
+        "CORDOVIL": {
+          "y25": 10,
+          "y26": 18
+        },
+        "PARADA DE LUCAS": {
+          "y25": 3,
+          "y26": 5
+        },
+        "VIGARIO GERAL": {
+          "y25": 10,
+          "y26": 13
+        },
+        "PADRE MIGUEL": {
+          "y25": 24,
+          "y26": 39
+        },
+        "SENADOR CAMARA": {
+          "y25": 17,
+          "y26": 58
+        },
+        "COSMOS": {
+          "y25": 40,
+          "y26": 47
+        },
+        "INHOAIBA": {
+          "y25": 28,
+          "y26": 31
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 23,
+          "y26": 51
+        },
+        "PACIENCIA": {
+          "y25": 60,
+          "y26": 37
+        },
+        "SANTA CRUZ": {
+          "y25": 95,
+          "y26": 102
+        },
+        "SEPETIBA": {
+          "y25": 24,
+          "y26": 54
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 3,
+          "y26": 1
+        },
+        "GUARATIBA": {
+          "y25": 76,
+          "y26": 65
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 20,
+          "y26": 23
+        },
+        "JARDIM SULACAP": {
+          "y25": 20,
+          "y26": 36
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 17,
+          "y26": 11
+        },
+        "REALENGO": {
+          "y25": 74,
+          "y26": 102
+        },
+        "CATUMBI": {
+          "y25": 2,
+          "y26": 1
+        },
+        "RIO COMPRIDO": {
+          "y25": 19,
+          "y26": 14
+        },
+        "SANTA TERESA": {
+          "y25": 24,
+          "y26": 23
+        },
+        "CATETE": {
+          "y25": 12,
+          "y26": 12
+        },
+        "FLAMENGO": {
+          "y25": 21,
+          "y26": 23
+        },
+        "HUMAITA": {
+          "y25": 2,
+          "y26": 7
+        },
+        "LEME": {
+          "y25": 2,
+          "y26": 3
+        },
+        "GAVEA": {
+          "y25": 9,
+          "y26": 20
+        },
+        "JARDIM BOTANICO": {
+          "y25": 7,
+          "y26": 9
+        },
+        "LAGOA": {
+          "y25": 7,
+          "y26": 9
+        },
+        "LEBLON": {
+          "y25": 7,
+          "y26": 10
+        },
+        "SAO CRISTOVAO": {
+          "y25": 10,
+          "y26": 20
+        },
+        "VASCO DA GAMA": {
+          "y25": 4,
+          "y26": 3
+        },
+        "SAO CONRADO": {
+          "y25": 3,
+          "y26": 1
+        },
+        "VIDIGAL": {
+          "y25": 1,
+          "y26": 2
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 15,
+          "y26": 14
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 6,
+          "y26": 5
+        },
+        "JACAREZINHO": {
+          "y25": 0,
+          "y26": 1
+        },
+        "ROCHA": {
+          "y25": 11,
+          "y26": 3
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 2,
+          "y26": 6
+        },
+        "CIDADE UNIVERSITARIA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "COCOTA": {
+          "y25": 0,
+          "y26": 8
+        },
+        "GALEAO": {
+          "y25": 6,
+          "y26": 6
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "RIBEIRA": {
+          "y25": 5,
+          "y26": 10
+        },
+        "TAUA": {
+          "y25": 13,
+          "y26": 23
+        },
+        "ZUMBI": {
+          "y25": 5,
+          "y26": 3
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 5,
+          "y26": 10
+        },
+        "VILA KOSMOS": {
+          "y25": 15,
+          "y26": 8
+        },
+        "VISTA ALEGRE": {
+          "y25": 10,
+          "y26": 12
+        },
+        "VAZ LOBO": {
+          "y25": 12,
+          "y26": 11
+        },
+        "VILA KENNEDY": {
+          "y25": 0,
+          "y26": 5
+        },
+        "DEODORO": {
+          "y25": 3,
+          "y26": 3
+        },
+        "CAJU": {
+          "y25": 4,
+          "y26": 2
+        },
+        "GAMBOA": {
+          "y25": 2,
+          "y26": 6
+        },
+        "LAPA": {
+          "y25": 0,
+          "y26": 2
+        },
+        "PAQUETA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "ESTACIO": {
+          "y25": 1,
+          "y26": 4
+        },
+        "COSME VELHO": {
+          "y25": 4,
+          "y26": 8
+        },
+        "URCA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "BENFICA": {
+          "y25": 4,
+          "y26": 19
+        },
+        "MANGUEIRA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "ROCINHA": {
+          "y25": 1,
+          "y26": 1
+        },
+        "VILA MILITAR": {
+          "y25": 0,
+          "y26": 3
+        },
+        "CAMPO DOS AFONSOS": {
+          "y25": 0,
+          "y26": 0
+        }
+      },
+      "nulo": {
+        "linhas": 39,
+        "y25": 80,
+        "y26": 81
+      },
+      "invalid": 0,
+      "linhas": 1361
+    },
+    "Abril": {
+      "total": {
+        "y25": 2845,
+        "y26": 3677
+      },
+      "institucional": {
+        "y25": 3049,
+        "y26": 3848
+      },
+      "pco": {
+        "y25": 204,
+        "y26": 171
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 3,
+          "y26": 1
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 2,
+          "y26": 1
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 13,
+          "y26": 7
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 218,
+          "y26": 254
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 1316,
+          "y26": 2160
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 37,
+          "y26": 97
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 1,
+          "y26": 0
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 10,
+          "y26": 12
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 718,
+          "y26": 717
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 0,
+          "y26": 0
+        },
+        "COLETA SELETIVA": {
+          "y25": 12,
+          "y26": 12
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 455,
+          "y26": 333
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 29,
+          "y26": 32
+        },
+        "VETORES": {
+          "y25": 31,
+          "y26": 51
+        }
+      },
+      "ap": {
+        "AP1": {
+          "y25": 100,
+          "y26": 111
+        },
+        "AP2": {
+          "y25": 342,
+          "y26": 477
+        },
+        "AP3": {
+          "y25": 1129,
+          "y26": 1431
+        },
+        "AP5": {
+          "y25": 838,
+          "y26": 1080
+        },
+        "AP4": {
+          "y25": 436,
+          "y26": 578
+        }
+      },
+      "bairro": {
+        "CATUMBI": {
+          "y25": 2,
+          "y26": 6
+        },
+        "CIDADE NOVA": {
+          "y25": 7,
+          "y26": 2
+        },
+        "COPACABANA": {
+          "y25": 36,
+          "y26": 30
+        },
+        "FLAMENGO": {
+          "y25": 12,
+          "y26": 17
+        },
+        "SAMPAIO": {
+          "y25": 3,
+          "y26": 10
+        },
+        "BONSUCESSO": {
+          "y25": 15,
+          "y26": 11
+        },
+        "CAMPO GRANDE": {
+          "y25": 249,
+          "y26": 339
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 51,
+          "y26": 64
+        },
+        "JOA": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LEBLON": {
+          "y25": 13,
+          "y26": 14
+        },
+        "MARACANA": {
+          "y25": 11,
+          "y26": 14
+        },
+        "PAVUNA": {
+          "y25": 48,
+          "y26": 40
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 63,
+          "y26": 62
+        },
+        "SANTA CRUZ": {
+          "y25": 117,
+          "y26": 86
+        },
+        "SANTO CRISTO": {
+          "y25": 5,
+          "y26": 11
+        },
+        "TIJUCA": {
+          "y25": 96,
+          "y26": 105
+        },
+        "ABOLICAO": {
+          "y25": 6,
+          "y26": 15
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 10,
+          "y26": 6
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 42,
+          "y26": 52
+        },
+        "BRÁS DE PINA": {
+          "y25": 19,
+          "y26": 22
+        },
+        "CACHAMBI": {
+          "y25": 29,
+          "y26": 41
+        },
+        "CENTRO": {
+          "y25": 28,
+          "y26": 28
+        },
+        "DEL CASTILHO": {
+          "y25": 8,
+          "y26": 15
+        },
+        "GLORIA": {
+          "y25": 0,
+          "y26": 19
+        },
+        "IPANEMA": {
+          "y25": 11,
+          "y26": 15
+        },
+        "JACAREPAGUA": {
+          "y25": 18,
+          "y26": 15
+        },
+        "JARDIM CARIOCA": {
+          "y25": 14,
+          "y26": 29
+        },
+        "JARDIM GUANABARA": {
+          "y25": 35,
+          "y26": 25
+        },
+        "LARANJEIRAS": {
+          "y25": 12,
+          "y26": 24
+        },
+        "PECHINCHA": {
+          "y25": 26,
+          "y26": 59
+        },
+        "PIEDADE": {
+          "y25": 34,
+          "y26": 62
+        },
+        "REALENGO": {
+          "y25": 56,
+          "y26": 96
+        },
+        "SANTISSIMO": {
+          "y25": 26,
+          "y26": 9
+        },
+        "TANQUE": {
+          "y25": 20,
+          "y26": 31
+        },
+        "TAQUARA": {
+          "y25": 76,
+          "y26": 99
+        },
+        "VASCO DA GAMA": {
+          "y25": 3,
+          "y26": 2
+        },
+        "VIGARIO GERAL": {
+          "y25": 11,
+          "y26": 15
+        },
+        "VILA DA PENHA": {
+          "y25": 17,
+          "y26": 27
+        },
+        "ANIL": {
+          "y25": 24,
+          "y26": 31
+        },
+        "CURICICA": {
+          "y25": 14,
+          "y26": 21
+        },
+        "GARDENIA AZUL": {
+          "y25": 7,
+          "y26": 2
+        },
+        "PRACA SECA": {
+          "y25": 31,
+          "y26": 52
+        },
+        "VILA VALQUEIRE": {
+          "y25": 27,
+          "y26": 33
+        },
+        "ITANHANGA": {
+          "y25": 8,
+          "y26": 2
+        },
+        "VARGEM GRANDE": {
+          "y25": 7,
+          "y26": 10
+        },
+        "VARGEM PEQUENA": {
+          "y25": 7,
+          "y26": 13
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 6,
+          "y26": 11
+        },
+        "ANDARAI": {
+          "y25": 17,
+          "y26": 24
+        },
+        "GRAJAU": {
+          "y25": 25,
+          "y26": 29
+        },
+        "VILA ISABEL": {
+          "y25": 33,
+          "y26": 55
+        },
+        "MARE": {
+          "y25": 2,
+          "y26": 27
+        },
+        "OLARIA": {
+          "y25": 30,
+          "y26": 38
+        },
+        "RAMOS": {
+          "y25": 24,
+          "y26": 31
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 9,
+          "y26": 12
+        },
+        "HIGIENOPOLIS": {
+          "y25": 13,
+          "y26": 14
+        },
+        "INHAUMA": {
+          "y25": 26,
+          "y26": 27
+        },
+        "JACARE": {
+          "y25": 8,
+          "y26": 22
+        },
+        "MARIA DA GRACA": {
+          "y25": 6,
+          "y26": 16
+        },
+        "ENGENHO NOVO": {
+          "y25": 33,
+          "y26": 54
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 5,
+          "y26": 18
+        },
+        "MEIER": {
+          "y25": 47,
+          "y26": 53
+        },
+        "RIACHUELO": {
+          "y25": 12,
+          "y26": 27
+        },
+        "ROCHA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 0,
+          "y26": 6
+        },
+        "TODOS OS SANTOS": {
+          "y25": 8,
+          "y26": 15
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 25,
+          "y26": 30
+        },
+        "PILARES": {
+          "y25": 19,
+          "y26": 17
+        },
+        "BANCARIOS": {
+          "y25": 4,
+          "y26": 17
+        },
+        "CACUIA": {
+          "y25": 2,
+          "y26": 4
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 10,
+          "y26": 20
+        },
+        "GALEAO": {
+          "y25": 3,
+          "y26": 3
+        },
+        "MONERO": {
+          "y25": 1,
+          "y26": 3
+        },
+        "PORTUGUESA": {
+          "y25": 4,
+          "y26": 5
+        },
+        "TAUA": {
+          "y25": 9,
+          "y26": 22
+        },
+        "ZUMBI": {
+          "y25": 1,
+          "y26": 2
+        },
+        "PENHA": {
+          "y25": 22,
+          "y26": 47
+        },
+        "PENHA CIRCULAR": {
+          "y25": 32,
+          "y26": 25
+        },
+        "COLEGIO": {
+          "y25": 8,
+          "y26": 9
+        },
+        "IRAJA": {
+          "y25": 58,
+          "y26": 41
+        },
+        "VILA KOSMOS": {
+          "y25": 10,
+          "y26": 7
+        },
+        "BENTO RIBEIRO": {
+          "y25": 35,
+          "y26": 40
+        },
+        "MARECHAL HERMES": {
+          "y25": 28,
+          "y26": 39
+        },
+        "OSVALDO CRUZ": {
+          "y25": 27,
+          "y26": 29
+        },
+        "ROCHA MIRANDA": {
+          "y25": 16,
+          "y26": 16
+        },
+        "CAMPINHO": {
+          "y25": 11,
+          "y26": 9
+        },
+        "CASCADURA": {
+          "y25": 20,
+          "y26": 35
+        },
+        "CAVALCANTI": {
+          "y25": 4,
+          "y26": 4
+        },
+        "MADUREIRA": {
+          "y25": 25,
+          "y26": 28
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 23,
+          "y26": 40
+        },
+        "TURIACU": {
+          "y25": 5,
+          "y26": 2
+        },
+        "VAZ LOBO": {
+          "y25": 9,
+          "y26": 13
+        },
+        "ANCHIETA": {
+          "y25": 33,
+          "y26": 38
+        },
+        "GUADALUPE": {
+          "y25": 30,
+          "y26": 17
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 26,
+          "y26": 11
+        },
+        "ACARI": {
+          "y25": 3,
+          "y26": 0
+        },
+        "COELHO NETO": {
+          "y25": 18,
+          "y26": 18
+        },
+        "COSTA BARROS": {
+          "y25": 7,
+          "y26": 10
+        },
+        "CORDOVIL": {
+          "y25": 9,
+          "y26": 8
+        },
+        "BANGU": {
+          "y25": 76,
+          "y26": 150
+        },
+        "PADRE MIGUEL": {
+          "y25": 19,
+          "y26": 31
+        },
+        "SENADOR CAMARA": {
+          "y25": 17,
+          "y26": 41
+        },
+        "VILA KENNEDY": {
+          "y25": 0,
+          "y26": 10
+        },
+        "COSMOS": {
+          "y25": 42,
+          "y26": 62
+        },
+        "INHOAIBA": {
+          "y25": 30,
+          "y26": 30
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 34,
+          "y26": 25
+        },
+        "PACIENCIA": {
+          "y25": 48,
+          "y26": 52
+        },
+        "SEPETIBA": {
+          "y25": 35,
+          "y26": 44
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "GUARATIBA": {
+          "y25": 60,
+          "y26": 52
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 8,
+          "y26": 15
+        },
+        "JARDIM SULACAP": {
+          "y25": 10,
+          "y26": 20
+        },
+        "ESTACIO": {
+          "y25": 2,
+          "y26": 5
+        },
+        "RIO COMPRIDO": {
+          "y25": 8,
+          "y26": 13
+        },
+        "SANTA TERESA": {
+          "y25": 18,
+          "y26": 22
+        },
+        "BOTAFOGO": {
+          "y25": 31,
+          "y26": 60
+        },
+        "CATETE": {
+          "y25": 0,
+          "y26": 13
+        },
+        "URCA": {
+          "y25": 7,
+          "y26": 1
+        },
+        "LEME": {
+          "y25": 1,
+          "y26": 6
+        },
+        "JARDIM BOTANICO": {
+          "y25": 5,
+          "y26": 7
+        },
+        "LAGOA": {
+          "y25": 4,
+          "y26": 7
+        },
+        "BENFICA": {
+          "y25": 7,
+          "y26": 6
+        },
+        "CAJU": {
+          "y25": 1,
+          "y26": 2
+        },
+        "SAO CRISTOVAO": {
+          "y25": 13,
+          "y26": 8
+        },
+        "ROCINHA": {
+          "y25": 0,
+          "y26": 3
+        },
+        "SAO CONRADO": {
+          "y25": 2,
+          "y26": 4
+        },
+        "VIDIGAL": {
+          "y25": 2,
+          "y26": 0
+        },
+        "CAMORIM": {
+          "y25": 11,
+          "y26": 22
+        },
+        "CIDADE DE DEUS": {
+          "y25": 4,
+          "y26": 8
+        },
+        "GRUMARI": {
+          "y25": 0,
+          "y26": 2
+        },
+        "MANGUINHOS": {
+          "y25": 3,
+          "y26": 3
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 14,
+          "y26": 9
+        },
+        "JACAREZINHO": {
+          "y25": 0,
+          "y26": 9
+        },
+        "TOMAS COELHO": {
+          "y25": 11,
+          "y26": 12
+        },
+        "AGUA SANTA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "ENCANTADO": {
+          "y25": 12,
+          "y26": 10
+        },
+        "CIDADE UNIVERSITARIA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "COCOTA": {
+          "y25": 10,
+          "y26": 10
+        },
+        "PITANGUEIRAS": {
+          "y25": 4,
+          "y26": 7
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 3,
+          "y26": 2
+        },
+        "RIBEIRA": {
+          "y25": 0,
+          "y26": 4
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 5,
+          "y26": 3
+        },
+        "VISTA ALEGRE": {
+          "y25": 8,
+          "y26": 11
+        },
+        "HONORIO GURGEL": {
+          "y25": 15,
+          "y26": 12
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 0,
+          "y26": 5
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 22,
+          "y26": 29
+        },
+        "BARROS FILHO": {
+          "y25": 0,
+          "y26": 5
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "JARDIM AMERICA": {
+          "y25": 11,
+          "y26": 7
+        },
+        "PARADA DE LUCAS": {
+          "y25": 3,
+          "y26": 2
+        },
+        "DEODORO": {
+          "y25": 1,
+          "y26": 4
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 7,
+          "y26": 11
+        },
+        "VILA MILITAR": {
+          "y25": 2,
+          "y26": 1
+        },
+        "GAMBOA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "SAUDE": {
+          "y25": 2,
+          "y26": 1
+        },
+        "PAQUETA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "COSME VELHO": {
+          "y25": 1,
+          "y26": 8
+        },
+        "HUMAITA": {
+          "y25": 3,
+          "y26": 4
+        },
+        "GAVEA": {
+          "y25": 4,
+          "y26": 1
+        },
+        "MANGUEIRA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "LAPA": {
+          "y25": 0,
+          "y26": 1
+        }
+      },
+      "nulo": {
+        "linhas": 44,
+        "y25": 66,
+        "y26": 125
+      },
+      "invalid": 0,
+      "linhas": 1253
+    },
+    "Maio": {
+      "total": {
+        "y25": 3286,
+        "y26": 3149
+      },
+      "institucional": {
+        "y25": 3434,
+        "y26": 3314
+      },
+      "pco": {
+        "y25": 148,
+        "y26": 165
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 1,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 8,
+          "y26": 11
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 272,
+          "y26": 144
+        },
+        "LIMPEZA": {
+          "y25": 1542,
+          "y26": 1516
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 79,
+          "y26": 82
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 2,
+          "y26": 13
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 12,
+          "y26": 21
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 772,
+          "y26": 951
+        },
+        "COLETA SELETIVA": {
+          "y25": 14,
+          "y26": 18
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 514,
+          "y26": 325
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 48,
+          "y26": 27
+        },
+        "VETORES": {
+          "y25": 22,
+          "y26": 41
+        }
+      },
+      "ap": {
+        "AP1": {
+          "y25": 150,
+          "y26": 99
+        },
+        "AP2": {
+          "y25": 384,
+          "y26": 395
+        },
+        "AP4": {
+          "y25": 500,
+          "y26": 552
+        },
+        "AP3": {
+          "y25": 1306,
+          "y26": 1255
+        },
+        "AP5": {
+          "y25": 946,
+          "y26": 848
+        }
+      },
+      "bairro": {
+        "CENTRO": {
+          "y25": 49,
+          "y26": 27
+        },
+        "LEBLON": {
+          "y25": 17,
+          "y26": 12
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 49,
+          "y26": 57
+        },
+        "BOTAFOGO": {
+          "y25": 29,
+          "y26": 49
+        },
+        "COELHO NETO": {
+          "y25": 21,
+          "y26": 12
+        },
+        "FLAMENGO": {
+          "y25": 12,
+          "y26": 16
+        },
+        "GAVEA": {
+          "y25": 2,
+          "y26": 14
+        },
+        "IPANEMA": {
+          "y25": 19,
+          "y26": 14
+        },
+        "PIEDADE": {
+          "y25": 61,
+          "y26": 46
+        },
+        "SANTO CRISTO": {
+          "y25": 17,
+          "y26": 4
+        },
+        "TIJUCA": {
+          "y25": 100,
+          "y26": 87
+        },
+        "BRÁS DE PINA": {
+          "y25": 19,
+          "y26": 29
+        },
+        "CASCADURA": {
+          "y25": 31,
+          "y26": 30
+        },
+        "COPACABANA": {
+          "y25": 30,
+          "y26": 39
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 38,
+          "y26": 33
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 8,
+          "y26": 10
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 73,
+          "y26": 79
+        },
+        "GRAJAU": {
+          "y25": 16,
+          "y26": 18
+        },
+        "HUMAITA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "IRAJA": {
+          "y25": 39,
+          "y26": 50
+        },
+        "JARDIM GUANABARA": {
+          "y25": 13,
+          "y26": 20
+        },
+        "MADUREIRA": {
+          "y25": 22,
+          "y26": 40
+        },
+        "MONERO": {
+          "y25": 2,
+          "y26": 3
+        },
+        "PECHINCHA": {
+          "y25": 36,
+          "y26": 54
+        },
+        "PILARES": {
+          "y25": 26,
+          "y26": 25
+        },
+        "REALENGO": {
+          "y25": 72,
+          "y26": 94
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 60,
+          "y26": 48
+        },
+        "ROCHA": {
+          "y25": 8,
+          "y26": 10
+        },
+        "ROCHA MIRANDA": {
+          "y25": 19,
+          "y26": 17
+        },
+        "SANTA CRUZ": {
+          "y25": 101,
+          "y26": 64
+        },
+        "SAO CRISTOVAO": {
+          "y25": 14,
+          "y26": 12
+        },
+        "TAQUARA": {
+          "y25": 85,
+          "y26": 106
+        },
+        "TODOS OS SANTOS": {
+          "y25": 11,
+          "y26": 14
+        },
+        "URCA": {
+          "y25": 6,
+          "y26": 3
+        },
+        "ANIL": {
+          "y25": 25,
+          "y26": 34
+        },
+        "CAMORIM": {
+          "y25": 6,
+          "y26": 8
+        },
+        "CIDADE DE DEUS": {
+          "y25": 7,
+          "y26": 2
+        },
+        "CURICICA": {
+          "y25": 21,
+          "y26": 17
+        },
+        "JACAREPAGUA": {
+          "y25": 20,
+          "y26": 15
+        },
+        "PRACA SECA": {
+          "y25": 29,
+          "y26": 44
+        },
+        "TANQUE": {
+          "y25": 26,
+          "y26": 25
+        },
+        "VILA VALQUEIRE": {
+          "y25": 29,
+          "y26": 36
+        },
+        "ITANHANGA": {
+          "y25": 8,
+          "y26": 2
+        },
+        "VARGEM GRANDE": {
+          "y25": 9,
+          "y26": 8
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 14,
+          "y26": 7
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 8,
+          "y26": 5
+        },
+        "ANDARAI": {
+          "y25": 22,
+          "y26": 21
+        },
+        "MARACANA": {
+          "y25": 18,
+          "y26": 13
+        },
+        "VILA ISABEL": {
+          "y25": 40,
+          "y26": 42
+        },
+        "BONSUCESSO": {
+          "y25": 16,
+          "y26": 5
+        },
+        "MARE": {
+          "y25": 5,
+          "y26": 5
+        },
+        "OLARIA": {
+          "y25": 32,
+          "y26": 44
+        },
+        "RAMOS": {
+          "y25": 40,
+          "y26": 67
+        },
+        "DEL CASTILHO": {
+          "y25": 14,
+          "y26": 6
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 10,
+          "y26": 10
+        },
+        "HIGIENOPOLIS": {
+          "y25": 17,
+          "y26": 15
+        },
+        "INHAUMA": {
+          "y25": 25,
+          "y26": 32
+        },
+        "JACARE": {
+          "y25": 6,
+          "y26": 15
+        },
+        "MARIA DA GRACA": {
+          "y25": 8,
+          "y26": 14
+        },
+        "TOMAS COELHO": {
+          "y25": 14,
+          "y26": 8
+        },
+        "CACHAMBI": {
+          "y25": 21,
+          "y26": 22
+        },
+        "ENGENHO NOVO": {
+          "y25": 27,
+          "y26": 23
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 13,
+          "y26": 12
+        },
+        "MEIER": {
+          "y25": 30,
+          "y26": 38
+        },
+        "RIACHUELO": {
+          "y25": 10,
+          "y26": 14
+        },
+        "SAMPAIO": {
+          "y25": 2,
+          "y26": 4
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 7,
+          "y26": 1
+        },
+        "ABOLICAO": {
+          "y25": 17,
+          "y26": 11
+        },
+        "AGUA SANTA": {
+          "y25": 5,
+          "y26": 4
+        },
+        "ENCANTADO": {
+          "y25": 22,
+          "y26": 18
+        },
+        "CACUIA": {
+          "y25": 7,
+          "y26": 3
+        },
+        "CIDADE UNIVERSITARIA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "GALEAO": {
+          "y25": 5,
+          "y26": 4
+        },
+        "JARDIM CARIOCA": {
+          "y25": 28,
+          "y26": 13
+        },
+        "TAUA": {
+          "y25": 17,
+          "y26": 15
+        },
+        "PENHA": {
+          "y25": 25,
+          "y26": 35
+        },
+        "PENHA CIRCULAR": {
+          "y25": 24,
+          "y26": 34
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 11,
+          "y26": 12
+        },
+        "VILA DA PENHA": {
+          "y25": 30,
+          "y26": 41
+        },
+        "VILA KOSMOS": {
+          "y25": 6,
+          "y26": 8
+        },
+        "BENTO RIBEIRO": {
+          "y25": 56,
+          "y26": 46
+        },
+        "HONORIO GURGEL": {
+          "y25": 9,
+          "y26": 10
+        },
+        "MARECHAL HERMES": {
+          "y25": 33,
+          "y26": 21
+        },
+        "OSVALDO CRUZ": {
+          "y25": 30,
+          "y26": 27
+        },
+        "CAVALCANTI": {
+          "y25": 5,
+          "y26": 2
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 3,
+          "y26": 3
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 31,
+          "y26": 55
+        },
+        "TURIACU": {
+          "y25": 8,
+          "y26": 14
+        },
+        "VAZ LOBO": {
+          "y25": 12,
+          "y26": 11
+        },
+        "ANCHIETA": {
+          "y25": 40,
+          "y26": 22
+        },
+        "GUADALUPE": {
+          "y25": 28,
+          "y26": 13
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 12,
+          "y26": 15
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 28,
+          "y26": 17
+        },
+        "BARROS FILHO": {
+          "y25": 6,
+          "y26": 5
+        },
+        "COSTA BARROS": {
+          "y25": 58,
+          "y26": 2
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "PAVUNA": {
+          "y25": 56,
+          "y26": 31
+        },
+        "JARDIM AMERICA": {
+          "y25": 5,
+          "y26": 5
+        },
+        "VIGARIO GERAL": {
+          "y25": 5,
+          "y26": 5
+        },
+        "BANGU": {
+          "y25": 100,
+          "y26": 95
+        },
+        "PADRE MIGUEL": {
+          "y25": 25,
+          "y26": 23
+        },
+        "SENADOR CAMARA": {
+          "y25": 29,
+          "y26": 43
+        },
+        "CAMPO GRANDE": {
+          "y25": 305,
+          "y26": 234
+        },
+        "COSMOS": {
+          "y25": 31,
+          "y26": 50
+        },
+        "INHOAIBA": {
+          "y25": 16,
+          "y26": 20
+        },
+        "SANTISSIMO": {
+          "y25": 22,
+          "y26": 14
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 43,
+          "y26": 22
+        },
+        "PACIENCIA": {
+          "y25": 53,
+          "y26": 45
+        },
+        "SEPETIBA": {
+          "y25": 31,
+          "y26": 38
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 1,
+          "y26": 1
+        },
+        "GUARATIBA": {
+          "y25": 62,
+          "y26": 39
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 19,
+          "y26": 15
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 7,
+          "y26": 13
+        },
+        "CAJU": {
+          "y25": 2,
+          "y26": 0
+        },
+        "GAMBOA": {
+          "y25": 6,
+          "y26": 2
+        },
+        "RIO COMPRIDO": {
+          "y25": 7,
+          "y26": 10
+        },
+        "SANTA TERESA": {
+          "y25": 23,
+          "y26": 14
+        },
+        "CATETE": {
+          "y25": 6,
+          "y26": 4
+        },
+        "COSME VELHO": {
+          "y25": 2,
+          "y26": 5
+        },
+        "LARANJEIRAS": {
+          "y25": 16,
+          "y26": 15
+        },
+        "LEME": {
+          "y25": 4,
+          "y26": 3
+        },
+        "JARDIM BOTANICO": {
+          "y25": 4,
+          "y26": 7
+        },
+        "BENFICA": {
+          "y25": 6,
+          "y26": 9
+        },
+        "SAO CONRADO": {
+          "y25": 6,
+          "y26": 4
+        },
+        "VIDIGAL": {
+          "y25": 0,
+          "y26": 1
+        },
+        "GARDENIA AZUL": {
+          "y25": 5,
+          "y26": 1
+        },
+        "JOA": {
+          "y25": 0,
+          "y26": 0
+        },
+        "GRUMARI": {
+          "y25": 0,
+          "y26": 1
+        },
+        "VARGEM PEQUENA": {
+          "y25": 12,
+          "y26": 15
+        },
+        "MANGUINHOS": {
+          "y25": 2,
+          "y26": 2
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 5,
+          "y26": 5
+        },
+        "JACAREZINHO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "BANCARIOS": {
+          "y25": 8,
+          "y26": 2
+        },
+        "COCOTA": {
+          "y25": 1,
+          "y26": 5
+        },
+        "PITANGUEIRAS": {
+          "y25": 8,
+          "y26": 7
+        },
+        "PORTUGUESA": {
+          "y25": 8,
+          "y26": 4
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 5,
+          "y26": 5
+        },
+        "RIBEIRA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "ZUMBI": {
+          "y25": 0,
+          "y26": 0
+        },
+        "COLEGIO": {
+          "y25": 7,
+          "y26": 8
+        },
+        "VISTA ALEGRE": {
+          "y25": 8,
+          "y26": 9
+        },
+        "CAMPINHO": {
+          "y25": 5,
+          "y26": 12
+        },
+        "ACARI": {
+          "y25": 0,
+          "y26": 2
+        },
+        "CORDOVIL": {
+          "y25": 2,
+          "y26": 6
+        },
+        "PARADA DE LUCAS": {
+          "y25": 1,
+          "y26": 2
+        },
+        "VILA KENNEDY": {
+          "y25": 4,
+          "y26": 4
+        },
+        "DEODORO": {
+          "y25": 5,
+          "y26": 5
+        },
+        "JARDIM SULACAP": {
+          "y25": 17,
+          "y26": 27
+        },
+        "VILA MILITAR": {
+          "y25": 3,
+          "y26": 2
+        },
+        "SAUDE": {
+          "y25": 2,
+          "y26": 1
+        },
+        "LAPA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "PAQUETA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "CATUMBI": {
+          "y25": 2,
+          "y26": 4
+        },
+        "CIDADE NOVA": {
+          "y25": 11,
+          "y26": 1
+        },
+        "ESTACIO": {
+          "y25": 3,
+          "y26": 7
+        },
+        "GLORIA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "LAGOA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "MANGUEIRA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "VASCO DA GAMA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "ROCINHA": {
+          "y25": 3,
+          "y26": 2
+        }
+      },
+      "nulo": {
+        "linhas": 49,
+        "y25": 62,
+        "y26": 70
+      },
+      "invalid": 0,
+      "linhas": 1264
+    },
+    "Junho": {
+      "total": {
+        "y25": 2247,
+        "y26": 2764
+      },
+      "institucional": {
+        "y25": 2433,
+        "y26": 2914
+      },
+      "pco": {
+        "y25": 186,
+        "y26": 150
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 7,
+          "y26": 10
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 186,
+          "y26": 130
+        },
+        "LIMPEZA": {
+          "y25": 1071,
+          "y26": 1180
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 42,
+          "y26": 74
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 2,
+          "y26": 4
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 5,
+          "y26": 11
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 434,
+          "y26": 962
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 0,
+          "y26": 0
+        },
+        "COLETA SELETIVA": {
+          "y25": 10,
+          "y26": 6
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 430,
+          "y26": 323
+        },
+        "PRAÇAS": {
+          "y25": 37,
+          "y26": 19
+        },
+        "VETORES": {
+          "y25": 23,
+          "y26": 45
+        }
+      },
+      "ap": {
+        "AP2": {
+          "y25": 334,
+          "y26": 385
+        },
+        "AP4": {
+          "y25": 349,
+          "y26": 525
+        },
+        "AP3": {
+          "y25": 862,
+          "y26": 1045
+        },
+        "AP5": {
+          "y25": 621,
+          "y26": 729
+        },
+        "AP1": {
+          "y25": 81,
+          "y26": 80
+        }
+      },
+      "bairro": {
+        "HUMAITA": {
+          "y25": 2,
+          "y26": 9
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 34,
+          "y26": 42
+        },
+        "CATETE": {
+          "y25": 3,
+          "y26": 10
+        },
+        "COPACABANA": {
+          "y25": 31,
+          "y26": 31
+        },
+        "JARDIM BOTANICO": {
+          "y25": 13,
+          "y26": 12
+        },
+        "MADUREIRA": {
+          "y25": 15,
+          "y26": 20
+        },
+        "TIJUCA": {
+          "y25": 86,
+          "y26": 90
+        },
+        "VILA ISABEL": {
+          "y25": 37,
+          "y26": 41
+        },
+        "BOTAFOGO": {
+          "y25": 21,
+          "y26": 28
+        },
+        "CACHAMBI": {
+          "y25": 17,
+          "y26": 47
+        },
+        "CAMPO GRANDE": {
+          "y25": 177,
+          "y26": 234
+        },
+        "CENTRO": {
+          "y25": 11,
+          "y26": 21
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 29,
+          "y26": 39
+        },
+        "ENGENHO NOVO": {
+          "y25": 24,
+          "y26": 17
+        },
+        "FLAMENGO": {
+          "y25": 12,
+          "y26": 17
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 61,
+          "y26": 84
+        },
+        "GUARATIBA": {
+          "y25": 44,
+          "y26": 59
+        },
+        "IPANEMA": {
+          "y25": 16,
+          "y26": 18
+        },
+        "LARANJEIRAS": {
+          "y25": 17,
+          "y26": 14
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 6,
+          "y26": 3
+        },
+        "PENHA": {
+          "y25": 26,
+          "y26": 28
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 11,
+          "y26": 28
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 37,
+          "y26": 59
+        },
+        "SAO CRISTOVAO": {
+          "y25": 6,
+          "y26": 20
+        },
+        "VIDIGAL": {
+          "y25": 0,
+          "y26": 2
+        },
+        "VILA DA PENHA": {
+          "y25": 10,
+          "y26": 30
+        },
+        "ANIL": {
+          "y25": 19,
+          "y26": 31
+        },
+        "CIDADE DE DEUS": {
+          "y25": 2,
+          "y26": 4
+        },
+        "CURICICA": {
+          "y25": 13,
+          "y26": 32
+        },
+        "GARDENIA AZUL": {
+          "y25": 3,
+          "y26": 3
+        },
+        "JACAREPAGUA": {
+          "y25": 14,
+          "y26": 25
+        },
+        "PECHINCHA": {
+          "y25": 35,
+          "y26": 28
+        },
+        "PRACA SECA": {
+          "y25": 19,
+          "y26": 30
+        },
+        "TANQUE": {
+          "y25": 22,
+          "y26": 27
+        },
+        "TAQUARA": {
+          "y25": 64,
+          "y26": 100
+        },
+        "VILA VALQUEIRE": {
+          "y25": 13,
+          "y26": 33
+        },
+        "VARGEM GRANDE": {
+          "y25": 6,
+          "y26": 3
+        },
+        "VARGEM PEQUENA": {
+          "y25": 3,
+          "y26": 13
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 7,
+          "y26": 7
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 5,
+          "y26": 7
+        },
+        "ANDARAI": {
+          "y25": 17,
+          "y26": 14
+        },
+        "GRAJAU": {
+          "y25": 20,
+          "y26": 36
+        },
+        "MARACANA": {
+          "y25": 9,
+          "y26": 18
+        },
+        "BONSUCESSO": {
+          "y25": 13,
+          "y26": 7
+        },
+        "MANGUINHOS": {
+          "y25": 3,
+          "y26": 0
+        },
+        "MARE": {
+          "y25": 2,
+          "y26": 6
+        },
+        "OLARIA": {
+          "y25": 48,
+          "y26": 30
+        },
+        "RAMOS": {
+          "y25": 45,
+          "y26": 35
+        },
+        "DEL CASTILHO": {
+          "y25": 5,
+          "y26": 13
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 5,
+          "y26": 13
+        },
+        "HIGIENOPOLIS": {
+          "y25": 17,
+          "y26": 9
+        },
+        "INHAUMA": {
+          "y25": 18,
+          "y26": 24
+        },
+        "JACARE": {
+          "y25": 9,
+          "y26": 10
+        },
+        "TOMAS COELHO": {
+          "y25": 11,
+          "y26": 8
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 8,
+          "y26": 12
+        },
+        "MEIER": {
+          "y25": 21,
+          "y26": 29
+        },
+        "RIACHUELO": {
+          "y25": 10,
+          "y26": 13
+        },
+        "ROCHA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "SAMPAIO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 7,
+          "y26": 0
+        },
+        "ABOLICAO": {
+          "y25": 8,
+          "y26": 10
+        },
+        "ENCANTADO": {
+          "y25": 8,
+          "y26": 15
+        },
+        "PIEDADE": {
+          "y25": 35,
+          "y26": 43
+        },
+        "PILARES": {
+          "y25": 19,
+          "y26": 12
+        },
+        "BANCARIOS": {
+          "y25": 6,
+          "y26": 7
+        },
+        "CIDADE UNIVERSITARIA": {
+          "y25": 0,
+          "y26": 2
+        },
+        "JARDIM CARIOCA": {
+          "y25": 13,
+          "y26": 18
+        },
+        "JARDIM GUANABARA": {
+          "y25": 11,
+          "y26": 25
+        },
+        "BRÁS DE PINA": {
+          "y25": 30,
+          "y26": 10
+        },
+        "PENHA CIRCULAR": {
+          "y25": 37,
+          "y26": 27
+        },
+        "IRAJA": {
+          "y25": 22,
+          "y26": 40
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 2,
+          "y26": 5
+        },
+        "VILA KOSMOS": {
+          "y25": 4,
+          "y26": 8
+        },
+        "BENTO RIBEIRO": {
+          "y25": 23,
+          "y26": 35
+        },
+        "HONORIO GURGEL": {
+          "y25": 5,
+          "y26": 8
+        },
+        "MARECHAL HERMES": {
+          "y25": 17,
+          "y26": 25
+        },
+        "OSVALDO CRUZ": {
+          "y25": 11,
+          "y26": 18
+        },
+        "ROCHA MIRANDA": {
+          "y25": 8,
+          "y26": 22
+        },
+        "CASCADURA": {
+          "y25": 7,
+          "y26": 26
+        },
+        "CAVALCANTI": {
+          "y25": 3,
+          "y26": 3
+        },
+        "TURIACU": {
+          "y25": 6,
+          "y26": 6
+        },
+        "VAZ LOBO": {
+          "y25": 10,
+          "y26": 8
+        },
+        "ANCHIETA": {
+          "y25": 21,
+          "y26": 20
+        },
+        "GUADALUPE": {
+          "y25": 13,
+          "y26": 12
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 14,
+          "y26": 9
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 11,
+          "y26": 18
+        },
+        "BARROS FILHO": {
+          "y25": 4,
+          "y26": 0
+        },
+        "COELHO NETO": {
+          "y25": 7,
+          "y26": 7
+        },
+        "PAVUNA": {
+          "y25": 42,
+          "y26": 36
+        },
+        "CORDOVIL": {
+          "y25": 6,
+          "y26": 8
+        },
+        "BANGU": {
+          "y25": 52,
+          "y26": 80
+        },
+        "PADRE MIGUEL": {
+          "y25": 17,
+          "y26": 13
+        },
+        "SENADOR CAMARA": {
+          "y25": 24,
+          "y26": 50
+        },
+        "COSMOS": {
+          "y25": 26,
+          "y26": 50
+        },
+        "INHOAIBA": {
+          "y25": 16,
+          "y26": 12
+        },
+        "SANTISSIMO": {
+          "y25": 13,
+          "y26": 10
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 27,
+          "y26": 22
+        },
+        "PACIENCIA": {
+          "y25": 37,
+          "y26": 27
+        },
+        "SANTA CRUZ": {
+          "y25": 85,
+          "y26": 63
+        },
+        "SEPETIBA": {
+          "y25": 29,
+          "y26": 19
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 0,
+          "y26": 2
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 6,
+          "y26": 10
+        },
+        "JARDIM SULACAP": {
+          "y25": 8,
+          "y26": 17
+        },
+        "REALENGO": {
+          "y25": 44,
+          "y26": 54
+        },
+        "GAMBOA": {
+          "y25": 4,
+          "y26": 0
+        },
+        "SANTO CRISTO": {
+          "y25": 7,
+          "y26": 3
+        },
+        "LAPA": {
+          "y25": 4,
+          "y26": 2
+        },
+        "CATUMBI": {
+          "y25": 1,
+          "y26": 3
+        },
+        "SANTA TERESA": {
+          "y25": 12,
+          "y26": 7
+        },
+        "LEME": {
+          "y25": 0,
+          "y26": 2
+        },
+        "GAVEA": {
+          "y25": 7,
+          "y26": 2
+        },
+        "LEBLON": {
+          "y25": 14,
+          "y26": 13
+        },
+        "SAO CONRADO": {
+          "y25": 3,
+          "y26": 3
+        },
+        "CAMORIM": {
+          "y25": 1,
+          "y26": 6
+        },
+        "ITANHANGA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "JOA": {
+          "y25": 0,
+          "y26": 2
+        },
+        "GRUMARI": {
+          "y25": 1,
+          "y26": 0
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 8,
+          "y26": 2
+        },
+        "JACAREZINHO": {
+          "y25": 1,
+          "y26": 2
+        },
+        "MARIA DA GRACA": {
+          "y25": 8,
+          "y26": 12
+        },
+        "TODOS OS SANTOS": {
+          "y25": 9,
+          "y26": 28
+        },
+        "AGUA SANTA": {
+          "y25": 3,
+          "y26": 2
+        },
+        "CACUIA": {
+          "y25": 6,
+          "y26": 3
+        },
+        "COCOTA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 10,
+          "y26": 7
+        },
+        "GALEAO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "MONERO": {
+          "y25": 2,
+          "y26": 3
+        },
+        "PITANGUEIRAS": {
+          "y25": 1,
+          "y26": 3
+        },
+        "PORTUGUESA": {
+          "y25": 3,
+          "y26": 6
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 3,
+          "y26": 1
+        },
+        "RIBEIRA": {
+          "y25": 0,
+          "y26": 3
+        },
+        "TAUA": {
+          "y25": 10,
+          "y26": 5
+        },
+        "ZUMBI": {
+          "y25": 2,
+          "y26": 1
+        },
+        "COLEGIO": {
+          "y25": 7,
+          "y26": 1
+        },
+        "VISTA ALEGRE": {
+          "y25": 6,
+          "y26": 7
+        },
+        "CAMPINHO": {
+          "y25": 2,
+          "y26": 16
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 2,
+          "y26": 6
+        },
+        "ACARI": {
+          "y25": 0,
+          "y26": 1
+        },
+        "COSTA BARROS": {
+          "y25": 4,
+          "y26": 3
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 4,
+          "y26": 2
+        },
+        "JARDIM AMERICA": {
+          "y25": 4,
+          "y26": 10
+        },
+        "PARADA DE LUCAS": {
+          "y25": 2,
+          "y26": 3
+        },
+        "VIGARIO GERAL": {
+          "y25": 1,
+          "y26": 7
+        },
+        "VILA KENNEDY": {
+          "y25": 1,
+          "y26": 1
+        },
+        "DEODORO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "VILA MILITAR": {
+          "y25": 6,
+          "y26": 1
+        },
+        "CAJU": {
+          "y25": 0,
+          "y26": 1
+        },
+        "SAUDE": {
+          "y25": 1,
+          "y26": 2
+        },
+        "CIDADE NOVA": {
+          "y25": 14,
+          "y26": 1
+        },
+        "ESTACIO": {
+          "y25": 5,
+          "y26": 2
+        },
+        "RIO COMPRIDO": {
+          "y25": 9,
+          "y26": 9
+        },
+        "COSME VELHO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "GLORIA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "URCA": {
+          "y25": 1,
+          "y26": 1
+        },
+        "LAGOA": {
+          "y25": 6,
+          "y26": 4
+        },
+        "BENFICA": {
+          "y25": 5,
+          "y26": 3
+        },
+        "MANGUEIRA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "VASCO DA GAMA": {
+          "y25": 2,
+          "y26": 5
+        },
+        "ROCINHA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "CAMPO DOS AFONSOS": {
+          "y25": 1,
+          "y26": 0
+        },
+        "PAQUETA": {
+          "y25": 0,
+          "y26": 0
+        }
+      },
+      "nulo": {
+        "linhas": 43,
+        "y25": 54,
+        "y26": 47
+      },
+      "invalid": 0,
+      "linhas": 1217
+    },
+    "Julho": {
+      "total": {
+        "y25": 2009,
+        "y26": 3222
+      },
+      "institucional": {
+        "y25": 2167,
+        "y26": 3421
+      },
+      "pco": {
+        "y25": 158,
+        "y26": 199
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 1,
+          "y26": 2
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 7,
+          "y26": 14
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 166,
+          "y26": 154
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 976,
+          "y26": 1457
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 50,
+          "y26": 86
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 2,
+          "y26": 1
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 4,
+          "y26": 9
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 317,
+          "y26": 1022
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 0,
+          "y26": 0
+        },
+        "COLETA SELETIVA": {
+          "y25": 14,
+          "y26": 10
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 410,
+          "y26": 416
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 36,
+          "y26": 17
+        },
+        "VETORES": {
+          "y25": 26,
+          "y26": 34
+        }
+      },
+      "ap": {
+        "AP2": {
+          "y25": 287,
+          "y26": 445
+        },
+        "AP4": {
+          "y25": 306,
+          "y26": 588
+        },
+        "AP3": {
+          "y25": 830,
+          "y26": 1174
+        },
+        "AP1": {
+          "y25": 76,
+          "y26": 96
+        },
+        "AP5": {
+          "y25": 510,
+          "y26": 919
+        }
+      },
+      "bairro": {
+        "ALTO DA BOA VISTA": {
+          "y25": 8,
+          "y26": 6
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 37,
+          "y26": 47
+        },
+        "ENGENHO NOVO": {
+          "y25": 16,
+          "y26": 39
+        },
+        "LEBLON": {
+          "y25": 5,
+          "y26": 14
+        },
+        "MARACANA": {
+          "y25": 12,
+          "y26": 16
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 9,
+          "y26": 10
+        },
+        "TIJUCA": {
+          "y25": 75,
+          "y26": 107
+        },
+        "CATETE": {
+          "y25": 5,
+          "y26": 4
+        },
+        "CENTRO": {
+          "y25": 22,
+          "y26": 19
+        },
+        "COPACABANA": {
+          "y25": 22,
+          "y26": 26
+        },
+        "CORDOVIL": {
+          "y25": 7,
+          "y26": 4
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 27,
+          "y26": 101
+        },
+        "GLORIA": {
+          "y25": 2,
+          "y26": 5
+        },
+        "IPANEMA": {
+          "y25": 17,
+          "y26": 19
+        },
+        "JARDIM SULACAP": {
+          "y25": 8,
+          "y26": 17
+        },
+        "LEME": {
+          "y25": 1,
+          "y26": 2
+        },
+        "MADUREIRA": {
+          "y25": 16,
+          "y26": 29
+        },
+        "OLARIA": {
+          "y25": 27,
+          "y26": 37
+        },
+        "PECHINCHA": {
+          "y25": 18,
+          "y26": 69
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 30,
+          "y26": 83
+        },
+        "ANIL": {
+          "y25": 14,
+          "y26": 26
+        },
+        "BONSUCESSO": {
+          "y25": 11,
+          "y26": 20
+        },
+        "BOTAFOGO": {
+          "y25": 23,
+          "y26": 33
+        },
+        "CAMORIM": {
+          "y25": 7,
+          "y26": 9
+        },
+        "CAMPO GRANDE": {
+          "y25": 155,
+          "y26": 267
+        },
+        "CIDADE NOVA": {
+          "y25": 1,
+          "y26": 1
+        },
+        "GUARATIBA": {
+          "y25": 34,
+          "y26": 54
+        },
+        "INHOAIBA": {
+          "y25": 6,
+          "y26": 27
+        },
+        "MARECHAL HERMES": {
+          "y25": 18,
+          "y26": 23
+        },
+        "MEIER": {
+          "y25": 20,
+          "y26": 51
+        },
+        "PENHA": {
+          "y25": 33,
+          "y26": 30
+        },
+        "PENHA CIRCULAR": {
+          "y25": 27,
+          "y26": 32
+        },
+        "PIEDADE": {
+          "y25": 35,
+          "y26": 39
+        },
+        "PRACA SECA": {
+          "y25": 27,
+          "y26": 41
+        },
+        "SANTA CRUZ": {
+          "y25": 56,
+          "y26": 51
+        },
+        "SENADOR CAMARA": {
+          "y25": 12,
+          "y26": 55
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 7,
+          "y26": 7
+        },
+        "CURICICA": {
+          "y25": 14,
+          "y26": 21
+        },
+        "GARDENIA AZUL": {
+          "y25": 6,
+          "y26": 5
+        },
+        "JACAREPAGUA": {
+          "y25": 12,
+          "y26": 12
+        },
+        "TANQUE": {
+          "y25": 21,
+          "y26": 17
+        },
+        "TAQUARA": {
+          "y25": 59,
+          "y26": 101
+        },
+        "VILA VALQUEIRE": {
+          "y25": 18,
+          "y26": 32
+        },
+        "ITANHANGA": {
+          "y25": 3,
+          "y26": 2
+        },
+        "JOA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 9,
+          "y26": 14
+        },
+        "ANDARAI": {
+          "y25": 17,
+          "y26": 23
+        },
+        "GRAJAU": {
+          "y25": 18,
+          "y26": 47
+        },
+        "VILA ISABEL": {
+          "y25": 21,
+          "y26": 47
+        },
+        "MARE": {
+          "y25": 3,
+          "y26": 11
+        },
+        "RAMOS": {
+          "y25": 37,
+          "y26": 46
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 8,
+          "y26": 8
+        },
+        "DEL CASTILHO": {
+          "y25": 10,
+          "y26": 8
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 7,
+          "y26": 10
+        },
+        "HIGIENOPOLIS": {
+          "y25": 12,
+          "y26": 8
+        },
+        "INHAUMA": {
+          "y25": 17,
+          "y26": 20
+        },
+        "JACARE": {
+          "y25": 8,
+          "y26": 9
+        },
+        "TOMAS COELHO": {
+          "y25": 10,
+          "y26": 8
+        },
+        "CACHAMBI": {
+          "y25": 24,
+          "y26": 58
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 9,
+          "y26": 20
+        },
+        "RIACHUELO": {
+          "y25": 4,
+          "y26": 24
+        },
+        "SAMPAIO": {
+          "y25": 2,
+          "y26": 5
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 3,
+          "y26": 5
+        },
+        "TODOS OS SANTOS": {
+          "y25": 9,
+          "y26": 15
+        },
+        "ABOLICAO": {
+          "y25": 11,
+          "y26": 20
+        },
+        "ENCANTADO": {
+          "y25": 11,
+          "y26": 11
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 28,
+          "y26": 36
+        },
+        "PILARES": {
+          "y25": 18,
+          "y26": 28
+        },
+        "BANCARIOS": {
+          "y25": 14,
+          "y26": 7
+        },
+        "GALEAO": {
+          "y25": 2,
+          "y26": 3
+        },
+        "JARDIM CARIOCA": {
+          "y25": 11,
+          "y26": 18
+        },
+        "JARDIM GUANABARA": {
+          "y25": 12,
+          "y26": 30
+        },
+        "PITANGUEIRAS": {
+          "y25": 6,
+          "y26": 4
+        },
+        "TAUA": {
+          "y25": 12,
+          "y26": 11
+        },
+        "BRÁS DE PINA": {
+          "y25": 19,
+          "y26": 30
+        },
+        "IRAJA": {
+          "y25": 28,
+          "y26": 37
+        },
+        "VILA DA PENHA": {
+          "y25": 10,
+          "y26": 20
+        },
+        "VISTA ALEGRE": {
+          "y25": 6,
+          "y26": 9
+        },
+        "BENTO RIBEIRO": {
+          "y25": 13,
+          "y26": 26
+        },
+        "OSVALDO CRUZ": {
+          "y25": 15,
+          "y26": 8
+        },
+        "ROCHA MIRANDA": {
+          "y25": 7,
+          "y26": 17
+        },
+        "CAMPINHO": {
+          "y25": 3,
+          "y26": 20
+        },
+        "CASCADURA": {
+          "y25": 8,
+          "y26": 14
+        },
+        "CAVALCANTI": {
+          "y25": 5,
+          "y26": 1
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 2,
+          "y26": 0
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 17,
+          "y26": 37
+        },
+        "TURIACU": {
+          "y25": 3,
+          "y26": 6
+        },
+        "VAZ LOBO": {
+          "y25": 7,
+          "y26": 2
+        },
+        "ANCHIETA": {
+          "y25": 28,
+          "y26": 15
+        },
+        "GUADALUPE": {
+          "y25": 18,
+          "y26": 18
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 12,
+          "y26": 14
+        },
+        "ACARI": {
+          "y25": 0,
+          "y26": 1
+        },
+        "COELHO NETO": {
+          "y25": 7,
+          "y26": 24
+        },
+        "COSTA BARROS": {
+          "y25": 5,
+          "y26": 3
+        },
+        "PAVUNA": {
+          "y25": 36,
+          "y26": 28
+        },
+        "PARADA DE LUCAS": {
+          "y25": 4,
+          "y26": 5
+        },
+        "BANGU": {
+          "y25": 41,
+          "y26": 134
+        },
+        "PADRE MIGUEL": {
+          "y25": 18,
+          "y26": 27
+        },
+        "COSMOS": {
+          "y25": 19,
+          "y26": 44
+        },
+        "SANTISSIMO": {
+          "y25": 5,
+          "y26": 15
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 25,
+          "y26": 15
+        },
+        "PACIENCIA": {
+          "y25": 44,
+          "y26": 44
+        },
+        "SEPETIBA": {
+          "y25": 27,
+          "y26": 37
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 10,
+          "y26": 19
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 5,
+          "y26": 15
+        },
+        "REALENGO": {
+          "y25": 33,
+          "y26": 86
+        },
+        "VILA MILITAR": {
+          "y25": 3,
+          "y26": 3
+        },
+        "CAJU": {
+          "y25": 4,
+          "y26": 2
+        },
+        "RIO COMPRIDO": {
+          "y25": 9,
+          "y26": 15
+        },
+        "SANTA TERESA": {
+          "y25": 17,
+          "y26": 20
+        },
+        "FLAMENGO": {
+          "y25": 11,
+          "y26": 20
+        },
+        "LARANJEIRAS": {
+          "y25": 5,
+          "y26": 19
+        },
+        "URCA": {
+          "y25": 3,
+          "y26": 4
+        },
+        "GAVEA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "JARDIM BOTANICO": {
+          "y25": 7,
+          "y26": 12
+        },
+        "LAGOA": {
+          "y25": 6,
+          "y26": 7
+        },
+        "BENFICA": {
+          "y25": 4,
+          "y26": 5
+        },
+        "MANGUEIRA": {
+          "y25": 2,
+          "y26": 0
+        },
+        "SAO CRISTOVAO": {
+          "y25": 1,
+          "y26": 21
+        },
+        "SAO CONRADO": {
+          "y25": 4,
+          "y26": 2
+        },
+        "VIDIGAL": {
+          "y25": 5,
+          "y26": 2
+        },
+        "CIDADE DE DEUS": {
+          "y25": 2,
+          "y26": 3
+        },
+        "VARGEM GRANDE": {
+          "y25": 2,
+          "y26": 7
+        },
+        "VARGEM PEQUENA": {
+          "y25": 8,
+          "y26": 12
+        },
+        "MANGUINHOS": {
+          "y25": 1,
+          "y26": 3
+        },
+        "JACAREZINHO": {
+          "y25": 1,
+          "y26": 1
+        },
+        "MARIA DA GRACA": {
+          "y25": 6,
+          "y26": 16
+        },
+        "ROCHA": {
+          "y25": 2,
+          "y26": 6
+        },
+        "AGUA SANTA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "CACUIA": {
+          "y25": 3,
+          "y26": 1
+        },
+        "CIDADE UNIVERSITARIA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "COCOTA": {
+          "y25": 5,
+          "y26": 3
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 5,
+          "y26": 9
+        },
+        "MONERO": {
+          "y25": 0,
+          "y26": 2
+        },
+        "PORTUGUESA": {
+          "y25": 6,
+          "y26": 4
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "RIBEIRA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "COLEGIO": {
+          "y25": 4,
+          "y26": 10
+        },
+        "VILA KOSMOS": {
+          "y25": 2,
+          "y26": 7
+        },
+        "HONORIO GURGEL": {
+          "y25": 6,
+          "y26": 8
+        },
+        "BARROS FILHO": {
+          "y25": 5,
+          "y26": 3
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "JARDIM AMERICA": {
+          "y25": 6,
+          "y26": 5
+        },
+        "VIGARIO GERAL": {
+          "y25": 3,
+          "y26": 5
+        },
+        "VILA KENNEDY": {
+          "y25": 3,
+          "y26": 3
+        },
+        "DEODORO": {
+          "y25": 5,
+          "y26": 2
+        },
+        "GAMBOA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "SANTO CRISTO": {
+          "y25": 3,
+          "y26": 2
+        },
+        "SAUDE": {
+          "y25": 2,
+          "y26": 0
+        },
+        "PAQUETA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "CATUMBI": {
+          "y25": 0,
+          "y26": 4
+        },
+        "ESTACIO": {
+          "y25": 4,
+          "y26": 2
+        },
+        "COSME VELHO": {
+          "y25": 2,
+          "y26": 1
+        },
+        "HUMAITA": {
+          "y25": 5,
+          "y26": 10
+        },
+        "VASCO DA GAMA": {
+          "y25": 4,
+          "y26": 1
+        },
+        "LAPA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "ZUMBI": {
+          "y25": 0,
+          "y26": 2
+        },
+        "CAMPO DOS AFONSOS": {
+          "y25": 0,
+          "y26": 1
+        },
+        "ROCINHA": {
+          "y25": 1,
+          "y26": 0
+        }
+      },
+      "nulo": {
+        "linhas": 38,
+        "y25": 37,
+        "y26": 88
+      },
+      "invalid": 0,
+      "linhas": 1281
+    },
+    "Agosto": {
+      "total": {
+        "y25": 2005,
+        "y26": 3252
+      },
+      "institucional": {
+        "y25": 2175,
+        "y26": 3453
+      },
+      "pco": {
+        "y25": 170,
+        "y26": 201
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 1,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 3,
+          "y26": 10
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 138,
+          "y26": 151
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 1075,
+          "y26": 1697
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 44,
+          "y26": 93
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 2,
+          "y26": 1
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 11,
+          "y26": 18
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 247,
+          "y26": 740
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 0,
+          "y26": 0
+        },
+        "COLETA SELETIVA": {
+          "y25": 10,
+          "y26": 15
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 427,
+          "y26": 483
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 31,
+          "y26": 22
+        },
+        "VETORES": {
+          "y25": 16,
+          "y26": 22
+        }
+      },
+      "ap": {
+        "AP2": {
+          "y25": 279,
+          "y26": 469
+        },
+        "AP4": {
+          "y25": 326,
+          "y26": 604
+        },
+        "AP1": {
+          "y25": 94,
+          "y26": 101
+        },
+        "AP3": {
+          "y25": 844,
+          "y26": 1172
+        },
+        "AP5": {
+          "y25": 462,
+          "y26": 906
+        }
+      },
+      "bairro": {
+        "LEBLON": {
+          "y25": 15,
+          "y26": 20
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 34,
+          "y26": 53
+        },
+        "BOTAFOGO": {
+          "y25": 13,
+          "y26": 32
+        },
+        "CATETE": {
+          "y25": 13,
+          "y26": 6
+        },
+        "CENTRO": {
+          "y25": 22,
+          "y26": 25
+        },
+        "COPACABANA": {
+          "y25": 20,
+          "y26": 40
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 35,
+          "y26": 64
+        },
+        "IPANEMA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "SANTO CRISTO": {
+          "y25": 5,
+          "y26": 5
+        },
+        "TIJUCA": {
+          "y25": 69,
+          "y26": 78
+        },
+        "VILA VALQUEIRE": {
+          "y25": 16,
+          "y26": 30
+        },
+        "BANGU": {
+          "y25": 50,
+          "y26": 119
+        },
+        "BENTO RIBEIRO": {
+          "y25": 19,
+          "y26": 36
+        },
+        "CAMPO GRANDE": {
+          "y25": 109,
+          "y26": 256
+        },
+        "GAVEA": {
+          "y25": 2,
+          "y26": 9
+        },
+        "GLORIA": {
+          "y25": 1,
+          "y26": 7
+        },
+        "GUARATIBA": {
+          "y25": 31,
+          "y26": 54
+        },
+        "HUMAITA": {
+          "y25": 3,
+          "y26": 10
+        },
+        "MEIER": {
+          "y25": 26,
+          "y26": 38
+        },
+        "PENHA": {
+          "y25": 40,
+          "y26": 21
+        },
+        "PENHA CIRCULAR": {
+          "y25": 19,
+          "y26": 31
+        },
+        "PRACA SECA": {
+          "y25": 37,
+          "y26": 42
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 36,
+          "y26": 52
+        },
+        "ROCHA": {
+          "y25": 7,
+          "y26": 7
+        },
+        "SAO CRISTOVAO": {
+          "y25": 13,
+          "y26": 16
+        },
+        "TAQUARA": {
+          "y25": 65,
+          "y26": 124
+        },
+        "TAUA": {
+          "y25": 10,
+          "y26": 8
+        },
+        "TOMAS COELHO": {
+          "y25": 5,
+          "y26": 5
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 8,
+          "y26": 6
+        },
+        "ANIL": {
+          "y25": 16,
+          "y26": 26
+        },
+        "CIDADE DE DEUS": {
+          "y25": 4,
+          "y26": 11
+        },
+        "CURICICA": {
+          "y25": 9,
+          "y26": 21
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 35,
+          "y26": 83
+        },
+        "GARDENIA AZUL": {
+          "y25": 4,
+          "y26": 7
+        },
+        "JACAREPAGUA": {
+          "y25": 11,
+          "y26": 18
+        },
+        "PECHINCHA": {
+          "y25": 17,
+          "y26": 67
+        },
+        "TANQUE": {
+          "y25": 21,
+          "y26": 29
+        },
+        "ITANHANGA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "VARGEM GRANDE": {
+          "y25": 6,
+          "y26": 4
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 7,
+          "y26": 27
+        },
+        "ANDARAI": {
+          "y25": 14,
+          "y26": 27
+        },
+        "GRAJAU": {
+          "y25": 25,
+          "y26": 51
+        },
+        "MARACANA": {
+          "y25": 12,
+          "y26": 30
+        },
+        "VILA ISABEL": {
+          "y25": 35,
+          "y26": 57
+        },
+        "BONSUCESSO": {
+          "y25": 16,
+          "y26": 14
+        },
+        "MARE": {
+          "y25": 2,
+          "y26": 2
+        },
+        "OLARIA": {
+          "y25": 28,
+          "y26": 48
+        },
+        "RAMOS": {
+          "y25": 31,
+          "y26": 32
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 3,
+          "y26": 3
+        },
+        "DEL CASTILHO": {
+          "y25": 13,
+          "y26": 7
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 9,
+          "y26": 6
+        },
+        "HIGIENOPOLIS": {
+          "y25": 13,
+          "y26": 8
+        },
+        "INHAUMA": {
+          "y25": 12,
+          "y26": 6
+        },
+        "JACARE": {
+          "y25": 5,
+          "y26": 15
+        },
+        "MARIA DA GRACA": {
+          "y25": 7,
+          "y26": 20
+        },
+        "CACHAMBI": {
+          "y25": 21,
+          "y26": 39
+        },
+        "ENGENHO NOVO": {
+          "y25": 29,
+          "y26": 51
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 5,
+          "y26": 15
+        },
+        "RIACHUELO": {
+          "y25": 11,
+          "y26": 14
+        },
+        "SAMPAIO": {
+          "y25": 3,
+          "y26": 10
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 3,
+          "y26": 7
+        },
+        "TODOS OS SANTOS": {
+          "y25": 12,
+          "y26": 22
+        },
+        "ABOLICAO": {
+          "y25": 15,
+          "y26": 14
+        },
+        "AGUA SANTA": {
+          "y25": 2,
+          "y26": 5
+        },
+        "ENCANTADO": {
+          "y25": 4,
+          "y26": 15
+        },
+        "PIEDADE": {
+          "y25": 34,
+          "y26": 46
+        },
+        "CACUIA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "COCOTA": {
+          "y25": 3,
+          "y26": 4
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 8,
+          "y26": 5
+        },
+        "GALEAO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "JARDIM CARIOCA": {
+          "y25": 20,
+          "y26": 18
+        },
+        "JARDIM GUANABARA": {
+          "y25": 18,
+          "y26": 29
+        },
+        "ZUMBI": {
+          "y25": 2,
+          "y26": 2
+        },
+        "BRÁS DE PINA": {
+          "y25": 14,
+          "y26": 12
+        },
+        "IRAJA": {
+          "y25": 19,
+          "y26": 45
+        },
+        "VILA DA PENHA": {
+          "y25": 17,
+          "y26": 23
+        },
+        "VILA KOSMOS": {
+          "y25": 4,
+          "y26": 10
+        },
+        "VISTA ALEGRE": {
+          "y25": 5,
+          "y26": 12
+        },
+        "HONORIO GURGEL": {
+          "y25": 4,
+          "y26": 8
+        },
+        "MARECHAL HERMES": {
+          "y25": 14,
+          "y26": 43
+        },
+        "OSVALDO CRUZ": {
+          "y25": 15,
+          "y26": 18
+        },
+        "ROCHA MIRANDA": {
+          "y25": 12,
+          "y26": 11
+        },
+        "CAMPINHO": {
+          "y25": 2,
+          "y26": 11
+        },
+        "CASCADURA": {
+          "y25": 5,
+          "y26": 19
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 4,
+          "y26": 3
+        },
+        "MADUREIRA": {
+          "y25": 11,
+          "y26": 23
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 13,
+          "y26": 29
+        },
+        "TURIACU": {
+          "y25": 3,
+          "y26": 5
+        },
+        "VAZ LOBO": {
+          "y25": 1,
+          "y26": 11
+        },
+        "ANCHIETA": {
+          "y25": 15,
+          "y26": 18
+        },
+        "GUADALUPE": {
+          "y25": 8,
+          "y26": 24
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 10,
+          "y26": 22
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 40,
+          "y26": 8
+        },
+        "BARROS FILHO": {
+          "y25": 2,
+          "y26": 1
+        },
+        "COSTA BARROS": {
+          "y25": 3,
+          "y26": 4
+        },
+        "PAVUNA": {
+          "y25": 14,
+          "y26": 27
+        },
+        "CORDOVIL": {
+          "y25": 8,
+          "y26": 10
+        },
+        "JARDIM AMERICA": {
+          "y25": 4,
+          "y26": 3
+        },
+        "PARADA DE LUCAS": {
+          "y25": 3,
+          "y26": 3
+        },
+        "VIGARIO GERAL": {
+          "y25": 5,
+          "y26": 10
+        },
+        "PADRE MIGUEL": {
+          "y25": 20,
+          "y26": 36
+        },
+        "SENADOR CAMARA": {
+          "y25": 12,
+          "y26": 57
+        },
+        "VILA KENNEDY": {
+          "y25": 3,
+          "y26": 2
+        },
+        "COSMOS": {
+          "y25": 21,
+          "y26": 55
+        },
+        "SANTISSIMO": {
+          "y25": 5,
+          "y26": 17
+        },
+        "INHOAIBA": {
+          "y25": 13,
+          "y26": 36
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 22,
+          "y26": 16
+        },
+        "PACIENCIA": {
+          "y25": 28,
+          "y26": 40
+        },
+        "SANTA CRUZ": {
+          "y25": 53,
+          "y26": 50
+        },
+        "SEPETIBA": {
+          "y25": 17,
+          "y26": 35
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 1,
+          "y26": 6
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 11,
+          "y26": 17
+        },
+        "CAMPO DOS AFONSOS": {
+          "y25": 2,
+          "y26": 1
+        },
+        "JARDIM SULACAP": {
+          "y25": 5,
+          "y26": 21
+        },
+        "REALENGO": {
+          "y25": 45,
+          "y26": 74
+        },
+        "CAJU": {
+          "y25": 2,
+          "y26": 5
+        },
+        "GAMBOA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "CATUMBI": {
+          "y25": 3,
+          "y26": 4
+        },
+        "CIDADE NOVA": {
+          "y25": 1,
+          "y26": 2
+        },
+        "ESTACIO": {
+          "y25": 5,
+          "y26": 2
+        },
+        "RIO COMPRIDO": {
+          "y25": 13,
+          "y26": 7
+        },
+        "SANTA TERESA": {
+          "y25": 17,
+          "y26": 20
+        },
+        "COSME VELHO": {
+          "y25": 2,
+          "y26": 3
+        },
+        "FLAMENGO": {
+          "y25": 16,
+          "y26": 15
+        },
+        "LARANJEIRAS": {
+          "y25": 5,
+          "y26": 22
+        },
+        "URCA": {
+          "y25": 4,
+          "y26": 7
+        },
+        "LEME": {
+          "y25": 1,
+          "y26": 5
+        },
+        "JARDIM BOTANICO": {
+          "y25": 4,
+          "y26": 9
+        },
+        "LAGOA": {
+          "y25": 6,
+          "y26": 4
+        },
+        "VASCO DA GAMA": {
+          "y25": 6,
+          "y26": 2
+        },
+        "CAMORIM": {
+          "y25": 8,
+          "y26": 21
+        },
+        "JOA": {
+          "y25": 0,
+          "y26": 0
+        },
+        "VARGEM PEQUENA": {
+          "y25": 5,
+          "y26": 13
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 6,
+          "y26": 4
+        },
+        "MANGUINHOS": {
+          "y25": 2,
+          "y26": 0
+        },
+        "JACAREZINHO": {
+          "y25": 0,
+          "y26": 1
+        },
+        "PILARES": {
+          "y25": 27,
+          "y26": 18
+        },
+        "BANCARIOS": {
+          "y25": 12,
+          "y26": 8
+        },
+        "MONERO": {
+          "y25": 6,
+          "y26": 5
+        },
+        "PITANGUEIRAS": {
+          "y25": 6,
+          "y26": 4
+        },
+        "PORTUGUESA": {
+          "y25": 7,
+          "y26": 3
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 4,
+          "y26": 4
+        },
+        "RIBEIRA": {
+          "y25": 1,
+          "y26": 5
+        },
+        "COLEGIO": {
+          "y25": 4,
+          "y26": 8
+        },
+        "CAVALCANTI": {
+          "y25": 7,
+          "y26": 6
+        },
+        "ACARI": {
+          "y25": 1,
+          "y26": 0
+        },
+        "COELHO NETO": {
+          "y25": 5,
+          "y26": 14
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 3,
+          "y26": 4
+        },
+        "DEODORO": {
+          "y25": 2,
+          "y26": 3
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 9,
+          "y26": 9
+        },
+        "VILA MILITAR": {
+          "y25": 3,
+          "y26": 2
+        },
+        "SAUDE": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LAPA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "PAQUETA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "BENFICA": {
+          "y25": 2,
+          "y26": 4
+        },
+        "SAO CONRADO": {
+          "y25": 2,
+          "y26": 1
+        },
+        "VIDIGAL": {
+          "y25": 1,
+          "y26": 0
+        },
+        "MANGUEIRA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "ROCINHA": {
+          "y25": 0,
+          "y26": 0
+        }
+      },
+      "nulo": {
+        "linhas": 41,
+        "y25": 60,
+        "y26": 110
+      },
+      "invalid": 0,
+      "linhas": 1315
+    },
+    "Setembro": {
+      "total": {
+        "y25": 2006,
+        "y26": 2463
+      },
+      "institucional": {
+        "y25": 2136,
+        "y26": 2652
+      },
+      "pco": {
+        "y25": 130,
+        "y26": 189
+      },
+      "tipo": {
+        "FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR": {
+          "y25": 0,
+          "y26": 2
+        },
+        "FISCALIZAÇÃO": {
+          "y25": 0,
+          "y26": 0
+        },
+        "FISCALIZAÇÃO DE GRANDE GERADOR": {
+          "y25": 13,
+          "y26": 2
+        },
+        "COLETA DOMICILIAR": {
+          "y25": 129,
+          "y26": 174
+        },
+        "COLETA DOMICILIAR (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "LIMPEZA": {
+          "y25": 1110,
+          "y26": 1230
+        },
+        "LIMPEZA (DLU)": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PAPELEIRA": {
+          "y25": 35,
+          "y26": 92
+        },
+        "REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR": {
+          "y25": 1,
+          "y26": 2
+        },
+        "REMOÇÃO DE CARCAÇA DE VEÍCULO": {
+          "y25": 8,
+          "y26": 15
+        },
+        "REMOÇÃO GRATUITA": {
+          "y25": 246,
+          "y26": 468
+        },
+        "REMOÇÃO GRATUITA PAQUETÁ": {
+          "y25": 0,
+          "y26": 1
+        },
+        "COLETA SELETIVA": {
+          "y25": 13,
+          "y26": 17
+        },
+        "MANEJO ARBÓREO": {
+          "y25": 386,
+          "y26": 404
+        },
+        "PARQUES": {
+          "y25": 0,
+          "y26": 0
+        },
+        "PRAÇAS": {
+          "y25": 36,
+          "y26": 20
+        },
+        "VETORES": {
+          "y25": 29,
+          "y26": 36
+        }
+      },
+      "ap": {
+        "AP1": {
+          "y25": 81,
+          "y26": 88
+        },
+        "AP4": {
+          "y25": 392,
+          "y26": 460
+        },
+        "AP3": {
+          "y25": 783,
+          "y26": 863
+        },
+        "AP2": {
+          "y25": 313,
+          "y26": 357
+        },
+        "AP5": {
+          "y25": 437,
+          "y26": 695
+        }
+      },
+      "bairro": {
+        "CENTRO": {
+          "y25": 24,
+          "y26": 17
+        },
+        "PRACA SECA": {
+          "y25": 40,
+          "y26": 22
+        },
+        "VILA DA PENHA": {
+          "y25": 12,
+          "y26": 14
+        },
+        "VILA ISABEL": {
+          "y25": 26,
+          "y26": 40
+        },
+        "BARRA DA TIJUCA": {
+          "y25": 24,
+          "y26": 43
+        },
+        "BOTAFOGO": {
+          "y25": 18,
+          "y26": 34
+        },
+        "CAMPO GRANDE": {
+          "y25": 108,
+          "y26": 194
+        },
+        "JARDIM AMERICA": {
+          "y25": 7,
+          "y26": 4
+        },
+        "PORTUGUESA": {
+          "y25": 5,
+          "y26": 3
+        },
+        "RECREIO DOS BANDEIRANTES": {
+          "y25": 42,
+          "y26": 39
+        },
+        "SANTO CRISTO": {
+          "y25": 5,
+          "y26": 5
+        },
+        "SAUDE": {
+          "y25": 0,
+          "y26": 0
+        },
+        "TIJUCA": {
+          "y25": 67,
+          "y26": 80
+        },
+        "VARGEM GRANDE": {
+          "y25": 9,
+          "y26": 13
+        },
+        "BANGU": {
+          "y25": 54,
+          "y26": 90
+        },
+        "BARRA DE GUARATIBA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "CIDADE NOVA": {
+          "y25": 1,
+          "y26": 3
+        },
+        "COPACABANA": {
+          "y25": 27,
+          "y26": 30
+        },
+        "FREGUESIA (JACAREPAGUA)": {
+          "y25": 36,
+          "y26": 40
+        },
+        "GRAJAU": {
+          "y25": 34,
+          "y26": 24
+        },
+        "IPANEMA": {
+          "y25": 15,
+          "y26": 9
+        },
+        "IRAJA": {
+          "y25": 23,
+          "y26": 40
+        },
+        "ITANHANGA": {
+          "y25": 2,
+          "y26": 4
+        },
+        "JACARE": {
+          "y25": 6,
+          "y26": 5
+        },
+        "JACAREPAGUA": {
+          "y25": 11,
+          "y26": 17
+        },
+        "JARDIM BOTANICO": {
+          "y25": 3,
+          "y26": 13
+        },
+        "JARDIM SULACAP": {
+          "y25": 18,
+          "y26": 12
+        },
+        "LEBLON": {
+          "y25": 25,
+          "y26": 11
+        },
+        "MEIER": {
+          "y25": 28,
+          "y26": 31
+        },
+        "PENHA": {
+          "y25": 22,
+          "y26": 20
+        },
+        "RAMOS": {
+          "y25": 34,
+          "y26": 17
+        },
+        "SAO CRISTOVAO": {
+          "y25": 7,
+          "y26": 12
+        },
+        "SAO FRANCISCO XAVIER": {
+          "y25": 7,
+          "y26": 4
+        },
+        "TAQUARA": {
+          "y25": 77,
+          "y26": 96
+        },
+        "TURIACU": {
+          "y25": 9,
+          "y26": 7
+        },
+        "VASCO DA GAMA": {
+          "y25": 3,
+          "y26": 4
+        },
+        "ANIL": {
+          "y25": 23,
+          "y26": 24
+        },
+        "CIDADE DE DEUS": {
+          "y25": 4,
+          "y26": 4
+        },
+        "CURICICA": {
+          "y25": 19,
+          "y26": 22
+        },
+        "GARDENIA AZUL": {
+          "y25": 7,
+          "y26": 6
+        },
+        "PECHINCHA": {
+          "y25": 37,
+          "y26": 56
+        },
+        "TANQUE": {
+          "y25": 8,
+          "y26": 19
+        },
+        "VILA VALQUEIRE": {
+          "y25": 18,
+          "y26": 33
+        },
+        "ANDARAI": {
+          "y25": 11,
+          "y26": 11
+        },
+        "MARACANA": {
+          "y25": 11,
+          "y26": 10
+        },
+        "BONSUCESSO": {
+          "y25": 13,
+          "y26": 13
+        },
+        "MARE": {
+          "y25": 2,
+          "y26": 2
+        },
+        "OLARIA": {
+          "y25": 22,
+          "y26": 22
+        },
+        "COMPLEXO DO ALEMAO": {
+          "y25": 1,
+          "y26": 5
+        },
+        "DEL CASTILHO": {
+          "y25": 4,
+          "y26": 6
+        },
+        "ENGENHO DA RAINHA": {
+          "y25": 7,
+          "y26": 4
+        },
+        "HIGIENOPOLIS": {
+          "y25": 5,
+          "y26": 8
+        },
+        "INHAUMA": {
+          "y25": 13,
+          "y26": 16
+        },
+        "MARIA DA GRACA": {
+          "y25": 15,
+          "y26": 8
+        },
+        "TOMAS COELHO": {
+          "y25": 5,
+          "y26": 3
+        },
+        "CACHAMBI": {
+          "y25": 17,
+          "y26": 36
+        },
+        "ENGENHO NOVO": {
+          "y25": 39,
+          "y26": 28
+        },
+        "LINS DE VASCONCELOS": {
+          "y25": 10,
+          "y26": 6
+        },
+        "RIACHUELO": {
+          "y25": 11,
+          "y26": 10
+        },
+        "ROCHA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "SAMPAIO": {
+          "y25": 7,
+          "y26": 6
+        },
+        "TODOS OS SANTOS": {
+          "y25": 13,
+          "y26": 17
+        },
+        "ABOLICAO": {
+          "y25": 21,
+          "y26": 9
+        },
+        "AGUA SANTA": {
+          "y25": 0,
+          "y26": 0
+        },
+        "ENGENHO DE DENTRO": {
+          "y25": 20,
+          "y26": 37
+        },
+        "PIEDADE": {
+          "y25": 42,
+          "y26": 37
+        },
+        "PILARES": {
+          "y25": 19,
+          "y26": 17
+        },
+        "BANCARIOS": {
+          "y25": 15,
+          "y26": 3
+        },
+        "COCOTA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "GALEAO": {
+          "y25": 3,
+          "y26": 3
+        },
+        "JARDIM GUANABARA": {
+          "y25": 19,
+          "y26": 22
+        },
+        "MONERO": {
+          "y25": 3,
+          "y26": 2
+        },
+        "PITANGUEIRAS": {
+          "y25": 4,
+          "y26": 3
+        },
+        "TAUA": {
+          "y25": 18,
+          "y26": 3
+        },
+        "BRÁS DE PINA": {
+          "y25": 19,
+          "y26": 33
+        },
+        "PENHA CIRCULAR": {
+          "y25": 21,
+          "y26": 26
+        },
+        "COLEGIO": {
+          "y25": 5,
+          "y26": 7
+        },
+        "VICENTE DE CARVALHO": {
+          "y25": 4,
+          "y26": 6
+        },
+        "VILA KOSMOS": {
+          "y25": 3,
+          "y26": 5
+        },
+        "BENTO RIBEIRO": {
+          "y25": 19,
+          "y26": 22
+        },
+        "HONORIO GURGEL": {
+          "y25": 3,
+          "y26": 11
+        },
+        "MARECHAL HERMES": {
+          "y25": 15,
+          "y26": 10
+        },
+        "OSVALDO CRUZ": {
+          "y25": 8,
+          "y26": 11
+        },
+        "ROCHA MIRANDA": {
+          "y25": 6,
+          "y26": 7
+        },
+        "CAMPINHO": {
+          "y25": 4,
+          "y26": 12
+        },
+        "CASCADURA": {
+          "y25": 11,
+          "y26": 11
+        },
+        "CAVALCANTI": {
+          "y25": 2,
+          "y26": 7
+        },
+        "ENGENHEIRO LEAL": {
+          "y25": 1,
+          "y26": 5
+        },
+        "MADUREIRA": {
+          "y25": 10,
+          "y26": 30
+        },
+        "QUINTINO BOCAIUVA": {
+          "y25": 18,
+          "y26": 20
+        },
+        "VAZ LOBO": {
+          "y25": 5,
+          "y26": 4
+        },
+        "ANCHIETA": {
+          "y25": 11,
+          "y26": 22
+        },
+        "GUADALUPE": {
+          "y25": 25,
+          "y26": 8
+        },
+        "PARQUE ANCHIETA": {
+          "y25": 6,
+          "y26": 5
+        },
+        "RICARDO DE ALBUQUERQUE": {
+          "y25": 13,
+          "y26": 6
+        },
+        "COELHO NETO": {
+          "y25": 8,
+          "y26": 6
+        },
+        "COSTA BARROS": {
+          "y25": 2,
+          "y26": 8
+        },
+        "PAVUNA": {
+          "y25": 22,
+          "y26": 25
+        },
+        "CORDOVIL": {
+          "y25": 4,
+          "y26": 6
+        },
+        "PADRE MIGUEL": {
+          "y25": 19,
+          "y26": 13
+        },
+        "SENADOR CAMARA": {
+          "y25": 13,
+          "y26": 90
+        },
+        "COSMOS": {
+          "y25": 20,
+          "y26": 25
+        },
+        "INHOAIBA": {
+          "y25": 11,
+          "y26": 13
+        },
+        "SANTISSIMO": {
+          "y25": 6,
+          "y26": 10
+        },
+        "SENADOR VASCONCELOS": {
+          "y25": 18,
+          "y26": 12
+        },
+        "PACIENCIA": {
+          "y25": 26,
+          "y26": 26
+        },
+        "SANTA CRUZ": {
+          "y25": 52,
+          "y26": 61
+        },
+        "SEPETIBA": {
+          "y25": 16,
+          "y26": 32
+        },
+        "GUARATIBA": {
+          "y25": 27,
+          "y26": 38
+        },
+        "PEDRA DE GUARATIBA": {
+          "y25": 4,
+          "y26": 11
+        },
+        "MAGALHAES BASTOS": {
+          "y25": 4,
+          "y26": 11
+        },
+        "REALENGO": {
+          "y25": 32,
+          "y26": 50
+        },
+        "CAJU": {
+          "y25": 9,
+          "y26": 3
+        },
+        "CATUMBI": {
+          "y25": 2,
+          "y26": 3
+        },
+        "RIO COMPRIDO": {
+          "y25": 5,
+          "y26": 7
+        },
+        "SANTA TERESA": {
+          "y25": 14,
+          "y26": 24
+        },
+        "FLAMENGO": {
+          "y25": 10,
+          "y26": 20
+        },
+        "GLORIA": {
+          "y25": 3,
+          "y26": 8
+        },
+        "HUMAITA": {
+          "y25": 3,
+          "y26": 5
+        },
+        "LARANJEIRAS": {
+          "y25": 8,
+          "y26": 20
+        },
+        "LEME": {
+          "y25": 1,
+          "y26": 1
+        },
+        "GAVEA": {
+          "y25": 11,
+          "y26": 6
+        },
+        "BENFICA": {
+          "y25": 2,
+          "y26": 1
+        },
+        "MANGUEIRA": {
+          "y25": 0,
+          "y26": 1
+        },
+        "CAMORIM": {
+          "y25": 27,
+          "y26": 11
+        },
+        "JOA": {
+          "y25": 2,
+          "y26": 1
+        },
+        "VARGEM PEQUENA": {
+          "y25": 6,
+          "y26": 10
+        },
+        "ALTO DA BOA VISTA": {
+          "y25": 9,
+          "y26": 5
+        },
+        "PRACA DA BANDEIRA": {
+          "y25": 14,
+          "y26": 3
+        },
+        "MANGUINHOS": {
+          "y25": 0,
+          "y26": 1
+        },
+        "ENCANTADO": {
+          "y25": 1,
+          "y26": 17
+        },
+        "CACUIA": {
+          "y25": 2,
+          "y26": 2
+        },
+        "CIDADE UNIVERSITARIA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "FREGUESIA (ILHA)": {
+          "y25": 3,
+          "y26": 9
+        },
+        "JARDIM CARIOCA": {
+          "y25": 8,
+          "y26": 3
+        },
+        "PRAIA DA BANDEIRA": {
+          "y25": 3,
+          "y26": 7
+        },
+        "RIBEIRA": {
+          "y25": 3,
+          "y26": 3
+        },
+        "ZUMBI": {
+          "y25": 3,
+          "y26": 3
+        },
+        "VISTA ALEGRE": {
+          "y25": 1,
+          "y26": 8
+        },
+        "ACARI": {
+          "y25": 1,
+          "y26": 2
+        },
+        "BARROS FILHO": {
+          "y25": 0,
+          "y26": 1
+        },
+        "PARQUE COLUMBIA": {
+          "y25": 1,
+          "y26": 6
+        },
+        "PARADA DE LUCAS": {
+          "y25": 1,
+          "y26": 3
+        },
+        "VIGARIO GERAL": {
+          "y25": 5,
+          "y26": 7
+        },
+        "VILA KENNEDY": {
+          "y25": 2,
+          "y26": 2
+        },
+        "DEODORO": {
+          "y25": 1,
+          "y26": 2
+        },
+        "VILA MILITAR": {
+          "y25": 4,
+          "y26": 1
+        },
+        "GAMBOA": {
+          "y25": 1,
+          "y26": 0
+        },
+        "LAPA": {
+          "y25": 3,
+          "y26": 0
+        },
+        "PAQUETA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "ESTACIO": {
+          "y25": 3,
+          "y26": 5
+        },
+        "CATETE": {
+          "y25": 7,
+          "y26": 9
+        },
+        "COSME VELHO": {
+          "y25": 3,
+          "y26": 4
+        },
+        "URCA": {
+          "y25": 2,
+          "y26": 3
+        },
+        "LAGOA": {
+          "y25": 1,
+          "y26": 5
+        },
+        "ROCINHA": {
+          "y25": 1,
+          "y26": 4
+        },
+        "SAO CONRADO": {
+          "y25": 2,
+          "y26": 2
+        },
+        "VIDIGAL": {
+          "y25": 1,
+          "y26": 0
+        },
+        "JACAREZINHO": {
+          "y25": 1,
+          "y26": 1
+        }
+      },
+      "nulo": {
+        "linhas": 42,
+        "y25": 76,
+        "y26": 59
+      },
+      "invalid": 0,
+      "linhas": 1281
+    }
+  }
+}

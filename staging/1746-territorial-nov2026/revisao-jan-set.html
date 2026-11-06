@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1746 · Auditoria histórica janeiro–setembro/2026</title>
+<style>
+:root{color-scheme:dark;--bg:#06111e;--p:#0b2035;--line:#23425e;--fg:#f5f9ff;--muted:#a7bdcf;--cyan:#65ddd9;--amber:#f5c07b;--ok:#8bd7b8;--red:#ffacb3}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top left,#123652,#06111e 55%);font:14px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--fg)}a{color:var(--cyan)}main{max-width:1220px;margin:auto;padding:24px 18px 72px}.eyebrow{font-size:11px;font-weight:850;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase}h1{font-size:clamp(27px,4vw,44px);letter-spacing:-.04em;line-height:1.13;margin:8px 0 14px}h2{font-size:21px;margin:0 0 14px}p{color:var(--muted)}header{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;padding-bottom:22px;border-bottom:1px solid var(--line)}.status{font-size:11px;letter-spacing:.05em;color:#ffe4bd;background:#362c1f;border:1px solid #886e46;border-radius:9px;padding:8px 12px;white-space:nowrap}.panel,.card{border:1px solid var(--line);background:#0b2136;border-radius:15px}.panel{padding:22px;margin:15px 0}.controls{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:26px 0}.controls label{color:var(--muted);font-size:12px;font-weight:800}.controls select{min-width:180px;padding:11px 14px;border:1px solid #37617e;border-radius:10px;background:#0e2940;color:white;font:inherit;font-weight:700}.figs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0 16px}.card{padding:17px}.card small{color:var(--muted);display:block;font-size:12px}.val{font-size:clamp(24px,2.7vw,35px);font-weight:850;letter-spacing:-.035em;margin-top:6px}.delta{font-size:12px;font-weight:750;margin-top:5px;color:var(--ok)}.delta.warning{color:var(--amber)}.tablewrap{max-width:100%;overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}td,th{padding:12px 13px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}th{background:#132d44;color:#c9dded;font-weight:750}td:first-child,th:first-child{text-align:left}.highlight{color:var(--cyan);font-weight:800}.muted{color:var(--muted)}.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.note{padding:13px 15px;border-left:3px solid var(--amber);background:#192b3d;color:#d7e5f0;border-radius:8px}.note strong{color:white}.note p{margin:0}.sources{display:flex;gap:18px;flex-wrap:wrap;margin:20px 0;font-size:13px}.error{color:var(--red)}@media(max-width:880px){.figs,.cols{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){header{display:block}.status{display:inline-block;margin-top:14px}.figs,.cols{grid-template-columns:1fr}}
+</style></head>
+<body><main><header><div><div class="eyebrow">HUB COMLURB · 1746 · Auditoria histórica</div><h1>O que muda nos demais meses?</h1><p>Comparação entre as bases históricas tratadas e os fechamentos do HUB, de janeiro a setembro de 2026. As revisões da fonte são exibidas separadamente da classificação territorial recuperada.</p></div><div class="status">PRÉVIA · SEM HOMOLOGAÇÃO</div></header>
+<div class="controls"><label for="month">Escolha a competência</label><select id="month" aria-label="Mês de referência"><option>Carregando…</option></select><span class="muted">Comparação com o mesmo mês de 2025</span></div>
+<section class="figs" id="cards" aria-live="polite"></section>
+<div class="cols">
+<section class="panel"><h2>Classificação por Tipo</h2><p>O SubTipo não altera a classificação: Limpeza permanece Limpeza e Papeleira permanece Papeleira.</p><div class="tablewrap"><table><thead><tr><th>Indicador</th><th>Publicado</th><th>Nova base</th><th>Diferença</th></tr></thead><tbody id="types"></tbody></table></div></section>
+<section class="panel"><h2>Distribuição por AP</h2><p>A AP exibida é a padronizada. A coluna AP original foi preservada na fonte.</p><div class="tablewrap"><table><thead><tr><th>AP</th><th>Chamados 2026</th><th>Δ Chamados</th><th>Ouvidorias 2026</th><th>Δ Ouvidorias</th></tr></thead><tbody id="aps"></tbody></table></div></section>
+</div>
+<div class="cols">
+<section class="panel"><h2>Bairros com maior aumento de Chamados</h2><div class="tablewrap"><table><thead><tr><th>Bairro</th><th>2025</th><th>2026</th><th>Δ</th></tr></thead><tbody id="bairrosC"></tbody></table></div></section>
+<section class="panel"><h2>Bairros com maior aumento de Ouvidorias</h2><div class="tablewrap"><table><thead><tr><th>Bairro</th><th>2025</th><th>2026</th><th>Δ</th></tr></thead><tbody id="bairrosO"></tbody></table></div></section>
+</div>
+<section class="panel"><h2>Leitura técnica</h2><div class="note" id="note"><p>Carregando auditoria…</p></div><p>Os totais publicados de julho a setembro permanecem congelados até decisão formal. O detalhamento de SubTipos de Ouvidorias foi adiado por ausência de dados na fonte.</p></section>
+<div class="sources"><a href="./AUDITORIA_JAN_SET_2026_IMPACTO_INSIGHTS.md" target="_blank" rel="noopener">Relatório técnico completo</a><a href="https://docs.google.com/spreadsheets/d/1u9vJsfd7TbG_5rTcXzpEVotte6QrLfMza3eT0Z_JmKI/edit" target="_blank" rel="noopener">Cadastro territorial mestre</a><a href="../../1746-resumo-executivo/previa-outubro-base-tratada.html" target="_blank" rel="noopener">Prévia revisada de outubro</a></div>
+</main><script>
+const nf=new Intl.NumberFormat('pt-BR');const f=v=>nf.format(v),d=v=>v>0?'+'+f(v):v<0?'−'+f(-v):'0';
+const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
+let C,O;
+function rowCells(values){return '<tr>'+values.map((v,i)=>'<td'+(i===0?'':'')+'>'+v+'</td>').join('')+'</tr>'}
+function show(m){
+const c=C.meses[m],o=O.meses[m],i=months.indexOf(m);
+const dateC=c.total[1],dateO=o.total[1],published={"Janeiro":[30475,3668],"Fevereiro":[31103,3667],"Março":[35562,4458],"Abril":[29537,3677],"Maio":[24700,3149],"Junho":[21542,2764],"Julho":[27553,3236],"Agosto":[29605,3254],"Setembro":[24695,2476]}[m];
+const meta=[['Chamados na nova base',dateC,d(dateC-published[0])+' vs publicado'],['Ouvidorias operacionais',dateO,d(dateO-published[1])+' vs publicado'],['AP3: Chamados',c.ap['AP3'][1],d(c.ap['AP3'][1]-c.ap['AP3'][0])+' vs 2025'],['AP5: Chamados',c.ap['AP5'][1],d(c.ap['AP5'][1]-c.ap['AP5'][0])+' vs 2025']];
+document.getElementById('cards').innerHTML=meta.map((x,j)=>'<div class="card"><small>'+x[0]+'</small><div class="val">'+f(x[1])+'</div><div class="delta'+((j<2&&x[2][0]!=='0')?' warning':'')+'">'+x[2]+'</div></div>').join('');
+const types=['LIMPEZA','PAPELEIRA'];let txt='';
+for(const t of types){const cv=c.tipo[t]||[0,0],ov=o.tipo[t]||[0,0];txt+=rowCells([t+' · Chamados','—',f(cv[1]),d(cv[1]-cv[0])+' vs 2025']);txt+=rowCells([t+' · Ouvidorias','—',f(ov[1]),d(ov[1]-ov[0])+' vs 2025']);}document.getElementById('types').innerHTML=txt;
+document.getElementById('aps').innerHTML=['AP1','AP2','AP3','AP4','AP5'].map(ap=>rowCells([ap,f(c.ap[ap][1]),d(c.ap[ap][1]-c.ap[ap][0]),f(o.ap[ap][1]),d(o.ap[ap][1]-o.ap[ap][0])])).join('');
+function top(obj){return Object.entries(obj).map(([n,v])=>({n,a:v[0],b:v[1],diff:v[1]-v[0]})).sort((a,b)=>b.diff-a.diff).slice(0,5).map(x=>rowCells([x.n,f(x.a),f(x.b),d(x.diff)])).join('')}
+document.getElementById('bairrosC').innerHTML=top(c.bairro);document.getElementById('bairrosO').innerHTML=top(o.bairro);
+const notes={
+'Janeiro':'Totais municipais iguais aos publicados. Há diferença de classificação por Tipo: registros originalmente Papeleira foram absorvidos em Limpeza na série antiga.',
+'Fevereiro':'Totais municipais iguais aos publicados. Crescimento de Chamados de Limpeza na nova classificação por Tipo original é maior que o indicado no Histórico.',
+'Março':'Totais municipais iguais aos publicados. O forte crescimento de Limpeza persiste e a distribuição territorial está integralmente identificada.',
+'Abril':'Totais municipais iguais aos publicados. A contribuição de Limpeza ao crescimento de Chamados muda após manter Papeleira como Tipo distinto.',
+'Maio':'Totais municipais iguais aos publicados. A contração de Limpeza nos Chamados é menor do que a apresentada na série antiga.',
+'Junho':'Totais municipais iguais aos publicados. A participação de Limpeza no aumento de Chamados é maior quando preservamos a classificação por Tipo original.',
+'Julho':'Pequenas revisões dos totais, mas diferenças relevantes entre os Tipos Limpeza e Papeleira nas Ouvidorias. O HUB antigo não autorizava taxa por AP para este mês.',
+'Agosto':'HUB preserva a categoria SEM AP (AGO); a nova fonte utiliza AP3 na camada padronizada. Não interpretar redistribuição territorial como novos atendimentos.',
+'Setembro':'Pequenas revisões de volume, com impacto relevante na classificação Limpeza/Papeleira e na contribuição de Limpeza ao aumento de Chamados.'
+};
+document.getElementById('note').innerHTML='<p><strong>'+m+':</strong> '+notes[m]+'</p><p style="margin-top:8px">AP original Nulo em Chamados: '+f(c.nuloOrigem[1])+' registros de 2026; em Ouvidorias operacionais: '+f(o.nuloOrigem[1])+'. Essas ocorrências já estão incluídas nos totais acima.</p>';
+}
+Promise.all([fetch('./auditoria-chamados-jan-set2026.json',{cache:'no-store'}),fetch('./auditoria-ouvidorias-jan-set2026.json',{cache:'no-store'})]).then(async rs=>{if(!rs.every(r=>r.ok))throw Error('Não foi possível recuperar as bases de auditoria');[C,O]=await Promise.all(rs.map(r=>r.json()));const select=document.getElementById('month');select.innerHTML=months.map(x=>'<option value="'+x+'">'+x+'</option>').join('');select.value='Julho';select.addEventListener('change',()=>show(select.value));show('Julho')}).catch(e=>{document.getElementById('note').innerHTML='<p class="error">'+e.message+'</p>';});
+</script></body></html>

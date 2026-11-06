@@ -122,7 +122,7 @@ jobs:
             assert.ok(redirect.includes('../../'+folder+'/previa-territorial-layout-original.html'),mod+' redirecionamento');
             const original=fs.readFileSync(folder+'/index.html','utf8');
             const replica=fs.readFileSync(folder+'/previa-territorial-layout-original.html','utf8')
-              .replace(/\\n<!-- PRÉVIA FIEL AO LAYOUT OFICIAL · SEM ATUALIZAÇÃO DE CUBOS · BRANCH TESTE · 06\\/11\\/2026 -->\\n/,'')
+              .replace(String.fromCharCode(10)+'<!-- PRÉVIA FIEL AO LAYOUT OFICIAL · SEM ATUALIZAÇÃO DE CUBOS · BRANCH TESTE · 06/11/2026 -->'+String.fromCharCode(10),'')
               .replace(/(<title>)Prévia do layout oficial · /,'$1');
             assert.equal(replica,original,mod+' layout 100% preservado');
           }

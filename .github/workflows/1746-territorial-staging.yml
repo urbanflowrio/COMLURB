@@ -35,3 +35,41 @@ jobs:
           assert.equal(oct.diferencas.ouvidorias2026,0);
           console.log('OK: 10 meses; 7 divergências registradas; sem alteração da main');
           NODE
+      - name: Conferir auditoria janeiro–setembro (AP, Tipo e versões)
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),assert=require('node:assert/strict');
+          const dir='staging/1746-territorial-nov2026/';
+          const C=JSON.parse(fs.readFileSync(dir+'auditoria-chamados-jan-set2026.json','utf8')).meses;
+          const O=JSON.parse(fs.readFileSync(dir+'auditoria-ouvidorias-jan-set2026.json','utf8')).meses;
+          const B=JSON.parse(fs.readFileSync(dir+'baseline-publicada-jan-set2026.json','utf8')).meses;
+          const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
+          for(const m of months){
+            for(const [data,group] of [[C[m],'Chamados'],[O[m],'Ouvidorias']]){
+              assert.ok(data,group+' '+m);
+              for(let y=0;y<2;y++){
+                const apSum=Object.values(data.ap).reduce((a,v)=>a+v[y],0);
+                const tipoSum=Object.values(data.tipo).reduce((a,v)=>a+v[y],0);
+                const bairroSum=Object.values(data.bairro).reduce((a,v)=>a+v[y],0);
+                assert.equal(apSum,data.total[y],group+' '+m+' AP');
+                assert.equal(tipoSum,data.total[y],group+' '+m+' Tipo');
+                assert.equal(bairroSum,data.total[y],group+' '+m+' Bairro');
+              }
+            }
+            assert.equal(C[m].total[0]>0,true);
+            assert.equal(O[m].total[0]>0,true);
+            const b=B[m].total;
+            if(months.indexOf(m)<6){
+              assert.equal(C[m].total[1],b.chamados2026,'Chamados '+m);
+              assert.equal(O[m].total[1],b.ouvidorias2026,'Ouvidorias '+m);
+            }
+          }
+          assert.equal(B.Julho.papeleira.ouvidorias2026,46);
+          assert.equal(O.Julho.tipo.PAPELEIRA[1],86);
+          assert.equal(B.Agosto.papeleira.ouvidorias2026,45);
+          assert.equal(O.Agosto.tipo.PAPELEIRA[1],93);
+          assert.equal(B.Setembro.papeleira.ouvidorias2026,53);
+          assert.equal(O.Setembro.tipo.PAPELEIRA[1],92);
+          assert.equal(C.Setembro.tipo.LIMPEZA[1]-C.Setembro.tipo.LIMPEZA[0],1163);
+          console.log('OK: 9 competências, ambas as fontes, somatórios de AP/Tipo/Bairro e revisões');
+          NODE

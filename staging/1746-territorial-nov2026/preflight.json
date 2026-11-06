@@ -1,0 +1,260 @@
+{
+  "metadata": {
+    "versao": "preflight-1746-territorial-v1",
+    "geradoEm": "2026-11-06",
+    "status": "teste_nao_homologado",
+    "fonteChamados": "https://docs.google.com/spreadsheets/d/1qOTScQ-fldjBv9vios4aMTCiBGqa4KoQT23Yiex81UQ/edit",
+    "fonteOuvidorias": "https://docs.google.com/spreadsheets/d/1QYo05-kXN-F_HbShX_QIliY8Kwn6_rIgrThsfk1u_A0/edit",
+    "cadastroTerritorial": "https://docs.google.com/spreadsheets/d/1u9vJsfd7TbG_5rTcXzpEVotte6QrLfMza3eT0Z_JmKI/edit",
+    "baseline": "1746-historico/data.js (main)",
+    "filtroOperacional": "Gerência original diferente de PCO",
+    "corte": "Outubro/2026",
+    "regra": "Tipo original preservado; SubTipo não determina Tipo",
+    "totalLinhas": {
+      "chamados": 63738,
+      "ouvidorias": 15322
+    },
+    "linhasAPCorrigidas": {
+      "chamados": 2079,
+      "ouvidorias": 487
+    },
+    "observacoes": [
+      "Quatro chamados adicionais de outubro/2026 preservados como diferença (+4).",
+      "Julho a setembro/2026 possuem diferenças retroativas, sem incorporar mudanças ao publicado.",
+      "3.570 chamados de novembro/2026 presentes na origem, excluídos do corte de outubro.",
+      "SubTipos de Ouvidorias não estão íntegros; análise por SubTipo suspensa."
+    ]
+  },
+  "monthly": [
+    {
+      "mes": "Janeiro",
+      "fonte": {
+        "chamados2025": 34305,
+        "chamados2026": 30475,
+        "ouvidorias2025": 4046,
+        "ouvidorias2026": 3668,
+        "ouvidoriasInstitucionais2025": 4732,
+        "ouvidoriasInstitucionais2026": 3861
+      },
+      "publicado": {
+        "chamados2025": 34305,
+        "chamados2026": 30475,
+        "ouvidorias2025": 4046,
+        "ouvidorias2026": 3668
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 0,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    },
+    {
+      "mes": "Fevereiro",
+      "fonte": {
+        "chamados2025": 26209,
+        "chamados2026": 31103,
+        "ouvidorias2025": 3635,
+        "ouvidorias2026": 3667,
+        "ouvidoriasInstitucionais2025": 4282,
+        "ouvidoriasInstitucionais2026": 3786
+      },
+      "publicado": {
+        "chamados2025": 26209,
+        "chamados2026": 31103,
+        "ouvidorias2025": 3635,
+        "ouvidorias2026": 3667
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 0,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    },
+    {
+      "mes": "Março",
+      "fonte": {
+        "chamados2025": 24281,
+        "chamados2026": 35562,
+        "ouvidorias2025": 3416,
+        "ouvidorias2026": 4458,
+        "ouvidoriasInstitucionais2025": 3661,
+        "ouvidoriasInstitucionais2026": 4643
+      },
+      "publicado": {
+        "chamados2025": 24281,
+        "chamados2026": 35562,
+        "ouvidorias2025": 3416,
+        "ouvidorias2026": 4458
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 0,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    },
+    {
+      "mes": "Abril",
+      "fonte": {
+        "chamados2025": 25905,
+        "chamados2026": 29537,
+        "ouvidorias2025": 2845,
+        "ouvidorias2026": 3677,
+        "ouvidoriasInstitucionais2025": 3049,
+        "ouvidoriasInstitucionais2026": 3848
+      },
+      "publicado": {
+        "chamados2025": 25905,
+        "chamados2026": 29537,
+        "ouvidorias2025": 2845,
+        "ouvidorias2026": 3677
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 0,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    },
+    {
+      "mes": "Maio",
+      "fonte": {
+        "chamados2025": 27167,
+        "chamados2026": 24700,
+        "ouvidorias2025": 3286,
+        "ouvidorias2026": 3149,
+        "ouvidoriasInstitucionais2025": 3434,
+        "ouvidoriasInstitucionais2026": 3314
+      },
+      "publicado": {
+        "chamados2025": 27167,
+        "chamados2026": 24700,
+        "ouvidorias2025": 3286,
+        "ouvidorias2026": 3149
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 0,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    },
+    {
+      "mes": "Junho",
+      "fonte": {
+        "chamados2025": 21308,
+        "chamados2026": 21542,
+        "ouvidorias2025": 2247,
+        "ouvidorias2026": 2764,
+        "ouvidoriasInstitucionais2025": 2433,
+        "ouvidoriasInstitucionais2026": 2914
+      },
+      "publicado": {
+        "chamados2025": 21308,
+        "chamados2026": 21542,
+        "ouvidorias2025": 2247,
+        "ouvidorias2026": 2764
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 0,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    },
+    {
+      "mes": "Julho",
+      "fonte": {
+        "chamados2025": 21789,
+        "chamados2026": 27510,
+        "ouvidorias2025": 2009,
+        "ouvidorias2026": 3222,
+        "ouvidoriasInstitucionais2025": 2167,
+        "ouvidoriasInstitucionais2026": 3421
+      },
+      "publicado": {
+        "chamados2025": 21789,
+        "chamados2026": 27553,
+        "ouvidorias2025": 2009,
+        "ouvidorias2026": 3236
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": -43,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": -14
+      }
+    },
+    {
+      "mes": "Agosto",
+      "fonte": {
+        "chamados2025": 21764,
+        "chamados2026": 29589,
+        "ouvidorias2025": 2005,
+        "ouvidorias2026": 3252,
+        "ouvidoriasInstitucionais2025": 2175,
+        "ouvidoriasInstitucionais2026": 3453
+      },
+      "publicado": {
+        "chamados2025": 21764,
+        "chamados2026": 29605,
+        "ouvidorias2025": 2005,
+        "ouvidorias2026": 3254
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": -16,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": -2
+      }
+    },
+    {
+      "mes": "Setembro",
+      "fonte": {
+        "chamados2025": 21276,
+        "chamados2026": 24672,
+        "ouvidorias2025": 2006,
+        "ouvidorias2026": 2463,
+        "ouvidoriasInstitucionais2025": 2136,
+        "ouvidoriasInstitucionais2026": 2652
+      },
+      "publicado": {
+        "chamados2025": 21276,
+        "chamados2026": 24695,
+        "ouvidorias2025": 2006,
+        "ouvidorias2026": 2476
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": -23,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": -13
+      }
+    },
+    {
+      "mes": "Outubro",
+      "fonte": {
+        "chamados2025": 21652,
+        "chamados2026": 24120,
+        "ouvidorias2025": 2697,
+        "ouvidorias2026": 2213,
+        "ouvidoriasInstitucionais2025": 2881,
+        "ouvidoriasInstitucionais2026": 2370
+      },
+      "publicado": {
+        "chamados2025": 21652,
+        "chamados2026": 24116,
+        "ouvidorias2025": 2697,
+        "ouvidorias2026": 2213
+      },
+      "diferencas": {
+        "chamados2025": 0,
+        "chamados2026": 4,
+        "ouvidorias2025": 0,
+        "ouvidorias2026": 0
+      }
+    }
+  ]
+}

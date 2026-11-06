@@ -54,3 +54,14 @@ Em 2025 os totais mensais de janeiro a outubro coincidem entre fonte e HUB. Em 2
 
 ## Publicação
 Esta branch `teste-integracao-territorial-1746-nov2026` destina-se à conferência. **Não realizar merge ou publicar os arquivos derivados como série oficial sem homologação específica**.
+
+
+## 06/11/2026 — Prévia integrada dos cinco módulos
+
+Dados agregados exclusivamente das duas cópias tratadas do Drive (2025–2026, janeiro a outubro): 53.470 linhas de Chamados e 12.982 de Ouvidorias no recorte. Chave da camada: mês, AP padronizada, Tipo original, bairro padronizado e gerência. PCO separada.
+
+Páginas independentes de testes: [Chamados](preview-chamados.html), [Ouvidorias](preview-ouvidoria.html), [Histórico](preview-historico.html), [Linha do Tempo](preview-timeline.html) e [Comparativo Territorial](preview-comparativo.html). Compartilham preview-app.js, preview.css e as duas bases JSON tratadas. Filtros por mês, AP, Tipo, bairro, gerência e visão PCO.
+
+Testes de sintaxe, totais mensais de ambos os anos, PCO, AP e integridade dos contratos dos cinco arquivos aprovados no GitHub: https://github.com/urbanflowrio/COMLURB/actions/runs/42219199927
+
+**Limites:** essas páginas são prévias funcionais isoladas, não a substituição dos cinco módulos oficiais. Não reproduzem todos os mapas, cascatas e recursos dos módulos produtivos. A navegação visual não passou por teste manual de navegador nesta etapa. O importador CSV integral continua pendente, embora os dados tenham sido agregados diretamente do Drive e seus totais validados. Os quatro Chamados adicionais de outubro e as revisões de julho a setembro seguem em ressalva sem ajustar os fechamentos. SubTipos de Ouvidorias não foram reconstruídos. Para publicação, adaptar os contratos dos cubos oficiais e testar cada detalhamento e taxa com o histórico congelado.

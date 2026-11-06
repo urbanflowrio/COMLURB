@@ -110,12 +110,21 @@ jobs:
             assert.equal(count,d.records.length);
             console.log('OK: '+channel+' 10 meses / '+count+' chaves de drill');
           }
-          for(const mod of ['chamados','ouvidoria','historico','timeline','comparativo']){
-            const html=fs.readFileSync(dir+'preview-'+mod+'.html','utf8');
-            assert.ok(html.includes('data-mode="'+mod+'"'));
-            assert.ok(html.includes('preview-app.js'));
-            for(const id of ['mes','ap','tipo','bairro','gerencia','reset','pco','results'])
-              assert.ok(html.includes('id="'+id+'"'),mod+' '+id);
+          const modules={
+            chamados:'chamados-1746',
+            ouvidoria:'ouvidoria',
+            historico:'1746-historico',
+            timeline:'1746-timeline',
+            comparativo:'1746-comparativo'
+          };
+          for(const [mod,folder] of Object.entries(modules)){
+            const redirect=fs.readFileSync(dir+'preview-'+mod+'.html','utf8');
+            assert.ok(redirect.includes('../../'+folder+'/previa-territorial-layout-original.html'),mod+' redirecionamento');
+            const original=fs.readFileSync(folder+'/index.html','utf8');
+            const replica=fs.readFileSync(folder+'/previa-territorial-layout-original.html','utf8')
+              .replace(/\\n<!-- PRÉVIA FIEL AO LAYOUT OFICIAL · SEM ATUALIZAÇÃO DE CUBOS · BRANCH TESTE · 06\\/11\\/2026 -->\\n/,'')
+              .replace(/(<title>)Prévia do layout oficial · /,'$1');
+            assert.equal(replica,original,mod+' layout 100% preservado');
           }
-          console.log('OK: cinco previews e contrato do drill')
+          console.log('OK: cinco redirecionamentos e layouts oficiais preservados; drill original não modificado')
           NODE

@@ -81,3 +81,19 @@ Os números acima são **nova base territorial tratada**; não representam valor
 7. Publicar somente após conferência da prévia e decisão formal de incorporar ou versionar revisões retroativas.
 
 **Resultado desta fase:** auditoria analítica por mês/Tipo/AP/bairro concluída e documentada; **os cinco módulos ainda NÃO estão reprocessados nem homologados.**
+
+## 6. Conferência dos rankings de bairros (julho–setembro)
+
+As comparações dos bairros foram repetidas com **chaves normalizadas**: `BRAZ DE PINA`/`BRÁS DE PINA` e `OSWALDO CRUZ`/`OSVALDO CRUZ` foram reunidas antes de comparar. Sem essa equivalência, a troca de grafia produz falsas reduções ou novos bairros. Após o alinhamento, as diferenças de bairro são pequenas e **somam exatamente** as revisões municipais do mês:
+
+| Mês | Bairros com algum ajuste de 2026 após normalização | Soma Δ Chamados | Soma Δ Ouvidorias | Principais aumentos absolutos de Chamados (2026 vs. 2025 na nova base) |
+|---|---:|---:|---:|---|
+| Julho | 95 | −43 | −14 | Campo Grande +614; Tijuca +390; Cachambi +260; Bangu +227; Méier +178 |
+| Agosto | 66 | −16 | −2 | Campo Grande +806; Bangu +369; Tijuca +343; Realengo +234; Vila Isabel +228 |
+| Setembro | 70 | −23 | −13 | Campo Grande +432; Bangu +374; Taquara +217; Botafogo +108; Brás de Pina +85 |
+
+**Conclusão:** Campo Grande lidera os aumentos absolutos de Chamados nos três meses. A ordem das demais posições deve ser tratada como ranking da **nova extração**, não como ranking já homologado do snapshot. As diferenças remanescentes por bairro são distribuídas entre várias localidades, sem indício de que as trocas de grafia correspondam a mudanças reais de atendimento.
+
+## 7. Encerramento da auditoria de impactos
+
+**Concluído nesta etapa:** recálculo de janeiro–setembro/2025 e 2026 nas fontes tratadas, classificação por Tipo, territorialização por AP e bairro, separação institucional/PCO, conciliação mensal contra Linha do Tempo, confronto de Tipos e recortes territoriais de julho–setembro. **Pendente de execução:** atualização material dos cinco cubos/módulos, teste de drilldown gerencial e conferência final das taxas dos painéis; dependem de uma nova integração em staging. Não confundir a aprovação desta matriz analítica com homologação de publicação.

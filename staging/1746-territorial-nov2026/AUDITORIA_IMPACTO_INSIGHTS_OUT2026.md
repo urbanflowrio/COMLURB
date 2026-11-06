@@ -41,7 +41,7 @@
 | Campo Grande e Bangu são os dois bairros com maior aumento absoluto de Chamados e de Ouvidorias | Chamados Bangu +409, Campo Grande +376; Ouvidorias Campo Grande +55, Bangu +37; ambas lideranças preservadas | **MANTER** |
 | Os dois bairros somaram +92 Ouvidorias contra −484 na cidade | Inalterado | **MANTER** |
 | Nota: excluir instalação/retirada de papeleira do Tipo Limpeza para chegar a +86 no município e +47 em Campo Grande | A fonte nova informa `LIMPEZA` para esses registros; excluí-los é incompatível com a regra aprovada. Variação de **Tipo LIMPEZA**: +154 no município e +48 em Campo Grande. | **SUBSTITUIR a interpretação metodológica** |
-| Remoção de resíduos, capina e varrição explicam 2.060 Chamados de Limpeza adicionais | Essa decomposição requer reconciliação por `SubTipo` da nova extração; **não homologada nesta passagem** | **REVALIDAR** antes de reeditar |
+| Remoção de resíduos, capina e varrição explicam 2.060 Chamados de Limpeza adicionais | Nova extração: **+2.067** (= +1.016 Remoção de Resíduos no Logradouro, +645 Capina em Logradouro, +406 Varrição de Logradouro). São **79,9%** de +2.587 em Limpeza. | **MANTER tese; AJUSTAR 2.060 → 2.067** |
 | Histórico de Remoção Gratuita indica mudanças de regime em 2021 e 2025 com causa não identificada | A nova extração não é prova de causalidade; leitura macro mantida, séries retroativas devem continuar versionadas | **MANTER com ressalva** |
 
 ## Comparação acumulada janeiro–outubro
@@ -67,7 +67,17 @@ A tendência central permanece: outubro teve maior volume de Chamados puxado por
 
 ## Homologação e limites
 1. Documento analítico não substitui `main`, o Boletim ou os cubos oficiais.
-2. Antes de editar o texto sobre subtipo (remoção/capina/varrição), executar reconciliação de `SubTipo` em Chamados. Ouvidorias: detalhamento ausente, **postergado**.
+2. A reconciliação de `SubTipo` em Chamados para outubro confirmou +2.067 nas três atividades destacadas. Ouvidorias: detalhamento ausente, **postergado**.
 3. O pequeno delta de +4 Chamados outubro e as revisões de julho-setembro continuam como evidência histórica, sem ajuste manual.
 4. Taxas e rankings por AP em Histórico, Comparativo e Linha do Tempo que tenham tratado `Nulo` como área separada devem ser reprocessados em prévia, com teste de denominadores e sem duplicação de bairros.
 5. A conferência de tipos, AP, bairros e gerências deste relatório foi calculada com a extração das cópias tratadas do Drive. Limitações de fonte e falta de homologação independente permanecem.
+
+### Detalhamento de Limpeza — SubTipos de Chamados (outubro/2025 × outubro/2026)
+| SubTipo original | Outubro/2025 | Outubro/2026 | Variação |
+|---|---:|---:|---:|
+| REMOÇÃO DE RESÍDUOS NO LOGRADOURO | 2.283 | 3.299 | +1.016 |
+| CAPINA EM LOGRADOURO | 780 | 1.425 | +645 |
+| VARRIÇÃO DE LOGRADOURO | 1.506 | 1.912 | +406 |
+| **Três SubTipos** | **4.569** | **6.636** | **+2.067** |
+
+Os três SubTipos representam 79,9% do aumento de +2.587 de Chamados do Tipo LIMPEZA na nova extração. Não reclassificar outros Tipos ou transferir SubTipos entre eles.

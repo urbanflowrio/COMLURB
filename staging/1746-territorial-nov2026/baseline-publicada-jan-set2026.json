@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "status": "baseline_oficial_congelada",
+    "origem": "1746-timeline/data.js main",
+    "nota": "null = categoria não comparável/indisponível no recorte publicado, não significa zero"
+  },
+  "meses": {
+    "Janeiro": {
+      "limpeza": {
+        "chamados2025": 13730,
+        "chamados2026": 11375,
+        "ouvidorias2025": 1988,
+        "ouvidorias2026": 1728
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": null,
+        "ouvidorias2026": null
+      },
+      "total": {
+        "chamados2026": 30475,
+        "ouvidorias2026": 3668
+      }
+    },
+    "Fevereiro": {
+      "limpeza": {
+        "chamados2025": 10183,
+        "chamados2026": 12946,
+        "ouvidorias2025": 1607,
+        "ouvidorias2026": 1929
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": null,
+        "ouvidorias2026": null
+      },
+      "total": {
+        "chamados2026": 31103,
+        "ouvidorias2026": 3667
+      }
+    },
+    "Março": {
+      "limpeza": {
+        "chamados2025": 8333,
+        "chamados2026": 14972,
+        "ouvidorias2025": 1317,
+        "ouvidorias2026": 2626
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": null,
+        "ouvidorias2026": null
+      },
+      "total": {
+        "chamados2026": 35562,
+        "ouvidorias2026": 4458
+      }
+    },
+    "Abril": {
+      "limpeza": {
+        "chamados2025": 8649,
+        "chamados2026": 11253,
+        "ouvidorias2025": 1316,
+        "ouvidorias2026": 2160
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": null,
+        "ouvidorias2026": null
+      },
+      "total": {
+        "chamados2026": 29537,
+        "ouvidorias2026": 3677
+      }
+    },
+    "Maio": {
+      "limpeza": {
+        "chamados2025": 9060,
+        "chamados2026": 8258,
+        "ouvidorias2025": 1542,
+        "ouvidorias2026": 1516
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": null,
+        "ouvidorias2026": null
+      },
+      "total": {
+        "chamados2026": 24700,
+        "ouvidorias2026": 3149
+      }
+    },
+    "Junho": {
+      "limpeza": {
+        "chamados2025": 6026,
+        "chamados2026": 6263,
+        "ouvidorias2025": 1071,
+        "ouvidorias2026": 1180
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": null,
+        "ouvidorias2026": null
+      },
+      "total": {
+        "chamados2026": 21542,
+        "ouvidorias2026": 2764
+      }
+    },
+    "Julho": {
+      "limpeza": {
+        "chamados2025": 5781,
+        "chamados2026": 8447,
+        "ouvidorias2025": 976,
+        "ouvidorias2026": 1497
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": 50,
+        "ouvidorias2026": 46
+      },
+      "total": {
+        "chamados2026": 27553,
+        "ouvidorias2026": 3236
+      }
+    },
+    "Agosto": {
+      "limpeza": {
+        "chamados2025": 6512,
+        "chamados2026": 10533,
+        "ouvidorias2025": 1075,
+        "ouvidorias2026": 1740
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": 44,
+        "ouvidorias2026": 45
+      },
+      "total": {
+        "chamados2026": 29605,
+        "ouvidorias2026": 3254
+      }
+    },
+    "Setembro": {
+      "limpeza": {
+        "chamados2025": 6598,
+        "chamados2026": 7538,
+        "ouvidorias2025": 1110,
+        "ouvidorias2026": 1275
+      },
+      "papeleira": {
+        "chamados2025": null,
+        "chamados2026": null,
+        "ouvidorias2025": 35,
+        "ouvidorias2026": 53
+      },
+      "total": {
+        "chamados2026": 24695,
+        "ouvidorias2026": 2476
+      }
+    }
+  }
+}

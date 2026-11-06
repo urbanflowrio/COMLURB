@@ -20,15 +20,15 @@
 </main><script>
 const nf=new Intl.NumberFormat('pt-BR');const f=v=>nf.format(v),d=v=>v>0?'+'+f(v):v<0?'−'+f(-v):'0';
 const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
-let C,O;
+let C,O,B;
 function rowCells(values){return '<tr>'+values.map((v,i)=>'<td'+(i===0?'':'')+'>'+v+'</td>').join('')+'</tr>'}
 function show(m){
 const c=C.meses[m],o=O.meses[m],i=months.indexOf(m);
-const dateC=c.total[1],dateO=o.total[1],published={"Janeiro":[30475,3668],"Fevereiro":[31103,3667],"Março":[35562,4458],"Abril":[29537,3677],"Maio":[24700,3149],"Junho":[21542,2764],"Julho":[27553,3236],"Agosto":[29605,3254],"Setembro":[24695,2476]}[m];
+const dateC=c.total[1],dateO=o.total[1],published=[B.meses[m].total.chamados2026,B.meses[m].total.ouvidorias2026];
 const meta=[['Chamados na nova base',dateC,d(dateC-published[0])+' vs publicado'],['Ouvidorias operacionais',dateO,d(dateO-published[1])+' vs publicado'],['AP3: Chamados',c.ap['AP3'][1],d(c.ap['AP3'][1]-c.ap['AP3'][0])+' vs 2025'],['AP5: Chamados',c.ap['AP5'][1],d(c.ap['AP5'][1]-c.ap['AP5'][0])+' vs 2025']];
 document.getElementById('cards').innerHTML=meta.map((x,j)=>'<div class="card"><small>'+x[0]+'</small><div class="val">'+f(x[1])+'</div><div class="delta'+((j<2&&x[2][0]!=='0')?' warning':'')+'">'+x[2]+'</div></div>').join('');
 const types=['LIMPEZA','PAPELEIRA'];let txt='';
-for(const t of types){const cv=c.tipo[t]||[0,0],ov=o.tipo[t]||[0,0];txt+=rowCells([t+' · Chamados','—',f(cv[1]),d(cv[1]-cv[0])+' vs 2025']);txt+=rowCells([t+' · Ouvidorias','—',f(ov[1]),d(ov[1]-ov[0])+' vs 2025']);}document.getElementById('types').innerHTML=txt;
+for(const t of types){const cv=c.tipo[t]||[0,0],ov=o.tipo[t]||[0,0],key=t.toLowerCase(),base=B.meses[m][key];const pubC=base.chamados2026,pubO=base.ouvidorias2026;txt+=rowCells([t+' · Chamados',pubC==null?'—':f(pubC),f(cv[1]),pubC==null?'Sem par':d(cv[1]-pubC)]);txt+=rowCells([t+' · Ouvidorias',pubO==null?'—':f(pubO),f(ov[1]),pubO==null?'Sem par':d(ov[1]-pubO)]);}document.getElementById('types').innerHTML=txt;
 document.getElementById('aps').innerHTML=['AP1','AP2','AP3','AP4','AP5'].map(ap=>rowCells([ap,f(c.ap[ap][1]),d(c.ap[ap][1]-c.ap[ap][0]),f(o.ap[ap][1]),d(o.ap[ap][1]-o.ap[ap][0])])).join('');
 function top(obj){return Object.entries(obj).map(([n,v])=>({n,a:v[0],b:v[1],diff:v[1]-v[0]})).sort((a,b)=>b.diff-a.diff).slice(0,5).map(x=>rowCells([x.n,f(x.a),f(x.b),d(x.diff)])).join('')}
 document.getElementById('bairrosC').innerHTML=top(c.bairro);document.getElementById('bairrosO').innerHTML=top(o.bairro);
@@ -45,5 +45,5 @@ const notes={
 };
 document.getElementById('note').innerHTML='<p><strong>'+m+':</strong> '+notes[m]+'</p><p style="margin-top:8px">AP original Nulo em Chamados: '+f(c.nuloOrigem[1])+' registros de 2026; em Ouvidorias operacionais: '+f(o.nuloOrigem[1])+'. Essas ocorrências já estão incluídas nos totais acima.</p>';
 }
-Promise.all([fetch('./auditoria-chamados-jan-set2026.json',{cache:'no-store'}),fetch('./auditoria-ouvidorias-jan-set2026.json',{cache:'no-store'})]).then(async rs=>{if(!rs.every(r=>r.ok))throw Error('Não foi possível recuperar as bases de auditoria');[C,O]=await Promise.all(rs.map(r=>r.json()));const select=document.getElementById('month');select.innerHTML=months.map(x=>'<option value="'+x+'">'+x+'</option>').join('');select.value='Julho';select.addEventListener('change',()=>show(select.value));show('Julho')}).catch(e=>{document.getElementById('note').innerHTML='<p class="error">'+e.message+'</p>';});
+Promise.all([fetch('./auditoria-chamados-jan-set2026.json',{cache:'no-store'}),fetch('./auditoria-ouvidorias-jan-set2026.json',{cache:'no-store'}),fetch('./baseline-publicada-jan-set2026.json',{cache:'no-store'})]).then(async rs=>{if(!rs.every(r=>r.ok))throw Error('Não foi possível recuperar as bases de auditoria');[C,O,B]=await Promise.all(rs.map(r=>r.json()));const select=document.getElementById('month');select.innerHTML=months.map(x=>'<option value="'+x+'">'+x+'</option>').join('');select.value='Julho';select.addEventListener('change',()=>show(select.value));show('Julho')}).catch(e=>{document.getElementById('note').innerHTML='<p class="error">'+e.message+'</p>';});
 </script></body></html>

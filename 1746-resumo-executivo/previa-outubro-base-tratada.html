@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06111f">
+<title>Prévia de revisão · Boletim Executivo 1746 | Outubro de 2026 | HUB COMLURB</title>
+<link rel="stylesheet" href="../assets/css/hub-premium.css">
+<!--
+  PRÉVIA DE AUDITORIA / NÃO PUBLICADO
+  Copiado do boletim aprovado na main, com ajustes pontuais na branch de testes.
+  Fonte de revisão: staging/1746-territorial-nov2026/AUDITORIA_IMPACTO_INSIGHTS_OUT2026.md
+  Baseline pública permanece em 1746-resumo-executivo/index.html.
+  Os 4 chamados adicionais de outubro e revisões retroativas são explicitamente registrados.
+  Não atribuir estes novos valores aos cubos oficiais ainda congelados.
+-->
+<style>
+:root{--be-ink:#f7f9ff;--be-soft:#c8d8eb;--be-mute:#8ba4bf;--be-rule:#294866;--be-rule2:rgba(41,72,102,.55);--be-up:#e8ae6d;--be-down:#84d8ad;--be-alert:#efa4a1;--be-accent:#8ec5f3}
+.be{width:100%;min-width:0;padding:22px 2px 6px;color:var(--be-ink)}
+.be *{box-sizing:border-box}
+.be-label{display:flex;align-items:center;gap:14px;margin:0 0 22px;color:var(--be-accent);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.be-label:after{content:"";flex:1;height:1px;background:var(--be-rule2)}
+.be-section{margin-top:64px}
+.be-section:first-of-type{margin-top:6px}
+
+/* Mensagem principal */
+.be-headline{margin:0;max-width:1480px;font-size:clamp(27px,3vw,46px);line-height:1.2;font-weight:700;letter-spacing:-.03em;color:var(--be-soft)}
+.be-headline strong{color:var(--be-ink);font-weight:800}
+
+/* Números do mês e do ano */
+.be-figures{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.9fr);margin-top:40px;border:1px solid var(--be-rule);border-radius:18px;background:#0a1b31;overflow:hidden}
+.be-fig{min-width:0;padding:26px 30px 24px;border-right:1px solid var(--be-rule)}
+.be-fig:last-child{border-right:0;background:rgba(6,17,31,.45)}
+.be-fig-name{font-size:13px;font-weight:700;color:var(--be-soft)}
+.be-fig-value{margin:6px 0 4px;font-size:clamp(34px,3.3vw,52px);line-height:1.1;font-weight:800;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.be-fig-change{font-size:15px;font-weight:750;font-variant-numeric:tabular-nums}
+.be-fig-base{margin-top:10px;font-size:12px;color:var(--be-mute)}
+.be-year{display:grid;gap:14px;margin-top:12px}
+.be-year div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--be-rule2)}
+.be-year div:last-child{border-bottom:0;padding-bottom:0}
+.be-year span{font-size:13px;color:var(--be-soft)}
+.be-year b{font-size:clamp(20px,1.8vw,26px);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--be-up)}.down{color:var(--be-down)}.alert{color:var(--be-alert)}
+
+/* O que explica */
+.be-explain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+.be-col{min-width:0;padding:0 48px 0 0}
+.be-col+.be-col{padding:0 0 0 48px;border-left:1px solid var(--be-rule2)}
+.be-col h3{margin:0 0 12px;font-size:13px;font-weight:800;color:var(--be-soft);letter-spacing:.02em}
+.be-reading{margin:0;max-width:720px;font-size:clamp(18px,1.45vw,22px);line-height:1.5;color:var(--be-ink);font-weight:500}
+.be-ledger{margin:24px 0 0;padding:0;list-style:none;max-width:520px;font-size:13px;font-variant-numeric:tabular-nums}
+.be-ledger li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;color:var(--be-soft);border-bottom:1px solid rgba(41,72,102,.3)}
+.be-ledger li b{font-weight:700;white-space:nowrap}
+.be-ledger li.total{border-bottom:0;border-top:1px solid var(--be-rule);margin-top:2px;padding-top:9px;color:var(--be-ink);font-weight:700}
+.be-bridge{margin:36px 0 0;padding-top:20px;border-top:1px solid var(--be-rule2);font-size:16px;line-height:1.6;color:var(--be-soft)}
+.be-bridge strong{color:var(--be-ink);font-weight:700}
+
+/* Onde ocorreu */
+.be-where-lead{margin:0 0 34px;max-width:1180px;font-size:clamp(18px,1.45vw,22px);line-height:1.55;color:var(--be-ink);font-weight:500}
+.be-places{border-top:1px solid var(--be-rule)}
+.be-place{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start;padding:24px 0;border-bottom:1px solid var(--be-rule)}
+.be-place-name{font-size:20px;font-weight:800;line-height:1.2}
+.be-place-ap{margin-top:5px;font-size:12px;color:var(--be-mute)}
+.be-m small{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--be-mute);margin-bottom:6px}
+.be-m span{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.be-m em{display:block;margin-top:3px;font-style:normal;font-size:14px;font-weight:750;font-variant-numeric:tabular-nums}
+.be-place p{margin:0;font-size:13px;line-height:1.65;color:var(--be-soft)}
+.be-place p+p{margin-top:8px;color:var(--be-mute)}
+.be-place p strong{color:var(--be-ink)}
+.be-closing{margin:30px 0 0;max-width:1300px;font-size:clamp(21px,2.1vw,32px);line-height:1.28;font-weight:700;letter-spacing:-.02em;color:var(--be-soft)}
+.be-closing strong{color:var(--be-ink)}
+
+/* Fechamento */
+.be-more{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:64px}
+.be-more span{margin-right:6px;color:var(--be-mute);font-size:12px;font-weight:700}
+.be-more a{padding:9px 14px;border:1px solid #315a7c;border-radius:10px;color:#dcecff;background:#0a1b31;text-decoration:none;font-size:12px;font-weight:700}
+.be-more a:hover{background:#173550;border-color:var(--be-accent)}
+.be-method{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 32px;margin:32px 0 0;padding-top:22px;border-top:1px solid var(--be-rule2)}
+.be-method div{min-width:0}
+.be-method dt{margin:0 0 4px;color:var(--be-soft);font-size:11px;font-weight:700}
+.be-method dd{margin:0;color:#91a6ba;font-size:11px;line-height:1.6}
+
+@media(max-width:1180px){.be-method{grid-template-columns:repeat(2,minmax(0,1fr))}.be-place{grid-template-columns:minmax(130px,1fr) minmax(0,1fr) minmax(0,1fr)}.be-place .be-note{grid-column:1/-1}}
+@media(max-width:900px){.be-figures{grid-template-columns:1fr 1fr}.be-fig:nth-child(2){border-right:0}.be-fig:last-child{grid-column:1/-1;border-top:1px solid var(--be-rule)}.be-explain{grid-template-columns:1fr}.be-col{padding:0}.be-col+.be-col{padding:36px 0 0;margin-top:36px;border-left:0;border-top:1px solid var(--be-rule2)}}
+@media(max-width:620px){.be{padding-top:10px}.be-section{margin-top:48px}.be-figures{grid-template-columns:1fr}.be-fig{border-right:0;border-bottom:1px solid var(--be-rule);padding:22px 20px}.be-fig:last-child{border-bottom:0;border-top:0}.be-place{grid-template-columns:1fr 1fr;gap:18px}.be-place-head{grid-column:1/-1}.be-more{display:grid;grid-template-columns:1fr 1fr;gap:8px}.be-more span{grid-column:1/-1}.be-more a{text-align:center}.be-method{grid-template-columns:1fr;gap:14px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="hubHeader"></div>
+  <main class="be">
+    <div role="status" aria-label="Prévia não homologada" style="margin:0 0 24px;padding:12px 16px;border:1px solid #8e7144;border-radius:10px;background:#32291d;color:#ffe1b4;font-size:12px;font-weight:700">PRÉVIA PARA CONFERÊNCIA · Dados revisados, ainda não homologados. O boletim público permanece inalterado.</div>
+
+    <section class="be-section" aria-labelledby="be-resultado">
+      <h2 class="be-label" id="be-resultado">Resultado</h2>
+      <p class="be-headline">O aumento dos chamados esteve concentrado em <strong>Limpeza</strong>. Outubro registrou o <strong>menor volume mensal de ouvidorias operacionais de janeiro a outubro de 2026</strong>, com a maior redução em Remoção Gratuita.</p>
+
+      <div class="be-figures">
+        <div class="be-fig">
+          <div class="be-fig-name">Chamados em outubro</div>
+          <div class="be-fig-value">24.120</div>
+          <div class="be-fig-change up">+11,4% · 2.468 a mais</div>
+          <div class="be-fig-base">Outubro de 2025: 21.652</div>
+        </div>
+        <div class="be-fig">
+          <div class="be-fig-name">Ouvidorias operacionais em outubro</div>
+          <div class="be-fig-value">2.213</div>
+          <div class="be-fig-change down">−17,9% · 484 a menos</div>
+          <div class="be-fig-base">Outubro de 2025: 2.697</div>
+        </div>
+        <div class="be-fig">
+          <div class="be-fig-name">No ano, janeiro a outubro</div>
+          <div class="be-year">
+            <div><span>Chamados</span><b class="up">+13,5%</b></div>
+            <div><span>Ouvidorias operacionais</span><b class="alert">+15,4%</b></div>
+          </div>
+          <div class="be-fig-base">Comparação com janeiro a outubro de 2025</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="be-section" aria-labelledby="be-explica">
+      <h2 class="be-label" id="be-explica">O que explica</h2>
+      <div class="be-explain">
+        <div class="be-col">
+          <h3>Chamados</h3>
+          <p class="be-reading">Limpeza teve 2.587 chamados a mais, acima do aumento total da cidade; os demais serviços somaram 119 a menos. Remoção de resíduos no logradouro, capina e varrição responderam por 2.067 desses registros.</p>
+          <ul class="be-ledger" aria-label="Variação de chamados por serviço">
+            <li><span>Limpeza</span><b class="up">+2.587</b></li>
+            <li><span>Coleta Domiciliar</span><b class="up">+607</b></li>
+            <li><span>Remoção Gratuita</span><b>−494</b></li>
+            <li><span>Manejo Arbóreo</span><b>−419</b></li>
+            <li><span>Demais serviços</span><b>+187</b></li>
+            <li class="total"><span>Total</span><b>+2.468</b></li>
+          </ul>
+        </div>
+        <div class="be-col">
+          <h3>Ouvidorias operacionais</h3>
+          <p class="be-reading">Remoção Gratuita teve 474 ouvidorias, contra 799 em outubro de 2025. Setembro e outubro foram os dois menores meses do serviço em 2026.</p>
+          <ul class="be-ledger" aria-label="Variação de ouvidorias operacionais por serviço">
+            <li><span>Remoção Gratuita</span><b class="down">−325</b></li>
+            <li><span>Manejo Arbóreo</span><b class="down">−172</b></li>
+            <li><span>Limpeza</span><b class="alert">+154</b></li>
+            <li><span>Demais serviços</span><b>−141</b></li>
+            <li class="total"><span>Total</span><b>−484</b></li>
+          </ul>
+        </div>
+      </div>
+      <p class="be-bridge">Entre os cinco serviços que somam 97,6% dos chamados, <strong>Limpeza foi o único que cresceu nos dois canais.</strong></p>
+    </section>
+
+    <section class="be-section" aria-labelledby="be-onde">
+      <h2 class="be-label" id="be-onde">Onde ocorreu</h2>
+      <p class="be-where-lead">A AP3 e a AP5 reúnem 2.318 dos 2.468 chamados adicionais. Na AP5, Campo Grande e Bangu somam 68% do aumento, embora representassem 40% dos chamados da área em outubro de 2025.</p>
+
+      <div class="be-places">
+        <article class="be-place">
+          <div class="be-place-head"><div class="be-place-name">Campo Grande</div><div class="be-place-ap">AP5</div></div>
+          <div class="be-m"><small>CHAMADOS</small><span>1.415 → 1.791</span><em class="up">+26,6%</em></div>
+          <div class="be-m"><small>OUVIDORIAS</small><span>152 → 207</span><em class="alert">+36,2%</em></div>
+          <div class="be-note">
+            <p>Limpeza respondeu por <strong>268 dos 376 chamados</strong> e <strong>48 das 55 ouvidorias</strong> adicionais.</p>
+            <p>A gerência OG18G registrou 597 chamados e 99 ouvidorias no bairro, já contidos nesses totais.</p>
+          </div>
+        </article>
+        <article class="be-place">
+          <div class="be-place-head"><div class="be-place-name">Bangu</div><div class="be-place-ap">AP5</div></div>
+          <div class="be-m"><small>CHAMADOS</small><span>577 → 986</span><em class="up">+70,9%</em></div>
+          <div class="be-m"><small>OUVIDORIAS</small><span>46 → 83</span><em class="alert">+80,4%</em></div>
+          <div class="be-note">
+            <p>Limpeza respondeu por <strong>405 dos 409 chamados</strong> e <strong>20 das 37 ouvidorias</strong> adicionais.</p>
+            <p>A gerência OG17B registrou 637 chamados e 52 ouvidorias no bairro, já contidos nesses totais.</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="be-closing">Os dois bairros somaram <strong>92 ouvidorias a mais</strong> num mês em que a cidade registrou 484 a menos.</p>
+    </section>
+
+    <nav class="be-more" aria-label="Módulos para aprofundamento">
+      <span>Para aprofundar</span>
+      <a href="../chamados-1746/">Chamados 1746</a>
+      <a href="../ouvidoria/">Ouvidorias</a>
+      <a href="../1746-comparativo/">Comparativo territorial</a>
+      <a href="../1746-historico/">Histórico</a>
+      <a href="../1746-timeline/">Linha do tempo</a>
+    </nav>
+
+    <dl class="be-method">
+      <div><dt>Períodos</dt><dd>Outubro de 2026 comparado a outubro de 2025. No ano, janeiro a outubro dos dois anos.</dd></div>
+      <div><dt>Ouvidorias operacionais</dt><dd>Excluem os registros tratados internamente pela PCO.</dd></div>
+      <div><dt>Serviços citados</dt><dd>Os cinco com pelo menos 5% dos chamados de outubro de 2025.</dd></div>
+      <div><dt>Bairros destacados</dt><dd>Os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.</dd></div>
+      <div><dt>Leitura</dt><dd>As variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.</dd></div>
+      <div><dt>Classificação</dt><dd>Cada registro permanece no <strong>Tipo original</strong> da fonte: Limpeza é Limpeza e Papeleira é Papeleira, independentemente do SubTipo. O responsável operacional não redefine o Tipo. Em Manejo Arbóreo, a mudança de nome do subtipo de avaliação de poda exige cautela nas comparações detalhadas.</dd></div>
+      <div><dt>Fonte</dt><dd>Bases históricas agregadas de Chamados e Ouvidorias da COMLURB, com AP e bairro padronizados em colunas separadas. Recorte operacional de Ouvidorias sem PCO. Não houve conferência de registros individuais do sistema 1746.</dd></div>
+      <div><dt>Situação</dt><dd>Prévia revisada em 06/11/2026, para avaliação antes de homologar. A nova extração inclui quatro Chamados a mais em outubro/2026 do que o fechamento publicado e revisões retroativas em julho–setembro. Nenhum valor oficial foi substituído.</dd></div>
+    </dl>
+  </main>
+  <div id="hubFooter"></div>
+</div>
+<script src="../assets/components/hub-utils.js"></script>
+<script src="../assets/components/hub-layout.js"></script>
+<script>
+HUB.header.render("hubHeader",{systemLabel:"RELACIONAMENTO COM O CIDADÃO | 1746",title:"Boletim Executivo 1746 — Prévia",subtitle:"Outubro de 2026 comparado a outubro de 2025",homeHref:"../",homeLabel:"Voltar ao HUB"});
+HUB.footer.render("hubFooter");
+</script>
+</body></html>

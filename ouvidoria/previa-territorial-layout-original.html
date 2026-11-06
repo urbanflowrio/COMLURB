@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<!-- PRÉVIA FIEL AO LAYOUT OFICIAL · SEM ATUALIZAÇÃO DE CUBOS · BRANCH TESTE · 06/11/2026 -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prévia do layout oficial · Ouvidoria | HUB COMLURB</title>
+  
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+/**
+ * HUB COMLURB - CSS Premium
+ * Tema Navy + Glow
+ * Versão 2.1 - Fix overflow textos
+ */
+
+/* ============================================
+   VARIÁVEIS CSS
+   ============================================ */
+:root {
+  --bg: #06111f;
+  --painel: #0d1f36;
+  --painel2: #0a1b31;
+  --linha: #294866;
+  --texto: #f7f9ff;
+  --silenciado: #b8c9de;
+  --azul: #4b86bd;
+  --azul2: #5b9bd5;
+  --laranja: #e87535;
+  --verde: #78aaa3;
+  --vermelho: #ef6a5d;
+  --amarelo: #ffa02b;
+  --roxo: #a78bfa;
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--texto);
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+input,
+select,
+button,
+textarea {
+  font-family: inherit;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL
+   ============================================ */
+.app {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 26px;
+  border: 1px solid var(--linha);
+  border-radius: 22px;
+  background: var(--painel2);
+  margin-bottom: 20px;
+}
+
+.logoWrap {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.logoImg {
+  width: 310px;
+  max-height: 82px;
+  object-fit: contain;
+  padding-right: 26px;
+  border-right: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.logoTextFallback {
+  font-size: 24px;
+  font-weight: 950;
+  color: #fff;
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.systemLabel {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #b8d4f2;
+  text-transform: uppercase;
+}
+
+.mainTitle {
+  margin: 6px 0;
+  font-size: 38px;
+  line-height: 1.1;
+  color: #fff;
+  font-weight: 900;
+}
+
+.subtitle {
+  color: #c7d8ee;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #b8d4f2;
+}
+
+h1 {
+  margin: 6px 0;
+  font-size: 38px;
+}
+
+.sub {
+  color: #8ca3b8;
+}
+
+/* ============================================
+   NAVEGAÇÃO TABS
+   ============================================ */
+.navTabs {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.hubHomeButton{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:0 16px;border:1px solid rgba(112,178,255,.38);
+  border-radius:999px;color:#f7f9ff;background:rgba(255,255,255,.04);
+  font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
+}
+.hubHomeButton:hover,.hubHomeButton:focus-visible{border-color:#70b2ff;background:rgba(112,178,255,.12)}
+
+.tabBtn {
+  border: 1px solid var(--linha);
+  background: #0a1b31;
+  color: #dcecff;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tabBtn:hover {
+  border-color: var(--azul);
+  transform: translateY(-1px);
+}
+
+.tabBtn.active {
+  background: #2f67a5;
+  border-color: #6fa7d8;
+  color: #fff;
+}
+
+/* ============================================
+   SCREENS
+   ============================================ */
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* ============================================
+   FILTROS
+   ============================================ */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr) auto;
+  gap: 12px;
+  margin: 16px 0;
+  align-items: stretch;
+}
+
+.field {
+  background: var(--painel);
+  border: 1px solid var(--linha);
+  border-radius: 16px;
+  padding: 12px;
+  min-width: 0; /* FIX: evita overflow no grid */
+}
+
+label {
+  display: block;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #b8d4f2;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  /* FIX: label não corta palavras */
+  white-space: normal;
+  word-break: keep-all;
+  line-height: 1.3;
+}
+
+select,
+input[type="text"],
+input[type="search"] {
+  width: 100%;
+  background: transparent;
+  color: #fff;
+  border: 0;
+  font-weight: 800;
+  font-size: 15px;
+  outline: none;
+  /* FIX: select não estoura */
+  min-width: 0;
+  max-width: 100%;
+}
+
+option {
+  background: #0d1f36;
+}
+
+.actionBtn {
+  border: 1px solid var(--linha);
+  background: #0a1b31;
+  color: #dcecff;
+  border-radius: 16px;
+  padding: 12px 15px;
+  font-weight: 900;
+  cursor: pointer;
+  align-self: stretch;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.actionBtn:hover {
+  border-color: var(--azul);
+  transform: translateY(-1px);
+}
+
+.actionBtn.primary {
+  background: #2f67a5;
+  border-color: #6fa7d8;
+  color: #fff;
+}
+
+/* ============================================
+   MULTI-SELECT
+   ============================================ */
+.multiBox {
+  position: relative;
+  min-width: 0; /* FIX */
+}
+
+.multiBtn {
+  width: 100%;
+  background: transparent;
+  color: #fff;
+  border: 0;
+  font-weight: 800;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  min-width: 0; /* FIX */
+  overflow: hidden; /* FIX */
+}
+
+/* FIX: texto do botão não estoura */
+.multiBtn span,
+.multiBtn > *:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.multiBtn:after {
+  content: "⌄";
+  font-size: 18px;
+  color: #dcecff;
+  flex-shrink: 0; /* FIX: seta não encolhe */
+}
+
+.multiPanel {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 999;
+  background: #0a1b31;
+  border: 1px solid var(--linha);
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  padding: 12px;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.multiBox.open .multiPanel {
+  display: block;
+}
+
+.multiSearch {
+  width: 100%;
+  border: 1px solid #294866;
+  background: #06111f;
+  border-radius: 12px;
+  padding: 10px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.multiList {
+  display: grid;
+  gap: 6px;
+}
+
+.multiItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #dcecff;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.multiItem:hover {
+  background: rgba(91, 155, 213, 0.1);
+}
+
+.multiItem input {
+  width: auto;
+  flex-shrink: 0;
+  accent-color: #5b9bd5;
+}
+
+.multiActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.multiActions button {
+  flex: 1;
+  border: 1px solid var(--linha);
+  background: #132840;
+  color: #dcecff;
+  border-radius: 10px;
+  padding: 8px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* ============================================
+   KPIs  ← PRINCIPAL FIX
+   ============================================ */
+.kpis {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+  align-items: stretch !important;
+}
+
+.kpi {
+  background: var(--painel);
+  border: 1px solid var(--linha);
+  border-radius: 18px;
+  padding: 18px;
+  min-height: 140px;
+  cursor: pointer;
+  transition: 0.2s;
+  grid-column: span 1 !important;
+  /* FIX: impede overflow */
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden;
+}
+
+.kpi:hover {
+  transform: translateY(-2px);
+  border-color: var(--azul);
+}
+
+.kpi.feature {
+  background: #102b46;
+  border-color: #4074a2;
+  grid-column: span 1 !important;
+}
+
+.kpi.red   { border-color: rgba(239, 106,  93, 0.46); }
+.kpi.orange{ border-color: rgba(232, 117,  53, 0.46); }
+.kpi.green { border-color: rgba(120, 170, 163, 0.52); }
+.kpi.purple{ border-color: rgba(167, 139, 250, 0.44); }
+
+/* FIX LABEL: nunca corta palavra no meio */
+.kpi .label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #b8d4f2;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  hyphens: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 46px;
+}
+
+/* FIX VALUE: número grande não estoura */
+.kpi .value {
+  font-size: clamp(26px, 2.4vw, 34px) !important;
+  font-weight: 950;
+  margin: 10px 0 4px;
+  line-height: 1.05 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi.feature .value {
+  font-size: clamp(32px, 3vw, 46px) !important;
+}
+
+/* FIX NOTE */
+.kpi .note {
+  color: #c7d8ee;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================
+   GRID LAYOUTS
+   ============================================ */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 14px;
+}
+
+/* ============================================
+   PANELS
+   ============================================ */
+.panel {
+  background: var(--painel);
+  border: 1px solid var(--linha);
+  border-radius: 20px;
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.panelHead {
+  padding: 18px;
+  border-bottom: 1px solid var(--linha);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.hint {
+  color: #c7d8ee;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.body {
+  padding: 18px;
+}
+
+/* ============================================
+   BAR CHARTS ← FIX nomes cortados
+   ============================================ */
+.barRow {
+  display: grid;
+  grid-template-columns: 160px 1fr 70px 55px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 10px;
+  transition: 0.15s;
+}
+
+.barRow:hover {
+  background: rgba(91, 155, 213, 0.07);
+}
+
+/* nome quebra em linhas, nunca trunca */
+.barName {
+  font-weight: 800;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.track {
+  height: 22px;
+  background: #132941;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: #2f67a5;
+  transition: width 0.3s;
+}
+
+.fill.orange { background: #e87535; }
+.fill.green  { background: #78aaa3; }
+.fill.red    { background: #ef6a5d; }
+.fill.purple { background: #a78bfa; }
+
+.num,
+.pct {
+  text-align: right;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: 10px;
+  margin-bottom: 18px;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.legendItem:hover {
+  transform: translateX(4px);
+}
+
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--azul); }
+.dot.orange { background: var(--laranja); }
+.dot.green  { background: var(--verde);  }
+.dot.purple { background: var(--roxo); }
+
+/* ============================================
+   COLUMN CHARTS
+   ============================================ */
+.cols {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  height: 210px;
+  align-items: end;
+}
+
+.colWrap {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  min-width: 0; /* FIX */
+}
+
+.colWrap:hover {
+  transform: translateY(-4px);
+}
+
+.col {
+  height: var(--h);
+  min-height: 32px;
+  background: #2f67a5;
+  border-radius: 6px;
+}
+
+.colVal {
+  font-weight: 900;
+  color: #80d199;
+}
+
+.colVal.warn {
+  color: #ffa02b;
+}
+
+/* FIX: label da coluna trunca sem quebrar */
+.colLbl {
+  font-size: 12px;
+  color: #d9e6f8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* ============================================
+   DRILL DOWN BANNER
+   ============================================ */
+.drillBanner {
+  display: none;
+  margin: 0 0 14px;
+  background: #0d1f36;
+  border: 1px solid var(--linha);
+  border-radius: 18px;
+  padding: 14px 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.drillBanner.active {
+  display: flex;
+}
+
+.drillBanner b {
+  display: block;
+  font-size: 18px;
+}
+
+.drillBanner span {
+  display: block;
+  color: #c7d8ee;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* ============================================
+   TABELA ANALÍTICA
+   ============================================ */
+.tableWrap {
+  max-height: 520px;
+  overflow: auto;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px;
+}
+
+.dataTable th {
+  position: sticky;
+  top: 0;
+  background: #102844;
+  color: #b8d4f2;
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 1;
+  white-space: nowrap; /* FIX: cabeçalho não quebra */
+}
+
+.dataTable td,
+.dataTable th {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dataTable td {
+  color: #eaf3ff;
+  /* FIX: célula longa trunca */
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag {
+  display: inline-flex;
+  border: 1px solid #345978;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-weight: 900;
+  font-size: 12px;
+  white-space: nowrap; /* FIX */
+}
+
+.tag.ok    { border-color: #3f7d55; color: #83d99d; }
+.tag.att   { border-color: #8d6a23; color: #ffa02b; }
+.tag.crit  { border-color: #8b3f38; color: #ff7d72; }
+.tag.purple{ border-color: #6d5ba0; color: #a78bfa; }
+
+/* ============================================
+   TERRITORIAL
+   ============================================ */
+.territorialExec {
+  display: grid;
+  gap: 14px;
+}
+
+.territorialSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.territorialCard {
+  background: #132840;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  min-height: 92px;
+  min-width: 0; /* FIX */
+  overflow: hidden;
+}
+
+.territorialCard small {
+  display: block;
+  color: #a8bdd5;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.territorialCard b {
+  display: block;
+  font-size: 24px;
+  color: #fff;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.territorialCard span {
+  display: block;
+  color: #c7d8ee;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.territorialNote {
+  color: #c7d8ee;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.territorialRank {
+  display: grid;
+  gap: 10px;
+}
+
+.territorialRow {
+  display: grid;
+  grid-template-columns: minmax(0, 180px) 1fr 82px 70px;
+  gap: 10px;
+  align-items: center;
+  background: rgba(19, 40, 64, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.territorialRow:hover {
+  border-color: #6fa7d8;
+  transform: translateY(-1px);
+  background: rgba(19, 40, 64, 0.95);
+}
+
+.territorialName {
+  font-weight: 900;
+  color: #eaf3ff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; /* FIX */
+}
+
+.territorialTrack {
+  height: 18px;
+  background: #09182a;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.territorialFill {
+  height: 100%;
+  background: #2f67a5;
+  border-radius: 999px;
+}
+
+.territorialNum,
+.territorialPct {
+  text-align: right;
+  font-weight: 900;
+  color: #fff;
+  white-space: nowrap; /* FIX */
+}
+
+/* ============================================
+   LOADING & EMPTY STATES
+   ============================================ */
+.loading,
+.empty {
+  color: #aebfd5;
+  padding: 12px 0;
+  text-align: center;
+}
+
+/* ============================================
+   FOOTER OFICIAL HUB COMLURB
+   ============================================ */
+
+.footer {
+  margin-top: 48px;
+  padding: 22px 0;
+  border-top: 1px solid var(--linha);
+  text-align: left;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 100%;
+  margin: 0;
+}
+
+.footerTitle {
+  color: #f5f8fc;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  line-height: 1.3;
+}
+
+.footerSubtitle {
+  color: var(--silenciado);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+@media (max-width: 1280px) {
+  .filters {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .territoryHero,
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+  .kpi.feature {
+    grid-column: span 1;
+  }
+  .kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  .territorialSummary {
+    grid-template-columns: 1fr;
+  }
+  .territorialRow {
+    grid-template-columns: 1fr;
+  }
+  .territorialNum,
+  .territorialPct {
+    text-align: left;
+  }
+}
+
+@media (max-width: 900px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .app {
+    padding: 14px;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .logoImg {
+    width: 220px;
+    border-right: 0;
+    padding-right: 0;
+  }
+  .mainTitle {
+    font-size: 32px;
+  }
+  .kpis,
+  .grid,
+  .grid2 {
+    grid-template-columns: 1fr !important;
+  }
+  .filters {
+    grid-template-columns: 1fr !important;
+  }
+  .barRow {
+    grid-template-columns: 1fr;
+  }
+  .num,
+  .pct {
+    text-align: left;
+  }
+  .drillBanner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .kpis {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Extensão do módulo. Usa exclusivamente os tokens do hub-premium.css. */
+.moduleBar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:18px 0 14px;flex-wrap:wrap}.periodSwitch{display:flex;gap:8px;padding:5px;background:var(--painel2);border:1px solid var(--linha);border-radius:999px}.periodBtn{border:0;background:transparent;color:var(--silenciado);font-weight:900;padding:9px 16px;border-radius:999px;cursor:pointer}.periodBtn.active{background:var(--azul2);color:#fff;box-shadow:0 8px 26px rgba(75,134,189,.18)}
+.execStrip{display:grid;grid-template-columns:1.45fr .55fr;gap:14px;margin-bottom:14px}.execLead{border:1px solid var(--linha);border-radius:18px;padding:19px 22px;background:rgba(20,48,78,.93);position:relative;overflow:hidden}.execLead:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--laranja)}.execLead small{color:var(--azul2);font-weight:900;letter-spacing:.08em;text-transform:none}.execLead h2{font-size:22px;line-height:1.28;margin:7px 0 7px}.execLead p{margin:0;color:var(--silenciado);font-size:14px;line-height:1.55}.execLead b{text-transform:none}.auditBadge{border:1px solid rgba(120,170,163,.45);border-radius:18px;padding:18px;background:rgba(120,170,163,.08);display:flex;flex-direction:column;justify-content:center}.auditBadge b{color:var(--verde);font-size:18px}.auditBadge span{color:var(--silenciado);font-size:12px}
+.kpisExecutive{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}.kpiExecutive{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:17px;min-width:0}.kpiExecutive.feature{background:rgba(27,61,94,.72);border-color:rgba(91,155,213,.65)}.kpiExecutive .kLabel{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--silenciado);font-weight:900}.kpiExecutive .kValue{font-size:clamp(26px,3vw,42px);font-weight:950;line-height:1.05;margin:9px 0 5px;white-space:nowrap}.kpiExecutive .kNote{font-size:12px;color:var(--silenciado)}.up{color:#ef6a5d}.down{color:#78aaa3}
+.dashboardGrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;margin-bottom:14px}.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}.span5{grid-column:span 5}.span4{grid-column:span 4}.chartBox{height:340px;position:relative}.chartBox.tall{height:430px}.chartBox.short{height:280px}.panelText{font-size:12px;color:var(--silenciado);margin-top:8px}.metricPills{display:flex;gap:8px;flex-wrap:wrap}.metricPill{border:1px solid var(--linha);background:var(--painel2);color:var(--silenciado);border-radius:999px;padding:7px 11px;font-weight:800;cursor:pointer}.metricPill.active{color:#fff;border-color:var(--azul2);background:rgba(75,134,189,.22)}
+#map{height:560px;border-radius:0 0 18px 18px;background:#071421}.mapLegend{background:rgba(6,17,31,.92);padding:10px 12px;border:1px solid var(--linha);border-radius:12px;color:#fff;font-size:11px}.legendRamp{height:8px;width:160px;border-radius:99px;background:linear-gradient(90deg,#18324d,#2f67a5,#5b9bd5,#ffa02b,#e87535);margin:6px 0}.mapPopup b{font-size:14px}.mapPopup div{margin:3px 0}.mapLegend .subtle{color:var(--silenciado);font-size:10px}
+.rankList{display:flex;flex-direction:column;gap:10px}.rankItem{display:grid;grid-template-columns:28px minmax(0,1fr) 90px 76px;gap:9px;align-items:center}.rankPos{width:27px;height:27px;border-radius:9px;background:var(--painel2);display:grid;place-items:center;font-weight:900;color:var(--azul2)}.rankName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}.rankValue{text-align:right;font-weight:900}.rankDelta{text-align:right;font-weight:900}.rankBar{grid-column:2/-1;height:5px;background:#102a44;border-radius:99px;overflow:hidden}.rankBar i{display:block;height:100%;background:var(--azul2);border-radius:99px}
+.insightGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.insightCard{border:1px solid var(--linha);background:var(--painel);border-radius:16px;padding:15px}.insightCard .tag{font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:900;color:var(--azul2)}.insightCard b{display:block;font-size:17px;margin:6px 0}.insightCard p{margin:0;color:var(--silenciado);font-size:12px;line-height:1.45}
+.tableCompact{width:100%;border-collapse:collapse;table-layout:fixed}.tableCompact th,.tableCompact td{padding:10px 9px;border-bottom:1px solid rgba(41,72,102,.65);text-align:right;vertical-align:middle}.tableCompact th:first-child,.tableCompact td:first-child{text-align:left}.tableCompact th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--silenciado)}.tableCompact td{font-size:12px}.drillTable col.col-name{width:38%}.drillTable col.col-y1,.drillTable col.col-y2{width:9%}.drillTable col.col-diff{width:16%}.drillTable col.col-var{width:14%}.drillTable col.col-part{width:14%}.screen{display:none}.screen.active{display:block}
+.leaflet-container{font-family:"Segoe UI",Arial,sans-serif}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0d1f36;color:#f7f9ff}.leaflet-popup-content-wrapper{border:1px solid #294866}
+.dualRankWrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}.miniBlockTitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:900;color:var(--azul2);margin:2px 0 12px}.bairroDetail{display:grid;grid-template-columns:1fr 1fr;gap:12px}.detailHero{grid-column:1 / -1;border:1px solid var(--linha);border-radius:16px;padding:16px;background:rgba(27,61,94,.72)}.detailHero .bairroName{font-size:24px;font-weight:950;line-height:1.08}.detailHero .bairroMeta{margin-top:6px;color:var(--silenciado);font-size:12px}.detailKpi{border:1px solid var(--linha);border-radius:14px;padding:14px;background:var(--painel2)}.detailKpi .label{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--silenciado);font-weight:900}.detailKpi .value{font-size:25px;font-weight:950;margin-top:6px}.detailKpi .sub{font-size:12px;color:var(--silenciado);margin-top:2px}.detailNote{grid-column:1 / -1;color:var(--silenciado);font-size:12px;line-height:1.45;border-top:1px solid rgba(41,72,102,.65);padding-top:8px}
+.emptyState{padding:18px;border:1px dashed rgba(91,155,213,.55);border-radius:16px;background:rgba(75,134,189,.08);color:var(--silenciado);font-size:13px;line-height:1.5}
+.pulseMarker{position:relative;border-radius:50%;background:var(--pulse-color);width:var(--pulse-size);height:var(--pulse-size);box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 16px color-mix(in srgb,var(--pulse-color) 75%, transparent);opacity:.95}.pulseMarker:after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--pulse-color);animation:pulse 1.8s ease-out infinite;opacity:.7}.pulseMarker.selected{box-shadow:0 0 0 2px rgba(255,255,255,.85),0 0 24px color-mix(in srgb,var(--pulse-color) 80%, transparent)}
+@keyframes pulse{0%{transform:scale(.75);opacity:.8}70%{transform:scale(1.8);opacity:0}100%{transform:scale(1.8);opacity:0}}
+
+.analyticSwitch{display:flex;gap:8px;padding:5px;background:var(--painel2);border:1px solid var(--linha);border-radius:999px}.analyticBtn{border:0;background:transparent;color:var(--silenciado);font-weight:900;padding:8px 15px;border-radius:999px;cursor:pointer}.analyticBtn.active{background:var(--azul2);color:#fff;box-shadow:0 8px 22px rgba(75,134,189,.22)}.analyticNotice{margin:0 0 14px;padding:12px 14px;border:1px dashed rgba(91,155,213,.55);border-radius:14px;background:rgba(75,134,189,.08);color:var(--silenciado);font-size:12px;line-height:1.45}.panelHeadActions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media(max-width:1050px){.kpisExecutive{grid-template-columns:repeat(2,1fr)}.execStrip{grid-template-columns:1fr}.span8,.span7,.span6,.span5,.span4{grid-column:span 12}.insightGrid{grid-template-columns:1fr}.chartBox{height:310px}.dualRankWrap{grid-template-columns:1fr}.bairroDetail{grid-template-columns:1fr 1fr}}@media(max-width:620px){.app{padding:14px}.kpisExecutive{grid-template-columns:1fr}.rankItem{grid-template-columns:28px minmax(0,1fr) 78px}.rankDelta{display:none}.moduleBar{align-items:stretch}.periodSwitch{width:100%}.periodBtn{flex:1}.execLead h2{font-size:18px}.bairroDetail{grid-template-columns:1fr}}
+
+
+/* V3, drill-down e cross-filter */
+.execStrip{display:block}.execLead{width:100%}.auditBadge{display:none!important}
+.moduleControls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.filterContext{display:flex;align-items:center;gap:8px;max-width:min(620px,60vw);padding:7px 10px;border-radius:999px;background:rgba(75,134,189,.12);border:1px solid rgba(91,155,213,.55);color:#dcecff;font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.filterContext b{color:#fff;overflow:hidden;text-overflow:ellipsis}.filterContext button{border:0;background:rgba(232,117,53,.18);color:#ffa02b;border-radius:999px;width:22px;height:22px;cursor:pointer;font-weight:950}
+.drillBadge{font-size:9px;font-weight:950;letter-spacing:.11em;color:var(--azul2);border:1px solid rgba(91,155,213,.45);background:rgba(75,134,189,.1);padding:6px 9px;border-radius:999px}
+.analyticBreadcrumb{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px;font-size:11px;color:var(--silenciado)}.analyticBreadcrumb button{border:0;background:none;color:var(--azul2);padding:0;cursor:pointer;font-weight:900}.analyticBreadcrumb .sep{opacity:.55}.analyticBreadcrumb .current{color:#fff;font-weight:900}
+.clearDrillBtn{border:1px solid var(--linha);background:var(--painel2);color:var(--silenciado);border-radius:999px;padding:8px 12px;font-weight:850;cursor:pointer}.clearDrillBtn:hover{color:#fff;border-color:var(--azul2)}
+.drillTable tbody tr{cursor:pointer;transition:.15s ease}.drillTable tbody tr:hover{background:rgba(75,134,189,.11)}.drillTable tbody tr.selected{background:rgba(75,134,189,.18)}.drillTable td:first-child{font-weight:800}.drillArrow{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;margin-right:7px;background:rgba(91,155,213,.12);color:var(--azul2);font-weight:950}.leafRow .drillArrow{background:transparent;color:var(--silenciado)}
+.chartBox canvas{cursor:pointer}.crossfilterNote{font-size:10px;color:var(--silenciado)}
+@media(max-width:760px){.moduleControls{width:100%;justify-content:stretch}.filterContext{max-width:100%;flex:1}.periodSwitch{width:auto}.drillBadge{display:none}}
+
+/* ===== V4 • legibilidade, escala e responsividade ===== */
+#map{height:clamp(560px,72vh,780px)!important;min-height:560px;width:100%;}
+.chartBox{min-width:0;overflow:visible}.chartBox.tall{height:auto;min-height:430px}
+.panel,.body,.dashboardGrid>*,.span12,.span8,.span7,.span5,.span4{min-width:0}
+.insightCard b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:normal;overflow-wrap:anywhere;line-height:1.25}
+.insightCard p{font-size:13px;line-height:1.5}
+.rankName{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25;overflow-wrap:anywhere}
+.detailHero .bairroName{white-space:normal;overflow-wrap:anywhere}
+.tableWrap{overflow:auto;max-width:100%}
+.tableCompact td:first-child,.tableCompact th:first-child{white-space:normal;overflow-wrap:anywhere}
+.mapPopup{min-width:230px}.mapPopup b{white-space:normal;overflow-wrap:anywhere}
+.metricPills{justify-content:flex-end}
+@media(max-width:1100px){#map{height:clamp(540px,68vh,700px)!important}.dashboardGrid{grid-template-columns:1fr}.span12,.span8,.span7,.span6,.span5,.span4{grid-column:1/-1!important}.chartBox{height:360px}.chartBox.tall{min-height:480px}.metricPills{justify-content:flex-start}}
+@media(max-width:720px){.app{padding:12px!important}.header{padding:16px!important}.mainTitle{font-size:30px!important}.panelHead{align-items:flex-start;flex-direction:column}.metricPills{width:100%}.metricPill{flex:1;text-align:center}.chartBox{height:400px}.chartBox.tall{min-height:520px}#map{height:68vh!important;min-height:500px}.dualRankWrap{grid-template-columns:1fr!important}.rankItem{grid-template-columns:28px minmax(0,1fr) 76px!important}.rankDelta{display:none}.tableCompact{min-width:900px}}
+
+/* ===== V5 • clareza semântica e filtros explícitos ===== */
+.globalClearBtn{border:1px solid rgba(232,117,53,.55);background:rgba(232,117,53,.10);color:#ffb06a;border-radius:999px;padding:9px 14px;font-weight:900;cursor:pointer;white-space:nowrap;transition:.2s ease}.globalClearBtn:hover:not(:disabled){background:rgba(232,117,53,.20);border-color:#e87535;color:#fff}.globalClearBtn:disabled{opacity:.35;cursor:not-allowed}.moduleControls{flex-wrap:wrap}.analyticHelp{display:block;margin-top:4px;color:var(--silenciado);font-size:10px;line-height:1.35}.impactPos{color:var(--laranja);font-weight:800}.impactNeg{color:var(--verde);font-weight:800}.impactNeutral{color:var(--silenciado)}
+@media(max-width:760px){.globalClearBtn{flex:0 0 auto}.moduleControls{gap:8px}.filterContext{order:3;flex-basis:100%}}
+
+
+/* V7, leitura mais clara do papel de cada item no resultado */
+#analyticImpactHeader{min-width:230px;}
+.tableCompact td:nth-child(6){min-width:unset;white-space:normal;}
+.impactPos,.impactNeg,.impactNeutral{display:inline-flex;align-items:center;gap:5px;line-height:1.25;}
+.impactPos b,.impactNeg b{font-weight:900;}
+
+
+/* ===== V11 • refino executivo premium ===== */
+.execLead{padding:18px 22px;background:rgba(18,43,70,.94);border-color:rgba(41,72,102,.9)}
+.execLead:before{width:3px;opacity:.9}
+.execLead small{font-size:10px;font-weight:700;letter-spacing:.06em;color:#75afe4}
+.execLead h2{font-size:20px;font-weight:650;letter-spacing:-.012em;line-height:1.34;margin:6px 0 6px;color:#f4f8fd}
+.execLead h2 b{font-weight:730;color:#fff}
+.execLead p{font-size:13px;line-height:1.55;color:#aebfd2}
+.execLead p b{font-weight:680;color:#dcecff}
+.kpiExecutive .kValue{font-weight:850}.kpiExecutive .kLabel{font-weight:750;letter-spacing:.075em}.panelHead h2{font-weight:720;letter-spacing:-.01em}
+
+#screenAnalitica .panel{background:rgba(12,29,51,.98);border-color:rgba(58,94,128,.9);box-shadow:0 18px 55px rgba(0,0,0,.16)}
+#screenAnalitica .panelHead{padding:20px 24px 17px;border-bottom:1px solid rgba(58,94,128,.7)}
+#screenAnalitica .panelHead h2{font-size:20px;margin-top:3px;margin-bottom:3px}
+#screenAnalitica .hint{font-size:12px;color:#9eb2c9;max-width:850px}
+.analyticBreadcrumb{margin-bottom:6px;font-size:11px;gap:7px}
+.analyticBreadcrumb button{font-weight:700;color:#75afe4}.analyticBreadcrumb .current{font-weight:700;color:#dcecff}
+.clearDrillBtn{font-weight:700;padding:8px 14px;background:rgba(6,17,31,.45);border-color:rgba(75,134,189,.5)}
+.analyticBody{padding:0!important}
+.analyticMeta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:13px 24px;background:rgba(6,17,31,.28);border-bottom:1px solid rgba(41,72,102,.55)}
+.analyticMetaChip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid rgba(75,134,189,.32);background:rgba(75,134,189,.07);border-radius:999px;font-size:10.5px;color:#aebfd2}
+.analyticMetaChip strong{font-weight:720;color:#e6f0fb}
+.analyticMetaHint{margin-left:auto;font-size:10.5px;color:#8299b2}
+.premiumTableWrap{max-height:min(64vh,720px);overflow:auto;padding:0 18px 16px;scrollbar-width:thin;scrollbar-color:#496985 #0a1b31}
+.drillTable{border-collapse:separate;border-spacing:0;margin-top:10px}
+.drillTable thead th{position:sticky;top:0;z-index:3;background:#0c2138;padding-top:13px;padding-bottom:13px;border-top:1px solid rgba(58,94,128,.65);border-bottom:1px solid rgba(75,134,189,.45);font-size:9.5px;font-weight:750;letter-spacing:.065em;color:#aebfd2}
+.drillTable thead th:first-child{border-radius:10px 0 0 0}.drillTable thead th:last-child{border-radius:0 10px 0 0}
+.drillTable tbody tr{background:rgba(13,31,54,.35)}
+.drillTable tbody tr:nth-child(even){background:rgba(8,25,44,.42)}
+.drillTable tbody tr:hover{background:rgba(75,134,189,.115)}
+.drillTable tbody tr.selected{background:rgba(75,134,189,.15)}
+.drillTable td{padding-top:12px;padding-bottom:12px;border-bottom-color:rgba(41,72,102,.48);font-size:12px;font-variant-numeric:tabular-nums}
+.drillTable td:first-child{font-weight:620;color:#e5eef8;line-height:1.35}
+.drillTable td:not(:first-child){font-weight:590;color:#d6e2ef}
+.drillArrow{width:18px;height:18px;margin-right:8px;border-radius:5px;font-size:11px;font-weight:750;background:rgba(91,155,213,.09)}
+.leafRow .drillArrow{opacity:.55}
+.drillTable .up{color:#ef8a80}.drillTable .down{color:#8fc0b9}
+@media(max-width:900px){.analyticMetaHint{flex-basis:100%;margin-left:0}.premiumTableWrap{padding:0 10px 12px}.execLead h2{font-size:18px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+    .hub-dark-tiles{filter:grayscale(1) invert(.92) brightness(.42) contrast(1.15) saturate(.55);}
+    .leaflet-control-attribution{background:rgba(5,18,33,.78)!important;color:#8fa6bd!important;font-size:9px!important;}
+    .leaflet-control-attribution a{color:#9fc6e8!important;}
+</style>
+</head>
+<body>
+  <div class="app">
+    <div id="header"></div>
+
+    <div class="moduleBar">
+      <div>
+        <div class="eyebrow">PERÍODO DA ANÁLISE</div>
+        <div class="sub">Ouvidorias operacionais • exclui registros tratados internamente pela PCO</div>
+        <div class="sub" id="dataCutoff" hidden></div>
+      </div>
+      <div class="moduleControls">
+        <div id="filterContext" class="filterContext" style="display:none"></div>
+        <button id="clearAllFilters" class="globalClearBtn" type="button" disabled>Limpar filtros</button>
+        <div class="periodSwitch">
+          <button class="periodBtn active" type="button" data-period="acumulado">Jan a Out</button>
+          <button class="periodBtn" type="button" data-period="outubro">Outubro</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="screenExecutiva" class="screen active">
+      <div id="execStrip" class="execStrip"></div>
+      <div id="kpis" class="kpisExecutive"></div>
+
+      <div class="dashboardGrid">
+        <div class="panel span8">
+          <div class="panelHead">
+            <div>
+              <h2>Ritmo mensal</h2>
+              <div class="hint">2025 × 2026 e variação anual</div>
+            </div>
+          </div>
+          <div class="body"><div class="chartBox"><canvas id="chartMensal" role="img" aria-label="Evolução mensal das ouvidorias em 2025 e 2026"></canvas></div></div>
+        </div>
+
+        <div class="panel span4">
+          <div class="panelHead">
+            <div>
+              <h2 id="growthTitle">Origem do crescimento</h2>
+              <div id="growthHint" class="hint">Contribuição líquida por tipo</div>
+            </div>
+          </div>
+          <div class="body"><div class="chartBox"><canvas id="chartContrib" role="img" aria-label="Principais contribuições para a variação das ouvidorias"></canvas></div></div>
+        </div>
+
+        <div class="panel span7">
+          <div class="panelHead">
+            <div>
+              <h2 id="structureTitle">Estrutura dinâmica da demanda</h2>
+              <div id="structureHint" class="hint">Clique em um tipo para aprofundar a análise</div>
+            </div>
+            <div class="drillBadge">CLIQUE PARA FILTRAR</div>
+          </div>
+          <div class="body"><div class="chartBox tall"><canvas id="chartStructure" role="img" aria-label="Distribuição das ouvidorias por tipo e subtipo"></canvas></div></div>
+        </div>
+
+        <div class="panel span5">
+          <div class="panelHead">
+            <div>
+              <h2>Leituras prioritárias</h2>
+              <div class="hint">Volume, aumento em quantidade e variação percentual com base relevante</div>
+            </div>
+          </div>
+          <div class="body"><div id="insights" class="insightGrid" style="grid-template-columns:1fr"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenTerritorial" class="screen">
+      <div class="dashboardGrid">
+        <div class="panel span12">
+          <div class="panelHead">
+            <div>
+              <h2>Mapa de intensidade por bairro</h2>
+              <div class="hint" id="mapCoverageHint">O mapa responde ao período e aos filtros de tipo/subtipo. Clique em um bairro para detalhar AP e gerência.</div>
+            </div>
+            <div class="metricPills">
+              <button class="metricPill active" type="button" data-mapmetric="v2026">Volume 2026</button>
+              <button class="metricPill" type="button" data-mapmetric="dif">Aumento em quantidade</button>
+              <button class="metricPill" type="button" data-mapmetric="var">Variação percentual</button>
+            </div>
+          </div>
+          <div id="map"></div>
+        </div>
+
+        <div class="panel span7">
+          <div class="panelHead">
+            <div>
+              <h2>Bairros prioritários</h2>
+              <div class="hint">Leitura direta de volume e crescimento</div>
+            </div>
+          </div>
+          <div class="body dualRankWrap">
+            <div>
+              <div class="miniBlockTitle">Maior volume</div>
+              <div id="rankVolume" class="rankList"></div>
+            </div>
+            <div>
+              <div class="miniBlockTitle">Maior aumento</div>
+              <div id="rankGrowth" class="rankList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel span5">
+          <div class="panelHead">
+            <div>
+              <h2>Detalhe do bairro</h2>
+              <div class="hint">AP e gerência aparecem no detalhamento</div>
+            </div>
+          </div>
+          <div class="body">
+            <div id="bairroDetail" class="bairroDetail"></div>
+          </div>
+        </div>
+
+        <div class="panel span12" id="apPanel">
+          <div class="panelHead">
+            <div>
+              <h2>Áreas de Planejamento</h2>
+              <div id="apHint" class="hint">Acumulado jan a out</div>
+            </div>
+          </div>
+          <div class="body">
+            <div class="chartBox short" id="apChartWrap"><canvas id="chartAP" role="img" aria-label="Comparação das ouvidorias por Área de Planejamento"></canvas></div>
+            <div class="emptyState" id="apEmpty" style="display:none;">A distribuição por AP está disponível integralmente para outubro.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenAnalitica" class="screen">
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <div id="analyticBreadcrumb" class="analyticBreadcrumb"></div>
+            <h2 id="analyticTitle">Tipos de ouvidoria</h2>
+            <div id="analyticHint" class="hint">Dados agregados. Clique em um tipo para abrir seus subtipos e filtrar todo o painel.</div>
+          </div>
+          <button id="clearAnalyticFilter" class="clearDrillBtn" type="button" style="display:none">Voltar aos tipos</button>
+        </div>
+        <div class="body analyticBody">
+          <div id="analyticMeta" class="analyticMeta"></div>
+          <div class="tableWrap premiumTableWrap">
+          <table class="tableCompact drillTable">
+            <colgroup>
+              <col class="col-name" />
+              <col class="col-y1" />
+              <col class="col-y2" />
+              <col class="col-diff" />
+              <col class="col-var" />
+              <col class="col-part" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th id="analyticFirstHeader">Tipo</th>
+                <th>2025</th>
+                <th>2026</th>
+                <th>Diferença em registros</th>
+                <th>Variação (%)</th>
+                <th>Participação no volume 2026</th>
+              </tr>
+            </thead>
+            <tbody id="tableTipos"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  
+  
+  
+
+<script>
+/**
+ * HUB COMLURB - Utilitários Gerais
+ * Funções auxiliares reutilizáveis em todos os painéis
+ */
+
+const HUB = window.HUB || {};
+
+// ============================================
+// FORMATAÇÃO
+// ============================================
+
+HUB.format = {
+  /**
+   * Normaliza string (remove acentos, maiúscula, trim)
+   */
+  norm(v) {
+    return String(v ?? "")
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .toUpperCase();
+  },
+
+  /**
+   * Limpa string (apenas trim)
+   */
+  clean(v) {
+    return String(v ?? "").trim();
+  },
+
+  /**
+   * Converte para número
+   */
+  toNumber(v) {
+    if (v === null || v === undefined || v === "") return 0;
+    const n = Number(String(v).replace(",", ".").replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? n : 0;
+  },
+
+  /**
+   * Formata número inteiro com separador de milhares
+   */
+  int(n) {
+    return Number(n || 0).toLocaleString("pt-BR");
+  },
+
+  /**
+   * Formata percentual (ex: 45.3%)
+   */
+  pct(n, decimals = 1) {
+    if (!Number.isFinite(n)) return "0,0%";
+    return n.toFixed(decimals).replace(".", ",") + "%";
+  },
+
+  /**
+   * Calcula percentual
+   */
+  calcPct(numerator, denominator) {
+    return denominator ? (numerator / denominator * 100) : 0;
+  },
+
+  /**
+   * Escapa HTML
+   */
+  esc(v) {
+    return String(v ?? "").replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[m]));
+  },
+
+  /**
+   * Formata data ISO para BR
+   */
+  date(isoString) {
+    try {
+      return new Date(isoString).toLocaleDateString("pt-BR");
+    } catch {
+      return "";
+    }
+  },
+
+  /**
+   * Formata data e hora
+   */
+  datetime(isoString) {
+    try {
+      return new Date(isoString).toLocaleString("pt-BR");
+    } catch {
+      return "";
+    }
+  }
+};
+
+// ============================================
+// CARREGAMENTO DE DADOS
+// ============================================
+
+HUB.data = {
+  /**
+   * Cache de URLs carregadas
+   */
+  cache: new Map(),
+
+  /**
+   * Converte URL do Google Sheets para CSV
+   */
+  googleCsvUrl(url) {
+    const m = url.match(/\/spreadsheets\/d\/([^/]+)/);
+    if (!m) return null;
+    const gid = (url.match(/[?&]gid=([^&]+)/) || [null, "0"])[1];
+    return `https://docs.google.com/spreadsheets/d/${m[1]}/gviz/tq?tqx=out:csv&gid=${gid}`;
+  },
+
+  /**
+   * Carrega CSV de uma URL
+   */
+  async loadCSV(url, options = {}) {
+    const { cache = true, required = false, name = "CSV" } = options;
+
+    // Verifica cache
+    if (cache && this.cache.has(url)) {
+      return this.cache.get(url);
+    }
+
+    // Tenta URLs alternativas
+    const attempts = [url];
+    const fallback = this.googleCsvUrl(url);
+    if (fallback && fallback !== url) attempts.push(fallback);
+
+    let lastError;
+    for (const u of attempts) {
+      try {
+        const res = await fetch(u, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        
+        const text = await res.text();
+        if (text.includes("<html") || text.includes("<!DOCTYPE")) {
+          throw new Error("Resposta não é CSV");
+        }
+
+        const parsed = Papa.parse(text, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: h => HUB.format.clean(h)
+        });
+
+        const rows = (parsed.data || []).filter(r => 
+          Object.values(r).some(v => HUB.format.clean(v) !== "")
+        );
+
+        // Salva no cache
+        if (cache) this.cache.set(url, rows);
+
+        console.log(`✅ ${name}: ${HUB.format.int(rows.length)} linhas`);
+        return rows;
+      } catch (e) {
+        lastError = e;
+        console.warn(`⚠️ ${name}:`, e);
+      }
+    }
+
+    if (required) {
+      throw new Error(`${name}: ${lastError?.message || "não carregou"}`);
+    }
+
+    console.warn(`⚠️ ${name}: ${lastError?.message || "não carregou"}`);
+    return [];
+  },
+
+  /**
+   * Limpa cache
+   */
+  clearCache() {
+    this.cache.clear();
+  }
+};
+
+// ============================================
+// MANIPULAÇÃO DE ARRAYS
+// ============================================
+
+HUB.array = {
+  /**
+   * Retorna valores únicos de um campo
+   */
+  unique(arr, field) {
+    return [...new Set(arr.map(r => r[field]).filter(Boolean))].sort((a, b) =>
+      a.localeCompare(b, "pt-BR")
+    );
+  },
+
+  /**
+   * Agrupa e conta ocorrências
+   */
+  groupCount(arr, field) {
+    const map = new Map();
+    arr.forEach(r => {
+      const key = r[field] || "Não informado";
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    return [...map.entries()].sort((a, b) => b[1] - a[1]);
+  },
+
+  /**
+   * Calcula média de um campo
+   */
+  avg(arr, field) {
+    const vals = arr.map(r => Number(r[field])).filter(v => Number.isFinite(v) && v > 0);
+    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  },
+
+  /**
+   * Soma valores de um campo
+   */
+  sum(arr, field) {
+    return arr.reduce((acc, r) => acc + HUB.format.toNumber(r[field]), 0);
+  },
+
+  /**
+   * Encontra valor máximo
+   */
+  max(arr, field) {
+    const vals = arr.map(r => HUB.format.toNumber(r[field]));
+    return vals.length ? Math.max(...vals) : 0;
+  },
+
+  /**
+   * Encontra valor mínimo
+   */
+  min(arr, field) {
+    const vals = arr.map(r => HUB.format.toNumber(r[field])).filter(v => v > 0);
+    return vals.length ? Math.min(...vals) : 0;
+  },
+
+  /**
+   * Agrupa por faixas de valores
+   */
+  faixaCount(arr, field, faixas) {
+    // faixas = [["0-10", 0, 10], ["11-20", 11, 20], ...]
+    return faixas.map(([label, min, max]) => [
+      label,
+      arr.filter(r => {
+        const v = HUB.format.toNumber(r[field]);
+        return v >= min && v <= max;
+      }).length,
+      min,
+      max
+    ]);
+  }
+};
+
+// ============================================
+// DOM HELPERS
+// ============================================
+
+HUB.dom = {
+  /**
+   * Atalho para document.getElementById
+   */
+  $(id) {
+    return document.getElementById(id);
+  },
+
+  /**
+   * Atalho para querySelectorAll
+   */
+  $$(selector) {
+    return document.querySelectorAll(selector);
+  },
+
+  /**
+   * Mostra elemento
+   */
+  show(id) {
+    const el = this.$(id);
+    if (el) el.style.display = "block";
+  },
+
+  /**
+   * Esconde elemento
+   */
+  hide(id) {
+    const el = this.$(id);
+    if (el) el.style.display = "none";
+  },
+
+  /**
+   * Toggle visibilidade
+   */
+  toggle(id) {
+    const el = this.$(id);
+    if (!el) return;
+    el.style.display = el.style.display === "none" ? "block" : "none";
+  },
+
+  /**
+   * Define conteúdo HTML com segurança
+   */
+  setHTML(id, html) {
+    const el = this.$(id);
+    if (el) el.innerHTML = html;
+  },
+
+  /**
+   * Define texto
+   */
+  setText(id, text) {
+    const el = this.$(id);
+    if (el) el.textContent = text;
+  },
+
+  /**
+   * Adiciona classe
+   */
+  addClass(id, className) {
+    const el = this.$(id);
+    if (el) el.classList.add(className);
+  },
+
+  /**
+   * Remove classe
+   */
+  removeClass(id, className) {
+    const el = this.$(id);
+    if (el) el.classList.remove(className);
+  },
+
+  /**
+   * Toggle classe
+   */
+  toggleClass(id, className) {
+    const el = this.$(id);
+    if (el) el.classList.toggle(className);
+  }
+};
+
+// ============================================
+// DEBOUNCE & PERFORMANCE
+// ============================================
+
+HUB.debounce = function(fn, ms) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), ms);
+  };
+};
+
+HUB.throttle = function(fn, ms) {
+  let lastRun = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastRun >= ms) {
+      lastRun = now;
+      fn.apply(this, args);
+    }
+  };
+};
+
+// ============================================
+// PICK DE CAMPOS (pra lidar com nomes variados)
+// ============================================
+
+HUB.pick = function(row, candidates) {
+  if (!row) return "";
+  const keys = Object.keys(row);
+  
+  // Tenta match exato primeiro
+  for (const c of candidates) {
+    if (row[c] !== undefined) return row[c];
+    const k = keys.find(x => HUB.format.norm(x) === HUB.format.norm(c));
+    if (k) return row[k];
+  }
+  
+  // Tenta match parcial
+  for (const c of candidates) {
+    const k = keys.find(x => {
+      const nx = HUB.format.norm(x);
+      const nc = HUB.format.norm(c);
+      return nx.includes(nc) || nc.includes(nx);
+    });
+    if (k) return row[k];
+  }
+  
+  return "";
+};
+
+// ============================================
+// LOCALSTORAGE HELPERS
+// ============================================
+
+HUB.storage = {
+  /**
+   * Salva dados
+   */
+  set(key, value) {
+    try {
+      localStorage.setItem(`hub_comlurb_${key}`, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      console.warn("Erro ao salvar no localStorage:", e);
+      return false;
+    }
+  },
+
+  /**
+   * Recupera dados
+   */
+  get(key, defaultValue = null) {
+    try {
+      const item = localStorage.getItem(`hub_comlurb_${key}`);
+      return item ? JSON.parse(item) : defaultValue;
+    } catch (e) {
+      console.warn("Erro ao ler do localStorage:", e);
+      return defaultValue;
+    }
+  },
+
+  /**
+   * Remove item
+   */
+  remove(key) {
+    try {
+      localStorage.removeItem(`hub_comlurb_${key}`);
+      return true;
+    } catch (e) {
+      console.warn("Erro ao remover do localStorage:", e);
+      return false;
+    }
+  },
+
+  /**
+   * Limpa tudo
+   */
+  clear() {
+    try {
+      Object.keys(localStorage)
+        .filter(k => k.startsWith("hub_comlurb_"))
+        .forEach(k => localStorage.removeItem(k));
+      return true;
+    } catch (e) {
+      console.warn("Erro ao limpar localStorage:", e);
+      return false;
+    }
+  }
+};
+
+// Exporta para window
+window.HUB = HUB;
+
+</script>
+<script>
+/**
+ * HUB COMLURB - Componentes de Header, Footer, Drill Down e Loading
+ * Componentes reutilizáveis do ecossistema HUB COMLURB
+ */
+
+window.HUB = window.HUB || {};
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+HUB.header = {
+  /**
+   * Renderiza o cabeçalho padrão do painel
+   */
+  render(containerId, config = {}) {
+    const {
+      logo = true,
+      systemLabel = "",
+      title = "",
+      subtitle = "",
+      status = null,
+      navigation = [],
+      homeHref = "../index.html"
+    } = config;
+
+    const container = HUB.dom.$(containerId);
+    if (!container) return;
+
+    let logoHTML = "";
+
+    if (logo) {
+      logoHTML = `
+        <div class="logoWrap">
+          <img id="logoComlurb" class="logoImg"
+               src="../assets/media/ouvidoria/embedded-1.png"
+               alt="Prefeitura do Rio + Comlurb"
+               style="display:block">
+
+          <div id="logoFallback" class="logoTextFallback" style="display:none">
+            PREFEITURA DO RIO | COMLURB
+          </div>
+        </div>
+      `;
+    }
+
+    let statusHTML = "";
+
+    if (status) {
+      statusHTML = `
+        <div class="statusIndicator">
+          <small>${HUB.format.esc(status.label)}</small>
+          <b>${HUB.format.esc(status.value)}</b>
+        </div>
+      `;
+    }
+
+    let navHTML = "";
+
+    if (navigation.length) {
+      navHTML = `
+        <div class="navTabs">
+          ${navigation.map((nav, i) => `
+            <button type="button" class="tabBtn ${i === 0 ? "active" : ""}" data-tab="${nav.id}">
+              ${HUB.format.esc(nav.label)}
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    container.innerHTML = `
+      <header class="header">
+        ${logoHTML}
+
+        <div class="headerContent">
+          ${systemLabel ? `<div class="systemLabel">${HUB.format.esc(systemLabel)}</div>` : ""}
+          ${title ? `<h1 class="mainTitle">${HUB.format.esc(title)}</h1>` : ""}
+          ${subtitle ? `<div class="subtitle">${HUB.format.esc(subtitle)}</div>` : ""}
+        </div>
+
+        <a class="hubHomeButton" href="${HUB.format.esc(homeHref)}" aria-label="Voltar para a Home">Home</a>
+        ${statusHTML}
+      </header><div role="note" style="max-width:1400px;margin:12px auto;padding:10px 16px;background:#14253b;border:1px solid #58718b;border-radius:12px;color:#dceafa;font:600 12px Segoe UI,Arial,sans-serif">PRÉVIA DE HOMOLOGAÇÃO · Outubro/2026 validado tecnicamente com fontes COMLURB; sem auditoria independente. Série anterior preservada até setembro. Não publicado.</div>
+
+      ${navHTML}
+    `;
+
+    this._initLogoFallback();
+
+    if (navigation.length) {
+      this._attachNavListeners(navigation);
+    }
+  },
+
+  /**
+   * Inicializa fallback da logo caso a imagem principal não carregue
+   */
+  _initLogoFallback() {
+    const img = HUB.dom.$("logoComlurb");
+    const fallback = HUB.dom.$("logoFallback");
+
+    if (!img) return;
+
+    const candidates = ["../assets/media/ouvidoria/embedded-2.png"];
+
+    let i = 0;
+
+    img.onerror = () => {
+      i++;
+
+      if (i < candidates.length) {
+        img.src = candidates[i];
+      } else {
+        img.style.display = "none";
+
+        if (fallback) {
+          fallback.style.display = "block";
+        }
+      }
+    };
+
+    img.onload = () => {
+      img.style.display = "block";
+
+      if (fallback) {
+        fallback.style.display = "none";
+      }
+    };
+
+    img.src = candidates[0];
+  },
+
+  /**
+   * Anexa listeners de navegação entre telas
+   */
+  _attachNavListeners(navigation) {
+    document.querySelectorAll(".tabBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tabBtn").forEach(b => {
+          b.classList.remove("active");
+        });
+
+        document.querySelectorAll(".screen").forEach(s => {
+          s.classList.remove("active");
+        });
+
+        btn.classList.add("active");
+
+        const targetId = btn.dataset.tab;
+        HUB.dom.addClass(targetId, "active");
+
+        const nav = navigation.find(n => n.id === targetId);
+
+        if (nav && nav.onActivate) {
+          nav.onActivate();
+        }
+      });
+    });
+  },
+
+  /**
+   * Atualiza status do header
+   */
+  updateStatus(label, value) {
+    const el = document.querySelector(".statusIndicator");
+    if (!el) return;
+
+    const labelEl = el.querySelector("small");
+    const valueEl = el.querySelector("b");
+
+    if (labelEl) labelEl.textContent = label;
+    if (valueEl) valueEl.textContent = value;
+  }
+};
+
+/* ============================================
+   FOOTER INSTITUCIONAL
+   ============================================ */
+
+HUB.footer = {
+  /**
+   * Renderiza o rodapé institucional padrão do HUB COMLURB.
+   *
+   * Padrão oficial:
+   * HUB COMLURB
+   * Núcleo de Inteligência e Gestão Estratégica Operacional
+   *
+   * Observação: informações técnicas como versão, build, commit,
+   * ambiente ou timestamp não devem aparecer na interface institucional.
+   */
+  render(containerId, config = {}) {
+    const container = HUB.dom.$(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+      <footer class="footer">
+        <div class="footerContent">
+          <div class="footerTitle">HUB COMLURB</div>
+          <div class="footerSubtitle">
+            Núcleo de Inteligência e Gestão Estratégica Operacional
+          </div>
+        </div>
+      </footer>
+    `;
+  },
+
+  /**
+   * Mantido apenas para compatibilidade com painéis antigos que ainda chamam
+   * HUB.footer.updateTimestamp(). O footer oficial não exibe timestamp.
+   */
+  updateTimestamp() {
+    // Footer institucional não exibe timestamp.
+  }
+};
+
+/* ============================================
+   DRILL DOWN BANNER
+   ============================================ */
+
+HUB.drillBanner = {
+  /**
+   * Mostra banner de drill down
+   */
+  show(containerId, config = {}) {
+    const {
+      title = "",
+      description = "",
+      onClear = "clearDrill()"
+    } = config;
+
+    const container = HUB.dom.$(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="drillBanner active">
+        <div>
+          <b>${HUB.format.esc(title)}</b>
+          <span>${HUB.format.esc(description)}</span>
+        </div>
+
+        <button type="button" class="actionBtn primary" onclick="${onClear}">
+          Fechar detalhamento
+        </button>
+      </div>
+    `;
+  },
+
+  /**
+   * Esconde banner
+   */
+  hide(containerId) {
+    const container = HUB.dom.$(containerId);
+
+    if (container) {
+      container.innerHTML = "";
+    }
+  },
+
+  /**
+   * Atualiza texto do banner
+   */
+  update(containerId, title, description) {
+    const container = HUB.dom.$(containerId);
+    if (!container) return;
+
+    const banner = container.querySelector(".drillBanner");
+    if (!banner) return;
+
+    const titleEl = banner.querySelector("b");
+    const descEl = banner.querySelector("span");
+
+    if (titleEl) titleEl.textContent = title;
+    if (descEl) descEl.textContent = description;
+  }
+};
+
+/* ============================================
+   LOADING
+   ============================================ */
+
+HUB.loading = {
+  /**
+   * Mostra loading em um container
+   */
+  show(containerId, message = "Carregando dados...") {
+    const container = HUB.dom.$(containerId);
+
+    if (container) {
+      container.innerHTML = `
+        <div class="loading">
+          ${HUB.format.esc(message)}
+        </div>
+      `;
+    }
+  },
+
+  /**
+   * Remove loading de um container
+   */
+  hide(containerId) {
+    const container = HUB.dom.$(containerId);
+
+    if (!container) return;
+
+    const loading = container.querySelector(".loading");
+
+    if (loading) {
+      loading.remove();
+    }
+  },
+
+  /**
+   * Mostra loading em múltiplos containers
+   */
+  showMultiple(containerIds, message = "Carregando dados...") {
+    containerIds.forEach(id => this.show(id, message));
+  }
+};
+
+</script>
+<script src="./ouvidoria_data.js?v=20261104"></script>
+<script src="./ouvidoria_cube.js?v=20261104"></script>
+<script>
+const GEO = window.OUVIDORIA_DATA.geojson;
+const CUBE = window.OUVIDORIA_CUBE;
+let period = 'acumulado';
+let filterType = null;
+let filterSubtype = null;
+let mapMetric = 'v2026';
+let charts = {};
+let map, polygonLayer, markerLayer;
+let selectedBairro = null;
+
+const fmt = n => new Intl.NumberFormat('pt-BR').format(Math.round(Number(n || 0)));
+const pct = n => (n == null || !isFinite(n) ? 'Não informado' : `${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n*100)}%`);
+const pctSigned = n => (n == null || !isFinite(n) ? 'Não informado' : `${n>=0?'+':''}${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n*100)}%`);
+const signed = n => `${n>=0?'+':''}${fmt(n)}`;
+const cssClass = n => n>=0?'up':'down';
+const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const BAIRRO_ALIAS_CUBE_TO_GEO={BRAZDEPINA:'BRASDEPINA',OSWALDOCRUZ:'OSVALDOCRUZ',IMPERIALDESAOCRISTOVAO:'SAOCRISTOVAO'};
+const geoNormForCube=name=>BAIRRO_ALIAS_CUBE_TO_GEO[norm(name)]||norm(name);
+const aggByGeo=recs=>{const m=new Map();for(const r of recs){const k=geoNormForCube(r.nome);const a=m.get(k)||{nome:r.nome,geoKey:k,v2025:0,v2026:0,origens:[]};a.v2025+=r.v2025||0;a.v2026+=r.v2026||0;a.origens.push(r.nome);m.set(k,a);}for(const a of m.values()){a.dif=a.v2026-a.v2025;a.var=a.v2025?a.dif/a.v2025:null;}return m;};
+const short = (s,n=30) => (s||'').length>n ? (s||'').slice(0,n-1)+'…' : (s||'');
+const wrapLabel=(s,max=22)=>{const words=String(s||'').split(/\s+/);const lines=[];let line='';for(const w of words){const candidate=line?line+' '+w:w;if(candidate.length>max&&line){lines.push(line);line=w;}else line=candidate;}if(line)lines.push(line);return lines;};
+const relevantForRate=(items,total)=>{const floor=Math.max(100,(total||0)*0.01);const eligible=items.filter(d=>d.var!=null&&isFinite(d.var)&&Math.max(d.v2025||0,d.v2026||0)>=floor);return eligible.length?eligible:items.filter(d=>d.var!=null&&isFinite(d.var));};
+const palette={blue1:'#18324d',blue2:'#2f67a5',blue3:'#5b9bd5',orange1:'#ffa02b',orange2:'#e87535',green:'#78aaa3',text:'#dcecff',grid:'rgba(41,72,102,.25)'};
+
+function getSummary(p=period){
+  const P=CUBE.periods[p];
+  if(filterType && filterSubtype) return P.byTipoSubtipo[filterType]?.[filterSubtype] || P.byTipo[filterType] || P.all;
+  if(filterType) return P.byTipo[filterType] || P.all;
+  return P.all;
+}
+function getParentSummary(p=period){
+  const P=CUBE.periods[p];
+  if(filterType) return P.byTipo[filterType] || P.all;
+  return P.all;
+}
+function level(){return filterSubtype?'subtipo':filterType?'tipo':'all';}
+function contextLabel(){return filterSubtype?`${filterType} › ${filterSubtype}`:filterType||'Todos os tipos';}
+function prettyTypeLabel(s){return String(s||'').toLocaleLowerCase('pt-BR');}
+function prettyPlace(s){return String(s||'').toLocaleLowerCase('pt-BR').replace(/(^|[\s(\/-])([a-zà-ÿ])/g,(m,p1,p2)=>p1+p2.toLocaleUpperCase('pt-BR')).replace(/\b(Da|De|Do|Das|Dos|E|Em|Na|No|Nas|Nos)\b/g,m=>m.toLocaleLowerCase('pt-BR'));}
+function currentPeriodText(){return period==='acumulado'?'no acumulado de janeiro a outubro de 2026':'em outubro de 2026';}
+function previousPeriodText(){return period==='acumulado'?'jan a out/2025':'outubro/2025';}
+function currentPeriodShort(){return period==='acumulado'?'jan a out/2026':'out/2026';}
+function previousPeriodShort(){return period==='acumulado'?'jan a out/2025':'out/2025';}
+
+function monthlyPulse(x){
+  const months=getSummary('acumulado').mensal||[];
+  const current=months.find(d=>norm(d.mes)==='OUTUBRO');
+  const previous=months.find(d=>norm(d.mes)==='SETEMBRO');
+  if(!current||!previous||!previous.v2026)return null;
+  const dif=current.v2026-previous.v2026;
+  return{current:current.v2026,previous:previous.v2026,dif,var:dif/previous.v2026};
+}
+function mainDrivers(x){
+  const direction=x.dif>=0?1:-1;
+  return[...(x.children||[])]
+    .filter(d=>d.dif!==0&&Math.sign(d.dif)===direction)
+    .sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif));
+}
+function shareOfMovement(value,total){return total?Math.abs(value/total):0;}
+
+// Pacote de confiabilidade 1 (out/2026): competência e data de corte lidas do
+// data-cutoff.json publicado junto com o cubo. Se o arquivo não carregar, a
+// linha permanece oculta: nenhuma data é exibida sem origem.
+function carregarCorte(){
+  const el=document.getElementById('dataCutoff');
+  if(!el||typeof fetch!=='function')return;
+  const MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const comp=v=>{const m=/^(\d{4})-(\d{2})$/.exec(String(v||''));return m&&+m[2]>=1&&+m[2]<=12?MESES[+m[2]-1]+'/'+m[1]:null;};
+  const dia=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v||''));return m?m[3]+'/'+m[2]+'/'+m[1]:null;};
+  fetch('data-cutoff.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(d=>{
+    const c=comp(d.competencia_mais_recente),k=dia(d.data_corte);
+    if(!c||!k)return;
+    const partes=['Competência '+c,'corte em '+k];
+    const h=comp(d.historico_congelado_ate);if(h)partes.push('histórico congelado até '+h);
+    el.textContent=partes.join(' · ');
+    el.hidden=false;
+  }).catch(err=>console.warn('data-cutoff.json não carregado; competência não exibida.',err));
+}
+function init(){
+  HUB.header.render('header',{systemLabel:'CANAIS DO CIDADÃO',title:'Ouvidoria',subtitle:'Leitura executiva das ouvidorias operacionais, evolução temporal e concentração territorial',navigation:[
+    {id:'screenExecutiva',label:'Visão Executiva',onActivate:()=>setTimeout(()=>{resizeCharts();window.scrollTo({top:0,behavior:'smooth'});},60)},
+    {id:'screenTerritorial',label:'Territorial',onActivate:()=>setTimeout(()=>{resizeCharts();window.scrollTo({top:0,behavior:'smooth'});fitMapViewport();},160)},
+    {id:'screenAnalitica',label:'Analítico',onActivate:()=>setTimeout(()=>{resizeCharts();window.scrollTo({top:0,behavior:'smooth'});},60)}
+  ]});
+  HUB.footer.render('footer');
+  carregarCorte();
+  document.querySelectorAll('.periodBtn').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.periodBtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');period=btn.dataset.period;selectedBairro=null;render();});
+  document.querySelectorAll('.metricPill').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.metricPill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');mapMetric=btn.dataset.mapmetric;drawMap();});
+  document.getElementById('clearAnalyticFilter').onclick=()=>clearFilter();
+  document.getElementById('clearAllFilters').onclick=()=>clearFilter();
+  render();
+}
+
+function setFilter(type,subtype=null){filterType=type||null;filterSubtype=subtype||null;selectedBairro=null;render();}
+function clearFilter(){filterType=null;filterSubtype=null;selectedBairro=null;render();}
+function clearSubtype(){filterSubtype=null;selectedBairro=null;render();}
+
+function render(){
+  const x=getSummary();
+  renderFilterContext();renderLead(x);renderKPIs(x);renderMonthly();renderGrowth(x);renderStructure(x);renderInsights(x);renderBairroRankings(x);renderDetailCard(getDefaultDetail(x));renderAP(x);renderTable();
+  if(!map)initMap();drawMap();
+}
+
+function renderFilterContext(){
+  const el=document.getElementById('filterContext');
+  const clearBtn=document.getElementById('clearAllFilters');
+  clearBtn.disabled=!filterType;
+  if(!filterType){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='flex';
+  el.innerHTML=`<span>FILTRO ATIVO</span><b title="${contextLabel()}">${contextLabel()}</b><button type="button" title="Limpar filtro">×</button>`;
+  el.querySelector('button').onclick=clearFilter;
+}
+
+function renderLead(x){
+  const comps=[...(x.children||[])].filter(d=>Number.isFinite(d.dif));
+  const bairros=[...(x.bairros||[])].filter(d=>d.v2026>0);
+  const direction=x.dif>=0?1:-1;
+  const same=comps.filter(d=>Math.sign(d.dif)===direction&&d.dif!==0).sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif));
+  const opposite=comps.filter(d=>Math.sign(d.dif)===-direction&&d.dif!==0).sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif));
+  const topBairro=[...bairros].sort((a,b)=>b.v2026-a.v2026)[0];
+  const topIncrease=[...bairros].sort((a,b)=>b.dif-a.dif)[0];
+  const topReduction=[...bairros].sort((a,b)=>a.dif-b.dif)[0];
+  let headline='',detail='';
+
+  if(!filterType){
+    const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
+    if(period==='outubro'){
+      headline=`Outubro fechou com <b>${fmt(x.total2026)} ouvidorias operacionais</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> sobre outubro de 2025${pulse?` e ${pulse.dif>=0?'avanço':'recuo'} de <b>${pctSigned(pulse.var)}</b> frente a setembro`:''}.`;
+      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> explicou ${pct(shareOfMovement(a.dif,x.dif))} da ${direction>0?'alta':'redução'} anual do mês`;
+      if(b)detail+=`, seguido por <b>${prettyTypeLabel(b.nome)}</b>, com ${pct(shareOfMovement(b.dif,x.dif))}`;
+      detail+='.';
+    }else{
+      headline=`De janeiro a outubro, o volume chegou a <b>${fmt(x.total2026)} ouvidorias operacionais</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> em relação a 2025.`;
+      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> respondeu por ${pct(shareOfMovement(a.dif,x.dif))} da variação acumulada`;
+      if(pulse)detail+=`. No mês mais recente, outubro ficou <b>${pctSigned(pulse.var)}</b> em relação a setembro`;
+      detail+='.';
+    }
+    if(topBairro)detail+=` <b>${prettyPlace(topBairro.nome)}</b> manteve o maior volume territorial, com ${fmt(topBairro.v2026)} registros ${currentPeriodText()}.`;
+  }else if(!filterSubtype){
+    if(same.length){
+      const a=same[0];
+      headline=`Em <b>${prettyTypeLabel(filterType)}</b>, <b>${prettyTypeLabel(a.nome)}</b> teve o maior ${direction>0?'aumento':'recuo'} no período: ${signed(a.dif)} registros (${pctSigned(a.var)}).`;
+      if(opposite[0]) detail=`<b>${prettyTypeLabel(opposite[0].nome)}</b> apresentou movimento contrário, com ${signed(opposite[0].dif)} registros. `;
+    }else headline=`A análise está concentrada em <b>${prettyTypeLabel(filterType)}</b> ${currentPeriodText()}.`;
+    if(topBairro) detail+=`No território, <b>${prettyPlace(topBairro.nome)}</b> teve o maior volume, com ${fmt(topBairro.v2026)} registros ${currentPeriodText()}.`;
+  }else{
+    headline=`Análise de <b>${prettyTypeLabel(filterSubtype)}</b>, dentro de <b>${prettyTypeLabel(filterType)}</b>, ${currentPeriodText()}.`;
+    const parts=[];
+    if(topBairro) parts.push(`<b>${prettyPlace(topBairro.nome)}</b> teve o maior volume, com ${fmt(topBairro.v2026)} registros`);
+    if(direction>0&&topIncrease&&topIncrease.dif>0) parts.push(`<b>${prettyPlace(topIncrease.nome)}</b> registrou o maior aumento frente a ${previousPeriodText()}, com ${signed(topIncrease.dif)} registros`);
+    if(direction<0&&topReduction&&topReduction.dif<0) parts.push(`<b>${prettyPlace(topReduction.nome)}</b> registrou a maior redução frente a ${previousPeriodText()}, com ${signed(topReduction.dif)} registros`);
+    detail=parts.length?parts.join('. ')+'.':'Use o mapa para explorar a distribuição territorial.';
+  }
+  document.getElementById('execStrip').innerHTML=`<div class="execLead"><small>síntese executiva</small><h2>${headline}</h2><p>${detail}</p></div>`;
+}
+function renderKPIs(x){
+  const movementLabel=x.dif>=0?'Aumento':'Redução';
+  const currentLabel=currentPeriodShort();
+  const previousLabel=previousPeriodShort();
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpiExecutive"><div class="kLabel">Período anterior</div><div class="kValue">${fmt(x.total2025)}</div><div class="kNote">${previousLabel}</div></div>
+    <div class="kpiExecutive feature"><div class="kLabel">Período atual</div><div class="kValue">${fmt(x.total2026)}</div><div class="kNote">${currentLabel}</div></div>
+    <div class="kpiExecutive"><div class="kLabel">${movementLabel}</div><div class="kValue ${cssClass(x.dif)}">${signed(x.dif)}</div><div class="kNote">De ${fmt(x.total2025)} em ${previousLabel} para ${fmt(x.total2026)} em ${currentLabel}</div></div>
+    <div class="kpiExecutive"><div class="kLabel">Variação</div><div class="kValue ${cssClass(x.var||0)}">${pctSigned(x.var)}</div><div class="kNote">Variação de ${currentLabel} em relação a ${previousLabel}</div></div>`;
+}
+
+function destroyChart(k){if(charts[k])charts[k].destroy();}
+function chartBase(){return{responsive:true,maintainAspectRatio:false,layout:{padding:{left:8,right:10,top:4,bottom:4}},plugins:{legend:{labels:{color:'#b8c9de',usePointStyle:true,boxWidth:8,padding:16}},tooltip:{backgroundColor:'#0a1b31',titleColor:'#fff',bodyColor:'#dcecff',borderColor:'#294866',borderWidth:1,padding:12}},scales:{x:{ticks:{color:'#b8c9de'},grid:{color:palette.grid}},y:{ticks:{color:'#b8c9de'},grid:{color:palette.grid}}}};}
+
+const barEndLabels={
+  id:'barEndLabels',
+  afterDatasetsDraw(chart,args,opts){
+    const datasetIndex=opts?.datasetIndex ?? 0;
+    const meta=chart.getDatasetMeta(datasetIndex);
+    const data=chart.data.datasets[datasetIndex]?.data||[];
+    const ctx=chart.ctx;ctx.save();ctx.font='800 12px Segoe UI, Arial';ctx.fillStyle='#f7f9ff';ctx.strokeStyle='rgba(6,17,31,.88)';ctx.lineWidth=4;ctx.textBaseline='middle';
+    meta.data.forEach((bar,i)=>{
+      const v=Number(data[i]);if(!Number.isFinite(v))return;
+      const pos=bar.tooltipPosition();
+      const horizontal=chart.options.indexAxis==='y';
+      if(horizontal){ctx.textAlign=v>=0?'left':'right';ctx.fillText(signed(v),pos.x+(v>=0?7:-7),pos.y);}
+    });ctx.restore();
+  }
+};
+const linePercentLabels={
+  id:'linePercentLabels',
+  afterDatasetsDraw(chart,args,opts){
+    const idx=opts?.datasetIndex ?? 2;const meta=chart.getDatasetMeta(idx);const data=chart.data.datasets[idx]?.data||[];const ctx=chart.ctx;ctx.save();ctx.font='800 10px Segoe UI, Arial';ctx.fillStyle='#ff9a54';ctx.textAlign='center';ctx.textBaseline='bottom';
+    meta.data.forEach((pt,i)=>{const v=Number(data[i]);if(!Number.isFinite(v))return;const p=pt.tooltipPosition();ctx.fillText(`${v>=0?'+':''}${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(v)}%`,p.x,p.y-7);});ctx.restore();
+  }
+};
+const apValueLabels={
+  id:'apValueLabels',
+  afterDatasetsDraw(chart){
+    const ctx=chart.ctx;
+    ctx.save();
+    // Volume 2026: dataset 1
+    const barMeta=chart.getDatasetMeta(1);
+    const barData=chart.data.datasets[1]?.data||[];
+    ctx.font='900 12px Segoe UI, Arial';ctx.strokeStyle='rgba(6,17,31,.88)';ctx.lineWidth=4;
+    ctx.fillStyle='#f7f9ff';
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    barMeta.data.forEach((bar,i)=>{
+      const v=Number(barData[i]);
+      if(!Number.isFinite(v))return;
+      const x=bar.x;
+      let y=bar.y+8; // dentro da barra para evitar sobreposição com a legenda
+      y=Math.max(chart.chartArea.top+28,y);
+      ctx.strokeText(fmt(v),x,y);ctx.fillText(fmt(v),x,y);
+    });
+    // Variação %: dataset 2
+    const lineMeta=chart.getDatasetMeta(2);
+    const lineData=chart.data.datasets[2]?.data||[];
+    ctx.font='900 12px Segoe UI, Arial';ctx.strokeStyle='rgba(6,17,31,.88)';ctx.lineWidth=4;
+    ctx.fillStyle='#ff8b3d';
+    ctx.textAlign='center';
+    ctx.textBaseline='bottom';
+    lineMeta.data.forEach((pt,i)=>{
+      const v=Number(lineData[i]);
+      if(!Number.isFinite(v))return;
+      const label=`${v>=0?'+':''}${new Intl.NumberFormat('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(v)}%`;
+      const x=pt.x;
+      let y=pt.y-12;
+      y=Math.max(chart.chartArea.top+44,y); // empurra para baixo se encostar na área da legenda
+      ctx.strokeText(label,x,y);
+      ctx.fillText(label,x,y);
+    });
+    ctx.restore();
+  }
+};
+const structureValueLabels={
+  id:'structureValueLabels',
+  afterDatasetsDraw(chart){
+    const ctx=chart.ctx;ctx.save();ctx.font='800 10px Segoe UI, Arial';ctx.fillStyle='#dcecff';ctx.textBaseline='middle';
+    chart.data.datasets.forEach((ds,di)=>{const meta=chart.getDatasetMeta(di);meta.data.forEach((bar,i)=>{const v=Number(ds.data[i]);if(!Number.isFinite(v)||v===0)return;const p=bar.tooltipPosition();ctx.textAlign='left';ctx.fillText(fmt(v),p.x+6,p.y);});});ctx.restore();
+  }
+};
+
+function renderMonthly(){
+  destroyChart('monthly');const x=getSummary('acumulado'),a=x.mensal,c=chartBase();
+  charts.monthly=new Chart(document.getElementById('chartMensal'),{data:{labels:a.map(d=>d.mes),datasets:[{type:'bar',label:'2025',data:a.map(d=>d.v2025),backgroundColor:'rgba(184,201,222,.32)',borderColor:'#b8c9de',borderWidth:1,borderRadius:7},{type:'bar',label:'2026',data:a.map(d=>d.v2026),backgroundColor:'rgba(75,134,189,.75)',borderColor:'#5b9bd5',borderWidth:1,borderRadius:7},{type:'line',label:'Variação %',data:a.map(d=>d.var==null?null:d.var*100),yAxisID:'y1',borderColor:'#e87535',backgroundColor:'#e87535',tension:.3,pointRadius:4,pointHoverRadius:6}]},plugins:[linePercentLabels],options:{...c,layout:{padding:{left:8,right:10,top:22,bottom:4}},plugins:{...c.plugins,linePercentLabels:{datasetIndex:2}},scales:{...c.scales,y:{...c.scales.y,beginAtZero:true,ticks:{color:'#b8c9de',callback:v=>fmt(v)}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#e87535',callback:v=>`${v}%`}}}}});
+}
+
+function componentsFor(x){
+  if(x.children?.length) return [...x.children].filter(d=>d.v2025||d.v2026);
+  return [...x.bairros].filter(d=>d.v2025||d.v2026).sort((a,b)=>b.v2026-a.v2026).slice(0,8);
+}
+function canDrill(){return level()!=='subtipo';}
+function drillItem(item){if(!item)return;if(level()==='all')setFilter(item.nome);else if(level()==='tipo')setFilter(filterType,item.nome);}
+
+function renderGrowth(x){
+  destroyChart('growth');
+  let arr=componentsFor(x).sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif)).slice(0,8);
+  const c=chartBase();
+  document.getElementById('growthTitle').textContent=x.children?.length?(level()==='all'?'Aumento e redução por tipo':'Aumento e redução por subtipo'):'Aumento e redução por bairro';
+  document.getElementById('growthHint').textContent=x.children?.length?(canDrill()?`Diferença em registros entre ${previousPeriodShort()} e ${currentPeriodShort()} • clique para filtrar`:`Diferença em registros entre ${previousPeriodShort()} e ${currentPeriodShort()}`):`Diferença em registros por bairro entre ${previousPeriodShort()} e ${currentPeriodShort()}`;
+  const labels=arr.map(d=>wrapLabel(d.nome,20));
+  const box=document.getElementById('chartContrib').parentElement;box.style.height=`${Math.max(340,arr.length*52+80)}px`;
+  charts.growth=new Chart(document.getElementById('chartContrib'),{type:'bar',data:{labels,datasets:[{label:'Registros a mais / a menos',data:arr.map(d=>d.dif),backgroundColor:arr.map(d=>d.dif>=0?'rgba(232,117,53,.78)':'rgba(120,170,163,.78)'),borderRadius:8,barThickness:20,maxBarThickness:24}]},plugins:[barEndLabels],options:{...c,indexAxis:'y',layout:{padding:{left:8,right:64,top:4,bottom:4}},onClick:(evt,els)=>{if(els.length&&canDrill())drillItem(arr[els[0].index]);},plugins:{...c.plugins,barEndLabels:{datasetIndex:0},legend:{display:false},tooltip:{...c.plugins.tooltip,callbacks:{label:(ctx)=>`${ctx.raw>=0?'Aumento':'Redução'}: ${signed(ctx.raw)} registros`}}},scales:{x:{grace:'18%',ticks:{color:'#b8c9de',callback:v=>signed(v)},grid:{color:palette.grid}},y:{ticks:{color:'#dcecff',autoSkip:false,font:{size:11}},grid:{display:false}}}}});
+}
+
+function renderStructure(x){
+  destroyChart('structure');
+  let arr=componentsFor(x).sort((a,b)=>b.v2026-a.v2026);
+  const cap=level()==='all'?8:10;
+  if(arr.length>cap)arr=arr.slice(0,cap);
+  const c=chartBase();
+  const isLeaf=!x.children?.length;
+  document.getElementById('structureTitle').textContent=isLeaf?'Concentração territorial do período':level()==='all'?'Composição das ouvidorias':`Subtipos de ${filterType}`;
+  document.getElementById('structureHint').textContent=isLeaf?'Principais bairros por volume • 2025 × 2026':`2025 × 2026 • ${canDrill()?'clique em uma barra para aprofundar':'filtros selecionados'}${level()==='all'?' • demais tipos permanecem disponíveis no Analítico':''}`;
+  const labels=arr.map(d=>wrapLabel(d.nome,24));
+  const box=document.getElementById('chartStructure').parentElement;
+  box.style.height=`${Math.max(440,arr.length*58+100)}px`;
+  charts.structure=new Chart(document.getElementById('chartStructure'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'2025',data:arr.map(d=>d.v2025),backgroundColor:'rgba(184,201,222,.26)',borderColor:'#b8c9de',borderWidth:1,borderRadius:8,barThickness:16,maxBarThickness:20},
+        {label:'2026',data:arr.map(d=>d.v2026),backgroundColor:'rgba(75,134,189,.78)',borderColor:'#5b9bd5',borderWidth:1,borderRadius:8,barThickness:16,maxBarThickness:20}
+      ]
+    },
+    options:{
+      ...c,
+      indexAxis:'y',
+      layout:{padding:{left:8,right:58,top:4,bottom:4}},
+      onClick:(evt,els)=>{if(els.length&&canDrill())drillItem(arr[els[0].index]);},
+      plugins:{
+        ...c.plugins,
+        tooltip:{
+          ...c.plugins.tooltip,
+          callbacks:{
+            afterBody:(items)=>{
+              const i=items?.[0]?.dataIndex;
+              const d=arr[i];
+              return d?`Diferença: ${signed(d.dif)} registros • Variação: ${pctSigned(d.var)}`:'';
+            }
+          }
+        }
+      },
+      scales:{
+        x:{grace:'18%',ticks:{color:'#b8c9de',callback:v=>fmt(v)},grid:{color:palette.grid}},
+        y:{ticks:{color:'#dcecff',autoSkip:false,font:{size:11}},grid:{display:false}}
+      }
+    },
+    plugins:[structureValueLabels]
+  });
+}
+
+function renderInsights(x){
+  const comp=componentsFor(x);if(!comp.length){document.getElementById('insights').innerHTML='';return;}
+  const direction=x.dif>=0?1:-1;
+  const vol=[...comp].sort((a,b)=>b.v2026-a.v2026)[0];
+  const movement=[...comp].sort((a,b)=>Math.abs(b.dif)-Math.abs(a.dif))[0];
+  const relevant=relevantForRate(comp,x.total2026);
+  const positives=relevant.filter(d=>d.var!=null&&d.var>0);
+  const negatives=relevant.filter(d=>d.var!=null&&d.var<0);
+  const rateTop=positives.length?[...positives].sort((a,b)=>b.var-a.var)[0]:(negatives.length?[...negatives].sort((a,b)=>a.var-b.var)[0]:null);
+  const label=x.children?.length?(level()==='all'?'tipo':'subtipo'):'bairro';
+  const moveTag=movement.dif>=0?'Maior aumento em quantidade':'Maior redução em quantidade';
+  const moveText=movement.dif>=0?`${signed(movement.dif)} registros a mais`:`${fmt(Math.abs(movement.dif))} registros a menos`;
+  const rateTag=rateTop?(rateTop.var>=0?'Maior variação percentual positiva':'Maior variação percentual negativa'):'Variação percentual';
+  const rateText=rateTop?`${pctSigned(rateTop.var)} frente a 2025.`:'Sem categoria elegível para destaque.';
+  if(!filterType){
+    const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
+    const combined=(a&&b)?shareOfMovement(a.dif+b.dif,x.dif):(a?shareOfMovement(a.dif,x.dif):0);
+    if(period==='outubro'){
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Ritmo recente</div><b>${pulse&&Math.abs(pulse.var)<.02?'Outubro manteve o patamar':pulse&&pulse.dif>=0?'Outubro acelerou':'Outubro perdeu ritmo'}</b><p>${pulse?`O volume passou de <strong>${fmt(pulse.previous)}</strong> em setembro para <strong>${fmt(pulse.current)}</strong> em outubro, variação de <strong>${pctSigned(pulse.var)}</strong>.`:'Comparação mensal indisponível.'}</p></div><div class="insightCard"><div class="tag">Principal contribuição para a variação</div><b>${a?.nome||'Não informado'}</b><p>${a?`Representou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação anual de outubro, com <strong>${signed(a.dif)}</strong> registros.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Concentração da variação</div><b>${a?.nome||''}${b?` + ${b.nome}`:''}</b><p>As duas principais contribuições representam <strong>${pct(combined)}</strong> da variação do mês frente a outubro de 2025.</p></div>`;
+    }else{
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado acumulado</div><b>${fmt(x.total2026)} registros</b><p>Entre janeiro e outubro, as ouvidorias operacionais ficaram <strong>${pctSigned(x.var)}</strong> em relação ao mesmo período de 2025.</p></div><div class="insightCard"><div class="tag">Principal contribuição</div><b>${a?.nome||'Não informado'}</b><p>${a?`Representou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação acumulada, com <strong>${signed(a.dif)}</strong> registros.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Sinal mais recente</div><b>${pulse&&Math.abs(pulse.var)<.02?'Estabilidade em nível elevado':pulse&&pulse.dif>=0?'Outubro acima de agosto':'Outubro abaixo de agosto'}</b><p>${pulse?`O mês mais recente variou <strong>${pctSigned(pulse.var)}</strong>, de ${fmt(pulse.previous)} para ${fmt(pulse.current)} registros.`:'Comparação mensal indisponível.'}</p></div>`;
+    }
+    return;
+  }
+  if(level()==='tipo'&&vol.part>=.9){
+    const topTerritory=[...(x.bairros||[])].filter(d=>d.v2026>0).sort((a,b)=>b.dif-a.dif)[0];
+    const movementLabel=x.dif>=0?'aumento':'redução';
+    document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado do tipo</div><b>${filterType}</b><p>O volume passou de <strong>${fmt(x.total2025)}</strong> para <strong>${fmt(x.total2026)}</strong> registros, ${movementLabel} de <strong>${fmt(Math.abs(x.dif))}</strong> (${pctSigned(x.var)}).</p></div><div class="insightCard"><div class="tag">Concentração interna</div><b>${vol.nome}</b><p>O subtipo concentra <strong>${pct(vol.part)}</strong> das manifestações de ${prettyTypeLabel(filterType)} ${currentPeriodText()}. Os demais subtipos têm participação residual.</p></div><div class="insightCard"><div class="tag">Principal destaque territorial</div><b>${topTerritory?.nome||'Não informado'}</b><p>${topTerritory?`Registrou a maior contribuição territorial para a variação, com <strong>${signed(topTerritory.dif)}</strong> registros frente a ${previousPeriodShort()}.`:'Não há território elegível para destaque neste filtro.'}</p></div>`;
+    return;
+  }
+  document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Maior volume • ${label}</div><b>${vol.nome}</b><p><strong>${fmt(vol.v2026)}</strong> registros ${currentPeriodText()}.${vol.part!=null?` Representa <strong>${pct(vol.part)}</strong> do volume operacional filtrado.`:''}</p></div><div class="insightCard"><div class="tag">${moveTag} • ${label}</div><b>${movement.nome}</b><p><strong>${moveText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Variação: <strong>${pctSigned(movement.var)}</strong>.</p></div><div class="insightCard"><div class="tag">${rateTag} • ${label}</div><b>${rateTop?.nome||'Não informado'}</b><p><strong>${rateText}</strong> na comparação entre ${previousPeriodShort()} e ${currentPeriodShort()}. Categorias de volume muito pequeno permanecem disponíveis no Analítico.</p></div>`;
+}
+function renderBairroRankings(x){const bairros=[...x.bairros].filter(b=>b.v2026>0);const topVol=bairros.slice().sort((a,b)=>b.v2026-a.v2026).slice(0,5);const topGrowth=bairros.slice().sort((a,b)=>b.dif-a.dif).slice(0,5);document.getElementById('rankVolume').innerHTML=buildRank(topVol,'v2026',topVol[0]?.v2026||1);document.getElementById('rankGrowth').innerHTML=buildRank(topGrowth,'dif',topGrowth[0]?.dif||1);}
+function buildRank(arr,metric,maxValue){return arr.map((d,i)=>{const main=metric==='v2026'?fmt(d.v2026):signed(d.dif);const width=Math.max(6,(Math.abs(metric==='v2026'?d.v2026:d.dif)/Math.abs(maxValue||1))*100);return `<div class="rankItem"><div class="rankPos">${i+1}</div><div class="rankName" title="${d.nome}">${d.nome}</div><div class="rankValue">${main}</div><div class="rankDelta ${cssClass(d.dif)}">${pctSigned(d.var)}</div><div class="rankBar"><i style="width:${width}%"></i></div></div>`}).join('');}
+function getDefaultDetail(x){const b=[...x.bairros].sort((a,b)=>b.v2026-a.v2026)[0];return buildBairroDetail(b?.nome);}
+function buildBairroDetail(nome){const key=geoNormForCube(nome);const rec=aggByGeo(getSummary().bairros).get(key);const feat=GEO.features.find(f=>norm(f.properties?.nome)===key);if(!rec)return null;return{...rec,nome:feat?.properties?.nome||rec.nome,ap:feat?.properties?.area_plane?`AP${String(feat.properties.area_plane).trim()}`:'AP não disponível no mapa',gerencia:feat?.properties?.gerdlu||feat?.properties?.first_superdlu||'Não informado',regiao:feat?.properties?.rp||feat?.properties?.regiao_adm?.trim()||'Não informado'};}
+function renderDetailCard(item){const el=document.getElementById('bairroDetail');if(!item){el.innerHTML='<div class="emptyState">Nenhum detalhe territorial disponível.</div>';return;}selectedBairro=norm(item.nome);const movement=item.dif>=0?'Aumento':'Redução';el.innerHTML=`<div class="detailHero"><div class="bairroName">${prettyPlace(item.nome)}</div><div class="bairroMeta">${item.ap} • Gerência ${item.gerencia} • Região ${item.regiao}</div></div><div class="detailKpi"><div class="label">Período anterior</div><div class="value">${fmt(item.v2025)}</div><div class="sub">${previousPeriodShort()}</div></div><div class="detailKpi"><div class="label">Período atual</div><div class="value">${fmt(item.v2026)}</div><div class="sub">${currentPeriodShort()}</div></div><div class="detailKpi"><div class="label">${movement}</div><div class="value ${cssClass(item.dif)}">${signed(item.dif)}</div><div class="sub">Diferença entre ${previousPeriodShort()} e ${currentPeriodShort()}</div></div><div class="detailKpi"><div class="label">Variação</div><div class="value ${cssClass(item.var||0)}">${pctSigned(item.var)}</div><div class="sub">${currentPeriodShort()} em relação a ${previousPeriodShort()}</div></div><div class="detailNote">Filtro atual: <b>${contextLabel()}</b>. O bairro é a evidência territorial; AP e gerência aparecem no detalhamento.</div>`;}
+
+function renderAP(x){
+  destroyChart('ap');
+  const arr=[...x.ap].sort((a,b)=>a.nome==='SEM AP (AGO)'?1:b.nome==='SEM AP (AGO)'?-1:String(a.nome).localeCompare(String(b.nome)));
+  const c=chartBase();
+  document.getElementById('apHint').textContent=period==='acumulado'?`${currentPeriodShort()} • ${contextLabel()} • Agosto/2025 e agosto/2026 constam no histórico oficial congelado sem classificação de AP. Os registros aparecem como 'Sem AP (Ago)'.`:`${currentPeriodShort()} • ${contextLabel()} • volume do período atual e variação em relação a ${previousPeriodShort()}`;
+  document.getElementById('apChartWrap').style.display='block';
+  document.getElementById('apEmpty').style.display='none';
+  charts.ap=new Chart(document.getElementById('chartAP'),{
+    data:{labels:arr.map(d=>d.nome),datasets:[
+      {type:'bar',label:'2025',data:arr.map(d=>d.v2025),backgroundColor:arr.map(d=>d.nome==='SEM AP (AGO)'?'rgba(148,163,184,.42)':'rgba(184,201,222,.30)'),borderColor:arr.map(d=>d.nome==='SEM AP (AGO)'?'#94a3b8':'#b8c9de'),borderWidth:1,borderRadius:7},
+      {type:'bar',label:'2026',data:arr.map(d=>d.v2026),backgroundColor:arr.map(d=>d.nome==='SEM AP (AGO)'?'rgba(100,116,139,.82)':'rgba(75,134,189,.75)'),borderColor:arr.map(d=>d.nome==='SEM AP (AGO)'?'#64748b':'#5b9bd5'),borderWidth:1,borderRadius:7},
+      {type:'line',label:'Variação %',data:arr.map(d=>d.var==null?null:d.var*100),yAxisID:'y1',borderColor:'#e87535',backgroundColor:'#e87535',tension:.3,pointRadius:4}
+    ]},
+    plugins:[apValueLabels],
+    options:{...c,layout:{padding:{left:8,right:18,top:18,bottom:12}},plugins:{...c.plugins,legend:{...c.plugins.legend,position:'bottom'}},scales:{...c.scales,y:{...c.scales.y,ticks:{color:'#b8c9de',callback:v=>fmt(v)}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#e87535',callback:v=>`${v}%`}}}}
+  });
+}
+
+function renderTable(){
+  const title=document.getElementById('analyticTitle'),hint=document.getElementById('analyticHint'),head=document.getElementById('analyticFirstHeader'),crumb=document.getElementById('analyticBreadcrumb'),back=document.getElementById('clearAnalyticFilter');
+  let rows,parent;
+  if(!filterType){
+    parent=CUBE.periods[period].all;
+    rows=parent.children;
+    title.textContent='Tipos de ouvidoria';
+    head.textContent='Tipo';
+    hint.textContent='Visão consolidada por tipo. Selecione uma linha para detalhar seus subtipos e atualizar os demais componentes do painel.';
+    crumb.innerHTML='<span class="current">Todos os tipos</span>';
+    back.style.display='none';
+  } else {
+    parent=CUBE.periods[period].byTipo[filterType];
+    rows=parent.children;
+    title.textContent=`Subtipos de ${prettyTypeLabel(filterType)}`;
+    head.textContent='Subtipo';
+    hint.textContent='Detalhamento do tipo selecionado. Selecione um subtipo para aprofundar a leitura no painel.';
+    crumb.innerHTML=`<button type="button" id="crumbAll">Todos os tipos</button><span class="sep">›</span>${filterSubtype?`<button type="button" id="crumbType">${prettyTypeLabel(filterType)}</button><span class="sep">›</span><span class="current">${prettyTypeLabel(filterSubtype)}</span>`:`<span class="current">${prettyTypeLabel(filterType)}</span>`}`;
+    back.style.display='inline-flex';
+    setTimeout(()=>{const b=document.getElementById('crumbAll');if(b)b.onclick=clearFilter;const t=document.getElementById('crumbType');if(t)t.onclick=clearSubtype;},0);
+  }
+  const sorted=[...rows].sort((a,b)=>b.v2026-a.v2026);
+  const meta=document.getElementById('analyticMeta');
+  if(meta){
+    const nivel=!filterType?'Tipos agregados':filterSubtype?'Subtipos • filtro ativo':'Subtipos';
+    meta.innerHTML=`<span class="analyticMetaChip">Período <strong>${currentPeriodShort()}</strong></span><span class="analyticMetaChip">Nível <strong>${nivel}</strong></span><span class="analyticMetaChip">Itens <strong>${sorted.length}</strong></span><span class="analyticMetaHint">Clique em uma linha para aprofundar a análise</span>`;
+  }
+  document.getElementById('tableTipos').innerHTML=sorted.map(d=>{
+    const selected=filterSubtype&&norm(d.nome)===norm(filterSubtype);
+    const arrow=filterType?'•':'›';
+    return `<tr class="${filterType?'leafRow':''} ${selected?'selected':''}" data-name="${encodeURIComponent(d.nome)}"><td><span class="drillArrow">${arrow}</span>${prettyTypeLabel(d.nome)}</td><td>${fmt(d.v2025)}</td><td>${fmt(d.v2026)}</td><td class="${cssClass(d.dif)}">${signed(d.dif)}</td><td class="${cssClass(d.var||0)}">${pctSigned(d.var)}</td><td>${pct(d.part)}</td></tr>`;
+  }).join('');
+  document.querySelectorAll('#tableTipos tr[data-name]').forEach(tr=>tr.onclick=()=>{const name=decodeURIComponent(tr.dataset.name);if(!filterType)setFilter(name);else setFilter(filterType,name);});
+}
+
+function fitMapViewport(){
+  if(!map)return;
+  map.invalidateSize(true);
+  setTimeout(()=>{if(polygonLayer){const b=polygonLayer.getBounds();if(b&&b.isValid())map.fitBounds(b,{padding:[18,18],maxZoom:13});}map.invalidateSize(true);},80);
+}
+
+function initMap(){map=L.map('map',{zoomControl:true,attributionControl:true});L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors',className:'hub-dark-tiles'}).addTo(map);}
+function drawMap(){if(!map)return;const records=getSummary().bairros;const geoMap=aggByGeo(records);const usable=GEO.features.filter(f=>f.properties?.nome&&geoMap.has(norm(f.properties.nome)));const mappedGeoKeys=new Set(usable.map(f=>norm(f.properties.nome)));const unmapped=[...geoMap.values()].filter(r=>!mappedGeoKeys.has(r.geoKey)&&(r.v2025||r.v2026));const mapHint=document.getElementById('mapCoverageHint');if(mapHint){const outside=unmapped.reduce((z,r)=>z+(r.v2026||0),0);mapHint.textContent=unmapped.length?`O mapa responde aos filtros. Bairros sem polígono: ${unmapped.flatMap(r=>r.origens).map(prettyPlace).join(', ')} (${fmt(outside)} registros no período atual).`:'O mapa responde ao período e aos filtros de tipo/subtipo. Cobertura cartográfica integral para os bairros com volume.';}if(polygonLayer)map.removeLayer(polygonLayer);if(markerLayer)map.removeLayer(markerLayer);polygonLayer=L.geoJSON({type:'FeatureCollection',features:usable},{style:featureStyle,onEachFeature:(feature,layer)=>{const item=enrichFeature(feature);layer.bindPopup(popupHTML(item),{className:'mapPopup'});layer.on('click',()=>{renderDetailCard(buildBairroDetail(item.nome));polygonLayer.setStyle(featureStyle);layer.setStyle({weight:2.2,color:'#fff',fillOpacity:.92});highlightMarker(item.nome);});}}).addTo(map);const markerItems=usable.map(feature=>{const temp=L.geoJSON(feature);return{center:temp.getBounds().getCenter(),item:enrichFeature(feature)}});markerLayer=L.layerGroup(markerItems.map(({center,item})=>{const size=markerSize(item);const icon=L.divIcon({className:'',html:`<div class="pulseMarker" data-bairro="${norm(item.nome)}" style="--pulse-size:${size}px;--pulse-color:${metricColor(item)}"></div>`,iconSize:[size+14,size+14],iconAnchor:[(size+14)/2,(size+14)/2]});const marker=L.marker(center,{icon,keyboard:false});marker.bindPopup(popupHTML(item),{className:'mapPopup'});marker.on('click',()=>{renderDetailCard(buildBairroDetail(item.nome));highlightPolygon(item.nome);highlightMarker(item.nome);});return marker;})).addTo(map);if(usable.length){setTimeout(()=>fitMapViewport(),100);}addLegend(records);if(selectedBairro){highlightPolygon(selectedBairro);highlightMarker(selectedBairro);}}
+function enrichFeature(feature){const raw=feature.properties.nome;const rec=aggByGeo(getSummary().bairros).get(norm(raw));return{nome:raw,v2025:rec?.v2025||0,v2026:rec?.v2026||0,dif:rec?.dif||0,var:rec?.var,origens:rec?.origens||[],ap:feature.properties.area_plane?`AP${String(feature.properties.area_plane).trim()}`:'Não informado',gerencia:feature.properties.gerdlu||'Não informado',regiao:feature.properties.rp||feature.properties.regiao_adm?.trim()||'Não informado'};}
+function popupHTML(i){return `<div class="mapPopup"><b>${i.nome}</b><div>${i.ap} • Gerência ${i.gerencia}</div><div>Filtro: <b>${short(contextLabel(),42)}</b></div><div>2025: <b>${fmt(i.v2025)}</b></div><div>2026: <b>${fmt(i.v2026)}</b></div><div>Diferença entre ${previousPeriodShort()} e ${currentPeriodShort()}: <b class="${cssClass(i.dif)}">${signed(i.dif)}</b></div><div>Variação de ${currentPeriodShort()} em relação a ${previousPeriodShort()}: <b class="${cssClass(i.var||0)}">${pctSigned(i.var)}</b></div></div>`;}
+function valueForMetric(i){return mapMetric==='dif'?i.dif:mapMetric==='var'?(i.var||0):i.v2026;}
+function markerSize(i){const vals=getSummary().bairros.map(b=>Math.max(0,valueForMetric(b))).filter(isFinite);const max=Math.max(...vals,1),v=Math.max(0,valueForMetric(i));return 10+Math.sqrt(v/max)*20;}
+function metricColor(i){if(mapMetric==='var'){if((i.var||0)<0)return palette.green;if((i.var||0)<.12)return palette.blue2;if((i.var||0)<.22)return palette.blue3;if((i.var||0)<.35)return palette.orange1;return palette.orange2;}if(mapMetric==='dif'){if(i.dif<0)return palette.green;const vals=getSummary().bairros.map(b=>Math.max(0,b.dif));return ramp(Math.max(0,i.dif)/Math.max(...vals,1));}const vals=getSummary().bairros.map(b=>b.v2026);return ramp(i.v2026/Math.max(...vals,1));}
+function ramp(t){if(t<.2)return palette.blue1;if(t<.4)return palette.blue2;if(t<.65)return palette.blue3;if(t<.82)return palette.orange1;return palette.orange2;}
+function featureStyle(feature){const i=enrichFeature(feature),selected=selectedBairro&&norm(feature.properties?.nome)===geoNormForCube(selectedBairro);return{color:selected?'#fff':'rgba(120,170,163,.35)',weight:selected?2.2:1,fillColor:metricColor(i),fillOpacity:selected?.92:.58};}
+function addLegend(records){if(map.legendControl)map.removeControl(map.legendControl);const vals=records.map(b=>valueForMetric(b)).filter(v=>v!=null&&isFinite(v));if(!vals.length)return;const min=Math.min(...vals),max=Math.max(...vals),label=mapMetric==='v2026'?'Volume de registros em 2026':mapMetric==='dif'?'Diferença em registros':'Variação (%)';map.legendControl=L.control({position:'bottomright'});map.legendControl.onAdd=()=>{const div=L.DomUtil.create('div','mapLegend');div.innerHTML=`<b>${label}</b><div class="legendRamp"></div><div style="display:flex;justify-content:space-between;gap:10px"><span>${mapMetric==='var'?pct(min):fmt(min)}</span><span>${mapMetric==='var'?pct(max):fmt(max)}</span></div><div class="subtle">Filtro: ${short(contextLabel(),34)}</div>`;return div;};map.legendControl.addTo(map);}
+function highlightPolygon(name){selectedBairro=geoNormForCube(name);if(!polygonLayer)return;polygonLayer.eachLayer(layer=>{layer.setStyle(featureStyle(layer.feature));if(norm(layer.feature.properties.nome)===selectedBairro)layer.setStyle({weight:2.2,color:'#fff',fillOpacity:.92});});}
+function highlightMarker(name){selectedBairro=geoNormForCube(name);document.querySelectorAll('.pulseMarker').forEach(el=>el.classList.toggle('selected',el.dataset.bairro===selectedBairro));}
+function resizeCharts(){Object.values(charts).forEach(c=>c?.resize?.());}
+window.addEventListener('resize',()=>{resizeCharts();if(map)setTimeout(()=>map.invalidateSize(true),80);});
+document.addEventListener('DOMContentLoaded',init);
+</script>
+<script>
+window.addEventListener('load', function(){
+  if(typeof Chart==='undefined' || typeof L==='undefined'){
+    const warn=document.createElement('div');
+    warn.style.cssText='position:fixed;left:18px;right:18px;bottom:18px;z-index:99999;background:#0d1f36;color:#f7f9ff;border:1px solid #e87535;border-radius:14px;padding:12px 16px;font:600 13px Segoe UI,Arial,sans-serif';
+    warn.textContent='O layout do HUB foi carregado, mas os gráficos ou o mapa precisam de conexão com a internet para carregar as bibliotecas externas.';
+    document.body.appendChild(warn);
+  }
+});
+</script></body>
+</html>

@@ -3,7 +3,7 @@
 var months=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro"];
 var modes={chamados:"Chamados",ouvidoria:"Ouvidorias",historico:"Histórico",timeline:"Linha do Tempo",comparativo:"Comparativo Territorial"};
 var mode=document.body.getAttribute("data-mode")||"historico",dataC=[],dataO=[];
-var state={mes:"10",ap:"*",tipo:"*",bairro:"*",gerencia:"*",pco:false};
+var state={mes:(mode==="historico"||mode==="timeline"?"*":"10"),ap:"*",tipo:"*",bairro:"*",gerencia:"*",pco:false};
 function E(id){return document.getElementById(id)}
 function fmt(x){return Number(x).toLocaleString("pt-BR")}
 function html(s){return String(s).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]})}

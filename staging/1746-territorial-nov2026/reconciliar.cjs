@@ -40,7 +40,7 @@ function calc(records,channel) {
   let originalNulo=0,periodoFuturo=0,semSubtipo=0,semBairro=0,total=0,invalid=0;
   for(let i=0;i<records.length;i++){
     const r=records[i],line=i+2,tipo=clean(r.Tipo),bairro=clean(r.Bairro),apOriginal=clean(r.AP),ap=clean(r.AP_PADRONIZADA),bairroPad=clean(r.BAIRRO_PADRONIZADO),month=clean(r["Mês Solicitação"]),gerencia=clean(r["Gerência"]);
-    if(tipo==="Total Geral"&&!bairro)continue;
+    if(clean(r.Diretoria)==="Total Geral"&&!tipo)continue;
     if(!tipo||!MONTHS.includes(month)) throw new Error(channel+" linha "+line+" sem Tipo ou mês válido");
     if(!bairro||!bairroPad){semBairro++;throw new Error(channel+" linha "+line+" com Bairro ausente");}
     if(!VALID_AP.test(ap)){invalid++;throw new Error(channel+" linha "+line+" AP padronizada inválida: "+ap);}

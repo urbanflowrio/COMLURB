@@ -1,0 +1,37 @@
+name: 1746 Territorial — Self-Test (staging)
+on:
+  push:
+    branches: [teste-integracao-territorial-1746-nov2026]
+    paths:
+      - "staging/1746-territorial-nov2026/**"
+      - ".github/workflows/1746-territorial-staging.yml"
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Validar regras e contrato de integração
+        run: node staging/1746-territorial-nov2026/reconciliar.cjs --self-test
+      - name: Conferir integridade dos dados de preflight
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),assert=require('assert/strict');
+          const d=JSON.parse(fs.readFileSync('staging/1746-territorial-nov2026/preflight.json','utf8'));
+          assert.equal(d.monthly.length,10);
+          assert.equal(d.metadata.linhasAPCorrigidas.chamados,2079);
+          assert.equal(d.metadata.linhasAPCorrigidas.ouvidorias,487);
+          const deltas=d.monthly.flatMap(m=>Object.values(m.diferencas).filter(x=>x!==0));
+          assert.equal(deltas.length,7);
+          const oct=d.monthly.find(m=>m.mes==='Outubro');
+          assert.equal(oct.diferencas.chamados2026,4);
+          assert.equal(oct.diferencas.ouvidorias2026,0);
+          console.log('OK: 10 meses; 7 divergências registradas; sem alteração da main');
+          NODE

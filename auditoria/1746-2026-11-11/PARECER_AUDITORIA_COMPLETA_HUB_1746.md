@@ -1,27 +1,27 @@
 # Auditoria independente — HUB 1746 | COMLURB
 **Referência de auditoria:** 11 de novembro de 2026  
 **Status:** REVISÃO NECESSÁRIA antes de homologar números e insights com a nova extração  
-**Ambiente examinado:** branch publicada \`main\` do repositório \`urbanflowrio/COMLURB\`  
+**Ambiente examinado:** branch publicada `main` do repositório `urbanflowrio/COMLURB`  
 **Proteção:** nenhuma alteração realizada no HUB publicado ou nos arquivos do Drive.
 
 ## 1. Parecer executivo
 
 A auditoria foi **reiniciada sobre as duas fontes brutas da pasta do Drive**, sem reutilizar cubos, cópias tratadas ou conclusões anteriores como origem dos valores. As fontes foram agregadas novamente por linha e comparadas com os cubos publicados dos módulos Chamados e Ouvidorias, com os dados do Histórico e da Linha do Tempo, o Comparativo Territorial e todas as afirmações do Boletim Executivo de outubro.
 
-**Conclusão:** os fechamentos de 2025 e os totais municipais de janeiro a junho de 2026 conciliam. Julho–setembro apresentam revisões retroativas conhecidas; outubro de Ouvidorias mudou de maneira material **após a atualização da fonte em 11/11/2026**. A série publicada permanece identificável como snapshot anterior, porém **não representa integralmente a fonte atual**. A maior discrepância metodológica é a mistura de \`PAPELEIRA\` com \`LIMPEZA\` nos acumulados de Chamados e a reclassificação de Ouvidorias. O uso executivo dos números exige indicação clara da versão/fotografia, mesmo se os valores publicados forem mantidos.
+**Conclusão:** os fechamentos de 2025 e os totais municipais de janeiro a junho de 2026 conciliam. Julho–setembro apresentam revisões retroativas conhecidas; outubro de Ouvidorias mudou de maneira material **após a atualização da fonte em 11/11/2026**. A série publicada permanece identificável como snapshot anterior, porém **não representa integralmente a fonte atual**. A maior discrepância metodológica é a mistura de `PAPELEIRA` com `LIMPEZA` nos acumulados de Chamados e a reclassificação de Ouvidorias. O uso executivo dos números exige indicação clara da versão/fotografia, mesmo se os valores publicados forem mantidos.
 
 **Não se recomenda publicar nem efetuar merge automático dos novos dados antes da decisão explícita sobre substituir os snapshots fechados ou versionar as revisões.**
 
 ## 2. Inventário e rastreabilidade das fontes
 
-| Fonte | Google Sheets | Linhas efetivas | Campo Tipo | Campo Gerência | SubTipo vazio | AP \`Nulo\` |
+| Fonte | Google Sheets | Linhas efetivas | Campo Tipo | Campo Gerência | SubTipo vazio | AP `Nulo` |
 |---|---|---:|---|---|---:|---:|
 | Chamados | [Fonte histórica](https://docs.google.com/spreadsheets/d/1JHyp28FigzUrvD9H_EAynap5PgQSrmYQDCOgMtiRkw8/edit) | 63.738 | B | D | 0 | 2.079 |
 | Ouvidorias (revista em 11/11) | [Fonte histórica](https://docs.google.com/spreadsheets/d/1-JdPs02T9grCOQgdUz5522bZvqOAUbD32QIaerjXy0U/edit) | 41.829 | C | B | 0 | 0 |
 
 A nova Ouvidoria tem 41.829 linhas, contra 15.322 na base anteriormente examinada, e contém SubTipo em todas as linhas. **A posição de Tipo e Gerência não é igual nas duas planilhas.** Uma leitura posicional comum aos dois arquivos produziria um resultado falso.
 
-Controle de fechamento: soma de 2020–2026 por linha versus coluna Total Geral: **0 divergências** em cada base. Campo Tipo, SubTipo, Bairro ou AP de referência inválido: nenhum, exceto os 2.079 registros de Chamados com AP original \`Nulo\`. No tratamento territorial **derivado**, todos possuem correspondência AP3 no cadastro de bairros; a fonte não foi sobrescrita. Foram encontrados 3 agrupamentos repetidos de chave na Ouvidoria, sem identificador de protocolo para qualificar duplicidade individual; não remover automaticamente.
+Controle de fechamento: soma de 2020–2026 por linha versus coluna Total Geral: **0 divergências** em cada base. Campo Tipo, SubTipo, Bairro ou AP de referência inválido: nenhum, exceto os 2.079 registros de Chamados com AP original `Nulo`. No tratamento territorial **derivado**, todos possuem correspondência AP3 no cadastro de bairros; a fonte não foi sobrescrita. Foram encontrados 3 agrupamentos repetidos de chave na Ouvidoria, sem identificador de protocolo para qualificar duplicidade individual; não remover automaticamente.
 
 **Limite fundamental:** são exportações agregadas, não eventos individuais com protocolo. A auditoria não atesta duplicidades de atendimentos ou legitimidade da extração original.
 
@@ -84,7 +84,7 @@ Os cinco maiores serviços pelo peso em Chamados de outubro/2025 continuam soman
 
 ## 5. Principal divergência de classificação — Tipo deve prevalecer
 
-**Regra aprovada pela operação:** o indicador por Tipo utiliza exatamente o **Tipo da fonte**. \`LIMPEZA\` continua LIMPEZA mesmo quando o SubTipo descreve instalação/retirada de papeleira ou caçamba. \`PAPELEIRA\` continua PAPELEIRA; gerência executora não troca o Tipo. A eventual retirada do prefixo \`OUV -\` é apenas **apresentação**.
+**Regra aprovada pela operação:** o indicador por Tipo utiliza exatamente o **Tipo da fonte**. `LIMPEZA` continua LIMPEZA mesmo quando o SubTipo descreve instalação/retirada de papeleira ou caçamba. `PAPELEIRA` continua PAPELEIRA; gerência executora não troca o Tipo. A eventual retirada do prefixo `OUV -` é apenas **apresentação**.
 
 ### Chamados acumulados jan–out
 
@@ -126,7 +126,7 @@ Em outubro, o SubTipo de instalação/retirada de papeleira é encontrado **45 v
 | AP4 | 385 | 393 | +8 |
 | AP5 | 592 | 607 | +15 |
 
-A AP3 e AP5 somam **+2.318** dos **+2.468** Chamados adicionais na fonte (93,9%). A análise de agosto é especialmente sensível à antiga categoria SEM AP. Os 2.079 registros agregados de Chamados com AP original \`Nulo\` devem ter sua AP derivada por bairro no Cadastro Territorial Mestre, mantendo a coluna original e explicitando que não são novos Chamados.
+A AP3 e AP5 somam **+2.318** dos **+2.468** Chamados adicionais na fonte (93,9%). A análise de agosto é especialmente sensível à antiga categoria SEM AP. Os 2.079 registros agregados de Chamados com AP original `Nulo` devem ter sua AP derivada por bairro no Cadastro Territorial Mestre, mantendo a coluna original e explicitando que não são novos Chamados.
 
 ### Bairros e gerências contidos nos totais
 
@@ -144,16 +144,16 @@ Os dois bairros continuam liderando os maiores aumentos absolutos de Chamados e 
 
 | Módulo | Controle realizado | Parecer |
 |---|---|---|
-| **Chamados** | Cubo \`chamados_cube.js\`, mensais, acumulados, Tipo, AP, bairro, gerência, SubTipo; nova fonte | **AJUSTAR:** total out/26 +4, revisões jul–set, PAPELEIRA separada de LIMPEZA e recortes territoriais |
-| **Ouvidorias** | Cubo \`ouvidoria_cube.js\`, PCO e mesma decomposição; fonte atualizada em 11/11 | **AJUSTE PRIORITÁRIO:** outubro operacional +54, institucional +66; alterações por Tipo e território |
-| **Histórico** | \`1746-historico/data.js\`, indicadores, texto estático, série exploratória RG | **AJUSTAR:** dados e taxonomia. O cabeçalho ainda descreve jan–set/2026, V4.2 e corte 05/10/2026, enquanto o arquivo e os KPIs já são jan–out/2026, V4.3. Os valores exploratórios de RG em 2021 e 2024 não reproduzem integralmente o Tipo RG da nova fonte e exigem nota de origem. O gráfico RG de outubro/2026 contém um recorte parcial (**1.670 Chamados e 130 Ouvidorias**), explicitamente rotulado no gráfico, e não deve ser confundido com o fechamento integral de outubro. |
-| **Linha do Tempo** | \`data.js\`, \`cascade_data.js\`, evolução, contratos de detalhamento e taxas | **AJUSTAR:** todos os totais revisados e as duas classificações. Nos **cinco períodos territoriais completos** do arquivo de cascata, serviços, SubTipos e linhas de bairro/gerência fecham internamente; **zero quebras de soma**. Em janeiro–setembro, a navegação mensal limita deliberadamente a granularidade ao SubTipo quando não há cruzamento territorial, comportamento explicado na interface: não é uma falha aritmética. |
-| **Comparativo Territorial** | Usa o cubo Chamados e \`populacao_ibge_2022.js\` | **AJUSTAR numeradores e rankings**, sem alterar a fórmula oficial **Chamados ÷ residentes do Censo 2022 × 10.000**. Os 162 registros de correspondência populacional cobrem os bairros examinados; São Cristóvão e Imperial de São Cristóvão compartilham o mesmo código/denominador IBGE e não são aditivos. Não substituir a taxa por Ouvidorias/1.000 Chamados. |
-| **Boletim Executivo** | Todos os números/afirmações da versão pública \`1746-resumo-executivo/index.html\` | **REESCREVER NÚMEROS E NOTAS**, preservando layout oficial: 24.120; 2.267; −15,9%; RG −316; Limpeza +178 Ouvidorias; Campo Grande 214 Ouvidorias; Bangu 85; +101 nos dois bairros; nota de papeleira pelo Tipo original |
+| **Chamados** | Cubo `chamados_cube.js`, mensais, acumulados, Tipo, AP, bairro, gerência, SubTipo; nova fonte | **AJUSTAR:** total out/26 +4, revisões jul–set, PAPELEIRA separada de LIMPEZA e recortes territoriais |
+| **Ouvidorias** | Cubo `ouvidoria_cube.js`, PCO e mesma decomposição; fonte atualizada em 11/11 | **AJUSTE PRIORITÁRIO:** outubro operacional +54, institucional +66; alterações por Tipo e território |
+| **Histórico** | `1746-historico/data.js`, indicadores, texto estático, série exploratória RG | **AJUSTAR:** dados e taxonomia. O cabeçalho ainda descreve jan–set/2026, V4.2 e corte 05/10/2026, enquanto o arquivo e os KPIs já são jan–out/2026, V4.3. Os valores exploratórios de RG em 2021 e 2024 não reproduzem integralmente o Tipo RG da nova fonte e exigem nota de origem. O gráfico RG de outubro/2026 contém um recorte parcial (**1.670 Chamados e 130 Ouvidorias**), explicitamente rotulado no gráfico, e não deve ser confundido com o fechamento integral de outubro. |
+| **Linha do Tempo** | `data.js`, `cascade_data.js`, evolução, contratos de detalhamento e taxas | **AJUSTAR:** todos os totais revisados e as duas classificações. Nos **cinco períodos territoriais completos** do arquivo de cascata, serviços, SubTipos e linhas de bairro/gerência fecham internamente; **zero quebras de soma**. Em janeiro–setembro, a navegação mensal limita deliberadamente a granularidade ao SubTipo quando não há cruzamento territorial, comportamento explicado na interface: não é uma falha aritmética. |
+| **Comparativo Territorial** | Usa o cubo Chamados e `populacao_ibge_2022.js` | **AJUSTAR numeradores e rankings**, sem alterar a fórmula oficial **Chamados ÷ residentes do Censo 2022 × 10.000**. Os 162 registros de correspondência populacional cobrem os bairros examinados; São Cristóvão e Imperial de São Cristóvão compartilham o mesmo código/denominador IBGE e não são aditivos. Não substituir a taxa por Ouvidorias/1.000 Chamados. |
+| **Boletim Executivo** | Todos os números/afirmações da versão pública `1746-resumo-executivo/index.html` | **REESCREVER NÚMEROS E NOTAS**, preservando layout oficial: 24.120; 2.267; −15,9%; RG −316; Limpeza +178 Ouvidorias; Campo Grande 214 Ouvidorias; Bangu 85; +101 nos dois bairros; nota de papeleira pelo Tipo original |
 
 ### Evidências de metadados e corte
 
-- \`chamados-1746/data-cutoff.json\` e \`ouvidoria/data-cutoff.json\` permanecem com \`data_corte: null\`. Não inventar data original de extração.
+- `chamados-1746/data-cutoff.json` e `ouvidoria/data-cutoff.json` permanecem com `data_corte: null`. Não inventar data original de extração.
 - Em Chamados, agosto/2026 consta como 29.590 em um registro de revisão, enquanto a fonte atual contém **29.589**. A correção não deve apagar o valor do snapshot anterior.
 - A indicação estática do Histórico (jan–set e V4.2) não acompanha a visualização jan–out. A expressão de corte 05/10/2026 é anterior ao encerramento de outubro; deve ser claramente vinculada ao histórico, e não confundida com extração final de outubro.
 - A nova Ouvidoria possui **SubTipos preenchidos**. A pendência antiga de 12.777 linhas vazias não é aplicável à fonte atual. Portanto, já é possível auditar o detalhamento por SubTipo, com as ressalvas de diferenças entre extrações.
@@ -167,17 +167,17 @@ Os dois bairros continuam liderando os maiores aumentos absolutos de Chamados e 
 | **P0 — Bloqueante** | Reconciliar outubro atualizado nos dois cubos e nos agregados de cascata | Exatamente **24.120 Chamados e 2.267 Ouvidorias operacionais**, ou manter os valores históricos com selo/identificador de snapshot anterior; nenhum número misto |
 | **P0 — Bloqueante** | Recuperar os Tipos originais LIMPEZA e PAPELEIRA de jan–out | Por mês e Tipo a soma corresponde à fonte e ao total municipal; sem remapeamento por SubTipo |
 | **P1** | Recalcular APs e bairros com cadastro territorial + atributos de gerência | AP3 recuperada sem dupla contagem; comparativos por AP/bairro/gerência reconciliados até cada recorte |
-| **P1** | Reconstruir SubTipos de Ouvidorias com a fonte de 11/11 e padronizar apenas os rótulos exibidos (sem \`OUV -\`) | Cada SubTipo mantém Tipo de origem; nenhum preenchimento artificial |
+| **P1** | Reconstruir SubTipos de Ouvidorias com a fonte de 11/11 e padronizar apenas os rótulos exibidos (sem `OUV -`) | Cada SubTipo mantém Tipo de origem; nenhum preenchimento artificial |
 | **P1** | Atualizar Histórico, Linha do Tempo, Comparativo e Boletim com a mesma fonte e período | Indicadores, taxas, textos, rankings e datas concordam; destaque de RG exploratória marcado como parcial |
 | **P1** | Validar os contratos dos cinco módulos oficiais em navegador | Testes reais de desktop/celular, navegação, links, cascata Serviço→SubTipo→AP→Gerência→Bairro, ranking de população e taxas |
 | **P2** | Homologar redações executivas e notas metodológicas | Sem causas não demonstradas, sem inferir qualidade de serviço a partir do volume |
-| **P2** | Publicar só após aceite explícito | \`main\` atualizada apenas após auditoria de regressão completa e aprovação |
+| **P2** | Publicar só após aceite explícito | `main` atualizada apenas após auditoria de regressão completa e aprovação |
 
 ## 9. O que foi efetivamente verificado e os limites
 
-**Verificado nesta auditoria:** leitura integral das duas planilhas do Drive por 2020–2026; somatório linha a linha; 2025/2026 mensal por canal/PCO; 2026 outubro por Tipo, AP, bairro, gerência e SubTipo; comparação computacional com \`chamados_cube.js\`, \`ouvidoria_cube.js\`, \`1746-historico/data.js\`, \`1746-timeline/data.js\` e \`cascade_data.js\`; conteúdo integral do Boletim Executivo; contrato e correspondência populacional do Comparativo.
+**Verificado nesta auditoria:** leitura integral das duas planilhas do Drive por 2020–2026; somatório linha a linha; 2025/2026 mensal por canal/PCO; 2026 outubro por Tipo, AP, bairro, gerência e SubTipo; comparação computacional com `chamados_cube.js`, `ouvidoria_cube.js`, `1746-historico/data.js`, `1746-timeline/data.js` e `cascade_data.js`; conteúdo integral do Boletim Executivo; contrato e correspondência populacional do Comparativo.
 
-**Limitações:** as fontes são agregações sem protocolo individual, e não foi documentada a data exata da extração original por competência. O que se chama “erro” em relação à nova base pode representar uma revisão posterior legítima de uma fotografia antiga; **não invalidar retroativamente a decisão de congelamento sem governança**. Esta auditoria não fez captura visual browser end-to-end nem recalculou cada combinação específica \`Tipo × SubTipo × AP × Gerência × Bairro\` diretamente contra os arquivos brutos geográficos de 9 MB dos módulos; essa é a prova final exigida para uma nova publicação.
+**Limitações:** as fontes são agregações sem protocolo individual, e não foi documentada a data exata da extração original por competência. O que se chama “erro” em relação à nova base pode representar uma revisão posterior legítima de uma fotografia antiga; **não invalidar retroativamente a decisão de congelamento sem governança**. Esta auditoria não fez captura visual browser end-to-end nem recalculou cada combinação específica `Tipo × SubTipo × AP × Gerência × Bairro` diretamente contra os arquivos brutos geográficos de 9 MB dos módulos; essa é a prova final exigida para uma nova publicação.
 
 ## Evidências produzidas nesta branch (sem merge)
 
@@ -186,3 +186,23 @@ Os dois bairros continuam liderando os maiores aumentos absolutos de Chamados e 
 - [03 — Comparação direta com os cubos publicados](03_confronto_cubos_publicados.json)
 
 **Status de encerramento:** auditoria da fonte, fechamento, principais recortes e conteúdo publicado **concluída com divergências documentadas**. A homologação de **nova publicação** permanece **bloqueada**, até revisão dos snapshots e execução da regressão funcional/geográfica.
+
+## 10. Prova adicional — histórico de revisões da planilha de Ouvidorias
+
+Foi consultado o histórico de versões da **mesma planilha de origem** no Drive, sem recorrer a planilhas de tratamento ou a versões reconstruídas.
+
+| Evidência | Revisão 13 | Revisão 23 |
+|---|---|---|
+| Modificada em | 06/11/2026, 02:55 UTC | 11/11/2026, 17:37 UTC |
+| Linhas agregadas de dados | **15.322** | **41.829** |
+| Ordem de colunas | Tipo B; SubTipo C; Gerência D | Gerência B; Tipo C; SubTipo D |
+| Campo SubTipo | Ausente nas linhas examinadas da versão anterior | **Preenchido em todas as linhas** |
+| Outubro/2026 operacional | **2.213** | **2.267** |
+| Outubro/2026 PCO | **157** | **169** |
+| Novembro/2026 | Sem registros na revisão anterior | **707 operacionais + 96 PCO**, parciais |
+
+A diferença de **+54 Ouvidorias operacionais** em outubro é reproduzida pela comparação direta entre as duas versões do **mesmo arquivo**. De janeiro a setembro, os totais operacionais de 2026 coincidem nessas duas revisões; novembro aparece na mais recente. A comparação por Tipo entre as revisões, em outubro/2026, aponta: **Limpeza +24, Papeleira +17, Remoção Gratuita +9, Coleta Domiciliar +4, Manejo Arbóreo +2, Vetores +2, Coleta Seletiva −3 e Remoção de Caçamba Particular −1**. O saldo desses ajustes é +54.
+
+**Atenção:** a revisão anterior 13 e o cubo publicado já apresentavam pequenas diferenças internas por Tipo (por exemplo, Limpeza 1.165 na revisão versus 1.169 no cubo), apesar do mesmo total 2.213. Por isso não se pode afirmar que `main` seja uma reprodução exata da revisão 13 por SubTipo ou Tipo, apenas que os seus totais de outubro coincidem.
+
+Essa confirmação modifica a decisão sobre SubTipos: **não há mais necessidade de aguardar outra planilha de Ouvidorias para obter a coluna SubTipo**. Resta auditar sua padronização e inserção no pipeline mantendo o Tipo original.

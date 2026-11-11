@@ -196,7 +196,7 @@ Foi consultado o histórico de versões da **mesma planilha de origem** no Drive
 | Modificada em | 06/11/2026, 02:55 UTC | 11/11/2026, 17:37 UTC |
 | Linhas agregadas de dados | **15.322** | **41.829** |
 | Ordem de colunas | Tipo B; SubTipo C; Gerência D | Gerência B; Tipo C; SubTipo D |
-| Campo SubTipo | Ausente nas linhas examinadas da versão anterior | **Preenchido em todas as linhas** |
+| Campo SubTipo | **12.777 linhas vazias de 15.322** (em outubro, 1.060 de 1.222 linhas) | **0 linhas vazias de 41.829** |
 | Outubro/2026 operacional | **2.213** | **2.267** |
 | Outubro/2026 PCO | **157** | **169** |
 | Novembro/2026 | Sem registros na revisão anterior | **707 operacionais + 96 PCO**, parciais |

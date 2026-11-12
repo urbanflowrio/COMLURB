@@ -1,0 +1,92 @@
+tipo_original;subtipo_original;tipo_hub;subtipo_hub;tratamento;linhas_agregadas
+"ABRIGOS";"TESTE - LIMPEZA DE RALO";"Abrigos";"Teste - limpeza de ralo";"MANTER";1
+"COLETA DOMICILIAR (DLU)";"OUV - COLETA DOMICILIAR - RUÍDO";"";"";"EXCLUIR_OUV";1
+"COLETA DOMICILIAR (DLU)";"OUV - RESÍDUO DA COLETA DOMICILIAR";"";"";"EXCLUIR_OUV";2
+"COLETA DOMICILIAR";"COLETA DOMICILIAR - RUÍDO";"Coleta domiciliar";"Coleta domiciliar - ruído";"MANTER";1
+"COLETA DOMICILIAR";"COMPORTAMENTO DE EQUIPE";"Coleta domiciliar";"Comportamento de equipe";"MANTER";4
+"COLETA DOMICILIAR";"FREQUÊNCIA IRREGULAR DA COLETA DOMICILIAR";"Coleta domiciliar";"Frequência irregular da coleta domiciliar";"MANTER";1441
+"COLETA DOMICILIAR";"IMPLANTAÇÃO DE COLETA DOMICILIAR";"Coleta domiciliar";"Implantação de coleta domiciliar";"MANTER";442
+"COLETA DOMICILIAR";"OUV - RESÍDUO DA COLETA DOMICILIAR";"";"";"EXCLUIR_OUV";1
+"COLETA DOMICILIAR";"OUV - VERIFICAÇÃO DE FREQUÊNCIA IRREGULAR DA COLETA DOMICILIAR COM RETIRADA DO RESÍDUO";"";"";"EXCLUIR_OUV";1
+"COLETA DOMICILIAR";"RESÍDUO DE COLETA DOMICILIAR";"Coleta domiciliar";"Resíduo da coleta domiciliar";"MANTER";1379
+"COLETA DOMICILIAR";"VERIFICAÇÃO DE FREQUÊNCIA IRREGULAR DA COLETA DOMICILIAR COM RETIRADA DO RESÍDUO";"Coleta domiciliar";"Verificação de frequência irregular da coleta domiciliar com retirada do resíduo";"MANTER";1861
+"COLETA SELETIVA";"COMPORTAMENTO DA EQUIPE";"Coleta seletiva";"Comportamento de equipe";"MANTER";4
+"COLETA SELETIVA";"FREQUÊNCIA IRREGULAR DE COLETA SELETIVA";"Coleta seletiva";"Frequência irregular de coleta seletiva";"MANTER";932
+"COLETA SELETIVA";"IMPLANTAÇÃO DA COLETA SELETIVA";"Coleta seletiva";"Implantação de coleta seletiva";"MANTER";469
+"COLETA SELETIVA";"OUV - IMPLANTAÇÃO DE COLETA SELETIVA";"";"";"EXCLUIR_OUV";1
+"FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR";"FISCALIZAÇÃO DE CAÇAMBA PARTICULAR, EMPRESAS/AUTÔNOMOS NÃO CREDENCIADOS, VEÍCULOS NÃO PERMITIDOS E COM IDENTIFICAÇÃO FORA DO PADRÃO";"Fiscalização de remoção de caçamba particular";"Fiscalização de caçamba particular, empresas/autônomos não credenciados, veículos não permitidos e com identificação fora do padrão";"MANTER";234
+"FISC DE REMOÇÃO DE CAÇAMBA PARTICULAR";"INSTALAÇÃO E RETIRADA DE CAÇAMBA PARTICULAR RUÍDO";"Fiscalização de remoção de caçamba particular";"Instalação e retirada de caçamba particular ruído";"MANTER";6
+"FISCALIZAÇÃO DE GRANDE GERADOR";"FISCALIZAÇÃO DE CAÇAMBA PARTICULAR, EMPRESA NÃO CREDENCIADA E DE ESTABELECIMENTO COM DESCARTE IRREGULAR DO LIXO EXTRAORDINÁRIO E/OU INFECTANTE";"Fiscalização de grande gerador";"Fiscalização de caçamba particular, empresa não credenciada e de estabelecimento com descarte irregular do lixo extraordinário e/ou infectante";"MANTER";190
+"FISCALIZAÇÃO DE GRANDE GERADOR";"FISCALIZAÇÃO DE EMPRESA OU VEÍCULO NÃO CREDENCIADO PARA REMOÇÃO DE RESÍDUO EXTRAORDINÁRIO E OU BIOLOGICO";"Fiscalização de grande gerador";"Fiscalização de empresa ou veículo não credenciado para remoção de resíduo extraordinário e/ou biológico";"MANTER";83
+"FISCALIZAÇÃO DE GRANDE GERADOR";"FISCALIZAÇÃO DE ESTABELECIMENTO COM IRREGULARIDADES NO DESCARTE DO LIXO EXTRAORDINÁRIO E OU INFECTANTE";"Fiscalização de grande gerador";"Fiscalização de estabelecimento com irregularidades no descarte do lixo extraordinário e/ou infectante";"MANTER";813
+"FISCALIZAÇÃO DE GRANDE GERADOR";"FISCALIZAÇÃO GRANDE GERADOR - RUÍDO";"Fiscalização de grande gerador";"Fiscalização grande gerador - ruído";"MANTER";8
+"FISCALIZAÇÃO";"LIXO ZERO";"Fiscalização";"Lixo zero";"MANTER";1
+"FRADES / GRAMPOS / GRADIS (CGC)";"MAU ESTADO";"Frades / grampos / gradis (CGC)";"Mau estado";"MANTER";2
+"LIMPEZA (DLU)";"OUV - REMOÇÃO DE RESÍDUOS DE PODA";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"CAPINA EM LOGRADOURO";"Limpeza";"Capina em logradouro";"MANTER";1904
+"LIMPEZA";"IMPLANTAÇÃO DE VARRIÇÃO";"Limpeza";"Implantação de varrição";"MANTER";1369
+"LIMPEZA";"INSTALAÇÃO DE CAÇAMBA DA COMLURB PARA ATENDIMENTO EM COMUNIDADE";"Limpeza";"Instalação de caçamba comunitária";"MANTER";1106
+"LIMPEZA";"INSTALAÇÃO DE PAPELEIRA";"Limpeza";"Instalação ou retirada de papeleira";"MANTER";5
+"LIMPEZA";"INSTALAÇÃO E/OU RETIRADA DE PAPELEIRA";"Limpeza";"Instalação ou retirada de papeleira";"MANTER";92
+"LIMPEZA";"LIMPEZA DAS MARGENS DE RIOS";"Limpeza";"Limpeza das margens de rios";"MANTER";871
+"LIMPEZA";"LIMPEZA DE PAPELEIRA, CONTÊINER E CAÇAMBA COMLURB";"Limpeza";"Limpeza de papeleira, contêiner e caçamba";"MANTER";1609
+"LIMPEZA";"LIMPEZA DE PARQUES";"Limpeza";"Limpeza de parques";"MANTER";235
+"LIMPEZA";"LIMPEZA DE PRAÇAS E PARQUES";"Limpeza";"Limpeza de praças e parques";"MANTER";1487
+"LIMPEZA";"LIMPEZA DE PRAÇAS";"Limpeza";"Limpeza de praças";"MANTER";1126
+"LIMPEZA";"LIMPEZA DE PRAIAS";"Limpeza";"Limpeza de praias";"MANTER";338
+"LIMPEZA";"LIMPEZA DE RALOS";"Limpeza";"Limpeza de ralos";"MANTER";1691
+"LIMPEZA";"LIMPEZA DE RESÍDUOS APÓS CHUVA/VENTO E ACIDENTES COM VEÍCULOS";"Limpeza";"Limpeza de resíduos após chuva/vento e acidentes com veículos";"MANTER";1017
+"LIMPEZA";"LIMPEZA RESÍDUOS OBRAS PÚBL E EMPRESA PARTICULAR";"Limpeza";"Limpeza de resíduos de obras públicas e de empresa particular";"MANTER";674
+"LIMPEZA";"NOTIFICAÇÃO AO PROPRIETÁRIO PARA LIMPEZA DE TERRENO BALDIO";"Limpeza";"Notificação ao proprietário para limpeza de terreno baldio";"MANTER";1656
+"LIMPEZA";"OUV - CAPINA EM LOGRADOURO";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"OUV - LIMPEZA DE PARQUES";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"OUV - NOTIFICAÇÃO AO PROPRIETÁRIO PARA LIMPEZA DE TERRENO BALDIO";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"OUV - REMOÇÃO DE RESÍDUOS DE PODA";"";"";"EXCLUIR_OUV";5
+"LIMPEZA";"OUV - REMOÇÃO DE RESÍDUOS DE QUEIMADA EM LOGRADOURO";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"OUV - REMOÇÃO DE RESÍDUOS NO LOGRADOURO";"";"";"EXCLUIR_OUV";2
+"LIMPEZA";"OUV - RETIRADA DE CAÇAMBA DA COMLURB INSTALADA PARA ATENDIMENTO EM COMUNIDADE";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"OUV - VARRIÇÃO DE LOGRADOURO";"";"";"EXCLUIR_OUV";1
+"LIMPEZA";"REMOÇÃO DE ANIMAIS MORTOS NO LOGRADOURO";"Limpeza";"Remoção de animais mortos no logradouro";"MANTER";1448
+"LIMPEZA";"REMOÇÃO DE RESÍDUOS APÓS MUTIRÃO DE LIMPEZA";"Limpeza";"Remoção de resíduos após mutirão de limpeza";"MANTER";806
+"LIMPEZA";"REMOÇÃO DE RESÍDUOS DE PODA";"Limpeza";"Remoção de resíduos de poda";"MANTER";1788
+"LIMPEZA";"REMOÇÃO DE RESÍDUOS DE QUEIMADA EM LOGRADOURO";"Limpeza";"Remoção de resíduos de queimada em logradouro";"MANTER";374
+"LIMPEZA";"REMOÇÃO DE RESÍDUOS EM LOGRADOURO APÓS VISTORIA DA SMS";"Limpeza";"Remoção de resíduos em logradouro após vistoria da SMS";"MANTER";28
+"LIMPEZA";"REMOÇÃO DE RESÍDUOS NO LOGRADOURO";"Limpeza";"Remoção de resíduos no logradouro";"MANTER";2020
+"LIMPEZA";"RETIRADA DE CAÇAMBA DA COMLURB INSTALADA PARA ATENDIMENTO EM COMUNIDADE";"Limpeza";"Retirada de caçamba comunitária";"MANTER";677
+"LIMPEZA";"VARRIÇÃO DE LOGRADOURO";"Limpeza";"Varrição de logradouro";"MANTER";1962
+"MANEJO ARBÓREO";"AVALIAÇÃO DE PODA DE ÁRVORES EM LOGRADOURO (180 DIAS)";"Manejo arbóreo";"Avaliação de poda de árvores em logradouro (180 dias)";"MANTER";1576
+"MANEJO ARBÓREO";"AVALIAÇÃO DE PODA DE ÁRVORES EM LOGRADOURO";"Manejo arbóreo";"Avaliação de poda de árvores em logradouro";"MANTER";1918
+"MANEJO ARBÓREO";"AVALIAÇÃO DE RETIRADA DE ÁRVORE";"Manejo arbóreo";"Avaliação de retirada de árvore";"MANTER";1606
+"MANEJO ARBÓREO";"AVALIAÇÃO DE RISCO DE QUEDA DA ÁRVORE";"Manejo arbóreo";"Avaliação de risco de queda de árvore";"MANTER";1700
+"MANEJO ARBÓREO";"AVALIAÇÃO DE RISCO DE QUEDA DE ÁRVORE";"Manejo arbóreo";"Avaliação de risco de queda de árvore";"MANTER";1465
+"MANEJO ARBÓREO";"OUV – AVALIAÇÃO DE PODA DE ÁRVORES EM LOGRADOURO";"";"";"EXCLUIR_OUV";2
+"MANEJO ARBÓREO";"OUV – AVALIAÇÃO DE RISCO DE QUEDA DE ÁRVORE";"";"";"EXCLUIR_OUV";1
+"MANEJO ARBÓREO";"OUV – REMOÇÃO DE ÁRVORE EM LOGRADOURO";"";"";"EXCLUIR_OUV";4
+"MANEJO ARBÓREO";"OUV – REMOÇÃO DE TOCO E RAIZ - DESTOCA";"";"";"EXCLUIR_OUV";1
+"MANEJO ARBÓREO";"REMOÇÃO DE ÁRVORE EM LOGRADOURO";"Manejo arbóreo";"Remoção de árvore em logradouro";"MANTER";1742
+"MANEJO ARBÓREO";"REMOÇÃO DE TOCO E RAIZ - DESTOCA";"Manejo arbóreo";"Remoção de toco e raiz (destoca)";"MANTER";966
+"MANEJO ARBÓREO";"REMOÇÃO DE TOCO E RAIZ (DESTOCA)";"Manejo arbóreo";"Remoção de toco e raiz (destoca)";"MANTER";1284
+"MANEJO ARBÓREO";"REPARAÇÃO PÓS DESTOCA";"Manejo arbóreo";"Reparação pós-destoca";"MANTER";861
+"MANEJO ARBÓREO";"REPARO DE CALÇADA DANIFICADA POR RAIZ";"Manejo arbóreo";"Reparo de calçada danificada por raiz";"MANTER";1304
+"PAPELEIRA";"INSTALAÇÃO DE PAPELEIRA";"Papeleira";"Instalação ou retirada de papeleira";"MANTER";1032
+"PAPELEIRA";"INSTALAÇÃO E/OU RETIRADA DE PAPELEIRA";"Papeleira";"Instalação ou retirada de papeleira";"MANTER";997
+"PAPELEIRA";"RETIRADA DE PAPELEIRA";"Papeleira";"Instalação ou retirada de papeleira";"MANTER";624
+"PARQUES";"MANUTENÇÃO DE MOBILIÁRIO, BRINQ E EQUIP ESPORTIVO";"Parques";"Manutenção de mobiliário, brinquedos e equipamentos esportivos";"MANTER";614
+"PRAÇAS";"MANUTENÇÃO DE MOBILIÁRIO, BRINQ E EQUIP ESPORTIVO";"Praças";"Manutenção de mobiliário, brinquedos e equipamentos esportivos";"MANTER";1186
+"PRAÇAS";"MANUTENÇÃO DE MOBILIÁRIO, BRINQUEDOS E EQUIPAMENTOS ESPORTIVOS EM PRAÇAS E PARQUES PÚBLICOS";"Praças";"Manutenção de mobiliário, brinquedos e equipamentos esportivos em praças e parques públicos";"MANTER";1295
+"PRAÇAS";"REPARAÇÃO DE MOBILIÁRIO DE PRAÇAS";"Praças";"Reparação de mobiliário de praças";"MANTER";9
+"REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR";"REMOÇÃO DE CAÇAMBA PARTICULAR CHEIA";"Remoção de caçamba de empresa particular";"Remoção de caçamba particular cheia";"MANTER";699
+"REMOÇÃO DE CAÇAMBA DE EMPRESA PARTICULAR";"REMOÇÃO DE CAÇAMBA PARTICULAR IMPEDINDO CIRCULAÇÃO DE PEDESTRE, VEÍCULO E LIMPEZA";"Remoção de caçamba de empresa particular";"Remoção de caçamba particular impedindo circulação de pedestre, veículo e limpeza";"MANTER";502
+"REMOÇÃO DE CARCAÇA DE VEÍCULO";"AVALIAÇÃO DE REMOÇÃO DE CARCAÇA DE VEÍCULO NÃO IDENTIFICÁVEL";"Remoção de carcaça de veículo";"Avaliação de remoção de carcaça de veículo não identificável";"MANTER";1621
+"REMOÇÃO DE CARCAÇA DE VEÍCULO";"REMOÇÃO DE CARCAÇA DE VEÍCULO COM RISCO DE FOCOS DE AEDES AEGYPTI, APÓS VISTORIA DA SMS";"Remoção de carcaça de veículo";"Remoção de carcaça de veículo com risco de focos de Aedes aegypti, após vistoria da SMS";"MANTER";28
+"REMOÇÃO GRATUITA PAQUETÁ";"REMOÇÃO DE ENTULHO E BENS INSERVÍVEIS EM PAQUETÁ";"Remoção gratuita paquetá";"Remoção de entulho e bens inservíveis em Paquetá";"MANTER";14
+"REMOÇÃO GRATUITA TRANSFERÊNCIA";"REMOÇÃO DE ENTULHO E BENS INSERVÍVEIS TRANSFERÊNCIA";"Remoção gratuita transferência";"Remoção de entulho e bens inservíveis transferência";"MANTER";925
+"REMOÇÃO GRATUITA";"OUV – REMOÇÃO DE ENTULHO E BENS INSERVÍVEIS";"";"";"EXCLUIR_OUV";13
+"REMOÇÃO GRATUITA";"REMOÇÃO DE ENTULHO E BENS INSERVÍVEIS PARA ESCOLA MUNICIPAL";"Remoção gratuita";"Remoção de entulho e bens inservíveis para escola municipal";"MANTER";626
+"REMOÇÃO GRATUITA";"REMOÇÃO DE ENTULHO E BENS INSERVÍVEIS";"Remoção gratuita";"Remoção de entulho e bens inservíveis";"MANTER";1905
+"VETORES";"CONTROLE DE CARAMUJOS AFRICANOS";"Vetores";"Controle de caramujos africanos";"MANTER";936
+"VETORES";"CONTROLE DE OUTROS VETORES EM PRAÇA PÚBLICA";"Vetores";"Controle de outros vetores em praça pública";"MANTER";383
+"VETORES";"CONTROLE DE ROEDORES E CARAMUJOS AFRICANOS";"Vetores";"Controle de roedores e caramujos africanos";"MANTER";1880
+"VETORES";"CONTROLE DE ROEDORES";"Vetores";"Controle de roedores";"MANTER";1842
+"VETORES";"OUV - CONTROLE DE ROEDORES E CARAMUJOS AFRICANOS";"";"";"EXCLUIR_OUV";2
+"VETORES";"OUV – CONTROLE DE ROEDORES";"";"";"EXCLUIR_OUV";1

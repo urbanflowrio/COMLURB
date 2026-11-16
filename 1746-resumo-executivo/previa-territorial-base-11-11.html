@@ -5,21 +5,7 @@
 <meta name="theme-color" content="#06111f">
 <title>Boletim Executivo 1746 | Outubro de 2026 | HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<!--
-  RASTREABILIDADE (resumo). Documento completo: 1746-resumo-executivo/RASTREABILIDADE.md
-  Verificação automática: node tests/1746-outubro/boletim-rastreabilidade.cjs
-  Auditoria independente: auditoria/1746-out2026/AUDITORIA_BOLETIM_1746_OUT2026.md
-  A1  Chamados 21.652 / 24.120 ............ CHAMADOS_CUBE.periods.outubro.all
-  A2  Ouvidorias 2.697 / 2.267 ............ OUVIDORIA_CUBE.periods.outubro.all
-  A3  Acumulado jan a out +13,5% / +15,6% . periods.acumulado.all (dois cubos)
-  A4  Decomposição por serviço ............ periods.outubro.all.children (dois cubos)
-  A5  Remoção Gratuita 799/474; set e out menores de 2026  OUVIDORIA_CUBE.periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal
-  A6  Ouvidorias: menor mês de jan a out/26  OUVIDORIA_CUBE.periods.acumulado.all.mensal
-  A7  2.067 em remoção, capina, varrição .. CHAMADOS_CUBE.periods.outubro.byTipo.LIMPEZA.children
-  A8  Único grande serviço nos dois canais  periods.outubro.all.children; grande = pelo menos 5% dos chamados de out/2025
-  A9  AP5 e AP3; CG e Bangu 68% da alta e 40% da base da AP5  periods.outubro.all.ap + bairros
-  A10 Bairros e gerências ................. TIMELINE1746_CASCADE.full['Outubro/2026'], conciliado com periods.outubro.all.bairros
--->
+<!-- Memória de cálculo da extração de 11/11/2026: ../auditoria/1746-2026-11-11/AUDITORIA_INDICADORES_PADRONIZADOS_1746.md -->
 <style>
 :root{--be-ink:#f7f9ff;--be-soft:#c8d8eb;--be-mute:#8ba4bf;--be-rule:#294866;--be-rule2:rgba(41,72,102,.55);--be-up:#e8ae6d;--be-down:#84d8ad;--be-alert:#efa4a1;--be-accent:#8ec5f3}
 .be{width:100%;min-width:0;padding:22px 2px 6px;color:var(--be-ink)}
@@ -200,8 +186,8 @@
       <div><dt>Bairros destacados</dt><dd>Os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.</dd></div>
       <div><dt>Leitura</dt><dd>As variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.</dd></div>
       <div><dt>Classificação</dt><dd>A classificação segue o Tipo da fonte. Limpeza inclui Limpeza (DLU). O subtipo Instalação ou retirada de papeleira preserva o Tipo de origem.</dd></div>
-      <div><dt>Fonte</dt><dd>Cubos de chamados e ouvidorias de outubro de 2026, conciliados com as exportações agregadas da COMLURB. Não houve conferência de registros individuais do sistema 1746.</dd></div>
-      <div><dt>Situação</dt><dd>Auditoria interna em 04/11/2026 e auditoria das interpretações em 05/11/2026; sem homologação independente.</dd></div>
+      <div><dt>Fonte</dt><dd>Bases agregadas de Chamados e Ouvidorias do 1746, extraídas em 11/11/2026. Os meses anteriores exibidos nesta prévia foram recalculados com a mesma extração.</dd></div>
+      <div><dt>Situação</dt><dd>Prévia para homologação. Os demais módulos ainda exibem a base anterior.</dd></div>
     </dl>
   </main>
   <div id="hubFooter"></div>

@@ -225,7 +225,12 @@ body{background:#06111f;color:#f7f9ff;font-family:"Segoe UI",Arial,sans-serif}
         <a href="../1746-historico/"><strong>Histórico</strong><span>Evolução e comparação entre períodos.</span></a>
       </nav>
     </section>
-    <div class="timeline-methodology"><strong>Fonte:</strong> CAS – Controle de Atendimento a Solicitações. Análise restrita às ouvidorias operacionais, com exclusão dos registros tratados internamente pela PCO.</div>
+    <details class="timeline-methodology">
+      <summary><strong>Agosto de 2026 · o que explica a alta de Ouvidorias</strong></summary>
+      <p>Foram 1.247 Ouvidorias operacionais a mais que em agosto de 2025. O aumento do volume de Chamados respondeu por 721 e a mudança na composição dos serviços, por 461. A variação das taxas por serviço reduziu o total em 27. Serviços com Ouvidorias e sem Chamados no ano correspondente contribuíram com mais 92.</p>
+      <p>O cálculo aplica primeiro a variação do total de Chamados à distribuição de serviços de 2025. Em seguida, mede o efeito da mudança dessa distribuição com as taxas de 2025 e o efeito da mudança das taxas com os volumes de 2026. Para serviços que passaram a ter Chamados em 2026, a taxa de 2026 serve de referência. Ouvidorias de serviços sem Chamados no ano correspondente entram na parcela sem denominador. Os valores são arredondados para exibição.</p>
+    </details>
+    <div class="timeline-methodology"><strong>Fonte:</strong> Bases do 1746 extraídas em 11/11/2026. Janeiro a outubro foram recalculados. Análise restrita às ouvidorias operacionais, com exclusão dos registros tratados internamente pela PCO.</div>
     </div>
   </main>
   <div id="hubFooter"></div>
@@ -254,8 +259,8 @@ const timelineHeader=document.querySelector("#hubHeader .header");
 if(timelineHeader){const logo=document.createElement("div");logo.className="logoWrap";logo.innerHTML='<img class="logoImg" src="../assets/logos/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio e COMLURB">';timelineHeader.prepend(logo);}
 HUB.footer.render("hubFooter");
 </script>
-<script src="./data.js"></script>
-<script src="./cascade_data.js"></script>
+<script src="./data.js?v=20261111"></script>
+<script src="./cascade_data.js?v=20261111"></script>
 <script>
 const D=window.TIMELINE1746_DATA;
 const C=window.TIMELINE1746_CASCADE;
@@ -326,7 +331,7 @@ function rowsForStage(){
 }
 function diffClass(n){return n>0?'pos':n<0?'neg':'muted'}
 function choiceHTML(x,next){
- const cd=(x.c2026||0)-(x.c2025||0),od=(x.o2026||0)-(x.o2025||0),r=((S.period==='Outubro/2026'||S.period==='Jan–Out/2026')&&S.stage==='subtype')?null:rate(x.o2026,x.c2026);
+ const cd=(x.c2026||0)-(x.c2025||0),od=(x.o2026||0)-(x.o2025||0),r=(S.stage!=='service')?null:rate(x.o2026,x.c2026);
  const safe=String(x.nome).replaceAll("'","\\'");
  return `<div class="choice" onclick="${next}('${safe}')">
    <div><div class="name">${x.nome}</div><div class="sub">${S.period} comparado com ${compLabel()}</div></div>
@@ -339,7 +344,7 @@ function choiceHTML(x,next){
 function renderCascade(){
  const s=currentSummary();
  if(s){
-   const r=(S.period==='Outubro/2026'||S.period==='Jan–Out/2026')&&S.sub?null:rate(s.o2026,s.c2026), cd=s.c2026-s.c2025, od=s.o2026-s.o2025;
+   const r=S.sub?null:rate(s.o2026,s.c2026), cd=s.c2026-s.c2025, od=s.o2026-s.o2025;
    document.getElementById('guide').innerHTML=`<b>Leitura deste recorte:</b> ${S.svc}${S.sub?' › '+S.sub:''}. Em ${S.period}, foram <b>${pt(s.c2026)} chamados</b> e <b>${pt(s.o2026)} ouvidorias</b>. ${r!=null?`Isso equivale a <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:''}`;
    document.getElementById('drawerMetrics').innerHTML=`
     <div class="dm"><b>${pt(s.c2026)}</b><span>chamados em ${S.period}<br>${cd>=0?'+':''}${pt(cd)} vs ${compLabel()}</span></div>
@@ -371,9 +376,9 @@ function renderCascade(){
 }
 function showBairro(n){
  const x=bairroRows().find(r=>r.nome===n&&r.ap===S.ap&&r.gerencia===S.ger);if(!x)return;
- const cd=x.c2026-x.c2025,od=x.o2026-x.o2025,r=(S.period==='Outubro/2026'||S.period==='Jan–Out/2026')?null:rate(x.o2026,x.c2026);
+ const cd=x.c2026-x.c2025,od=x.o2026-x.o2025,r=null;
  document.getElementById('stepTitle').textContent='5. Bairro selecionado';
- document.getElementById('cascadeContent').innerHTML=`<div class="finalCard"><h3>${x.nome}</h3><p>Em ${S.period}, este recorte registrou <b>${pt(x.c2026)} chamados</b> (${cd>=0?'+':''}${pt(cd)} em relação a ${compLabel()}) e <b>${pt(x.o2026)} ouvidorias</b> (${od>=0?'+':''}${pt(od)}). ${r!=null?`A taxa foi de <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:'Não há chamados comparáveis para calcular a taxa.'}</p></div>`;
+ document.getElementById('cascadeContent').innerHTML=`<div class="finalCard"><h3>${x.nome}</h3><p>Em ${S.period}, este recorte registrou <b>${pt(x.c2026)} chamados</b> (${cd>=0?'+':''}${pt(cd)} em relação a ${compLabel()}) e <b>${pt(x.o2026)} ouvidorias</b> (${od>=0?'+':''}${pt(od)}). ${r!=null?`A taxa foi de <b>${Math.round(r)} ouvidorias para cada 1.000 chamados</b>.`:'O pareamento entre canais neste subtipo requer validação.'}</p></div>`;
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 </script>

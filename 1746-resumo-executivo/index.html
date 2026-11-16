@@ -5,21 +5,6 @@
 <meta name="theme-color" content="#06111f">
 <title>Boletim Executivo 1746 | Outubro de 2026 | HUB COMLURB</title>
 <link rel="stylesheet" href="../assets/css/hub-premium.css">
-<!--
-  RASTREABILIDADE (resumo). Documento completo: 1746-resumo-executivo/RASTREABILIDADE.md
-  Verificação automática: node tests/1746-outubro/boletim-rastreabilidade.cjs
-  Auditoria independente: auditoria/1746-out2026/AUDITORIA_BOLETIM_1746_OUT2026.md
-  A1  Chamados 21.652 / 24.116 ............ CHAMADOS_CUBE.periods.outubro.all
-  A2  Ouvidorias 2.697 / 2.213 ............ OUVIDORIA_CUBE.periods.outubro.all
-  A3  Acumulado jan a out +13,5% / +15,5% . periods.acumulado.all (dois cubos)
-  A4  Decomposição por serviço ............ periods.outubro.all.children (dois cubos)
-  A5  Remoção Gratuita 799/474; set e out menores de 2026  OUVIDORIA_CUBE.periods.acumulado.byTipo['REMOÇÃO GRATUITA'].mensal
-  A6  Ouvidorias: menor mês de jan a out/26  OUVIDORIA_CUBE.periods.acumulado.all.mensal
-  A7  2.060 em remoção, capina, varrição .. CHAMADOS_CUBE.periods.outubro.byTipo.LIMPEZA.children
-  A8  Único grande serviço nos dois canais  periods.outubro.all.children; grande = pelo menos 5% dos chamados de out/2025
-  A9  AP5 e AP3; CG e Bangu 68% da alta e 40% da base da AP5  periods.outubro.all.ap + bairros
-  A10 Bairros e gerências ................. TIMELINE1746_CASCADE.full['Outubro/2026'], conciliado com periods.outubro.all.bairros
--->
 <style>
 :root{--be-ink:#f7f9ff;--be-soft:#c8d8eb;--be-mute:#8ba4bf;--be-rule:#294866;--be-rule2:rgba(41,72,102,.55);--be-up:#e8ae6d;--be-down:#84d8ad;--be-alert:#efa4a1;--be-accent:#8ec5f3}
 .be{width:100%;min-width:0;padding:22px 2px 6px;color:var(--be-ink)}
@@ -95,6 +80,7 @@
 <div class="app">
   <div id="hubHeader"></div>
   <main class="be">
+    <p class="be-mute">Extração de 11/11/2026</p>
 
     <section class="be-section" aria-labelledby="be-resultado">
       <h2 class="be-label" id="be-resultado">Resultado</h2>
@@ -103,21 +89,21 @@
       <div class="be-figures">
         <div class="be-fig">
           <div class="be-fig-name">Chamados em outubro</div>
-          <div class="be-fig-value">24.116</div>
-          <div class="be-fig-change up">+11,4% · 2.464 a mais</div>
+          <div class="be-fig-value">24.120</div>
+          <div class="be-fig-change up">+11,4% · 2.468 a mais</div>
           <div class="be-fig-base">Outubro de 2025: 21.652</div>
         </div>
         <div class="be-fig">
           <div class="be-fig-name">Ouvidorias operacionais em outubro</div>
-          <div class="be-fig-value">2.213</div>
-          <div class="be-fig-change down">−17,9% · 484 a menos</div>
+          <div class="be-fig-value">2.267</div>
+          <div class="be-fig-change down">−15,9% · 430 a menos</div>
           <div class="be-fig-base">Outubro de 2025: 2.697</div>
         </div>
         <div class="be-fig">
           <div class="be-fig-name">No ano, janeiro a outubro</div>
           <div class="be-year">
             <div><span>Chamados</span><b class="up">+13,5%</b></div>
-            <div><span>Ouvidorias operacionais</span><b class="alert">+15,5%</b></div>
+            <div><span>Ouvidorias operacionais</span><b class="alert">+15,6%</b></div>
           </div>
           <div class="be-fig-base">Comparação com janeiro a outubro de 2025</div>
         </div>
@@ -129,25 +115,25 @@
       <div class="be-explain">
         <div class="be-col">
           <h3>Chamados</h3>
-          <p class="be-reading">Limpeza teve 2.581 chamados a mais, acima do aumento total da cidade; os demais serviços somaram 117 a menos. Remoção de resíduos, capina e varrição respondem por 2.060 desses registros.</p>
+          <p class="be-reading">Limpeza teve 2.587 chamados a mais, acima do aumento total da cidade; os demais serviços somaram 119 a menos. Remoção de resíduos, capina e varrição respondem por 2.067 desses registros.</p>
           <ul class="be-ledger" aria-label="Variação de chamados por serviço">
-            <li><span>Limpeza</span><b class="up">+2.581</b></li>
-            <li><span>Coleta Domiciliar</span><b class="up">+608</b></li>
-            <li><span>Remoção Gratuita</span><b>−484</b></li>
-            <li><span>Manejo Arbóreo</span><b>−418</b></li>
-            <li><span>Demais serviços</span><b>+177</b></li>
-            <li class="total"><span>Total</span><b>+2.464</b></li>
+            <li><span>Limpeza</span><b class="up">+2.587</b></li>
+            <li><span>Coleta Domiciliar</span><b class="up">+607</b></li>
+            <li><span>Remoção Gratuita</span><b>−494</b></li>
+            <li><span>Manejo Arbóreo</span><b>−419</b></li>
+            <li><span>Demais serviços</span><b>+187</b></li>
+            <li class="total"><span>Total</span><b>+2.468</b></li>
           </ul>
         </div>
         <div class="be-col">
           <h3>Ouvidorias operacionais</h3>
-          <p class="be-reading">Remoção Gratuita teve 474 ouvidorias, contra 799 em outubro de 2025. Setembro e outubro foram os dois menores meses do serviço em 2026.</p>
+          <p class="be-reading">Remoção Gratuita teve 483 ouvidorias, contra 799 em outubro de 2025. Setembro e outubro foram os dois menores meses do serviço em 2026.</p>
           <ul class="be-ledger" aria-label="Variação de ouvidorias operacionais por serviço">
-            <li><span>Remoção Gratuita</span><b class="down">−325</b></li>
-            <li><span>Manejo Arbóreo</span><b class="down">−172</b></li>
-            <li><span>Limpeza</span><b class="alert">+158</b></li>
-            <li><span>Demais serviços</span><b>−145</b></li>
-            <li class="total"><span>Total</span><b>−484</b></li>
+            <li><span>Remoção Gratuita</span><b class="down">−316</b></li>
+            <li><span>Manejo Arbóreo</span><b class="down">−170</b></li>
+            <li><span>Limpeza</span><b class="alert">+178</b></li>
+            <li><span>Demais serviços</span><b>−122</b></li>
+            <li class="total"><span>Total</span><b>−430</b></li>
           </ul>
         </div>
       </div>
@@ -156,30 +142,31 @@
 
     <section class="be-section" aria-labelledby="be-onde">
       <h2 class="be-label" id="be-onde">Onde ocorreu</h2>
-      <p class="be-where-lead">A AP5 e a AP3 reúnem 2.310 dos 2.464 chamados adicionais. Na AP5, Campo Grande e Bangu somam 68% do aumento, bem acima dos 40% que representam no volume da área.</p>
+      <p class="be-where-lead"><strong>Bangu e Campo Grande registraram os maiores aumentos no volume de Chamados</strong> em outubro de 2026, frente a outubro de 2025. Foram <strong>409 Chamados a mais em Bangu</strong> e <strong>376 a mais em Campo Grande</strong>.</p>
+      <p class="be-where-lead">O Comparativo Territorial apresenta também a <strong>taxa de Chamados por 10 mil moradores</strong>, calculada com a população de cada bairro no <strong>Censo 2022 do IBGE</strong>. O volume indica a demanda recebida pela operação. A taxa permite comparar a demanda registrada em relação à população de cada bairro.</p>
 
       <div class="be-places">
         <article class="be-place">
           <div class="be-place-head"><div class="be-place-name">Campo Grande</div><div class="be-place-ap">AP5</div></div>
-          <div class="be-m"><small>CHAMADOS</small><span>1.415 → 1.796</span><em class="up">+26,9%</em></div>
-          <div class="be-m"><small>OUVIDORIAS</small><span>152 → 207</span><em class="alert">+36,2%</em></div>
+          <div class="be-m"><small>CHAMADOS</small><span>1.415 → 1.791</span><em class="up">+26,6%</em></div>
+          <div class="be-m"><small>OUVIDORIAS</small><span>152 → 214</span><em class="alert">+40,8%</em></div>
           <div class="be-note">
-            <p>Limpeza respondeu por <strong>271 dos 381 chamados</strong> e <strong>48 das 55 ouvidorias</strong> adicionais.</p>
-            <p>A gerência OG18G registrou 599 chamados e 99 ouvidorias no bairro, já contidos nesses totais.</p>
+            <p>Limpeza respondeu por <strong>268 dos 376 chamados</strong> e <strong>53 das 62 ouvidorias</strong> adicionais.</p>
+            <p>A gerência OG18G registrou 597 chamados e 102 ouvidorias no bairro, já contidos nesses totais.</p>
           </div>
         </article>
         <article class="be-place">
           <div class="be-place-head"><div class="be-place-name">Bangu</div><div class="be-place-ap">AP5</div></div>
           <div class="be-m"><small>CHAMADOS</small><span>577 → 986</span><em class="up">+70,9%</em></div>
-          <div class="be-m"><small>OUVIDORIAS</small><span>46 → 83</span><em class="alert">+80,4%</em></div>
+          <div class="be-m"><small>OUVIDORIAS</small><span>46 → 85</span><em class="alert">+84,8%</em></div>
           <div class="be-note">
-            <p>Limpeza respondeu por <strong>405 dos 409 chamados</strong> e <strong>20 das 37 ouvidorias</strong> adicionais.</p>
-            <p>A gerência OG17B registrou 637 chamados e 52 ouvidorias no bairro, já contidos nesses totais.</p>
+            <p>Limpeza respondeu por <strong>405 dos 409 chamados</strong> e <strong>22 das 39 ouvidorias</strong> adicionais.</p>
+            <p>A gerência OG17B registrou 637 chamados e 54 ouvidorias no bairro, já contidos nesses totais.</p>
           </div>
         </article>
       </div>
 
-      <p class="be-closing">Os dois bairros somaram <strong>92 ouvidorias a mais</strong> num mês em que a cidade registrou 484 a menos.</p>
+      <p class="be-closing">Os dois bairros somaram <strong>101 ouvidorias a mais</strong> num mês em que a cidade registrou 430 a menos.</p>
     </section>
 
     <nav class="be-more" aria-label="Módulos para aprofundamento">
@@ -197,9 +184,9 @@
       <div><dt>Serviços citados</dt><dd>Os cinco com pelo menos 5% dos chamados de outubro de 2025.</dd></div>
       <div><dt>Bairros destacados</dt><dd>Os dois com maior aumento absoluto de chamados, que também tiveram o maior aumento de ouvidorias. Os registros das gerências estão contidos nos totais dos bairros e não são somados a eles.</dd></div>
       <div><dt>Leitura</dt><dd>As variações descrevem volume de registros e não medem, isoladamente, a qualidade dos serviços.</dd></div>
-      <div><dt>Classificação</dt><dd>Implantação ou retirada de papeleira é serviço distinto da limpeza de papeleira, contêiner e caçamba. Em chamados, teve 166 registros em outubro de 2025, em Demais serviços, e 3 de maio a outubro de 2026. Em ouvidorias, a fonte registrou 72 desses casos como Limpeza em outubro de 2026; sem eles, a variação de Limpeza passa de +158 para +86 na cidade e de 48 para 47 em Campo Grande. Em Manejo Arbóreo, o subtipo de avaliação de poda mudou de nome em 2026, o que afeta a comparação do serviço.</dd></div>
-      <div><dt>Fonte</dt><dd>Cubos de chamados e ouvidorias de outubro de 2026, conciliados com as exportações agregadas da COMLURB. Não houve conferência de registros individuais do sistema 1746.</dd></div>
-      <div><dt>Situação</dt><dd>Auditoria interna em 04/11/2026 e auditoria das interpretações em 05/11/2026; sem homologação independente.</dd></div>
+      <div><dt>Classificação</dt><dd>A classificação segue o Tipo da fonte. Limpeza inclui Limpeza (DLU). O subtipo Instalação ou retirada de papeleira preserva o Tipo de origem.</dd></div>
+      <div><dt>Fonte</dt><dd>Bases agregadas de Chamados e Ouvidorias do 1746, extraídas em 11/11/2026. Os meses anteriores exibidos foram recalculados com a mesma extração.</dd></div>
+
     </dl>
   </main>
   <div id="hubFooter"></div>

@@ -1838,7 +1838,7 @@ HUB.header = {
 
         <a class="hubHomeButton" href="${HUB.format.esc(homeHref)}" aria-label="Voltar para a Home">Home</a>
         ${statusHTML}
-      </header><div role="note" style="max-width:1400px;margin:12px auto;padding:10px 16px;background:#14253b;border:1px solid #58718b;border-radius:12px;color:#dceafa;font:600 12px Segoe UI,Arial,sans-serif">PRÉVIA DE HOMOLOGAÇÃO · Outubro/2026 validado tecnicamente com fontes COMLURB; sem auditoria independente. Série anterior preservada até setembro. Não publicado.</div>
+      </header><div role="note" style="max-width:1400px;margin:12px auto;padding:10px 16px;background:#14253b;border:1px solid #58718b;border-radius:12px;color:#dceafa;font:600 12px Segoe UI,Arial,sans-serif">Extração de 11/11/2026 · Série de janeiro a outubro de 2025 e 2026 recalculada.</div>
 
       ${navHTML}
     `;
@@ -2077,7 +2077,7 @@ HUB.loading = {
 
 </script>
 <script src="./chamados_data.js?v=20261104"></script>
-<script src="./chamados_cube.js?v=20261104"></script>
+<script src="./chamados_cube.js?v=20261111"></script>
 <script>
 const GEO = window.CHAMADOS_DATA.geojson;
 const CUBE = window.CHAMADOS_CUBE;
@@ -2151,7 +2151,7 @@ function carregarCorte(){
   fetch('data-cutoff.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(d=>{
     const c=comp(d.competencia_mais_recente),k=dia(d.data_corte);
     if(!c||!k)return;
-    const partes=['Competência '+c,'corte em '+k];
+    const partes=['Competência '+c,'extração de '+k];
     const h=comp(d.historico_congelado_ate);if(h)partes.push('histórico congelado até '+h);
     el.textContent=partes.join(' · ');
     el.hidden=false;

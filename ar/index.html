@@ -209,6 +209,17 @@
 .arAcao strong{color:#ffc48c}
 .arAcao span{color:#d1dfee}
 @media(max-width:680px){.arPrioridade,.arAcao{grid-template-columns:1fr}.arAcao{gap:2px;margin-bottom:9px}}
+.arTabela{border:1px solid var(--linha);border-radius:12px;background:var(--painel);overflow:hidden}
+.arLinhaMeta+.arLinhaMeta{border-top:1px solid var(--linha)}
+.arLinhaMeta>summary{display:grid;grid-template-columns:minmax(155px,1fr) minmax(0,4fr);gap:16px;padding:12px 16px;cursor:pointer}
+.arLinhaMeta>summary>strong::after{content:" +";color:#8dc8fb}
+.arLinhaMeta[open]>summary>strong::after{content:" −"}
+.arRequisito{display:grid;grid-template-columns: minmax(0,2fr) minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,1.2fr);gap:8px;color:#b3c6dd}
+.arRequisito+.arRequisito{margin-top:6px}
+.arRequisito strong{color:#edf4fd}
+.arRequisitoStatus{color:#c2daf4}
+.arLinhaDetalhe{padding:0 16px 14px;color:#b3c6dd}
+@media(max-width:850px){.arLinhaMeta>summary{grid-template-columns:1fr;gap:8px}.arRequisito{grid-template-columns:1fr 1fr}.arRequisito>span:first-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -940,92 +951,48 @@ function renderBonus(){
    RENDER: INDICADORES
    ═══════════════════════════════════════════════════════════ */
 function renderIndicadores(){
-  const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
-  if(!FILTRADOS.length){
-    $("indicadoresContainer").innerHTML=`<div class="emptyBlock">Nenhum indicador encontrado nos filtros selecionados.</div>`;
+  const visiveis=new Set(FILTRADOS.map(d=>d.codigo));
+  const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))];
+  const nomes={"par-02":"Recuperação de Resíduos + Ranking","par-03":"Poda",
+    "par-04":"Remoção Gratuita","par-c06":"Índice Padrão de Limpeza"};
+  if(!grupos.length){
+    $("indicadoresContainer").innerHTML='<div class="emptyBlock">Nenhuma meta encontrada nos filtros selecionados.</div>';
     return;
   }
-  $("indicadoresContainer").innerHTML=grupos.map(grupo=>{
-    const rows=FILTRADOS.filter(d=>d.grupo===grupo);
-    const dentro=rows.filter(d=>d.status==="Dentro da Meta").length;
-    const atencao=rows.filter(d=>d.status==="Atenção").length;
-    const critico=rows.filter(d=>d.status==="Crítico").length;
-    const sem=rows.filter(d=>d.status==="Sem dado").length;
-
-    const renderizados=new Set();
-    const blocos=[];
-    rows.forEach(d=>{
-      if(renderizados.has(d.codigo))return;
-      if(d.casadoId){
-        const par=CASADOS.find(c=>c.id===d.casadoId);
-        if(par){
-          const membrosNoFiltro=par.membros.filter(m=>rows.find(r=>r.codigo===m));
-          if(membrosNoFiltro.length>1){
-            membrosNoFiltro.forEach(m=>renderizados.add(m));
-            const membrosData=membrosNoFiltro.map(m=>rows.find(r=>r.codigo===m));
-            blocos.push({tipo:"casado",par,membros:membrosData});
-            return;
-          }
-        }
-      }
-      renderizados.add(d.codigo);
-      blocos.push({tipo:"individual",data:d});
-    });
-
-    const blocosHtml=blocos.map(bloco=>{
-      if(bloco.tipo==="casado"){
-        const par=bloco.par;
-        const todosOk=bloco.membros.every(m=>m.status==="Dentro da Meta");
-        return `
-          <div class="casadoWrap">
-            <div class="casadoLabel">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Requisitos conjuntos · ${todosOk?"✓ Situação favorável":"⚠ Há requisito pendente"}
-            </div>
-            ${bloco.membros.map(d=>renderRow(d,true)).join("")}
-            <div class="casadoBonusNote">⊞ ${esc(par.bonusNote)}</div>
-          </div>`;
-      }
-      return renderRow(bloco.data,false);
+  $("indicadoresContainer").innerHTML=grupos
+    .sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)).map(grupo=>{
+      const metas=new Map();
+      DATA.filter(d=>d.grupo===grupo).forEach(d=>{
+        const chave=d.casadoId||d.codigo;
+        if(!metas.has(chave))metas.set(chave,[]);
+        metas.get(chave).push(d);
+      });
+      const linhas=[...metas.entries()].filter(([,itens])=>itens.some(d=>visiveis.has(d.codigo)));
+      return `<section class="arBlock">
+        <div class="arBlockHead"><h2 class="arBlockTitle">${esc(grupo)}</h2></div>
+        <div class="arTabela">${linhas.map(([chave,itens])=>{
+          const par=CASADOS.find(c=>c.id===chave);
+          const e06=itens.find(d=>d.codigo==="E06");
+          const requisitos=itens.map(d=>{
+            const divergente=d.codigo==="E01"&&d.meta!==5325;
+            const pendente=d.statusCenario==="Sem dado";
+            const resultado=pendente&&!divergente?"Aguardando apuração":fmtValor(d.atual,d.unidade);
+            const referencia=divergente?"5.325 (publicada)":d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
+            const situacao=divergente?"Referência em conferência":pendente?"Apuração pendente":d.statusDisplay;
+            return `<div class="arRequisito"><span>${esc(d.indicador)}</span>
+              <strong>${esc(resultado)}</strong><span>Meta ${esc(referencia)}</span>
+              <span class="arRequisitoStatus">${esc(situacao)}</span></div>`;
+          }).join("");
+          return `<details class="arLinhaMeta"><summary>
+            <strong>${esc(nomes[chave]||itens[0].indicador)}</strong><div>${requisitos}</div>
+          </summary><div class="arLinhaDetalhe">
+            ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||d.fonte)}</p>`).join("")}
+            ${itens.some(d=>d.codigo==="E01"&&d.meta!==5325)?`<p>Referência registrada no SARC: ${esc(fmtValor(itens[0].meta,itens[0].unidade))}.</p>`:""}
+            ${par?`<p>${esc(par.bonusNote)}</p>`:""}
+            ${e06?`<button class="btnLimpar" type="button" data-indicator-code="E06">Abrir histórico por subprefeitura</button>${renderE06Drill(e06)}`:""}
+          </div></details>`;
+        }).join("")}</div></section>`;
     }).join("");
-
-    return `
-      <section class="arBlock">
-        <div class="arBlockHead">
-          <div>
-            <h2 class="arBlockTitle">${esc(grupo)}</h2>
-            <div class="arBlockMeta">${rows.length} indicador(es) · ${dentro} dentro da meta · ${atencao} atenção · ${critico} crítico · ${sem} sem dado</div>
-          </div>
-        </div>
-        <div class="indicatorList">${blocosHtml}</div>
-      </section>`;
-  }).join("");
-}
-
-function renderRow(d,dentroCasado){
-  const desc=d.descricao||d.pendencia||d.fonte||"Indicador pactuado no Acordo de Resultados 2026.";
-  const atingTxt=fmtPct(d.atingimento);
-  const atingHtml=d.atingimentoProporcional
-    ?`${atingTxt} <span class="propBadge" title="Calculado sobre meta proporcional ao mês corrente (${new Date().getMonth()+1}/12)">prop.</span>`
-    :atingTxt;
-  const metaLabel=d.metaProporcional?"Meta anual → mês":"Meta";
-  const metaHtml=d.metaProporcional
-    ?`${fmtValor(d.meta,d.unidade)} <span class="propBadge" title="Meta proporcional ao mês: ${fmtValor(d.metaProporcional,d.unidade)}">→ ${fmtValor(d.metaProporcional,d.unidade)}</span>`
-    :fmtValor(d.meta,d.unidade);
-  const isE06=d.codigo==="E06";
-  const atualDisplay=isE06&&d.e06Total?`${(d.e06Conformes/d.e06Total*100).toFixed(1).replace(".",",")}%`:fmtValor(d.atual,d.unidade);
-  const nomeExtra=isE06?`<span class="drillCue"><span class="arr">›</span> Abrir ${d.e06Total||12} Subprefeituras · histórico mensal</span>`:"";
-  const row=`
-    <article data-indicator-code="${esc(d.codigo)}" class="indicatorRow ${esc(d.statusClass)}${isE06?" drillable":""}"${dentroCasado?" style='border-radius:14px;margin-bottom:8px'":""}>
-      <div class="codeBox">${esc(d.codigo)}</div>
-      <div class="indName"><b>${esc(d.indicador)}</b><span>${esc(desc)}</span>${nomeExtra}</div>
-      <div class="metricCell"><small>Atual</small><b>${esc(atualDisplay)}</b></div>
-      <div class="metricCell"><small>${esc(metaLabel)}</small><b>${metaHtml}</b></div>
-      <div class="metricCell"><small>Atingimento</small><b>${atingHtml}</b></div>
-      <div class="metricCell"><small>Status</small><span class="tag ${esc(d.statusClass)}">${esc(d.statusDisplay)}</span></div>
-      <div class="metricCell"><small>Tendência</small><span class="tag ${esc(d.tendenciaClass)}">${esc(d.tendencia)}</span></div>
-    </article>`;
-  return row+(isE06?renderE06Drill(d):"");
 }
 
 /* ═══════════════════════════════════════════════════════════

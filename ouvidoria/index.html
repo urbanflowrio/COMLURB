@@ -2034,7 +2034,7 @@ HUB.loading = {
 
 </script>
 <script src="./ouvidoria_data.js?v=20261104"></script>
-<script src="./ouvidoria_cube.js?v=20261104"></script>
+<script src="./ouvidoria_cube.js?v=20261111"></script>
 <script>
 const GEO = window.OUVIDORIA_DATA.geojson;
 const CUBE = window.OUVIDORIA_CUBE;
@@ -2108,7 +2108,7 @@ function carregarCorte(){
   fetch('data-cutoff.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(d=>{
     const c=comp(d.competencia_mais_recente),k=dia(d.data_corte);
     if(!c||!k)return;
-    const partes=['Competência '+c,'corte em '+k];
+    const partes=['Competência '+c,'extração de '+k];
     const h=comp(d.historico_congelado_ate);if(h)partes.push('histórico congelado até '+h);
     el.textContent=partes.join(' · ');
     el.hidden=false;

@@ -1,96 +1,9 @@
 {
   "modulo": "ouvidoria",
   "competencia_mais_recente": "2026-10",
-  "data_corte": null,
-  "historico_congelado_ate": "2026-09",
+  "data_corte": "2026-11-11",
   "fonte_analitica": "ouvidoria_cube.js",
   "fonte_geografica": "ouvidoria_data.js",
-  "situacao_tecnica": "validado_tecnicamente_com_base_oficial_comlurb",
-  "qualidade": {
-    "conciliacao_interna": "Conciliação dos totais operacionais preservada. O acumulado mantém registros de agosto sem classificação de AP, representados como SEM AP (AGO).",
-    "regra_pco": "PCO mantido na base institucional e excluído das análises operacionais",
-    "pco_setembro_2026": 174,
-    "area_planejamento_setembro_2025": {
-      "total": 2006,
-      "classificados": 2006,
-      "sem_classificacao": 0
-    },
-    "area_planejamento_setembro_2026": {
-      "total": 2476,
-      "classificados": 2476,
-      "sem_classificacao": 0,
-      "cobertura_percentual": 100
-    },
-    "tratamento_interface": "Setembro possui cobertura integral de AP. No acumulado, os registros históricos de agosto sem AP são exibidos como SEM AP (AGO), sem reclassificação retroativa.",
-    "area_planejamento_acumulado": {
-      "2025": {
-        "total": 25495,
-        "classificados": 25421,
-        "sem_classificacao": 74,
-        "cobertura_percentual": 99.7097
-      },
-      "2026": {
-        "total": 30349,
-        "classificados": 30233,
-        "sem_classificacao": 116,
-        "cobertura_percentual": 99.6178
-      }
-    }
-  },
-  "revisoes_nao_incorporadas": [
-    {
-      "competencia": "2026-06",
-      "valor_fechado": 2764,
-      "valor_fonte_atual": 2765,
-      "diferenca": 1
-    },
-    {
-      "competencia": "2026-07",
-      "valor_fechado": 3236,
-      "valor_fonte_atual": 3222,
-      "diferenca": -14
-    },
-    {
-      "competencia": "2026-08",
-      "valor_fechado": 3254,
-      "valor_fonte_atual": 3252,
-      "diferenca": -2
-    },
-    {
-      "competencia": "2026-09",
-      "observacao": "Divergência na fonte atual de setembro/2026 de +2 ouvidorias gerais; fechamento 2.650 mantido."
-    }
-  ],
-  "observacao_institucional": "Agosto institucional: 3.452 fechado x 3.453 na fonte atual (+1), sem incorporação retroativa.",
-  "regra": "Janeiro a setembro permanece congelado. Outubro foi incorporado após auditoria interna; a homologação independente não foi realizada.",
-  "auditoria_interna": {
-    "status": "concluida",
-    "data": "2026-11-04",
-    "relatorio": "staging/1746-outubro-2026/AUDITORIA_HUB_COMPLETO_2026-11-04.md",
-    "escopo": "Conciliações numéricas e conferência estática documentadas no relatório. Não equivale a homologação independente."
-  },
-  "publicacao": {
-    "status": "publicado",
-    "branch": "main",
-    "preparacao": {
-      "branch": "preparacao-1746-outubro-2026",
-      "commit": "8182241",
-      "data": "2026-11-04",
-      "descricao": "Incorporação técnica de outubro/2026 nos cinco módulos, fora da main."
-    },
-    "publicacao_dados": {
-      "commit": "36892a8",
-      "data": "2026-11-04",
-      "descricao": "Merge na main do fechamento de outubro/2026 e do Boletim Executivo."
-    },
-    "refinamento_visual": {
-      "commit": "be5a809",
-      "data": "2026-11-04",
-      "descricao": "Integração da Linha do Tempo e do Boletim ao padrão visual do HUB, sem alteração de dados."
-    }
-  },
-  "homologacao_independente": false,
-  "homologacao_independente_observacao": "Não realizada. Auditoria interna, publicação e homologação independente são etapas distintas.",
-  "fonte_oficial": "COMLURB — extrações finais de outubro/2026",
-  "observacao_corte": "Data precisa da extração final não informada. O campo data_corte permanece nulo até haver documentação da extração; a validação técnica de 04/11/2026 não substitui a data de corte da fonte."
+  "situacao_tecnica": "previa_para_homologacao",
+  "regra": "Janeiro a outubro recalculados com a extração de 11/11/2026. Novembro parcial fora do fechamento."
 }

@@ -209,17 +209,21 @@
 .arAcao strong{color:#ffc48c}
 .arAcao span{color:#d1dfee}
 @media(max-width:680px){.arPrioridade,.arAcao{grid-template-columns:1fr}.arAcao{gap:2px;margin-bottom:9px}}
-.arTabela{border:1px solid var(--linha);border-radius:12px;background:var(--painel);overflow:hidden}
-.arLinhaMeta+.arLinhaMeta{border-top:1px solid var(--linha)}
-.arLinhaMeta>summary{display:grid;grid-template-columns:minmax(155px,1fr) minmax(0,4fr);gap:16px;padding:12px 16px;cursor:pointer}
-.arLinhaMeta>summary>strong::after{content:" +";color:#8dc8fb}
-.arLinhaMeta[open]>summary>strong::after{content:" −"}
-.arRequisito{display:grid;grid-template-columns: minmax(0,2fr) minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,1.2fr);gap:8px;color:#b3c6dd}
-.arRequisito+.arRequisito{margin-top:6px}
-.arRequisito strong{color:#edf4fd}
-.arRequisitoStatus{color:#c2daf4}
-.arLinhaDetalhe{padding:0 16px 14px;color:#b3c6dd}
-@media(max-width:850px){.arLinhaMeta>summary{grid-template-columns:1fr;gap:8px}.arRequisito{grid-template-columns:1fr 1fr}.arRequisito>span:first-child{grid-column:1/-1}}
+.arTabela{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:14px;align-items:start}
+.arLinhaMeta{background:var(--painel);border:1px solid var(--linha);border-radius:14px}
+.arLinhaMeta>summary{display:flex;flex-direction:column;gap:12px;padding:16px 18px;cursor:pointer;list-style:none}
+.arLinhaMeta>summary::-webkit-details-marker{display:none}
+.arLinhaMeta>summary>strong{font-size:15px;color:#edf4fd}
+.arLinhaMeta>summary:hover .arVerDetalhes{color:#d7edff}
+.arRequisito+.arRequisito{margin-top:10px;padding-top:10px;border-top:1px solid var(--linha)}
+.arRequisitoNome{display:block;color:#b3c6dd;font-size:12px}
+.arRequisitoValores{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;margin:3px 0 6px}
+.arRequisitoValores strong{font:650 24px/1.2 "IBM Plex Mono",monospace;color:#edf4fd}
+.arRequisitoValores span{font-size:12px;color:#b3c6dd}
+.arVerDetalhes{color:#9acbf2;font-size:12px}
+.arVerDetalhes::before{content:"Ver critérios e dados ›"}
+.arLinhaMeta[open] .arVerDetalhes::before{content:"Recolher detalhes"}
+.arLinhaDetalhe{padding:12px 18px;border-top:1px solid var(--linha);color:#b3c6dd;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -976,15 +980,18 @@ function renderIndicadores(){
           const requisitos=itens.map(d=>{
             const divergente=d.codigo==="E01"&&d.meta!==5325;
             const pendente=d.statusCenario==="Sem dado";
-            const resultado=pendente&&!divergente?"Aguardando apuração":fmtValor(d.atual,d.unidade);
+            const resultado=pendente&&!divergente?"":fmtValor(d.atual,d.unidade);
             const referencia=divergente?"5.325 (publicada)":d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
-            const situacao=divergente?"Referência em conferência":pendente?"Apuração pendente":d.statusDisplay;
-            return `<div class="arRequisito"><span>${esc(d.indicador)}</span>
-              <strong>${esc(resultado)}</strong><span>Meta ${esc(referencia)}</span>
-              <span class="arRequisitoStatus">${esc(situacao)}</span></div>`;
+            const situacao=divergente?"Referência em conferência":pendente?"Aguardando apuração":d.statusDisplay==="Crítico"?"Abaixo da meta":d.statusDisplay;
+            const classe=divergente?"att":pendente?"nd":d.statusClass;
+            return `<div class="arRequisito">
+              ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}
+              <div class="arRequisitoValores">${resultado?`<strong>${esc(resultado)}</strong>`:""}<span>Meta ${esc(referencia)}</span></div>
+              <span class="tag ${esc(classe)}">${esc(situacao)}</span>
+            </div>`;
           }).join("");
           return `<details class="arLinhaMeta"><summary>
-            <strong>${esc(nomes[chave]||itens[0].indicador)}</strong><div>${requisitos}</div>
+            <strong>${esc(nomes[chave]||itens[0].indicador)}</strong><div>${requisitos}</div><span class="arVerDetalhes"></span>
           </summary><div class="arLinhaDetalhe">
             ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||d.fonte)}</p>`).join("")}
             ${itens.some(d=>d.codigo==="E01"&&d.meta!==5325)?`<p>Referência registrada no SARC: ${esc(fmtValor(itens[0].meta,itens[0].unidade))}.</p>`:""}

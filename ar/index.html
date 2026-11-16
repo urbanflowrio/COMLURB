@@ -201,6 +201,14 @@
 .arMetaResumo p{margin:8px 0 0 16px;color:#b3c6dd;overflow-wrap:anywhere}
 .arPremiacao{margin-top:16px}
 @media(max-width:600px){.arReguaProxima{margin-left:0;width:100%}.arMetaResumo summary span{display:block;margin-left:16px}}
+.arPrioridades{border:1px solid var(--linha);background:var(--painel);border-radius:14px;overflow:hidden}
+.arPrioridade{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,3fr);gap:6px 20px;padding:14px 18px;border-bottom:1px solid var(--linha)}
+.arPrioridade:last-child{border-bottom:0}
+.arPrioridade .arMetaResumo{grid-column:1/-1;border:0;padding:0;font-size:12px}
+.arAcao{display:grid;grid-template-columns:minmax(145px,1fr) 3fr;gap:8px 12px;margin-bottom:5px}
+.arAcao strong{color:#ffc48c}
+.arAcao span{color:#d1dfee}
+@media(max-width:680px){.arPrioridade,.arAcao{grid-template-columns:1fr}.arAcao{gap:2px;margin-bottom:9px}}
 </style>
 </head>
 <body>
@@ -786,9 +794,32 @@ function renderResumo(){
     return d.statusDisplay;
   }
 
-  const metas=b.detalhesEstrategicos.map(meta=>{
+  const encaminhamentos={
+    E01:["Conferir referência","Conciliar a meta publicada com a referência registrada no SARC."],
+    E02:["Concluir apuração","Conferir o percentual de recuperação frente à meta de 3,8%."],
+    E03:["Acompanhar publicação","Confirmar a posição da cidade quando sair o ranking nacional."],
+    E04:["Melhorar atendimento","Elevar o atendimento de poda no prazo até 95%."],
+    E05:["Validar indicador","Confirmar a escala da satisfação de poda e verificar se a nota chega a 4,5."],
+    E06:["Completar apuração regional","Atualizar as 12 regiões na mesma competência e conferir o atingimento em cada uma."],
+    E07:["Validar indicador","Confirmar a escala da satisfação de remoção e verificar se a nota chega a 4,4."],
+    E08:["Comprovar execução","Reunir as evidências dos três ciclos nos 50 locais cadastrados."]
+  };
+
+  const metas=[...b.detalhesEstrategicos].sort((a,b)=>{
+    const ordem=["E04+E05","E06+E07","E01","E08","E02+E03"];
+    return Number(a.atingiu)-Number(b.atingiu)||ordem.indexOf(a.cod)-ordem.indexOf(b.cod);
+  }).map(meta=>{
     const membros=meta.cod.split("+").map(c=>porCodigo[c]).filter(Boolean);
-    const resumo=meta.atingiu?"Favorável no cenário":membros.map(situacao).join(" · ");
+    const acoes=membros.filter(d=>situacao(d)!=="Dentro da Meta").map(d=>{
+      const [tipo,acao]=d.codigo==="E01" && d.meta===5325
+        ?["Acompanhar produção","Acompanhar o saldo de revitalizações até a meta publicada."]
+        :d.codigo==="E06" && d.statusCenario!=="Sem dado"
+        ?["Melhorar atendimento","Atuar nas regiões abaixo da meta. Todas as 12 precisam atingir o requisito."]
+        :encaminhamentos[d.codigo]||["Verificar resultado",d.indicador];
+      const falta=d.codigo==="E04" && d.atual!==null && d.atual<d.meta
+        ?` Faltam ${nota(d.meta-d.atual)} p.p.`:"";
+      return `<div class="arAcao"><strong>${esc(tipo)}</strong><span>${esc(acao+falta)}</span></div>`;
+    }).join("");
     const linhas=membros.map(d=>{
       const referenciaDivergente=d.codigo==="E01" && d.meta!==5325;
       const resultado=d.statusCenario==="Sem dado" && !referenciaDivergente
@@ -801,7 +832,12 @@ function renderResumo(){
         ?` · Faltam ${nota(d.meta-d.atual)} p.p.`:"";
       return `<p><strong>${esc(d.indicador)}</strong>${esc(resultado+metaTxt+faltaPoda)}${d.pendencia?" · "+esc(d.pendencia):""}</p>`;
     }).join("");
-    return `<details class="arMetaResumo"><summary><strong>${esc(resumos[meta.cod]||meta.label)}</strong><span>${esc(resumo)}</span></summary>${linhas}</details>`;
+    return `<article class="arPrioridade">
+      <header><strong>${esc(resumos[meta.cod]||meta.label)}</strong>
+      ${meta.atingiu?'<small>Favorável no cenário</small>':""}</header>
+      <div>${acoes}</div>
+      <details class="arMetaResumo"><summary>Dados e critérios</summary>${linhas}</details>
+    </article>`;
   }).join("");
 
   $("placarGrid").innerHTML=`
@@ -817,8 +853,8 @@ function renderResumo(){
         <small>${f.metas} ${f.metas===1?"meta":"metas"}</small><strong>${nota(f.nota)}</strong><small>${f.pct}%</small></li>`).join("")}</ol>
       <small>Condicionadas a partir de 3 estratégicas · Performance aguarda avaliação oficial.</small>
     </section>
-    <h3>Metas estratégicas · o que falta</h3>
-    ${metas}`;
+    <h3>O que falta para avançar</h3>
+    <div class="arPrioridades">${metas}</div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════

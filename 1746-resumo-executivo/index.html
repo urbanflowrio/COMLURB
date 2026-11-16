@@ -47,8 +47,7 @@
 .be-bridge strong{color:var(--be-ink);font-weight:700}
 
 /* Onde ocorreu */
-.be-where-lead{margin:0 0 12px;max-width:75ch;font-size:clamp(18px,1.3vw,22px);line-height:1.45;color:var(--be-ink);font-weight:500;text-wrap:pretty}
-.be-where-method{margin:0 0 26px;max-width:84ch;color:var(--be-soft);font-size:15px;line-height:1.55;text-wrap:pretty}
+.be-where-lead{margin:0 0 22px;max-width:85ch;font-size:clamp(18px,1.3vw,22px);line-height:1.45;color:var(--be-ink);font-weight:500;text-wrap:pretty}
 .be-places{border-top:1px solid var(--be-rule)}
 .be-place{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start;padding:24px 0;border-bottom:1px solid var(--be-rule)}
 .be-place-name{font-size:20px;font-weight:800;line-height:1.2}
@@ -59,7 +58,8 @@
 .be-place p{margin:0;font-size:13px;line-height:1.65;color:var(--be-soft)}
 .be-place p+p{margin-top:8px;color:var(--be-mute)}
 .be-place p strong{color:var(--be-ink)}
-.be-closing{margin:24px 0 0;max-width:58ch;font-size:clamp(18px,1.45vw,24px);line-height:1.4;font-weight:600;color:var(--be-soft);text-wrap:balance}
+.be-closing{display:flex;flex-wrap:wrap;gap:8px 28px;margin:18px 0 0;font-size:16px;line-height:1.45;color:var(--be-soft)}
+.be-closing span{max-width:100%;text-wrap:pretty}
 .be-closing strong{color:var(--be-ink)}
 
 /* Fechamento */
@@ -143,8 +143,7 @@
 
     <section class="be-section" aria-labelledby="be-onde">
       <h2 class="be-label" id="be-onde">Onde ocorreu</h2>
-      <p class="be-where-lead">Bangu e Campo Grande tiveram os maiores aumentos de Chamados em outubro de 2026, frente a outubro de 2025. Foram <strong>409 a mais em Bangu</strong> e <strong>376 a mais em Campo Grande</strong>.</p>
-      <p class="be-where-method">O volume indica a demanda recebida pela operação. Para comparar bairros de portes diferentes, o Comparativo Territorial usa <strong>Chamados por 10 mil moradores</strong>, com base na população de cada bairro no <strong>Censo 2022 do IBGE</strong>.</p>
+      <p class="be-where-lead">Em outubro, <strong>Bangu (+409)</strong> e <strong>Campo Grande (+376)</strong> lideraram a alta de Chamados frente a outubro de 2025.</p>
 
       <div class="be-places">
         <article class="be-place">
@@ -167,7 +166,7 @@
         </article>
       </div>
 
-      <p class="be-closing">Bangu e Campo Grande somaram <strong>101 Ouvidorias a mais</strong>. Na cidade, foram <strong>430 a menos</strong>.</p>
+      <p class="be-closing"><span><strong>+101 Ouvidorias</strong> em Bangu e Campo Grande</span><span><strong>−430 Ouvidorias</strong> na cidade</span></p>
     </section>
 
     <nav class="be-more" aria-label="Módulos para aprofundamento">
@@ -180,6 +179,7 @@
     </nav>
 
     <dl class="be-method">
+      <div><dt>Comparação entre bairros</dt><dd>O volume indica a demanda recebida pela operação. O Comparativo Territorial usa Chamados por 10 mil moradores, com base na população de cada bairro no Censo 2022 do IBGE.</dd></div>
       <div><dt>Períodos</dt><dd>Outubro de 2026 comparado a outubro de 2025. No ano, janeiro a outubro dos dois anos.</dd></div>
       <div><dt>Ouvidorias operacionais</dt><dd>Excluem os registros tratados internamente pela PCO.</dd></div>
       <div><dt>Serviços citados</dt><dd>Os cinco com pelo menos 5% dos chamados de outubro de 2025.</dd></div>

@@ -1,3 +1,5 @@
+> **Aviso de versão, 17/11/2026.** Este documento conserva a análise do fechamento anterior de 05/11 e contém números anteriores à republicação de 16/11. A referência oficial de 16/11 foi aprovada por Greicy em 17/11. Para os arquivos corretos, regras atuais, validações e pendências, leia [Continuidade e fechamento mensal do HUB 1746](../auditoria/1746/CONTINUIDADE_E_FECHAMENTO_MENSAL.md).
+
 # Rastreabilidade do Boletim Executivo 1746, outubro de 2026
 
 Cada afirmação do boletim (`1746-resumo-executivo/index.html`) tem origem identificável nos cubos auditados do repositório. A verificação é automática:

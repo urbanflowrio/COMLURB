@@ -111,3 +111,15 @@ A migração preservou as bases reais de outubro. A estrutura foi transferida se
 ## Como deixar a continuidade registrada
 
 Ao concluir uma alteração, atualizar este arquivo com data, ação, evidência, resultado e pendência. Registrar a fonte e a versão utilizadas. Guardar snapshots e decisões aprovadas. Diferenciar publicado, calculado, testado e efetivamente executado. Ler o estado atual dos arquivos antes de afirmar que algo continua válido.
+
+## Organização da pasta AUDITORIA — atualizada em 17/11/2026
+
+Na [pasta AUDITORIA](https://drive.google.com/drive/folders/1al5FkJdvWHEEjZEOYFEtlBa4-m42O-DE), os arquivos de consulta são os fechamentos oficiais, com nome Auditoria HUB 1746 - AAAA-MM. Outubro é a planilha oficial já vinculada neste guia. A aba Leia primeiro explica essa organização.
+
+| Local | Conteúdo | Quando consultar |
+|---|---|---|
+| Pasta principal AUDITORIA | Auditorias oficiais mensais | Consultar, conferir e continuar o trabalho |
+| [Arquivo de versões](https://drive.google.com/drive/folders/1s-vCGYYIfKhblwL-qCDyZuUoSog9znF7) | ARQUIVO - Auditoria outubro antes da integração - 17-11-2026 | Recuperar o estado anterior ou comparar versões |
+| [Testes](https://drive.google.com/drive/folders/1X4XxvyQYKxBnVIlQ5X87a3vMuYK32hwU) | Teste Apps Script v3 e teste anterior de fórmulas por critério | Consultar evidências técnicas e repetir testes em cópias |
+
+A cópia v3 contém novembro simulado e alterações artificiais. Esses dados não pertencem ao fechamento oficial. As três planilhas auxiliares foram movidas para as subpastas, mantendo seus IDs e links. Nunca escolher a fonte somente pela data da última modificação ou por ser o arquivo maior. Usar a função e os links registrados neste documento.

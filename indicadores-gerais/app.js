@@ -922,7 +922,9 @@
     const anos = anoSelecionado === 'comparar' ? [anoComparacao(), anoPrincipal()].filter(Boolean) : [anoPrincipal()];
     return anos.map(ano => {
       const row = ano === anoPrincipal() ? k.row : resolverLinha(k.indicador, diretoriaSelecionada, ano);
-      const cells = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(row && HUB.indicadores.parseNumeroBR(row[m]) !== null ? formatValorIndicador(k, HUB.indicadores.parseNumeroBR(row[m])) : 'Sem dado')}</b></div>`).join('');
+      const ultimo = ultimoValorDisponivel(row);
+      const meses = ultimo ? HUB.indicadores.MESES.slice(0, HUB.indicadores.MESES.indexOf(ultimo.mes) + 1) : [];
+      const cells = meses.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(row && HUB.indicadores.parseNumeroBR(row[m]) !== null ? formatValorIndicador(k, HUB.indicadores.parseNumeroBR(row[m])) : 'Sem dado')}</b></div>`).join('');
       return `<section class="yearCycles"><div class="yearCyclesTitle">${esc(ano)}</div><div class="months">${cells}</div></section>`;
     }).join('');
   }
@@ -941,23 +943,26 @@
       fichaChart = null;
     }
 
-    const meses = HUB.indicadores.MESES;
-    const serie = meses.map(m => k.row ? HUB.indicadores.parseNumeroBR(k.row[m]) : null);
-    const temSerie = serie.some(Number.isFinite);
+    const calendario = HUB.indicadores.MESES;
+    const valores = calendario.map(m => k.row ? HUB.indicadores.parseNumeroBR(k.row[m]) : null);
+    const fim = valores.findLastIndex(Number.isFinite) + 1;
+    const meses = calendario.slice(0, fim);
+    const serie = valores.slice(0, fim);
+    const temSerie = fim > 0;
     const podeRenderizar = temSerie && typeof Chart !== 'undefined';
     document.getElementById('drawerChartWrap').hidden = !podeRenderizar;
     const mensagem = document.getElementById('drawerChartEmpty');
     mensagem.hidden = podeRenderizar;
     mensagem.textContent = temSerie ? 'Gráfico indisponível. Consulte os valores mês a mês.' : 'Sem dados mensais na fonte.';
     const ciclos = document.getElementById('drawerCycles');
-    ciclos.hidden = !temSerie;
+    ciclos.hidden = !temSerie || podeRenderizar;
     ciclos.open = temSerie && !podeRenderizar;
     if (!podeRenderizar) return;
 
     const tipo = k.referenciaMeta.tipo;
     const referencia = tipo === 'competencia'
       ? meses.map(m => metaMensalExplicita(k.row, m))
-      : meses.map(() => tipo === 'proporcional' ? k.metaAnual / meses.length : indicadorNaoAditivo(k.indicador, k.unidade) ? k.meta : null);
+      : meses.map(() => tipo === 'proporcional' ? k.metaAnual / calendario.length : indicadorNaoAditivo(k.indicador, k.unidade) ? k.meta : null);
     const datasets = [{
       label: k.indicador, data: serie, borderColor: '#49a9ee', backgroundColor: '#49a9ee',
       pointRadius: 3, tension: .25, spanGaps: false

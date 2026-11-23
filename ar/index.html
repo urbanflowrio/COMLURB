@@ -604,9 +604,11 @@ function desenharHistoricoAR(canvas,nome,serie,unidade,meta,limites={},rotuloMet
   const formatar=v=>isPercent(unidade)
     ?v.toLocaleString('pt-BR',{style:'percent',maximumFractionDigits:2})
     :fmtValor(v,unidade);
-  const datasets=[{label:nome,data:serie,borderColor:'#49a9ee',backgroundColor:'#49a9ee',borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5}];
-  if(Number.isFinite(meta))datasets.push({label:rotuloMeta+' '+formatar(meta),data:MESES.map(()=>meta),borderColor:'#f0809c',backgroundColor:'#f0809c',hubReferencia:true,borderWidth:1.5,borderDash:[5,5],pointRadius:0});
-  E06_CHART=new Chart(canvas,{type:'line',data:{labels:MESES,datasets},plugins:[HUBChartLabels.criar(formatar)],options:{
+  const fim=serie.findLastIndex(Number.isFinite)+1;
+  const meses=MESES.slice(0,fim);
+  const datasets=[{label:nome,data:serie.slice(0,fim),borderColor:'#49a9ee',backgroundColor:'#49a9ee',borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5}];
+  if(Number.isFinite(meta))datasets.push({label:rotuloMeta+' '+formatar(meta),data:meses.map(()=>meta),borderColor:'#f0809c',backgroundColor:'#f0809c',hubReferencia:true,borderWidth:1.5,borderDash:[5,5],pointRadius:0});
+  E06_CHART=new Chart(canvas,{type:'line',data:{labels:meses,datasets},plugins:[HUBChartLabels.criar(formatar)],options:{
     responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
     plugins:{legend:HUBChartLabels.legenda(Chart),tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':formatar(c.parsed.y)}`}}},
     scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{...limites,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:formatar}}}

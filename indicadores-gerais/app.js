@@ -455,7 +455,7 @@
     if (Math.abs(delta) < 1e-9) return { texto: `Estável em relação a ${anterior.mes}`, delta: 0, mesAnterior: anterior.mes, mesAtual: atual.mes };
     const menorMelhor = clean(sentido) === '↓';
     const favoravel = menorMelhor ? delta < 0 : delta > 0;
-    return { texto: `${favoravel ? 'Melhora' : 'Piora'} em relação a ${anterior.mes}`, detalhe: formatDiferenca(delta, unidade), delta, favoravel, mesAnterior: anterior.mes, mesAtual: atual.mes };
+    return { texto: `${favoravel ? 'Melhora' : 'Piora'} em relação a ${anterior.mes}`, detalhe: formatDiferenca(delta, unidade), delta, variacaoRelativa: anterior.valor === 0 ? null : Math.abs(delta / anterior.valor), favoravel, mesAnterior: anterior.mes, mesAtual: atual.mes };
   }
 
   function anoPrincipal() { return ANO_FIXO; }
@@ -702,7 +702,7 @@
   function cardHTML(k) {
     const tag = statusTag(k);
     const movimento = k.variacao ? k.variacao.texto : '';
-    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
+    return `<article class="indCard" data-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-haspopup="dialog"><div><div class="indCardTop"><h3>${esc(k.indicador)}</h3><span class="tag ${tag[0]}">${esc(tag[1])}</span></div><div class="indValue ${esc(k.status.cor || '')}">${esc(formatValorIndicador(k, k.acumulado))}</div>${k.atingimento ? `<div class="indAchievement">${esc(k.atingimento.texto)}</div>` : ''}<div class="indNote">${esc(k.distanciaTexto)}</div>${movimento ? `<div class="indTrend">${esc(movimento)}</div>` : ''}</div><div class="indAction">Abrir ficha →</div></article>`;
   }
 
   const TENDENCIA_LABEL = { piora: 'Piora', melhora: 'Melhora', estavel: 'Estável' };
@@ -797,7 +797,7 @@
 
   function axisDrillCard(k) {
     const tag = statusTag(k);
-    return `<button class="axisDrillCard" type="button" data-axis-indicador="${esc(k.indicador)}">
+    return `<button class="axisDrillCard" type="button" aria-haspopup="dialog" data-axis-indicador="${esc(k.indicador)}">
       <span class="axisDrillTop"><span class="axisDrillName">${esc(k.indicador)}</span><span class="tag ${tag[0]}">${esc(tag[1])}</span></span>
       <span class="axisDrillMetric">${esc(formatValorIndicador(k, k.acumulado))}</span>
       <span class="axisDrillMeta">${esc(rotuloMetaReferencia(k))}: ${esc(formatValorIndicador(k, k.meta))}</span>
@@ -874,7 +874,7 @@
     }
     container.innerHTML = prioridades.slice(0, 5).map(k => {
       const tag = statusTag(k);
-      return `<div class="priorityRow" data-priority-indicador="${esc(k.indicador)}" tabindex="0" role="button"><div><div class="priorityName">${esc(k.indicador)}</div><div class="priorityAxis">${esc(k.eixoLabel)}</div></div><div class="priorityMetric"><b>${esc(formatValorIndicador(k, k.acumulado))}</b><small>${esc(rotuloMetaReferencia(k))} ${esc(formatValorIndicador(k, k.meta))}</small></div><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
+      return `<div class="priorityRow" data-priority-indicador="${esc(k.indicador)}" tabindex="0" role="button" aria-haspopup="dialog"><div><div class="priorityName">${esc(k.indicador)}</div><div class="priorityAxis">${esc(k.eixoLabel)}${k.referenciaMeta.mes ? ` · ${esc(k.referenciaMeta.mes)}/${esc(k.ano)}` : ""}</div></div><div class="priorityMetric"><b>${esc(formatValorIndicador(k, k.acumulado))}</b><small>${esc(rotuloMetaReferencia(k))} ${esc(formatValorIndicador(k, k.meta))} · ${esc(k.distanciaTexto)}</small></div><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
     }).join('');
     container.querySelectorAll('[data-priority-indicador]').forEach(row => {
       const open = () => { const k = KPIDATA.find(x => x.indicador === row.dataset.priorityIndicador); if (k) abrirDrawer(k); };
@@ -885,10 +885,10 @@
 
   function renderMovements(kpis) {
     const movimentos = kpis.filter(k => k.metaAnual !== null && k.metaAnual !== undefined && k.variacao && k.variacao.favoravel !== null && k.variacao.favoravel !== undefined);
-    const melhoras = movimentos.filter(k => k.variacao.favoravel === true).sort((a, b) => Math.abs(b.variacao.delta || 0) - Math.abs(a.variacao.delta || 0)).slice(0, 3);
+    const melhoras = movimentos.filter(k => k.variacao.favoravel === true).sort((a, b) => (b.variacao.variacaoRelativa ?? -1) - (a.variacao.variacaoRelativa ?? -1)).slice(0, 3);
     const pioras = movimentos.filter(k => k.variacao.favoravel === false).sort((a, b) => {
       const status = PRIORIDADE_STATUS[a.status.cor || ''] - PRIORIDADE_STATUS[b.status.cor || ''];
-      return status || Math.abs(b.variacao.delta || 0) - Math.abs(a.variacao.delta || 0);
+      return status || (b.variacao.variacaoRelativa ?? -1) - (a.variacao.variacaoRelativa ?? -1);
     }).slice(0, 3);
     const html = arr => arr.length ? arr.map(k => `<div class="movementItem"><b>${esc(k.indicador)}</b><span>${esc(k.variacao.texto)}${k.variacao.detalhe ? ` · ${esc(k.variacao.detalhe)}` : ''}</span></div>`).join('') : '<div class="emptyState">Sem movimento relevante calculável.</div>';
     document.getElementById('improvementList').innerHTML = html(melhoras);
@@ -934,18 +934,80 @@
     return 'A regra de avaliação deste indicador não foi informada.';
   }
 
-  function abrirDrawer(k) {
-    document.getElementById('drawerEixo').textContent = `${k.eixoLabel} · ${anoSelecionado === 'comparar' ? 'Comparativo ' + anoComparacao() + ' × ' + anoPrincipal() : anoPrincipal()}`;
-    document.getElementById('drawerTitulo').textContent = k.indicador;
-    const tag = statusTag(k);
-    const resultClass = k.status.cor === 'red' ? 'result-critical' : k.status.cor === 'green' ? 'result-positive' : k.status.cor === 'orange' ? 'result-warning' : '';
-    const unidadeBox = indicadorCTR(k) ? `<div class="detailBox"><small>Unidade de medida</small><b>${esc(unidadeDescritiva(k.unidade))}</b></div>` : '';
-    document.getElementById('drawerDetails').innerHTML = `<div class="detailBox"><small>Resultado ${esc(anoPrincipal())}</small><b class="${resultClass}">${esc(formatValorIndicador(k, k.acumulado))}</b></div><div class="detailBox"><small>${esc(rotuloMetaReferencia(k))}</small><b>${esc(formatValorIndicador(k, k.meta))}</b></div>${k.referenciaMeta && k.referenciaMeta.tipo === 'proporcional' ? `<div class="detailBox"><small>Meta anual</small><b>${esc(formatValorIndicador(k, k.metaAnual))}</b></div>` : ''}<div class="detailBox"><small>Status</small><b><span class="tag ${tag[0]}">${esc(tag[1])}</span></b></div><div class="detailBox"><small>Atingimento da meta</small><b>${esc(k.atingimento ? k.atingimento.texto.replace(' de atingimento', '') : 'N/D')}</b></div><div class="detailBox"><small>Distância da meta</small><b>${esc(k.distanciaTexto)}</b></div>${unidadeBox}<div class="detailBox detailBoxWide"><small>Como interpretar</small><b>${esc(sentidoAmigavel(k.sentido))}</b></div><div class="detailBox detailBoxWide"><small>${anoSelecionado === 'comparar' ? 'Comparação entre anos' : 'Movimento recente'}</small><b>${esc(k.variacao ? k.variacao.texto : 'Sem ciclos suficientes para comparação')}</b>${k.variacao && k.variacao.detalhe ? `<span class="detailSupport">Variação: ${esc(k.variacao.detalhe)}</span>` : ''}</div>`;
-    document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
-    document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'false');
+  let fichaChart;
+  function desenharSerieFicha(k) {
+    if (fichaChart) {
+      fichaChart.destroy();
+      fichaChart = null;
+    }
+
+    const meses = HUB.indicadores.MESES;
+    const serie = meses.map(m => k.row ? HUB.indicadores.parseNumeroBR(k.row[m]) : null);
+    const temSerie = serie.some(Number.isFinite);
+    const podeRenderizar = temSerie && typeof Chart !== 'undefined';
+    document.getElementById('drawerChartWrap').hidden = !podeRenderizar;
+    const mensagem = document.getElementById('drawerChartEmpty');
+    mensagem.hidden = podeRenderizar;
+    mensagem.textContent = temSerie ? 'Gráfico indisponível. Consulte os valores mês a mês.' : 'Sem dados mensais na fonte.';
+    const ciclos = document.getElementById('drawerCycles');
+    ciclos.hidden = !temSerie;
+    ciclos.open = temSerie && !podeRenderizar;
+    if (!podeRenderizar) return;
+
+    const tipo = k.referenciaMeta.tipo;
+    const referencia = tipo === 'competencia'
+      ? meses.map(m => metaMensalExplicita(k.row, m))
+      : meses.map(() => tipo === 'proporcional' ? k.metaAnual / meses.length : indicadorNaoAditivo(k.indicador, k.unidade) ? k.meta : null);
+    const datasets = [{
+      label: k.indicador, data: serie, borderColor: '#49a9ee', backgroundColor: '#49a9ee',
+      pointRadius: 3, tension: .25, spanGaps: false
+    }];
+    if (referencia.some(Number.isFinite)) datasets.push({
+      label: tipo === 'proporcional' ? 'Ritmo mensal da meta anual' : tipo === 'competencia' ? 'Meta por competência' : 'Meta',
+      data: referencia, borderColor: '#f0809c', backgroundColor: '#f0809c', borderDash: [5, 5],
+      pointRadius: tipo === 'competencia' ? 3 : 0, spanGaps: false
+    });
+
+    const canvas = document.getElementById('drawerChart');
+    canvas.setAttribute('aria-label', `Evolução mensal de ${k.indicador}`);
+    const formatar = valor => formatValorIndicador(k, valor);
+    fichaChart = new Chart(canvas, {
+      type: 'line', data: { labels: meses, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#c7d8ee', boxWidth: 16 } },
+          tooltip: { callbacks: { label: item => `${item.dataset.label}: ${formatar(item.parsed.y)}` } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#9fb3c8' } },
+          y: { grid: { color: 'rgba(91,155,213,.14)' }, ticks: { color: '#9fb3c8', callback: formatar } }
+        }
+      }
+    });
   }
 
-  function fecharDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer').setAttribute('aria-hidden', 'true'); }
+  function abrirDrawer(k) {
+    const competencia = k.referenciaMeta.mes ? `${k.referenciaMeta.mes}/${anoPrincipal()}` : anoPrincipal();
+    document.getElementById('drawerEixo').textContent = `${k.eixoLabel} · ${competencia}`;
+    document.getElementById('drawerTitulo').textContent = k.indicador;
+    const tag = statusTag(k);
+    const caixa = (rotulo, valor) => `<div class="detailBox"><small>${esc(rotulo)}</small><b>${esc(valor)}</b></div>`;
+    document.getElementById('drawerDetails').innerHTML =
+      caixa('Resultado acumulado', formatValorIndicador(k, k.acumulado)) +
+      caixa(rotuloMetaReferencia(k), formatValorIndicador(k, k.meta)) +
+      (k.referenciaMeta.tipo === 'proporcional' ? caixa('Meta anual', formatValorIndicador(k, k.metaAnual)) : '') +
+      caixa('Distância da referência', k.distanciaTexto) +
+      (k.atingimento ? caixa('Atingimento informado', k.atingimento.texto.replace(' de atingimento', '')) : '') +
+      `<div class="detailBox"><small>Status</small><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
+    document.getElementById('drawerCriterio').innerHTML = `<h3>Critério de avaliação</h3><p>${esc(sentidoAmigavel(k.sentido))}</p>${indicadorCTR(k) ? `<p>Unidade: ${esc(unidadeDescritiva(k.unidade))}.</p>` : ''}${k.variacao ? `<p>${esc(k.variacao.texto)}${k.variacao.detalhe ? ` · ${esc(k.variacao.detalhe)}` : ''}.</p>` : ''}`;
+    document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
+    const dialog = document.getElementById('drawer');
+    if (!dialog.open) dialog.showModal();
+    dialog.scrollTop = 0;
+    desenharSerieFicha(k);
+  }
 
   function salvarFiltros() {}
   function restaurarFiltros() { return {}; }
@@ -978,7 +1040,10 @@
       e.currentTarget.innerHTML = aberto ? 'Explorar indicadores <span aria-hidden="true">↓</span>' : 'Recolher indicadores <span aria-hidden="true">↑</span>';
       if (!aberto) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-    document.getElementById('drawerClose').addEventListener('click', fecharDrawer); document.getElementById('drawerOverlay').addEventListener('click', fecharDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDrawer(); });
+    document.getElementById('drawer').addEventListener('close', () => {
+      if (fichaChart) fichaChart.destroy();
+      fichaChart = null;
+    });
   }
 
   async function init() {
@@ -996,7 +1061,18 @@
         ...carregamentosHoraExtra
       ]);
       INDICADORES_AR = new Set((metasAR || []).map(normalizarRow).map(r => norm(r.Indicador)).filter(Boolean));
-      DATA = aplicarHoraExtra((resultados || []).map(normalizarRow).filter(r => clean(r.Indicador) && !INDICADORES_AR.has(norm(r.Indicador))), fontesHoraExtra);
+      const codigosAR = new Set((metasAR || []).map(r => clean(r.Código || r.Codigo)));
+      const linhas = (resultados || []).map(normalizarRow);
+      if (codigosAR.has('E01')) INDICADORES_AR.add(norm('Praças'));
+      if (codigosAR.has('E02')) INDICADORES_AR.add(norm('Índice de Recuperação de Resíduos Secos e Orgânicos'));
+      if (codigosAR.has('E06')) {
+        const prefixo = norm('Performance de Atendimento de Remoção de Resíduos -') + ' ';
+        linhas.forEach(r => {
+          const nome = norm(r.Indicador);
+          if (nome.startsWith(prefixo)) INDICADORES_AR.add(nome);
+        });
+      }
+      DATA = aplicarHoraExtra(linhas.filter(r => clean(r.Indicador) && !INDICADORES_AR.has(norm(r.Indicador))), fontesHoraExtra);
       popularFiltros(); render();
       document.getElementById('conteudo').hidden = false;
       const linhasHoraExtra = fontesHoraExtra.reduce((total, rows) => total + rows.length, 0);

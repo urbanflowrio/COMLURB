@@ -8,8 +8,9 @@
   <meta http-equiv="Expires" content="0">
   <title>Governança Corporativa · HUB COMLURB</title>
   <link rel="stylesheet" href="../assets/css/hub-premium.css?v=20260817-v24">
-  <link rel="stylesheet" href="governanca.css?v=20260817-v24">
+  <link rel="stylesheet" href="governanca.css?v=20261123-v25">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
   <script src="../assets/components/hub-utils.js?v=20260817-v24"></script>
   <script src="../assets/components/hub-layout.js?v=20260817-v24"></script>
   <script src="../assets/components/hub-cards.js?v=20260817-v24"></script>
@@ -52,6 +53,16 @@
         </div>
       </section>
 
+      <article class="decisionPanel priorityPanel" aria-labelledby="prioridadesTitulo">
+          <div class="panelHeading">
+            <div>
+              <h2 id="prioridadesTitulo">Desvios que pedem ação</h2>
+            </div>
+            <span id="priorityCount" class="panelMeta"></span>
+          </div>
+          <div id="priorityList" class="priorityList"></div>
+        </article>
+
       <section class="managementSection" aria-label="Desempenho por eixo">
         <div class="sectionTitleRow">
           <div>
@@ -63,22 +74,9 @@
         <div id="axisPerformance" class="axisPerformance"></div>
       </section>
 
-      <section class="decisionGrid" aria-label="Prioridades e movimentos">
-        <article class="decisionPanel priorityPanel">
+      <article class="decisionPanel movementPanel">
           <div class="panelHeading">
             <div>
-              <div class="sectionEyebrow">Ação gerencial</div>
-              <h2>Prioridades de gestão</h2>
-            </div>
-            <span id="priorityCount" class="panelMeta"></span>
-          </div>
-          <div id="priorityList" class="priorityList"></div>
-        </article>
-
-        <article class="decisionPanel movementPanel">
-          <div class="panelHeading">
-            <div>
-              <div class="sectionEyebrow">Dinâmica recente</div>
               <h2>Movimentos do período</h2>
             </div>
           </div>
@@ -93,13 +91,12 @@
             </div>
           </div>
         </article>
-      </section>
 
       <section class="arGateway" aria-label="Acordo de Resultados">
         <div>
           <div class="sectionEyebrow">Módulo relacionado</div>
           <h2>Acordo de Resultados 2026</h2>
-          <p>Indicadores e metas pactuados no AR são acompanhados em painel próprio.</p>
+          <p>Praças, Recuperação de Resíduos e Remoção no prazo por subprefeitura estão no painel do AR.</p>
         </div>
         <a class="gatewayLink" href="../ar/">Abrir painel <span aria-hidden="true">→</span></a>
       </section>
@@ -136,16 +133,23 @@
     <div id="hubFooter"></div>
   </div>
 
-  <div class="drawerOverlay" id="drawerOverlay"></div>
-  <aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="drawerTitulo">
-    <button class="drawerClose" id="drawerClose" aria-label="Fechar ficha">×</button>
-    <div class="drawerKicker" id="drawerEixo">Indicador</div>
-    <h2 id="drawerTitulo">Indicador</h2>
-    <div class="detailGrid" id="drawerDetails"></div>
-    <div class="drawerKicker drawerCyclesTitle">Últimos ciclos</div>
-    <div class="months" id="drawerMonths"></div>
-  </aside>
+  <dialog class="governancaDialog" id="drawer" aria-labelledby="drawerTitulo">
+    <header class="fichaHeader">
+      <div><div class="drawerKicker" id="drawerEixo"></div><h2 id="drawerTitulo">Indicador</h2></div>
+      <form method="dialog"><button class="drawerClose" type="submit" aria-label="Fechar indicador" autofocus>×</button></form>
+    </header>
+    <div class="fichaBody">
+      <div class="detailGrid" id="drawerDetails"></div>
+      <section class="fichaHistorico" aria-labelledby="fichaHistoricoTitulo">
+        <h3 id="fichaHistoricoTitulo">Evolução mensal</h3>
+        <div class="fichaChart" id="drawerChartWrap"><canvas id="drawerChart" role="img" aria-label="Evolução mensal do indicador"></canvas></div>
+        <p id="drawerChartEmpty" class="emptyState" hidden></p>
+        <details id="drawerCycles"><summary>Valores mês a mês</summary><div id="drawerMonths"></div></details>
+      </section>
+      <div class="fichaCriterio" id="drawerCriterio"></div>
+    </div>
+  </dialog>
 
-  <script src="app.js?v=20260817-v24"></script>
+  <script src="app.js?v=20261123-v25"></script>
 </body>
 </html>

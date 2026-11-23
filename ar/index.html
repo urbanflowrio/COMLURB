@@ -540,6 +540,10 @@ function aplicarRegraE06(d){
   d.e06Conformes=conformes;
   d.e06Total=total;
   d.mesReferencia=total===12?MESES.reduce((ultimo,_,i)=>subs.every(s=>s.vals[i]!=null)?i+1:ultimo,null):null;
+  if(total===12&&avaliadas.length===12&&d.mesReferencia>=10&&subs.every(s=>norm(get(s.row,["Diretoria"]))==="comlurb")){
+    // A pendência de outubro por falta das séries caiu após a atualização da aba geral.
+    if(/pendência out\/26:[\s\S]*12 séries regionais ausentes/i.test(d.pendencia||""))d.pendencia="";
+  }
   if(subs.every(s=>norm(get(s.row,["Diretoria"]))==="dlu")){
     d.pendencia="Resultado calculado pelas séries regionais da DLU. Registro no consolidado oficial pendente.";
   }
@@ -1069,7 +1073,12 @@ function renderIndicadores(){
             const situacao=!resultado?semResultado:d.codigo==="E06"&&d.e06Total&&d.e06Total!==12
               ?`A base lista ${d.e06Total} regiões; a meta prevê 12`:pendente?"Validação pendente":
               ritmo||(d.volumeLinear?"Sem referência para o período":d.statusDisplay==="Crítico"?"Fora da meta":d.statusDisplay);
-            const situacaoFinal=d.codigo==="E06"&&d.mesReferencia&&pendente?"Fechamento mais recente ainda não validado":situacao;
+            const regionalCompleta=d.codigo==="E06"&&d.e06Total===12&&d.mesReferencia&&!pendente;
+            const situacaoFinal=regionalCompleta?(d.e06Conformes===12?"Meta atingida":"Meta ainda não atingida"):situacao;
+            const restanteRegional=regionalCompleta&&d.e06Conformes<12?12-d.e06Conformes:0;
+            const podeComparar=!d.volumeLinear&&d.codigo!=="E06"&&!pendente&&Number.isFinite(d.atual)&&Number.isFinite(d.meta);
+            const diferenca=podeComparar?(maiorMelhor(d.sentido)?d.meta-d.atual:d.atual-d.meta):0;
+            const falta=diferenca>1e-9?(isPercent(d.unidade)?(100*diferenca).toLocaleString("pt-BR",{maximumFractionDigits:2})+" p.p.":fmtValor(diferenca,"")):"";
             const classe=pendente||!resultado?"nd":ritmo?(d.atual+1e-9>=d.referenciaRitmo?"ok":"crit"):d.volumeLinear?"nd":d.statusClass;
             return `<div class="arRequisito">
               ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}
@@ -1077,6 +1086,8 @@ function renderIndicadores(){
                 ${resultado&&periodo?`<span>Referência: ${esc(periodo)}</span>`:""}
                 ${ritmo?`<span>Previsto até ${esc(periodo)}: ${esc(fmtValor(d.referenciaRitmo,d.unidade))}</span>`:""}
                 <span>${d.volumeLinear?"Meta anual":d.codigo==="E08"?"Meta":d.codigo==="E06"?"Meta":maiorMelhor(d.sentido)?"Meta mínima":"Limite máximo"}: ${esc(referencia)}</span>
+                ${restanteRegional?`<span>${restanteRegional===1?"Falta 1 subprefeitura":`Faltam ${restanteRegional} subprefeituras`}</span>`:""}
+                ${falta?`<span>${maiorMelhor(d.sentido)?"Abaixo da meta em":"Acima do limite em"} ${esc(falta)}</span>`:""}
                 ${d.volumeLinear&&resultado&&d.meta>d.atual?`<span>Faltam ${esc(fmtValor(d.meta-d.atual,d.unidade))} até dezembro</span>`:""}
               </div>
               <span class="tag ${esc(classe)}">${esc(situacaoFinal)}</span>

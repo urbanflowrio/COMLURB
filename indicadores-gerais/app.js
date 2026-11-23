@@ -328,7 +328,7 @@
   }
 
   function formatValor(v, unidade) {
-    if (v === null || v === undefined || Number.isNaN(v)) return 'N/D';
+    if (v === null || v === undefined || Number.isNaN(v)) return 'Sem dado';
     const opts = Math.abs(v) >= 1000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 1 };
     const numero = Number(v).toLocaleString('pt-BR', opts);
     const u = unidadeVisual(unidade);
@@ -355,7 +355,7 @@
   }
 
   function formatDiferenca(v, unidade) {
-    if (v === null || v === undefined || Number.isNaN(v)) return 'N/D';
+    if (v === null || v === undefined || Number.isNaN(v)) return 'Sem dado';
     const abs = Math.abs(v);
     const num = abs.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
     const u = unidadeVisual(unidade);

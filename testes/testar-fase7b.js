@@ -700,7 +700,7 @@ return carregarLiveFixture().then(function (resultadoFixtureReferencia) {
     // Baseline HUB-2026-09-15-GOV-01. O index do AR preserva o painel
     // anterior e fixa Chart.js 4.4.7. Os demais arquivos abaixo continuam
     // protegidos contra mudanças não registradas.
-    "ar/index.html": "d5d8d07e44b5b05adb7cc34a25b2331df333fa77c83876cb01a75d2958960625",
+    "ar/index.html": "23b46d98d62a0c47613a31fac1963ab1e63223213d387b3d365cd9277890c4e7",
     "ar/ar.js": "9a8defb4c5046b5db1d69bcc68ea8cda5769cd83b0461412691bd78a3a0fbfa7",
     "ar/ar-config.js": "467fef0c23615b4b1eb0b184c33768686dd607fc12faaf6583b41de10764c230",
     "ar/piloto/index.html": "31dd0475e401a1763e87691f88e782279d547541a376f5e3e43bc975afa349da",

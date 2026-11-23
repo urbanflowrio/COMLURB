@@ -173,3 +173,5 @@
   .movementItem{height:auto;min-height:auto;padding:13px 0}
   .movementTitle{min-height:auto}
 }
+
+.scoreValue,.indValue,.statusTileValue,.priorityMetric,.governancaDialog .detailBox b{font-variant-numeric:tabular-nums}

@@ -195,7 +195,7 @@
 
 .arRegua{background:var(--painel);border:1px solid var(--linha);border-radius:16px;padding:clamp(14px,3vw,24px)}
 .arReguaTopo{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:16px}
-.arReguaNota{font:700 clamp(34px,6vw,56px)/1 "IBM Plex Mono",monospace;color:#fff}
+.arReguaNota{font-size:clamp(34px,6vw,56px);font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:#fff}
 .arReguaProxima{margin-left:auto;color:#ffc48c}
 .arRegua small{display:block;color:#b3c6dd;margin-top:4px}
 .arFaixas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:0;margin:0;list-style:none}
@@ -224,7 +224,7 @@
 .arRequisito+.arRequisito{margin-top:10px;padding-top:10px;border-top:1px solid var(--linha)}
 .arRequisitoNome{display:block;color:#b3c6dd;font-size:12px}
 .arRequisitoValores{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;margin:3px 0 6px}
-.arRequisitoValores strong{font:650 24px/1.2 "IBM Plex Mono",monospace;color:#edf4fd}
+.arRequisitoValores strong{font-size:24px;font-weight:650;line-height:1.2;font-variant-numeric:tabular-nums;color:#edf4fd}
 .arRequisitoValores span{font-size:12px;color:#b3c6dd}
 .arVerDetalhes{align-self:flex-start;padding:4px 0;background:none;border:0;color:#9acbf2;font:inherit;font-size:12px;text-align:left;cursor:pointer}
 .arVerDetalhes:hover{text-decoration:underline}
@@ -364,14 +364,14 @@ function num(v){
 function isPercent(unidade){const u=norm(unidade);return u.includes("percent")||u==="%";}
 function calcValue(v,unidade){let n=num(v);if(n===null)return null;if(isPercent(unidade)&&n>1.5)n=n/100;return n;}
 function fmtValor(v,unidade){
-  if(v===null||v===undefined||v==="")return "N/D";
-  let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "N/D";
-  if(isPercent(unidade)){if(n<=1.5)n=n*100;return fmtPct(n/100);}
+  if(v===null||v===undefined||v==="")return "Sem dado";
+  let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "Sem dado";
+  if(isPercent(unidade))return fmtPct(n<=1.5?n:n/100);
   if(norm(unidade).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";
   if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
   return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
 }
-function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "N/D";return n.toLocaleString("pt-BR",{style:"percent",minimumFractionDigits:1,maximumFractionDigits:1});}
+function fmtPct(v){const n=v===null||v===undefined||v===""?NaN:Number(v);if(!Number.isFinite(n))return "Sem dado";return n.toLocaleString("pt-BR",{style:"percent",minimumFractionDigits:1,maximumFractionDigits:1});}
 function maiorMelhor(sentido){const s=norm(sentido);return s.includes("maior")||s.includes("↑")||s==="";}
 
 /* ═══════════════════════════════════════════════════════════
@@ -610,7 +610,7 @@ function desenharHistoricoAR(canvas,nome,serie,unidade,meta,limites={},rotuloMet
   if(Number.isFinite(meta))datasets.push({label:rotuloMeta+' '+formatar(meta),data:meses.map(()=>meta),borderColor:'#f0809c',backgroundColor:'#f0809c',hubReferencia:true,borderWidth:1.5,borderDash:[5,5],pointRadius:0});
   E06_CHART=new Chart(canvas,{type:'line',data:{labels:meses,datasets},plugins:[HUBChartLabels.criar(formatar)],options:{
     responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-    plugins:{legend:HUBChartLabels.legenda(Chart),tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':formatar(c.parsed.y)}`}}},
+    plugins:{legend:HUBChartLabels.legenda(Chart),tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'Sem dado':formatar(c.parsed.y)}`}}},
     scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{...limites,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:formatar}}}
   }});
 }

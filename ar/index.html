@@ -111,7 +111,7 @@
 .indicatorRow.expanded .drillCue .arr{transform:rotate(90deg)}
 .e06Drill{box-sizing:border-box;width:min(960px,calc(100% - 32px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid var(--linha);border-radius:18px;background:#0d1e30;color:#e6f0fb;box-shadow:0 24px 80px #0008;overflow:auto;overflow-wrap:normal}
 .e06Drill::backdrop{background:rgba(3,10,19,.76)}
-.arDialogCompact{width:min(680px,calc(100% - 32px))}
+.arHistoricoVazio{margin-top:14px}
 .e06DrillHead{position:sticky;top:0;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 22px;background:#0d1e30;border-bottom:1px solid var(--linha)}
 .e06DrillBody{padding:18px 22px 22px;container-type:inline-size}
 .e06Close{flex:none;background:rgba(255,255,255,.06);color:#e6f0fb;border:1px solid var(--linha);border-radius:8px;min-width:40px;height:40px;font-size:22px;cursor:pointer}
@@ -281,7 +281,7 @@ const CASADOS = [
     id: "par-04",
     label: "Meta dupla: Atendimento no prazo e satisfação na remoção de resíduos em logradouro",
     membros: ["E06","E07"],
-    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85% no prazo em cada subprefeitura e nota de satisfação igual ou superior a 4,4 para a cidade. Os dois precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85% no prazo em cada subprefeitura e satisfação igual ou superior a 4,4% para a cidade. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-c06",
@@ -557,8 +557,8 @@ function aplicarRegraE06(d){
     d.tendenciaClass=tendenciaClass(d.tendencia);
   }else{d.tendencia="Série curta";d.tendenciaClass="nd";}
 }
-function renderARDialog(id,title,body,regional=false){
-  return `<dialog class="e06Drill${regional?"":" arDialogCompact"}" id="${id}" aria-labelledby="${id}-title">
+function renderARDialog(id,title,body){
+  return `<dialog class="e06Drill" id="${id}" aria-labelledby="${id}-title">
     <header class="e06DrillHead"><h3 id="${id}-title">${esc(title)}</h3><form method="dialog"><button class="e06Close" type="submit" aria-label="Fechar detalhes" autofocus>×</button></form></header>
     <div class="e06DrillBody">${body}</div>
   </dialog>`;
@@ -583,7 +583,7 @@ function renderE06Drill(d){
 function showE06History(index){
   const d=DATA.find(x=>x.codigo==='E06');if(!d)return;
   const s=(d.e06Subs||[])[Number(index)];if(!s)return;
-  document.querySelectorAll('.subprefCard').forEach((el,i)=>{
+  document.querySelectorAll('[data-e06-index]').forEach((el,i)=>{
     const selected=i===Number(index);
     el.classList.toggle('active',selected);
     el.setAttribute('aria-pressed',String(selected));
@@ -593,13 +593,42 @@ function showE06History(index){
   const lastIdx=s.vals.reduce((acc,v,i)=>v!==null?i:acc,-1);
   const lastVal=lastIdx>=0?s.vals[lastIdx]:null;
   info.innerHTML=`<small>${esc(s.nome)}</small><b>${esc(fmtValor(s.acum,'%'))}</b><span>Acumulado de 2026 · meta ≥ ${esc(fmtValor(s.meta,'%'))}.<br>Última competência com dado: ${lastIdx>=0?MESES[lastIdx]+'/2026':'sem dado'} · ${esc(fmtValor(lastVal,'%'))}.</span>`;
-  if(typeof Chart==='undefined')return;
+  desenharHistoricoAR(document.getElementById('e06HistoryChart'),s.nome,s.vals,'%',s.meta,{suggestedMin:.5,max:1});
+}
+function desenharHistoricoAR(canvas,nome,serie,unidade,meta,limites={}){
+  if(typeof Chart==='undefined'||!canvas)return;
   if(E06_CHART)E06_CHART.destroy();
-  const ctx=document.getElementById('e06HistoryChart');if(!ctx)return;
-  E06_CHART=new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
-    {label:s.nome,data:s.vals,borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5},
-    {label:'Meta '+fmtValor(s.meta,'%'),data:MESES.map(()=>s.meta),borderWidth:1.2,borderDash:[5,5],pointRadius:0,tension:0}
-  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':c.parsed.y.toLocaleString('pt-BR',{style:'percent',maximumFractionDigits:2})}`}}},scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{suggestedMin:.5,max:1,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:v=>v.toLocaleString('pt-BR',{style:'percent'})}}}}});
+  const formatar=v=>isPercent(unidade)
+    ?v.toLocaleString('pt-BR',{style:'percent',maximumFractionDigits:2})
+    :fmtValor(v,unidade);
+  const datasets=[{label:nome,data:serie,borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5}];
+  if(Number.isFinite(meta))datasets.push({label:'Meta '+formatar(meta),data:MESES.map(()=>meta),borderWidth:1.2,borderDash:[5,5],pointRadius:0});
+  E06_CHART=new Chart(canvas,{type:'line',data:{labels:MESES,datasets},options:{
+    responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':formatar(c.parsed.y)}`}}},
+    scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{...limites,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:formatar}}}
+  }});
+}
+function mostrarHistoricoIndicador(dialog,codigo){
+  const d=DATA.find(item=>item.codigo===codigo);
+  const temSerie=d.serie.some(Number.isFinite);
+  const historico=dialog.querySelector('.e06History');
+  const vazio=dialog.querySelector('.arHistoricoVazio');
+  historico.classList.toggle('open',temSerie);
+  vazio.hidden=temSerie;
+  dialog.querySelectorAll('[data-ar-serie]').forEach(button=>{
+    const selected=button.dataset.arSerie===codigo;
+    button.classList.toggle('active',selected);
+    button.setAttribute('aria-pressed',String(selected));
+  });
+  if(!temSerie)return;
+  historico.querySelector('.e06HistoryInfo').innerHTML=`<small>${esc(d.indicador)}</small><b>${esc(fmtValor(d.atual,d.unidade))}</b><span>Resultado registrado · meta ${esc(fmtValor(d.meta,d.unidade))}.</span>`;
+  desenharHistoricoAR(historico.querySelector('canvas'),d.indicador,d.serie,d.unidade,d.volumeLinear?null:d.meta);
+}
+function renderHistoricoIndicadores(itens){
+  return `<div class="subprefGrid">${itens.map(d=>`<button class="subprefCard" type="button" data-ar-serie="${esc(d.codigo)}" aria-pressed="false"><div class="subprefName">${esc(d.indicador)}</div><div class="subprefMeta">${d.serie.some(Number.isFinite)?"Evolução mensal":"Sem série mensal na fonte"}</div></button>`).join("")}</div>
+    <div class="e06History"><div class="e06ChartWrap"><canvas></canvas></div><div class="e06HistoryInfo" aria-live="polite"></div></div>
+    <p class="emptyBlock arHistoricoVazio" hidden>Sem série mensal disponível na fonte para este indicador.</p>`;
 }
 function bindARDialogs(){
   document.querySelectorAll('.arVerDetalhes').forEach(button=>button.addEventListener('click',()=>{
@@ -608,9 +637,13 @@ function bindARDialogs(){
     if(dialog.id==='e06Drill'){
       const subs=DATA.find(d=>d.codigo==='E06')?.e06Subs||[];
       if(subs.length)showE06History(Math.max(0,subs.findIndex(s=>!s.ok)));
+    }else{
+      const primeiro=[...dialog.querySelectorAll('[data-ar-serie]')].find(b=>DATA.find(d=>d.codigo===b.dataset.arSerie).serie.some(Number.isFinite))||dialog.querySelector('[data-ar-serie]');
+      mostrarHistoricoIndicador(dialog,primeiro.dataset.arSerie);
     }
   }));
-  document.querySelectorAll('.subprefCard').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();showE06History(el.dataset.e06Index);document.getElementById('e06History').scrollIntoView({block:'nearest'});}));
+  document.querySelectorAll('[data-ar-serie]').forEach(button=>button.addEventListener('click',()=>mostrarHistoricoIndicador(button.closest('dialog'),button.dataset.arSerie)));
+  document.querySelectorAll('[data-e06-index]').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();showE06History(el.dataset.e06Index);document.getElementById('e06History').scrollIntoView({block:'nearest'});}));
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -682,6 +715,11 @@ function processar(){
       d.metaRaw=get(linha,["Meta"]);
       d.fonte="SARC · aba Geral";
     }
+    if(codigo==="E07"){
+      d.unidade="%";
+      if(d.pendencia)d.pendencia="Referência anterior: 3,9%. Meta: 4,4%. O resultado da competência ainda não foi validado.";
+    }
+    d.serie=MESES.map(m=>calcValue(get(linha,[m]),d.unidade));
     d.atual=calcValue(d.atualRaw,d.unidade);
     // Nos volumes, a série mensal pode datar o acumulado já exibido
     // somente quando o valor da linha mapeada coincide com ele.
@@ -867,7 +905,7 @@ function renderResumo(){
     E04:["Melhorar atendimento","Elevar o atendimento de poda no prazo até 95%."],
     E05:["Validar indicador","Confirmar a escala da satisfação de poda e verificar se a nota chega a 4,5."],
     E06:["Completar apuração regional","Conferir o atendimento no prazo nas 12 subprefeituras, na mesma competência. Todas precisam atingir a meta."],
-    E07:["Validar indicador","Confirmar a escala da satisfação de remoção e verificar se a nota chega a 4,4."],
+    E07:["Validar indicador","Validar o resultado percentual da satisfação de remoção frente à meta de 4,4%."],
     E08:["Comprovar execução","Confirmar, ponto a ponto, a realização dos três ciclos de limpeza nos 50 pontos críticos. Sem comprovação, o ponto não conta para a meta."]
   };
 
@@ -1039,7 +1077,7 @@ function renderIndicadores(){
             const ritmo=leituraRitmo(d);
             const periodo=d.mesReferencia?`${MESES[d.mesReferencia-1]}/2026`:"";
             const referencia=d.codigo==="E06"?"12 de 12 subprefeituras":d.codigo==="E08"?fmtValor(d.meta,d.unidade)+" pontos com três ciclos cada":fmtValor(d.meta,d.unidade);
-            const semResultado=d.codigo==="E07"?"Nota ainda não validada":d.codigo==="E08"?"Execução ainda não comprovada":"Sem resultado registrado";
+            const semResultado=d.codigo==="E07"?"Resultado ainda não validado":d.codigo==="E08"?"Execução ainda não comprovada":"Sem resultado registrado";
             const situacao=!resultado?semResultado:d.codigo==="E06"&&d.e06Total&&d.e06Total!==12
               ?`A base lista ${d.e06Total} regiões; a meta prevê 12`:pendente?"Validação pendente":
               ritmo||(d.volumeLinear?"Sem referência para o período":d.statusDisplay==="Crítico"?"Fora da meta":d.statusDisplay);
@@ -1069,11 +1107,11 @@ function renderIndicadores(){
             ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||(d.codigo==="E01"?"Revitalizações registradas no acumulado do ano.":d.fonte))}</p>`).join("")}
             ${par?`<p>${esc(par.bonusNote)}</p>`:""}
           </div>`;
-          const conteudo=e06?renderE06Drill(e06)+notas:requisitos+notas;
+          const conteudo=e06?renderE06Drill(e06)+notas:requisitos+renderHistoricoIndicadores(itens)+notas;
           return `<article class="arLinhaMeta"><div class="arCardResumo">
             <strong>${esc(titulo)}</strong><div>${requisitos}</div>
             <button class="arVerDetalhes" type="button" aria-controls="${id}" aria-haspopup="dialog" aria-label="Ver critérios e dados: ${esc(titulo)}">Ver critérios e dados ›</button>
-          </div>${renderARDialog(id,titulo,conteudo,Boolean(e06))}</article>`;
+          </div>${renderARDialog(id,titulo,conteudo)}</article>`;
         }).join("")}</div></section>`;
     }).join("");
 }

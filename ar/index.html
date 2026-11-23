@@ -597,6 +597,25 @@ function bindE06Drill(){
 /* ═══════════════════════════════════════════════════════════
    PROCESSAMENTO PRINCIPAL
    ═══════════════════════════════════════════════════════════ */
+function competenciaAR(row, acumulado){
+  const raw=norm(get(row,["Competência","Mês de referência","Mes de referencia"]));
+  const partes=raw.match(/^(0?[1-9]|1[0-2])[/.-](?:20)?26$/);
+  if(partes)return Number(partes[1]);
+  const nome=raw.match(/^(\p{L}+)[ /.-]+(?:20)?26$/u);
+  if(nome){
+    const i=MESES.findIndex(m=>norm(m)===nome[1].slice(0,3));
+    if(i>=0)return i+1;
+  }
+  if(acumulado&&String(get(row,["Ano"])).trim()==="2026"){
+    return MESES.reduce((i,m,j)=>num(get(row,[m]))===null?i:j+1,0)||null;
+  }
+  return null;
+}
+function leituraRitmo(d){
+  if(!Number.isFinite(d.referenciaRitmo)||!Number.isFinite(d.atual))return null;
+  const delta=d.atual-d.referenciaRitmo;
+  return Math.abs(delta)<1e-9?"No ritmo da meta":delta>0?"Acima do previsto para o período":"Abaixo do previsto para o período";
+}
 function processar(){
   const map=montarMapeamento();
   DATA=RAW.ar.map((r,idx)=>{
@@ -617,6 +636,12 @@ function processar(){
       periodicidade:String(get(r,["Periodicidade"],"Mensal")).trim()
     };
     const linha=encontrarGeral(d,map.get(codigo));
+    const usaLinha=codigo==="E01"||!d.atualRaw;
+    d.mesReferencia=competenciaAR(usaLinha?linha:r,usaLinha);
+    const volumeLinear=codigo==="E01"||(
+      codigo!=="E08"&&String(get(r,["Tipo_Acumulado","Tipo Acumulado"])).trim().toUpperCase()==="SOMA"&&
+      norm(get(r,["Periodicidade"])).includes("mensal")&&maiorMelhor(d.sentido)
+    );
     if(codigo==="C01"||codigo==="C02"){
       const usaAcumulado=!d.atualRaw;
       const ultimo=usaAcumulado&&linha?MESES.reduce((i,m,j)=>num(get(linha,[m]))===null?i:j,-1):-1;
@@ -638,11 +663,11 @@ function processar(){
     }
     d.atual=calcValue(d.atualRaw,d.unidade);
     d.meta=calcValue(d.metaRaw,d.unidade);
+    d.volumeLinear=volumeLinear&&!isPercent(d.unidade)&&!norm(d.unidade).includes("posi");
+    d.referenciaRitmo=d.volumeLinear&&d.mesReferencia&&d.meta>0?d.meta*d.mesReferencia/12:null;
     if(d.atual!==null&&d.meta!==null&&d.meta!==0){
-      const isSomaAnual=codigo!=="E01"&&d.tipoAcumulado==="SOMA"&&norm(d.periodicidade).includes("mensal");
-      if(isSomaAnual){
-        const mesAtual=new Date().getMonth()+1;
-        d.metaProporcional=d.meta*(mesAtual/12);
+      if(codigo!=="E01"&&d.referenciaRitmo!==null){
+        d.metaProporcional=d.referenciaRitmo;
         d.atingimento=d.metaProporcional>0?
           (maiorMelhor(d.sentido)?d.atual/d.metaProporcional:d.metaProporcional/d.atual):null;
         d.atingimentoProporcional=true;
@@ -665,7 +690,7 @@ function processar(){
                rawStatus==="Crítico"?"Crítico":"Sem dado";
       d.statusDisplay=d.status;
     } else {
-      const metaRef=d.metaProporcional??d.meta;
+      const metaRef=d.meta; // Cenário anual não usa o ritmo mensal.
       d.status=statusCanonico(d.atual,metaRef,d.sentido);
       d.statusDisplay=d.status;
     }
@@ -844,7 +869,7 @@ function renderResumo(){
         ?d.atual===null||!d.meta
           ?["Apuração pendente","Ainda não há dados suficientes para informar quantas praças faltam para a meta."]
           :d.atual<d.meta
-            ?["Acompanhar a meta anual",`Foram revitalizadas ${fmtValor(d.atual,d.unidade)} praças. Faltam ${fmtValor(d.meta-d.atual,d.unidade)} para atingir a meta anual de ${fmtValor(d.meta,d.unidade)}.`]
+            ?["Acompanhar a meta anual",`${leituraRitmo(d)?leituraRitmo(d)+". ":""}Foram revitalizadas ${fmtValor(d.atual,d.unidade)} praças. Faltam ${fmtValor(d.meta-d.atual,d.unidade)} para atingir a meta anual de ${fmtValor(d.meta,d.unidade)}.`]
             :["Acompanhar a validação","O total registrado alcançou a meta anual. A confirmação oficial ainda está pendente."]
         :d.codigo==="E06" && d.statusCenario!=="Sem dado"
         ?["Melhorar atendimento","Atuar nas regiões abaixo da meta. Todas as 12 precisam atingir o requisito."]
@@ -1015,13 +1040,21 @@ function renderIndicadores(){
               </div>`;
             }
             const pendente=d.statusCenario==="Sem dado";
-            const resultado=(d.atual===null||(pendente&&d.codigo!=="E01"))?"":fmtValor(d.atual,d.unidade);
+            const resultado=d.atual===null?"":fmtValor(d.atual,d.unidade);
+            const ritmo=leituraRitmo(d);
+            const periodo=d.mesReferencia?`${MESES[d.mesReferencia-1]}/2026`:"";
             const referencia=d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
-            const situacao=pendente?"Aguardando apuração":d.statusDisplay==="Crítico"?"Abaixo da meta":d.statusDisplay;
-            const classe=pendente?"nd":d.statusClass;
+            const situacao=!resultado?"Sem resultado":pendente?"Validação pendente":
+              ritmo||(d.volumeLinear?"Sem referência para o período":d.statusDisplay==="Crítico"?"Fora da meta":d.statusDisplay);
+            const classe=pendente||!resultado?"nd":ritmo?(d.atual+1e-9>=d.referenciaRitmo?"ok":"crit"):d.volumeLinear?"nd":d.statusClass;
             return `<div class="arRequisito">
               ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}
-              <div class="arRequisitoValores">${resultado?`<strong>${esc(resultado)}</strong>`:""}<span>Meta ${esc(referencia)}</span></div>
+              <div class="arRequisitoValores">${resultado?`<strong>${esc(d.codigo==="E06"?`${d.e06Conformes??0} de ${d.e06Total??0} regiões`:resultado)}</strong>`:""}
+                ${resultado&&periodo?`<span>Referência: ${esc(periodo)}</span>`:""}
+                ${ritmo?`<span>Previsto até ${esc(periodo)}: ${esc(fmtValor(d.referenciaRitmo,d.unidade))}</span>`:""}
+                <span>${d.volumeLinear?"Meta anual":d.codigo==="E06"?"Meta":maiorMelhor(d.sentido)?"Meta mínima":"Limite máximo"}: ${esc(referencia)}</span>
+                ${d.volumeLinear&&resultado&&d.meta>d.atual?`<span>Faltam ${esc(fmtValor(d.meta-d.atual,d.unidade))} até dezembro</span>`:""}
+              </div>
               <span class="tag ${esc(classe)}">${esc(situacao)}</span>
             </div>`;
           }).join("");

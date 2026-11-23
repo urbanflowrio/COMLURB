@@ -145,23 +145,23 @@
     const sentencas = [];
     if (percentualLongo !== null) sentencas.push(`${pf(percentualLongo)} das pessoas afastadas estão nessa situação há mais de um ano.`);
     if (lider && pctIdade !== null) sentencas.push(`Em ${esc(lider.label)}, ${pf(pctIdade)} das pessoas têm mais de 60 anos.`);
-    $("geralLeitura").innerHTML = sentencas.length ? sentencas.map(s => `<span class="leitura-frase">${s}</span>`).join("") : "Não há dados disponíveis para esta leitura.";
-    const item = (categoria,valor,titulo,descricao,acao,aba) => `<article class="pe-card visao-prioridade"><div class="pe-eyebrow">${categoria}</div><div class="visao-valor">${valor}</div><h3>${titulo}</h3><p>${descricao}</p><div class="visao-acao">${acao}</div><button type="button" class="pe-btn visao-detalhe" data-abrir-aba="${aba}">Ver detalhes</button></article>`;
+    $("geralLeitura").innerHTML = sentencas.length ? sentencas.map(s => `<span class="leitura-frase">${s}</span>`).join("") : "Sem dados para mostrar neste resumo.";
+    const item = (categoria,valor,titulo,descricao,aba) => `<article class="pe-card visao-prioridade"><div class="pe-eyebrow">${categoria}</div><div class="visao-valor">${valor}</div><h3>${titulo}</h3><p>${descricao}</p><button type="button" class="pe-btn visao-detalhe" data-abrir-aba="${aba}">Ver detalhes</button></article>`;
     const textoLongo = percentualLongo !== null ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano.` : "Dados de duração indisponíveis.";
     const garisIdade = (D.sucessao || []).find(x => x.label === "Gari efetivo");
     const textoIdade = lider ? `${nf(lider.fx[6])} de ${nf(lider.n)} em ${esc(lider.label)} estão acima de 60 anos.${garisIdade && Number.isFinite(garisIdade.fx[6]) ? ` Entre os garis efetivos, são ${nf(garisIdade.fx[6])} pessoas (${pf(pct(garisIdade.fx[6],garisIdade.n))}).` : ""}` : "Dados de renovação indisponíveis.";
     const textoGari = percentualGari !== null ? `${nf(n.resGarisEf)} de ${nf(n.garisEf)} garis efetivos têm registro de restrição.` : "Dados de restrição indisponíveis.";
     $("geralPontos").innerHTML =
-      item("Afastamentos",pf(percentualLongo),"Há mais de um ano",textoLongo,"Acompanhar as situações de longa duração.","afast") +
-      item("Renovação",pf(pctIdade),"Maior proporção acima de 60 anos",textoIdade,"Compare proporção e quantidade. Idade não prevê desligamento.","suc") +
-      item("Restrições",pf(percentualGari),"Garis efetivos com restrição",textoGari,"Examinar a distribuição por unidade e função.","restr");
-    $("geralCedidos").innerHTML = cedidos && Number.isFinite(cedidos.n) ? `<div class="visao-valor">${nf(cedidos.n)}</div><p>Empregados no grupo de APAs cedidos à SME, distribuídos pelas CREs e apresentados separadamente das gerências operacionais.</p>` : "<p>Dados de cessão indisponíveis.</p>";
+      item("Afastamentos",pf(percentualLongo),"Há mais de um ano",textoLongo,"afast") +
+      item("Renovação",pf(pctIdade),"Grupo com maior percentual acima de 60 anos",textoIdade,"suc") +
+      item("Restrições",pf(percentualGari),"Garis efetivos com restrição",textoGari,"restr");
+    $("geralCedidos").innerHTML = cedidos && Number.isFinite(cedidos.n) ? `<div class="visao-valor">${nf(cedidos.n)}</div><p>Empregados cedidos à SME nas Coordenadorias Regionais de Educação (CREs).</p>` : "<p>Dados de cessão indisponíveis.</p>";
   }
   renderGeral();
 
   /* ---------------- Bloco 1 ---------------- */
   function renderQuadro(n) {
-    $("sitSub").textContent = `${nf(n.n)} empregados. O símbolo (•) indica um valor ocultado para proteger informações pessoais, inclusive quando necessário para impedir seu cálculo por diferença.`;
+    $("sitSub").textContent = `${nf(n.n)} empregados. O símbolo (•) indica um valor omitido para proteger a privacidade de equipes pequenas.`;
     const tot = n.n || 1;
     $("sitStack").innerHTML = n.sit.map((v, i) => (v ? `<span style="width:${(100 * v) / tot}%;background:${COR_SIT[i]}" data-tip="<b>${esc(R.sit[i])}</b>: ${nf(v)} (${pf(pct(v, n.n))})"></span>` : "")).join("");
     $("sitStack").setAttribute("aria-label", R.sit.map((s, i) => `${s}: ${nf(n.sit[i])}`).join("; "));

@@ -420,12 +420,21 @@ function montarMapeamento(){
 }
 function encontrarGeral(indicador,mapItem){
   const nomeMap=norm(mapItem?.indicadorGeral||""),nomeInd=norm(indicador.indicador);
+  if(indicador.codigo==="E01"){
+    const consolidadas=RAW.geral.filter(r=>
+      String(get(r,["Ano"])).trim()==="2026" &&
+      norm(get(r,["Indicador"]))==="pracas" &&
+      norm(get(r,["Diretoria"]))==="comlurb" &&
+      ["","-"].includes(norm(get(r,["Superint.","Superintendência","Superint"]))) &&
+      ["","-"].includes(norm(get(r,["Gerência","Gerencia"])))
+    );
+    return consolidadas.length===1?consolidadas[0]:null;
+  }
   const rows=RAW.geral.filter(r=>{
     const ano=String(get(r,["Ano"])).trim();
-    if(indicador.codigo==="E01" ? ano!=="2026" : ano&&ano!=="2026")return false;
+    if(ano&&ano!=="2026")return false;
     const nomeGeral=norm(get(r,["Indicador"]));
-    if(indicador.codigo==="E01"){if(!nomeGeral||nomeGeral!==(nomeMap||nomeInd))return false;}
-    else if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}
+    if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}
     else{if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral))return false;}
     const fDir=norm(mapItem?.diretoria||""),fSup=norm(mapItem?.superint||""),fGer=norm(mapItem?.gerencia||"");
     if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir)return false;
@@ -433,7 +442,6 @@ function encontrarGeral(indicador,mapItem){
     if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer)return false;
     return true;
   });
-  if(indicador.codigo==="E01"&&rows.length!==1)return null;
   return rows[0]||null;
 }
 function valoresMensais(row,unidade){

@@ -39,19 +39,19 @@
     <section class="pe-kpis" id="peKpis" aria-label="Síntese do recorte"></section>
 
     <section class="pe-bloco" id="bloco-geral" role="tabpanel" aria-labelledby="aba-geral" tabindex="0">
-      <div class="pe-head"><div><div class="pe-eyebrow">Visão geral</div><h2>Visão geral de Pessoas</h2><p>Leitura consolidada da força de trabalho da Companhia.</p></div></div>
-      <div class="pe-card visao-leitura"><div class="pe-eyebrow">Leitura executiva</div><h3>O que o quadro revela</h3><p id="geralLeitura"></p></div>
+      <div class="pe-head"><div><div class="pe-eyebrow">Visão geral</div><h2>Pessoas em números</h2></div></div>
+      <div class="pe-card visao-leitura"><h3>Destaques do quadro</h3><p id="geralLeitura"></p></div>
       <div class="pe-kpis" id="geralKpis" style="margin-top:14px"></div>
-      <div class="visao-heading"><div class="pe-eyebrow">Ação gerencial</div><h3>Prioridades de gestão</h3></div>
+      <div class="visao-heading"><h3>Afastamentos, idade e restrições</h3></div>
       <div class="visao-prioridades" id="geralPontos"></div>
       <div class="geral-grid">
-        <div class="pe-card"><div class="pe-eyebrow">Composição da força de trabalho</div><h3>Empregados cedidos à SME</h3><div id="geralCedidos"></div></div>
-        <div class="pe-card"><div class="pe-eyebrow">Onde aprofundar</div><h3>Explorar os dados</h3>
-          <button type="button" class="visao-link" data-abrir-aba="afast"><span>Afastamentos: onde estão e há quanto tempo?</span><span aria-hidden="true">→</span></button>
-          <button type="button" class="visao-link" data-abrir-aba="suc"><span>Renovação: quais funções merecem atenção?</span><span aria-hidden="true">→</span></button>
-          <button type="button" class="visao-link" data-abrir-aba="restr"><span>Restrições: como se distribuem entre os garis?</span><span aria-hidden="true">→</span></button>
-          <button type="button" class="visao-link" data-abrir-aba="tmp"><span>Temporários: onde estão alocados?</span><span aria-hidden="true">→</span></button>
-          <button type="button" class="visao-link" data-abrir-aba="movimentacao"><span>Desligamentos: como se comportam as entradas e saídas?</span><span aria-hidden="true">→</span></button>
+        <div class="pe-card"><h3>Empregados cedidos à SME</h3><div id="geralCedidos"></div></div>
+        <div class="pe-card"><h3>Detalhes por assunto</h3>
+          <button type="button" class="visao-link" data-abrir-aba="afast"><span>Afastamentos por unidade e duração</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="suc"><span>Idade e tempo de casa por função</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="restr"><span>Restrições entre garis efetivos</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="tmp"><span>Garis temporários por unidade</span><span aria-hidden="true">→</span></button>
+          <button type="button" class="visao-link" data-abrir-aba="movimentacao"><span>Admissões e desligamentos por ano</span><span aria-hidden="true">→</span></button>
         </div>
       </div>
     </section>
@@ -59,7 +59,7 @@
     <section class="pe-bloco" id="bloco-quadro" role="tabpanel" aria-labelledby="aba-quadro" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Quadro e situação</div>
-        <h2>Quem compõe o recorte e em que situação está</h2>
+        <h2>Composição do quadro</h2>
         <p>Cada pessoa aparece em uma única situação. Quem está afastado é contado em afastamentos, mesmo que tenha outra marcação cadastral. A restrição tem prioridade sobre férias.</p>
       </div></div>
       <div class="pe-grid">
@@ -80,22 +80,22 @@
         </div>
       </div>
       <div class="pe-card" style="margin-top:16px">
-        <div class="pe-head" style="margin-bottom:8px"><div><h3>Unidades do recorte</h3><div class="sub" style="margin:0">Clique em uma linha para detalhar. Algumas unidades são somadas em uma única linha para proteger grupos pequenos. Essa linha é um agrupamento de apresentação, não um setor do cadastro, e não permite detalhamento.</div></div><span class="pe-chip" id="unitsChip">Cadastro consolidado de setores</span></div>
+        <div class="pe-head" style="margin-bottom:8px"><div><h3>Unidades do recorte</h3><div class="sub" style="margin:0">Selecione uma unidade para abrir os detalhes. Unidades com equipes pequenas aparecem agrupadas para preservar a privacidade.</div></div><span class="pe-chip" id="unitsChip">Cadastro consolidado de setores</span></div>
         <div class="pe-tabela-wrap alta"><table id="unitTable"></table></div>
       </div>
     </section>
 
     <section class="pe-bloco" id="bloco-afast" role="tabpanel" aria-labelledby="aba-afast" tabindex="0" hidden>
       <div class="pe-head"><div>
-        <div class="pe-eyebrow">Afastamentos qualificados</div>
+        <div class="pe-eyebrow">Afastamentos</div>
         <h2>Afastamentos no quadro</h2>
-        <p>Veja a proporção por unidade, a natureza e a duração dos afastamentos na data de referência.</p>
+        <p>Os dados mostram quem estava afastado na data de referência da SIPE.</p>
       </div></div>
       <div class="pe-card afast-unidades">
-        <div class="pe-head"><div><h3>Onde os afastamentos são proporcionalmente maiores</h3><div class="sub" id="funilSub"></div></div></div>
+        <div class="pe-head"><div><h3>Percentual de afastados por unidade</h3><div class="sub" id="funilSub"></div></div></div>
         <div class="af-destaques" id="funil"></div>
         <button type="button" class="pe-btn afast-mais" id="afastMais" hidden>Ver todas as unidades</button>
-        <p class="pe-nota">As unidades são ordenadas pelo percentual de afastados. Os valores indicam a situação na data da base.</p>
+        
       </div>
       <div class="pe-grid meio afast-detalhes" style="margin-top:16px">
         <div class="pe-card"><h3>Natureza do afastamento</h3><div class="sub" id="natSub"></div><div class="af-resumo" id="natBars"></div></div>
@@ -107,7 +107,7 @@
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Restrição</div>
         <h2>Garis efetivos com registro de restrição</h2>
-        <p>Percentual de garis efetivos com registro de restrição em cada unidade.</p>
+        
       </div></div>
       <div class="pe-grid">
         <div class="pe-card">
@@ -117,7 +117,7 @@
           <p class="pe-nota">A linha nas barras indica a média COMLURB.</p>
         </div>
         <div class="pe-card">
-          <h3>Por faixa etária</h3><div class="sub">Garis efetivos, COMLURB. Comparação das proporções por faixa etária.</div>
+          <h3>Por faixa etária</h3><div class="sub">Percentual de garis efetivos com restrição em cada faixa etária.</div>
           <div class="pe-hbars" id="resFaixa"></div>
           <h3 style="margin-top:22px">Garis efetivos com restrição, por jornada</h3><div class="sub">Total e percentual em cada jornada, na COMLURB.</div>
           <div class="pe-tabela-wrap"><div id="resJornada"></div></div><p class="pe-nota" id="jornadaExemplo"></p>
@@ -129,15 +129,15 @@
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Movimentação do quadro · COMLURB</div>
         <h2>Desligamentos por ano e motivo</h2>
-        <p>Admissões identificadas na BASE SIPE e na listagem de desligados, sem repetir a mesma matrícula e data de exercício. Inclui todos os vínculos das fontes, como estágios e cargos de confiança.</p>
+        <p>As admissões vêm da BASE SIPE e da Listagem de Desligados. Cada matrícula é contada uma vez por data de exercício. Os números incluem estágios e cargos de confiança.</p>
       </div></div>
       <div class="pe-card">
         <label for="movAno">Ano da movimentação <select id="movAno" aria-describedby="movPeriodo"></select></label>
         <p class="pe-nota" id="movPeriodo"></p>
-        <p class="pe-nota">Visão anual da COMLURB. Escolha o ano para consultar os motivos e detalhar as unidades.</p>
+        <p class="pe-nota">Escolha o ano para consultar os motivos e os dados por unidade.</p>
         <div class="pe-grid mov-kpis" id="movKpis" aria-live="polite"></div>
         <p class="pe-nota" id="movLeitura"></p>
-        <p class="pe-aviso">A diferença entre entradas identificadas e saídas registradas depende da cobertura das fontes e das datas de corte. Ela não comprova a redução do quadro nem a reposição por função.</p>
+        <p class="pe-aviso">O saldo considera as entradas e saídas registradas nas duas bases. Para medir a variação do quadro ou a reposição por função, são necessários dados adicionais.</p>
       </div>
       <div class="pe-subabas" role="tablist" aria-label="Detalhamento dos desligamentos">
         <button type="button" role="tab" id="mov-tab-anual" aria-controls="mov-painel-anual" aria-selected="true">Por ano e motivo</button>
@@ -146,34 +146,34 @@
       <div id="mov-painel-anual" role="tabpanel" aria-labelledby="mov-tab-anual">
         <div class="pe-grid" style="margin-top:16px">
           <div class="pe-card"><h3>Histórico anual</h3><div class="sub">Selecione um ano para ver os motivos. O ano mais recente é parcial.</div><div class="pe-tabela-wrap"><table id="movAnual"></table></div></div>
-          <div class="pe-card"><h3 id="movMotivosTitulo">Motivos dos desligamentos</h3><div class="sub">Classificações originais do cadastro. Os códigos legais permanecem sem interpretação adicional.</div><div class="pe-tabela-wrap"><table id="movMotivos"></table></div></div>
+          <div class="pe-card"><h3 id="movMotivosTitulo">Motivos dos desligamentos</h3><div class="sub">Motivos e códigos conforme a Listagem de Desligados.</div><div class="pe-tabela-wrap"><table id="movMotivos"></table></div></div>
         </div>
       </div>
       <div class="pe-card" id="mov-painel-unidades" role="tabpanel" aria-labelledby="mov-tab-unidades" style="margin-top:16px" hidden>
         <h3>Movimentações por unidade no ano</h3>
-        <div class="sub">Clique para detalhar Diretoria, Sup/Coord e unidade. A estrutura usa o cadastro consolidado atual; não reconstitui a hierarquia histórica. Nas entradas de quem permanece, a lotação é a da SIPE atual; nas demais, é o setor informado na listagem de desligados. O saldo por unidade não mede transferências nem recomposição local confirmada.</div>
+        <div class="sub">Selecione uma diretoria ou Sup/Coord para abrir as unidades. A estrutura é a do cadastro atual. A lotação de quem segue no quadro vem da SIPE. Para quem saiu, vale o setor informado na Listagem de Desligados.</div>
         <div id="movCaminho" class="mov-path"></div>
         <div class="pe-tabela-wrap alta"><table id="movUnidades"></table></div>
         <p class="pe-nota">Siglas sem vínculo comprovado no cadastro atual permanecem em “Sem correspondência”. Traço indica contagem protegida, inclusive por supressão complementar; não significa zero. Saldo só aparece quando as duas contagens estão disponíveis.</p>
       </div>
-      <p class="pe-nota">Fontes: BASE SIPE de 26/10/2026, Listagem de Desligados recebida em 29/10/2026 e Cadastro consolidado de setores. A atualização desta seção depende da conferência das três fontes e da geração dos agregados de movimentação.</p>
+      <p class="pe-nota">Fontes: BASE SIPE de 26/10/2026, Listagem de Desligados recebida em 29/10/2026 e Cadastro consolidado de setores.</p>
     </section>
 
     <section class="pe-bloco" id="bloco-suc" role="tabpanel" aria-labelledby="aba-suc" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Renovação e sucessão · COMLURB</div>
-        <h2>Onde o quadro atual tem pouca renovação e muita experiência acumulada</h2>
-        <p>A base mostra só quem permanece no cadastro. Idade e aposentadoria pelo INSS indicam atenção para sucessão, não preveem saídas.</p>
+        <h2>Idade, tempo de casa e renovação do quadro</h2>
+        <p>Os dados consideram os empregados que permanecem no quadro. A idade e o registro de aposentadoria pelo INSS ajudam a planejar a sucessão.</p>
       </div></div>
       <div class="pe-card" style="margin-bottom:16px">
-        <h3>Envelhecimento do quadro: concentração etária e sucessão</h3>
+        <h3>Distribuição do quadro por idade</h3>
         <div class="sub">COMLURB · sem temporários e cargos de confiança extraquadro · faixas etárias da BASE SIPE.</div>
         <div class="renov-destaques" id="agingDestaques"></div>
         <h3>Maiores proporções por função ou grupo</h3>
         <div class="pe-tabela-wrap"><table id="agingTable"></table></div>
-        <details class="pe-detalhes"><summary>Entenda o indicador e suas referências</summary><p class="pe-nota"><b>Indicador:</b> pessoas na faixa “Acima de 60 anos” ÷ quadro do mesmo grupo de funções × 100. O corte de 60 anos é descritivo do HUB, sem classificar capacidade individual. A tabela destaca as maiores proporções entre os grupos de funções com valores disponíveis.</p><p class="pe-nota"><b>Base científica:</b> Ilmarinen, Tuomi e Klockars (1997) acompanharam 818 empregados por 11 anos e encontraram associação da capacidade para o trabalho com idade e exigências físicas. Alcântara et al. (2014), em estudo com 5.646 empregados municipais brasileiros, mostraram a importância conjunta da saúde e das características do trabalho. As populações e métodos diferem da COMLURB; seus resultados não estimam o risco individual dos nossos empregados.</p>
-        <p class="pe-nota"><b>Aplicação ao planejamento:</b> avaliar transferência de conhecimento e sucessão nos grupos de funções com maior concentração etária; examinar exigências físicas, condições de trabalho e saúde ocupacional em conjunto. Idade isolada não mede produtividade, incapacidade nem previsão de desligamento.</p>
-        <p class="pe-nota"><b>Evolução mensal:</b> a variação da proporção entre duas competências comparáveis será medida em pontos percentuais. Uma única extração permite descrever a composição atual; não permite calcular a velocidade de envelhecimento. Admissões, saídas e mudanças de cadastro também alteram a proporção.</p>
+        <details class="pe-detalhes"><summary>Como o indicador é calculado</summary><p class="pe-nota"><b>Indicador:</b> pessoas na faixa “Acima de 60 anos” ÷ quadro do mesmo grupo de funções × 100. O corte de 60 anos é descritivo do HUB, sem classificar capacidade individual. A tabela destaca as maiores proporções entre os grupos de funções com valores disponíveis.</p><p class="pe-nota"><b>Base científica:</b> Ilmarinen, Tuomi e Klockars (1997) acompanharam 818 empregados por 11 anos e encontraram associação da capacidade para o trabalho com idade e exigências físicas. Alcântara et al. (2014), em estudo com 5.646 empregados municipais brasileiros, mostraram a importância conjunta da saúde e das características do trabalho. As populações e métodos diferem da COMLURB; seus resultados não estimam o risco individual dos nossos empregados.</p>
+        <p class="pe-nota"><b>Planejamento da sucessão.</b> A proporção de empregados acima de 60 anos ajuda a identificar as funções em que vale organizar o repasse de conhecimento. Para avaliar as condições de trabalho, é preciso considerar também as exigências da função e os dados de saúde ocupacional.</p>
+        <p class="pe-nota"><b>Comparação mensal.</b> A mudança na proporção será medida em pontos percentuais quando houver dois meses com bases comparáveis. Admissões, desligamentos e atualizações cadastrais também podem mudar esse percentual.</p>
         <p class="pe-nota">Estudos: <a href="https://pubmed.ncbi.nlm.nih.gov/9247995/" target="_blank" rel="noopener">Ilmarinen et al., 1997</a> · <a href="https://doi.org/10.3233/WOR-131703" target="_blank" rel="noopener">Alcântara et al., 2014</a>.</p></details>
       </div>
       <details class="pe-card pe-detalhes" style="margin-top:16px"><summary>Ano de admissão de quem está no quadro hoje</summary>
@@ -203,8 +203,8 @@
     <section class="pe-bloco" id="bloco-tmp" role="tabpanel" aria-labelledby="aba-tmp" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Garis temporários</div>
-        <h2>Onde os temporários entraram e com que peso entre os garis</h2>
-        <p>Identificados pelo regime por tempo determinado. A base não traz data de término dos contratos.</p>
+        <h2>Garis temporários por unidade</h2>
+        <p>O painel identifica os temporários pelo regime de contratação. A SIPE consultada não informa o término dos contratos.</p>
       </div></div>
       <div class="pe-grid">
         <div class="pe-card">
@@ -224,13 +224,13 @@
     <section class="pe-bloco" id="bloco-alertas" role="tabpanel" aria-labelledby="aba-alertas" tabindex="0" hidden>
       <div class="pe-head"><div>
         <div class="pe-eyebrow">Alertas cadastrais e de férias · COMLURB</div>
-        <h2>O que corrigir no cadastro antes de comparar unidades</h2>
-        <p>Férias consideradas só entre empregados não afastados. Os pontos de qualidade vêm da conferência da base.</p>
+        <h2>Férias e conferência do cadastro</h2>
+        <p>A situação das férias considera apenas os empregados sem afastamento.</p>
       </div></div>
       <div class="pe-grid meio">
         <div class="pe-card"><h3>Situação das férias</h3><div class="sub">Empregados não afastados.</div><div class="pe-hbars" id="feriasBars"></div>
           <h3 style="margin-top:20px">Férias vencidas, críticas ou em alerta alto, por diretoria</h3><div class="pe-tabela-wrap"><table id="feriasDir"></table></div></div>
-        <div class="pe-card"><h3>Pontos de qualidade cadastral</h3><div class="sub">Contagens da extração informada.</div><div class="pe-tabela-wrap"><table id="qualTable"></table></div></div>
+        <div class="pe-card"><h3>Ocorrências na conferência do cadastro</h3><div class="sub">Contagens da extração informada.</div><div class="pe-tabela-wrap"><table id="qualTable"></table></div></div>
       </div>
     </section>
 
@@ -241,9 +241,9 @@
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=18"></script>
-<script src="pessoas.js?v=29"></script>
+<script src="pessoas.js?v=30"></script>
 <script src="movimentacao-dados.js?v=3"></script>
-<script src="movimentacao.js?v=5"></script>
+<script src="movimentacao.js?v=6"></script>
 <script src="abas.js?v=2"></script>
 </body>
 </html>

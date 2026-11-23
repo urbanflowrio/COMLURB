@@ -617,6 +617,13 @@ function processar(){
       periodicidade:String(get(r,["Periodicidade"],"Mensal")).trim()
     };
     const linha=encontrarGeral(d,map.get(codigo));
+    if(codigo==="C01"||codigo==="C02"){
+      const usaAcumulado=!d.atualRaw;
+      const ultimo=usaAcumulado&&linha?MESES.reduce((i,m,j)=>num(get(linha,[m]))===null?i:j,-1):-1;
+      const ano=get(linha,["Ano"]);
+      d.periodoIPL=String(get(usaAcumulado?linha:r,["Competência","Competencia","Mês de referência","Mes de referencia"])).trim()
+        || (ultimo>=0&&String(ano)==="2026"?`Acumulado até ${MESES[ultimo]}/${ano}`:"");
+    }
     if(linha){
       d.unidade=d.unidade||String(get(linha,["Unidade"])).trim();
       d.sentido=d.sentido||String(get(linha,["Sentido"],"maior_melhor")).trim();
@@ -985,6 +992,28 @@ function renderIndicadores(){
           const par=CASADOS.find(c=>c.id===chave);
           const e06=itens.find(d=>d.codigo==="E06");
           const requisitos=itens.map(d=>{
+            if(d.codigo==="C01"||d.codigo==="C02"){
+              const minimo=d.codigo==="C01";
+              const comResultado=Number.isFinite(d.atual);
+              const comMeta=Number.isFinite(d.meta);
+              const exibe=v=>minimo?(v*100).toLocaleString("pt-BR",{maximumFractionDigits:2})+"%":fmtValor(v,d.unidade);
+              const diferenca=comResultado&&comMeta?(minimo?d.atual-d.meta:d.meta-d.atual):null;
+              const magnitude=diferenca===null?"":(Math.abs(diferenca)*(minimo?100:1)).toLocaleString("pt-BR",{maximumFractionDigits:2})+(minimo?" p.p.":"");
+              const distancia=diferenca===null?"":Math.abs(diferenca)<1e-9?"No valor da meta":minimo
+                ?diferenca<0?`Faltam ${magnitude} para a meta`:`${magnitude} acima da meta`
+                :diferenca<0?`${magnitude} acima do limite`:`${magnitude} abaixo do limite`;
+              const pendente=comResultado&&d.statusCenario==="Sem dado";
+              return `<div class="arRequisito">
+                <span class="arRequisitoNome">${esc(d.indicador)}</span>
+                <div class="arRequisitoValores">
+                  <strong>${comResultado?esc(exibe(d.atual)):"Sem resultado"}</strong>
+                  ${comResultado?`<span>${esc(d.periodoIPL||"Competência não informada")}</span>`:""}
+                  <span>${comMeta?esc((minimo?"Meta mínima: ":"Limite máximo: ")+exibe(d.meta)):"Meta não informada"}</span>
+                </div>
+                ${distancia?`<span class="tag ${pendente?"nd":diferenca<0?"crit":"ok"}">${esc(distancia)}</span>`:""}
+                ${pendente?'<span class="tag nd">Validação pendente</span>':""}
+              </div>`;
+            }
             const pendente=d.statusCenario==="Sem dado";
             const resultado=(d.atual===null||(pendente&&d.codigo!=="E01"))?"":fmtValor(d.atual,d.unidade);
             const referencia=d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);

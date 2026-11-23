@@ -111,30 +111,32 @@
 .indicatorRow.expanded .drillCue .arr{transform:rotate(90deg)}
 .e06Drill{display:none;margin:-2px 0 10px;padding:16px 18px 18px;border:1px solid rgba(91,155,213,.28);border-top:0;border-radius:0 0 16px 16px;background:linear-gradient(180deg,rgba(10,32,54,.92),rgba(7,24,42,.96))}
 .e06Drill.open{display:block}
+.e06Toggle.btnLimpar{width:100%;height:auto;min-height:44px;padding:10px 12px;white-space:normal;text-align:left;line-height:1.35}
+.e06Drill{container-type:inline-size;overflow-wrap:normal}
 .e06DrillHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
 .e06DrillHead h3{margin:0 0 4px;color:#fff;font-size:15px}
 .e06DrillHead p{margin:0;color:#9fb0c7;font-size:11px;line-height:1.4}
-.e06Summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.e06Summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,116px),1fr));gap:8px;margin-bottom:14px}
 .e06Mini{border:1px solid var(--linha);border-radius:12px;background:rgba(255,255,255,.025);padding:10px 12px}
 .e06Mini small{display:block;color:#8fa6bf;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
-.e06Mini b{font-size:20px;color:#fff}
-.subprefGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.e06Mini b{font-size:20px;color:#fff;white-space:nowrap}
+.subprefGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:8px}
 .subprefCard{appearance:none;text-align:left;border:1px solid var(--linha);border-radius:12px;background:rgba(255,255,255,.025);padding:11px 12px;cursor:pointer;color:inherit;transition:.15s ease}
 .subprefCard:hover,.subprefCard.active{border-color:rgba(91,155,213,.55);background:rgba(91,155,213,.08)}
-.subprefCardTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.subprefName{font-size:12px;font-weight:900;color:#e6f0fb}
+.subprefCardTop{display:flex;align-items:baseline;flex-wrap:wrap;justify-content:space-between;gap:4px 8px}
+.subprefName{word-break:normal;overflow-wrap:normal;font-size:12px;font-weight:900;color:#e6f0fb}
 .subprefVal{font-size:15px;font-weight:950;color:#fff;white-space:nowrap}
 .subprefMeta{margin-top:5px;font-size:10px;color:#8fa6bf}
 .subprefDot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;background:#ff7d72}.subprefCard.ok .subprefDot{background:#83d99d}
 .e06History{display:none;margin-top:14px;border-top:1px solid rgba(41,72,102,.65);padding-top:14px}
-.e06History.open{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.7fr);gap:16px}
+.e06History.open{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@container (min-width:640px){.e06History.open{grid-template-columns:minmax(0,1.65fr) minmax(220px,.7fr)}}
 .e06ChartWrap{height:250px;min-width:0}
 .e06HistoryInfo{display:flex;flex-direction:column;justify-content:center;border:1px solid var(--linha);border-radius:12px;padding:14px;background:rgba(255,255,255,.025)}
 .e06HistoryInfo small{font-size:9px;color:#8fa6bf;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 .e06HistoryInfo b{font-size:25px;color:#fff;margin:4px 0 8px}
 .e06HistoryInfo span{font-size:11px;color:#aebfd5;line-height:1.45}
-@media(max-width:980px){.e06Summary{grid-template-columns:repeat(2,1fr)}.subprefGrid{grid-template-columns:repeat(2,1fr)}.e06History.open{grid-template-columns:1fr}}
-@media(max-width:620px){.e06Summary,.subprefGrid{grid-template-columns:1fr}.e06Drill{padding:12px}.e06ChartWrap{height:220px}}
+@media(max-width:620px){.e06Drill{padding:12px}.e06ChartWrap{height:220px}}
 
 /* ── Responsivo ── */
 @media(max-width:1380px){
@@ -581,7 +583,7 @@ function toggleE06(ev){
   const panel=document.getElementById('e06Drill');
   if(!row||!panel)return;
   const open=!panel.classList.contains('open');
-  panel.classList.toggle('open',open);row.classList.toggle('expanded',open);
+  panel.classList.toggle('open',open);row.classList.toggle('expanded',open);row.setAttribute('aria-expanded',String(open));
 }
 function showE06History(index){
   const d=DATA.find(x=>x.codigo==='E06');if(!d)return;
@@ -1060,7 +1062,7 @@ function renderIndicadores(){
           </summary><div class="arLinhaDetalhe">
             ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||(d.codigo==="E01"?"Revitalizações registradas no acumulado do ano.":d.fonte))}</p>`).join("")}
             ${par?`<p>${esc(par.bonusNote)}</p>`:""}
-            ${e06?`<button class="btnLimpar" type="button" data-indicator-code="E06">Abrir histórico da remoção em logradouro por subprefeitura</button>${renderE06Drill(e06)}`:""}
+            ${e06?`<button class="btnLimpar e06Toggle" type="button" data-indicator-code="E06" aria-controls="e06Drill" aria-expanded="false">Histórico por subprefeitura</button>${renderE06Drill(e06)}`:""}
           </div></details>`;
         }).join("")}</div></section>`;
     }).join("");

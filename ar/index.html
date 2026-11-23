@@ -283,7 +283,7 @@ const CASADOS = [
   },
   {
     id: "par-04",
-    label: "Meta dupla: Atendimento 1746 Remoção + Satisfação Remoção",
+    label: "Meta dupla: Atendimento no prazo e satisfação na remoção de resíduos em logradouro",
     membros: ["E06","E07"],
     bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85% no prazo em cada subprefeitura e nota de satisfação igual ou superior a 4,4 para a cidade. Os dois precisam ser atingidos juntos."
   },
@@ -645,6 +645,8 @@ function processar(){
       periodicidade:String(get(r,["Periodicidade"],"Mensal")).trim()
     };
     const linha=encontrarGeral(d,map.get(codigo));
+    if(codigo==="E06")d.indicador="Atendimento no prazo por subprefeitura";
+    if(codigo==="E07")d.indicador="Satisfação com o atendimento";
     const usaLinha=codigo==="E01"||!d.atualRaw;
     d.mesReferencia=competenciaAR(usaLinha?linha:r,usaLinha);
     const volumeLinear=codigo==="E01"||(
@@ -856,7 +858,7 @@ function renderResumo(){
   const nota=n=>n.toFixed(1).replace(".",",");
   const porCodigo=Object.fromEntries(DATA.map(d=>[d.codigo,d]));
   const resumos={E01:"Revitalização de Praças", "E02+E03":"Recuperação de Resíduos + Ranking",
-    "E04+E05":"Poda", "E06+E07":"Remoção Gratuita", E08:"Microdrenagem Urbana"};
+    "E04+E05":"Poda", "E06+E07":"Remoção de Resíduos em Logradouro", E08:"Microdrenagem Urbana"};
 
   function situacao(d){
     if(!d)return "Sem dado";
@@ -1012,7 +1014,7 @@ function renderIndicadores(){
   const visiveis=new Set(FILTRADOS.map(d=>d.codigo));
   const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))];
   const nomes={"par-02":"Recuperação de Resíduos + Ranking","par-03":"Poda",
-    "par-04":"Remoção Gratuita","par-c06":"Índice Padrão de Limpeza"};
+    "par-04":"Remoção de Resíduos em Logradouro","par-c06":"Índice Padrão de Limpeza"};
   if(!grupos.length){
     $("indicadoresContainer").innerHTML='<div class="emptyBlock">Nenhuma meta encontrada nos filtros selecionados.</div>';
     return;

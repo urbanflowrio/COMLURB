@@ -818,14 +818,13 @@ function renderResumo(){
   }
 
   const encaminhamentos={
-    E01:["Acompanhar produção","Acompanhar as revitalizações frente à meta do SARC."],
     E02:["Concluir apuração","Conferir o percentual de recuperação frente à meta de 3,8%."],
     E03:["Acompanhar publicação","Confirmar a posição da cidade quando sair o ranking nacional."],
     E04:["Melhorar atendimento","Elevar o atendimento de poda no prazo até 95%."],
     E05:["Validar indicador","Confirmar a escala da satisfação de poda e verificar se a nota chega a 4,5."],
     E06:["Completar apuração regional","Atualizar as 12 regiões na mesma competência e conferir o atingimento em cada uma."],
     E07:["Validar indicador","Confirmar a escala da satisfação de remoção e verificar se a nota chega a 4,4."],
-    E08:["Comprovar execução","Reunir as evidências dos três ciclos nos 50 locais cadastrados."]
+    E08:["Comprovar execução","Confirmar, ponto a ponto, a realização dos três ciclos de limpeza nos 50 pontos críticos. Sem comprovação, o ponto não conta para a meta."]
   };
 
   const metas=[...b.detalhesEstrategicos].sort((a,b)=>{
@@ -834,8 +833,12 @@ function renderResumo(){
   }).map(meta=>{
     const membros=meta.cod.split("+").map(c=>porCodigo[c]).filter(Boolean);
     const acoes=membros.filter(d=>situacao(d)!=="Dentro da Meta").map(d=>{
-      const [tipo,acao]=d.codigo==="E01" && (d.atual===null||!d.meta)
-        ?["Conferir dados no SARC","Aguardar uma linha válida com resultado e meta para 2026."]
+      const [tipo,acao]=d.codigo==="E01"
+        ?d.atual===null||!d.meta
+          ?["Apuração pendente","Ainda não há dados suficientes para informar quantas praças faltam para a meta."]
+          :d.atual<d.meta
+            ?["Acompanhar a meta anual",`Foram revitalizadas ${fmtValor(d.atual,d.unidade)} praças. Faltam ${fmtValor(d.meta-d.atual,d.unidade)} para atingir a meta anual de ${fmtValor(d.meta,d.unidade)}.`]
+            :["Acompanhar a validação","O total registrado alcançou a meta anual. A confirmação oficial ainda está pendente."]
         :d.codigo==="E06" && d.statusCenario!=="Sem dado"
         ?["Melhorar atendimento","Atuar nas regiões abaixo da meta. Todas as 12 precisam atingir o requisito."]
         :encaminhamentos[d.codigo]||["Verificar resultado",d.indicador];
@@ -846,7 +849,7 @@ function renderResumo(){
     const linhas=membros.map(d=>{
       const resultado=(d.atual===null||(d.codigo!=="E01"&&d.statusCenario==="Sem dado"))?"":` · Resultado ${fmtValor(d.atual,d.unidade)}`;
       const metaTxt=d.codigo==="E06"?" · Atendimento conforme em 12 de 12 regiões"
-        :` · Meta ${fmtValor(d.meta,d.unidade)}${d.codigo==="E01"?" · Fonte: SARC":""}`;
+        :` · Meta ${fmtValor(d.meta,d.unidade)}`;
       const faltaPoda=d.codigo==="E04" && d.atual!==null && d.atual<d.meta
         ?` · Faltam ${nota(d.meta-d.atual)} p.p.`:"";
       return `<p><strong>${esc(d.indicador)}</strong>${esc(resultado+metaTxt+faltaPoda)}${d.pendencia?" · "+esc(d.pendencia):""}</p>`;
@@ -996,7 +999,7 @@ function renderIndicadores(){
           return `<details class="arLinhaMeta"><summary>
             <strong>${esc(nomes[chave]||itens[0].indicador)}</strong><div>${requisitos}</div><span class="arVerDetalhes"></span>
           </summary><div class="arLinhaDetalhe">
-            ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||d.fonte)}</p>`).join("")}
+            ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||(d.codigo==="E01"?"Revitalizações registradas no acumulado do ano.":d.fonte))}</p>`).join("")}
             ${par?`<p>${esc(par.bonusNote)}</p>`:""}
             ${e06?`<button class="btnLimpar" type="button" data-indicator-code="E06">Abrir histórico por subprefeitura</button>${renderE06Drill(e06)}`:""}
           </div></details>`;

@@ -534,6 +534,11 @@ function aplicarRegraE06(d){
   d.statusClass=tagClass(d.status);
   d.e06Conformes=conformes;
   d.e06Total=total;
+  if(total!==12||avaliadas.length!==12){
+    d.pendencia=d.pendencia||(total!==12
+      ?`A base lista ${total} regiões, mas a meta prevê 12. É preciso conferir quais entram na apuração.`
+      :`Só ${avaliadas.length} de 12 regiões têm resultado disponível.`);
+  }
   // Tendência = comparação entre conformidade das subprefeituras no último mês e mês anterior.
   const mesesComDados=MESES.map((m,i)=>({i,vals:subs.map(s=>s.vals[i]).filter(v=>v!==null)})).filter(x=>x.vals.length);
   if(mesesComDados.length>=2){
@@ -638,7 +643,7 @@ function processar(){
     const usaLinha=codigo==="E01"||!d.atualRaw;
     d.mesReferencia=competenciaAR(usaLinha?linha:r,usaLinha);
     const volumeLinear=codigo==="E01"||(
-      codigo!=="E08"&&String(get(r,["Tipo_Acumulado","Tipo Acumulado"])).trim().toUpperCase()==="SOMA"&&
+      codigo!=="E06"&&codigo!=="E08"&&String(get(r,["Tipo_Acumulado","Tipo Acumulado"])).trim().toUpperCase()==="SOMA"&&
       norm(get(r,["Periodicidade"])).includes("mensal")&&maiorMelhor(d.sentido)
     );
     if(codigo==="C01"||codigo==="C02"){
@@ -661,6 +666,12 @@ function processar(){
       d.fonte="SARC · aba Geral";
     }
     d.atual=calcValue(d.atualRaw,d.unidade);
+    // Nos volumes, a série mensal pode datar o acumulado já exibido
+    // somente quando o valor da linha mapeada coincide com ele.
+    const acumuladoGeral=calcValue(get(linha,["Acumulado"]),d.unidade);
+    if(volumeLinear&&!d.mesReferencia&&d.atual!==null&&acumuladoGeral!==null&&Math.abs(d.atual-acumuladoGeral)<1e-9){
+      d.mesReferencia=competenciaAR(linha,true);
+    }
     d.meta=calcValue(d.metaRaw,d.unidade);
     d.volumeLinear=volumeLinear&&!isPercent(d.unidade)&&!norm(d.unidade).includes("posi");
     d.referenciaRitmo=d.volumeLinear&&d.mesReferencia&&d.meta>0?d.meta*d.mesReferencia/12:null;
@@ -1043,12 +1054,13 @@ function renderIndicadores(){
             const ritmo=leituraRitmo(d);
             const periodo=d.mesReferencia?`${MESES[d.mesReferencia-1]}/2026`:"";
             const referencia=d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
-            const situacao=!resultado?"Sem resultado":pendente?"Validação pendente":
+            const situacao=!resultado?"Sem resultado":d.codigo==="E06"&&d.e06Total&&d.e06Total!==12
+              ?`A base lista ${d.e06Total} regiões; a meta prevê 12`:pendente?"Validação pendente":
               ritmo||(d.volumeLinear?"Sem referência para o período":d.statusDisplay==="Crítico"?"Fora da meta":d.statusDisplay);
             const classe=pendente||!resultado?"nd":ritmo?(d.atual+1e-9>=d.referenciaRitmo?"ok":"crit"):d.volumeLinear?"nd":d.statusClass;
             return `<div class="arRequisito">
               ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}
-              <div class="arRequisitoValores">${resultado?`<strong>${esc(d.codigo==="E06"?`${d.e06Conformes??0} de ${d.e06Total??0} regiões`:resultado)}</strong>`:""}
+              <div class="arRequisitoValores">${resultado?`<strong>${esc(d.codigo==="E06"?`${d.e06Conformes??0} de ${d.e06Total??0} regiões na base`:resultado)}</strong>`:""}
                 ${resultado&&periodo?`<span>Referência: ${esc(periodo)}</span>`:""}
                 ${ritmo?`<span>Previsto até ${esc(periodo)}: ${esc(fmtValor(d.referenciaRitmo,d.unidade))}</span>`:""}
                 <span>${d.volumeLinear?"Meta anual":d.codigo==="E06"?"Meta":maiorMelhor(d.sentido)?"Meta mínima":"Limite máximo"}: ${esc(referencia)}</span>

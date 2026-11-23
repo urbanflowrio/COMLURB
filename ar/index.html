@@ -109,11 +109,13 @@
 .drillCue{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:#7ec3f5;font-size:10px;font-weight:900;letter-spacing:.05em}
 .drillCue .arr{transition:transform .18s ease}
 .indicatorRow.expanded .drillCue .arr{transform:rotate(90deg)}
-.e06Drill{display:none;margin:-2px 0 10px;padding:16px 18px 18px;border:1px solid rgba(91,155,213,.28);border-top:0;border-radius:0 0 16px 16px;background:linear-gradient(180deg,rgba(10,32,54,.92),rgba(7,24,42,.96))}
-.e06Drill.open{display:block}
+.e06Drill{box-sizing:border-box;width:min(960px,calc(100% - 32px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid var(--linha);border-radius:18px;background:#0d1e30;color:#e6f0fb;box-shadow:0 24px 80px #0008;overflow:auto;overflow-wrap:normal}
+.e06Drill::backdrop{background:rgba(3,10,19,.76)}
 .e06Toggle.btnLimpar{width:100%;height:auto;min-height:44px;padding:10px 12px;white-space:normal;text-align:left;line-height:1.35}
-.e06Drill{container-type:inline-size;overflow-wrap:normal}
-.e06DrillHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.e06DrillHead{position:sticky;top:0;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 22px;background:#0d1e30;border-bottom:1px solid var(--linha)}
+.e06DrillBody{padding:18px 22px 22px;container-type:inline-size}
+.e06Close{flex:none;background:rgba(255,255,255,.06);color:#e6f0fb;border:1px solid var(--linha);border-radius:8px;min-width:40px;height:40px;font-size:22px;cursor:pointer}
+.e06Close:hover{background:rgba(91,155,213,.2)}
 .e06DrillHead h3{margin:0 0 4px;color:#fff;font-size:15px}
 .e06DrillHead p{margin:0;color:#9fb0c7;font-size:11px;line-height:1.4}
 .e06Summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,116px),1fr));gap:8px;margin-bottom:14px}
@@ -136,7 +138,7 @@
 .e06HistoryInfo small{font-size:9px;color:#8fa6bf;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 .e06HistoryInfo b{font-size:25px;color:#fff;margin:4px 0 8px}
 .e06HistoryInfo span{font-size:11px;color:#aebfd5;line-height:1.45}
-@media(max-width:620px){.e06Drill{padding:12px}.e06ChartWrap{height:220px}}
+@media(max-width:620px){.e06DrillHead,.e06DrillBody{padding:12px}.e06ChartWrap{height:220px}}
 
 /* ── Responsivo ── */
 @media(max-width:1380px){
@@ -559,36 +561,39 @@ function aplicarRegraE06(d){
 }
 function renderE06Drill(d){
   const subs=d.e06Subs||e06Subprefeituras();
-  if(!subs.length)return '<div class="e06Drill" id="e06Drill"><div class="emptyBlock">Sem detalhamento por subprefeitura na fonte SARC.</div></div>';
+
   const conformes=subs.filter(s=>s.ok).length;
   const abaixo=subs.filter(s=>!s.ok).length;
   const vals=subs.map(s=>s.acum).filter(v=>v!==null);
   const menor=vals.length?Math.min(...vals):null;
   const cards=subs.map((s,i)=>`<button class="subprefCard ${s.ok?'ok':'crit'}" data-e06-index="${i}" type="button"><div class="subprefCardTop"><span class="subprefName"><span class="subprefDot"></span>${esc(s.nome)}</span><span class="subprefVal">${esc(fmtValor(s.acum,'%'))}</span></div><div class="subprefMeta">Meta ≥ ${esc(fmtValor(s.meta,'%'))} · ${s.ok?'Dentro da meta':'Abaixo da meta'}</div></button>`).join('');
-  return `<div class="e06Drill" id="e06Drill">
-    <div class="e06DrillHead"><div><h3>Atendimento no prazo por Subprefeitura</h3><p>Resultado acumulado de 2026. Clique em uma Subprefeitura para abrir o histórico mês a mês.</p></div></div>
-    <div class="e06Summary">
+  return `<dialog class="e06Drill" id="e06Drill" aria-labelledby="e06Title">
+    <header class="e06DrillHead"><div><h3 id="e06Title">Atendimento no prazo por subprefeitura</h3><p>Acumulado de 2026 e evolução mensal da região selecionada.</p></div><form method="dialog"><button class="e06Close" type="submit" aria-label="Fechar histórico" autofocus>×</button></form></header>
+    <div class="e06DrillBody">${subs.length?`<div class="e06Summary">
       <div class="e06Mini"><small>Na meta</small><b>${conformes}/${subs.length}</b></div>
       <div class="e06Mini"><small>Conformidade</small><b>${(conformes/subs.length*100).toFixed(1).replace('.',',')}%</b></div>
-      <div class="e06Mini"><small>Abaixo de 85%</small><b>${abaixo}</b></div>
+      <div class="e06Mini"><small>Abaixo da meta</small><b>${abaixo}</b></div>
       <div class="e06Mini"><small>Menor acumulado</small><b>${esc(fmtValor(menor,'%'))}</b></div>
     </div>
     <div class="subprefGrid">${cards}</div>
-    <div class="e06History" id="e06History"><div class="e06ChartWrap"><canvas id="e06HistoryChart"></canvas></div><div class="e06HistoryInfo" id="e06HistoryInfo"></div></div>
-  </div>`;
+    <div class="e06History" id="e06History"><div class="e06ChartWrap"><canvas id="e06HistoryChart"></canvas></div><div class="e06HistoryInfo" id="e06HistoryInfo" aria-live="polite"></div></div>`:'<p class="emptyBlock">Sem detalhamento por subprefeitura na fonte SARC.</p>'}</div>
+  </dialog>`;
 }
-function toggleE06(ev){
-  if(ev && ev.target.closest('.subprefCard'))return;
-  const row=document.querySelector('[data-indicator-code="E06"]');
+function openE06Drill(){
   const panel=document.getElementById('e06Drill');
-  if(!row||!panel)return;
-  const open=!panel.classList.contains('open');
-  panel.classList.toggle('open',open);row.classList.toggle('expanded',open);row.setAttribute('aria-expanded',String(open));
+  if(!panel||panel.open)return;
+  panel.showModal();
+  const subs=DATA.find(x=>x.codigo==='E06')?.e06Subs||[];
+  if(subs.length)showE06History(Math.max(0,subs.findIndex(s=>!s.ok)));
 }
 function showE06History(index){
   const d=DATA.find(x=>x.codigo==='E06');if(!d)return;
   const s=(d.e06Subs||[])[Number(index)];if(!s)return;
-  document.querySelectorAll('.subprefCard').forEach((el,i)=>el.classList.toggle('active',i===Number(index)));
+  document.querySelectorAll('.subprefCard').forEach((el,i)=>{
+    const selected=i===Number(index);
+    el.classList.toggle('active',selected);
+    el.setAttribute('aria-pressed',String(selected));
+  });
   const box=document.getElementById('e06History');const info=document.getElementById('e06HistoryInfo');
   if(!box||!info)return;box.classList.add('open');
   const lastIdx=s.vals.reduce((acc,v,i)=>v!==null?i:acc,-1);
@@ -599,12 +604,12 @@ function showE06History(index){
   const ctx=document.getElementById('e06HistoryChart');if(!ctx)return;
   E06_CHART=new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
     {label:s.nome,data:s.vals,borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5},
-    {label:'Meta 85%',data:MESES.map(()=>85),borderWidth:1.2,borderDash:[5,5],pointRadius:0,tension:0}
+    {label:'Meta '+fmtValor(s.meta,'%'),data:MESES.map(()=>s.meta),borderWidth:1.2,borderDash:[5,5],pointRadius:0,tension:0}
   ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':c.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})+'%'}`}}},scales:{x:{grid:{display:false},ticks:{color:'#8fa6bf',font:{size:10}}},y:{min:50,max:100,grid:{color:'rgba(41,72,102,.35)'},ticks:{color:'#8fa6bf',font:{size:10},callback:v=>v+'%'}}}}});
 }
 function bindE06Drill(){
-  const row=document.querySelector('[data-indicator-code="E06"]');if(row)row.addEventListener('click',toggleE06);
-  document.querySelectorAll('.subprefCard').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();showE06History(el.dataset.e06Index);}));
+  const row=document.querySelector('[data-indicator-code="E06"]');if(row)row.addEventListener('click',openE06Drill);
+  document.querySelectorAll('.subprefCard').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();showE06History(el.dataset.e06Index);document.getElementById('e06History').scrollIntoView({block:'nearest'});}));
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1062,7 +1067,7 @@ function renderIndicadores(){
           </summary><div class="arLinhaDetalhe">
             ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||(d.codigo==="E01"?"Revitalizações registradas no acumulado do ano.":d.fonte))}</p>`).join("")}
             ${par?`<p>${esc(par.bonusNote)}</p>`:""}
-            ${e06?`<button class="btnLimpar e06Toggle" type="button" data-indicator-code="E06" aria-controls="e06Drill" aria-expanded="false">Histórico por subprefeitura</button>${renderE06Drill(e06)}`:""}
+            ${e06?`<button class="btnLimpar e06Toggle" type="button" data-indicator-code="E06" aria-controls="e06Drill" aria-haspopup="dialog">Histórico por subprefeitura</button>${renderE06Drill(e06)}`:""}
           </div></details>`;
         }).join("")}</div></section>`;
     }).join("");

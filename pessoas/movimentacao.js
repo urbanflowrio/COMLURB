@@ -44,9 +44,9 @@
     root.querySelector('#movMotivosTitulo').textContent='Motivos dos desligamentos · '+year.value;
     table(root.querySelector('#movMotivos'),['Forma de desligamento','Quantidade'],d.motivos.map(m=>[m.nome,m.n]));
     const partial=Number(year.value)===Number(data.meta.referencia_sipe.slice(0,4));
-    root.querySelector('#movPeriodo').textContent=partial ? `${year.value} parcial. SIPE de ${dateLabel(data.meta.referencia_sipe)}; último desligamento registrado em ${dateLabel(data.meta.ultimo_desligamento)}.` : `${year.value}: movimentações identificadas nas fontes disponíveis. Série histórica sujeita à cobertura do cadastro.`;
+    root.querySelector('#movPeriodo').textContent=partial ? `Dados parciais de ${year.value}. SIPE de ${dateLabel(data.meta.referencia_sipe)} e último desligamento registrado em ${dateLabel(data.meta.ultimo_desligamento)}.` : `Registros de ${year.value} encontrados nas duas bases.`;
     const pdv=d.motivos.find(m=>m.nome==='PDV');
-    root.querySelector('#movLeitura').textContent=pdv?.n != null && d.saidas ? `PDV: ${fmt(pdv.n)} saídas, equivalentes a ${(pdv.n/d.saidas*100).toLocaleString('pt-BR',{maximumFractionDigits:1})}% dos desligamentos registrados no ano. Considere essa concentração ao comparar períodos e planejar reposições.` : 'As entradas e saídas identificadas incluem diferentes vínculos. A diferença não informa a reposição por função.';
+    root.querySelector('#movLeitura').textContent=pdv?.n != null && d.saidas ? `O PDV respondeu por ${fmt(pdv.n)} saídas, ou ${(pdv.n/d.saidas*100).toLocaleString('pt-BR',{maximumFractionDigits:1})}% dos desligamentos registrados no ano.` : '';
     units();
   }
   year.addEventListener('change',render);render();

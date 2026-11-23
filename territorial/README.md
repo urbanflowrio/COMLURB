@@ -8,7 +8,7 @@ Painel territorial do HUB COMLURB para navegação pela estrutura administrativa
 - `../assets/geojson/GERENCIAS_DSU.geojson`: áreas das Gerências DSU.
 - `../assets/geojson/DLU_Novos_Bairros_estrutura2025.geojson`: polígonos territoriais associados às Superintendências DLU.
 
-O arquivo `unidades_comlurb (1).csv` é uma cópia antiga mantida por segurança. Ele não deve ser atualizado nem tratado como fonte oficial.
+O cadastro público mantém os dados necessários ao mapa. Antes de publicar uma atualização, retire a coluna de e-mails e confira se os demais campos estão livres de endereços de e-mail.
 
 ## Navegação
 

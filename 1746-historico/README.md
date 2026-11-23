@@ -1,6 +1,8 @@
-# 1746 Histórico — V4.2
+# 1746 Histórico
 
-Baseline auditada para leitura comparável jan–set/2025 x jan–set/2026, com histórico ampliado de Remoção Gratuita.
+Leitura comparável de janeiro a outubro de 2025 e 2026, com a extração de 11/11/2026 publicada em 16/11/2026 e aprovada como referência oficial em 17/11/2026. Inclui o histórico ampliado de Remoção Gratuita.
+
+A versão V4.2 (jan–set, corte de 05/10/2026) permanece no histórico do repositório para rastreabilidade.
 
 ## Atualização de 08/10/2026
 
@@ -21,7 +23,7 @@ No subtipo padronizado `REMOÇÃO DE ENTULHO E BENS INSERVÍVEIS`:
 - 2021: taxa cai de ~230/mil em janeiro para ~19/mil em setembro e permanece baixa até dezembro.
 - 2024: série relativamente estável, aproximadamente 21–47/mil.
 - 2025: pico de ~161/mil em março, queda para ~25–27/mil em agosto–setembro e recuperação para ~79/mil em outubro.
-- 2026: série disponível até outubro, sendo outubro parcial e não considerado fechamento.
+- 2026: série de janeiro a outubro fechada com a extração de 11/11/2026.
 
 ## Regras de padronização nominal
 

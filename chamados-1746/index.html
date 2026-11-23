@@ -1131,8 +1131,8 @@ h2 {
         <div id="filterContext" class="filterContext" style="display:none"></div>
         <button id="clearAllFilters" class="globalClearBtn" type="button" disabled>Limpar filtros</button>
         <div class="periodSwitch">
-          <button class="periodBtn active" type="button" data-period="acumulado">Jan a Out</button>
-          <button class="periodBtn" type="button" data-period="outubro">Outubro</button>
+          <button class="periodBtn active" type="button" data-period="acumulado" id="btnAcum">Jan a Out</button>
+          <button class="periodBtn" type="button" data-period="outubro" id="btnMes">Outubro</button>
         </div>
       </div>
     </div>
@@ -1242,7 +1242,7 @@ h2 {
           </div>
           <div class="body">
             <div class="chartBox short" id="apChartWrap"><canvas id="chartAP" role="img" aria-label="Comparação dos chamados por Área de Planejamento"></canvas></div>
-            <div class="emptyState" id="apEmpty" style="display:none;">A distribuição por AP está disponível integralmente para outubro.</div>
+            <div class="emptyState" id="apEmpty" style="display:none;">A distribuição por AP está disponível integralmente para o mês de referência.</div>
           </div>
         </div>
       </div>
@@ -2118,15 +2118,21 @@ function level(){return filterSubtype?'subtipo':filterType?'tipo':'all';}
 function contextLabel(){return filterSubtype?`${filterType} › ${filterSubtype}`:filterType||'Todos os serviços';}
 function prettyTypeLabel(s){return String(s||'').toLocaleLowerCase('pt-BR');}
 function prettyPlace(s){return String(s||'').toLocaleLowerCase('pt-BR').replace(/(^|[\s(\/-])([a-zà-ÿ])/g,(m,p1,p2)=>p1+p2.toLocaleUpperCase('pt-BR')).replace(/\b(Da|De|Do|Das|Dos|E|Em|Na|No|Nas|Nos)\b/g,m=>m.toLocaleLowerCase('pt-BR'));}
-function currentPeriodText(){return period==='acumulado'?'no acumulado de janeiro a outubro de 2026':'em outubro de 2026';}
-function previousPeriodText(){return period==='acumulado'?'jan a out/2025':'outubro/2025';}
-function currentPeriodShort(){return period==='acumulado'?'jan a out/2026':'out/2026';}
-function previousPeriodShort(){return period==='acumulado'?'jan a out/2025':'out/2025';}
+// Mês de referência derivado do cubo publicado (última competência da série mensal).
+const MESES_NOMES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const MES=(()=>{const m=(CUBE.periods.acumulado.all.mensal||[]);const ult=m[m.length-1]||{};let i=MESES_NOMES.findIndex(n=>norm(n)===norm(ult.mes));if(i<0)i=9;const nome=MESES_NOMES[i];const chaves=Object.keys(CUBE.periods).filter(k=>k!=='acumulado');const key=chaves.find(k=>norm(k)===norm(nome))||chaves[chaves.length-1];return{i,nome,Nome:nome[0].toUpperCase()+nome.slice(1),abrev:nome.slice(0,3),Abrev:nome[0].toUpperCase()+nome.slice(1,3),anterior:MESES_NOMES[(i+11)%12],key};})();
+
+document.getElementById('btnMes')&&(document.getElementById('btnMes').dataset.period=MES.key,document.getElementById('btnMes').textContent=MES.Nome);
+document.getElementById('btnAcum')&&(document.getElementById('btnAcum').textContent='Jan a '+MES.Abrev);
+function currentPeriodText(){return period==='acumulado'?`no acumulado de janeiro a ${MES.nome} de 2026`:`em ${MES.nome} de 2026`;}
+function previousPeriodText(){return period==='acumulado'?`jan a ${MES.abrev}/2025`:`${MES.nome}/2025`;}
+function currentPeriodShort(){return period==='acumulado'?`jan a ${MES.abrev}/2026`:`${MES.abrev}/2026`;}
+function previousPeriodShort(){return period==='acumulado'?`jan a ${MES.abrev}/2025`:`${MES.abrev}/2025`;}
 
 function monthlyPulse(x){
   const months=getSummary('acumulado').mensal||[];
-  const current=months.find(d=>norm(d.mes)==='OUTUBRO');
-  const previous=months.find(d=>norm(d.mes)==='SETEMBRO');
+  const current=months.find(d=>norm(d.mes)===norm(MES.nome));
+  const previous=months.find(d=>norm(d.mes)===norm(MES.anterior));
   if(!current||!previous||!previous.v2026)return null;
   const dif=current.v2026-previous.v2026;
   return{current:current.v2026,previous:previous.v2026,dif,var:dif/previous.v2026};
@@ -2152,7 +2158,7 @@ function carregarCorte(){
     const c=comp(d.competencia_mais_recente),k=dia(d.data_corte);
     if(!c||!k)return;
     const partes=['Competência '+c,'extração de '+k];
-    const h=comp(d.historico_congelado_ate);if(h)partes.push('histórico congelado até '+h);
+    const h=comp(d.fechamentos_congelados_ate||d.historico_congelado_ate);if(h)partes.push('fechamentos congelados até '+h);
     el.textContent=partes.join(' · ');
     el.hidden=false;
   }).catch(err=>console.warn('data-cutoff.json não carregado; competência não exibida.',err));
@@ -2205,15 +2211,15 @@ function renderLead(x){
 
   if(!filterType){
     const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
-    if(period==='outubro'){
-      headline=`Outubro fechou com <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> sobre outubro de 2025${pulse?` e ${pulse.dif>=0?'avanço':'recuo'} de <b>${pctSigned(pulse.var)}</b> frente a setembro`:''}.`;
-      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> explicou ${pct(shareOfMovement(a.dif,x.dif))} da ${direction>0?'alta':'redução'} anual do mês`;
+    if(period===MES.key){
+      headline=`${MES.Nome} fechou com <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> sobre ${MES.nome} de 2025${pulse?` e ${pulse.dif>=0?'avanço':'recuo'} de <b>${pctSigned(pulse.var)}</b> frente a ${MES.anterior}`:''}.`;
+      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> representou ${pct(shareOfMovement(a.dif,x.dif))} da ${direction>0?'alta':'redução'} anual do mês`;
       if(b)detail+=`, seguido por <b>${prettyTypeLabel(b.nome)}</b>, com ${pct(shareOfMovement(b.dif,x.dif))}`;
       detail+='.';
     }else{
-      headline=`De janeiro a outubro, o volume chegou a <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> em relação a 2025.`;
-      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> respondeu por ${pct(shareOfMovement(a.dif,x.dif))} da variação acumulada`;
-      if(pulse)detail+=`. No mês mais recente, outubro ficou <b>${pctSigned(pulse.var)}</b> em relação a setembro`;
+      headline=`De janeiro a ${MES.nome}, o volume chegou a <b>${fmt(x.total2026)} chamados</b>, ${x.dif>=0?'alta':'redução'} de <b>${pctSigned(x.var)}</b> em relação a 2025.`;
+      if(a)detail=`<b>${prettyTypeLabel(a.nome)}</b> representou ${pct(shareOfMovement(a.dif,x.dif))} da variação acumulada`;
+      if(pulse)detail+=`. No mês mais recente, ${MES.nome} ficou <b>${pctSigned(pulse.var)}</b> em relação a ${MES.anterior}`;
       detail+='.';
     }
     if(topBairro)detail+=` <b>${prettyPlace(topBairro.nome)}</b> manteve o maior volume territorial, com ${fmt(topBairro.v2026)} chamados ${currentPeriodText()}.`;
@@ -2406,10 +2412,10 @@ function renderInsights(x){
   if(!filterType){
     const drivers=mainDrivers(x),a=drivers[0],b=drivers[1],pulse=monthlyPulse(x);
     const combined=(a&&b)?shareOfMovement(a.dif+b.dif,x.dif):(a?shareOfMovement(a.dif,x.dif):0);
-    if(period==='outubro'){
-      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Ritmo recente</div><b>${pulse&&pulse.dif>=0?'Outubro acelerou':'Outubro perdeu ritmo'}</b><p>${pulse?`O volume passou de <strong>${fmt(pulse.previous)}</strong> em setembro para <strong>${fmt(pulse.current)}</strong> em outubro, variação de <strong>${pctSigned(pulse.var)}</strong>.`:'Comparação mensal indisponível.'}</p></div><div class="insightCard"><div class="tag">Principal contribuição para a variação</div><b>${a?.nome||'Não informado'}</b><p>${a?`Representou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação anual de outubro, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Concentração da variação</div><b>${a?.nome||''}${b?` + ${b.nome}`:''}</b><p>As duas principais contribuições representam <strong>${pct(combined)}</strong> da variação do mês frente a outubro de 2025.</p></div>`;
+    if(period===MES.key){
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Ritmo recente</div><b>${pulse&&pulse.dif>=0?`${MES.Nome} acelerou`:`${MES.Nome} perdeu ritmo`}</b><p>${pulse?`O volume passou de <strong>${fmt(pulse.previous)}</strong> em ${MES.anterior} para <strong>${fmt(pulse.current)}</strong> em ${MES.nome}, variação de <strong>${pctSigned(pulse.var)}</strong>.`:'Comparação mensal indisponível.'}</p></div><div class="insightCard"><div class="tag">Principal contribuição para a variação</div><b>${a?.nome||'Não informado'}</b><p>${a?`Representou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação anual de ${MES.nome}, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Concentração da variação</div><b>${a?.nome||''}${b?` + ${b.nome}`:''}</b><p>As duas principais contribuições representam <strong>${pct(combined)}</strong> da variação do mês frente a ${MES.nome} de 2025.</p></div>`;
     }else{
-      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado acumulado</div><b>${fmt(x.total2026)} chamados</b><p>Entre janeiro e outubro, a demanda ficou <strong>${pctSigned(x.var)}</strong> em relação ao mesmo período de 2025.</p></div><div class="insightCard"><div class="tag">Principal contribuição</div><b>${a?.nome||'Não informado'}</b><p>${a?`Representou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação acumulada, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Sinal mais recente</div><b>${pulse&&pulse.dif>=0?'Outubro acima de agosto':'Outubro abaixo de agosto'}</b><p>${pulse?`O mês mais recente variou <strong>${pctSigned(pulse.var)}</strong>, de ${fmt(pulse.previous)} para ${fmt(pulse.current)} chamados.`:'Comparação mensal indisponível.'}</p></div>`;
+      document.getElementById('insights').innerHTML=`<div class="insightCard"><div class="tag">Resultado acumulado</div><b>${fmt(x.total2026)} chamados</b><p>Entre janeiro e ${MES.nome}, a demanda ficou <strong>${pctSigned(x.var)}</strong> em relação ao mesmo período de 2025.</p></div><div class="insightCard"><div class="tag">Principal contribuição</div><b>${a?.nome||'Não informado'}</b><p>${a?`Representou <strong>${pct(shareOfMovement(a.dif,x.dif))}</strong> da variação acumulada, com <strong>${signed(a.dif)}</strong> chamados.`:'Sem movimento relevante.'}</p></div><div class="insightCard"><div class="tag">Sinal mais recente</div><b>${pulse&&pulse.dif>=0?`${MES.Nome} acima de ${MES.anterior}`:`${MES.Nome} abaixo de ${MES.anterior}`}</b><p>${pulse?`O mês mais recente variou <strong>${pctSigned(pulse.var)}</strong>, de ${fmt(pulse.previous)} para ${fmt(pulse.current)} chamados.`:'Comparação mensal indisponível.'}</p></div>`;
     }
     return;
   }
@@ -2431,7 +2437,7 @@ function renderAP(x){
   destroyChart('ap');
   const arr=[...x.ap].sort((a,b)=>a.nome==='SEM AP (AGO)'?1:b.nome==='SEM AP (AGO)'?-1:String(a.nome).localeCompare(String(b.nome)));
   const c=chartBase();
-  document.getElementById('apHint').textContent=period==='acumulado'?`${currentPeriodShort()} • ${contextLabel()} • Agosto/2025 e agosto/2026 constam no histórico oficial congelado sem classificação de AP. Os registros aparecem como 'Sem AP (Ago)'.`:`${currentPeriodShort()} • ${contextLabel()} • volume do período atual e variação em relação a ${previousPeriodShort()}`;
+  document.getElementById('apHint').textContent=period==='acumulado'?`${currentPeriodShort()} • ${contextLabel()} • registros sem AP na fonte atribuídos à AP3, conforme regra do fechamento.`:`${currentPeriodShort()} • ${contextLabel()} • volume do período atual e variação em relação a ${previousPeriodShort()}`;
   document.getElementById('apChartWrap').style.display='block';
   document.getElementById('apEmpty').style.display='none';
   charts.ap=new Chart(document.getElementById('chartAP'),{

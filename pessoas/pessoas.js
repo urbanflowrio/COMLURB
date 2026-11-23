@@ -6,7 +6,7 @@
   if (!D) return;
   const A = D.arvore, R = D.meta.rotulos, ROOT = A.COMLURB;
   const APAS_ID = "D:DSU|_APAS";
-  if (A[APAS_ID]) A[APAS_ID].label = "Empregados cedidos à SME";
+  if (A[APAS_ID]) A[APAS_ID].label = "Agentes de preparo de alimentos nas escolas da SME";
   const $ = (id) => document.getElementById(id);
   const dataRef = D.meta.referencia.split('-').reverse().join('/');
   $('dataReferencia').textContent = dataRef;
@@ -140,24 +140,28 @@
     $("geralKpis").innerHTML = indicadores.map(([titulo,valor,detalhe,aba]) => `<button type="button" class="pe-kpi geral-kpi" data-abrir-aba="${aba}"><span class="k">${esc(titulo)}</span><span class="v">${esc(valor)}</span><span class="d">${esc(detalhe)}</span></button>`).join("");
     const dur = n.dur || [], longo = Number.isFinite(dur[2]) && Number.isFinite(dur[3]) ? dur[2] + dur[3] : null;
     const familias = (D.sucessao || []).filter(x => Number.isFinite(x.n) && x.n >= 30 && Array.isArray(x.fx) && Number.isFinite(x.fx[6])).sort((a,b) => pct(b.fx[6],b.n) - pct(a.fx[6],a.n));
-    const lider = familias[0], cedidos = A[APAS_ID], percentualLongo = pct(longo,af), percentualGari = pct(n.resGarisEf,n.garisEf);
+    const lider = familias[0], apas = A[APAS_ID], percentualLongo = pct(longo,af), percentualGari = pct(n.resGarisEf,n.garisEf);
     const pctIdade = lider ? pct(lider.fx[6],lider.n) : null;
     const sentencas = [];
-    if (percentualLongo !== null) sentencas.push(`${pf(percentualLongo)} das pessoas afastadas estão nessa situação há mais de um ano.`);
+    if (percentualLongo !== null) sentencas.push(`${pf(percentualLongo)} dos empregados classificados como afastados pela SIPE têm mais de 365 dias nessa situação.`);
     if (lider && pctIdade !== null) sentencas.push(`Em ${esc(lider.label)}, ${pf(pctIdade)} das pessoas têm mais de 60 anos.`);
     $("geralLeitura").innerHTML = sentencas.length ? sentencas.map(s => `<span class="leitura-frase">${s}</span>`).join("") : "Sem dados para mostrar neste resumo.";
     const item = (categoria,valor,titulo,descricao,aba) => `<article class="pe-card visao-prioridade"><div class="pe-eyebrow">${categoria}</div><div class="visao-valor">${valor}</div><h3>${titulo}</h3><p>${descricao}</p><button type="button" class="pe-btn visao-detalhe" data-abrir-aba="${aba}">Ver detalhes</button></article>`;
-    const textoLongo = percentualLongo !== null ? `${nf(longo)} dos ${nf(af)} afastados estão nessa situação há mais de um ano.` : "Dados de duração indisponíveis.";
+    const textoLongo = percentualLongo !== null ? `${nf(longo)} dos ${nf(af)} empregados classificados como afastados pela SIPE têm mais de 365 dias nessa situação.${D.meta.referencia === "2026-10-26" && longo === 1014 ? " Desses, 711 têm contrato suspenso por invalidez ou aposentadoria." : ""}` : "Dados de duração indisponíveis.";
     const garisIdade = (D.sucessao || []).find(x => x.label === "Gari efetivo");
     const textoIdade = lider ? `${nf(lider.fx[6])} de ${nf(lider.n)} em ${esc(lider.label)} estão acima de 60 anos.${garisIdade && Number.isFinite(garisIdade.fx[6]) ? ` Entre os garis efetivos, são ${nf(garisIdade.fx[6])} pessoas (${pf(pct(garisIdade.fx[6],garisIdade.n))}).` : ""}` : "Dados de renovação indisponíveis.";
     const textoGari = percentualGari !== null ? `${nf(n.resGarisEf)} de ${nf(n.garisEf)} garis efetivos têm registro de restrição.` : "Dados de restrição indisponíveis.";
     $("geralPontos").innerHTML =
-      item("Afastamentos",pf(percentualLongo),"Há mais de um ano",textoLongo,"afast") +
-      item("Renovação",pf(pctIdade),"Grupo com maior percentual acima de 60 anos",textoIdade,"suc") +
+      item("Afastamentos",pf(percentualLongo),"Mais de 365 dias na situação de afastado",textoLongo,"afast") +
+      item("Renovação",pf(pctIdade),"Maior percentual acima de 60 anos entre os grupos de funções",textoIdade,"suc") +
       item("Restrições",pf(percentualGari),"Garis efetivos com restrição",textoGari,"restr");
-    $("geralCedidos").innerHTML = cedidos && Number.isFinite(cedidos.n) ? `<div class="visao-valor">${nf(cedidos.n)}</div><p>Empregados cedidos à SME nas Coordenadorias Regionais de Educação (CREs).</p>` : "<p>Dados de cessão indisponíveis.</p>";
+    $("geralCedidos").innerHTML = apas && Number.isFinite(apas.n) ? `<div class="visao-valor">${nf(apas.n)}</div><p>Agentes lotados nas APAs das Coordenadorias Regionais de Educação (CREs).</p>` : "<p>Dados de lotação indisponíveis.</p>";
   }
   renderGeral();
+  if (D.meta.referencia === "2026-10-26") {
+    $("durNotaAuditoria").hidden = false;
+    $("ggqNotaAuditoria").hidden = false;
+  }
 
   /* ---------------- Bloco 1 ---------------- */
   function renderQuadro(n) {

@@ -133,7 +133,7 @@
   HUB.require("core", "sources", "ingest-model", "ingest-reader");
 
   var MESES_PT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-  var PERIODO_RE = /^([a-z]{3})\.-(\d{2})$/i;
+  var PERIODO_RE = /^([a-z]{3})\.?[-\/](\d{2})$/i;
   var ROMANO_RE = /^[IVXLCDM]+\s*-\s*/;
   var BLOCO_RE = /^([A-Z])\s*-\s*(.+)$/;
   var OFENSORA_RE = /^Gerência\s+Ofensora\s+(\d+)$/i;

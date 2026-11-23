@@ -768,8 +768,8 @@ const MESES_ABREV = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out"
 function parseDateLabel(s) {
   const str = String(s ?? "").trim();
   const low = str.toLowerCase();
-  // formato real da planilha: "mai.-25", "jun.-25"...
-  let m = low.match(/^([a-z]{3})\.-(\d{2})$/);
+  // formatos reais da planilha: "mai.-25", "set./26" (aceita também "set/26")
+  let m = low.match(/^([a-z]{3})\.?[-\/](\d{2})$/);
   if (m && MESES_ABREV.includes(m[1])) return m[1] + "/" + m[2];
   // formato dd/mm/aaaa
   m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
@@ -789,7 +789,8 @@ function prettyRef(label) {
 
 function isDateCell(s) {
   const str = String(s ?? "").trim().toLowerCase();
-  if (/^[a-z]{3}\.-\d{2}$/.test(str) && MESES_ABREV.includes(str.slice(0, 3))) return true;
+  if (/^[a-z]{3}\.?[-\/]\d{2}$/.test(str) && MESES_ABREV.includes(str.slice(0, 3))) return true;
+  if (/^[a-z]{3}\.?[-\/]\d{1}$/.test(str) && MESES_ABREV.includes(str.slice(0, 3))) console.warn("Cabeçalho de mês inválido na fonte DTE:", s);
   if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(str)) return true;
   if (/^\d{4}-\d{1,2}-\d{1,2}/.test(str)) return true;
   return false;

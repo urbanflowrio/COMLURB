@@ -97,13 +97,15 @@ var MESES_PT = ["JANEIRO", "FEVEREIRO", "MARCO", "ABRIL", "MAIO", "JUNHO", "JULH
   verdadeiro("competencia_mais_recente no formato AAAA-MM", !!mc, corte.competencia_mais_recente);
   var md = /^(\d{4})-(\d{2})-(\d{2})$/.exec(corte.data_corte || "");
   verdadeiro("data_corte no formato AAAA-MM-DD", !!md, corte.data_corte);
-  var mh = /^(\d{4})-(\d{2})$/.exec(corte.historico_congelado_ate || "");
-  verdadeiro("historico_congelado_ate no formato AAAA-MM", !!mh, corte.historico_congelado_ate);
+  // Regra aprovada em 17/11/2026: cada fechamento publicado fica congelado.
+  var mh = /^(\d{4})-(\d{2})$/.exec(corte.fechamentos_congelados_ate || "");
+  verdadeiro("fechamentos_congelados_ate no formato AAAA-MM", !!mh, corte.fechamentos_congelados_ate);
+  verdadeiro("Referência da aprovação do histórico registrada", typeof corte.referencia_aprovacao === "string" && corte.referencia_aprovacao.trim().length > 10, corte.referencia_aprovacao);
   if (!mc || !md) return;
   var fimCompetencia = new Date(Date.UTC(+mc[1], +mc[2], 0));
   var dataCorte = new Date(Date.UTC(+md[1], +md[2] - 1, +md[3]));
   verdadeiro("Data de corte é posterior ao fim da competência", dataCorte > fimCompetencia, corte.data_corte);
-  if (mh) verdadeiro("Histórico congelado termina antes da competência mais recente", (+mh[1] * 12 + +mh[2]) < (+mc[1] * 12 + +mc[2]), corte.historico_congelado_ate);
+  if (mh) verdadeiro("Fechamentos congelados não ultrapassam a competência mais recente", (+mh[1] * 12 + +mh[2]) <= (+mc[1] * 12 + +mc[2]), corte.fechamentos_congelados_ate);
 
   var cubo = carregarGlobal(mod.pasta + "/" + mod.cubo, mod.global);
   verdadeiro("Cubo carregado", !!(cubo && cubo.periods && cubo.periods.acumulado));
@@ -112,7 +114,9 @@ var MESES_PT = ["JANEIRO", "FEVEREIRO", "MARCO", "ABRIL", "MAIO", "JUNHO", "JULH
   var ultimoMes = mensal.length ? norm(mensal[mensal.length - 1].mes) : "";
   caso("Último mês do cubo corresponde à competência do corte", ultimoMes, MESES_PT[+mc[2] - 1]);
   var periodoMensal = Object.keys(cubo.periods).filter(function (k) { return k !== "acumulado"; });
-  caso("Recorte mensal do cubo corresponde à competência do corte", periodoMensal.map(norm), [MESES_PT[+mc[2] - 1]]);
+  var mesesRecorte = periodoMensal.map(norm);
+  verdadeiro("Recorte mensal da competência do corte existe no cubo", mesesRecorte.indexOf(MESES_PT[+mc[2] - 1]) !== -1, mesesRecorte);
+  verdadeiro("Nenhum recorte mensal posterior à competência do corte", mesesRecorte.every(function (m) { return MESES_PT.indexOf(m) !== -1 && MESES_PT.indexOf(m) <= +mc[2] - 1; }), mesesRecorte);
   var soma = mensal.reduce(function (s, x) { return s + x.v2026; }, 0);
   caso("Total acumulado 2026 igual à soma da série mensal", cubo.periods.acumulado.all.total2026, soma);
 });

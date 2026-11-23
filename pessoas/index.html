@@ -45,7 +45,7 @@
       <div class="visao-heading"><h3>Afastamentos, idade e restrições</h3></div>
       <div class="visao-prioridades" id="geralPontos"></div>
       <div class="geral-grid">
-        <div class="pe-card"><h3>Empregados cedidos à SME</h3><div id="geralCedidos"></div></div>
+        <div class="pe-card"><h3>Agentes de preparo de alimentos nas escolas da SME</h3><div id="geralCedidos"></div></div>
         <div class="pe-card"><h3>Detalhes por assunto</h3>
           <button type="button" class="visao-link" data-abrir-aba="afast"><span>Afastamentos por unidade e duração</span><span aria-hidden="true">→</span></button>
           <button type="button" class="visao-link" data-abrir-aba="suc"><span>Idade e tempo de casa por função</span><span aria-hidden="true">→</span></button>
@@ -81,6 +81,7 @@
       </div>
       <div class="pe-card" style="margin-top:16px">
         <div class="pe-head" style="margin-bottom:8px"><div><h3>Unidades do recorte</h3><div class="sub" style="margin:0">Selecione uma unidade para abrir os detalhes. Unidades com equipes pequenas aparecem agrupadas para preservar a privacidade.</div></div><span class="pe-chip" id="unitsChip">Cadastro consolidado de setores</span></div>
+        <p class="pe-nota" id="ggqNotaAuditoria" hidden>Na base de 26/10/2026, a GGQ02, lotação administrativa, concentra 225 dos 249 afastados da DGG.</p>
         <div class="pe-tabela-wrap alta"><table id="unitTable"></table></div>
       </div>
     </section>
@@ -99,7 +100,7 @@
       </div>
       <div class="pe-grid meio afast-detalhes" style="margin-top:16px">
         <div class="pe-card"><h3>Natureza do afastamento</h3><div class="sub" id="natSub"></div><div class="af-resumo" id="natBars"></div></div>
-        <div class="pe-card"><h3>Duração do afastamento</h3><div class="sub">Duração cadastrada na data de referência.</div><div class="af-resumo" id="durBars"></div></div>
+        <div class="pe-card"><h3>Duração do afastamento</h3><div class="sub">Duração cadastrada na data de referência.</div><div class="af-resumo" id="durBars"></div><p class="pe-nota" id="durNotaAuditoria" hidden>Na COMLURB, 247 dos 825 afastamentos por doença ou acidente (29,9%) passam de 365 dias no fechamento de 26/10/2026.</p></div>
       </div>
     </section>
 
@@ -241,7 +242,7 @@
 <script src="../assets/components/hub-utils.js"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="dados-pessoas.js?v=18"></script>
-<script src="pessoas.js?v=30"></script>
+<script src="pessoas.js?v=31"></script>
 <script src="movimentacao-dados.js?v=3"></script>
 <script src="movimentacao.js?v=6"></script>
 <script src="abas.js?v=2"></script>

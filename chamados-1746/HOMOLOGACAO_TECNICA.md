@@ -166,3 +166,11 @@ Data do registro: 14/10/2026. Referência: `CONF-2026-10-P1`.
 | `index.html` | `aa3ff3ee2886dbd28fb671ed97c1d1c1c9c9851c6ccd0002df0f9b2aac4e8979` |
 
 Resultado: **aceite técnico e visual do escopo P1 registrado**. O histórico de homologação anterior permanece válido; esta seção documenta exclusivamente as modificações de confiabilidade do P1.
+
+## Republicação do histórico, janeiro a outubro de 2026
+
+A extração de 11/11/2026 foi incorporada aos cubos em 16/11/2026.
+A aprovação foi registrada em 17/11/2026 na planilha **Auditoria HUB 1746 - 2026-10**, aba **Aprovação do histórico**, conforme os arquivos de corte de Chamados e Ouvidorias.
+O fechamento de setembro passou de 24.695 para 24.672 Chamados (−23). A série de Ouvidorias também foi revisada em setembro (−13).
+
+O total de 24.695 nos registros anteriores corresponde à versão daquele fechamento. A republicação é a referência para janeiro a outubro; novembro parcial fica fora.

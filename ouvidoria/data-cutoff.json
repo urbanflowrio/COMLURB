@@ -5,5 +5,7 @@
   "fonte_analitica": "ouvidoria_cube.js",
   "fonte_geografica": "ouvidoria_data.js",
   "situacao_tecnica": "publicado",
-  "regra": "Janeiro a outubro recalculados com a extração de 11/11/2026. Novembro parcial fora do fechamento."
+  "regra": "Janeiro a outubro recalculados com a extração de 11/11/2026. Novembro parcial fora do fechamento.",
+  "fechamentos_congelados_ate": "2026-10",
+  "referencia_aprovacao": "Auditoria HUB 1746 - 2026-10, aba Aprovação do histórico: republicação de 16/11/2026 aprovada em 17/11/2026"
 }

@@ -922,7 +922,7 @@
     const anos = anoSelecionado === 'comparar' ? [anoComparacao(), anoPrincipal()].filter(Boolean) : [anoPrincipal()];
     return anos.map(ano => {
       const row = ano === anoPrincipal() ? k.row : resolverLinha(k.indicador, diretoriaSelecionada, ano);
-      const cells = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(formatValorIndicador(k, row ? HUB.indicadores.parseNumeroBR(row[m]) : null))}</b></div>`).join('');
+      const cells = HUB.indicadores.MESES.map(m => `<div class="monthCell"><small>${m}</small><b>${esc(row && HUB.indicadores.parseNumeroBR(row[m]) !== null ? formatValorIndicador(k, HUB.indicadores.parseNumeroBR(row[m])) : 'Sem dado')}</b></div>`).join('');
       return `<section class="yearCycles"><div class="yearCyclesTitle">${esc(ano)}</div><div class="months">${cells}</div></section>`;
     }).join('');
   }
@@ -964,7 +964,7 @@
     }];
     if (referencia.some(Number.isFinite)) datasets.push({
       label: tipo === 'proporcional' ? 'Ritmo mensal da meta anual' : tipo === 'competencia' ? 'Meta por competência' : 'Meta',
-      data: referencia, borderColor: '#f0809c', backgroundColor: '#f0809c', borderDash: [5, 5],
+      data: referencia, borderColor: '#f0809c', backgroundColor: '#f0809c', borderDash: [5, 5], hubReferencia: true,
       pointRadius: tipo === 'competencia' ? 3 : 0, spanGaps: false
     });
 
@@ -972,12 +972,12 @@
     canvas.setAttribute('aria-label', `Evolução mensal de ${k.indicador}`);
     const formatar = valor => formatValorIndicador(k, valor);
     fichaChart = new Chart(canvas, {
-      type: 'line', data: { labels: meses, datasets },
+      type: 'line', data: { labels: meses, datasets }, plugins: [HUBChartLabels.criar(formatar)],
       options: {
         responsive: true, maintainAspectRatio: false, animation: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { labels: { color: '#c7d8ee', boxWidth: 16 } },
+          legend: HUBChartLabels.legenda(Chart),
           tooltip: { callbacks: { label: item => `${item.dataset.label}: ${formatar(item.parsed.y)}` } }
         },
         scales: {
@@ -994,13 +994,16 @@
     document.getElementById('drawerTitulo').textContent = k.indicador;
     const tag = statusTag(k);
     const caixa = (rotulo, valor) => `<div class="detailBox"><small>${esc(rotulo)}</small><b>${esc(valor)}</b></div>`;
-    document.getElementById('drawerDetails').innerHTML =
-      caixa('Resultado acumulado', formatValorIndicador(k, k.acumulado)) +
-      caixa(rotuloMetaReferencia(k), formatValorIndicador(k, k.meta)) +
-      (k.referenciaMeta.tipo === 'proporcional' ? caixa('Meta anual', formatValorIndicador(k, k.metaAnual)) : '') +
-      caixa('Distância da referência', k.distanciaTexto) +
-      (k.atingimento ? caixa('Atingimento informado', k.atingimento.texto.replace(' de atingimento', '')) : '') +
-      `<div class="detailBox"><small>Status</small><span class="tag ${tag[0]}">${esc(tag[1])}</span></div>`;
+    const temMeta = Number.isFinite(k.meta);
+    const resultado = Number.isFinite(k.acumulado) ? formatValorIndicador(k, k.acumulado) : 'Sem resultado';
+    const avaliacao = temMeta
+      ? caixa(rotuloMetaReferencia(k), formatValorIndicador(k, k.meta)) +
+        (k.referenciaMeta.tipo === 'proporcional' ? caixa('Meta anual', formatValorIndicador(k, k.metaAnual)) : '') +
+        (Number.isFinite(k.acumulado) ? caixa('Distância da referência', k.distanciaTexto) : '') +
+        (k.atingimento ? caixa('Atingimento informado', k.atingimento.texto.replace(' de atingimento', '')) : '') +
+        `<div class="detailBox"><small>Status</small><span class="tag ${tag[0]}">${esc(Number.isFinite(k.acumulado) ? tag[1] : 'Aguardando resultado')}</span></div>`
+      : caixa('Finalidade', 'Acompanhamento do volume ou da evolução');
+    document.getElementById('drawerDetails').innerHTML = caixa('Resultado acumulado', resultado) + avaliacao;
     document.getElementById('drawerCriterio').innerHTML = `<h3>Critério de avaliação</h3><p>${esc(sentidoAmigavel(k.sentido))}</p>${indicadorCTR(k) ? `<p>Unidade: ${esc(unidadeDescritiva(k.unidade))}.</p>` : ''}${k.variacao ? `<p>${esc(k.variacao.texto)}${k.variacao.detalhe ? ` · ${esc(k.variacao.detalhe)}` : ''}.</p>` : ''}`;
     document.getElementById('drawerMonths').innerHTML = ciclosHTML(k);
     const dialog = document.getElementById('drawer');

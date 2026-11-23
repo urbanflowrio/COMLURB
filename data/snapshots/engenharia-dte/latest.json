@@ -1,11 +1,11 @@
 {
   "snapshotVersion": "1.0.0",
   "moduloId": "engenharia-dte",
-  "path": "snapshots/engenharia-dte/periodos/2025-05..2026-05/2026-09-21T16-48-09-895Z__f49535ff953a.json",
-  "hash": "sha256:f49535ff953a50e78c3afcf19707b80a3769a3dac02b64dbe37ea180a53516d6",
+  "path": "snapshots/engenharia-dte/periodos/2025-05..2026-05/2026-11-23T22-27-33-338Z__3cc27e4ed948.json",
+  "hash": "sha256:3cc27e4ed948898480f945a56cb30199d728371b05cbfebb72a384f91b47f1ed",
   "referencePeriod": "2025-05..2026-05",
-  "capturedAt": "2026-09-21T16:48:09.895Z",
-  "updatedAt": "2026-09-21T16:48:09.915Z",
+  "capturedAt": "2026-11-23T22:27:33.338Z",
+  "updatedAt": "2026-11-23T22:27:33.364Z",
   "schemaVersion": "series_operacionais.dte.v1",
   "domain": "series_operacionais"
 }

@@ -1,11 +1,11 @@
 {
   "snapshotVersion": "1.0.0",
   "moduloId": "ar",
-  "path": "snapshots/ar/periodos/2026/2026-10-19T17-20-37-798Z__6be8258251c1.json",
-  "hash": "sha256:6be8258251c118366ce46e80a471d25ce2cb4fd73a779bfa00157b790c746d91",
+  "path": "snapshots/ar/periodos/2026/2026-11-23T22-27-32-197Z__4c6e5fa3cf60.json",
+  "hash": "sha256:4c6e5fa3cf60210399b646b07b5817d3cc01a1585d4ff04fe59c959813feabff",
   "referencePeriod": "2026",
-  "capturedAt": "2026-10-19T17:20:37.798Z",
-  "updatedAt": "2026-10-19T17:20:37.800Z",
+  "capturedAt": "2026-11-23T22:27:32.197Z",
+  "updatedAt": "2026-11-23T22:27:32.199Z",
   "schemaVersion": "indicadores.v1",
   "domain": "indicadores_metas"
 }

@@ -63,7 +63,7 @@
     AR_MAPEAMENTO: {
       id: "AR_MAPEAMENTO",
       descricao: "Acordo de Resultados — mapeamento código AR → indicador/filtros da aba Geral",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv",
+      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2035928171&single=true&output=csv",
       readerType: "remote-csv",
       acesso: ACESSO.PUBLICO,
       sensibilidade: SENSIBILIDADE.NENHUMA,
@@ -76,7 +76,7 @@
         "ar-config.js. NÃO é consumida pelo render legado atual (ar/index.html só lê geral/ar2026/mapeamento) " +
         "nem pelo Adapter AR/piloto desta fase (hub-ingest-adapter-ar.js busca só AR_GERAL/AR_2026/AR_MAPEAMENTO). " +
         "Três fontes operacionais, uma registrada sem consumo — não forçar uso só para fechar a contagem em quatro.",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=2035928171&single=true&output=csv",
+      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQphrIIjiY4aWBONgByLezMnFk8YbyYpF-vtgxOLoV8-85_WUVAXH_f_Ahy8ymxmgnGXmQ_KiFSOkIK/pub?gid=1233253722&single=true&output=csv",
       readerType: "remote-csv",
       acesso: ACESSO.PUBLICO,
       sensibilidade: SENSIBILIDADE.NENHUMA,

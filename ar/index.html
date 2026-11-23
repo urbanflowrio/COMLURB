@@ -248,12 +248,6 @@
   </div>
   <div id="placarGrid"></div>
 
-  <!-- FILTROS -->
-<section class="filters arFilters">
-  <div class="field"><label>Grupo</label><select id="fGrupo"><option value="">Todos</option></select></div>
-  <div class="field"><label>Status</label><select id="fStatus"><option value="">Todos</option></select></div>
-  <button class="btnLimpar" id="btnLimpar">✕ Limpar</button>
-</section>
   <div id="indicadoresContainer"></div>
   <details class="arPremiacao"><summary>Memória de cálculo da premiação</summary>
     <section class="bonusPanel" id="bonusPanel"></section>
@@ -323,7 +317,7 @@ const URLS = {
 };
 
 const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-let RAW = {geral:[], ar:[], map:[]}, DATA = [], FILTRADOS = [];
+let RAW = {geral:[], ar:[], map:[]}, DATA = [];
 let E06_CHART = null;
 const $ = id => document.getElementById(id);
 
@@ -840,21 +834,6 @@ function calcularBonificacao(lista){
 /* ═══════════════════════════════════════════════════════════
    FILTROS E POPULAÇÃO
    ═══════════════════════════════════════════════════════════ */
-function popularFiltros(){
-  const grupos=[...new Set(DATA.map(d=>d.grupo).filter(Boolean))].sort((a,b)=>grupoOrdem(a)-grupoOrdem(b)||a.localeCompare(b,"pt-BR"));
-  $("fGrupo").innerHTML=`<option value="">Todos</option>`+grupos.map(g=>`<option>${esc(g)}</option>`).join("");
-  const status=["Dentro da Meta","Atenção","Crítico","Sem dado"];
-  $("fStatus").innerHTML=`<option value="">Todos</option>`+status.map(s=>`<option>${esc(s)}</option>`).join("");
-}
-function aplicarFiltros(){
-  const grupo=$("fGrupo").value,status=$("fStatus").value;
-  FILTRADOS=DATA.filter(d=>{
-    if(grupo&&d.grupo!==grupo)return false;
-    if(status&&d.status!==status)return false;
-    return true;
-  });
-}
-
 /* ═══════════════════════════════════════════════════════════
    RENDER: PLACAR EXECUTIVO
    ═══════════════════════════════════════════════════════════ */
@@ -889,34 +868,19 @@ function renderResumo(){
     return Number(a.atingiu)-Number(b.atingiu)||ordem.indexOf(a.cod)-ordem.indexOf(b.cod);
   }).map(meta=>{
     const membros=meta.cod.split("+").map(c=>porCodigo[c]).filter(Boolean);
-    const acoes=membros.filter(d=>situacao(d)!=="Dentro da Meta").map(d=>{
+    const acoes=membros.filter(d=>situacao(d)!=="Dentro da Meta"&&!(d.codigo==="E01"&&d.atual!==null&&d.referenciaRitmo!==null&&d.atual>=d.referenciaRitmo)).map(d=>{
       const [tipo,acao]=d.codigo==="E01"
-        ?d.atual===null||!d.meta
-          ?["Apuração pendente","Ainda não há dados suficientes para informar quantas praças faltam para a meta."]
-          :d.atual<d.meta
-            ?["Acompanhar a meta anual",`${leituraRitmo(d)?leituraRitmo(d)+". ":""}Foram revitalizadas ${fmtValor(d.atual,d.unidade)} praças. Faltam ${fmtValor(d.meta-d.atual,d.unidade)} para atingir a meta anual de ${fmtValor(d.meta,d.unidade)}.`]
-            :["Acompanhar a validação","O total registrado alcançou a meta anual. A confirmação oficial ainda está pendente."]
-        :d.codigo==="E06" && d.statusCenario!=="Sem dado"
-        ?["Melhorar atendimento","Atuar nas regiões abaixo da meta. Todas as 12 precisam atingir o requisito."]
-        :encaminhamentos[d.codigo]||["Verificar resultado",d.indicador];
-      const falta=d.codigo==="E04" && d.atual!==null && d.atual<d.meta
-        ?` Faltam ${nota(d.meta-d.atual)} p.p.`:"";
-      return `<div class="arAcao"><strong>${esc(tipo)}</strong><span>${esc(acao+falta)}</span></div>`;
+        ?d.atual===null?["Resultado indisponível","Confirmar o total de praças revitalizadas."]:
+          d.referenciaRitmo!==null?["Produção abaixo do previsto","Revisar o ritmo de revitalização."]:["Verificar previsão","Confirmar a previsão de revitalizações para o período."]
+        :d.codigo==="E06"&&d.statusCenario!=="Sem dado"
+          ?["Atendimento no prazo",`Priorizar ${(d.e06Subs||[]).filter(s=>!s.ok).map(s=>s.nome).join(", ")||"as subprefeituras abaixo da meta"}.`]
+          :encaminhamentos[d.codigo]||["Verificar resultado",d.indicador];
+      return `<div class="arAcao"><strong>${esc(tipo)}</strong><span>${esc(acao)}</span></div>`;
     }).join("");
-    const linhas=membros.map(d=>{
-      const resultado=(d.atual===null||(d.codigo!=="E01"&&d.statusCenario==="Sem dado"))?"":` · Resultado ${fmtValor(d.atual,d.unidade)}`;
-      const metaTxt=d.codigo==="E06"?" · Meta: atendimento no prazo em 12 de 12 subprefeituras"
-        :` · Meta ${fmtValor(d.meta,d.unidade)}`;
-      const faltaPoda=d.codigo==="E04" && d.atual!==null && d.atual<d.meta
-        ?` · Faltam ${nota(d.meta-d.atual)} p.p.`:"";
-      return `<p><strong>${esc(d.indicador)}</strong>${esc(resultado+metaTxt+faltaPoda)}${d.pendencia?" · "+esc(d.pendencia):""}</p>`;
-    }).join("");
-    return `<article class="arPrioridade">
-      <header><strong>${esc(resumos[meta.cod]||meta.label)}</strong>
-      ${meta.atingiu?'<small>Favorável no cenário</small>':""}</header>
+    return acoes?`<article class="arPrioridade">
+      <header><strong>${esc(resumos[meta.cod]||meta.label)}</strong></header>
       <div>${acoes}</div>
-      <details class="arMetaResumo"><summary>Dados e critérios</summary>${linhas}</details>
-    </article>`;
+    </article>`:"";
   }).join("");
 
   $("placarGrid").innerHTML=`
@@ -932,8 +896,7 @@ function renderResumo(){
         <small>${f.metas} ${f.metas===1?"meta":"metas"}</small><strong>${nota(f.nota)}</strong><small>${f.pct}%</small></li>`).join("")}</ol>
       <small>Condicionadas a partir de 3 estratégicas · Performance aguarda avaliação oficial.</small>
     </section>
-    <h3>O que falta para avançar</h3>
-    <div class="arPrioridades">${metas}</div>`;
+    ${metas?`<h3>Pendências das metas estratégicas</h3><div class="arPrioridades">${metas}</div>`:""}`;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1019,12 +982,11 @@ function renderBonus(){
    RENDER: INDICADORES
    ═══════════════════════════════════════════════════════════ */
 function renderIndicadores(){
-  const visiveis=new Set(FILTRADOS.map(d=>d.codigo));
-  const grupos=[...new Set(FILTRADOS.map(d=>d.grupo))];
+  const grupos=[...new Set(DATA.map(d=>d.grupo))];
   const nomes={"par-02":"Recuperação de Resíduos + Ranking","par-03":"Poda",
     "par-04":"Remoção de Resíduos em Logradouro","par-c06":"Índice Padrão de Limpeza"};
   if(!grupos.length){
-    $("indicadoresContainer").innerHTML='<div class="emptyBlock">Nenhuma meta encontrada nos filtros selecionados.</div>';
+    $("indicadoresContainer").innerHTML='<div class="emptyBlock">Nenhuma meta disponível.</div>';
     return;
   }
   $("indicadoresContainer").innerHTML=grupos
@@ -1035,7 +997,7 @@ function renderIndicadores(){
         if(!metas.has(chave))metas.set(chave,[]);
         metas.get(chave).push(d);
       });
-      const linhas=[...metas.entries()].filter(([,itens])=>itens.some(d=>visiveis.has(d.codigo)));
+      const linhas=[...metas.entries()];
       return `<section class="arBlock">
         <div class="arBlockHead"><h2 class="arBlockTitle">${esc(grupo)}</h2></div>
         <div class="arTabela">${linhas.map(([chave,itens])=>{
@@ -1108,18 +1070,11 @@ function renderIndicadores(){
    RENDER COMPLETO
    ═══════════════════════════════════════════════════════════ */
 function render(){
-  aplicarFiltros();
   renderResumo();
   renderBonus();
   renderIndicadores();
   bindE06Drill();
 }
-function bind(){
-  $("fGrupo").addEventListener("change",render);
-  $("fStatus").addEventListener("change",render);
-  $("btnLimpar").addEventListener("click",()=>{$("fGrupo").value="";$("fStatus").value="";render();});
-}
-
 /* ═══════════════════════════════════════════════════════════
    INICIALIZAÇÃO
    ═══════════════════════════════════════════════════════════ */
@@ -1151,8 +1106,6 @@ async function init(){
     const map=await csv(URLS.map).catch(e=>{throw Object.assign(e,{fonte:"map"});});
     RAW={geral,ar,map};
     processar();
-    popularFiltros();
-    bind();
     render();
     $("loading").style.display="none";
     $("conteudo").style.display="block";

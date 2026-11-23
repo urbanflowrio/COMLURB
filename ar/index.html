@@ -428,9 +428,10 @@ function encontrarGeral(indicador,mapItem){
   const nomeMap=norm(mapItem?.indicadorGeral||""),nomeInd=norm(indicador.indicador);
   const rows=RAW.geral.filter(r=>{
     const ano=String(get(r,["Ano"])).trim();
-    if(ano&&ano!=="2026")return false;
+    if(indicador.codigo==="E01" ? ano!=="2026" : ano&&ano!=="2026")return false;
     const nomeGeral=norm(get(r,["Indicador"]));
-    if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}
+    if(indicador.codigo==="E01"){if(!nomeGeral||nomeGeral!==(nomeMap||nomeInd))return false;}
+    else if(nomeMap){if(nomeGeral!==nomeMap&&!nomeGeral.includes(nomeMap)&&!nomeMap.includes(nomeGeral))return false;}
     else{if(nomeGeral!==nomeInd&&!nomeGeral.includes(nomeInd)&&!nomeInd.includes(nomeGeral))return false;}
     const fDir=norm(mapItem?.diretoria||""),fSup=norm(mapItem?.superint||""),fGer=norm(mapItem?.gerencia||"");
     if(fDir&&fDir!=="-"&&norm(get(r,["Diretoria"]))!==fDir)return false;
@@ -438,6 +439,7 @@ function encontrarGeral(indicador,mapItem){
     if(fGer&&fGer!=="-"&&norm(get(r,["Gerência","Gerencia"]))!==fGer)return false;
     return true;
   });
+  if(indicador.codigo==="E01"&&rows.length!==1)return null;
   return rows[0]||null;
 }
 function valoresMensais(row,unidade){
@@ -619,10 +621,16 @@ function processar(){
       d.atualRaw=d.atualRaw||get(linha,["Acumulado"]);
       d.metaRaw=d.metaRaw||get(linha,["Meta"]);
     }
+    // E01 usa uma única linha oficial da aba Geral (SARC), sem fallback para AR_2026.
+    if(codigo==="E01"){
+      d.atualRaw=get(linha,["Acumulado"]);
+      d.metaRaw=get(linha,["Meta"]);
+      d.fonte="SARC · aba Geral";
+    }
     d.atual=calcValue(d.atualRaw,d.unidade);
     d.meta=calcValue(d.metaRaw,d.unidade);
     if(d.atual!==null&&d.meta!==null&&d.meta!==0){
-      const isSomaAnual=d.tipoAcumulado==="SOMA"&&norm(d.periodicidade).includes("mensal");
+      const isSomaAnual=codigo!=="E01"&&d.tipoAcumulado==="SOMA"&&norm(d.periodicidade).includes("mensal");
       if(isSomaAnual){
         const mesAtual=new Date().getMonth()+1;
         d.metaProporcional=d.meta*(mesAtual/12);
@@ -639,7 +647,10 @@ function processar(){
     }
 
     const rawStatus=String(get(r,["Status"])).trim();
-    if(rawStatus&&rawStatus!=="Indisponível"){
+    if(codigo==="E01"){
+      d.status=d.atual===0&&d.meta>0?"Crítico":statusCanonico(d.atual,d.meta,d.sentido);
+      d.statusDisplay=d.status;
+    } else if(rawStatus&&rawStatus!=="Indisponível"){
       d.status=(rawStatus==="Superado"||rawStatus==="Dentro da Meta")?"Dentro da Meta":
                rawStatus==="Atenção"?"Atenção":
                rawStatus==="Crítico"?"Crítico":"Sem dado";
@@ -666,11 +677,7 @@ function processar(){
     d.tendencia=tendenciaTexto(linha,d.unidade,d.sentido);
     d.tendenciaClass=tendenciaClass(d.tendencia);
     if(d.codigo==="E06")aplicarRegraE06(d);
-    if(rawStatus==="Indisponível" || d.pendencia){
-      d.statusCenario="Sem dado";
-    }
-    // A referência de acompanhamento de Praças pode diferir da meta publicada.
-    if(d.codigo==="E01" && d.meta!==5325){
+    if((codigo!=="E01"&&rawStatus==="Indisponível") || d.pendencia){
       d.statusCenario="Sem dado";
     }
 
@@ -804,13 +811,12 @@ function renderResumo(){
 
   function situacao(d){
     if(!d)return "Sem dado";
-    if(d.codigo==="E01" && d.meta!==5325)return "Referência em conferência";
     if(d.pendencia || d.statusCenario==="Sem dado")return "Apuração pendente";
     return d.statusDisplay;
   }
 
   const encaminhamentos={
-    E01:["Conferir referência","Conciliar a meta publicada com a referência registrada no SARC."],
+    E01:["Acompanhar produção","Acompanhar as revitalizações frente à meta do SARC."],
     E02:["Concluir apuração","Conferir o percentual de recuperação frente à meta de 3,8%."],
     E03:["Acompanhar publicação","Confirmar a posição da cidade quando sair o ranking nacional."],
     E04:["Melhorar atendimento","Elevar o atendimento de poda no prazo até 95%."],
@@ -826,8 +832,8 @@ function renderResumo(){
   }).map(meta=>{
     const membros=meta.cod.split("+").map(c=>porCodigo[c]).filter(Boolean);
     const acoes=membros.filter(d=>situacao(d)!=="Dentro da Meta").map(d=>{
-      const [tipo,acao]=d.codigo==="E01" && d.meta===5325
-        ?["Acompanhar produção","Acompanhar o saldo de revitalizações até a meta publicada."]
+      const [tipo,acao]=d.codigo==="E01" && (d.atual===null||!d.meta)
+        ?["Conferir dados no SARC","Aguardar uma linha válida com resultado e meta para 2026."]
         :d.codigo==="E06" && d.statusCenario!=="Sem dado"
         ?["Melhorar atendimento","Atuar nas regiões abaixo da meta. Todas as 12 precisam atingir o requisito."]
         :encaminhamentos[d.codigo]||["Verificar resultado",d.indicador];
@@ -836,13 +842,9 @@ function renderResumo(){
       return `<div class="arAcao"><strong>${esc(tipo)}</strong><span>${esc(acao+falta)}</span></div>`;
     }).join("");
     const linhas=membros.map(d=>{
-      const referenciaDivergente=d.codigo==="E01" && d.meta!==5325;
-      const resultado=d.statusCenario==="Sem dado" && !referenciaDivergente
-        ?"":` · Resultado ${fmtValor(d.atual,d.unidade)}`;
-      const metaTxt=referenciaDivergente
-        ?` · Meta publicada 5.325 · Referência no SARC ${fmtValor(d.meta,d.unidade)}`
-        :d.codigo==="E06"?" · Atendimento conforme em 12 de 12 regiões"
-        :` · Meta ${fmtValor(d.meta,d.unidade)}`;
+      const resultado=(d.atual===null||(d.codigo!=="E01"&&d.statusCenario==="Sem dado"))?"":` · Resultado ${fmtValor(d.atual,d.unidade)}`;
+      const metaTxt=d.codigo==="E06"?" · Atendimento conforme em 12 de 12 regiões"
+        :` · Meta ${fmtValor(d.meta,d.unidade)}${d.codigo==="E01"?" · Fonte: SARC":""}`;
       const faltaPoda=d.codigo==="E04" && d.atual!==null && d.atual<d.meta
         ?` · Faltam ${nota(d.meta-d.atual)} p.p.`:"";
       return `<p><strong>${esc(d.indicador)}</strong>${esc(resultado+metaTxt+faltaPoda)}${d.pendencia?" · "+esc(d.pendencia):""}</p>`;
@@ -978,12 +980,11 @@ function renderIndicadores(){
           const par=CASADOS.find(c=>c.id===chave);
           const e06=itens.find(d=>d.codigo==="E06");
           const requisitos=itens.map(d=>{
-            const divergente=d.codigo==="E01"&&d.meta!==5325;
             const pendente=d.statusCenario==="Sem dado";
-            const resultado=pendente&&!divergente?"":fmtValor(d.atual,d.unidade);
-            const referencia=divergente?"5.325 (publicada)":d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
-            const situacao=divergente?"Referência em conferência":pendente?"Aguardando apuração":d.statusDisplay==="Crítico"?"Abaixo da meta":d.statusDisplay;
-            const classe=divergente?"att":pendente?"nd":d.statusClass;
+            const resultado=(d.atual===null||(pendente&&d.codigo!=="E01"))?"":fmtValor(d.atual,d.unidade);
+            const referencia=d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
+            const situacao=pendente?"Aguardando apuração":d.statusDisplay==="Crítico"?"Abaixo da meta":d.statusDisplay;
+            const classe=pendente?"nd":d.statusClass;
             return `<div class="arRequisito">
               ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}
               <div class="arRequisitoValores">${resultado?`<strong>${esc(resultado)}</strong>`:""}<span>Meta ${esc(referencia)}</span></div>
@@ -994,7 +995,6 @@ function renderIndicadores(){
             <strong>${esc(nomes[chave]||itens[0].indicador)}</strong><div>${requisitos}</div><span class="arVerDetalhes"></span>
           </summary><div class="arLinhaDetalhe">
             ${itens.map(d=>`<p><strong>${esc(d.codigo+" · "+d.indicador)}</strong> · ${esc(d.pendencia||d.descricao||d.fonte)}</p>`).join("")}
-            ${itens.some(d=>d.codigo==="E01"&&d.meta!==5325)?`<p>Referência registrada no SARC: ${esc(fmtValor(itens[0].meta,itens[0].unidade))}.</p>`:""}
             ${par?`<p>${esc(par.bonusNote)}</p>`:""}
             ${e06?`<button class="btnLimpar" type="button" data-indicator-code="E06">Abrir histórico por subprefeitura</button>${renderE06Drill(e06)}`:""}
           </div></details>`;

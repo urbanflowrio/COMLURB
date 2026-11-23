@@ -286,7 +286,7 @@
     let valor = HUB.indicadores.parseNumeroBR(bruto);
     if (valor === null || !Number.isFinite(valor)) return null;
     if (!bruto.includes('%') && Math.abs(valor) <= 1) valor *= 100;
-    return { valor, texto: `${valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% de atingimento`, origem: 'base complementar' };
+    return { valor, texto: `${formatPercentual(valor)} de atingimento`, origem: 'base complementar' };
   }
 
   function ehConsolidado(row) {
@@ -323,13 +323,17 @@
     return clean(unidade);
   }
 
+  function formatPercentual(valor) {
+    return valor.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+  }
+
   function formatValor(v, unidade) {
     if (v === null || v === undefined || Number.isNaN(v)) return 'N/D';
     const opts = Math.abs(v) >= 1000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 1 };
     const numero = Number(v).toLocaleString('pt-BR', opts);
     const u = unidadeVisual(unidade);
     if (!u) return numero;
-    if (u === '%') return numero + '%';
+    if (u === '%') return formatPercentual(Number(v));
     if (/^R\$/i.test(u)) return 'R$ ' + numero;
     return numero + ' ' + u;
   }
@@ -355,7 +359,7 @@
     const abs = Math.abs(v);
     const num = abs.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
     const u = unidadeVisual(unidade);
-    if (u === '%') return num + ' p.p.';
+    if (u === '%') return abs.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' p.p.';
     if (u === 't') return num + (abs === 1 ? ' tonelada' : ' toneladas');
     if (!u) return num + (abs === 1 ? ' unidade' : ' unidades');
     return num + ' ' + u;
@@ -497,19 +501,19 @@
     const menorMelhor = clean(k.sentido) === '↓';
 
     if (menorMelhor) {
-      if (meta === 0 && atual === 0) return { valor: 100, texto: '100% de atingimento' };
-      if (meta === 0 && atual > 0) return { valor: 0, texto: '0% de atingimento' };
-      if (atual === 0 && meta > 0) return { valor: null, texto: 'Acima de 100% de atingimento', superado: true };
+      if (meta === 0 && atual === 0) return { valor: 100, texto: '100,0% de atingimento' };
+      if (meta === 0 && atual > 0) return { valor: 0, texto: '0,0% de atingimento' };
+      if (atual === 0 && meta > 0) return { valor: null, texto: 'Acima de 100,0% de atingimento', superado: true };
       const valor = (meta / atual) * 100;
-      return { valor, texto: `${valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% de atingimento` };
+      return { valor, texto: `${formatPercentual(valor)} de atingimento` };
     }
 
     if (meta === 0) {
       const valor = atual >= 0 ? 100 : 0;
-      return { valor, texto: `${valor}% de atingimento` };
+      return { valor, texto: `${formatPercentual(valor)} de atingimento` };
     }
     const valor = (atual / meta) * 100;
-    return { valor, texto: `${valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% de atingimento` };
+    return { valor, texto: `${formatPercentual(valor)} de atingimento` };
   }
 
   function montarKpi(entry) {
@@ -770,7 +774,7 @@
     const resumo = resumoStatus(avaliaveis);
     const situacao = gerarSituacaoCorporativa(avaliaveis);
 
-    const pct = valor => resumo.comStatus ? `${Math.round(valor / resumo.comStatus * 100)}% dos avaliados` : 'Sem base classificável';
+    const pct = valor => resumo.comStatus ? `${formatPercentual(valor / resumo.comStatus * 100)} dos avaliados` : 'Sem base classificável';
     const scorecards = [
       { cls: '', valor: resumo.comStatus, label: 'Avaliados', support: 'Indicadores com meta e resultado em 2026' },
       { cls: 'is-green', valor: resumo.green, label: 'Dentro da meta', support: pct(resumo.green) },

@@ -278,19 +278,19 @@ const CASADOS = [
     id: "par-03",
     label: "Meta dupla: Atendimento 1746 Poda + Satisfação Poda",
     membros: ["E04","E05"],
-    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 95% no prazo e nota de satisfação igual ou superior a 4,5. Os dois precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 95,0% no prazo e nota de satisfação igual ou superior a 4,5. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-04",
     label: "Meta dupla: Atendimento no prazo e satisfação na remoção de resíduos em logradouro",
     membros: ["E06","E07"],
-    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85% no prazo em cada subprefeitura e satisfação igual ou superior a 4,4% para a cidade. Os dois precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: atendimento igual ou superior a 85,0% no prazo em cada subprefeitura e satisfação igual ou superior a 4,4% para a cidade. Os dois precisam ser atingidos juntos."
   },
   {
     id: "par-c06",
     label: "Meta dupla (Condicionada): Conformidade IPL + Desvio Padrão IPL",
     membros: ["C01","C02"],
-    bonusNote: "São dois requisitos da mesma meta: conformidade acumulada igual ou superior a 80% e desvio padrão entre gerências igual ou inferior a 5,9. Os dois precisam ser atingidos juntos."
+    bonusNote: "São dois requisitos da mesma meta: conformidade acumulada igual ou superior a 80,0% e desvio padrão entre gerências igual ou inferior a 5,9. Os dois precisam ser atingidos juntos."
   }
 ];
 
@@ -366,12 +366,12 @@ function calcValue(v,unidade){let n=num(v);if(n===null)return null;if(isPercent(
 function fmtValor(v,unidade){
   if(v===null||v===undefined||v==="")return "N/D";
   let n=Number(v);if(!Number.isFinite(n))n=num(v);if(n===null)return "N/D";
-  if(isPercent(unidade)){if(n<=1.5)n=n*100;return n.toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
+  if(isPercent(unidade)){if(n<=1.5)n=n*100;return fmtPct(n/100);}
   if(norm(unidade).includes("posi"))return n.toLocaleString("pt-BR",{maximumFractionDigits:0})+"º";
   if(Math.abs(n)>=1000)return n.toLocaleString("pt-BR",{maximumFractionDigits:0});
   return n.toLocaleString("pt-BR",{maximumFractionDigits:2});
 }
-function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "N/D";return (n*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";}
+function fmtPct(v){const n=Number(v);if(!Number.isFinite(n))return "N/D";return n.toLocaleString("pt-BR",{style:"percent",minimumFractionDigits:1,maximumFractionDigits:1});}
 function maiorMelhor(sentido){const s=norm(sentido);return s.includes("maior")||s.includes("↑")||s==="";}
 
 /* ═══════════════════════════════════════════════════════════
@@ -602,7 +602,7 @@ function desenharHistoricoAR(canvas,nome,serie,unidade,meta,limites={},rotuloMet
   if(typeof Chart==='undefined'||!canvas)return;
   if(E06_CHART)E06_CHART.destroy();
   const formatar=v=>isPercent(unidade)
-    ?v.toLocaleString('pt-BR',{style:'percent',maximumFractionDigits:2})
+    ?fmtPct(v)
     :fmtValor(v,unidade);
   const fim=serie.findLastIndex(Number.isFinite)+1;
   const meses=MESES.slice(0,fim);
@@ -910,7 +910,7 @@ function renderResumo(){
   const encaminhamentos={
     E02:["Concluir apuração","Conferir o percentual de recuperação frente à meta de 3,8%."],
     E03:["Acompanhar publicação","Confirmar a posição da cidade quando sair o ranking nacional."],
-    E04:["Melhorar atendimento","Elevar o atendimento de poda no prazo até 95%."],
+    E04:["Melhorar atendimento","Elevar o atendimento de poda no prazo até 95,0%."],
     E05:["Validar indicador","Confirmar a escala da satisfação de poda e verificar se a nota chega a 4,5."],
     E06:["Completar apuração regional","Conferir o atendimento no prazo nas 12 subprefeituras, na mesma competência. Todas precisam atingir a meta."],
     E07:["Validar indicador","Validar o resultado percentual da satisfação de remoção frente à meta de 4,4%."],
@@ -942,12 +942,12 @@ function renderResumo(){
       <div class="arReguaTopo">
         <div class="arReguaNota">${atual?nota(b.regE.nota):atual+"/5"}</div>
         <div><strong>${atual?"Nota-base simulada":"Metas estratégicas favoráveis no cenário"}</strong>
-        <small>${atual?`${atual} de 5 estratégicas · ${b.bonusTotal}% de bônus simulado`:"Sem faixa de nota-base no cenário disponível"}</small></div>
+        <small>${atual?`${atual} de 5 estratégicas · ${fmtPct(b.bonusTotal/100)} de bônus simulado`:"Sem faixa de nota-base no cenário disponível"}</small></div>
         <div class="arReguaProxima"><strong>${proxima?`Próxima faixa · nota ${nota(proxima.nota)}`:"Faixa estratégica máxima"}</strong>
-        ${proxima?`<small>Requer mais 1 meta estratégica · ${proxima.pct}% de bônus das estratégicas</small>`:""}</div>
+        ${proxima?`<small>Requer mais 1 meta estratégica · ${fmtPct(proxima.pct/100)} de bônus das estratégicas</small>`:""}</div>
       </div>
       <ol class="arFaixas">${faixas.map(f=>`<li ${f.metas===atual?'aria-current="step"':f===proxima?'class="proxima"':""}>
-        <small>${f.metas} ${f.metas===1?"meta":"metas"}</small><strong>${nota(f.nota)}</strong><small>${f.pct}%</small></li>`).join("")}</ol>
+        <small>${f.metas} ${f.metas===1?"meta":"metas"}</small><strong>${nota(f.nota)}</strong><small>${fmtPct(f.pct/100)}</small></li>`).join("")}</ol>
       <small>Condicionadas a partir de 3 estratégicas · Performance aguarda avaliação oficial.</small>
     </section>
     ${metas?`<h3>Pendências das metas estratégicas</h3><div class="arPrioridades">${metas}</div>`:""}`;
@@ -999,7 +999,7 @@ function renderBonus(){
 
   var condTotal=[...["C03","C04"].filter(function(c){return DATA.some(function(d){return d.codigo===c;});}),...CASADOS.filter(function(p){return p.membros.some(function(m){return DATA.some(function(d){return d.codigo===m&&d.grupo.toLowerCase().includes("condicion");});});})].length;
   var condDetalhe=b.condicionalAtiva
-    ?"Ponto adicional no cenário atual: "+b.regC.ponto+"; "+b.regC.pct+"% adicional"
+    ?"Ponto adicional no cenário atual: "+b.regC.ponto+"; "+fmtPct(b.regC.pct/100)+" adicional"
     :"Estas metas só são consideradas a partir de 3 estratégicas favoráveis no cenário atual";
   var condCls=b.condicionalAtiva?"ok":"nd";
   var condStyle=b.condicionalAtiva?"":"opacity:.6";
@@ -1014,7 +1014,7 @@ function renderBonus(){
       '<div class="bonusCard">'+
         '<div class="label">Estratégicas</div>'+
         '<div class="valor">'+b.metasEstrategicasAtingidas+'/'+b.totalEstrategicas+'</div>'+
-        '<div class="detalhe">Nota no cenário atual: <strong>'+b.regE.nota+'</strong>, equivalente a '+b.regE.pct+'% na faixa estratégica. Pares de indicadores contam como uma meta.</div>'+
+        '<div class="detalhe">Nota no cenário atual: <strong>'+b.regE.nota+'</strong>, equivalente a '+fmtPct(b.regE.pct/100)+' na faixa estratégica. Pares de indicadores contam como uma meta.</div>'+
       '</div>'+
       '<div class="bonusCard '+condCls+'" style="'+condStyle+'">'+
         '<div class="label">'+condLabel+'</div>'+
@@ -1062,9 +1062,9 @@ function renderIndicadores(){
               const minimo=d.codigo==="C01";
               const comResultado=Number.isFinite(d.atual);
               const comMeta=Number.isFinite(d.meta);
-              const exibe=v=>minimo?(v*100).toLocaleString("pt-BR",{maximumFractionDigits:2})+"%":fmtValor(v,d.unidade);
+              const exibe=v=>minimo?fmtPct(v):fmtValor(v,d.unidade);
               const diferenca=comResultado&&comMeta?(minimo?d.atual-d.meta:d.meta-d.atual):null;
-              const magnitude=diferenca===null?"":(Math.abs(diferenca)*(minimo?100:1)).toLocaleString("pt-BR",{maximumFractionDigits:2})+(minimo?" p.p.":"");
+              const magnitude=diferenca===null?"":(Math.abs(diferenca)*(minimo?100:1)).toLocaleString("pt-BR",(minimo?{minimumFractionDigits:1,maximumFractionDigits:1}:{maximumFractionDigits:2}))+(minimo?" p.p.":"");
               const distancia=diferenca===null?"":Math.abs(diferenca)<1e-9?"No valor da meta":minimo
                 ?diferenca<0?`Faltam ${magnitude} para a meta`:`${magnitude} acima da meta`
                 :diferenca<0?`${magnitude} acima do limite`:`${magnitude} abaixo do limite`;
@@ -1094,7 +1094,7 @@ function renderIndicadores(){
             const restanteRegional=regionalCompleta&&d.e06Conformes<12?12-d.e06Conformes:0;
             const podeComparar=!d.volumeLinear&&d.codigo!=="E06"&&!pendente&&Number.isFinite(d.atual)&&Number.isFinite(d.meta);
             const diferenca=podeComparar?(maiorMelhor(d.sentido)?d.meta-d.atual:d.atual-d.meta):0;
-            const falta=diferenca>1e-9?(isPercent(d.unidade)?(100*diferenca).toLocaleString("pt-BR",{maximumFractionDigits:2})+" p.p.":fmtValor(diferenca,"")):"";
+            const falta=diferenca>1e-9?(isPercent(d.unidade)?(100*diferenca).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+" p.p.":fmtValor(diferenca,"")):"";
             const classe=pendente||!resultado?"nd":ritmo?(d.atual+1e-9>=d.referenciaRitmo?"ok":"crit"):d.volumeLinear?"nd":d.statusClass;
             return `<div class="arRequisito">
               ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}

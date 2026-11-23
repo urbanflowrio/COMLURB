@@ -111,7 +111,9 @@
 .indicatorRow.expanded .drillCue .arr{transform:rotate(90deg)}
 .e06Drill{box-sizing:border-box;width:min(960px,calc(100% - 32px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid var(--linha);border-radius:18px;background:#0d1e30;color:#e6f0fb;box-shadow:0 24px 80px #0008;overflow:auto;overflow-wrap:normal}
 .e06Drill::backdrop{background:rgba(3,10,19,.76)}
-.arHistoricoVazio{margin-top:14px}
+.arHistoricoVazio{margin-top:18px}
+.arHistoricoIndicadores{margin-top:22px}
+.arHistoricoIndicadores h4{margin:0 0 12px;color:#e6f0fb;font-size:13px}
 .e06DrillHead{position:sticky;top:0;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 22px;background:#0d1e30;border-bottom:1px solid var(--linha)}
 .e06DrillBody{padding:18px 22px 22px;container-type:inline-size}
 .e06Close{flex:none;background:rgba(255,255,255,.06);color:#e6f0fb;border:1px solid var(--linha);border-radius:8px;min-width:40px;height:40px;font-size:22px;cursor:pointer}
@@ -595,14 +597,14 @@ function showE06History(index){
   info.innerHTML=`<small>${esc(s.nome)}</small><b>${esc(fmtValor(s.acum,'%'))}</b><span>Acumulado de 2026 · meta ≥ ${esc(fmtValor(s.meta,'%'))}.<br>Última competência com dado: ${lastIdx>=0?MESES[lastIdx]+'/2026':'sem dado'} · ${esc(fmtValor(lastVal,'%'))}.</span>`;
   desenharHistoricoAR(document.getElementById('e06HistoryChart'),s.nome,s.vals,'%',s.meta,{suggestedMin:.5,max:1});
 }
-function desenharHistoricoAR(canvas,nome,serie,unidade,meta,limites={}){
+function desenharHistoricoAR(canvas,nome,serie,unidade,meta,limites={},rotuloMeta="Meta"){
   if(typeof Chart==='undefined'||!canvas)return;
   if(E06_CHART)E06_CHART.destroy();
   const formatar=v=>isPercent(unidade)
     ?v.toLocaleString('pt-BR',{style:'percent',maximumFractionDigits:2})
     :fmtValor(v,unidade);
   const datasets=[{label:nome,data:serie,borderWidth:2.2,tension:.28,spanGaps:false,pointRadius:3,pointHoverRadius:5}];
-  if(Number.isFinite(meta))datasets.push({label:'Meta '+formatar(meta),data:MESES.map(()=>meta),borderWidth:1.2,borderDash:[5,5],pointRadius:0});
+  if(Number.isFinite(meta))datasets.push({label:rotuloMeta+' '+formatar(meta),data:MESES.map(()=>meta),borderWidth:1.2,borderDash:[5,5],pointRadius:0});
   E06_CHART=new Chart(canvas,{type:'line',data:{labels:MESES,datasets},options:{
     responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
     plugins:{legend:{labels:{color:'#aebfd5',boxWidth:14,boxHeight:2,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'N/D':formatar(c.parsed.y)}`}}},
@@ -623,12 +625,16 @@ function mostrarHistoricoIndicador(dialog,codigo){
   });
   if(!temSerie)return;
   historico.querySelector('.e06HistoryInfo').innerHTML=`<small>${esc(d.indicador)}</small><b>${esc(fmtValor(d.atual,d.unidade))}</b><span>Resultado registrado · meta ${esc(fmtValor(d.meta,d.unidade))}.</span>`;
-  desenharHistoricoAR(historico.querySelector('canvas'),d.indicador,d.serie,d.unidade,d.volumeLinear?null:d.meta);
+  const referencia=d.volumeLinear&&Number.isFinite(d.meta)?d.meta/MESES.length:d.meta;
+  desenharHistoricoAR(historico.querySelector('canvas'),d.indicador,d.serie,d.unidade,referencia,{},d.volumeLinear?"Ritmo mensal da meta":"Meta");
 }
 function renderHistoricoIndicadores(itens){
-  return `<div class="subprefGrid">${itens.map(d=>`<button class="subprefCard" type="button" data-ar-serie="${esc(d.codigo)}" aria-pressed="false"><div class="subprefName">${esc(d.indicador)}</div><div class="subprefMeta">${d.serie.some(Number.isFinite)?"Evolução mensal":"Sem série mensal na fonte"}</div></button>`).join("")}</div>
+  const primeiro=itens.find(d=>d.serie.some(Number.isFinite))||itens[0];
+  return `<section class="arHistoricoIndicadores" data-ar-inicial="${esc(primeiro.codigo)}">
+    <h4>Evolução mensal</h4>
+    ${itens.length>1?`<div class="subprefGrid">${itens.map(d=>`<button class="subprefCard" type="button" data-ar-serie="${esc(d.codigo)}" aria-pressed="false"><div class="subprefName">${esc(d.indicador)}</div><div class="subprefMeta">${d.serie.some(Number.isFinite)?"Evolução mensal":"Sem série mensal na fonte"}</div></button>`).join("")}</div>`:""}
     <div class="e06History"><div class="e06ChartWrap"><canvas></canvas></div><div class="e06HistoryInfo" aria-live="polite"></div></div>
-    <p class="emptyBlock arHistoricoVazio" hidden>Sem série mensal disponível na fonte para este indicador.</p>`;
+    <p class="emptyBlock arHistoricoVazio" hidden>Sem série mensal disponível na fonte para este indicador.</p></section>`;
 }
 function bindARDialogs(){
   document.querySelectorAll('.arVerDetalhes').forEach(button=>button.addEventListener('click',()=>{
@@ -638,8 +644,7 @@ function bindARDialogs(){
       const subs=DATA.find(d=>d.codigo==='E06')?.e06Subs||[];
       if(subs.length)showE06History(Math.max(0,subs.findIndex(s=>!s.ok)));
     }else{
-      const primeiro=[...dialog.querySelectorAll('[data-ar-serie]')].find(b=>DATA.find(d=>d.codigo===b.dataset.arSerie).serie.some(Number.isFinite))||dialog.querySelector('[data-ar-serie]');
-      mostrarHistoricoIndicador(dialog,primeiro.dataset.arSerie);
+      mostrarHistoricoIndicador(dialog,dialog.querySelector('[data-ar-inicial]').dataset.arInicial);
     }
   }));
   document.querySelectorAll('[data-ar-serie]').forEach(button=>button.addEventListener('click',()=>mostrarHistoricoIndicador(button.closest('dialog'),button.dataset.arSerie)));

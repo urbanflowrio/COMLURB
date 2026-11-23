@@ -538,6 +538,7 @@ function aplicarRegraE06(d){
   d.statusClass=tagClass(d.status);
   d.e06Conformes=conformes;
   d.e06Total=total;
+  d.mesReferencia=total===12?MESES.reduce((ultimo,_,i)=>subs.every(s=>s.vals[i]!=null)?i+1:ultimo,null):null;
   if(total!==12||avaliadas.length!==12){
     d.pendencia=d.pendencia||(total!==12
       ?`A base lista ${total} regiões, mas a meta prevê 12. É preciso conferir quais entram na apuração.`
@@ -1057,20 +1058,22 @@ function renderIndicadores(){
             const resultado=d.atual===null?"":fmtValor(d.atual,d.unidade);
             const ritmo=leituraRitmo(d);
             const periodo=d.mesReferencia?`${MESES[d.mesReferencia-1]}/2026`:"";
-            const referencia=d.codigo==="E06"?"12 de 12 regiões":fmtValor(d.meta,d.unidade);
-            const situacao=!resultado?"Sem resultado":d.codigo==="E06"&&d.e06Total&&d.e06Total!==12
+            const referencia=d.codigo==="E06"?"12 de 12 regiões":d.codigo==="E08"?fmtValor(d.meta,d.unidade)+" pontos com três ciclos cada":fmtValor(d.meta,d.unidade);
+            const semResultado=d.codigo==="E07"?"Nota ainda não validada":d.codigo==="E08"?"Execução ainda não comprovada":"Sem resultado registrado";
+            const situacao=!resultado?semResultado:d.codigo==="E06"&&d.e06Total&&d.e06Total!==12
               ?`A base lista ${d.e06Total} regiões; a meta prevê 12`:pendente?"Validação pendente":
               ritmo||(d.volumeLinear?"Sem referência para o período":d.statusDisplay==="Crítico"?"Fora da meta":d.statusDisplay);
+            const situacaoFinal=d.codigo==="E06"&&d.mesReferencia&&pendente?"Fechamento mais recente ainda não validado":situacao;
             const classe=pendente||!resultado?"nd":ritmo?(d.atual+1e-9>=d.referenciaRitmo?"ok":"crit"):d.volumeLinear?"nd":d.statusClass;
             return `<div class="arRequisito">
               ${itens.length>1?`<span class="arRequisitoNome">${esc(d.indicador)}</span>`:""}
-              <div class="arRequisitoValores">${resultado?`<strong>${esc(d.codigo==="E06"?`${d.e06Conformes??0} de ${d.e06Total??0} regiões na base`:resultado)}</strong>`:""}
+              <div class="arRequisitoValores">${resultado?`<strong>${esc(d.codigo==="E06"?`${d.e06Conformes??0} de ${d.e06Total??0} regiões atingiram a meta`:resultado)}</strong>`:""}
                 ${resultado&&periodo?`<span>Referência: ${esc(periodo)}</span>`:""}
                 ${ritmo?`<span>Previsto até ${esc(periodo)}: ${esc(fmtValor(d.referenciaRitmo,d.unidade))}</span>`:""}
-                <span>${d.volumeLinear?"Meta anual":d.codigo==="E06"?"Meta":maiorMelhor(d.sentido)?"Meta mínima":"Limite máximo"}: ${esc(referencia)}</span>
+                <span>${d.volumeLinear?"Meta anual":d.codigo==="E08"?"Meta":d.codigo==="E06"?"Meta":maiorMelhor(d.sentido)?"Meta mínima":"Limite máximo"}: ${esc(referencia)}</span>
                 ${d.volumeLinear&&resultado&&d.meta>d.atual?`<span>Faltam ${esc(fmtValor(d.meta-d.atual,d.unidade))} até dezembro</span>`:""}
               </div>
-              <span class="tag ${esc(classe)}">${esc(situacao)}</span>
+              <span class="tag ${esc(classe)}">${esc(situacaoFinal)}</span>
             </div>`;
           }).join("");
           return `<details class="arLinhaMeta"><summary>

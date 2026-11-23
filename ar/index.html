@@ -493,30 +493,31 @@ function e06Subprefeituras(){
     return nome!==""&&nome!=="subprefeituras";
   });
 
-  // A aba geral repete a mesma Subprefeitura em linhas de gerências diferentes.
-  // Priorizamos as 12 linhas consolidadas COMLURB; se não estiverem disponíveis
-  // na publicação CSV, deduplicamos as linhas operacionais pelo nome da Subprefeitura.
-  let rows=candidatas.filter(r=>norm(get(r,["Diretoria"]))==="comlurb");
-  if(!rows.length) rows=candidatas;
-
-  const porNome=new Map();
-  rows.forEach(r=>{
-    const nomeRaw=String(get(r,["Indicador"])).trim();
-    const nome=nomeRaw.replace(/^.*?\s-\s/i,"").trim();
-    const k=norm(nome);
-    if(!k||porNome.has(k))return;
-    const vals=MESES.map(m=>calcValue(get(r,[m]),"%"));
-    const acum=calcValue(get(r,["Acumulado"]),"%");
-    const meta=calcValue(get(r,["Meta"]),"%")??85;
-    porNome.set(k,{nome,row:r,vals,acum,meta,ok:acum!==null&&acum>=meta});
-  });
-
-  const out=[...porNome.values()];
-  // Fallback auditável: garante o drill-down mesmo se o CSV publicado da aba geral
-  // estiver temporariamente defasado. Os valores são os consolidados 2026 da SARC
-  // (linhas COMLURB da aba geral, Jan–Jul/2026). Quando a fonte traz as 12 linhas,
-  // ela sempre prevalece sobre este fallback.
-  const fonte=out.length>=12?out:E06_SUBPREF_FALLBACK_2026.map(s=>({...s}));
+  function serie(diretoria){
+    const grupos=new Map();
+    for(const row of candidatas.filter(r=>norm(get(r,["Diretoria"]))===diretoria)){
+      const nome=String(get(row,["Indicador"])).replace(/^.*?\s-\s/i,"").trim();
+      const vals=MESES.map(m=>calcValue(get(row,[m]),"%"));
+      const acum=calcValue(get(row,["Acumulado"]),"%"),meta=calcValue(get(row,["Meta"]),"%");
+      const mes=vals.reduce((n,v,i)=>v===null?n:i+1,0);
+      if(!mes||acum===null||meta===null)continue;
+      const k=norm(nome);
+      if(!grupos.has(k))grupos.set(k,[]);
+      grupos.get(k).push({nome,row,vals,acum,meta,mes,ok:acum>=meta});
+    }
+    const inteiro=n=>Math.abs(n*100-Math.round(n*100))<1e-8;
+    const equiv=(a,b)=>Math.abs(a-b)<1e-9||
+      (inteiro(a)&&Math.round(b*100)===Math.round(a*100))||
+      (inteiro(b)&&Math.round(a*100)===Math.round(b*100));
+    return [...grupos.values()].flatMap(g=>{
+      g.sort((a,b)=>b.mes-a.mes||Number(inteiro(a.acum))-Number(inteiro(b.acum)));
+      const s=g[0];
+      return g.filter(x=>x.mes===s.mes).every(x=>x.meta===s.meta&&x.ok===s.ok&&equiv(x.acum,s.acum)&&equiv(x.vals[s.mes-1],s.vals[s.mes-1]))?[s]:[];
+    });
+  }
+  const oficial=serie("comlurb"),dlu=serie("dlu");
+  const periodo=s=>s.length===12&&s.every(x=>x.mes===s[0].mes)?s[0].mes:0;
+  const fonte=periodo(dlu)>periodo(oficial)&&oficial.every(o=>dlu.some(d=>norm(o.nome)===norm(d.nome)))?dlu:oficial;
   return fonte.sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
 }
 function aplicarRegraE06(d){
@@ -539,6 +540,9 @@ function aplicarRegraE06(d){
   d.e06Conformes=conformes;
   d.e06Total=total;
   d.mesReferencia=total===12?MESES.reduce((ultimo,_,i)=>subs.every(s=>s.vals[i]!=null)?i+1:ultimo,null):null;
+  if(subs.every(s=>norm(get(s.row,["Diretoria"]))==="dlu")){
+    d.pendencia="Resultado calculado pelas séries regionais da DLU. Registro no consolidado oficial pendente.";
+  }
   if(total!==12||avaliadas.length!==12){
     d.pendencia=d.pendencia||(total!==12
       ?`A base lista ${total} regiões, mas a meta prevê 12. É preciso conferir quais entram na apuração.`

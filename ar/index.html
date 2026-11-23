@@ -486,7 +486,11 @@ function e06Subprefeituras(){
   const prefixo="performance de atendimento de remocao de residuos -";
   const candidatas=RAW.geral.filter(r=>{
     if(String(get(r,["Ano"])).trim()!=="2026")return false;
-    return norm(get(r,["Indicador"])).startsWith(prefixo);
+    const indicador=norm(get(r,["Indicador"]));
+    if(!indicador.startsWith(prefixo))return false;
+    const nome=indicador.slice(prefixo.length).trim();
+    // A linha “Subprefeituras” consolida as 12 regiões e não entra na apuração.
+    return nome!==""&&nome!=="subprefeituras";
   });
 
   // A aba geral repete a mesma Subprefeitura em linhas de gerências diferentes.

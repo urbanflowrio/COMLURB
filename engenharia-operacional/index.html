@@ -521,7 +521,7 @@
     <div class="grid2" style="margin-bottom:14px;">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Recebimento nas ETRs</h2><div class="hint">Recebimento mensal (t)</div></div>
+          <div><h2>Recebimento nas ETRs</h2><div class="hint">Recebimento mensal no Relatório DTE (t)</div></div>
         </div>
         <div class="body"><div class="chartWrap small"><canvas id="chartEtrTotal" role="img" aria-label="Recebimento mensal total nas estações de transferência"></canvas></div></div>
       </div>
@@ -961,18 +961,23 @@ function relatorioMeses(rows) {
 function relatorioSerie(rows, label, n) {
   const row = findRow(rows, label);
   if (!row) { console.warn("relatorioSerie: rótulo não encontrado ->", label); return Array(n).fill(null); }
-  const idx = firstNonEmptyIdx(row);
-  return row.slice(idx + 1, idx + 1 + n).map(parseNumBR);
+  return execReportValues(row, n);
 }
 
 // --- Tabela 1493 (formato largo: Label | Total | Jan..Dez) ---
+function findTabela1493Row(rows, label) {
+  const target = norm(label);
+  return rows.find(row => norm(row[1]) === target) ||
+    rows.find(row => norm(row[1]).startsWith(target + " (")) ||
+    rows.find(row => norm(row[1]).endsWith(" - " + target));
+}
+
 function ind1493Serie(rows, label) {
-  const row = findRow(rows, label);
-  if (!row) { console.warn("ind1493Serie: rótulo não encontrado ->", label); return { total: null, meses: Array(12).fill(null) }; }
-  const idx = firstNonEmptyIdx(row);
-  const total = parseNumBR(row[idx + 1]);
-  const meses = row.slice(idx + 2, idx + 14).map(parseNumBR);
-  return { total, meses };
+  const row = findTabela1493Row(rows, label);
+  return {
+    total: parseNumBRNullable(row?.[2]),
+    meses: Array.from({length:12}, (_,i)=>parseNumBRNullable(row?.[i+3]))
+  };
 }
 
 // Leitura auditável usada pelo Relatório Executivo. Diferencia zero publicado
@@ -1008,6 +1013,12 @@ function execWindowKeys(endKey, count = 13) {
     const d = new Date(end.getFullYear(), end.getMonth() - (count - 1 - i), 1);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   });
+}
+
+function execReportValues(row, n) {
+  const header = findDateHeaderRow(RAW.relatorio);
+  return header ? header.flatMap((value,column)=>isDateCell(value)?[parseNumBRNullable(row[column])]:[]).slice(0,n)
+    : Array(n).fill(null);
 }
 
 function execMapearColunasRelatorio(row) {
@@ -1047,12 +1058,22 @@ function execSerieAposTituloMap(rows, title, metric) {
 function execTabela1493Map(label2025, label2026 = label2025) {
   const out = new Map();
   [[2025, RAW.ind2025, label2025], [2026, RAW.ind2026, label2026]].forEach(([year, rows, label]) => {
-    const row = findRow(rows, label);
+    // Em 2025, o índice de recuperação repete o rótulo do potencial
+    // reciclável. A linha de recuperação pertence ao bloco após rejeito.
+    const rejeito = rows.findIndex(row=>norm(row[1]).startsWith("REJEITO - COLETA SELETIVA"));
+    const escopo = year===2025 && norm(label)==="INDICE DE RESIDUOS RECUPERADOS" && rejeito>=0
+      ? rows.slice(rejeito+1) : [];
+    const row = findTabela1493Row(rows,label) ||
+      findTabela1493Row(escopo,"INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
     if (!row) return;
-    const idx = firstNonEmptyIdx(row);
-    row.slice(idx + 2, idx + 14).forEach((v, monthIdx) => {
-      out.set(`${year}-${String(monthIdx + 1).padStart(2, "0")}`, parseNumBRNullable(v));
-    });
+    // A planilha preenche algumas linhas com zeros nos meses futuros.
+    const publicados = ind1493Serie(rows,"INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL").meses;
+    const ultimo = publicados.findLastIndex(Number.isFinite);
+    for(let i=0;i<12;i++){
+      const valor = parseNumBRNullable(row[i+3]);
+      if(valor===0 && ultimo>=0 && i>ultimo) continue;
+      out.set(`${year}-${String(i+1).padStart(2,"0")}`,valor);
+    }
   });
   return out;
 }
@@ -1096,17 +1117,24 @@ function dteDestroyChart(canvasOrId) {
 }
 
 function chartOuVazio(canvasId, values, drawFn) {
-  const temDado = values.some(v => v && v !== 0);
+  const temDado = values.some(Number.isFinite);
   const canvas = document.getElementById(canvasId);
-  if (!temDado) {
-    console.warn(canvasId + ": série sem dado carregado.");
-    if (canvas && canvas.parentElement) {
-      dteDestroyChart(canvas);
-      canvas.parentElement.innerHTML = '<div class="loading">Sem dado carregado · ver console (F12)</div>';
+  if(!canvas) return;
+  dteDestroyChart(canvas);
+  const aviso = canvas.parentElement.querySelector("[data-chart-empty]");
+  if(!temDado){
+    canvas.hidden = true;
+    if(!aviso){
+      const mensagem = document.createElement("div");
+      mensagem.className = "loading";
+      mensagem.dataset.chartEmpty = "";
+      mensagem.textContent = "Sem dados publicados para este recorte.";
+      canvas.after(mensagem);
     }
     return;
   }
-  dteDestroyChart(canvas);
+  aviso?.remove();
+  canvas.hidden = false;
   drawFn();
 }
 
@@ -1358,7 +1386,7 @@ function renderVisaoGeral() {
 
   // Pulso operacional: poucos sinais, todos apoiados em fontes existentes.
   const idx2026SelTop = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
-  const idx2025SelTop = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
+  const idx2025SelTop = ind1493Serie(RAW.ind2025, "COLETA SELETIVA");
   const selSerieTop = lastValidIndex(idx2026SelTop.meses) >= 0 ? idx2026SelTop.meses : idx2025SelTop.meses;
   const iSelTop = lastValidIndex(selSerieTop);
   const seletivaMesTop = iSelTop >= 0 ? selSerieTop[iSelTop] : null;
@@ -1370,7 +1398,7 @@ function renderVisaoGeral() {
   const frotaOpTop = secFrotaTop ? relatorioSerie(secFrotaTop.rows, "TOTAL EM OPERACAO", nTodosTop) : [];
   const iFrotaTop = lastValidIndex(frotaTotalTop);
   const dispTop = iFrotaTop >= 0 && frotaTotalTop[iFrotaTop] > 0 ? frotaOpTop[iFrotaTop] / frotaTotalTop[iFrotaTop] * 100 : null;
-  const domicTop = serieAposTitulo(RAW.relatorio, "Coleta Domiciliar e Comunidade", "Peso Coletado / Capacidade Estimada", nTodosTop).map(v=>v>1?v:v*100);
+  const domicTop = serieAposTitulo(RAW.relatorio, "Coleta Domiciliar e Comunidade", "Peso Coletado / Capacidade Estimada", nTodosTop).map(v=>v===null?null:v>1?v:v*100);
   const iDomicTop = lastValidIndex(domicTop);
   const utilDomicTop = iDomicTop >= 0 ? domicTop[iDomicTop] : null;
 
@@ -1393,7 +1421,7 @@ function renderVisaoGeral() {
 
   // --- Fluxo Operacional: coleta -> ETRs -> CTR/biogás -> chorume -> coleta seletiva ---
   const idx2026Sel = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
-  const idx2025Sel = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
+  const idx2025Sel = ind1493Serie(RAW.ind2025, "COLETA SELETIVA");
   const iSel26 = lastValidIndex(idx2026Sel.meses);
   const seletivaSerie = iSel26 >= 0 ? idx2026Sel.meses : idx2025Sel.meses;
   const iSel = lastValidIndex(seletivaSerie);
@@ -1505,7 +1533,7 @@ function renderVisaoGeral() {
 
   // Coleta seletiva anual · histórico + live
   const anos = ["2022","2023","2024","2025","2026"];
-  const seletiva2025 = ind1493Serie(RAW.ind2025, "TOTAL - COLETA SELETIVA");
+  const seletiva2025 = ind1493Serie(RAW.ind2025, "COLETA SELETIVA");
   const seletiva2026 = ind1493Serie(RAW.ind2026, "COLETA SELETIVA");
   const anosComMes = { "2025": seletiva2025.meses, "2026": seletiva2026.meses };
   const valoresSeletiva = [
@@ -1585,10 +1613,12 @@ function renderDestinacao() {
   chartOuVazio("chartBiogas", biogas, () => barras("chartBiogas", biogas, "rgba(167,139,250,.92)", v => (v/1e6).toFixed(1).replace(".",",")+"M"));
   // chartChorume isolado eliminado (redundante com Chorume x Precipitacao, que exibe a mesma serie).
 
+  chartOuVazio("chartChorumeChuva", chorume, () =>
+    barras("chartChorumeChuva", chorume, "rgba(239,106,93,.82)", v => HUB.format.int(Math.round(v))+" m³"));
   renderClimaChorume(mesesFmt, chorume);
 
   // Alerta dinâmico de chorume: pico vs média dos primeiros meses da janela
-  const base = chorume.slice(0, Math.max(1, n - 5));
+  const base = chorume.slice(0, Math.max(1, n - 5)).filter(Number.isFinite);
   const baseAvg = base.length ? base.reduce((a,b)=>a+b,0) / base.length : 0;
   const iMax = chorume.indexOf(Math.max(...chorume));
   const pico = chorume[iMax] || 0;
@@ -1598,8 +1628,8 @@ function renderDestinacao() {
       <div class="noteBanner warn">
         <div class="noteTag">ATENÇÃO</div>
         <div>
-          <b>Acúmulo de chorume acima do padrão histórico</b>
-          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${mesesFmt[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")}x acima da média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). O painel cruza este comportamento com a precipitação local abaixo; a chuva pode contribuir para a geração de chorume, mas não explica sozinha a variação operacional.</p>
+          <b>Pico de chorume na janela analisada</b>
+          <p>Pico de ${HUB.format.int(Math.round(pico))} m³ em ${mesesFmt[iMax] || "mês do pico"}, ${(pico/baseAvg).toFixed(1).replace(".", ",")} vezes a média dos meses iniciais da janela (${HUB.format.int(Math.round(baseAvg))} m³). O painel cruza este comportamento com a precipitação local abaixo; a chuva pode contribuir para a geração de chorume, mas não explica sozinha a variação operacional.</p>
         </div>
       </div>`;
   } else {
@@ -1610,7 +1640,6 @@ function renderDestinacao() {
 // ============================================
 // CHORUME × PRECIPITAÇÃO · SEROPÉDICA
 // ============================================
-let climateChart = null;
 
 function labelToYearMonth(label) {
   const m = String(label || "").toLowerCase().match(/^([a-z]{3})\/(\d{2})$/);
@@ -1624,7 +1653,7 @@ function isoDate(y,m,d){ return `${y}-${String(m).padStart(2,"0")}-${String(d).p
 function lastDay(y,m){ return new Date(y, m, 0).getDate(); }
 
 function pearson(a,b){
-  const pairs=a.map((v,i)=>[Number(v),Number(b[i])]).filter(([x,y])=>Number.isFinite(x)&&Number.isFinite(y));
+  const pairs=a.map((v,i)=>[v,b[i]]).filter(([x,y])=>Number.isFinite(x)&&Number.isFinite(y));
   if(pairs.length<4) return null;
   const xs=pairs.map(p=>p[0]), ys=pairs.map(p=>p[1]);
   const mx=xs.reduce((s,v)=>s+v,0)/xs.length, my=ys.reduce((s,v)=>s+v,0)/ys.length;
@@ -1653,7 +1682,9 @@ async function fetchRainINMET(start,end){
   out.forEach(row=>{
     const date=String(row.DT_MEDICAO||'').slice(0,10);
     const key=date.slice(0,7);
-    let rain=Number(String(row.CHUVA??'').replace(',','.'));
+    const raw=String(row.CHUVA??'').trim();
+    if(!raw) return;
+    const rain=Number(raw.replace(',','.'));
     if(!/^\d{4}-\d{2}$/.test(key) || !Number.isFinite(rain) || rain<0 || rain>=9999) return;
     monthly[key]=(monthly[key]||0)+rain;
   });
@@ -1667,7 +1698,7 @@ async function fetchRainOpenMeteo(start,end){
   const j=await r.json();
   const dates=j?.daily?.time||[], vals=j?.daily?.precipitation_sum||[];
   const monthly={};
-  dates.forEach((d,i)=>{const v=Number(vals[i]); if(Number.isFinite(v)){const k=d.slice(0,7);monthly[k]=(monthly[k]||0)+v;}});
+  dates.forEach((d,i)=>{const v=vals[i]; if(Number.isFinite(v)){const k=d.slice(0,7);monthly[k]=(monthly[k]||0)+v;}});
   return {monthly, source:'Open-Meteo (fallback)'};
 }
 
@@ -1685,13 +1716,13 @@ async function renderClimaChorume(meses, chorume){
     let rain;
     try{ rain=await fetchRainINMET(start,end); }
     catch(e){ rain=await fetchRainOpenMeteo(start,end); }
-    const chuva=parsed.map(p=>p?Number((rain.monthly[p.key]||0).toFixed(1)):0);
+    const chuva=parsed.map(p=>p&&Number.isFinite(rain.monthly[p.key])?Number(rain.monthly[p.key].toFixed(1)):null);
     if(status) status.textContent=rain.source;
 
     const canvas=document.getElementById('chartChorumeChuva');
     if(canvas){
-      if(climateChart) climateChart.destroy();
-      climateChart=new Chart(canvas.getContext('2d'),{
+      dteDestroyChart(canvas);
+      new Chart(canvas.getContext('2d'),{
         data:{labels:meses,datasets:[
           {type:'bar',label:'Chorume acumulado (m³)',data:chorume,backgroundColor:'rgba(239,106,93,.38)',borderColor:HUB.charts.colors.red,borderWidth:1,yAxisID:'y',borderRadius:4,maxBarThickness:28,order:1},
           {type:'line',label:'Precipitação (mm)',data:chuva,borderColor:HUB.charts.colors.blue,backgroundColor:'rgba(91,147,232,.10)',fill:false,tension:.32,yAxisID:'y1',pointRadius:3,pointHoverRadius:5,order:0}
@@ -1707,8 +1738,10 @@ async function renderClimaChorume(meses, chorume){
     const r0=pearson(chorume,chuva);
     const r1=pearson(chorume.slice(1),chuva.slice(0,-1));
     const iMax=chorume.indexOf(Math.max(...chorume));
-    const chuvaPico=iMax>=0?chuva[iMax]:0;
-    const chuvaAvg=chuva.length?chuva.reduce((a,b)=>a+b,0)/chuva.length:0;
+    const chuvaPico=chuva[iMax];
+    const chuvaValida=chuva.filter(Number.isFinite);
+    const chuvaAvg=chuvaValida.length?chuvaValida.reduce((a,b)=>a+b,0)/chuvaValida.length:null;
+    const fmtChuva=v=>Number.isFinite(v)?HUB.format.int(Math.round(v))+" mm":"Sem dado";
     const corrAbs=r0===null?null:Math.abs(r0);
     const classe=corrAbs===null?'indeterminada':corrAbs>=.65?'forte':corrAbs>=.35?'moderada':'fraca';
     let leituraTxt='Os dados não sustentam atribuição automática do aumento de chorume à chuva.';
@@ -1719,9 +1752,9 @@ async function renderClimaChorume(meses, chorume){
     if(leitura){
       leitura.innerHTML=`
         <div class="climateMetric"><div class="k">Correlação no mesmo mês</div><div class="v">${r0===null?'n/d':r0.toFixed(2).replace('.',',')}</div><div class="s">Associação ${classe}; correlação não significa causalidade.</div></div>
-        <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${HUB.format.int(Math.round(chuvaPico))} mm</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${HUB.format.int(Math.round(chuvaAvg))} mm.</div></div>
+        <div class="climateMetric"><div class="k">Chuva no mês do pico</div><div class="v">${fmtChuva(chuvaPico)}</div><div class="s">${meses[iMax]||'mês do pico'} · média da janela: ${fmtChuva(chuvaAvg)}.</div></div>
         <div class="climateMetric"><div class="k">Defasagem de 1 mês</div><div class="v">${r1===null?'n/d':r1.toFixed(2).replace('.',',')}</div><div class="s">Testa se chuva do mês anterior se relaciona ao chorume do mês seguinte.</div></div>
-        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]} · referência espacial: Seropédica/RJ.<br><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar histórico oficial do INMET</a></div>`;
+        <div class="climateSource"><b>Leitura:</b> ${leituraTxt}<br>Fonte meteorológica usada no painel: ${rain.source}. Período consultado: ${meses[0]} a ${meses[meses.length-1]}<br><a href="${inmetUrl}" target="_blank" rel="noopener">Consultar histórico oficial do INMET</a></div>`;
     }
   }catch(err){
     if(status) status.textContent='chuva indisponível';
@@ -1765,41 +1798,41 @@ function renderReciclagem() {
     }
   }
 
-  const frotaRolling = rolling13("COLETA SELETIVA - FROTA COMLURB", "COLETA SELETIVA - FROTA COMLURB");
-  const naoRolling = rolling13("NAO CADASTRADOS", "NAO CADASTRADOS");
-  const compHas = frotaRolling.map((v,i)=>(v||0)+(naoRolling[i]||0));
-  const frotaShare = frotaRolling.map((v,i)=>compHas[i]>0?(v||0)/compHas[i]*100:0);
-  const naoShare = naoRolling.map((v,i)=>compHas[i]>0?(v||0)/compHas[i]*100:0);
+  const origens = [
+    ["Frota Comlurb","COLETA SELETIVA - FROTA COMLURB","rgba(91,147,232,.88)"],
+    ["Cooperativas com frota alternativa","FROTA ALTERNATIVA","rgba(161,132,232,.88)"],
+    ["Cooperativas não cadastradas","NAO CADASTRADOS","rgba(244,121,42,.90)"]
+  ].map(([nome,linha,cor])=>({nome,linha,cor,serie:rolling13(linha,linha)}));
+  const frotaRolling = origens[0].serie;
+  const naoRolling = origens[2].serie;
+  const compHas = labels13.map((_,i)=>origens.every(o=>Number.isFinite(o.serie[i]))
+    ? origens.reduce((total,o)=>total+o.serie[i],0) : null);
+  const fmtTon = v=>HUB.format.int(Math.round(v))+" t";
+  const fmtPart = (v,i)=>`${fmtTon(v)} (${execFmtPct1(v/compHas[i]*100)}%)`;
   chartOuVazio("chartComposicao", compHas, () => {
     const canvas=document.getElementById("chartComposicao"); if(!canvas)return;
     new Chart(canvas.getContext("2d"),{
       type:"bar",
-      data:{labels:labels13,datasets:[
-        {label:"Frota Comlurb",data:frotaShare,backgroundColor:"rgba(91,147,232,.88)",borderRadius:4,borderSkipped:false},
-        {label:"Cooperativas / não cadastrados",data:naoShare,backgroundColor:"rgba(244,121,42,.90)",borderRadius:4,borderSkipped:false}
-      ]},
+      data:{labels:labels13,datasets:origens.map(o=>({
+        label:o.nome,data:o.serie.map((v,i)=>compHas[i]>0?v/compHas[i]*100:null),
+        backgroundColor:o.cor,borderRadius:4,borderSkipped:false
+      }))},
       options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
-        const idx=dteClickIndex(items); if(idx<0)return;
-        const f=frotaRolling[idx]||0, nc=naoRolling[idx]||0, tot=f+nc;
-        if(tot<=0){dteBannerShow({kind:"Detalhe da competência",title:"Composição da coleta seletiva",description:"Sem dado publicado para "+labels13[idx]+"."});return;}
+        const idx=dteClickIndex(items); if(idx<0 || !(compHas[idx]>0))return;
         dteShowDetalheCompetencia({
-          titulo:"Composição da coleta seletiva",
-          meses:labels13, serie:frotaRolling.map((v,i)=>(v||0)+(naoRolling[i]||0)), idx,
-          fonte:"Tabela 1493 · Coleta Seletiva - Frota Comlurb / Não Cadastrados",
-          fmt:v=>HUB.format.int(Math.round(v))+" t",
-          extraLinhas:[`Frota Comlurb: ${HUB.format.int(Math.round(f))} t (${(f/tot*100).toFixed(1).replace(".",",")}%)`,`Cooperativas/não cadastrados: ${HUB.format.int(Math.round(nc))} t (${(nc/tot*100).toFixed(1).replace(".",",")}%)`]
+          titulo:"Composição da coleta seletiva",meses:labels13,serie:compHas,idx,
+          fonte:"Tabela 1493 · coleta seletiva por origem",fmt:fmtTon,
+          extraLinhas:origens.map(o=>`${o.nome}: ${fmtPart(o.serie[idx],idx)}`)
         });
       },plugins:{
         ...HUB.charts.baseConfig.plugins,
         legend:{display:true,position:"bottom",labels:{color:"#c7d8ee",font:{size:12,weight:"600"},usePointStyle:true,pointStyle:"circle",boxWidth:8,padding:18}},
-        tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>{
-          const i=ctx.dataIndex;
-          const toneladas=ctx.datasetIndex===0?(frotaRolling[i]||0):(naoRolling[i]||0);
-          return `${ctx.dataset.label}: ${Number(ctx.raw||0).toFixed(1).replace(".",",")}% · ${HUB.format.int(Math.round(toneladas))} t`;
-        }}}
+        tooltip:{...HUB.charts.baseConfig.plugins.tooltip,callbacks:{label:ctx=>
+          `${ctx.dataset.label}: ${fmtPart(origens[ctx.datasetIndex].serie[ctx.dataIndex],ctx.dataIndex)}`
+        }}
       },scales:{
         x:{...HUB.charts.baseConfig.scales.x,stacked:true,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,font:{size:12},maxRotation:38,minRotation:38,autoSkip:false}},
-        y:{...HUB.charts.baseConfig.scales.y,stacked:true,min:0,max:100,grid:{color:"rgba(120,150,180,.10)"},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.y.ticks,font:{size:12},stepSize:25,callback:v=>v+"%"}}
+        y:{...HUB.charts.baseConfig.scales.y,stacked:true,min:0,max:100,grid:{color:"rgba(120,150,180,.10)"},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.y.ticks,font:{size:12},stepSize:25,callback:v=>execFmtPct1(v)+"%"}}
       }}
     });
   });
@@ -1807,7 +1840,7 @@ function renderReciclagem() {
   const bannerEl=document.getElementById("bannerComposicao");
   if(bannerEl){
     const iUlt=Math.max(lastDataIndex(frotaRolling),lastDataIndex(naoRolling));
-    const prevIdx=[...Array(iUlt).keys()].filter(i=>(naoRolling[i]||0)>0);
+    const prevIdx=[...Array(Math.max(0,iUlt)).keys()].filter(i=>(naoRolling[i]||0)>0);
     const baseNao=prevIdx.length?prevIdx.reduce((a,i)=>a+(naoRolling[i]||0),0)/prevIdx.length:0;
     const prevF=prevIdx.filter(i=>(frotaRolling[i]||0)>0);
     const baseF=prevF.length?prevF.reduce((a,i)=>a+(frotaRolling[i]||0),0)/prevF.length:0;
@@ -2036,8 +2069,7 @@ function serieAposTitulo(rows,title,metric,n){
           const cells=row.slice(idx+1,idx+1+n);
           const isHeader=cells.filter(isDateCell).length>=Math.min(3,Math.max(1,Math.floor(n/3)));
           if(isHeader && rows[j+1]) row=rows[j+1];
-          const idx2=firstNonEmptyIdx(row);
-          return row.slice(idx2+1,idx2+1+n).map(parseNumBR);
+          return execReportValues(row,n);
         }
       }
     }
@@ -2084,12 +2116,12 @@ function renderFrota() {
   const corta13=arr=>arr.slice(inicio,inicio+meses.length);
 
   const horasExtras=corta13(relatorioSerie(RAW.relatorio,"VALOR TOTAL DE HORAS EXTRAS",nTodos));
-  const sobrecarga=corta13(relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",nTodos)).map(v=>v>1?v:v*100);
+  const sobrecarga=corta13(relatorioSerie(RAW.relatorio,"QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL",nTodos)).map(v=>v===null?null:v>1?v:v*100);
   const secFrota=findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
   const frotaTotal=secFrota?corta13(relatorioSerie(secFrota.rows,"FROTA TOTAL",nTodos)):Array(meses.length).fill(null);
   const frotaOp=secFrota?corta13(relatorioSerie(secFrota.rows,"TOTAL EM OPERACAO",nTodos)):Array(meses.length).fill(null);
-  const domicOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Domiciliar e Comunidade","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v>1?v:v*100);
-  const seletivaOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Seletiva","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v>1?v:v*100);
+  const domicOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Domiciliar e Comunidade","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v===null?null:v>1?v:v*100);
+  const seletivaOf=corta13(serieAposTitulo(RAW.relatorio,"Coleta Seletiva","Peso Coletado / Capacidade Estimada",nTodos)).map(v=>v===null?null:v>1?v:v*100);
   const lixoOf=Array(meses.length).fill(null); // sem série consolidada publicada por mês na fonte atual
 
   const officialUtilFor=tipo=>tipo==="seletiva"?seletivaOf:tipo==="lixo"?lixoOf:domicOf;
@@ -2141,8 +2173,8 @@ function renderFrota() {
   }
 
   // Frota própria: disponibilidade (%), calculada a partir de Frota Total e Frota em Operação.
-  const disponibilidade=frotaTotal.map((v,i)=>v>0?(frotaOp[i]/v*100):0);
-  const iDisp=lastValidIndex(disponibilidade);
+  const disponibilidade=frotaTotal.map((v,i)=>v>0&&Number.isFinite(frotaOp[i])?frotaOp[i]/v*100:null);
+  const iDisp=execLastPublishedIndex(disponibilidade);
   const iDispYoY=iDisp-12;
   const temYoYDisp=iDisp>=0 && iDispYoY>=0 && disponibilidade[iDispYoY]>0;
 
@@ -2158,7 +2190,7 @@ function renderFrota() {
     const c=document.getElementById("chartFrotaDisponibilidade"); if(!c)return;
     new Chart(c.getContext("2d"),{type:"line",data:{labels:meses,datasets:[{data:disponibilidade,borderColor:HUB.charts.colors.blue,backgroundColor:"transparent",borderWidth:2,tension:.25,pointRadius:disponibilidade.map((_,i)=>i===iDisp?3:0),pointHoverRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,items)=>{
       const idx=dteClickIndex(items); if(idx<0)return;
-      const indisp=frotaTotal[idx]>0?Math.max(0,Math.round(frotaTotal[idx]-frotaOp[idx])):null;
+      const indisp=frotaTotal[idx]>0&&Number.isFinite(frotaOp[idx])?Math.max(0,Math.round(frotaTotal[idx]-frotaOp[idx])):null;
       dteShowDetalheCompetencia({titulo:"Disponibilidade da Frota Própria COMLURB",meses,serie:disponibilidade,idx,fonte:"MANUTENÇÃO FROTA PRÓPRIA · FROTA TOTAL / TOTAL EM OPERAÇÃO",fmt:v=>v.toFixed(1).replace(".",",")+"%",extraLinhas:indisp!=null?[`Veículos indisponíveis: ${HUB.format.int(indisp)}`]:[]});
     },plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Disponibilidade: ${Number(ctx.raw).toFixed(1).replace(".",",")}%`}}},scales:{x:{display:false},y:{display:false}}}});
   });
@@ -2363,19 +2395,19 @@ function renderInfra(){
   const n=meses.length||13;
   const corta13=arr=>arr.slice(inicio,inicio+n);
 
-  const pctSerie=(label)=>corta13(relatorioSerie(RAW.relatorio,label,nTodos)).map(v=>v>1?v:v*100);
+  const pctSerie=(label)=>corta13(relatorioSerie(RAW.relatorio,label,nTodos)).map(v=>v===null?null:v>1?v:v*100);
   const trComun=pctSerie("P15A - TRATOR DE COMUNIDADE");
   const trPraia12=pctSerie("P16A - TRATOR DE PRAIA");
-  const trPraia345=corta13(serieAposTitulo(RAW.relatorio,"Utilização de Tratores Limp. Praia - AP3/4/5","P16A - Trator de Praia",nTodos)).map(v=>v>1?v:v*100);
-  const trCorte=corta13(serieAposTitulo(RAW.relatorio,"Utilização Tratores de Corte Vegetação","Total P21, P22, P22A",nTodos)).map(v=>v>1?v:v*100);
-  const pas123=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 1/2/3","Total P20, P23, P23A",nTodos)).map(v=>v>1?v:v*100);
-  const pas45=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 4/5","Total P20, P23, P23A",nTodos)).map(v=>v>1?v:v*100);
+  const trPraia345=corta13(serieAposTitulo(RAW.relatorio,"Utilização de Tratores Limp. Praia - AP3/4/5","P16A - Trator de Praia",nTodos)).map(v=>v===null?null:v>1?v:v*100);
+  const trCorte=corta13(serieAposTitulo(RAW.relatorio,"Utilização Tratores de Corte Vegetação","Total P21, P22, P22A",nTodos)).map(v=>v===null?null:v>1?v:v*100);
+  const pas123=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 1/2/3","Total P20, P23, P23A",nTodos)).map(v=>v===null?null:v>1?v:v*100);
+  const pas45=corta13(serieAposTitulo(RAW.relatorio,"Utilização Pás Carregadeiras AP 4/5","Total P20, P23, P23A",nTodos)).map(v=>v===null?null:v>1?v:v*100);
 
   const predial=corta13(relatorioSerie(RAW.relatorio,"QUANTIDADES INTERVENCOES HIDRAULICAS E ELETRICAS E OUTRAS",nTodos));
   const refrig=corta13(relatorioSerie(RAW.relatorio,"REFRIGERACAO",nTodos));
   const eco=corta13(relatorioSerie(RAW.relatorio,"MANUTENCAO DE ECOPONTOS",nTodos));
 
-  const lastInfo=arr=>{const i=lastValidIndex(arr); return i>=0?{i,v:arr[i]}:{i:-1,v:null};};
+  const lastInfo=arr=>{const i=execLastPublishedIndex(arr); return i>=0?{i,v:arr[i]}:{i:-1,v:null};};
   const fmtPct=v=>Number.isFinite(v)?v.toFixed(1).replace('.',',')+'%':'n/d';
   const fmtNum=v=>Number.isFinite(v)?HUB.format.int(Math.round(v)):'n/d';
   const fmtDec=v=>Number.isFinite(v)?v.toFixed(1).replace('.',','):'n/d';
@@ -2447,7 +2479,7 @@ function renderInfra(){
   }
 
   const focus=focusMap[DTE_DRILL.infraFocus];
-  const iUlt=lastValidIndex(focus.serie);
+  const iUlt=execLastPublishedIndex(focus.serie);
   const atual=iUlt>=0?focus.serie[iUlt]:null;
   const anterior=iUlt>0 && Number.isFinite(focus.serie[iUlt-1])?focus.serie[iUlt-1]:null;
   const anoAnterior=iUlt>=12 && Number.isFinite(focus.serie[iUlt-12])?focus.serie[iUlt-12]:null;
@@ -2457,7 +2489,8 @@ function renderInfra(){
   const hintEl=document.getElementById('infraFocusHint'); if(hintEl) hintEl.textContent=focus.hint;
   const statsEl=document.getElementById('infraFocusStats');
   if(statsEl){
-    const delta=(a,b, format)=> (a==null || b==null)?'sem comparação': ((a-b)>=0?'+':'') + format(a-b);
+    const delta=(a,b,format)=> (a==null || b==null)?'sem comparação': ((a-b)>=0?'+':'') +
+      (focus.grupo==='equip'?execFmtPP(a-b):format(a-b));
     const atualMes=iUlt>=0?meses[iUlt]:'sem dado';
     statsEl.innerHTML=[
       ['Mês atual', atual==null?'n/d':focus.fmt(atual), atualMes],
@@ -3157,7 +3190,7 @@ function execRenderAreas(root, data, isMobile) {
       item("Chorume acumulado",rel("CHORUME ACUMULADO"),"m³")
     ]],
     ["Coleta Seletiva",[
-      item("Coleta seletiva",execRolling13("TOTAL - COLETA SELETIVA","COLETA SELETIVA",j)," t",tabela),
+      item("Coleta seletiva",execRolling13("COLETA SELETIVA","COLETA SELETIVA",j)," t",tabela),
       item("Índice Potencial Reciclável",data.capturaSerie,"%",tabela),
       item("Índice de Resíduos Recuperados",execRolling13("INDICE DE RESIDUOS RECUPERADOS","INDICE DE RESIDUOS RECUPERADOS",j),"%",tabela)
     ]],
@@ -3363,7 +3396,7 @@ function renderLeituraMes() {
   const n = meses.length || 13;
   const etrTotal = relatorioSerie(RAW.relatorio, "ETR TOTAL", n);
   const chorume = relatorioSerie(RAW.relatorio, "CHORUME ACUMULADO", n);
-  const sobrecarga = relatorioSerie(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL", n).map(v=>v>1?v:v*100);
+  const sobrecarga = relatorioSerie(RAW.relatorio, "QTDE PESAGENS > 10% PBT / QTDE PESAGENS TOTAL", n).map(v=>v===null?null:v>1?v:v*100);
   const unidades = ["ETR Bangu","ETR Caju","ETR Jacarepagua","ETR Mal Hermes","ETR Santa Cruz"];
   const seriesUnidades = unidades.map(u => relatorioSerie(RAW.relatorio, u, n));
   const items = [];

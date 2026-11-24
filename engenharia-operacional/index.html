@@ -433,16 +433,20 @@
 .etr-table button:hover{text-decoration:underline;}
 .etr-table .etr-largest th,.etr-table .etr-largest td{background:#142b41;}
 @media(max-width:760px){.etr-overview{grid-template-columns:minmax(0,1fr);}.etr-table th,.etr-table td{padding:9px 4px;}.execBody.execFull .execChartWrap{height:235px;}}
-.dte-brief{margin:25px 0 30px;}
-.dte-brief h2,.dte-brief-detail{font-size:20px;margin:0 0 6px;}
-.dte-brief-detail{font-size:14px;color:var(--silenciado);margin-bottom:12px;}
-.dte-brief>p{margin:0 0 18px;color:var(--silenciado);}
-.dte-brief-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;}
-.dte-brief-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:15px 0;border-top:1px solid var(--linha);}
-.dte-brief-row small,.dte-brief-row strong{display:block;}
-.dte-brief-row small{color:var(--silenciado);margin-bottom:6px;}
-.dte-brief-row strong{font-size:15px;line-height:1.45;}
-@media(max-width:690px){.dte-brief-grid{grid-template-columns:1fr;}.dte-brief-row{gap:8px;}}
+.dte-opening{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);gap:clamp(28px,4vw,64px);padding:clamp(28px,5vw,66px) 0 30px;align-items:start;}
+.dte-opening:not(:has([data-exec-attention]:not([hidden]))){grid-template-columns:1fr;}
+.dte-opening-story{border-top:3px solid #72bdf5;padding:20px 0 0;}
+.dte-opening-date{color:#9bc4e8;font-size:13px;margin:0 0 16px;}
+.dte-opening-story h2{font-size:clamp(28px,3.15vw,49px);line-height:1.15;letter-spacing:-.035em;max-width:24ch;margin:0;text-wrap:balance;}
+.dte-opening-story [data-dte-opening-context]{color:var(--silenciado);font-size:15px;line-height:1.6;margin:15px 0 0;max-width:58ch;}
+.dte-opening-story [data-dte-opening-context]:empty{display:none;}
+.dte-opening-link{margin-top:20px;}
+.dte-opening-attention{border-top:1px solid var(--linha);padding-top:20px;}
+.dte-opening-attention h2{font-size:16px;margin:0 0 8px;}
+.dte-opening-attention .dte-signal{border:0;border-bottom:1px solid var(--linha);border-radius:0;background:none;padding:13px 0;}
+.dte-opening-attention .dte-signal b{color:#8fc6f4;}
+.dte-opening-catalog{margin-top:12px;}
+@media(max-width:760px){.dte-opening{grid-template-columns:1fr;gap:28px;padding-bottom:22px;}.dte-opening-story h2{max-width:none;}}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -464,38 +468,23 @@
   
   <!-- ===================== RELATÓRIO EXECUTIVO ===================== -->
   <section class="screen active" id="screenExecutivo">
-    <section class="dte-brief" aria-labelledby="dteBriefTitle">
-      <h2 id="dteBriefTitle">Resumo executivo</h2>
-      <p data-dte-brief-period></p>
-      <div class="dte-brief-grid" data-dte-brief></div>
-    </section>
-    <div class="execCover">
-      <h2 class="dte-brief-detail">Indicador em destaque</h2>
-      <div class="execDefasagens" data-exec-defasagens hidden></div>
-      <div class="execHeadline" data-exec-headline></div>
-      <div class="execSub" data-exec-sub></div>
-
-      <div class="execBody">
-        <div class="execViz">
-          <div class="execVizCaption" data-exec-viz-caption></div>
-          <div data-exec-viz-mount></div>
-        </div>
-        <div class="execEditorial">
-          <div class="execBlk"><h3>O que mudou</h3><p data-exec-mudou></p></div>
-          <div class="execBlk"><h3>Onde</h3><div data-exec-onde></div></div>
-          <div class="execBlk"><h3>O que observar</h3><p data-exec-observar></p></div>
-        </div>
-      </div>
-
+    <div class="dte-opening">
+      <section class="dte-opening-story" aria-labelledby="dteOpeningTitle">
+        <p class="dte-opening-date" data-dte-brief-period></p>
+        <h2 id="dteOpeningTitle" data-dte-opening-title></h2>
+        <p data-dte-opening-context></p>
+        <button class="dte-topic-history dte-opening-link" type="button" data-dte-opening-link hidden>Ver análise ›</button>
+      </section>
+      <section class="dte-opening-attention" data-exec-attention hidden>
+        <h2>Pontos de atenção</h2>
+        <div class="dte-signal-list" data-exec-signals></div>
+      </section>
     </div>
-    <section class="dte-summary-section" data-exec-attention hidden>
-      <h2>Pontos de atenção</h2>
-      <div class="dte-signal-list" data-exec-signals></div>
-    </section>
-    <section class="dte-summary-section">
-      <h2>Indicadores por área</h2>
-      <div class="dte-area-grid" data-exec-areas></div>
-    </section>
+    <details class="dteDeepen dte-topic-details dte-opening-catalog">
+      <summary><span>Indicadores e históricos</span></summary>
+      <div class="dteDeepenBody"><div class="dte-area-grid" data-exec-areas></div></div>
+    </details>
+    <p class="execDefasagens" data-exec-defasagens hidden></p>
   </section>
 
   <!-- ===================== VISÃO GERAL ===================== -->
@@ -3150,7 +3139,7 @@ function execBuildSubjects(data, primary) {
 // tooltip, rótulos legíveis com redução no celular.
 // ============================================
 let EXEC_CHARTS = [];
-function execDestroyCharts(){ EXEC_CHARTS.forEach(c=>{ try{c.destroy();}catch(e){} }); EXEC_CHARTS=[]; }
+
 
 function execFormatPanelValue(value, unit){
   if(value==null || !Number.isFinite(Number(value))) return "Sem dado";
@@ -3197,62 +3186,7 @@ function execBuildPanelChart(canvas, panel, isMobile, resumo=false) {
   return chart;
 }
 
-function execBuildViz(root, subject, isMobile) {
-  const s = EXEC_STATE.subjects[subject];
-  const mount = root.querySelector("[data-exec-viz-mount]");
-  if (!s.panels.length) {
-    mount.innerHTML = `<div class="execEmpty">Sem dado publicado nesta competência</div>`;
-    return;
-  }
-  const cls = s.panels.length > 1 ? "execPanelStack" : "execPanelStack execSingle";
-  mount.innerHTML = `<div class="${cls}">` + s.panels.map((p,i)=>{
-    const atual = p.iAtual>=0 ? p.data[p.iAtual] : null;
-    return `<div class="execPanel">
-      <div class="execPanelTop">
-        <div class="execPanelName">${HUB.format.esc(p.name)}</div>
-        <div class="execPanelStats">${p.meses[p.iAtual]||"Atual"}: <b>${execFormatPanelValue(atual,p.unit)}</b></div>
-      </div>
-      <div class="execChartWrap"><canvas id="execChart_${root.id}_${i}" role="img" aria-label="${HUB.format.esc(p.title || p.label || 'Indicador operacional')}"></canvas></div>
-    </div>`;
-  }).join("") + `</div>`;
-  s.panels.forEach((p,i)=>{
-    const canvas = document.getElementById(`execChart_${root.id}_${i}`);
-    if (canvas) execBuildPanelChart(canvas, p, isMobile, subject==="seletiva");
-  });
-}
-
-// ============================================
-// RENDER / NAVEGAÇÃO ENTRE ASSUNTOS
-// "Visão da competência" permanece acessível após navegar para outro
-// assunto sempre que a abertura automática tiver sido estável.
-// ============================================
-const EXEC_STATE = { subjects:null };
-
-function execRender(root, subject, isMobile) {
-  const s = EXEC_STATE.subjects[subject];
-  root.querySelector("[data-exec-headline]").textContent = s.headline;
-  root.querySelector("[data-exec-sub]").textContent = s.sub;
-  const legenda=root.querySelector("[data-exec-viz-caption]");
-  legenda.textContent = s.vizCaption;
-  legenda.hidden=subject==="seletiva";
-  const mudou = root.querySelector("[data-exec-mudou]");
-  mudou.textContent = s.mudou;
-  mudou.parentElement.hidden = subject==="seletiva";
-  const onde = root.querySelector("[data-exec-onde]");
-  onde.innerHTML = s.ondeParas.map(t=>`<p>${HUB.format.esc(t)}</p>`).join("");
-  onde.parentElement.hidden = subject==="seletiva" || !s.ondeParas.length;
-  const observar = root.querySelector("[data-exec-observar]");
-  observar.textContent = s.observar || "";
-  observar.parentElement.hidden = !s.observar || /^(Nenhuma verificação|Sem verificação)/i.test(s.observar);
-  const editorial=root.querySelector(".execEditorial");
-  editorial.hidden=[mudou,onde,observar].every(el=>el.parentElement.hidden);
-  editorial.parentElement.classList.toggle("execFull",editorial.hidden);
-  execDestroyCharts();
-  execBuildViz(root, subject, isMobile);
-
-}
-
-function execRenderAreas(root, data, isMobile) {
+function execRenderAreas(root, data, isMobile, assunto="") {
   const {janela:j} = data;
   const dte = "Relatório mensal DTE";
   const tabela = "Tabela 1493 · Indicadores Comlurb Prefeitura";
@@ -3379,19 +3313,6 @@ function execRenderAreas(root, data, isMobile) {
       texto:`De ${execFormatPanelValue(destaqueEquip.data[iEquip-1],"%")} em ${j.meses[iEquip-1]} para ${execFormatPanelValue(destaqueEquip.data[iEquip],"%")} em ${j.meses[iEquip]}, ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip)).toLowerCase()}`
     }
   };
-  root.querySelector("[data-dte-brief-period]").textContent=j.competenciaLabel||"";
-  const altaSeletiva=variacao(seletiva,seletiva.iAtual);
-  const resumo=[
-    ["Destinação",totalEtr,iEtr>=0?`${execFormatPanelValue(totalEtr.data[iEtr]," t")} recebidas nas ETRs. ${etrDestaque?`Maior ${deltaEtr>0?"alta":"queda"} em ${etrDestaque.name.replace(/^ETR /,"")}.`:""}`:""],
-    ["Coleta seletiva",seletiva,seletiva.iAtual>=0?`${execFormatPanelValue(seletiva.data[seletiva.iAtual]," t")} coletadas${altaSeletiva===null?"":`. ${comparacao(seletiva)}`}`:""],
-    ["Frota própria",disp,destaques.screenFrota?destaques.screenFrota.titulo:""],
-    ["Equipamentos",destaqueEquip,destaqueEquip?`${destaqueEquip.name}: ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip)).toLowerCase()} no mês`:""]
-  ];
-  root.querySelector("[data-dte-brief]").innerHTML=resumo.filter(([,p,frase])=>p&&frase).map(([area,p,frase])=>`
-    <div class="dte-brief-row">
-      <div><small>${esc(area)}${p.iAtual!==j.n-1&&p.meses[p.iAtual]?` · ${esc(p.meses[p.iAtual])}`:""}</small><strong>${esc(frase)}</strong></div>
-      <button class="dte-topic-history" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog" aria-label="Histórico de ${esc(p.name)}">Histórico ›</button>
-    </div>`).join("");
   const etrOverview = `<section class="dte-topic-group">
     <h2>Recebimento nas estações de transferência</h2>
     <div class="etr-overview">
@@ -3436,8 +3357,8 @@ function execRenderAreas(root, data, isMobile) {
     `<button class="dte-area-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog"><span>${esc(p.name)}<small>${esc([p.meses[p.iAtual],comparacao(p)].filter(Boolean).join(" · "))}</small></span><strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong></button>`
   ).join("")}</article>`).join("");
 
-  const sinais = data.candidatos.filter(c=>c.direcao==="ausencia"?c.essencial:
-    (c.direcao==="desfavoravel"||c.subject==="equipamentos")&&(c.relevancia==="alta"||c.relevancia==="moderada"))
+  const sinais = data.candidatos.filter(c=>c.subject!==assunto && (c.direcao==="ausencia"?c.essencial:
+    c.direcao==="desfavoravel"&&(c.relevancia==="alta"||c.relevancia==="moderada")))
     .sort(execCompareCandidatos).flatMap(c=>{
       const nome = c.indicador.replace(/ \(utilização\)$/,"");
       const i = itens.findIndex(p=>norm(p.name)===norm(nome));
@@ -3545,11 +3466,24 @@ document.querySelectorAll(".dte-topic-details,#fleetDeepen").forEach(details=>{
 function renderExecutivo() {
   const data = computeExecutiveData();
   const selecao = execSelectPrimarySubject(data.candidatos);
-  EXEC_STATE.subjects = execBuildSubjects(data, selecao.subject);
-  console.log(selecao.justificativa);
-
+  const assunto = selecao.subject;
+  const destaque = execBuildSubjects(data,assunto)[assunto];
   const root = document.getElementById("screenExecutivo");
   if (!root) return;
+  const competencia=data.janela.competenciaKey;
+  root.querySelector("[data-dte-brief-period]").textContent=competencia
+    ? new Intl.DateTimeFormat("pt-BR",{month:"long",year:"numeric",timeZone:"UTC"})
+      .format(new Date(competencia+"-01T00:00:00Z")) : "";
+  root.querySelector("[data-dte-opening-title]").textContent=destaque.headline;
+  const contexto=root.querySelector("[data-dte-opening-context]");
+  contexto.textContent=(destaque.ondeParas||[]).find(t=>t!==destaque.headline && t!==destaque.mudou &&
+    !/^O índice ficou /i.test(t))||"";
+  const abas={destinacao:"screenDestinacao",seletiva:"screenReciclagem",frota:"screenFrota",equipamentos:"screenInfra",manutencao:"screenInfra"};
+  const destino=abas[assunto];
+  const link=root.querySelector("[data-dte-opening-link]");
+  const aba=destino&&document.querySelector(`[data-tab="${destino}"]`);
+  link.hidden=!aba;
+  if(aba)link.onclick=()=>{aba.click();aba.focus();};
   const lagEl = root.querySelector("[data-exec-defasagens]");
   if (lagEl) {
     const lags = data.defasagens.filter(x=>x.status!=="atual");
@@ -3557,8 +3491,7 @@ function renderExecutivo() {
     lagEl.innerHTML = lags.map(x=>x.status==="defasado"?`${HUB.format.esc(x.nome)}: último dado ${HUB.format.esc(x.ultimaCompetencia)}`:`${HUB.format.esc(x.nome)}: sem dado`).join("<br>");
   }
   const isMobile = window.matchMedia("(max-width: 1000px)").matches;
-  execRender(root, selecao.subject, isMobile);
-  execRenderAreas(root, data, isMobile);
+  execRenderAreas(root, data, isMobile, assunto);
 }
 
 

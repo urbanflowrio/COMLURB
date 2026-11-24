@@ -279,14 +279,14 @@
 @media (max-width:1050px){.reciclagemGrid{grid-template-columns:1fr}}
 
 /* ===================== RELATÓRIO EXECUTIVO ===================== */
-.execCover{padding:6px 2px 8px;}
+.execCover{padding:18px 2px 24px;}
 .execContext{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--linha);}
 .execContextLabel{font-size:9.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--silenciado);}
 .execCompetencia{font-size:12px;font-weight:850;color:var(--texto);}
 .execDefasagens{font-size:10.5px;color:var(--amarelo);text-align:right;line-height:1.45;}
 .execHeadline{font-size:25px;font-weight:800;line-height:1.32;letter-spacing:-.01em;color:var(--texto);max-width:56ch;}
 .execSub{margin-top:9px;font-size:13.5px;line-height:1.55;color:var(--silenciado);max-width:66ch;}
-.execBody{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:30px;margin-top:24px;align-items:start;}
+.execBody{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:38px;margin-top:30px;align-items:start;}
 .execViz{min-width:0;}
 .execVizCaption{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--silenciado);margin-bottom:10px;}
 .execPanelStack{display:flex;flex-direction:column;gap:12px;}
@@ -299,7 +299,7 @@
 .execPanelStack.execSingle .execChartWrap{height:230px;}
 .execEmpty{height:170px;display:flex;align-items:center;justify-content:center;color:#7c8ea6;font-size:12.5px;text-align:center;padding:0 20px;border-bottom:1px solid var(--linha);}
 .execEditorial{min-width:0;padding-left:2px;}
-.execEditorial .execBlk{margin-bottom:20px;}
+.execEditorial .execBlk{margin-bottom:25px;}
 .execEditorial .execBlk:last-child{margin-bottom:0;}
 .execEditorial h3{font-size:10.5px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#8fb3d9;margin:0 0 7px;}
 .execEditorial p{margin:0;font-size:13.5px;line-height:1.55;color:var(--texto);}
@@ -402,7 +402,7 @@
   <!-- ===================== RELATÓRIO EXECUTIVO ===================== -->
   <section class="screen active" id="screenExecutivo">
     <div class="execCover">
-      <div class="execContext"><div><div class="execContextLabel">Relatório executivo</div><div class="execCompetencia" data-exec-competencia>Competência em carregamento</div></div><div class="execDefasagens" data-exec-defasagens></div></div>
+      <div class="execDefasagens" data-exec-defasagens hidden></div>
       <div class="execHeadline" data-exec-headline></div>
       <div class="execSub" data-exec-sub></div>
 
@@ -2852,10 +2852,12 @@ function execBuildSubjects(data, primary) {
       const deltaCap = iCap>=1 && capturaSerie[iCap-1]!=null ? capturaSerie[iCap]-capturaSerie[iCap-1] : null;
       const persist = execPersistencia(capturaSerie, iCap, d=>Math.abs(d)<EXEC_EDITORIAL_THRESHOLDS.estabilidadePP?"estavel":(d>0?"favoravel":"desfavoravel"));
       headline = `O Índice Potencial Reciclável está em ${execFmtPct1(capturaSerie[iCap])}% em ${meses[iCap]}${deltaCap!=null?`, ${deltaCap>=0?"alta":"queda"} de ${execFmtPP(Math.abs(deltaCap))} frente ao mês anterior`:""}.`;
-      sub = persist>=3 ? `O movimento completou ${persist} competências seguidas na mesma direção.` : "Leitura da competência mais recente com dado publicado.";
+      sub = persist>=3 ? `O movimento completou ${persist} competências seguidas na mesma direção.` : "";
       mudou = `Índice Potencial Reciclável chegou a ${execFmtPct1(capturaSerie[iCap])}%${deltaCap!=null?`, ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior`:""}.`;
-      onde = ["A distribuição por regional (UDS-S / UDS-N / UDS-O) mostra volume coletado, não a variação do índice de captura; a base não permite atribuir a variação do índice a uma regional específica."];
-      observar = persist>=3 ? "Acompanhar se a próxima competência confirma a mesma direção." : "Sem verificação prioritária adicional nesta competência.";
+      const anteriorAnual = capturaSerie[iCap - 12];
+      const deltaAnual = Number.isFinite(anteriorAnual) ? capturaSerie[iCap] - anteriorAnual : null;
+      onde = deltaAnual === null ? [] : [`O índice ficou ${Math.abs(deltaAnual)<0.05 ? "no mesmo patamar" : execFmtPP(Math.abs(deltaAnual)) + (deltaAnual > 0 ? " acima" : " abaixo")} de ${meses[iCap - 12]}.`];
+      observar = "";
       indexText = deltaCap!=null ? `Captura variou ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior.` : "Ver detalhamento na aba Coleta Seletiva.";
     }
     subjects.seletiva = {
@@ -3075,11 +3077,16 @@ function execRender(root, subject, isMobile) {
   root.querySelector("[data-exec-headline]").textContent = s.headline;
   root.querySelector("[data-exec-sub]").textContent = s.sub;
   root.querySelector("[data-exec-viz-caption]").textContent = s.vizCaption;
-  root.querySelector("[data-exec-mudou]").textContent = s.mudou;
-  root.querySelector("[data-exec-onde]").innerHTML = s.ondeParas.map(t=>`<p>${HUB.format.esc(t)}</p>`).join("");
+  const mudou = root.querySelector("[data-exec-mudou]");
+  mudou.textContent = s.mudou;
+  mudou.parentElement.hidden = subject==="seletiva" && s.ondeParas.length>0;
+  const onde = root.querySelector("[data-exec-onde]");
+  onde.innerHTML = s.ondeParas.map(t=>`<p>${HUB.format.esc(t)}</p>`).join("");
+  onde.parentElement.hidden = !s.ondeParas.length;
+  onde.previousElementSibling.textContent = subject==="seletiva" ? "Comparação anual" : "Onde";
   const observar = root.querySelector("[data-exec-observar]");
   observar.textContent = s.observar || "";
-  observar.parentElement.hidden = !s.observar || /^Nenhuma verificação adicional/i.test(s.observar);
+  observar.parentElement.hidden = !s.observar || /^(Nenhuma verificação|Sem verificação)/i.test(s.observar);
   execDestroyCharts();
   execBuildViz(root, subject, isMobile);
 
@@ -3161,11 +3168,10 @@ function renderExecutivo() {
 
   const root = document.getElementById("screenExecutivo");
   if (!root) return;
-  const compEl = root.querySelector("[data-exec-competencia]");
-  if (compEl) compEl.textContent = `Competência do painel: ${data.janela.competenciaLabel || "não identificada"}`;
   const lagEl = root.querySelector("[data-exec-defasagens]");
   if (lagEl) {
     const lags = data.defasagens.filter(x=>x.status!=="atual");
+    lagEl.hidden = !lags.length;
     lagEl.innerHTML = lags.map(x=>x.status==="defasado"?`${HUB.format.esc(x.nome)}: último dado ${HUB.format.esc(x.ultimaCompetencia)}`:`${HUB.format.esc(x.nome)}: sem dado`).join("<br>");
   }
   const isMobile = window.matchMedia("(max-width: 1000px)").matches;

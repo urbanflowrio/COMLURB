@@ -374,8 +374,11 @@
 .dte-indicator-dialog::backdrop{background:rgba(3,10,19,.76)}
 .dte-indicator-dialog header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--linha)}
 .dte-indicator-dialog h2{margin:0;font-size:18px}.dte-indicator-dialog header button{width:40px;height:40px;border-radius:8px;border:1px solid var(--linha);background:#142b41;color:#fff;font-size:22px;cursor:pointer}
-.dte-indicator-body{padding:18px 20px}.dte-indicator-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:12px}
-.dte-indicator-stats div{border:1px solid var(--linha);border-radius:10px;padding:14px}.dte-indicator-stats small{display:block;color:#9fb3ca;margin-bottom:5px}.dte-indicator-stats b{font-size:17px}
+.dte-indicator-body{padding:18px 20px}
+.dte-indicator-insight{border-inline-start:3px solid var(--azul);border-radius:0 10px 10px 0;background:#142a40;padding:14px 18px;}
+.dte-indicator-insight h3{margin:0;font-size:15px;line-height:1.4;color:#eef5ff;}
+.dte-indicator-body .dte-indicator-insight p{margin:6px 0 0;font-size:13px;line-height:1.55;}
+.dte-indicator-chart:first-of-type{margin-top:12px;}
 .dte-indicator-chart{height:265px;position:relative;margin-top:20px}.dte-indicator-body p{font-size:12px;color:#a9bdd1;margin:16px 0 0}
 @media(max-width:620px){.dte-indicator-body,.dte-indicator-dialog header{padding:12px}.dte-indicator-chart{height:220px}}
 .dte-method-note{margin-top:16px;padding:12px 14px;border:1px solid var(--linha);border-radius:10px;color:#b8c9de;font-size:13px;line-height:1.55}
@@ -755,7 +758,7 @@
     <dialog class="dte-indicator-dialog" id="dteIndicatorDialog" aria-labelledby="dteIndicatorTitle">
       <header><h2 id="dteIndicatorTitle"></h2><form method="dialog"><button type="submit" aria-label="Fechar indicador">×</button></form></header>
       <div class="dte-indicator-body">
-        <div class="dte-indicator-stats" data-dte-stats></div>
+        <div class="dte-indicator-insight" data-dte-insight hidden></div>
         <div class="dte-indicator-chart" data-dte-chart-wrap><canvas data-dte-chart role="img" aria-label="Evolução mensal"></canvas></div>
         <p data-dte-source></p><div data-dte-method hidden></div>
       </div>
@@ -3371,6 +3374,63 @@ function execRenderAreas(root, data, isMobile) {
   root.querySelector("[data-exec-attention]").hidden = !sinais.length;
   root.querySelector("[data-exec-signals]").innerHTML = sinais.map(({c,i})=>`<button class="dte-signal" type="button" data-dte-item="${i}" aria-haspopup="dialog"><span>${esc(itens[i].name)}<small>${esc(c.direcao==="ausencia"?`Sem dado em ${j.competenciaLabel}`:c.tipo==="pontos percentuais"?`${execSinal(c.magnitude)}${execFmtPP(c.magnitude)} frente ao mês anterior`:`${execSinal(c.magnitude)}${execFmtPct1(c.magnitude)}% frente ao mês anterior`)}</small></span><b>Ver detalhe ›</b></button>`).join("");
 
+  const recuperacao=areas[1][1][2];
+  const volumePorOrigem=["COLETA SELETIVA - FROTA COMLURB","FROTA ALTERNATIVA","NAO CADASTRADOS"]
+    .map(linha=>execRolling13(linha,linha,j));
+
+  function leituraHistorico(p){
+    const i=p.iAtual;
+    if(i<0)return {titulo:"Sem série publicada"};
+    const recente=p.data.slice(Math.max(0,i-2),i+1);
+    const anterior=p.data.slice(Math.max(0,i-5),Math.max(0,i-2));
+    const media=valores=>valores.reduce((a,b)=>a+b,0)/valores.length;
+    const janelaValida=recente.length===3 && anterior.length===3 && [...recente,...anterior].every(Number.isFinite);
+    const anual=variacao(p,i,12);
+    const volume=p.data[i];
+
+    if(p===recuperacao && anual!==null && anual>=0.5 && recente.length===3 &&
+        recente.every(v=>Number.isFinite(v) && v>p.data[i-12])){
+      const recorde=p.data.slice(0,i).filter(Number.isFinite).every(v=>v<volume);
+      return {
+        titulo:recorde?"Recuperação no maior nível da janela":"Recuperação acima da referência de um ano atrás",
+        texto:`O índice ganhou ${execFmtPP(anual)} em um ano. Cada um dos últimos três meses ficou acima de ${p.meses[i-12]}. Para entender o ganho, acompanhe o volume desviado do aterro, o rejeito da seletiva e o total coletado, que entram no cálculo do índice.`
+      };
+    }
+
+    if(p===seletiva && anual>0 && volumePorOrigem.every(serie=>Number.isFinite(serie[i])&&Number.isFinite(serie[i-12]))){
+      const ganho=volumePorOrigem[2][i]-volumePorOrigem[2][i-12];
+      if(ganho/anual>=0.5)return {
+        titulo:"A alta se concentrou nas cooperativas não cadastradas",
+        texto:`Esse grupo coletou ${execFormatPanelValue(ganho," t")} a mais que em ${p.meses[i-12]}, ${ganho>anual?"enquanto as demais origens, somadas, recuaram.":`o equivalente a ${execFmtPct1(ganho/anual*100)}% do aumento líquido da coleta seletiva.`}`
+      };
+    }
+
+    if(propria.includes(p) && Number.isFinite(propria[1].data[i]) && Number.isFinite(propria[2].data[i])){
+      const fora=propria[1].data[i]-propria[2].data[i];
+      if(fora>0)return {
+        titulo:`${HUB.format.int(fora)} veículos próprios fora de operação`,
+        texto:"O relatório registra o total em operação. A abertura por veículo é necessária para identificar quais podem voltar ao serviço e quais dependem de manutenção ou substituição."
+      };
+    }
+
+    if(p===totalEtr && etrDestaque)return {
+      titulo:`Maior movimento na ${etrDestaque.name}`,
+      texto:`Entre as estações que acompanharam o sentido da variação do total, ${etrDestaque.name} teve a maior mudança de volume frente ao mês anterior.`
+    };
+
+    if(janelaValida){
+      const ref=media(anterior), atual=media(recente), delta=atual-ref;
+      const pct=ref>0?delta/ref*100:null;
+      const consistente=recente.every(v=>delta>0?v>ref:v<ref);
+      const relevante=p.unit==="%"?Math.abs(delta)>=1.5:pct!==null&&Math.abs(pct)>=15;
+      if(consistente && relevante)return {
+        titulo:delta>0?"Três meses acima da média anterior":"Três meses abaixo da média anterior",
+        texto:`De ${p.meses[i-2]} a ${p.meses[i]}, a média ficou ${p.unit==="%"?execFmtPP(Math.abs(delta)):execFmtPct1(Math.abs(pct))+"%"} ${delta>0?"acima":"abaixo"} dos três meses anteriores (${execFormatPanelValue(ref,p.unit)}).`
+      };
+    }
+    return null;
+  }
+
   const dialog = document.getElementById("dteIndicatorDialog");
   let chart;
   dialog.onclose = ()=>{
@@ -3380,10 +3440,10 @@ function execRenderAreas(root, data, isMobile) {
     const p = itens[Number(button.dataset.dteItem)];
     const i = p.iAtual;
     document.getElementById("dteIndicatorTitle").textContent=p.name;
-    dialog.querySelector("[data-dte-stats]").innerHTML = i<0?"<p>Sem série publicada.</p>":
-      [i,i-1,i-12].filter(k=>Number.isFinite(p.data[k])).map(k=>
-        `<div><small>${esc(p.meses[k])}</small><b>${esc(execFormatPanelValue(p.data[k],p.unit))}</b></div>`
-      ).join("");
+    const leitura=leituraHistorico(p);
+    const insight=dialog.querySelector("[data-dte-insight]");
+    insight.hidden=!leitura;
+    insight.innerHTML=leitura?`<h3>${esc(leitura.titulo)}</h3>${leitura.texto?`<p>${esc(leitura.texto)}</p>`:""}`:"";
     dialog.querySelector("[data-dte-source]").textContent=p.source;
     const metodo=dialog.querySelector("[data-dte-method]");
     metodo.hidden=p.name!=="Índice Potencial Reciclável";

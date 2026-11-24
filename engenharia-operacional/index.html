@@ -399,6 +399,14 @@
   .dte-topic-grid{gap:12px;}
   .screen .dte-topic-details>.dteDeepenBody{padding:12px;}
 }
+
+.dte-topic-insight{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;padding:22px 24px;border:1px solid var(--linha);border-inline-start:3px solid var(--azul);border-radius:14px;background:linear-gradient(105deg,#132a40,var(--painel));}
+.dte-topic-insight h2{margin:0;font-size:19px;line-height:1.35;}
+.dte-topic-insight p{margin:8px 0 0;color:var(--silenciado);line-height:1.55;}
+.dte-topic-history{border:1px solid var(--linha);border-radius:9px;background:var(--painel);padding:9px 13px;color:var(--azul2,var(--azul));font:inherit;cursor:pointer;}
+.dte-topic-metric .dte-topic-comparison{font-size:13px;font-weight:400;}
+.dte-topic-metric .dte-topic-action{color:var(--azul2,var(--azul));margin-top:4px;}
+.dte-topic-metric small:empty{display:none;}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -3203,25 +3211,84 @@ function execRenderAreas(root, data, isMobile) {
   ])];
 
   const esc = HUB.format.esc;
-  const contexto = (p,index) => {
-    const i = p.iAtual;
-    const ref = p.meses[i] || "Sem dado";
-    if(!Number.isFinite(p.data[index]) || !Number.isFinite(p.data[index-1])) return ref;
-    const delta = p.data[index]-p.data[index-1];
+  function variacao(p, i, intervalo=1){
+    return Number.isFinite(p.data[i]) && Number.isFinite(p.data[i-intervalo])
+      ? p.data[i]-p.data[i-intervalo] : null;
+  }
+
+  function mudanca(p, delta){
+    if(delta===0 || (p.unit==="%" && Math.abs(delta)<0.05)) return "Mesmo patamar";
     const valor = p.unit==="%"?execFmtPP(Math.abs(delta)):execFormatPanelValue(Math.abs(delta),p.unit);
-    return `${ref} · ${delta===0?"estável":(delta>0?"+":"−")+valor} frente ao mês anterior`;
+    return `${delta>0?"Alta":"Queda"} de ${valor}`;
+  }
+
+  function comparacao(p){
+    const i=p.iAtual;
+    const anual=variacao(p,i,12);
+    const mensal=variacao(p,i);
+    if(anual!==null && (mensal===null || mudanca(p,mensal)==="Mesmo patamar")){
+      return `${mudanca(p,anual)} ante ${p.meses[i-12]}.`;
+    }
+    if(mensal!==null) return `${mudanca(p,mensal)} ante ${p.meses[i-1]}.`;
+    return i>=0?"Sem mês anterior para comparar.":"A série ainda não tem valores publicados.";
+  }
+
+  const totalEtr=areas[0][1][0];
+  const deltaEtr=variacao(totalEtr,iEtr);
+  const etrDestaque=etrComparaveis.find(p=>deltaEtr!==null && deltaEtr!==0 &&
+    Math.sign(variacao(p,iEtr))===Math.sign(deltaEtr));
+  const seletiva=areas[1][1][0];
+  const potencial=areas[1][1][1];
+  const iPot=potencial.iAtual;
+  const intervaloPot=variacao(potencial,iPot,12)!==null?12:1;
+  const deltaPot=variacao(potencial,iPot,intervaloPot);
+  const disp=areas[2][1][0];
+  const propria=topics[2][1][0][1];
+  const iDisp=disp.iAtual;
+  const ativos=propria[2].data[iDisp], totalVeiculos=propria[1].data[iDisp];
+  const iEquip=j.n-1;
+  const destaqueEquip=topics[3][1][0][1]
+    .filter(p=>variacao(p,iEquip)!==null && Math.abs(variacao(p,iEquip))>=0.05)
+    .sort((a,b)=>Math.abs(variacao(b,iEquip))-Math.abs(variacao(a,iEquip)))[0];
+  const destaques={
+    screenDestinacao:etrDestaque && {
+      item:totalEtr, titulo:`Recebimento nas ETRs · ${mudanca(totalEtr,deltaEtr)}`,
+      texto:`${etrDestaque.name} teve a maior variação no mesmo sentido, ${mudanca(etrDestaque,variacao(etrDestaque,iEtr)).toLowerCase()} frente a ${j.meses[iEtr-1]}.`
+    },
+    screenReciclagem:deltaPot!==null && {
+      item:potencial, titulo:`Potencial reciclável · ${mudanca(potencial,deltaPot)} ante ${j.meses[iPot-intervaloPot]}`,
+      texto:seletiva.iAtual===iPot
+        ? `A coleta seletiva somou ${execFormatPanelValue(seletiva.data[iPot],seletiva.unit)} em ${j.meses[iPot]}. O índice passou de ${execFormatPanelValue(potencial.data[iPot-intervaloPot],"%")} em ${j.meses[iPot-intervaloPot]} para ${execFormatPanelValue(potencial.data[iPot],"%")}.`
+        : `O índice passou de ${execFormatPanelValue(potencial.data[iPot-intervaloPot],"%")} em ${j.meses[iPot-intervaloPot]} para ${execFormatPanelValue(potencial.data[iPot],"%")} em ${j.meses[iPot]}.`
+    },
+    screenFrota:Number.isFinite(ativos) && Number.isFinite(totalVeiculos) && {
+      item:disp, titulo:`${HUB.format.int(ativos)} de ${HUB.format.int(totalVeiculos)} veículos próprios em operação`,
+      texto:`Disponibilidade de ${execFormatPanelValue(disp.data[iDisp],"%")} em ${j.meses[iDisp]}. ${comparacao(disp)}`
+    },
+    screenInfra:destaqueEquip && {
+      item:destaqueEquip, titulo:`${destaqueEquip.name} teve a maior variação de utilização`,
+      texto:`De ${execFormatPanelValue(destaqueEquip.data[iEquip-1],"%")} em ${j.meses[iEquip-1]} para ${execFormatPanelValue(destaqueEquip.data[iEquip],"%")} em ${j.meses[iEquip]}. ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip))}.`
+    }
   };
   for(const [id,groups] of topics){
-    document.getElementById(id).querySelector("[data-dte-topic]").innerHTML = groups.map(([title,items])=>
+    const destaque=destaques[id];
+    const chamada=destaque?`<aside class="dte-topic-insight">
+      <div><h2>${esc(destaque.titulo)}</h2><p>${esc(destaque.texto)}</p></div>
+      <button class="dte-topic-history" type="button" data-dte-item="${itens.indexOf(destaque.item)}" aria-haspopup="dialog">Abrir histórico ›</button>
+    </aside>`:"";
+    document.getElementById(id).querySelector("[data-dte-topic]").innerHTML = chamada + groups.map(([title,items])=>
       `<section class="dte-topic-group"><h2>${esc(title)}</h2><div class="dte-topic-grid">${items.map(p=>
         `<button class="dte-topic-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog">
-          <span>${esc(p.name)}</span><strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong>
-          <small>${esc(contexto(p,etrs.includes(p)?p.iAtual===iEtr?iEtr:-1:p.iAtual))}</small>
+          <span>${esc(p.name)}</span>
+          <strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong>
+          <small>${esc(p.meses[p.iAtual]||"")}</small>
+          <span class="dte-topic-comparison">${esc(comparacao(p))}</span>
+          <small class="dte-topic-action" aria-hidden="true">Ver histórico ›</small>
         </button>`).join("")}</div></section>`).join("");
   }
   const cards = root.querySelector("[data-exec-areas]");
   cards.innerHTML = areas.map(([title,items])=>`<article class="dte-area-card"><h3>${esc(title)}</h3>${items.map(p=>
-    `<button class="dte-area-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog"><span>${esc(p.name)}<small>${esc(p.meses[p.iAtual]||"Sem dado")}</small></span><strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong></button>`
+    `<button class="dte-area-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog"><span>${esc(p.name)}<small>${esc([p.meses[p.iAtual],comparacao(p)].filter(Boolean).join(" · "))}</small></span><strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong></button>`
   ).join("")}</article>`).join("");
 
   const sinais = data.candidatos.filter(c=>c.direcao==="ausencia"?c.essencial:

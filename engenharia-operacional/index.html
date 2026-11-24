@@ -3300,9 +3300,9 @@ function execRenderAreas(root, data, isMobile) {
     const anual=variacao(p,i,12);
     const mensal=variacao(p,i);
     if(anual!==null && (mensal===null || mudanca(p,mensal)==="Mesmo patamar")){
-      return `${mudanca(p,anual)} ante ${p.meses[i-12]}.`;
+      return `${mudanca(p,anual)} em comparação com ${p.meses[i-12]}.`;
     }
-    if(mensal!==null) return `${mudanca(p,mensal)} ante ${p.meses[i-1]}.`;
+    if(mensal!==null) return `${mudanca(p,mensal)} em comparação com ${p.meses[i-1]}.`;
     return i>=0?"Sem mês anterior para comparar.":"A série ainda não tem valores publicados.";
   }
 
@@ -3329,7 +3329,7 @@ function execRenderAreas(root, data, isMobile) {
       texto:`${etrDestaque.name} teve a maior variação no mesmo sentido, ${mudanca(etrDestaque,variacao(etrDestaque,iEtr)).toLowerCase()} frente a ${j.meses[iEtr-1]}.`
     },
     screenReciclagem:deltaPot!==null && {
-      item:potencial, titulo:`Potencial reciclável · ${mudanca(potencial,deltaPot)} ante ${j.meses[iPot-intervaloPot]}`,
+      item:potencial, titulo:`Potencial reciclável · ${mudanca(potencial,deltaPot)} em comparação com ${j.meses[iPot-intervaloPot]}`,
       texto:seletiva.iAtual===iPot
         ? `A coleta seletiva somou ${execFormatPanelValue(seletiva.data[iPot],seletiva.unit)} em ${j.meses[iPot]}. O índice passou de ${execFormatPanelValue(potencial.data[iPot-intervaloPot],"%")} em ${j.meses[iPot-intervaloPot]} para ${execFormatPanelValue(potencial.data[iPot],"%")}.`
         : `O índice passou de ${execFormatPanelValue(potencial.data[iPot-intervaloPot],"%")} em ${j.meses[iPot-intervaloPot]} para ${execFormatPanelValue(potencial.data[iPot],"%")} em ${j.meses[iPot]}.`
@@ -3378,6 +3378,12 @@ function execRenderAreas(root, data, isMobile) {
   const volumePorOrigem=["COLETA SELETIVA - FROTA COMLURB","FROTA ALTERNATIVA","NAO CADASTRADOS"]
     .map(linha=>execRolling13(linha,linha,j));
 
+  const formatoMes = new Intl.DateTimeFormat("pt-BR",{month:"long",year:"numeric",timeZone:"UTC"});
+  const mesPorExtenso = i => formatoMes.format(new Date(j.keys[i]+"-01T00:00:00Z"));
+  const periodoComparado = (inicio,fim) => j.keys[inicio].slice(0,4)===j.keys[fim].slice(0,4)
+    ? `${mesPorExtenso(inicio).split(" de ")[0]} a ${mesPorExtenso(fim)}`
+    : `${mesPorExtenso(inicio)} a ${mesPorExtenso(fim)}`;
+
   function leituraHistorico(p){
     const i=p.iAtual;
     if(i<0)return {titulo:"Sem série publicada"};
@@ -3392,8 +3398,8 @@ function execRenderAreas(root, data, isMobile) {
         recente.every(v=>Number.isFinite(v) && v>p.data[i-12])){
       const recorde=p.data.slice(0,i).filter(Number.isFinite).every(v=>v<volume);
       return {
-        titulo:recorde?"Recuperação no maior nível da janela":"Recuperação acima da referência de um ano atrás",
-        texto:`O índice ganhou ${execFmtPP(anual)} em um ano. Cada um dos últimos três meses ficou acima de ${p.meses[i-12]}. Para entender o ganho, acompanhe o volume desviado do aterro, o rejeito da seletiva e o total coletado, que entram no cálculo do índice.`
+        titulo:recorde?"Maior índice de recuperação no período mostrado":"A recuperação cresceu em um ano",
+        texto:`O índice passou de ${execFormatPanelValue(p.data[i-12],"%")} em ${mesPorExtenso(i-12)} para ${execFormatPanelValue(volume,"%")} em ${mesPorExtenso(i)}, uma alta de ${execFmtPP(anual)} Para calcular o índice, a Comlurb desconta os rejeitos da coleta seletiva do volume desviado do aterro e divide o resultado pelo total de resíduos coletados.`
       };
     }
 
@@ -3424,8 +3430,10 @@ function execRenderAreas(root, data, isMobile) {
       const consistente=recente.every(v=>delta>0?v>ref:v<ref);
       const relevante=p.unit==="%"?Math.abs(delta)>=1.5:pct!==null&&Math.abs(pct)>=15;
       if(consistente && relevante)return {
-        titulo:delta>0?"Três meses acima da média anterior":"Três meses abaixo da média anterior",
-        texto:`De ${p.meses[i-2]} a ${p.meses[i]}, a média ficou ${p.unit==="%"?execFmtPP(Math.abs(delta)):execFmtPct1(Math.abs(pct))+"%"} ${delta>0?"acima":"abaixo"} dos três meses anteriores (${execFormatPanelValue(ref,p.unit)}).`
+        titulo:p===potencial
+          ? (delta>0?"Uma parcela maior do potencial reciclável foi coletada":"Uma parcela menor do potencial reciclável foi coletada")
+          : (delta>0?"A média dos últimos três meses subiu":"A média dos últimos três meses caiu"),
+        texto:`De ${periodoComparado(i-5,i-3)}, a média foi de ${execFormatPanelValue(ref,p.unit)}. De ${periodoComparado(i-2,i)}, foi de ${execFormatPanelValue(atual,p.unit)}.`
       };
     }
     return null;

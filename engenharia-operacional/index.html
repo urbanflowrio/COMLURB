@@ -378,6 +378,8 @@
 .dte-indicator-stats div{border:1px solid var(--linha);border-radius:10px;padding:11px}.dte-indicator-stats small{display:block;color:#9fb3ca;margin-bottom:5px}.dte-indicator-stats b{font-size:17px}
 .dte-indicator-chart{height:265px;position:relative;margin-top:20px}.dte-indicator-body p{font-size:12px;color:#a9bdd1;margin:16px 0 0}
 @media(max-width:620px){.dte-indicator-body,.dte-indicator-dialog header{padding:12px}.dte-indicator-chart{height:220px}}
+.dte-method-note{margin-top:16px;padding:12px 14px;border:1px solid var(--linha);border-radius:10px;color:#b8c9de;font-size:13px;line-height:1.55}
+.dte-method-note summary{cursor:pointer;color:#9acbf2;font-weight:700}.dte-method-note p{margin:10px 0 0}.dte-method-note a{color:#9acbf2}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -430,7 +432,7 @@
       <div class="dte-indicator-body">
         <div class="dte-indicator-stats" data-dte-stats></div>
         <div class="dte-indicator-chart" data-dte-chart-wrap><canvas data-dte-chart role="img" aria-label="Evolução mensal"></canvas></div>
-        <p data-dte-source></p>
+        <p data-dte-source></p><div data-dte-method hidden></div>
       </div>
     </dialog>
   </section>
@@ -529,7 +531,7 @@
     <div class="noteBanner compact" id="bannerIndice">
       <div class="noteTag" id="bannerTag">MONITORADO</div>
       <div>
-        <b id="bannerTitle">Índice de captura EGP-RIO · monitoramento mensal</b>
+        <b id="bannerTitle">Índice Potencial Reciclável · monitoramento mensal</b>
         <p id="bannerComposicao" style="margin-top:4px;"></p>
       </div>
     </div>
@@ -542,9 +544,14 @@
     <div class="reciclagemGrid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Índice de captura EGP-RIO</h2><div class="hint">% mensal · ano corrente · indicador de referência da aba</div></div>
+          <div><h2>Índice Potencial Reciclável</h2><div class="hint">% mensal · ano corrente · indicador de referência da aba</div></div>
         </div>
-        <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal" role="img" aria-label="Índice mensal de captura EGP-RIO"></canvas></div></div>
+        <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal" role="img" aria-label="Índice Potencial Reciclável mensal"></canvas></div><details class="dte-method-note"><summary>Como o índice é calculado</summary>
+        <p>A gravimetria identifica os materiais presentes no lixo domiciliar. O Centro de Pesquisa da COMLURB separa e pesa amostras por tipo de material para acompanhar mudanças nos hábitos e no consumo das famílias do Rio de Janeiro.</p>
+        <p>O estudo de referência, de <strong>2018</strong>, apresenta <strong>50,51% de resíduos orgânicos</strong> e <strong>34,94% de recicláveis</strong>. O painel usa os 34,94% para estimar o potencial reciclável da coleta domiciliar.</p>
+        <p><strong>Potencial reciclável estimado</strong> = 34,94% × peso da coleta domiciliar + peso da coleta seletiva. <strong>Índice Potencial Reciclável</strong> = peso da coleta seletiva ÷ potencial estimado × 100. Os pesos são medidos em toneladas.</p>
+        <p><a href="https://docs.google.com/spreadsheets/d/1DH3ogjplKsVgBBiITYLLvEsM2pnxngv1UGqZiO1pxJM/edit?gid=1862476983#gid=1862476983" target="_blank" rel="noopener noreferrer">Série histórica da gravimetria da COMLURB</a></p>
+      </details></div>
       </div>
       <div class="panel">
         <div class="panelHead">
@@ -1686,7 +1693,7 @@ function renderReciclagem() {
   function lastDataIndex(arr){ for(let i=arr.length-1;i>=0;i--) if(Number.isFinite(arr[i]) && arr[i]>0) return i; return -1; }
 
   const serieIdx = rolling13("INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL", "INDICE DO COLETADO EM RELACAO AO POTENCIAL RECICLAVEL");
-  renderTendenciaAnualChart("chartIndiceMensal", labels13, serieIdx, HUB.charts.colors.green, "%", { titulo: "Índice de captura EGP-RIO", fonte: "Tabela 1493 · Índice do coletado em relação ao potencial reciclável" });
+  renderTendenciaAnualChart("chartIndiceMensal", labels13, serieIdx, HUB.charts.colors.green, "%", { titulo: "Índice Potencial Reciclável", fonte: "Tabela 1493 · Índice do coletado em relação ao potencial reciclável" });
 
   const bannerTitleEl = document.getElementById("bannerTitle");
   const bannerEl2 = document.getElementById("bannerIndice");
@@ -1697,11 +1704,11 @@ function renderReciclagem() {
     const mediaAnterior = anteriores.length ? anteriores.reduce((a,b)=>a+b,0)/anteriores.length : 0;
     const destoante = iIdx >= 0 && mediaAnterior > 0 && Math.abs(serieIdx[iIdx]-mediaAnterior)/mediaAnterior > 0.3;
     if (destoante) {
-      bannerTitleEl.textContent = `Índice de captura EGP-RIO · ${labels13[iIdx]} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% em relação a média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
+      bannerTitleEl.textContent = `Índice Potencial Reciclável · ${labels13[iIdx]} destoa da série (${serieIdx[iIdx].toFixed(1).replace(".", ",")}% em relação a média de ${mediaAnterior.toFixed(1).replace(".", ",")}% nos meses anteriores)`;
       if (bannerEl2) bannerEl2.className = "noteBanner warn compact";
       if (bannerTagEl) bannerTagEl.textContent = "ATENÇÃO";
     } else if (iIdx >= 0) {
-      bannerTitleEl.textContent = `Índice de captura EGP-RIO · ${labels13[iIdx]}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%`;
+      bannerTitleEl.textContent = `Índice Potencial Reciclável · ${labels13[iIdx]}: ${serieIdx[iIdx].toFixed(1).replace(".", ",")}%`;
       if (bannerEl2) bannerEl2.className = "noteBanner compact";
       if (bannerTagEl) bannerTagEl.textContent = "MONITORADO";
     }
@@ -2458,7 +2465,7 @@ function renderInfra(){
 // - Disponibilidade permanece consolidada; nunca é decomposta por gerência.
 // - Utilização por gerência (base detalhada) pode aparecer em "Onde", mas
 //   nunca como explicação da disponibilidade consolidada.
-// - Captura EGP-RIO nunca é atribuída a uma regional pela tonelagem;
+// - Índice Potencial Reciclável nunca é atribuída a uma regional pela tonelagem;
 //   a leitura por regional mostra apenas volume, nunca causalidade.
 // - Equipamentos permanecem em séries individuais; nenhuma média geral.
 // - Poda mecanizada (km/manejo, manejo/apresentação) não entra como
@@ -2635,16 +2642,16 @@ function computeExecutiveData() {
     });
   }
 
-  // --- Coleta Seletiva: captura EGP-RIO (favorável=sobe, desfavorável=desce) ---
+  // --- Coleta Seletiva: Índice Potencial Reciclável (favorável=sobe, desfavorável=desce) ---
   const iCap = capturaSerie.at(-1) === null ? -1 : capturaSerie.length - 1;
   if (iCap < 0) {
-    candidatos.push({ subject:"seletiva", dimension:"Coleta Seletiva", indicador:"Índice de captura EGP-RIO", direcao:"ausencia", essencial:true, magnitude:null, tipo:"pontos percentuais", relevancia:null, persistenciaMeses:0 });
+    candidatos.push({ subject:"seletiva", dimension:"Coleta Seletiva", indicador:"Índice Potencial Reciclável", direcao:"ausencia", essencial:true, magnitude:null, tipo:"pontos percentuais", relevancia:null, persistenciaMeses:0 });
   } else {
     const iCapAnt = iCap - 1;
     const deltaCap = iCapAnt >= 0 && capturaSerie[iCapAnt] != null ? capturaSerie[iCap] - capturaSerie[iCapAnt] : null;
     const dirCap = deltaCap == null ? "neutra" : (deltaCap >= 0 ? "favoravel" : "desfavoravel");
     candidatos.push({
-      subject:"seletiva", dimension:"Coleta Seletiva", indicador:"Índice de captura EGP-RIO",
+      subject:"seletiva", dimension:"Coleta Seletiva", indicador:"Índice Potencial Reciclável",
       direcao: dirCap, essencial:true, magnitude: deltaCap, tipo:"pontos percentuais",
       relevancia: execRelevanciaCaptura(deltaCap == null ? null : Math.abs(deltaCap)),
       persistenciaMeses: execPersistencia(capturaSerie, iCap, d => Math.abs(d) < EXEC_EDITORIAL_THRESHOLDS.estabilidadePP ? "estavel" : (d > 0 ? "favoravel" : "desfavoravel"))
@@ -2713,7 +2720,7 @@ function computeExecutiveData() {
 
   const defasagens = [
     ["Disponibilidade", disponibilidade], ["Sobrecarga", sobrecarga],
-    ["Captura EGP-RIO", capturaSerie], ["Recebimento nas ETRs", etrTotal]
+    ["Índice Potencial Reciclável", capturaSerie], ["Recebimento nas ETRs", etrTotal]
   ].map(([nome, serie]) => {
     const i = execLastPublishedIndex(serie);
     return { nome, ultimaCompetencia: i >= 0 ? j.meses[i] : null, defasagemMeses: i >= 0 ? (j.n - 1 - i) : null, status: i === j.n - 1 ? "atual" : (i >= 0 ? "defasado" : "ausente") };
@@ -2835,7 +2842,7 @@ function execBuildSubjects(data, primary) {
     const currentIdx = janela.n - 1;
     let headline, sub, mudou, onde, observar, indexText;
     if (iCap !== currentIdx) {
-      headline = "O índice de captura EGP-RIO não foi publicado para esta competência.";
+      headline = "O Índice Potencial Reciclável não foi publicado para esta competência.";
       sub = `Competência do painel: ${janela.competenciaLabel}. Nenhum valor anterior foi usado como se pertencesse a esse mês.`;
       mudou = iCap>=0 ? `Último dado disponível: ${meses[iCap]}, ${execFmtPct1(capturaSerie[iCap])}%.` : "Sem dado publicado na janela móvel.";
       onde = ["Não aplicável."];
@@ -2844,18 +2851,18 @@ function execBuildSubjects(data, primary) {
     } else {
       const deltaCap = iCap>=1 && capturaSerie[iCap-1]!=null ? capturaSerie[iCap]-capturaSerie[iCap-1] : null;
       const persist = execPersistencia(capturaSerie, iCap, d=>Math.abs(d)<EXEC_EDITORIAL_THRESHOLDS.estabilidadePP?"estavel":(d>0?"favoravel":"desfavoravel"));
-      headline = `O índice de captura EGP-RIO está em ${execFmtPct1(capturaSerie[iCap])}% em ${meses[iCap]}${deltaCap!=null?`, ${deltaCap>=0?"alta":"queda"} de ${execFmtPP(Math.abs(deltaCap))} frente ao mês anterior`:""}.`;
+      headline = `O Índice Potencial Reciclável está em ${execFmtPct1(capturaSerie[iCap])}% em ${meses[iCap]}${deltaCap!=null?`, ${deltaCap>=0?"alta":"queda"} de ${execFmtPP(Math.abs(deltaCap))} frente ao mês anterior`:""}.`;
       sub = persist>=3 ? `O movimento completou ${persist} competências seguidas na mesma direção.` : "Leitura da competência mais recente com dado publicado.";
-      mudou = `Índice de captura EGP-RIO chegou a ${execFmtPct1(capturaSerie[iCap])}%${deltaCap!=null?`, ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior`:""}.`;
+      mudou = `Índice Potencial Reciclável chegou a ${execFmtPct1(capturaSerie[iCap])}%${deltaCap!=null?`, ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior`:""}.`;
       onde = ["A distribuição por regional (UDS-S / UDS-N / UDS-O) mostra volume coletado, não a variação do índice de captura; a base não permite atribuir a variação do índice a uma regional específica."];
       observar = persist>=3 ? "Acompanhar se a próxima competência confirma a mesma direção." : "Sem verificação prioritária adicional nesta competência.";
       indexText = deltaCap!=null ? `Captura variou ${execSinal(deltaCap)}${execFmtPP(deltaCap)} frente ao mês anterior.` : "Ver detalhamento na aba Coleta Seletiva.";
     }
     subjects.seletiva = {
       label:"Coleta seletiva", headline, sub,
-      vizCaption:`Índice de captura EGP-RIO (%) · janela de ${meses[0]} a ${meses.at(-1)} (Tabela 1493)`,
+      vizCaption:`Índice Potencial Reciclável (%) · janela de ${meses[0]} a ${meses.at(-1)} (Tabela 1493)`,
       mudou, ondeParas: onde, observar, indexText,
-      panels: iCap>=0 ? [{ name:"Índice de captura EGP-RIO", unit:"%", color: HUB.charts.colors.green, meses, data: capturaSerie, iAtual:iCap }] : []
+      panels: iCap>=0 ? [{ name:"Índice Potencial Reciclável", unit:"%", color: HUB.charts.colors.green, meses, data: capturaSerie, iAtual:iCap }] : []
     };
   }
 
@@ -3093,7 +3100,7 @@ function execRenderAreas(root, data, isMobile) {
     ]],
     ["Coleta Seletiva",[
       item("Coleta seletiva",execRolling13("TOTAL - COLETA SELETIVA","COLETA SELETIVA",j)," t",tabela),
-      item("Índice de captura EGP-RIO",data.capturaSerie,"%",tabela),
+      item("Índice Potencial Reciclável",data.capturaSerie,"%",tabela),
       item("Resíduos recuperados",execRolling13("INDICE DE RESIDUOS RECUPERADOS","INDICE DE RESIDUOS RECUPERADOS",j),"%",tabela)
     ]],
     ["Frota",[
@@ -3137,6 +3144,9 @@ function execRenderAreas(root, data, isMobile) {
         `<div><small>${esc(p.meses[k])}</small><b>${esc(execFormatPanelValue(p.data[k],p.unit))}</b></div>`
       ).join("");
     dialog.querySelector("[data-dte-source]").textContent=p.source;
+    const metodo=dialog.querySelector("[data-dte-method]");
+    metodo.hidden=p.name!=="Índice Potencial Reciclável";
+    metodo.innerHTML=metodo.hidden?"":document.querySelector(".dte-method-note").outerHTML;
     dialog.querySelector("[data-dte-chart-wrap]").hidden=i<0;
     dialog.showModal();
     if(i>=0)chart=execBuildPanelChart(dialog.querySelector("[data-dte-chart]"),p,isMobile);

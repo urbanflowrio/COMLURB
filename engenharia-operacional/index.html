@@ -447,10 +447,19 @@
 .dte-opening-metric small{grid-column:1/-1;color:var(--silenciado);line-height:1.4;}
 .dte-opening-chart{min-width:0;padding:16px 18px;}
 .dte-opening-chart h3{font-size:16px;margin:0 0 10px;}
-.dte-opening-chart .execChartWrap{height:245px;}
+.dte-opening-chart .execChartWrap{height:292px;}
+.dte-opening-chart{background:linear-gradient(160deg,rgba(73,169,238,.035),transparent 65%),var(--painel);padding:20px 22px;}
+.dte-opening-chart h3{font-size:17px;letter-spacing:-.025em;margin-bottom:14px;}
+.dte-opening-metrics{padding:9px 12px;gap:4px;align-content:stretch;grid-auto-rows:1fr;}
+.dte-opening-metric{border-radius:9px;align-content:center;transition:background .18s ease,box-shadow .18s ease;}
+.dte-opening-metric:hover{background:rgba(73,169,238,.07);}
+.dte-opening-metric:focus-visible{outline:2px solid #72bdf5;outline-offset:-2px;}
+.dte-opening-metric[aria-pressed="true"]{background:rgba(73,169,238,.13);box-shadow:inset 3px 0 #72bdf5;}
+.dte-opening-metric strong{font-size:22px;letter-spacing:-.035em;font-variant-numeric:tabular-nums;}
+.dte-opening-metric small{font-size:12px;}
 .dte-opening-attention{margin:22px 0 16px;}
 .dte-opening-attention h2{font-size:16px;margin:0 0 8px;}
-@media(max-width:760px){.dte-opening-grid{grid-template-columns:1fr;}.dte-opening-chart .execChartWrap{height:210px;}}
+@media(max-width:760px){.dte-opening-grid{grid-template-columns:1fr;}.dte-opening-chart .execChartWrap{height:255px;}.dte-opening-chart{padding:14px 10px;}}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -3169,13 +3178,38 @@ function execBuildPanelChart(canvas, panel, isMobile, resumo=false) {
   const chart = new Chart(canvas.getContext("2d"), {
     type:"line",
     data:{ labels: panel.meses, datasets:[{
-      data: panel.data, borderColor: panel.color, backgroundColor:"transparent",
-      borderWidth:2.2, tension:resumo?0:.25, spanGaps:false,
-      pointRadius, pointHoverRadius:5, pointBackgroundColor: pointColor
+      data: panel.data, borderColor: panel.color, backgroundColor:resumo?(ctx=>{const {chart}=ctx; const a=chart.chartArea;if(!a)return "transparent";const g=chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,"rgba(73,169,238,.16)");g.addColorStop(1,"rgba(73,169,238,0)");return g;}):"transparent",
+      borderWidth:resumo?2.8:2.2, tension:resumo?.38:.25, cubicInterpolationMode:resumo?"monotone":"default", spanGaps:false,
+      fill:resumo?"origin":false,
+      pointRadius:resumo?panel.data.map((_,i)=>i===iAtual?5:2.8):pointRadius, pointHoverRadius:6, pointBackgroundColor: pointColor, pointBorderColor:"#14263a",pointBorderWidth:1.5
     }]},
-    plugins:!resumo&&window.HUBChartLabels?[HUBChartLabels.criar(v=>execFormatPanelValue(v,panel.unit))]:[],
+    plugins:resumo?[{
+      id:"dteOverviewLabels",
+      afterDatasetsDraw(chart){
+        const {ctx,chartArea:a}=chart, meta=chart.getDatasetMeta(0);
+        const compact=chart.width<540;
+        const labels=panel.data.map((v,i)=>({v,i})).filter(({v,i})=>Number.isFinite(v)&&(!compact||i===iAtual||i===0||i%3===0));
+        labels.sort((x,y)=>Number(y.i===iAtual)-Number(x.i===iAtual));
+        const placed=[];
+        ctx.save();ctx.textBaseline="middle";ctx.textAlign="center";
+        for(const {v,i} of labels){
+          const pt=meta.data[i];if(!pt||pt.skip)continue;
+          const label=panel.unit===" t"?(v/1000).toLocaleString("pt-BR",{maximumFractionDigits:1,minimumFractionDigits:1})+" mil":execFormatPanelValue(v,panel.unit);
+          ctx.font=(i===iAtual?"700 ":"500 ")+(compact?10:11)+"px Inter, Arial, sans-serif";
+          const w=ctx.measureText(label).width+8,h=16;
+          const x=Math.max(a.left+w/2,Math.min(a.right-w/2,pt.x));
+          for(const dy of [-15,16,-32,32]){
+            const y=pt.y+dy,box={l:x-w/2,r:x+w/2,t:y-h/2,b:y+h/2};
+            if(box.t<a.top-18||box.b>a.bottom+2||placed.some(b=>box.l<b.r&&box.r>b.l&&box.t<b.b&&box.b>b.t))continue;
+            ctx.fillStyle=i===iAtual?"#f2f8ff":"#c2d2e2";ctx.fillText(label,x,y);placed.push(box);break;
+          }
+        }
+        ctx.restore();
+      }
+    }]:window.HUBChartLabels?[HUBChartLabels.criar(v=>execFormatPanelValue(v,panel.unit))]:[],
     options:{
       responsive:true, maintainAspectRatio:false,
+      layout:resumo?{padding:{top:24,right:12,left:4,bottom:2}}:undefined,
       interaction:{mode:"index",intersect:false},
       plugins:{
         legend:{ display:false },
@@ -3187,7 +3221,7 @@ function execBuildPanelChart(canvas, panel, isMobile, resumo=false) {
       },
       scales:{
         x:{ grid:{display:false}, border:{display:false}, ticks:{ color:"#9fb3ca", font:{size:isMobile?11:12}, maxRotation:resumo||isMobile?0:38, minRotation:resumo||isMobile?0:38, autoSkip:true, maxTicksLimit:isMobile?4:13 } },
-        y:resumo?{ticks:{color:"#9fb3ca",maxTicksLimit:5,callback:v=>execFormatPanelValue(v,panel.unit)},grid:{color:"rgba(120,150,180,.13)"}}:{display:false}
+        y:resumo?{ticks:{color:"#9fb3ca",maxTicksLimit:5,callback:v=>execFormatPanelValue(v,panel.unit)},grace:"12%",border:{display:false},grid:{color:"rgba(120,150,180,.09)",drawTicks:false}}:{display:false}
       }
     }
   });

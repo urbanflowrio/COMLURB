@@ -1833,10 +1833,11 @@ function renderReciclagem() {
     ? origens.reduce((total,o)=>total+o.serie[i],0) : null);
   const fmtTon = v=>HUB.format.int(Math.round(v))+" t";
   const fmtPart = (v,i)=>`${fmtTon(v)} (${execFmtPct1(v/compHas[i]*100)}%)`;
+  const totaisPublicados=rolling13("COLETA SELETIVA","COLETA SELETIVA");
   const iComp=execLastPublishedIndex(compHas);
   const resumoComp=document.getElementById("collectionCompositionSummary");
   if(resumoComp)resumoComp.innerHTML=iComp>=0 && compHas[iComp]>0?[
-    [`Total em ${labels13[iComp]}`,fmtTon(compHas[iComp]),"Todas as origens"],
+    [`Total em ${labels13[iComp]}`,fmtTon(totaisPublicados[iComp]??compHas[iComp]),"Total da Tabela 1493"],
     ...origens.map(o=>[o.nome,fmtTon(o.serie[iComp]),`${execFmtPct1(o.serie[iComp]/compHas[iComp]*100)}% do total`])
   ].map(([nome,valor,nota])=>`<div><small>${nome}</small><strong>${valor}</strong><small>${nota}</small></div>`).join(""):"";
   chartOuVazio("chartComposicao", compHas, () => {
@@ -1850,7 +1851,7 @@ function renderReciclagem() {
       options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},onClick:(evt,items)=>{
         const idx=dteClickIndex(items); if(idx<0 || !(compHas[idx]>0))return;
         dteShowDetalheCompetencia({
-          titulo:"Composição da coleta seletiva",meses:labels13,serie:compHas,idx,
+          titulo:"Composição da coleta seletiva",meses:labels13,serie:totaisPublicados,idx,
           fonte:"Tabela 1493 · coleta seletiva por origem",fmt:fmtTon,
           extraLinhas:origens.map(o=>`${o.nome}: ${fmtPart(o.serie[idx],idx)}`)
         });

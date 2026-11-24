@@ -374,12 +374,31 @@
 .dte-indicator-dialog::backdrop{background:rgba(3,10,19,.76)}
 .dte-indicator-dialog header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--linha)}
 .dte-indicator-dialog h2{margin:0;font-size:18px}.dte-indicator-dialog header button{width:40px;height:40px;border-radius:8px;border:1px solid var(--linha);background:#142b41;color:#fff;font-size:22px;cursor:pointer}
-.dte-indicator-body{padding:18px 20px}.dte-indicator-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:8px}
-.dte-indicator-stats div{border:1px solid var(--linha);border-radius:10px;padding:11px}.dte-indicator-stats small{display:block;color:#9fb3ca;margin-bottom:5px}.dte-indicator-stats b{font-size:17px}
+.dte-indicator-body{padding:18px 20px}.dte-indicator-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:12px}
+.dte-indicator-stats div{border:1px solid var(--linha);border-radius:10px;padding:14px}.dte-indicator-stats small{display:block;color:#9fb3ca;margin-bottom:5px}.dte-indicator-stats b{font-size:17px}
 .dte-indicator-chart{height:265px;position:relative;margin-top:20px}.dte-indicator-body p{font-size:12px;color:#a9bdd1;margin:16px 0 0}
 @media(max-width:620px){.dte-indicator-body,.dte-indicator-dialog header{padding:12px}.dte-indicator-chart{height:220px}}
 .dte-method-note{margin-top:16px;padding:12px 14px;border:1px solid var(--linha);border-radius:10px;color:#b8c9de;font-size:13px;line-height:1.55}
 .dte-method-note summary{cursor:pointer;color:#9acbf2;font-weight:700}.dte-method-note p{margin:10px 0 0}.dte-method-note a{color:#9acbf2}
+
+.dte-topic,.dte-topic-group{display:grid;gap:16px;}
+.dte-topic{gap:28px;margin:26px 0 30px;}
+.dte-topic-group h2{margin:0;font-size:17px;line-height:1.4;}
+.dte-topic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:16px;}
+.dte-topic-metric{display:grid;align-content:start;gap:9px;text-align:left;padding:18px 20px;min-height:128px;border:1px solid var(--linha);border-radius:14px;color:var(--texto);background:var(--painel);cursor:pointer;font:inherit;}
+.dte-topic-metric:hover,.dte-topic-metric:focus-visible{border-color:var(--azul);background:var(--painel2,var(--painel));}
+.dte-topic-metric strong{font-size:24px;line-height:1.2;}
+.dte-topic-metric small,.dte-topic-details summary small{display:block;color:var(--silenciado);line-height:1.45;}
+.dte-topic-metric span{font-weight:700;line-height:1.4;}
+.dte-topic-details,.dte-topic~#fleetDeepen{margin-top:22px;}
+.screen .dte-topic-details>summary,.dte-topic~#fleetDeepen>summary{padding:18px 20px;}
+.screen .dte-topic-details>.dteDeepenBody{padding:20px;}
+.dte-topic~.drillSlot:empty{display:none;}
+@media(max-width:600px){
+  .dte-topic{gap:24px;margin:20px 0 24px;}
+  .dte-topic-grid{gap:12px;}
+  .screen .dte-topic-details>.dteDeepenBody{padding:12px;}
+}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -427,14 +446,6 @@
       <h2>Indicadores por área</h2>
       <div class="dte-area-grid" data-exec-areas></div>
     </section>
-    <dialog class="dte-indicator-dialog" id="dteIndicatorDialog" aria-labelledby="dteIndicatorTitle">
-      <header><h2 id="dteIndicatorTitle"></h2><form method="dialog"><button type="submit" aria-label="Fechar indicador">×</button></form></header>
-      <div class="dte-indicator-body">
-        <div class="dte-indicator-stats" data-dte-stats></div>
-        <div class="dte-indicator-chart" data-dte-chart-wrap><canvas data-dte-chart role="img" aria-label="Evolução mensal"></canvas></div>
-        <p data-dte-source></p><div data-dte-method hidden></div>
-      </div>
-    </dialog>
   </section>
 
   <!-- ===================== VISÃO GERAL ===================== -->
@@ -494,11 +505,15 @@
 
   <!-- ===================== DESTINAÇÃO & BIOGÁS ===================== -->
   <section class="screen" id="screenDestinacao">
+    <div class="dte-topic" data-dte-topic></div>
     <div class="drillSlot" data-drill-slot></div>
+    <details class="dteDeepen dte-topic-details">
+      <summary><span>Análise das estações e da operação ambiental<small class="sub">Séries de recebimento, biogás e comparação entre chorume e chuva</small></span></summary>
+      <div class="dteDeepenBody">
     <div class="grid2" style="margin-bottom:14px;">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>ETR Total</h2><div class="hint">Recebimento mensal (t)</div></div>
+          <div><h2>Recebimento nas ETRs</h2><div class="hint">Recebimento mensal (t)</div></div>
         </div>
         <div class="body"><div class="chartWrap small"><canvas id="chartEtrTotal" role="img" aria-label="Recebimento mensal total nas estações de transferência"></canvas></div></div>
       </div>
@@ -514,7 +529,7 @@
          incorporada ao mesmo painel do gráfico, em vez de card separado. -->
     <div class="panel">
       <div class="panelHead">
-        <div><h2>Chorume × precipitação</h2><div class="hint">Volume mensal de chorume acumulado (m³, eixo esquerdo) e precipitação em Seropédica (mm, eixo direito) · bloco principal da aba</div></div>
+        <div><h2>Chorume × precipitação</h2><div class="hint">Volume mensal de chorume acumulado (m³, eixo esquerdo) e precipitação em Seropédica (mm, eixo direito)</div></div>
         <div class="readAutoBadge" id="climaStatus">carregando chuva…</div>
       </div>
       <div class="body">
@@ -523,11 +538,17 @@
       </div>
     </div>
     <div id="chorumeAlertSlot" style="margin-top:14px;"></div>
+      </div>
+    </details>
   </section>
 
   <!-- ===================== COLETA SELETIVA & RECICLAGEM ===================== -->
   <section class="screen" id="screenReciclagem">
+    <div class="dte-topic" data-dte-topic></div>
     <div class="drillSlot" data-drill-slot></div>
+    <details class="dteDeepen dte-topic-details">
+      <summary><span>Origem e distribuição regional<small class="sub">Composição da coleta e toneladas por regional</small></span></summary>
+      <div class="dteDeepenBody">
     <div class="noteBanner compact" id="bannerIndice">
       <div class="noteTag" id="bannerTag">MONITORADO</div>
       <div>
@@ -544,7 +565,7 @@
     <div class="reciclagemGrid">
       <div class="panel">
         <div class="panelHead">
-          <div><h2>Índice Potencial Reciclável</h2><div class="hint">% mensal · ano corrente · indicador de referência da aba</div></div>
+          <div><h2>Índice Potencial Reciclável</h2><div class="hint">% mensal · ano corrente</div></div>
         </div>
         <div class="body"><div class="chartWrap"><canvas id="chartIndiceMensal" role="img" aria-label="Índice Potencial Reciclável mensal"></canvas></div><details class="dte-method-note"><summary>Como o índice é calculado</summary>
         <p>A gravimetria identifica os materiais presentes no lixo domiciliar. O Centro de Pesquisa da COMLURB separa e pesa amostras por tipo de material para acompanhar mudanças nos hábitos e no consumo das famílias do Rio de Janeiro.</p>
@@ -566,14 +587,19 @@
         <div class="body"><div class="chartWrap"><canvas id="chartOrigem" role="img" aria-label="Participação da coleta seletiva por origem"></canvas></div></div>
       </div>
     </div>
+      </div>
+    </details>
   </section>
 
   <!-- ===================== UTILIZAÇÃO DA FROTA ===================== -->
   <section class="screen" id="screenFrota">
-
+    <div class="dte-topic" data-dte-topic></div>
+    <div class="drillSlot" data-drill-slot></div>
+    <details class="dteDeepen dte-topic-details">
+      <summary><span>Gráficos consolidados da frota<small class="sub">Histórico de utilização, disponibilidade, sobrecarga e horas extras</small></span></summary>
+      <div class="dteDeepenBody">
     <!-- LINHA 1 · quatro KPIs horizontais -->
     <div class="fleetKpis" id="fleetKpis"></div>
-    <div class="drillSlot" data-drill-slot></div>
 
     <!-- LINHA 2 · insight executivo, largura total -->
     <div class="panel frotaInsightPanel" style="margin-bottom:16px;">
@@ -619,7 +645,8 @@
         </div>
       </div>
     </div>
-
+      </div>
+    </details>
     <details class="dteDeepen" id="fleetDeepen">
       <summary>
         <div><div>Detalhamento por serviço, unidade e veículo</div><div class="sub">Coleta Domiciliar, Coleta Seletiva e Lixo Público · filtros por competência, superintendência, gerência e veículo</div></div>
@@ -681,6 +708,11 @@
 
   <!-- ===================== EQUIPAMENTOS & INFRAESTRUTURA ===================== -->
   <section class="screen" id="screenInfra">
+    <div class="dte-topic" data-dte-topic></div>
+
+    <details class="dteDeepen dte-topic-details">
+      <summary><span>Comparar equipamentos e intervenções<small class="sub">Séries de utilização e manutenção em uma janela de 13 meses</small></span></summary>
+      <div class="dteDeepenBody">
     <div class="panel">
       <div class="panelHead"><div><h2>Equipamentos do mês</h2><div class="hint">Utilização na competência mais recente · clique num equipamento para o histórico</div></div></div>
       <div class="body">
@@ -702,7 +734,18 @@
         <div class="infraPointDetail" id="infraPointDetail"></div>
       </div>
     </div>
+      </div>
+    </details>
   </section>
+
+    <dialog class="dte-indicator-dialog" id="dteIndicatorDialog" aria-labelledby="dteIndicatorTitle">
+      <header><h2 id="dteIndicatorTitle"></h2><form method="dialog"><button type="submit" aria-label="Fechar indicador">×</button></form></header>
+      <div class="dte-indicator-body">
+        <div class="dte-indicator-stats" data-dte-stats></div>
+        <div class="dte-indicator-chart" data-dte-chart-wrap><canvas data-dte-chart role="img" aria-label="Evolução mensal"></canvas></div>
+        <p data-dte-source></p><div data-dte-method hidden></div>
+      </div>
+    </dialog>
 
   <div id="footer"></div>
   <div id="drillNote" style="display:none"></div>
@@ -3108,7 +3151,7 @@ function execRenderAreas(root, data, isMobile) {
     ["Coleta Seletiva",[
       item("Coleta seletiva",execRolling13("TOTAL - COLETA SELETIVA","COLETA SELETIVA",j)," t",tabela),
       item("Índice Potencial Reciclável",data.capturaSerie,"%",tabela),
-      item("Resíduos recuperados",execRolling13("INDICE DE RESIDUOS RECUPERADOS","INDICE DE RESIDUOS RECUPERADOS",j),"%",tabela)
+      item("Índice de Resíduos Recuperados",execRolling13("INDICE DE RESIDUOS RECUPERADOS","INDICE DE RESIDUOS RECUPERADOS",j),"%",tabela)
     ]],
     ["Frota",[
       item("Disponibilidade da frota própria",data.disponibilidade,"%"),
@@ -3120,8 +3163,62 @@ function execRenderAreas(root, data, isMobile) {
       ...data.predialItens.map(k=>item(k.nome,k.serie,""))
     ]]
   ];
-  const itens = areas.flatMap(([,items])=>items);
+  const frotaPropria = findSecao(RAW.secoes,"MANUTENCAO FROTA PROPRIA");
+  const capacidade = titulo => execSeriesFromMap(
+    execSerieAposTituloMap(RAW.relatorio,titulo,"Peso Coletado / Capacidade Estimada"),j.keys
+  ).map(v=>v===null?null:v>1?v:v*100);
+  const etrs = [
+    ["ETR Bangu","ETR Bangu"],["ETR Caju","ETR Caju"],["ETR Jacarepaguá","ETR Jacarepagua"],
+    ["ETR Marechal Hermes","ETR Mal Hermes"],["ETR Santa Cruz","ETR Santa Cruz"]
+  ].map(([nome,linha])=>item(nome,rel(linha)," t"));
+  const iEtr = areas[0][1][0].iAtual;
+  const etrComparaveis = etrs.filter(p=>Number.isFinite(p.data[iEtr])&&Number.isFinite(p.data[iEtr-1]))
+    .sort((a,b)=>Math.abs(b.data[iEtr]-b.data[iEtr-1])-Math.abs(a.data[iEtr]-a.data[iEtr-1]));
+  const topics = [
+    ["screenDestinacao",[
+      ["Recebimento nas estações de transferência",[areas[0][1][0],...etrComparaveis,...etrs.filter(p=>!etrComparaveis.includes(p))]],
+      ["Operação ambiental em Seropédica",areas[0][1].slice(1)]
+    ]],
+    ["screenReciclagem",[["Coleta seletiva e recuperação",areas[1][1]]]],
+    ["screenFrota",[
+      ["Frota própria",[
+        areas[2][1][0],
+        item("Total de veículos",frotaPropria?rel("FROTA TOTAL",frotaPropria.rows):[],""),
+        item("Veículos em operação",frotaPropria?rel("TOTAL EM OPERACAO",frotaPropria.rows):[],"")
+      ]],
+      ["Capacidade utilizada pela frota contratada",[
+        item("Coleta domiciliar e em comunidades",capacidade("Coleta Domiciliar e Comunidade"),"%"),
+        item("Coleta seletiva",capacidade("Coleta Seletiva"),"%")
+      ]],
+      ["Sobrecarga e horas extras",areas[2][1].slice(1)]
+    ]],
+    ["screenInfra",[
+      ["Utilização de equipamentos",areas[3][1].slice(0,data.equipamentos.length)],
+      ["Manutenção predial",areas[3][1].slice(data.equipamentos.length)]
+    ]]
+  ];
+  const itens = [...new Set([
+    ...areas.flatMap(([,items])=>items),
+    ...topics.flatMap(([,groups])=>groups.flatMap(([,items])=>items))
+  ])];
+
   const esc = HUB.format.esc;
+  const contexto = (p,index) => {
+    const i = p.iAtual;
+    const ref = p.meses[i] || "Sem dado";
+    if(!Number.isFinite(p.data[index]) || !Number.isFinite(p.data[index-1])) return ref;
+    const delta = p.data[index]-p.data[index-1];
+    const valor = p.unit==="%"?execFmtPP(Math.abs(delta)):execFormatPanelValue(Math.abs(delta),p.unit);
+    return `${ref} · ${delta===0?"estável":(delta>0?"+":"−")+valor} frente ao mês anterior`;
+  };
+  for(const [id,groups] of topics){
+    document.getElementById(id).querySelector("[data-dte-topic]").innerHTML = groups.map(([title,items])=>
+      `<section class="dte-topic-group"><h2>${esc(title)}</h2><div class="dte-topic-grid">${items.map(p=>
+        `<button class="dte-topic-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog">
+          <span>${esc(p.name)}</span><strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong>
+          <small>${esc(contexto(p,etrs.includes(p)?p.iAtual===iEtr?iEtr:-1:p.iAtual))}</small>
+        </button>`).join("")}</div></section>`).join("");
+  }
   const cards = root.querySelector("[data-exec-areas]");
   cards.innerHTML = areas.map(([title,items])=>`<article class="dte-area-card"><h3>${esc(title)}</h3>${items.map(p=>
     `<button class="dte-area-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog"><span>${esc(p.name)}<small>${esc(p.meses[p.iAtual]||"Sem dado")}</small></span><strong>${esc(execFormatPanelValue(p.data[p.iAtual],p.unit))}</strong></button>`
@@ -3142,7 +3239,7 @@ function execRenderAreas(root, data, isMobile) {
   dialog.onclose = ()=>{
     if(chart){chart.destroy();EXEC_CHARTS=EXEC_CHARTS.filter(c=>c!==chart);chart=null;}
   };
-  root.querySelectorAll("[data-dte-item]").forEach(button=>button.onclick=()=>{
+  document.querySelectorAll("[data-dte-item]").forEach(button=>button.onclick=()=>{
     const p = itens[Number(button.dataset.dteItem)];
     const i = p.iAtual;
     document.getElementById("dteIndicatorTitle").textContent=p.name;
@@ -3153,12 +3250,20 @@ function execRenderAreas(root, data, isMobile) {
     dialog.querySelector("[data-dte-source]").textContent=p.source;
     const metodo=dialog.querySelector("[data-dte-method]");
     metodo.hidden=p.name!=="Índice Potencial Reciclável";
-    metodo.innerHTML=metodo.hidden?"":document.querySelector(".dte-method-note").outerHTML;
+    metodo.innerHTML=metodo.hidden?"":document.querySelector("#screenReciclagem .dte-method-note").outerHTML;
     dialog.querySelector("[data-dte-chart-wrap]").hidden=i<0;
     dialog.showModal();
     if(i>=0)chart=execBuildPanelChart(dialog.querySelector("[data-dte-chart]"),p,isMobile);
   });
 }
+
+document.querySelectorAll(".dte-topic-details,#fleetDeepen").forEach(details=>{
+  details.addEventListener("toggle",()=>{
+    if(details.open) requestAnimationFrame(()=>{
+      details.querySelectorAll("canvas").forEach(canvas=>Chart.getChart(canvas)?.resize());
+    });
+  });
+});
 
 function renderExecutivo() {
   const data = computeExecutiveData();

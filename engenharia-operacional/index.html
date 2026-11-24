@@ -416,6 +416,23 @@
 .collection-composition-summary strong{display:block;margin-top:5px;font-size:18px;color:var(--texto);}
 .chartWrap.collection-composition-chart{height:320px;}
 @media(max-width:620px){.chartWrap.collection-composition-chart{height:270px;}}
+
+.execBody.execFull{grid-template-columns:minmax(0,1fr);}
+.execBody.execFull .execChartWrap{height:300px;}
+.etr-overview{display:grid;grid-template-columns:minmax(230px,.85fr) minmax(0,2fr);gap:22px;align-items:stretch;}
+.etr-total{padding:26px;border:1px solid #315777;border-radius:14px;background:#132b41;display:grid;align-content:center;gap:10px;}
+.etr-total strong{font-size:clamp(30px,4vw,52px);line-height:1.1;}
+.etr-total p,.etr-table caption{margin:0;color:var(--silenciado);line-height:1.5;}
+.etr-total button{justify-self:start;margin-top:8px;}
+.etr-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;}
+.etr-table caption{text-align:left;padding-bottom:12px;}
+.etr-table th,.etr-table td{text-align:right;padding:11px 8px;border-bottom:1px solid var(--linha);}
+.etr-table th:first-child{text-align:left;}
+.etr-table thead th{font-size:12px;color:var(--silenciado);}
+.etr-table button{color:var(--azul2,var(--azul));background:none;border:0;padding:0;text-align:left;font:inherit;cursor:pointer;}
+.etr-table button:hover{text-decoration:underline;}
+.etr-table .etr-largest th,.etr-table .etr-largest td{background:#142b41;}
+@media(max-width:760px){.etr-overview{grid-template-columns:minmax(0,1fr);}.etr-table th,.etr-table td{padding:9px 4px;}.execBody.execFull .execChartWrap{height:235px;}}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -3128,7 +3145,7 @@ function execFormatPanelValue(value, unit){
   return HUB.format.int(Math.round(n))+(unit==="m³"||unit==="Nm³"? " "+unit : "");
 }
 
-function execBuildPanelChart(canvas, panel, isMobile) {
+function execBuildPanelChart(canvas, panel, isMobile, resumo=false) {
   const fim = execLastPublishedIndex(panel.data) + 1;
   panel = {...panel, data:panel.data.slice(0,fim), meses:panel.meses.slice(0,fim)};
   const iAtual = panel.iAtual;
@@ -3139,12 +3156,13 @@ function execBuildPanelChart(canvas, panel, isMobile) {
     type:"line",
     data:{ labels: panel.meses, datasets:[{
       data: panel.data, borderColor: panel.color, backgroundColor:"transparent",
-      borderWidth:2.2, tension:.25, spanGaps:false,
+      borderWidth:2.2, tension:resumo?0:.25, spanGaps:false,
       pointRadius, pointHoverRadius:5, pointBackgroundColor: pointColor
     }]},
-    plugins:window.HUBChartLabels?[HUBChartLabels.criar(v=>execFormatPanelValue(v,panel.unit))]:[],
+    plugins:!resumo&&window.HUBChartLabels?[HUBChartLabels.criar(v=>execFormatPanelValue(v,panel.unit))]:[],
     options:{
       responsive:true, maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
       plugins:{
         legend:{ display:false },
         tooltip:{
@@ -3154,8 +3172,8 @@ function execBuildPanelChart(canvas, panel, isMobile) {
         }
       },
       scales:{
-        x:{ grid:{display:false}, border:{display:false}, ticks:{ color:"#9fb3ca", font:{size:isMobile?11:12}, maxRotation:isMobile?0:38, minRotation:isMobile?0:38, autoSkip:true, maxTicksLimit:isMobile?4:13 } },
-        y:{ display:false }
+        x:{ grid:{display:false}, border:{display:false}, ticks:{ color:"#9fb3ca", font:{size:isMobile?11:12}, maxRotation:resumo||isMobile?0:38, minRotation:resumo||isMobile?0:38, autoSkip:true, maxTicksLimit:isMobile?4:13 } },
+        y:resumo?{ticks:{color:"#9fb3ca",maxTicksLimit:5,callback:v=>execFormatPanelValue(v,panel.unit)},grid:{color:"rgba(120,150,180,.13)"}}:{display:false}
       }
     }
   });
@@ -3173,19 +3191,17 @@ function execBuildViz(root, subject, isMobile) {
   const cls = s.panels.length > 1 ? "execPanelStack" : "execPanelStack execSingle";
   mount.innerHTML = `<div class="${cls}">` + s.panels.map((p,i)=>{
     const atual = p.iAtual>=0 ? p.data[p.iAtual] : null;
-    const iYoY = p.iAtual-12;
-    const yoy = iYoY>=0 ? p.data[iYoY] : null;
     return `<div class="execPanel">
       <div class="execPanelTop">
         <div class="execPanelName">${HUB.format.esc(p.name)}</div>
-        <div class="execPanelStats">${p.meses[p.iAtual]||"Atual"}: <b>${execFormatPanelValue(atual,p.unit)}</b>${Number.isFinite(yoy)?` · ${p.meses[iYoY]}: <b>${execFormatPanelValue(yoy,p.unit)}</b>`:""}</div>
+        <div class="execPanelStats">${p.meses[p.iAtual]||"Atual"}: <b>${execFormatPanelValue(atual,p.unit)}</b></div>
       </div>
       <div class="execChartWrap"><canvas id="execChart_${root.id}_${i}" role="img" aria-label="${HUB.format.esc(p.title || p.label || 'Indicador operacional')}"></canvas></div>
     </div>`;
   }).join("") + `</div>`;
   s.panels.forEach((p,i)=>{
     const canvas = document.getElementById(`execChart_${root.id}_${i}`);
-    if (canvas) execBuildPanelChart(canvas, p, isMobile);
+    if (canvas) execBuildPanelChart(canvas, p, isMobile, subject==="seletiva");
   });
 }
 
@@ -3200,17 +3216,21 @@ function execRender(root, subject, isMobile) {
   const s = EXEC_STATE.subjects[subject];
   root.querySelector("[data-exec-headline]").textContent = s.headline;
   root.querySelector("[data-exec-sub]").textContent = s.sub;
-  root.querySelector("[data-exec-viz-caption]").textContent = s.vizCaption;
+  const legenda=root.querySelector("[data-exec-viz-caption]");
+  legenda.textContent = s.vizCaption;
+  legenda.hidden=subject==="seletiva";
   const mudou = root.querySelector("[data-exec-mudou]");
   mudou.textContent = s.mudou;
-  mudou.parentElement.hidden = subject==="seletiva" && s.ondeParas.length>0;
+  mudou.parentElement.hidden = subject==="seletiva";
   const onde = root.querySelector("[data-exec-onde]");
   onde.innerHTML = s.ondeParas.map(t=>`<p>${HUB.format.esc(t)}</p>`).join("");
-  onde.parentElement.hidden = !s.ondeParas.length;
-  onde.previousElementSibling.textContent = subject==="seletiva" ? "Comparação anual" : "Onde";
+  onde.parentElement.hidden = subject==="seletiva" || !s.ondeParas.length;
   const observar = root.querySelector("[data-exec-observar]");
   observar.textContent = s.observar || "";
   observar.parentElement.hidden = !s.observar || /^(Nenhuma verificação|Sem verificação)/i.test(s.observar);
+  const editorial=root.querySelector(".execEditorial");
+  editorial.hidden=[mudou,onde,observar].every(el=>el.parentElement.hidden);
+  editorial.parentElement.classList.toggle("execFull",editorial.hidden);
   execDestroyCharts();
   execBuildViz(root, subject, isMobile);
 
@@ -3343,13 +3363,36 @@ function execRenderAreas(root, data, isMobile) {
       texto:`De ${execFormatPanelValue(destaqueEquip.data[iEquip-1],"%")} em ${j.meses[iEquip-1]} para ${execFormatPanelValue(destaqueEquip.data[iEquip],"%")} em ${j.meses[iEquip]}, ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip)).toLowerCase()}`
     }
   };
+  const etrOverview = `<section class="dte-topic-group">
+    <h2>Recebimento nas estações de transferência</h2>
+    <div class="etr-overview">
+      <div class="etr-total">
+        <span>Total recebido · ${esc(j.meses[iEtr]||"Sem dado")}</span>
+        <strong>${esc(execFormatPanelValue(totalEtr.data[iEtr]," t"))}</strong>
+        <p>${esc(comparacao(totalEtr))}${etrDestaque?` ${esc(etrDestaque.name)} teve a maior variação no mesmo sentido.`:""}</p>
+        <button class="dte-topic-history" type="button" data-dte-item="${itens.indexOf(totalEtr)}" aria-haspopup="dialog">Histórico do total ›</button>
+      </div>
+      <table class="etr-table">
+        <caption>${esc(j.meses[iEtr]||"Última competência")}${j.meses[iEtr-1]?` · variação em relação a ${esc(j.meses[iEtr-1])}`:""}</caption>
+        <thead><tr><th scope="col">Estação</th><th scope="col">Recebido</th><th scope="col">Variação</th></tr></thead>
+        <tbody>${[...etrComparaveis,...etrs.filter(p=>!etrComparaveis.includes(p))].map(p=>{
+          const delta=variacao(p,iEtr);
+          return `<tr${p===etrDestaque?' class="etr-largest"':""}>
+            <th scope="row"><button type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog" aria-label="Histórico de ${esc(p.name)}">${esc(p.name)} ›</button></th>
+            <td>${esc(execFormatPanelValue(p.data[iEtr]," t"))}</td>
+            <td>${delta===null?"Sem dado":esc((delta>0?"+":"")+execFormatPanelValue(delta," t"))}</td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table>
+    </div>
+  </section>`;
   for(const [id,groups] of topics){
     const destaque=destaques[id];
-    const chamada=destaque?`<aside class="dte-topic-insight">
+    const chamada=id==="screenDestinacao"?etrOverview:destaque?`<aside class="dte-topic-insight">
       <div><h2>${esc(destaque.titulo)}</h2><p>${esc(destaque.texto)}</p></div>
       <button class="dte-topic-history" type="button" data-dte-item="${itens.indexOf(destaque.item)}" aria-haspopup="dialog">Abrir histórico ›</button>
     </aside>`:"";
-    document.getElementById(id).querySelector("[data-dte-topic]").innerHTML = chamada + groups.map(([title,items])=>
+    document.getElementById(id).querySelector("[data-dte-topic]").innerHTML = chamada + (id==="screenDestinacao"?groups.slice(1):groups).map(([title,items])=>
       `<section class="dte-topic-group"><h2>${esc(title)}</h2><div class="dte-topic-grid">${items.map(p=>
         `<button class="dte-topic-metric" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog">
           <span>${esc(p.name)}</span>

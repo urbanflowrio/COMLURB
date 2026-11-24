@@ -407,6 +407,12 @@
 .dte-topic-metric .dte-topic-comparison{font-size:13px;font-weight:400;}
 .dte-topic-metric .dte-topic-action{color:var(--azul2,var(--azul));margin-top:4px;}
 .dte-topic-metric small:empty{display:none;}
+.collection-composition-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px;margin:0 0 20px;}
+.collection-composition-summary div{padding:12px 15px;border:1px solid var(--linha);border-radius:10px;line-height:1.45;}
+.collection-composition-summary small{display:block;color:var(--silenciado);}
+.collection-composition-summary strong{display:block;margin-top:5px;font-size:18px;color:var(--texto);}
+.chartWrap.collection-composition-chart{height:320px;}
+@media(max-width:620px){.chartWrap.collection-composition-chart{height:270px;}}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -566,9 +572,9 @@
     </div>
     <div class="panel" style="margin-bottom:16px;">
       <div class="panelHead">
-        <div><h2>Composição da coleta seletiva</h2><div class="hint">Participação mensal por origem · cada coluna representa 100% do peso coletado</div></div>
+        <div><h2>Composição da coleta seletiva</h2><div class="hint">Peso coletado por mês, em toneladas</div></div>
       </div>
-      <div class="body"><div class="chartWrap"><canvas id="chartComposicao" role="img" aria-label="Composição mensal da coleta seletiva por origem"></canvas></div></div>
+      <div class="body"><div id="collectionCompositionSummary" class="collection-composition-summary"></div><div class="chartWrap collection-composition-chart"><canvas id="chartComposicao" role="img" aria-label="Composição mensal da coleta seletiva por origem"></canvas></div></div>
     </div>
     <div class="reciclagemGrid">
       <div class="panel">
@@ -804,6 +810,7 @@ Chart.register(DTEValueLabelsPlugin);
 <script src="../assets/components/hub-chart-labels.js?v=1"></script>
 <script src="../assets/components/hub-layout.js"></script>
 <script src="fleet-snapshot.js"></script>
+<script src="fleet-snapshot-complemento.js"></script>
 
 <script>
 // ============================================
@@ -1264,7 +1271,22 @@ function dteClickIndex(elements) {
 const FLEET_SOURCE_MODE = { domiciliar:"pending", seletiva:"pending", lixo:"pending" };
 function fleetSnapshot(tipo){
   const snap=window.DTE_FLEET_SNAPSHOT||{};
-  return Array.isArray(snap[tipo])?snap[tipo]:[];
+  const complemento=window.DTE_FLEET_SUPPLEMENT?.[tipo]||[];
+  const meses=new Set(complemento.map(r=>fleetDateKey(r["Período"])));
+  return [...(snap[tipo]||[]).filter(r=>!meses.has(fleetDateKey(r["Período"]))),...complemento];
+}
+function mergeFleetMonths(rows,tipo){
+  const periodo=r=>fleetDateKey(HUB.pick(r,["Período","Periodo"]));
+  const validas=rows.filter(r=>periodo(r) && HUB.pick(r,["Gerência","Gerencia"]) &&
+    HUB.format.toNumber(HUB.pick(r,["Capacidade Total (ton)"]))>0);
+  if(!validas.length) return [];
+  const suplemento=window.DTE_FLEET_SUPPLEMENT?.[tipo]||[];
+  const mesesRevisados=new Set(suplemento.map(periodo));
+  const oficiais=validas.filter(r=>!mesesRevisados.has(periodo(r)));
+  const meses=new Set(oficiais.map(periodo));
+  const complemento=fleetSnapshot(tipo).filter(r=>!meses.has(periodo(r)));
+  FLEET_SOURCE_MODE[tipo]=complemento.length?"combined":"live";
+  return [...oficiais,...complemento];
 }
 function fleetPublishedGviz(url, callbackName){
   const m=String(url||"").match(/\/spreadsheets\/d\/e\/([^/]+)/);
@@ -1306,11 +1328,13 @@ function loadFleetJsonp(url,tipo){
 async function loadFleetSource(url,tipo,label){
   try{
     const rows=await HUB.data.loadCSV(url,{name:label,cache:false});
-    if(rows&&rows.length){FLEET_SOURCE_MODE[tipo]="live";return rows;}
+    const merged=mergeFleetMonths(rows||[],tipo);
+    if(merged.length)return merged;
   }catch(e){console.warn(label+" CSV:",e)}
   try{
     const rows=await loadFleetJsonp(url,tipo);
-    if(rows&&rows.length){FLEET_SOURCE_MODE[tipo]="live";console.log(`OK ${label} via GViz: ${rows.length} linhas`);return rows;}
+    const merged=mergeFleetMonths(rows||[],tipo);
+    if(merged.length)return merged;
   }catch(e){console.warn(label+" GViz:",e)}
   const snap=fleetSnapshot(tipo);
   if(snap.length){FLEET_SOURCE_MODE[tipo]="snapshot";console.warn(`${label}: usando snapshot local de contingência (${snap.length} linhas)`);return snap;}
@@ -1809,15 +1833,21 @@ function renderReciclagem() {
     ? origens.reduce((total,o)=>total+o.serie[i],0) : null);
   const fmtTon = v=>HUB.format.int(Math.round(v))+" t";
   const fmtPart = (v,i)=>`${fmtTon(v)} (${execFmtPct1(v/compHas[i]*100)}%)`;
+  const iComp=execLastPublishedIndex(compHas);
+  const resumoComp=document.getElementById("collectionCompositionSummary");
+  if(resumoComp)resumoComp.innerHTML=iComp>=0 && compHas[iComp]>0?[
+    [`Total em ${labels13[iComp]}`,fmtTon(compHas[iComp]),"Todas as origens"],
+    ...origens.map(o=>[o.nome,fmtTon(o.serie[iComp]),`${execFmtPct1(o.serie[iComp]/compHas[iComp]*100)}% do total`])
+  ].map(([nome,valor,nota])=>`<div><small>${nome}</small><strong>${valor}</strong><small>${nota}</small></div>`).join(""):"";
   chartOuVazio("chartComposicao", compHas, () => {
     const canvas=document.getElementById("chartComposicao"); if(!canvas)return;
     new Chart(canvas.getContext("2d"),{
       type:"bar",
       data:{labels:labels13,datasets:origens.map(o=>({
-        label:o.nome,data:o.serie.map((v,i)=>compHas[i]>0?v/compHas[i]*100:null),
-        backgroundColor:o.cor,borderRadius:4,borderSkipped:false
+        label:o.nome,data:o.serie.map((v,i)=>compHas[i]>0?v:null),
+        backgroundColor:o.cor,borderRadius:0,maxBarThickness:46
       }))},
-      options:{...HUB.charts.baseConfig,onClick:(evt,items)=>{
+      options:{...HUB.charts.baseConfig,interaction:{mode:"index",intersect:false},onClick:(evt,items)=>{
         const idx=dteClickIndex(items); if(idx<0 || !(compHas[idx]>0))return;
         dteShowDetalheCompetencia({
           titulo:"Composição da coleta seletiva",meses:labels13,serie:compHas,idx,
@@ -1831,8 +1861,8 @@ function renderReciclagem() {
           `${ctx.dataset.label}: ${fmtPart(origens[ctx.datasetIndex].serie[ctx.dataIndex],ctx.dataIndex)}`
         }}
       },scales:{
-        x:{...HUB.charts.baseConfig.scales.x,stacked:true,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,font:{size:12},maxRotation:38,minRotation:38,autoSkip:false}},
-        y:{...HUB.charts.baseConfig.scales.y,stacked:true,min:0,max:100,grid:{color:"rgba(120,150,180,.10)"},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.y.ticks,font:{size:12},stepSize:25,callback:v=>execFmtPct1(v)+"%"}}
+        x:{...HUB.charts.baseConfig.scales.x,stacked:true,grid:{display:false},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.x.ticks,font:{size:11},maxRotation:0,minRotation:0,autoSkip:true,maxTicksLimit:window.matchMedia("(max-width:620px)").matches?5:13}},
+        y:{...HUB.charts.baseConfig.scales.y,stacked:true,beginAtZero:true,grid:{color:"rgba(120,150,180,.10)"},border:{display:false},ticks:{...HUB.charts.baseConfig.scales.y.ticks,maxTicksLimit:5,callback:fmtTon}}
       }}
     });
   });
@@ -1976,6 +2006,8 @@ function fleetLabel(code){
 }
 function fleetDateKey(v){
   const s=String(v??"").trim();
+  const abreviado=execLabelToKey(parseDateLabel(s));
+  if(abreviado)return abreviado;
   let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if(m){
     const first=Number(m[1]);
@@ -2321,8 +2353,11 @@ function renderFleetDetail(){
   const status=document.getElementById("fleetSourceStatus");
   if(status){
     const mode=FLEET_SOURCE_MODE[FLEET_STATE.tipo]||"error";
-    status.className="fleetStatus "+(mode==="snapshot"?"snapshot":mode==="error"?"error":"");
-    status.textContent=mode==="live"?"Atualização automática":mode==="snapshot"?"base de contingência · dados até jul/26":"base detalhada indisponível";
+    const ultimo=rows.map(r=>r.periodo).sort().at(-1);
+    const mensal=officialMaxFleetMonth();
+    status.className="fleetStatus "+(mode==="snapshot"||mode==="combined"?"snapshot":mode==="error"?"error":"");
+    const origem=mode==="snapshot"?"Cópia da planilha":mode==="combined"?"Planilha e cópia de apoio":"Planilha publicada";
+    status.textContent=ultimo?`${origem} · detalhe até ${fleetPrettyMonth(ultimo)}${mensal>ultimo?` · consolidado até ${fleetPrettyMonth(mensal)}`:""}`:"Base detalhada indisponível";
   }
   const summary=document.getElementById("fleetSummary");
   const gerCount=new Set(current.map(r=>r.gerencia)).size;
@@ -2358,7 +2393,8 @@ function renderFleetDetail(){
   const hint=document.getElementById("fleetTrendHint");
   if(hint){
     const filtros=[FLEET_STATE.gerencia||"",FLEET_STATE.veiculo?fleetLabel(FLEET_STATE.veiculo):""].filter(Boolean).join(" · ");
-    hint.textContent=`${serviceName} · ${fleetPrettyMonth(inicioJanela)} a ${fleetPrettyMonth(fimJanela)}${filtros?" · "+filtros:""}`;
+    const periodo=trend.length?`${fleetPrettyMonth(trend[0].name)} a ${fleetPrettyMonth(trend.at(-1).name)}`:"Sem dados para a seleção";
+    hint.textContent=`${serviceName} · ${periodo}${filtros?" · "+filtros:""}`;
   }
 
   const vehicleBase=fleetBaseFiltered(rows,{ignoreVeh:true});

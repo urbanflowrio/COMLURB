@@ -433,6 +433,16 @@
 .etr-table button:hover{text-decoration:underline;}
 .etr-table .etr-largest th,.etr-table .etr-largest td{background:#142b41;}
 @media(max-width:760px){.etr-overview{grid-template-columns:minmax(0,1fr);}.etr-table th,.etr-table td{padding:9px 4px;}.execBody.execFull .execChartWrap{height:235px;}}
+.dte-brief{margin:25px 0 30px;}
+.dte-brief h2,.dte-brief-detail{font-size:20px;margin:0 0 6px;}
+.dte-brief-detail{font-size:14px;color:var(--silenciado);margin-bottom:12px;}
+.dte-brief>p{margin:0 0 18px;color:var(--silenciado);}
+.dte-brief-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;}
+.dte-brief-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:15px 0;border-top:1px solid var(--linha);}
+.dte-brief-row small,.dte-brief-row strong{display:block;}
+.dte-brief-row small{color:var(--silenciado);margin-bottom:6px;}
+.dte-brief-row strong{font-size:15px;line-height:1.45;}
+@media(max-width:690px){.dte-brief-grid{grid-template-columns:1fr;}.dte-brief-row{gap:8px;}}
 </style>
 <style>
 @media (prefers-reduced-motion: reduce) {
@@ -454,7 +464,13 @@
   
   <!-- ===================== RELATÓRIO EXECUTIVO ===================== -->
   <section class="screen active" id="screenExecutivo">
+    <section class="dte-brief" aria-labelledby="dteBriefTitle">
+      <h2 id="dteBriefTitle">Resumo executivo</h2>
+      <p data-dte-brief-period></p>
+      <div class="dte-brief-grid" data-dte-brief></div>
+    </section>
     <div class="execCover">
+      <h2 class="dte-brief-detail">Indicador em destaque</h2>
       <div class="execDefasagens" data-exec-defasagens hidden></div>
       <div class="execHeadline" data-exec-headline></div>
       <div class="execSub" data-exec-sub></div>
@@ -1371,7 +1387,7 @@ async function init() {
     title: CONFIG.panelName,
     subtitle: CONFIG.subtitle,
     navigation: [
-      { id: "screenExecutivo", label: "Relatório Executivo" },
+      { id: "screenExecutivo", label: "Resumo Executivo" },
       { id: "screenDestinacao", label: "Destinação e Biogás" },
       { id: "screenReciclagem", label: "Coleta Seletiva" },
       { id: "screenFrota", label: "Utilização da Frota" },
@@ -3363,6 +3379,19 @@ function execRenderAreas(root, data, isMobile) {
       texto:`De ${execFormatPanelValue(destaqueEquip.data[iEquip-1],"%")} em ${j.meses[iEquip-1]} para ${execFormatPanelValue(destaqueEquip.data[iEquip],"%")} em ${j.meses[iEquip]}, ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip)).toLowerCase()}`
     }
   };
+  root.querySelector("[data-dte-brief-period]").textContent=j.competenciaLabel||"";
+  const altaSeletiva=variacao(seletiva,seletiva.iAtual);
+  const resumo=[
+    ["Destinação",totalEtr,iEtr>=0?`${execFormatPanelValue(totalEtr.data[iEtr]," t")} recebidas nas ETRs. ${etrDestaque?`Maior ${deltaEtr>0?"alta":"queda"} em ${etrDestaque.name.replace(/^ETR /,"")}.`:""}`:""],
+    ["Coleta seletiva",seletiva,seletiva.iAtual>=0?`${execFormatPanelValue(seletiva.data[seletiva.iAtual]," t")} coletadas${altaSeletiva===null?"":`. ${comparacao(seletiva)}`}`:""],
+    ["Frota própria",disp,destaques.screenFrota?destaques.screenFrota.titulo:""],
+    ["Equipamentos",destaqueEquip,destaqueEquip?`${destaqueEquip.name}: ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip)).toLowerCase()} no mês`:""]
+  ];
+  root.querySelector("[data-dte-brief]").innerHTML=resumo.filter(([,p,frase])=>p&&frase).map(([area,p,frase])=>`
+    <div class="dte-brief-row">
+      <div><small>${esc(area)}${p.iAtual!==j.n-1&&p.meses[p.iAtual]?` · ${esc(p.meses[p.iAtual])}`:""}</small><strong>${esc(frase)}</strong></div>
+      <button class="dte-topic-history" type="button" data-dte-item="${itens.indexOf(p)}" aria-haspopup="dialog" aria-label="Histórico de ${esc(p.name)}">Histórico ›</button>
+    </div>`).join("");
   const etrOverview = `<section class="dte-topic-group">
     <h2>Recebimento nas estações de transferência</h2>
     <div class="etr-overview">

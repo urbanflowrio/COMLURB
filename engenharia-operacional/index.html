@@ -3267,7 +3267,7 @@ function execRenderAreas(root, data, isMobile) {
     },
     screenInfra:destaqueEquip && {
       item:destaqueEquip, titulo:`${destaqueEquip.name} teve a maior variação de utilização`,
-      texto:`De ${execFormatPanelValue(destaqueEquip.data[iEquip-1],"%")} em ${j.meses[iEquip-1]} para ${execFormatPanelValue(destaqueEquip.data[iEquip],"%")} em ${j.meses[iEquip]}. ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip))}.`
+      texto:`De ${execFormatPanelValue(destaqueEquip.data[iEquip-1],"%")} em ${j.meses[iEquip-1]} para ${execFormatPanelValue(destaqueEquip.data[iEquip],"%")} em ${j.meses[iEquip]}, ${mudanca(destaqueEquip,variacao(destaqueEquip,iEquip)).toLowerCase()}`
     }
   };
   for(const [id,groups] of topics){

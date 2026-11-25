@@ -346,8 +346,8 @@ function populateCascade(){
 
 async function load(){
   const snapshot=window.DAF_DATA;
-  if(!snapshot||!Array.isArray(snapshot.registros)||snapshot.registros.length!==414||!Array.isArray(snapshot.faturamentoDetalhado)||!snapshot.faturamentoDetalhado.length){
-    $("dataAlert").textContent="Base DAF de setembro/2026 não disponível. Indicadores temporariamente indisponíveis.";
+  if(!snapshot||!Array.isArray(snapshot.registros)||!snapshot.registros.length||!Array.isArray(snapshot.faturamentoDetalhado)||!snapshot.faturamentoDetalhado.length){
+    $("dataAlert").textContent="Base DAF não disponível. Indicadores temporariamente indisponíveis.";
     $("dataAlert").hidden=false;
     console.error("HUB COMLURB: dados estáticos DAF incompletos.");
     return;
@@ -366,8 +366,8 @@ async function load(){
       billed:Number(r.valor)||0,paid:0,paidProvided:false,debt:0,launches:0,type:""};
   });
   const actual=totals(billed2026Rows).billed;
-  const expected=Number(snapshot.resumo?.faturamento)||199932855.80;
-  if(Math.abs(actual-expected)>0.05){
+  const expected=Number(snapshot.resumo?.faturamento);
+  if(!Number.isFinite(expected)||expected<=0||Math.abs(actual-expected)>0.05){
     $("dataAlert").textContent="Inconsistência no faturamento da base DAF. Indicadores indisponíveis até conferência.";
     $("dataAlert").hidden=false;
     console.error("HUB COMLURB: divergência no faturamento.",actual,expected);
